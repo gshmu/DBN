@@ -24,9 +24,7 @@ public class ConnectionUtil {
         if (resultSet != null) {
             try {
                 closeStatement(resultSet.getStatement());
-                if (!resultSet.isClosed()) {
-                    resultSet.close();
-                }
+                resultSet.close();
             } catch (Exception e) {
                 LOGGER.warn("Error closing result set", e);
             }
@@ -35,7 +33,7 @@ public class ConnectionUtil {
 
     public static void closeStatement(final Statement statement) {
         try {
-            if (statement != null && !statement.isClosed()) {
+            if (statement != null) {
                 statement.close();
             }
         } catch (SQLException e) {
