@@ -86,13 +86,6 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         return settings;
     }
 
-    @Override
-    protected void disposeRow(DatasetEditorModelRow row) {
-        if (!changedRows.contains(row)) {
-            super.disposeRow(row);
-        }
-    }
-
     private ResultSet loadResultSet(boolean useCurrentFilter) throws SQLException {
         Connection connection = connectionHandler.getStandaloneConnection();
         DBDataset dataset = getDataset();
@@ -151,6 +144,13 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             }
         }
         return null;
+    }
+
+    @Override
+    protected void disposeRow(DatasetEditorModelRow row) {
+        if (!changedRows.contains(row)) {
+            super.disposeRow(row);
+        }
     }
 
     @NotNull
@@ -221,9 +221,12 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                         DatasetFilterInput filterInput = new DatasetFilterInput(foreignKeyDataset);
 
                         for (DBColumn constraintColumn : constraint.getColumns()) {
-                            DBColumn foreignKeyColumn = ((DBColumn) constraintColumn.getUndisposedElement()).getForeignKeyColumn();
-                            Object value = cell.getRow().getCellForColumn(constraintColumn).getUserValue();
-                            filterInput.setColumnValue(foreignKeyColumn, value);
+                            constraintColumn = (DBColumn) constraintColumn.getUndisposedElement();
+                            if (constraintColumn != null) {
+                                DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
+                                Object value = cell.getRow().getCellForColumn(constraintColumn).getUserValue();
+                                filterInput.setColumnValue(foreignKeyColumn, value);
+                            }
                         }
                         return filterInput;
 
