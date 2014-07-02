@@ -257,7 +257,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         if (!isLoading) {
             setLoading(true);
             new SimpleBackgroundTask() {
-                public void run() {
+                public void execute() {
                     try {
                         if (!isDisposed()) {
                             editorForm.showLoadingHint();

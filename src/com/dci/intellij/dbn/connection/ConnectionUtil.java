@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -25,7 +26,7 @@ public class ConnectionUtil {
             try {
                 closeStatement(resultSet.getStatement());
                 resultSet.close();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOGGER.warn("Error closing result set", e);
             }
         }
@@ -36,7 +37,7 @@ public class ConnectionUtil {
             if (statement != null) {
                 statement.close();
             }
-        } catch (SQLException e) {
+        } catch (Throwable e) {
             LOGGER.warn("Error closing statement", e);
         }
 
@@ -44,12 +45,12 @@ public class ConnectionUtil {
 
     public static void closeConnection(final Connection connection) {
         if (connection != null) {
-            new Thread() {
+            new SimpleBackgroundTask() {
                 @Override
-                public void run() {
+                public void execute() {
                     try {
                         connection.close();
-                    } catch (SQLException e) {
+                    } catch (Throwable e) {
                         LOGGER.warn("Error closing connection", e);
                     }
                 }

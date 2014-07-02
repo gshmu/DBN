@@ -551,7 +551,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
             new SimpleBackgroundTask() {
-                public void run() {
+                public void execute() {
                     if (!isDisposed()) buildTreeChildren();
                 }
             }.start();
