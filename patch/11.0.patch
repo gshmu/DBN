@@ -1,0 +1,85 @@
+Index: src/com/dci/intellij/dbn/common/compatibility/CompatibilityUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- src/com/dci/intellij/dbn/common/compatibility/CompatibilityUtil.java	(revision 2149)
++++ src/com/dci/intellij/dbn/common/compatibility/CompatibilityUtil.java	(revision )
+@@ -21,21 +21,22 @@
+     }
+ 
+     public static ModuleType getModuleType(Module module) {
+-        return module.getModuleType();
+-        //return ModuleType.get(module);
++        //return module.getModuleType();
++        return ModuleType.get(module);
+     }
+     
+     public static void stripDocumentTrailingSpaces(Document document) {
+         if (document instanceof DocumentImpl) {
+             DocumentImpl documentImpl = (DocumentImpl) document;
+-            documentImpl.stripTrailingSpaces(true);
+-            //documentImpl.stripTrailingSpaces();
++            //documentImpl.stripTrailingSpaces(true);
++            documentImpl.stripTrailingSpaces();
+         }
+         
+     }
+ 
+     public static void showSearchCompletionPopup(boolean byClickingToolbarButton, JComponent toolbarComponent, JBList list, String title, JTextField textField) {
+-        Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField);
++        //Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField);
++        Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField, "");
+     }
+ 
+     public static void setSmallerFontForChildren(JComponent component) {
+Index: src/com/dci/intellij/dbn/language/common/DBLanguageElementSignatureProvider.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- src/com/dci/intellij/dbn/language/common/DBLanguageElementSignatureProvider.java	(revision 2149)
++++ src/com/dci/intellij/dbn/language/common/DBLanguageElementSignatureProvider.java	(revision )
+@@ -11,7 +11,7 @@
+ 
+ import java.util.StringTokenizer;
+ 
+-public class DBLanguageElementSignatureProvider extends ElementSignatureProvider {
++public class DBLanguageElementSignatureProvider implements ElementSignatureProvider {
+     public String getSignature(PsiElement psiElement) {
+         if (psiElement.getContainingFile() instanceof DBLanguageFile) {
+             TextRange textRange = psiElement.getTextRange();
+Index: src/META-INF/plugin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/META-INF/plugin.xml	(revision 2149)
++++ src/META-INF/plugin.xml	(revision )
+@@ -5,7 +5,7 @@
+     <category>Database</category>
+     <depends>com.intellij.modules.lang</depends>
+     <vendor email="dancioca@bluewin.ch" logo="/img/DatabaseNavigator.png">Dan Cioca</vendor>
+-    <idea-version since-build="97.0001" until-build="107.9999"/>
++    <idea-version since-build="111.0001" until-build="111.9999"/>
+     <description><![CDATA[
+             </b>
+             <b>Database development, scripting and navigation tool</b><br>
+Index: build/build.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1252
+===================================================================
+--- build/build.properties	(revision 2149)
++++ build/build.properties	(revision )
+@@ -1,4 +1,4 @@
+-package.name = DBN-9.0.zip
+-idea.version = 9.0
+-idea.home= C:/Program Files/JetBrains/IntelliJ IDEA ${idea.version}
+-idea.plugins.sandbox=T:/IntelliJIdea/${idea.version}/system/plugins-sandbox${idea.version}/plugins
+\ No newline at end of file
++package.name = DBN-11.0.zip
++idea.version = 11.0
++idea.home= C:/Program Files (x86)/JetBrains/IntelliJ IDEA 11
++idea.plugins.sandbox=D:/IntelliJIdea/${idea.version}/system/plugins-sandbox${idea.version}/plugins
+\ No newline at end of file

@@ -1,0 +1,147 @@
+<!ELEMENT element-defs (element-def)*>
+<!ATTLIST element-defs
+        language CDATA #REQUIRED
+        version CDATA #REQUIRED>
+<!ELEMENT element-def (token|element|sequence|iteration|one-of|wrapper|qualified-identifier|object-ref|object-def|alias-def|alias-ref|variable-def|variable-ref|block)*>
+<!ATTLIST element-def
+        id CDATA #REQUIRED
+        description CDATA #REQUIRED
+        attributes CDATA #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        original-name CDATA #IMPLIED
+        icon CDATA #IMPLIED
+        truncate-on-execution CDATA #IMPLIED
+        virtual-object CDATA #IMPLIED
+        virtual-object-inside-lookup CDATA #IMPLIED>
+<!ELEMENT token (#PCDATA)>
+<!ATTLIST token
+        id CDATA #REQUIRED
+        type-id CDATA #REQUIRED
+        optional (true | false) #IMPLIED
+        exit CDATA #IMPLIED
+        flavor CDATA #IMPLIED
+        original-name CDATA #IMPLIED
+        virtual-object CDATA #IMPLIED>
+<!ELEMENT wrapper (token|element|sequence|one-of|iteration|qualified-identifier|object-ref|variable-ref|alias-ref)*>
+<!ATTLIST wrapper
+        id CDATA #REQUIRED
+        optional (true | false) #IMPLIED
+        exit (true | false) #IMPLIED
+        begin-token CDATA #IMPLIED
+        end-token CDATA #IMPLIED
+        template CDATA #IMPLIED
+        wrapping-optional (true | false) #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT element (#PCDATA)>
+<!ATTLIST element
+        ref-id CDATA #REQUIRED
+        optional (true | false) #IMPLIED
+        exit CDATA #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        original-name CDATA #IMPLIED
+<!ELEMENT sequence (token|element|sequence|iteration|one-of|wrapper|qualified-identifier|object-def|object-ref|alias-def|alias-ref|variable-def|variable-ref)*>
+<!ATTLIST sequence
+        id CDATA #REQUIRED
+        attributes CDATA #IMPLIED
+        optional (true | false) #IMPLIED
+        exit (true | false) #IMPLIED
+        virtual-object CDATA #IMPLIED
+        virtual-object-inside-lookup CDATA #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT iteration (token|element|sequence|one-of|wrapper|qualified-identifier|object-def|object-ref|variable-ref|alias-ref|alias-def)*>
+<!ATTLIST iteration
+        id CDATA #REQUIRED
+        separator CDATA #IMPLIED
+        optional (true | false) #IMPLIED
+        exit CDATA #IMPLIED
+        elements-count CDATA #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT one-of (token|element|sequence|iteration|wrapper|qualified-identifier|object-ref|alias-ref|alias-def|variable-ref|exec-variable)*>
+<!ATTLIST one-of
+        id CDATA #REQUIRED
+        attributes CDATA #IMPLIED
+        optional (true | false) #IMPLIED
+        exit CDATA #IMPLIED
+        ambiguity-level CDATA #IMPLIED
+        sortable (true | false) #IMPLIED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT qualified-identifier (variant)*>
+<!ATTLIST qualified-identifier
+        id CDATA #REQUIRED
+        separator CDATA #REQUIRED
+        original-name CDATA #IMPLIED>
+<!ELEMENT variant (token|object-def|object-ref|variable-ref|alias-ref|alias-def)*>
+<!ELEMENT object-def (#PCDATA)>
+<!ATTLIST object-def
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        attributes CDATA #IMPLIED
+        optional (true | false) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT object-ref (#PCDATA)>
+<!ATTLIST object-ref
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        attributes CDATA #IMPLIED
+        optional (true | false) #IMPLIED
+        referenceable (true | false) #IMPLIED
+        local (true | false) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT alias-def (#PCDATA)>
+<!ATTLIST alias-def
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        optional (true | false) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT alias-ref (#PCDATA)>
+<!ATTLIST alias-ref
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        optional (true | false) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT variable-ref (#PCDATA)>
+<!ATTLIST variable-ref
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        optional (true | false) #IMPLIED
+        attributes CDATA #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT exec-variable (#PCDATA)>
+<!ATTLIST exec-variable
+        id CDATA #REQUIRED>
+<!ELEMENT variable-def (#PCDATA)>
+<!ATTLIST variable-def
+        id CDATA #REQUIRED
+        type CDATA #REQUIRED
+        attributes CDATA #IMPLIED
+        optional (true | false) #IMPLIED
+        original-name CDATA #IMPLIED>
+<!ELEMENT block (element)*>
+<!ATTLIST block
+        id CDATA #REQUIRED
+        formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
+        formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
+        formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
+        formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED>
