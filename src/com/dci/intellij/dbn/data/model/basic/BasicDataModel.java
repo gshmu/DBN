@@ -285,6 +285,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             tableModelListeners.clear();
             listDataListeners.clear();
             searchResult = null;
+            project = null;
         }
     }
 

@@ -226,6 +226,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
 
     public void dispose() {
         super.dispose();
+        tableGutter = null;
         EditorColorsManager.getInstance().removeEditorColorsListener(this);
     }
 

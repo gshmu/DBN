@@ -85,6 +85,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
 
         Disposer.register(this, cellEditorFactory);
+        Disposer.register(this, tableMouseListener);
     }
 
     @Override
@@ -365,6 +366,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void dispose() {
         super.dispose();
         datasetEditor = null;
+        removeMouseListener(tableMouseListener);
+        tableMouseListener = null;
     }
 
     public DatasetEditor getDatasetEditor() {

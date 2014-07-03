@@ -32,4 +32,11 @@ public class DatasetEditorTableGutter extends BasicTableGutter {
     public DatasetEditorTable getTable() {
         return (DatasetEditorTable) super.getTable();
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        removeMouseListener(mouseListener);
+        mouseListener = null;
+    }
 }

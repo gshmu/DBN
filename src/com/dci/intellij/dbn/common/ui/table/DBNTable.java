@@ -13,8 +13,10 @@ import sun.swing.SwingUtilities2;
 
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -253,6 +255,8 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             disposed = true;
             project = null;
             GUIUtil.removeListeners(this);
+            listenerList = new EventListenerList();
+            columnModel = new DefaultTableColumnModel();
         }
     }
 

@@ -6,12 +6,13 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
+import com.intellij.openapi.Disposable;
 
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DatasetEditorMouseListener extends MouseAdapter {
+public class DatasetEditorMouseListener extends MouseAdapter implements Disposable {
     private DatasetEditorTable table;
 
     public DatasetEditorMouseListener(DatasetEditorTable table) {
@@ -56,5 +57,10 @@ public class DatasetEditorMouseListener extends MouseAdapter {
                 }
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        table = null;
     }
 }
