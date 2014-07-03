@@ -78,7 +78,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     while (path.hasMoreElements() && object != null) {
                         String token = path.nextToken();
                         if (path.hasMoreTokens()) {
-                            int idx = token.indexOf("~");
+                            int idx = token.indexOf("#");
                             if (idx > -1) {
                                 String type = token.substring(0, idx);
                                 String name = token.substring(idx + 1);
@@ -172,7 +172,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public static String createUrl(DBObject object) {
         StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
         DBObjectType objectType = object.getObjectType();
-        buffer.insert(0, "~");
+        buffer.insert(0, "#");
         buffer.insert(0, objectType);
         buffer.append(".");
         buffer.append(getDefaultExtension(object));
@@ -183,7 +183,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             buffer.insert(0, parent.getName());
             objectType = parent.getObjectType();
             if (objectType != DBObjectType.SCHEMA) {
-                buffer.insert(0, "~");
+                buffer.insert(0, "#");
                 buffer.insert(0, objectType);
             }
             if (parent instanceof DBSchema) break;
