@@ -11,8 +11,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 import sun.swing.SwingUtilities2;
 
-import javax.swing.JTable;
-import javax.swing.JViewport;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelListener;
@@ -257,6 +256,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             GUIUtil.removeListeners(this);
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();
+            selectionModel = new DefaultListSelectionModel();
         }
     }
 
