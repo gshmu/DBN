@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
@@ -12,9 +13,12 @@ import sun.swing.SwingUtilities2;
 
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -29,7 +33,7 @@ import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class DBNTable extends JTable implements Disposable{
+public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
     public static final DBNColor GRID_COLOR = new DBNColor(new Color(0xE6E6E6), Color.DARK_GRAY);
@@ -81,6 +85,11 @@ public class DBNTable extends JTable implements Disposable{
         }
 
         Disposer.register(this, tableModel);
+    }
+
+    @Override
+    public T getModel() {
+        return (T) super.getModel();
     }
 
     private double calculateScrollDistance() {

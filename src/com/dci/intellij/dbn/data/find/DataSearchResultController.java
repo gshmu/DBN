@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
+import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindResult;
@@ -23,7 +24,7 @@ public class DataSearchResultController implements Disposable{
     }
 
     public void moveCursor(DataSearchDirection direction) {
-        BasicTable table = searchableComponent.getTable();
+        BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
         DataModel dataModel = table.getModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
         DataSearchResultScrollPolicy scrollPolicy = DataSearchResultScrollPolicy.HORIZONTAL;
@@ -36,7 +37,7 @@ public class DataSearchResultController implements Disposable{
     }
 
     public void selectFirst(int selectedRowIndex, int selectedColumnIndex) {
-        BasicTable table = searchableComponent.getTable();
+        BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
         DataModel dataModel = table.getModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
         DataSearchResultScrollPolicy scrollPolicy = DataSearchResultScrollPolicy.HORIZONTAL;

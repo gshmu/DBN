@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.export;
 
 import com.dci.intellij.dbn.data.model.ColumnInfo;
+import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelCell;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -9,12 +10,12 @@ import com.intellij.openapi.project.Project;
 
 public class SortableTableExportModel implements DataExportModel{
     private boolean selection;
-    private SortableTable table;
+    private SortableTable<? extends SortableDataModel> table;
 
     int[] selectedRows;
     int[] selectedColumns;
 
-    public SortableTableExportModel(boolean selection, SortableTable table) {
+    public SortableTableExportModel(boolean selection, SortableTable<? extends SortableDataModel>  table) {
         this.selection = selection;
         this.table = table;
 

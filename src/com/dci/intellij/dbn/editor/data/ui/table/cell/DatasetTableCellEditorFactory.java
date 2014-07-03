@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 
 import javax.swing.table.TableCellEditor;
 import java.util.HashMap;
@@ -93,7 +95,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
         for (TableCellEditor cellEditor : cache.values()) {
             if (cellEditor instanceof Disposable) {
                 Disposable disposable = (Disposable) cellEditor;
-                disposable.dispose();
+                Disposer.dispose(disposable);
             }
         }
         cache.clear();

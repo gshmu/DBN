@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.data.find.action.ToggleRegex;
 import com.dci.intellij.dbn.data.find.action.ToggleWholeWordsOnlyAction;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelListener;
+import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindManager;
@@ -90,7 +91,7 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
     public DataSearchComponent(final SearchableDataComponent searchableComponent) {
         super(new BorderLayout(0, 0));
         this.searchableComponent = searchableComponent;
-        BasicTable table = searchableComponent.getTable();
+        BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
         DataModel dataModel = table.getModel();
         dataModel.addDataModelListener(this);
         initializeFindModel();

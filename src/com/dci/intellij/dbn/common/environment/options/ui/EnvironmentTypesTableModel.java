@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
+import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.Color;
@@ -141,6 +142,11 @@ public class EnvironmentTypesTableModel implements DBNTableModel {
             }
         }
     }
+
+    @Override public int getSize() {return 0;}
+    @Override public Object getElementAt(int index) {return null;}
+    @Override public void addListDataListener(ListDataListener l) {}
+    @Override public void removeListDataListener(ListDataListener l) {}
 
     /********************************************************
      *                    Disposable                        *

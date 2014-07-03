@@ -30,14 +30,14 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public class BasicTable extends DBNTable implements EditorColorsListener, Disposable {
+public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements EditorColorsListener, Disposable {
     private BasicTableCellRenderer cellRenderer;
     private BasicTableGutter tableGutter;
     private JBPopup valuePopup;
     private boolean isLoading;
     protected RegionalSettings regionalSettings;
 
-    public BasicTable(Project project, BasicDataModel dataModel) {
+    public BasicTable(Project project, T dataModel) {
         super(project, dataModel, true);
         cellRenderer = createCellRenderer(project);
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
@@ -50,11 +50,6 @@ public class BasicTable extends DBNTable implements EditorColorsListener, Dispos
 
     protected BasicTableCellRenderer createCellRenderer(Project project) {
         return new BasicTableCellRenderer(project);
-    }
-
-    @Override
-    public BasicDataModel getModel() {
-        return (BasicDataModel) super.getModel();
     }
 
     public void setLoading(boolean loading) {

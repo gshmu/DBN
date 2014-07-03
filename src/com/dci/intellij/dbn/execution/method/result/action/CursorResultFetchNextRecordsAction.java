@@ -12,9 +12,9 @@ import com.intellij.openapi.project.DumbAwareAction;
 import java.sql.SQLException;
 
 public class CursorResultFetchNextRecordsAction extends DumbAwareAction {
-    private ResultSetTable table;
+    private ResultSetTable<? extends ResultSetDataModel> table;
     private MethodExecutionResult executionResult;
-    public CursorResultFetchNextRecordsAction(MethodExecutionResult executionResult, ResultSetTable table) {
+    public CursorResultFetchNextRecordsAction(MethodExecutionResult executionResult, ResultSetTable<? extends ResultSetDataModel> table) {
         super("Fetch next records", null, Icons.EXEC_RESULT_RESUME);
         this.table = table;
         this.executionResult = executionResult;

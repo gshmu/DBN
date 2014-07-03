@@ -37,6 +37,7 @@ import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +58,7 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 
-public class DatasetEditorTable extends ResultSetTable {
+public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);
     private DatasetTableCellEditorFactory cellEditorFactory = new DatasetTableCellEditorFactory();
     private DatasetEditor datasetEditor;
@@ -82,6 +83,8 @@ public class DatasetEditorTable extends ResultSetTable {
         ActionUtil.registerDataProvider(this, dataProvider, false);
         ActionUtil.registerDataProvider(getTableGutter(), dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
+
+        Disposer.register(this, cellEditorFactory);
     }
 
     @Override
@@ -118,10 +121,6 @@ public class DatasetEditorTable extends ResultSetTable {
     @Override
     public BasicTableGutter createTableGutter() {
         return new DatasetEditorTableGutter(this);
-    }
-
-    public DatasetEditorModel getModel() {
-        return (DatasetEditorModel) super.getModel();
     }
 
     public boolean isInserting() {
@@ -365,7 +364,6 @@ public class DatasetEditorTable extends ResultSetTable {
     @Override
     public void dispose() {
         super.dispose();
-        cellEditorFactory.dispose();
         datasetEditor = null;
     }
 

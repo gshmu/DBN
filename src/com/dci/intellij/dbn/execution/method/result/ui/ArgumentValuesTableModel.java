@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.intellij.openapi.project.Project;
 
+import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelListener;
 import java.util.List;
 
@@ -71,7 +72,10 @@ public class ArgumentValuesTableModel implements DBNTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
     public void addTableModelListener(TableModelListener l) {}
     public void removeTableModelListener(TableModelListener l) {}
-
+    @Override public int getSize() {return 0;}
+    @Override public Object getElementAt(int index) {return null;}
+    @Override public void addListDataListener(ListDataListener l) {}
+    @Override public void removeListDataListener(ListDataListener l) {}
 
     /********************************************************
      *                    Disposable                        *

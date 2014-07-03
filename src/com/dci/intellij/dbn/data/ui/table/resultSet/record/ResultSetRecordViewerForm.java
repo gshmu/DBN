@@ -46,7 +46,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
     private ResultSetTable table;
     private ResultSetDataModelRow row;
 
-    public ResultSetRecordViewerForm(ResultSetTable table) {
+    public ResultSetRecordViewerForm(ResultSetTable<? extends ResultSetDataModel> table) {
         this.table = table;
         ResultSetDataModel model = table.getModel();
         row = (ResultSetDataModelRow) model.getRowAtIndex(table.getSelectedRow());

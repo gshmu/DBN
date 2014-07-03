@@ -24,7 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class EnvironmentTypesEditorTable extends DBNTable {
+public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableModel> {
 
     public EnvironmentTypesEditorTable(Project project, EnvironmentTypeBundle environmentTypes) {
         super(project, new EnvironmentTypesTableModel(project, environmentTypes), true);
@@ -134,11 +134,6 @@ public class EnvironmentTypesEditorTable extends DBNTable {
         }.start();
         selectCell(rowIndex, columnIndex);
         return textField;
-    }
-
-    @Override
-    public EnvironmentTypesTableModel getModel() {
-        return (EnvironmentTypesTableModel) super.getModel();
     }
 
     public void insertRow() {

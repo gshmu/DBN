@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCellValueListene
 import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
@@ -49,6 +50,8 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
         EventManager.subscribe(project, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
+
+        Disposer.register(this, editorComponent);
     }
 
     public JComponent getEditorComponent() {

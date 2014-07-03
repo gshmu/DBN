@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
+import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
 
 public interface SearchableDataComponent {
@@ -7,5 +8,5 @@ public interface SearchableDataComponent {
     void hideSearchHeader();
     void cancelEditActions();
     String getSelectedText();
-    BasicTable getTable();
+    BasicTable<? extends BasicDataModel> getTable();
 }
