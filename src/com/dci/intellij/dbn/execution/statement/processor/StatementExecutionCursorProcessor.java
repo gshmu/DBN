@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.processor;
 
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguageFile;
@@ -30,6 +31,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
             executionResult.updateExecutionMessage(MessageType.INFO, getStatementName() + " executed successfully.");
             return executionResult;
         } else {
+            StatementExecutionBasicResult executionResult = getExecutionResult();
             if (executionResult == null) {
                 return new StatementExecutionCursorResult(getResultName(), executionInput, resultSet);
             } else {
@@ -46,22 +48,19 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         }
     }
 
-    public void reset() {
-        super.reset();
-    }
-
-
     public void setIndex(int index) {
         this.index = index;
     }
 
     public boolean canExecute() {
+        StatementExecutionBasicResult executionResult = getExecutionResult();
         return executionResult == null ||
                 executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR ||
                 executionResult.getExecutionInput().isObsolete() || isDirty();
     }
 
     public void navigateToResult() {
+        StatementExecutionBasicResult executionResult = getExecutionResult();
         if (executionResult instanceof StatementExecutionCursorResult) {
             StatementExecutionCursorResult executionCursorResult = (StatementExecutionCursorResult) executionResult;
             executionCursorResult.navigateToResult();

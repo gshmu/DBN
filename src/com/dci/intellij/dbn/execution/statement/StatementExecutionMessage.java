@@ -41,7 +41,6 @@ public class StatementExecutionMessage extends ConsoleMessage {
 
     public void dispose() {
         if (executionResult != null) {
-            executionResult.getExecutionProcessor().reset();
             executionResult = null;
         }
     }

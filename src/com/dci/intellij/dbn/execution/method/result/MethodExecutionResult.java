@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 import javax.swing.Icon;
 import java.sql.ResultSet;
@@ -39,6 +40,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, boolean debug) {
         this(executionInput, debug);
         this.resultPanel = resultPanel;
+
+        Disposer.register(this, resultPanel);
     }
 
     public int getExecutionDuration() {
@@ -62,6 +65,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
             int maxRecords = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
             ResultSetDataModel dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), maxRecords);
             cursorModels.put(argument.getRef(), dataModel);
+
+            Disposer.register(this, dataModel);
         }
     }
 
@@ -78,6 +83,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     public MethodExecutionResultForm getResultPanel() {
         if (resultPanel == null) {
             resultPanel = new MethodExecutionResultForm(this);
+
+            Disposer.register(this, resultPanel);
         }
         return resultPanel;
     }
@@ -129,19 +136,6 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     }
 
 
-    public void dispose() {
-        resultPanel = null;
-        executionInput.setExecutionResult(null);
-        executionInput = null;
-        if (cursorModels != null) {
-            for (ResultSetDataModel resultSetDataModel : cursorModels.values()) {
-                resultSetDataModel.dispose();
-            }
-            cursorModels.clear();
-        }
-        argumentValues.clear();
-    }
-
     public void setResultPanel(MethodExecutionResultForm resultPanel) {
         this.resultPanel = resultPanel;
     }
@@ -153,4 +147,22 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     public ResultSetDataModel getTableModel(DBArgument argument) {
         return cursorModels.get(argument.getRef());
     }
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    public void dispose() {
+        resultPanel = null;
+        executionInput = null;
+        cursorModels.clear();
+        argumentValues.clear();
+    }
+
 }

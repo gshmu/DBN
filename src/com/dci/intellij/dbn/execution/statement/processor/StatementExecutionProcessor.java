@@ -24,8 +24,6 @@ public interface StatementExecutionProcessor {
 
     boolean canExecute();
 
-    void reset();
-
     ConnectionHandler getActiveConnection();
 
     DBSchema getCurrentSchema();

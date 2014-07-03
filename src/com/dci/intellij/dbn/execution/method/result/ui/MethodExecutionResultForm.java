@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionA
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
@@ -51,6 +52,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         updateStatusBarLabels();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
+
+        Disposer.register(this, cursorOutputTabs);
     }
 
     public void setExecutionResult(MethodExecutionResult executionResult) {
@@ -140,7 +143,6 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     public void dispose() {
         super.dispose();
-        executionResult.dispose();
         executionResult = null;
     }
 

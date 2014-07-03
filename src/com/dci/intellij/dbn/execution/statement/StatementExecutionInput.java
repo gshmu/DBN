@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -15,7 +16,7 @@ import com.intellij.psi.PsiFileFactory;
 public class StatementExecutionInput implements Disposable {
     private StatementExecutionProcessor executionProcessor;
     private ConnectionHandler connectionHandler;
-    private DBSchema schema;
+    private DBObjectRef<DBSchema> schemaRef;
 
     private ExecutablePsiElement originalPsiElement;
     private String originalStatement;
@@ -25,7 +26,7 @@ public class StatementExecutionInput implements Disposable {
     public StatementExecutionInput(String originalStatement, String executeStatement, StatementExecutionProcessor executionProcessor) {
         this.executionProcessor = executionProcessor;
         this.connectionHandler = executionProcessor.getActiveConnection();
-        this.schema = executionProcessor.getCurrentSchema();
+        this.schemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatement = originalStatement;
         this.executeStatement = executeStatement;
     }
@@ -61,7 +62,7 @@ public class StatementExecutionInput implements Disposable {
     public boolean isObsolete() {
         return  executionProcessor == null || executionProcessor.isOrphan() ||
                 executionProcessor.getActiveConnection() != connectionHandler || // connection changed since execution
-                executionProcessor.getCurrentSchema() != schema || // current schema changed since execution
+                executionProcessor.getCurrentSchema() != schemaRef || // current schema changed since execution
                 (executionProcessor.getExecutablePsiElement() != null &&
                         executionProcessor.getExecutablePsiElement().matches(getExecutablePsiElement()) &&
                         !executionProcessor.getExecutablePsiElement().equals(getExecutablePsiElement()));
@@ -80,15 +81,15 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public DBSchema getSchema() {
-        return schema;
+        return DBObjectRef.get(schemaRef);
     }
 
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            executionProcessor.reset();
             executionProcessor = null;
             connectionHandler = null;
+            originalPsiElement = null;
         }
     }
 

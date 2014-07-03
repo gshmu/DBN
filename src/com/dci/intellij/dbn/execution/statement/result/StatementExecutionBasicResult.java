@@ -113,13 +113,25 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return executionInput.getConnectionHandler();
     }
 
+    public ExecutionResultForm getResultPanel() {
+        return null;
+    }
+
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
     public void dispose() {
+        disposed = true;
         statementViewerPopup = null;
         executionInput = null;
         executionMessage = null;
-    }
-
-    public ExecutionResultForm getResultPanel() {
-        return null;
     }
 }

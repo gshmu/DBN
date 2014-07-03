@@ -24,6 +24,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.event.SelectionEvent;
 import com.intellij.openapi.editor.event.SelectionListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -100,6 +101,8 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         searchResultController = new DataSearchResultController(searchableComponent);
         searchResult.addListener(this);
         searchResultController.updateResult(findModel);
+
+        Disposer.register(this, searchResultController);
 
 
         GRADIENT_C1 = getBackground();

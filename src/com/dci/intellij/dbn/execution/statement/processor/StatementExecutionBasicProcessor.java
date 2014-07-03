@@ -38,7 +38,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     protected String resultName;
     protected int index;
 
-    protected StatementExecutionResult executionResult;
+    private StatementExecutionResult executionResult;
 
     public StatementExecutionBasicProcessor(ExecutablePsiElement psiElement, int index) {
         this.executablePsiElement = psiElement;
@@ -59,6 +59,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public boolean matches(ExecutablePsiElement executablePsiElement, boolean lenient) {
         if (executablePsiElement.getFile().equals(file)) {
+            StatementExecutionBasicResult executionResult = getExecutionResult();
             if (executionResult == null) {
                 return lenient ?
                         this.executablePsiElement.matches(executablePsiElement) :
@@ -84,7 +85,17 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return executablePsiElement == null || !executablePsiElement.isValid();
     }
 
+    public void setExecutionResult(StatementExecutionResult executionResult) {
+        if (this.executionResult != null) {
+            Disposer.dispose(this.executionResult);
+        }
+        this.executionResult = executionResult;
+    }
+
     public StatementExecutionBasicResult getExecutionResult() {
+        if (executionResult != null && executionResult.isDisposed()) {
+            executionResult = null;
+        }
         return (StatementExecutionBasicResult) executionResult;
     }
 
@@ -127,7 +138,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             executionInput.setExecuteStatement(executeStatementText);
 
             if (executionVariables.hasErrors()) {
-                executionResult = createErrorExecutionResult(executionInput, "Could not bind all variables. ");
+                StatementExecutionResult executionResult = createErrorExecutionResult(executionInput, "Could not bind all variables.");
+                setExecutionResult(executionResult);
                 continueExecution = false;
             }
         }
@@ -140,14 +152,16 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                     statement.setQueryTimeout(getStatementExecutionSettings().getExecutionTimeout());
                     statement.execute(executeStatementText);
-                    executionResult = createExecutionResult(statement, executionInput);
+                    StatementExecutionResult executionResult = createExecutionResult(statement, executionInput);
+                    setExecutionResult(executionResult);
                     if (executablePsiElement != null) {
                         if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(file.getVirtualFile());
                         if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
                     }
                 }
             } catch (SQLException e) {
-                executionResult = createErrorExecutionResult(executionInput, e.getMessage());
+                StatementExecutionResult executionResult = createErrorExecutionResult(executionInput, e.getMessage());
+                setExecutionResult(executionResult);
             }
         }
 
@@ -180,11 +194,6 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public StatementExecutionSettings getStatementExecutionSettings() {
         return ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-    }
-
-    public void reset() {
-        Disposer.dispose(executionResult);
-        executionResult = null;
     }
 
     public ConnectionHandler getActiveConnection() {

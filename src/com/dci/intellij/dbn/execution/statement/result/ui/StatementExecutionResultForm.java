@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
 
@@ -106,14 +107,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void dispose() {
         super.dispose();
-        if (executionResult != null) {
-            if (executionResult.hasResult()) {
-                executionResult.getTableModel().dispose();
-            }
-            executionResult.getExecutionProcessor().reset();
-            executionResult.dispose();
-            executionResult = null;
-        }
+        executionResult = null;
     }
 
     public void show() {
@@ -140,6 +134,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
             dataSearchComponent = new DataSearchComponent(this);
             ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult.getDataProvider(), false);
             searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
+
+            Disposer.register(this, dataSearchComponent);
         } else {
             dataSearchComponent.initializeFindModel();
         }

@@ -8,13 +8,14 @@ import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindResult;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Rectangle;
 
-public class DataSearchResultController {
+public class DataSearchResultController implements Disposable{
     private SearchableDataComponent searchableComponent;
 
     public DataSearchResultController(SearchableDataComponent searchableComponent) {
@@ -120,5 +121,10 @@ public class DataSearchResultController {
             }
         }.start();
 
+    }
+
+    @Override
+    public void dispose() {
+        searchableComponent = null;
     }
 }

@@ -13,6 +13,8 @@ import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResu
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.util.Disposer;
+
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +37,9 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         resultPanel = new StatementExecutionResultForm(this);
         resultPanel.updateVisibleComponents();
         resultPanel.getResultTable().setName(getResultName());
+
+        Disposer.register(this, dataModel);
+        Disposer.register(this, resultPanel);
     }
 
     private StatementExecutionSettings getQueryExecutionSettings() {
@@ -133,9 +138,9 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     @Override
     public void dispose() {
         super.dispose();
-        dataModel.dispose();
         dataModel = null;
         resultPanel = null;
+        dataProvider = null;
     }
 
 
