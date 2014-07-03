@@ -17,13 +17,11 @@ import java.util.List;
 
 public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> implements Disposable {
     private static final Object[] EMPTY_ARRAY = new Object[0];
-    private DatabaseBrowserTree tree;
     private Object[] elements = null;
 
     public DatabaseBrowserTreeSpeedSearch(DatabaseBrowserTree tree) {
         super(tree);
-        this.tree = tree;
-        this.tree.getModel().addTreeModelListener(treeModelListener);
+        getComponent().getModel().addTreeModelListener(treeModelListener);
     }
 
     protected int getSelectedIndex() {
@@ -40,7 +38,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
     }
 
     private BrowserTreeNode getSelectedTreeElement() {
-        TreePath selectionPath = tree.getSelectionPath();
+        TreePath selectionPath = getComponent().getSelectionPath();
         if (selectionPath != null) {
             return (BrowserTreeNode) selectionPath.getLastPathComponent();
         }
@@ -50,7 +48,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
     protected Object[] getAllElements() {
         if (elements == null) {
             List<BrowserTreeNode> nodes = new ArrayList<BrowserTreeNode>();
-            BrowserTreeNode root = tree.getModel().getRoot();
+            BrowserTreeNode root = getComponent().getModel().getRoot();
             loadElements(nodes, root);
             this.elements = nodes.toArray();
         }
@@ -77,6 +75,11 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         }
     }
 
+    @Override
+    public DatabaseBrowserTree getComponent() {
+        return (DatabaseBrowserTree) super.getComponent();
+    }
+
     protected String getElementText(Object o) {
         BrowserTreeNode treeNode = (BrowserTreeNode) o;
         return treeNode.getPresentableText();
@@ -84,7 +87,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
 
     protected void selectElement(Object o, String s) {
         BrowserTreeNode treeNode = (BrowserTreeNode) o;
-        tree.selectElement(treeNode, false);
+        getComponent().selectElement(treeNode, false);
 
 /*
         TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
@@ -114,9 +117,8 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
 
     @Override
     public void dispose() {
-        tree.getModel().removeTreeModelListener(treeModelListener);
+        getComponent().getModel().removeTreeModelListener(treeModelListener);
         elements = EMPTY_ARRAY;
         treeModelListener = null;
-        tree = null;
     }
 }

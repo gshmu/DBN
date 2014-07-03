@@ -402,10 +402,14 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     public void dispose() {
         if (!isDisposed()) {
             disposed = true;
+            navigationHistory.clear();
             targetSelection = null;
             setModel(EMPTY_TREE_MODEL);
             GUIUtil.removeListeners(this);
-            navigationHistory.clear();
+            treeSelectionListener = null;
+            mouseListener = null;
+            keyListener = null;
+            treeModelListener = null;
         }
     }
 
