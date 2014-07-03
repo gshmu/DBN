@@ -4,6 +4,8 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -13,9 +15,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class MessagesTreeModel implements TreeModel {
+public class MessagesTreeModel implements TreeModel, Disposable {
     private Set<TreeModelListener> treeModelListeners = new HashSet<TreeModelListener>();
-    RootNode rootNode = new RootNode(this);
+    private RootNode rootNode = new RootNode(this);
+
+    public MessagesTreeModel() {
+        Disposer.register(this, rootNode);
+    }
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
         return rootNode.addExecutionMessage(executionMessage);
@@ -30,13 +36,17 @@ public class MessagesTreeModel implements TreeModel {
     }
 
 
-    public void notifyTreeModelListeners(TreeNode node, TreeEventType eventType) {
-        TreePath treePath = TreeUtil.createTreePath(node);
+    public void notifyTreeModelListeners(TreePath treePath, TreeEventType eventType) {
         TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
     }
+    public void notifyTreeModelListeners(TreeNode node, TreeEventType eventType) {
+        TreePath treePath = TreeUtil.createTreePath(node);
+        notifyTreeModelListeners(treePath, eventType);
+    }
 
-    public void invalidate() {
-        rootNode.dispose();
+    public void dispose() {
+        treeModelListeners.clear();
+        rootNode = null;
     }
 
    /*********************************************************

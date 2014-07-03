@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.tree.TreeNode;
@@ -13,6 +14,8 @@ public class StatementExecutionMessageNode implements MessagesTreeNode {
     public StatementExecutionMessageNode(StatementExecutionMessagesFileNode parent, StatementExecutionMessage executionMessage) {
         this.parent = parent;
         this.executionMessage = executionMessage;
+
+        Disposer.register(this, executionMessage);
     }
 
     public StatementExecutionMessage getExecutionMessage() {
@@ -24,7 +27,8 @@ public class StatementExecutionMessageNode implements MessagesTreeNode {
     }
 
     public void dispose() {
-        executionMessage.dispose();
+        executionMessage = null;
+        parent = null;
     }
 
     public MessagesTreeModel getTreeModel() {

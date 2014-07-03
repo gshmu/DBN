@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreePath;
+import java.util.List;
 
 public class CompilerMessagesObjectNode extends BundleTreeNode {
     private DatabaseEditableObjectFile databaseFile;
@@ -27,25 +28,34 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage) {
+        List<MessagesTreeNode> children = getChildren();
         if (children.size() > 0) {
             CompilerMessageNode firstChild = (CompilerMessageNode) children.get(0);
             if (firstChild.getCompilerMessage().getCompilerResult() != compilerMessage.getCompilerResult()) {
-                children.clear();
+                clearChildren();
             }
         }
         CompilerMessageNode messageNode = new CompilerMessageNode(this, compilerMessage);
-        children.add(messageNode);
-        getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
-        return TreeUtil.createTreePath(messageNode);
+        addChild(messageNode);
+
+        TreePath treePath = TreeUtil.createTreePath(this);
+        getTreeModel().notifyTreeModelListeners(treePath, TreeEventType.STRUCTURE_CHANGED);
+        return treePath;
     }
 
     public TreePath getTreePath(CompilerMessage compilerMessage) {
-        for (MessagesTreeNode messageNode : children) {
+        for (MessagesTreeNode messageNode : getChildren()) {
             CompilerMessageNode compilerMessageNode = (CompilerMessageNode) messageNode;
             if (compilerMessageNode.getCompilerMessage() == compilerMessage) {
                 return TreeUtil.createTreePath(compilerMessageNode);
             }
         }
         return null;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        databaseFile = null;
     }
 }

@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import sun.java2d.DisposerRecord;
 
 import javax.swing.Icon;
 
@@ -24,6 +26,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
             StatementExecutionInput executionInput) {
         this.resultName = resultName;
         this.executionInput = executionInput;
+
+        Disposer.register(this, executionInput);
     }
 
     public String getResultName() {
@@ -80,18 +84,24 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     public void setStatementViewerPopup(StatementViewerPopup statementViewerPopup) {
         this.statementViewerPopup = statementViewerPopup;
+        Disposer.register(this, statementViewerPopup);
     }
 
     public void updateExecutionMessage(MessageType messageType, String message, String causeMessage) {
         executionMessage = new StatementExecutionMessage(this, message, causeMessage, messageType);
+        Disposer.register(this, executionMessage);
     }
 
     public void updateExecutionMessage(MessageType messageType, String message) {
         executionMessage = new StatementExecutionMessage(this, message, "", messageType);
+        Disposer.register(this, executionMessage);
     }
 
     public void clearExecutionMessage() {
-        executionMessage = null;
+        if (executionMessage != null) {
+            Disposer.dispose(executionMessage);
+            executionMessage = null;
+        }
     }
 
     public Project getProject() {
@@ -104,11 +114,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     }
 
     public void dispose() {
-        executionInput.dispose();
-        if (statementViewerPopup != null) {
-            statementViewerPopup.dispose();
-            statementViewerPopup = null;
-        }
+        statementViewerPopup = null;
         executionInput = null;
         executionMessage = null;
     }

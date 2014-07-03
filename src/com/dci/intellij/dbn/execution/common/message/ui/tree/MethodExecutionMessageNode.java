@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.vfs.DatabaseContentFile;
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
+import com.intellij.openapi.util.Disposer;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
@@ -13,6 +14,8 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
     public MethodExecutionMessageNode(MethodExecutionMessagesObjectNode parent, MethodExecutionMessage methodExecutionMessage) {
         this.parent = parent;
         this.methodExecutionMessage = methodExecutionMessage;
+
+        Disposer.register(this, methodExecutionMessage);
     }
 
     public MethodExecutionMessage getExecutionMessage() {
@@ -24,7 +27,8 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
     }
 
     public void dispose() {
-
+        methodExecutionMessage = null;
+        parent = null;
     }
 
     public MessagesTreeModel getTreeModel() {

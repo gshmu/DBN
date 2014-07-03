@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseContentFile;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,11 +25,15 @@ public class CompilerMessage extends ConsoleMessage {
     public CompilerMessage(CompilerResult compilerResult, String text, MessageType type) {
         super(type, text);
         this.compilerResult = compilerResult;
+
+        Disposer.register(this, compilerResult);
     }
 
     public CompilerMessage(CompilerResult compilerResult, String text) {
         super(MessageType.INFO, text);
         this.compilerResult = compilerResult;
+
+        Disposer.register(this, compilerResult);
     }
 
     public CompilerMessage(CompilerResult compilerResult, ResultSet resultSet) throws SQLException {
@@ -51,6 +56,7 @@ public class CompilerMessage extends ConsoleMessage {
         subjectIdentifier = extractIdentifier(text, '\'');
         if (subjectIdentifier == null) subjectIdentifier = extractIdentifier(text, '"');
 
+        Disposer.register(this, compilerResult);
     }
 
     public String getSubjectIdentifier() {
@@ -125,7 +131,6 @@ public class CompilerMessage extends ConsoleMessage {
     }
 
     public void dispose() {
-        compilerResult.dispose();
         compilerResult = null;
         databaseFile = null;
         contentFile = null;

@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.intellij.openapi.Disposable;
 
-public interface StatementExecutionResult extends ExecutionResult, Disposable {
+public interface StatementExecutionResult extends ExecutionResult {
     int STATUS_SUCCESS = 0;
     int STATUS_ERROR = 1;
 

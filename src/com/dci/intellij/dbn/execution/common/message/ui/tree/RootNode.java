@@ -18,7 +18,7 @@ public class RootNode extends BundleTreeNode {
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
         StatementExecutionMessagesNode execMessagesNode = null;
-        for (TreeNode treeNode : children) {
+        for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof StatementExecutionMessagesNode) {
                 execMessagesNode = (StatementExecutionMessagesNode) treeNode;
                 break;
@@ -26,7 +26,7 @@ public class RootNode extends BundleTreeNode {
         }
         if (execMessagesNode == null) {
             execMessagesNode = new StatementExecutionMessagesNode(this);
-            children.add(execMessagesNode);
+            addChild(execMessagesNode);
             getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
@@ -37,14 +37,14 @@ public class RootNode extends BundleTreeNode {
         CompilerMessagesNode compilerMessagesNode = getCompilerMessagesNode();
         if (compilerMessagesNode == null) {
             compilerMessagesNode = new CompilerMessagesNode(this);
-            children.add(compilerMessagesNode);
+            addChild(compilerMessagesNode);
             getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
         return compilerMessagesNode.addCompilerMessage(compilerMessage);
     }
 
     public CompilerMessagesNode getCompilerMessagesNode() {
-        for (TreeNode treeNode : children) {
+        for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof CompilerMessagesNode) {
                 return (CompilerMessagesNode) treeNode;
             }
@@ -64,5 +64,11 @@ public class RootNode extends BundleTreeNode {
 
     public VirtualFile getVirtualFile() {
         return null;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        messagesTreeModel = null;
     }
 }

@@ -21,8 +21,14 @@ public class StatementExecutionMessagesFileNode extends BundleTreeNode {
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
         StatementExecutionMessageNode execMessageNode = new StatementExecutionMessageNode(this, executionMessage);
-        children.add(execMessageNode);
+        addChild(execMessageNode);
         getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         return TreeUtil.createTreePath(execMessageNode);
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        virtualFile = null;
     }
 }

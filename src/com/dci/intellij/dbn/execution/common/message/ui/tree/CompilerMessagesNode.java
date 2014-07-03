@@ -12,7 +12,7 @@ public class CompilerMessagesNode extends BundleTreeNode {
     }
 
     public MessagesTreeNode getChildTreeNode(VirtualFile virtualFile) {
-        for (MessagesTreeNode messagesTreeNode : children) {
+        for (MessagesTreeNode messagesTreeNode : getChildren()) {
             if (messagesTreeNode.getVirtualFile().equals(virtualFile)) {
                 return messagesTreeNode;
             }
@@ -25,7 +25,7 @@ public class CompilerMessagesNode extends BundleTreeNode {
                 getChildTreeNode(compilerMessage.getDatabaseFile());
         if (objectNode == null) {
             objectNode = new CompilerMessagesObjectNode(this, compilerMessage.getDatabaseFile());
-            children.add(objectNode);
+            addChild(objectNode);
             getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
         return objectNode.addCompilerMessage(compilerMessage);

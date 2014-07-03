@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.vfs.DatabaseContentFile;
+import com.intellij.openapi.util.Disposer;
 
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
@@ -13,6 +14,8 @@ public class CompilerMessageNode implements MessagesTreeNode {
     public CompilerMessageNode(CompilerMessagesObjectNode parent, CompilerMessage compilerMessage) {
         this.parent = parent;
         this.compilerMessage = compilerMessage;
+
+        Disposer.register(this, compilerMessage);
     }
 
     public CompilerMessage getCompilerMessage() {
@@ -24,7 +27,8 @@ public class CompilerMessageNode implements MessagesTreeNode {
     }
 
     public void dispose() {
-
+        compilerMessage = null;
+        parent = null;
     }
 
     public MessagesTreeModel getTreeModel() {

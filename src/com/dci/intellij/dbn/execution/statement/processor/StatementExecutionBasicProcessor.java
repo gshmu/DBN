@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashSet;
 
 import java.sql.Connection;
@@ -182,6 +183,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public void reset() {
+        Disposer.dispose(executionResult);
         executionResult = null;
     }
 

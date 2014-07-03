@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.tab;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
@@ -19,6 +20,19 @@ public class TabbedPane extends JBTabsImpl {
         if (tabInfo != null) {
             select(tabInfo, requestFocus);
         }
+    }
+
+    @NotNull
+    @Override
+    public ActionCallback removeTab(TabInfo tabInfo) {
+        Object object = tabInfo.getObject();
+        ActionCallback actionCallback = super.removeTab(tabInfo);
+        if (object instanceof Disposable) {
+            Disposable disposable = (Disposable) object;
+            Disposer.dispose(disposable);
+            tabInfo.setObject(null);
+        }
+        return actionCallback;
     }
 
     @Override

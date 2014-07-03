@@ -4,22 +4,27 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class CompilerResult implements Disposable {
-    private DBSchemaObject object;
+    private Project project;
+    private DBObjectRef<DBSchemaObject> objectRef;
     private List<CompilerMessage> compilerMessages = new ArrayList<CompilerMessage>();
     private boolean isError = false;
 
     public CompilerResult(DBSchemaObject object) {
-        this.object = object;
+        objectRef = DBObjectRef.from(object);
+        project = object.getProject();
         Connection connection = null;
         ResultSet resultSet = null;
         List<CompilerMessage> echoMessages = new ArrayList<CompilerMessage>();
@@ -54,7 +59,8 @@ public class CompilerResult implements Disposable {
                 compilerMessages.addAll(echoMessages);
                 isError = true;
             } else {
-                compilerMessages.add(new CompilerMessage(this, "The " + getObject().getQualifiedNameWithType() + " was updated successfully."));
+                CompilerMessage compilerMessage = new CompilerMessage(this, "The " + object.getQualifiedNameWithType() + " was updated successfully.");
+                compilerMessages.add(compilerMessage);
             }
         }
     }
@@ -64,25 +70,27 @@ public class CompilerResult implements Disposable {
     }
 
     public CompilerResult(DBSchemaObject object, String errorMessage) {
-        this.object = object;
-        CompilerMessage message = new CompilerMessage(this, errorMessage, MessageType.ERROR);
-        compilerMessages.add(message);
+        objectRef = DBObjectRef.from(object);
+        CompilerMessage compilerMessage = new CompilerMessage(this, errorMessage, MessageType.ERROR);
+        compilerMessages.add(compilerMessage);
     }
 
     public List<CompilerMessage> getCompilerMessages() {
         return compilerMessages;
     }
 
+    @Nullable
     public DBSchemaObject getObject() {
-        return object;
+        return DBObjectRef.get(objectRef);
     }
 
     public Project getProject() {
-        return object.getProject();
+        return project;
     }
 
     public void dispose() {
         compilerMessages.clear();
-        object = null;
+        objectRef = null;
+        project = null;
     }
 }

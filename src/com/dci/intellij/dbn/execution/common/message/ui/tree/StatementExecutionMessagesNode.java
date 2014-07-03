@@ -12,7 +12,7 @@ public class StatementExecutionMessagesNode extends BundleTreeNode {
     }
 
     public MessagesTreeNode getChildTreeNode(VirtualFile virtualFile) {
-        for (MessagesTreeNode messagesTreeNode : children) {
+        for (MessagesTreeNode messagesTreeNode : getChildren()) {
             if (messagesTreeNode.getVirtualFile().equals(virtualFile)) {
                 return messagesTreeNode;
             }
@@ -24,7 +24,7 @@ public class StatementExecutionMessagesNode extends BundleTreeNode {
         StatementExecutionMessagesFileNode node = (StatementExecutionMessagesFileNode) getChildTreeNode(executionMessage.getVirtualFile());
         if (node == null) {
             node = new StatementExecutionMessagesFileNode(this, executionMessage.getVirtualFile());
-            children.add(node);
+            addChild(node);
             getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
         return node.addExecutionMessage(executionMessage);

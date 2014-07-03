@@ -25,20 +25,28 @@ public class MethodExecutionMessagesObjectNode extends BundleTreeNode {
     }
 
     public TreePath addCompilerMessage(MethodExecutionMessage executionMessage) {
-        children.clear();
+        clearChildren();
         MethodExecutionMessageNode messageNode = new MethodExecutionMessageNode(this, executionMessage);
-        children.add(messageNode);
-        getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
-        return TreeUtil.createTreePath(messageNode);
+        addChild(messageNode);
+
+        TreePath treePath = TreeUtil.createTreePath(this);
+        getTreeModel().notifyTreeModelListeners(treePath, TreeEventType.STRUCTURE_CHANGED);
+        return treePath;
     }
 
     public TreePath getTreePath(MethodExecutionMessage executionMessage) {
-        for (MessagesTreeNode messageNode : children) {
+        for (MessagesTreeNode messageNode : getChildren()) {
             MethodExecutionMessageNode methodExecutionMessageNode = (MethodExecutionMessageNode) messageNode;
             if (methodExecutionMessageNode.getExecutionMessage() == executionMessage) {
                 return TreeUtil.createTreePath(methodExecutionMessageNode);
             }
         }
         return null;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        databaseFile = null;
     }
 }
