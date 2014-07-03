@@ -257,6 +257,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();
             selectionModel = new DefaultListSelectionModel();
+            tableHeader = null;
         }
     }
 
