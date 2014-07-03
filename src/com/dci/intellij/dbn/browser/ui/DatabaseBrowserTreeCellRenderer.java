@@ -35,7 +35,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (value instanceof LoadInProgressTreeNode) {
-            return new LoaderCellRendererComponent((LoadInProgressTreeNode) value);
+            return new LoaderCellRendererComponent(LoadInProgressTreeNode.LOOSE_INSTANCE);
         } else {
             return cellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
         }

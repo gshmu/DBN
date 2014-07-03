@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.model;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.navigation.ItemPresentation;
@@ -13,10 +14,24 @@ import com.intellij.openapi.vcs.FileStatus;
 
 import javax.swing.Icon;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoadInProgressTreeNode implements BrowserTreeNode {
+    public static final LoadInProgressTreeNode LOOSE_INSTANCE = new LoadInProgressTreeNode(null);
+    static {
+        Timer updateChecker = new Timer("Load in progress icon roller");
+        updateChecker.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                iconIndex++;
+                if (iconIndex == icons.length) iconIndex = 0;
+            }
+        }, 50, 50);
+    }
+
     private BrowserTreeNode parent;
-    private int iconIndex;
+    private static int iconIndex;
     private boolean disposed;
 
     private static Icon[] icons = new Icon[12];
@@ -72,8 +87,6 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     }
 
     public Icon getIcon(int flags) {
-        iconIndex++;
-        if (iconIndex == icons.length) iconIndex = 0;
         return icons[iconIndex];
     }
 
@@ -152,5 +165,6 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
 
     public void dispose() {
         disposed = true;
+        parent = null;
     }
 }

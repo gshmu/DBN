@@ -59,7 +59,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
             loadInProgressNodes.add(node);
             if (startTimer) {
                 Timer reloader = new Timer("Load in progress tree leaf reloader");
-                reloader.schedule(new LoadInProgressRefreshTask(), 0, 100);
+                reloader.schedule(new LoadInProgressRefreshTask(), 0, 50);
             }
         }
     }
