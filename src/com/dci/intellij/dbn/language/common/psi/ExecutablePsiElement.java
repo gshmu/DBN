@@ -5,8 +5,11 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
@@ -22,13 +25,17 @@ public class ExecutablePsiElement extends NamedPsiElement{
     }
 
     public synchronized StatementExecutionBasicProcessor getExecutionProcessor() {
-        if (executionProcessor == null || !executionProcessor.matches(this, false)) {
-            StatementExecutionManager  statementExecutionManager = StatementExecutionManager.getInstance(getProject());
-            executionProcessor = statementExecutionManager.locateExecutionProcessor(this);
-            if (executionProcessor == null) {
-                executionProcessor = statementExecutionManager.createExecutionProcessor(this);
+        VirtualFileSystem fileSystem = getContainingFile().getVirtualFile().getFileSystem();
+        if (fileSystem instanceof LocalFileSystem || fileSystem instanceof DatabaseFileSystem) {
+            if (executionProcessor == null || !executionProcessor.matches(this, false)) {
+                StatementExecutionManager  statementExecutionManager = StatementExecutionManager.getInstance(getProject());
+                executionProcessor = statementExecutionManager.locateExecutionProcessor(this);
+                if (executionProcessor == null) {
+                    executionProcessor = statementExecutionManager.createExecutionProcessor(this);
+                }
             }
         }
+
         return executionProcessor;
     }
 

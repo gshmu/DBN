@@ -15,22 +15,30 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
+
 import org.jetbrains.annotations.NotNull;
 
 public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
 
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        if (psiElement instanceof ExecutablePsiElement)  annotateExecutable((ExecutablePsiElement) psiElement, holder); else
-        if (psiElement instanceof ChameleonPsiElement)  annotateChameleon(psiElement, holder); else
-        if (psiElement instanceof TokenPsiElement) annotateToken((TokenPsiElement) psiElement, holder);  else
-        if (psiElement instanceof IdentifierPsiElement) {
+        if (psiElement instanceof ExecutablePsiElement)  {
+            annotateExecutable((ExecutablePsiElement) psiElement, holder);
+
+        } else if (psiElement instanceof ChameleonPsiElement)  {
+            annotateChameleon(psiElement, holder);
+
+        } else if (psiElement instanceof TokenPsiElement) {
+            annotateToken((TokenPsiElement) psiElement, holder);
+
+        } else if (psiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
             ConnectionHandler connectionHandler = identifierPsiElement.getActiveConnection();
             if (connectionHandler != null && !connectionHandler.isVirtual()) {
                 annotateIdentifier(identifierPsiElement, holder);
             }
         }
+
 
 
         if (psiElement instanceof NamedPsiElement) {

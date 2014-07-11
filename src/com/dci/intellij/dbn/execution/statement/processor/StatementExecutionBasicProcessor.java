@@ -15,11 +15,12 @@ import com.dci.intellij.dbn.language.common.DBLanguageFile;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiFile;
 import gnu.trove.THashSet;
 
 import java.sql.Connection;
@@ -77,6 +78,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public boolean isOrphan(){
         if (executablePsiElement == null || !executablePsiElement.isValid()) return true;
+        PsiFile psiFile = PsiUtil.getPsiFile(getProject(), file.getVirtualFile());
+        if (!psiFile.equals(file)) return true;
+
         NamedPsiElement rootPsiElement = executablePsiElement.lookupEnclosingRootPsiElement();
         return rootPsiElement == null || !file.contains(rootPsiElement, true);
     }

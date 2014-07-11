@@ -122,4 +122,10 @@ public class DocumentUtil {
     public static Document getDocument(VirtualFile virtualFile) {
         return FileDocumentManager.getInstance().getDocument(virtualFile);
     }
+
+    public static PsiFile getPsiFile(Project project, VirtualFile virtualFile) {
+        Document document = getDocument(virtualFile);
+        PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+        return psiDocumentManager.getPsiFile(document);
+    }
 }

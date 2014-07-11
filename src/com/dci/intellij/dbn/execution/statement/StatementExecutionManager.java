@@ -171,6 +171,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public StatementExecutionBasicProcessor locateExecutionProcessor(ExecutablePsiElement executablePsiElement) {
         synchronized(executionProcessors) {
+            cleanup();
             for (StatementExecutionBasicProcessor executionProcessor : executionProcessors) {
                 if (executionProcessor.getExecutablePsiElement() != executablePsiElement && executionProcessor.matches(executablePsiElement, false)) {
                     executionProcessor.bind(executablePsiElement);
@@ -197,7 +198,6 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                             new StatementExecutionCursorProcessor(executablePsiElement, getNextSequence()) :
                             new StatementExecutionBasicProcessor(executablePsiElement, getNextSequence());
             executionProcessors.add(executionProcessor);
-            cleanup();
             return executionProcessor;
         }
     }
