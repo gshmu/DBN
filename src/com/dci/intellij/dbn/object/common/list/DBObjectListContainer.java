@@ -280,7 +280,9 @@ public class DBObjectListContainer implements Disposable {
         }
         if (hiddenObjectLists != null)  {
             for (DBObjectList objectList : hiddenObjectLists.values()) {
-                objectList.load(false);
+                if (objectList.getObjectType() != DBObjectType.ANY) {
+                    objectList.load(false);
+                }
             }
         }
     }
