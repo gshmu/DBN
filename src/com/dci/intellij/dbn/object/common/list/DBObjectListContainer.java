@@ -127,7 +127,7 @@ public class DBObjectListContainer implements Disposable {
             }
         }
 
-        if (lookupHidden) {
+        if (hiddenObjectLists != null && lookupHidden) {
             for (DBObjectList objectList : hiddenObjectLists.values()) {
                 DBObjectType objectType = objectList.getObjectType();
                 if (objectType.getParents().contains(parentObjectType)) {
