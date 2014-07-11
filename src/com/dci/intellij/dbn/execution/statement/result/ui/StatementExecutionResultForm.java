@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -65,12 +66,17 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
         ActionUtil.registerDataProvider(resultTable, executionResult.getDataProvider(), false);
+
+        Disposer.register(this, executionResult);
     }
 
     public void setExecutionResult(StatementExecutionCursorResult executionResult) {
         if (this.executionResult != executionResult) {
+            StatementExecutionCursorResult oldExecutionResult = this.executionResult;
             this.executionResult = executionResult;
             reloadTableModel();
+
+            DisposerUtil.dispose(oldExecutionResult);
         }
     }
 

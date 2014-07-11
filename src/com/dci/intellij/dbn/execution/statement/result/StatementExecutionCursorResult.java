@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Disposer;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -39,7 +40,6 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         resultPanel.getResultTable().setName(getResultName());
 
         Disposer.register(this, dataModel);
-        Disposer.register(this, resultPanel);
     }
 
     private StatementExecutionSettings getQueryExecutionSettings() {
@@ -121,8 +121,9 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         return dataModel;
     }
 
+    @Nullable
     public ResultSetTable getResultTable() {
-        return resultPanel.getResultTable();
+        return resultPanel == null ? null : resultPanel.getResultTable();
     }
 
     public boolean hasResult() {

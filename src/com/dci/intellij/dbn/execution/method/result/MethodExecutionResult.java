@@ -40,8 +40,6 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, boolean debug) {
         this(executionInput, debug);
         this.resultPanel = resultPanel;
-
-        Disposer.register(this, resultPanel);
     }
 
     public int getExecutionDuration() {
@@ -83,8 +81,6 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     public MethodExecutionResultForm getResultPanel() {
         if (resultPanel == null) {
             resultPanel = new MethodExecutionResultForm(this);
-
-            Disposer.register(this, resultPanel);
         }
         return resultPanel;
     }
@@ -159,6 +155,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     }
 
     public void dispose() {
+        disposed = true;
+
         resultPanel = null;
         executionInput = null;
         cursorModels.clear();

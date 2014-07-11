@@ -247,7 +247,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     protected void updateIndex() {
         if (indexed) {
-            if (elements.size() > 0) {
+            if (elements.size() > 30) {
                 if (index == null)
                     index = new THashMap<String, T>(); else
                     index.clear();
@@ -264,10 +264,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public T getElement(String name) {
         if (name != null) {
+            List<T> elements = getElements();
             if (indexed && index != null) {
                 return index.get(name.toUpperCase());
             } else {
-                List<T> elements = getElements();
                 for (T element : elements) {
                     if (element.getName().equalsIgnoreCase(name)) {
                         return element;

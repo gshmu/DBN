@@ -24,6 +24,7 @@ public class ExecutionResultRerunAction extends AbstractExecutionResultAction {
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(
                 executionResult != null &&
+                executionResult.getResultTable() != null &&
                 !executionResult.getResultTable().isLoading());
         
         presentation.setText("Rerun statement");

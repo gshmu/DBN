@@ -301,7 +301,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm, Enviro
                         DocumentUtil.refreshEditorAnnotations(file);
                     }
                 }
-                resultComponent.dispose();
+                Disposer.dispose(resultComponent);
             }
             if (getTabCount() == 0) {
                 ExecutionManager.getInstance(project).hideExecutionConsole();

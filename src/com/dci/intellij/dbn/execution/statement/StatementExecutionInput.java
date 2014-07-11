@@ -62,7 +62,7 @@ public class StatementExecutionInput implements Disposable {
     public boolean isObsolete() {
         return  executionProcessor == null || executionProcessor.isOrphan() ||
                 executionProcessor.getActiveConnection() != connectionHandler || // connection changed since execution
-                executionProcessor.getCurrentSchema() != schemaRef || // current schema changed since execution
+                executionProcessor.getCurrentSchema() != getSchema() || // current schema changed since execution
                 (executionProcessor.getExecutablePsiElement() != null &&
                         executionProcessor.getExecutablePsiElement().matches(getExecutablePsiElement()) &&
                         !executionProcessor.getExecutablePsiElement().equals(getExecutablePsiElement()));

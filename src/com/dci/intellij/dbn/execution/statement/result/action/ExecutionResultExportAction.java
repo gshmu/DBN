@@ -16,8 +16,10 @@ public class ExecutionResultExportAction extends AbstractExecutionResultAction {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
             ResultSetTable table = executionResult.getResultTable();
-            ExportDataDialog dialog = new ExportDataDialog(table, executionResult);
-            dialog.show();
+            if (table != null) {
+                ExportDataDialog dialog = new ExportDataDialog(table, executionResult);
+                dialog.show();
+            }
         }
     }
 

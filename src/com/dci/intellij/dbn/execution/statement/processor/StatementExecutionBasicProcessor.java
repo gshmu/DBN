@@ -85,13 +85,6 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return executablePsiElement == null || !executablePsiElement.isValid();
     }
 
-    public void setExecutionResult(StatementExecutionResult executionResult) {
-        if (this.executionResult != null) {
-            Disposer.dispose(this.executionResult);
-        }
-        this.executionResult = executionResult;
-    }
-
     public StatementExecutionBasicResult getExecutionResult() {
         if (executionResult != null && executionResult.isDisposed()) {
             executionResult = null;
@@ -138,8 +131,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             executionInput.setExecuteStatement(executeStatementText);
 
             if (executionVariables.hasErrors()) {
-                StatementExecutionResult executionResult = createErrorExecutionResult(executionInput, "Could not bind all variables.");
-                setExecutionResult(executionResult);
+                executionResult = createErrorExecutionResult(executionInput, "Could not bind all variables.");
                 continueExecution = false;
             }
         }
@@ -152,16 +144,14 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
                     statement.setQueryTimeout(getStatementExecutionSettings().getExecutionTimeout());
                     statement.execute(executeStatementText);
-                    StatementExecutionResult executionResult = createExecutionResult(statement, executionInput);
-                    setExecutionResult(executionResult);
+                    executionResult = createExecutionResult(statement, executionInput);
                     if (executablePsiElement != null) {
                         if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(file.getVirtualFile());
                         if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
                     }
                 }
             } catch (SQLException e) {
-                StatementExecutionResult executionResult = createErrorExecutionResult(executionInput, e.getMessage());
-                setExecutionResult(executionResult);
+                executionResult = createErrorExecutionResult(executionInput, e.getMessage());
             }
         }
 

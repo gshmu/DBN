@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -54,12 +55,16 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         TreeUtil.expand(argumentValuesTree, 2);
 
         Disposer.register(this, cursorOutputTabs);
+        Disposer.register(this, executionResult);
     }
 
     public void setExecutionResult(MethodExecutionResult executionResult) {
         if (this.executionResult != executionResult) {
+            MethodExecutionResult oldExecutionResult = this.executionResult;
             this.executionResult = executionResult;
             rebuild();
+
+            DisposerUtil.dispose(oldExecutionResult);
         }
     }
 

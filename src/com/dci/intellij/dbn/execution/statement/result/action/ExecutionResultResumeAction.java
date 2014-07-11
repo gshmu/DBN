@@ -25,6 +25,7 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
 
         boolean enabled = executionResult != null &&
                 executionResult.hasResult() &&
+                executionResult.getResultTable() != null &&
                 !executionResult.getResultTable().isLoading() &&
                 !executionResult.getTableModel().isResultSetExhausted();
 
