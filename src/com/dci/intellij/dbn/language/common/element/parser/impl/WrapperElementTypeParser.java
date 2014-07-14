@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
@@ -9,8 +11,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperElementType> {
     public WrapperElementTypeParser(WrapperElementType elementType) {
@@ -20,8 +20,7 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         logBegin(builder, optional, depth);
-        ParsePathNode node = createParseNode(parentNode, builder.getCurrentOffset());
-        PsiBuilder.Marker marker = builder.mark(null);
+        ParsePathNode node = stepIn(parentNode, context);
 
         boolean isWrappingOptional = getElementType().isWrappingOptional();
         ElementType wrappedElement = getElementType().getWrappedElement();
@@ -36,10 +35,10 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
             ParseResult wrappedResult = wrappedElement.getParser().parse(node, optional, depth + 1, context);
             if (wrappedResult.isMatch()) {
                 matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
-                return stepOut(marker, depth, wrappedResult.getType(), matchedTokens, node, context);
+                return stepOut(node, context, depth, wrappedResult.getType(), matchedTokens);
             } else {
-                builder.markerRollbackTo(marker, null);
-                marker = builder.mark(null);
+                builder.markerRollbackTo(node.getElementMarker(), null);
+                node = stepIn(parentNode, context);
             }
         }
 
@@ -60,15 +59,15 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
                 ParseResult endTokenResult = endTokenElement.getParser().parse(node, false, depth -1, context);
                 if (endTokenResult.isMatch()) {
                     matchedTokens++;
-                    return stepOut(marker, depth, ParseResultType.FULL_MATCH, matchedTokens, node, context);
+                    return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
                 } else {
-                    return stepOut(marker, depth, wrappedResult.getType(), matchedTokens, node, context);
+                    return stepOut(node, context, depth, wrappedResult.getType(), matchedTokens);
                 }
             } else {
-                return stepOut(marker, depth, wrappedResult.getType(), matchedTokens, node, context);
+                return stepOut(node, context, depth, wrappedResult.getType(), matchedTokens);
             }
         }
 
-        return stepOut(marker, depth, ParseResultType.NO_MATCH, matchedTokens, node, context);
+        return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
     }
 }
