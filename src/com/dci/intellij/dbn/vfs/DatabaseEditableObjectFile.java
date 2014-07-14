@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -29,13 +36,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseEditableObjectFile extends DatabaseObjectFile<DBSchemaObject> implements FileConnectionMappingProvider {
     public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
@@ -77,10 +77,10 @@ public class DatabaseEditableObjectFile extends DatabaseObjectFile<DBSchemaObjec
                 ConnectionHandler connectionHandler = object.getConnectionHandler();
                 boolean ddlFileBinding = connectionHandler.getSettings().getDetailSettings().isDdlFileBinding();
                 if (ddlFileBinding && ddlFileSettings.getLookupDDLFilesEnabled().value()) {
-                    List<VirtualFile> boundDDLFiles = getBoundDDLFiles();
-                    if (boundDDLFiles == null || boundDDLFiles.isEmpty()) {
+                    List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
+                    if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
                         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                        List<VirtualFile> virtualFiles = fileAttachmentManager.lookupUnboundDDLFiles(object);
+                        List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(object);
                         if (virtualFiles.size() > 0) {
                             int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                             return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
@@ -126,12 +126,12 @@ public class DatabaseEditableObjectFile extends DatabaseObjectFile<DBSchemaObjec
     }
 
     @Nullable
-    public List<VirtualFile> getBoundDDLFiles() {
+    public List<VirtualFile> getAttachedDDLFiles() {
         DBSchemaObject object = getObject();
         if (object != null) {
             DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
             if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                return fileAttachmentManager.getBoundDDLFiles(object);
+                return fileAttachmentManager.getAttachedDDLFiles(object);
             }
         }
         return null;

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.ddl;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -7,8 +9,6 @@ import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.SourceCodeFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.util.List;
 
 public class ObjectToDDLContentSynchronizer implements Runnable {
     DatabaseEditableObjectFile databaseFile;
@@ -22,7 +22,7 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
     public void run() {
         assert !sourceContentType.isBundle();
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(databaseFile.getProject());
-        List<VirtualFile> ddlFiles = databaseFile.getBoundDDLFiles();
+        List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(databaseFile.getProject());
         String postfix = ddlFileSettings.getGeneralSettings().getStatementPostfix().value();
 

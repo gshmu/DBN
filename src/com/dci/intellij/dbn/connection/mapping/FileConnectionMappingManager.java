@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -33,13 +40,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class FileConnectionMappingManager extends VirtualFileAdapter implements ProjectComponent, JDOMExternalizable {
     private Project project;
@@ -114,7 +114,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         }
 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
-            // if the file is a bound ddl file, then resolve the object which it is
+            // if the file is an attached ddl file, then resolve the object which it is
             // linked to, and return its database connection
             DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
             if (schemaObject != null && DatabaseFileSystem.getInstance().isFileOpened(schemaObject)) {
@@ -156,7 +156,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         }
 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile) || VirtualFileUtil.isVirtualFileSystem(virtualFile)) {
-            // if the file is a bound ddl file, then resolve the object which it is
+            // if the file is an attached ddl file, then resolve the object which it is
             // linked to, and return its parent schema
             DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
             if (schemaObject != null && DatabaseFileSystem.getInstance().isFileOpened(schemaObject)) {

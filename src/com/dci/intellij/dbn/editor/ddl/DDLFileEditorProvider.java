@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.ddl;
 
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -10,10 +14,6 @@ import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public abstract class DDLFileEditorProvider extends BasicTextEditorProvider implements DumbAware {
 
@@ -32,7 +32,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DatabaseEditableObjectFile) {
             DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) virtualFile;
-            List<VirtualFile> ddlFiles = databaseFile.getBoundDDLFiles();
+            List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
             return ddlFiles != null && ddlFiles.size() > index;
         }
         return false;
@@ -41,7 +41,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
-        VirtualFile virtualFile = databaseFile.getBoundDDLFiles().get(index);
+        VirtualFile virtualFile = databaseFile.getAttachedDDLFiles().get(index);
 
         BasicTextEditor textEditor = new DDLFileEditor(project, virtualFile);
         updateTabIcon(databaseFile, textEditor, VirtualFileUtil.getIcon(virtualFile));
