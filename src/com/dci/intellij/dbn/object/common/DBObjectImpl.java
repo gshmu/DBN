@@ -183,7 +183,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public DBObject getParentObject() {
-        return parentObject == null ? null : parentObject.get();
+        return DBObjectRef.get(parentObject);
     }
 
     public DBObject getDefaultNavigationObject() {
@@ -282,6 +282,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return getConnectionHandler().getObjectBundle();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         if (parentObject != null) {
             DBObject object = parentObject.get();

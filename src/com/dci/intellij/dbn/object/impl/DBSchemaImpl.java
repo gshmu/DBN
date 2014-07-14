@@ -380,14 +380,14 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return program;
     }
 
-    public DBMethod getMethod(String name, String type, int overload) {
-        if (type == null) {
+    public DBMethod getMethod(String name, DBObjectType methodType, int overload) {
+        if (methodType == null) {
             DBMethod method = getProcedure(name, overload);
             if (method == null) method = getFunction(name, overload);
             return method;
-        } else if (type.equalsIgnoreCase("PROCEDURE")) {
+        } else if (methodType == DBObjectType.PROCEDURE) {
             return getProcedure(name, overload);
-        } else if (type.equalsIgnoreCase("FUNCTION")) {
+        } else if (methodType == DBObjectType.FUNCTION) {
             return getFunction(name, overload);
         }
         return null;
@@ -1014,10 +1014,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
             String cacheKey = methodName + methodType + overload;
             DBMethod method = (DBMethod) loaderCache.getObject(cacheKey);
+            DBObjectType objectType = DBObjectType.getObjectType(methodType);
 
             if (method == null || method.getProgram() != program || method.getOverload() != overload) {
                 if (programName == null) {
-                    method = schema.getMethod(methodName, methodType, overload);
+                    method = schema.getMethod(methodName, objectType, overload);
                 } else {
                     method = program == null ? null : program.getMethod(methodName, overload);
                 }

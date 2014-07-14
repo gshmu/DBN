@@ -49,9 +49,20 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod> imple
 
     @Nullable
     protected T lookup(@NotNull ConnectionHandler connectionHandler) {
-        DBSchema schema = connectionHandler.getObjectBundle().getSchema(nodes[0].getName());
+        DBSchema schema = getSchema();
         if (schema == null) return null;
 
+        DBMethod method;
+        DBProgram program = getProgram();
+        if (program == null) {
+            method = schema.getMethod(objectName, objectType, overload);
+        } else {
+            method = program.getMethod(objectName, overload);
+        }
+
+        return method != null && method.getObjectType() == objectType ? (T) method : null;
+
+/*
         DBMethod method;
         Node programNode = getProgramNode();
         Node methodNode = getMethodNode();
@@ -64,38 +75,37 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod> imple
         } else {
             method = schema.getMethod(methodNode.getName(), methodObjectType.getName(), overload);
         }
+*/
+    }
 
-        return method != null && method.getObjectType() == methodObjectType ? (T) method : null;
+    protected DBProgram getProgram() {
+        return (DBProgram) getParentObject(DBObjectType.PROGRAM);
     }
 
 
-
     public String getQualifiedMethodName() {
+
         String programName = getProgramName();
         String methodName = getMethodName();
         return programName == null ? methodName : programName + "." + methodName;
     }
 
-    public String getSchemaName() {
-        return nodes[0].getName();
-    }
-
     public String getProgramName() {
-        Node programNode = getProgramNode();
-        return programNode == null ? null : programNode.getName();
+        DBObjectRef programRef = getParentRef(DBObjectType.PROGRAM);
+        return programRef == null ? null : programRef.objectName;
     }
 
     public DBObjectType getProgramObjectType() {
-        Node programNode = getProgramNode();
-        return programNode == null ? null : programNode.getType();
+        DBObjectRef programRef = getParentRef(DBObjectType.PROGRAM);
+        return programRef == null ? null : programRef.objectType;
     }
 
     public String getMethodName() {
-        return getMethodNode().getName();
+        return objectName;
     }
 
     public DBObjectType getMethodObjectType() {
-        return getMethodNode().getType();
+        return objectType;
     }
 
     public int getOverload() {
@@ -123,55 +133,46 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod> imple
 
     @Override
     public String toString() {
-        return getMethodNode().getType().getName() + " " + getPath();
+        return objectType.getName() + " " + getPath();
     }
 
     /*********************************************************
      *                   JDOMExternalizable                  *
      *********************************************************/
     public void readConfiguration(Element element) throws InvalidDataException {
-        connectionId = element.getAttributeValue("connection-id");
+        String connectionId = element.getAttributeValue("connection-id");
         String schemaName = element.getAttributeValue("schema-name");
-        append(DBObjectType.SCHEMA, schemaName);
+        DBObjectRef<DBSchema> schemaRef = new DBObjectRef<DBSchema>(connectionId, DBObjectType.SCHEMA, schemaName);
 
+        DBObjectRef<DBProgram> programRef = null;
         String programTypeName = element.getAttributeValue("program-type");
         if (programTypeName != null) {
             String programName = element.getAttributeValue("program-name");
             DBObjectType programObjectType = DBObjectType.getObjectType(programTypeName);
-            append(programObjectType, programName);
+            programRef = new DBObjectRef<DBProgram>(schemaRef, programObjectType, programName);
         }
 
-        String methodName = element.getAttributeValue("method-name");
-        DBObjectType methodObjectType = DBObjectType.getObjectType(element.getAttributeValue("method-type"));
-
-        append(methodObjectType, methodName);
+        objectName = element.getAttributeValue("method-name");
+        objectType = DBObjectType.getObjectType(element.getAttributeValue("method-type"));
+        parent = programRef == null ? schemaRef : programRef;
 
         String overload = element.getAttributeValue("method-overload");
         this.overload = Integer.parseInt(overload == null ? "0" : overload);
     }
 
     public void writeConfiguration(Element element) throws WriteExternalException {
-        element.setAttribute("connection-id", connectionId);
-        element.setAttribute("schema-name", nodes[0].getName());
+        element.setAttribute("connection-id", getConnectionId());
+        element.setAttribute("schema-name", getSchemaName());
 
-        Node programNode = getProgramNode();
-        if (programNode != null) {
-            element.setAttribute("program-type", programNode.getType().getName());
-            element.setAttribute("program-name", programNode.getName());
+        DBObjectRef programRef = getParentRef(DBObjectType.PROGRAM);
+        if (programRef != null) {
+            element.setAttribute("program-type", programRef.objectType.getName());
+            element.setAttribute("program-name", programRef.objectName);
         }
 
-        Node methodNode = getMethodNode();
-        element.setAttribute("method-type", methodNode.getType().getName());
-        element.setAttribute("method-name", methodNode.getName());
+        element.setAttribute("method-type", objectType.getName());
+        element.setAttribute("method-name", objectName);
 
         element.setAttribute("method-overload", Integer.toString(overload));
-    }
-
-    private Node getProgramNode() {
-        return nodes.length == 3 ? nodes[1] : null;
-    }
-
-    private Node getMethodNode() {
-        return nodes.length == 3 ? nodes[2] : nodes[1];
     }
 }

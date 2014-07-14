@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
@@ -35,13 +36,20 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("SYNONYM_NAME");
-        underlyingObject = new DBObjectRef<DBObject>(getConnectionHandler());
         String schemaName = resultSet.getString("OBJECT_OWNER");
         String objectName = resultSet.getString("OBJECT_NAME");
         DBObjectType objectType = DBObjectType.getObjectType(resultSet.getString("OBJECT_TYPE"), DBObjectType.ANY);
 
-        underlyingObject.append(DBObjectType.SCHEMA, schemaName);
-        underlyingObject.append(objectType, objectName);
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null) {
+            DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+            if (schema != null) {
+                DBObjectRef schemaRef = schema.getRef();
+                underlyingObject = new DBObjectRef<DBObject>(schemaRef, objectType, objectName);
+            }
+        }
+
+
     }
 
     public void initStatus(ResultSet resultSet) throws SQLException {
@@ -79,7 +87,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
 
     @Nullable
     public DBObject getUnderlyingObject() {
-        return underlyingObject.get();
+        return DBObjectRef.get(underlyingObject);
     }
 
     public String getNavigationTooltipText() {
@@ -135,7 +143,6 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     @Override
     public void dispose() {
         super.dispose();
-        underlyingObject = null;
     }
 
     /*********************************************************
