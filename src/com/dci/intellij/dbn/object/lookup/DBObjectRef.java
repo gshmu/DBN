@@ -22,32 +22,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected String objectName;
     protected String connectionId;
 
-
-    //protected Node[] nodes;
     private WeakReference<T> reference;
     private int hashCode = -1;
 
     public DBObjectRef(T object) {
         reference = new WeakReference<T>(object);
-/*
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
-        connectionId = connectionHandler == null ? null : connectionHandler.getId();
-
-        List<DBObject> chain = new ArrayList<DBObject>();
-        chain.add(object);
-
-        DBObject parentObject = object.getParentObject();
-        while (parentObject != null) {
-            chain.add(0, parentObject);
-            parentObject = parentObject.getParentObject();
-        }
-        int length = chain.size();
-        nodes = new Node[length];
-        for (int i = 0; i<length; i++) {
-            DBObject chainObject = chain.get(i);
-            nodes[i] = new Node(chainObject.getObjectType(), chainObject.getName());
-        }
-*/
         objectType = object.getObjectType();
         objectName = object.getName();
         DBObject parentObj = object.getParentObject();
@@ -124,8 +103,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                     this.objectType = objectType;
                     this.objectName = objectName;
                 }
-
-                //append(objectType, objectName);
             }
         }
     }
@@ -143,34 +120,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             objectNames.insert(0, parent.objectName);
             parent = parent.parent;
         }
-/*
-        for (Node node: nodes) {
-            if (objectTypes.length() > 0) {
-                objectTypes.append(".");
-                objectNames.append(".");
-            }
-            objectTypes.append(node.getType().getName());
-            objectNames.append(node.getName());
-        }
-*/
 
         element.setAttribute("object-ref", "[" + objectTypes.toString() + "]" + objectNames);
     }
-
-/*    @Deprecated
-    public DBObjectRef append(DBObjectType objectType, String name) {
-        Node node = new Node(objectType, name);
-        if (nodes == null) {
-            nodes = new Node[1];
-            nodes[0] = node;
-        } else {
-            Node[] newNodes = new Node[nodes.length + 1];
-            System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
-            newNodes[nodes.length] = node;
-            nodes = newNodes;
-        }
-        return this;
-    }*/
 
     public String getPath() {
         DBObjectRef parent = this.parent;
@@ -185,19 +137,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             }
             return buffer.toString();
         }
-
-/*
-        if (nodes.length == 1) {
-            return nodes[0].getName();
-        } else {
-            StringBuilder buffer = new StringBuilder();
-            for (Node node : nodes) {
-                if (buffer.length() > 0) buffer.append(".");
-                buffer.append(node.getName());
-            }
-            return buffer.toString();
-        }
-*/
     }
 
     public String getTypePath() {
@@ -213,19 +152,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             }
             return buffer.toString();
         }
-
-/*
-        if (nodes.length == 1) {
-            return nodes[0].getName();
-        } else {
-            StringBuilder buffer = new StringBuilder();
-            for (Node node : nodes) {
-                if (buffer.length() > 0) buffer.append(".");
-                buffer.append(node.getName());
-            }
-            return buffer.toString();
-        }
-*/
     }
 
 
@@ -234,31 +160,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public boolean is(@NotNull T object) {
-        if (object.getConnectionHandler().getId().equals(getConnectionId())) {
-            DBObjectRef parent = this.parent;
-            DBObject parentObject = object.getParentObject();
-            while (parent != null) {
-                if (parentObject == null || !parent.is(parentObject)) {
-                    return false;
-                }
-                parent = parent.parent;
-                parentObject.getParentObject();
-            }
-            return true;
-
-/*
-            int index = nodes.length -1;
-            DBObject checkObject = object;
-            while (checkObject != null) {
-                Node checkNode = nodes[index];
-                if (!checkNode.matches(checkObject)) return false;
-                checkObject = checkObject.getParentObject();
-                index--;
-            }
-            return true;
-*/
-        }
-        return false;
+        return object.getRef().equals(this);
     }
 
     @Nullable
@@ -315,20 +217,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 object = parentObject.getChildObject(objectType, objectName, true);
             }
         }
-
-/*
-        DBObject object = null;
-        for (Node node : nodes) {
-            DBObjectType objectType = node.getType();
-            String objectName = node.getName();
-            if (object == null) {
-                object = connectionHandler.getObjectBundle().getObject(objectType, objectName);
-            } else {
-                object = object.getChildObject(objectType, objectName, true);
-            }
-            if (object == null) break;
-        }
-*/
         return (T) object;
     }
 
@@ -362,22 +250,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             } else if (that.parent == null) {
                 return 1;
             }
-
-
-/*
-            if (this.nodes.length != that.nodes.length) {
-                return this.nodes.length - that.nodes.length;
-            }
-
-            for (int i=0; i<this.nodes.length; i++) {
-                Node thisNode = this.nodes[i];
-                Node thatNode = that.nodes[i];
-                result = thisNode.getType().compareTo(thatNode.getType());
-                if (result != 0) return result;
-                result = thisNode.getName().compareTo(thatNode.getName());
-                if (result != 0) return result;
-            }
-*/
         }
         return 0;
     }

@@ -321,7 +321,6 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     }
 
     private List<String> getAttachedFilePaths(DBSchemaObject object) {
-        String objectPath = object.getQualifiedNameWithConnectionId();
         List<String> filePaths = new ArrayList<String>();
         for (String filePath : mappings.keySet()) {
             DBObjectRef<DBSchemaObject> objectRef = mappings.get(filePath);
