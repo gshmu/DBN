@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -9,8 +12,6 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ParserBuilder {
     private PsiBuilder builder;
@@ -58,6 +59,7 @@ public class ParserBuilder {
     }
 
     public ASTNode getTreeBuilt() {
+        nestingMonitor.cleanup(true);
         return builder.getTreeBuilt();
     }
 
@@ -74,7 +76,7 @@ public class ParserBuilder {
                 TokenType beginTokenType = beginElementType.getTokenType();
                 while(builder.getTokenType() == beginTokenType) {
                     PsiBuilder.Marker beginTokenMarker = builder.mark();
-                    advanceLexer(node.getParent(), true);
+                    advanceLexer(node, true);
                     beginTokenMarker.done((IElementType) beginElementType);
                 }
             }
@@ -85,7 +87,7 @@ public class ParserBuilder {
     public void markerRollbackTo(PsiBuilder.Marker marker, @Nullable ParsePathNode node) {
         if (marker != null) {
             marker.rollbackTo();
-            nestingMonitor.reset();
+            nestingMonitor.rollback();
         }
     }
 

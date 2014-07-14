@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.intellij.lang.PsiBuilder;
 
 public class NestedRangeStartMarker {
     private ParsePathNode parentNode;
+    private PsiBuilder.Marker marker;
     private int offset;
 
-    public NestedRangeStartMarker(ParsePathNode parentNode, int offset) {
+    public NestedRangeStartMarker(ParsePathNode parentNode, PsiBuilder builder, boolean mark) {
         this.parentNode = parentNode;
-        this.offset = offset;
-    }
-
-    public NestedRangeStartMarker(int offset) {
-        this.offset = offset;
+        this.offset = builder.getCurrentOffset();
+        this.marker = mark ? builder.mark() : null;
     }
 
     public ParsePathNode getParentNode() {
@@ -23,8 +22,14 @@ public class NestedRangeStartMarker {
         return offset;
     }
 
+    public void dropMarker() {
+        if (marker != null) {
+            marker.drop();
+        }
+    }
+
     @Override
     public String toString() {
-        return offset + "";
+        return offset + " " + (marker != null);
     }
 }
