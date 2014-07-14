@@ -11,6 +11,7 @@ import javax.swing.Icon;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 public enum DBObjectType implements DynamicContentType {
     
@@ -53,6 +54,7 @@ public enum DBObjectType implements DynamicContentType {
     PARTITION(DatabaseObjectTypeId.PARTITION, "partition", "partitions", null, null, false),
     PRIVILEGE(DatabaseObjectTypeId.PRIVILEGE, "privilege", "privileges", Icons.DBO_PRIVILEGE, Icons.DBO_PRIVILEGES, false),
     PROCEDURE(DatabaseObjectTypeId.PROCEDURE, "procedure", "procedures", Icons.DBO_PROCEDURE, Icons.DBO_PROCEDURES, false),
+    PROGRAM(DatabaseObjectTypeId.PROGRAM, "program", "programs", null, null, true),
     PROFILE(DatabaseObjectTypeId.PROFILE, "profile", "profiles", null, null, false),
     ROLLBACK_SEGMENT(DatabaseObjectTypeId.ROLLBACK_SEGMENT, "rollback segment", "rollback segments", null, null, false),
     ROLE(DatabaseObjectTypeId.ROLE, "role", "roles", Icons.DBO_ROLE, Icons.DBO_ROLES, false),
@@ -272,7 +274,11 @@ public enum DBObjectType implements DynamicContentType {
     }
 
     public static DBObjectType getObjectType(String typeName) {
-       typeName = typeName.replace('_', ' ');
+        if (StringUtils.isEmpty(typeName)) {
+            return null;
+        }
+
+        typeName = typeName.replace('_', ' ');
         for (DBObjectType objectType: values()) {
             if (objectType.getName().equalsIgnoreCase(typeName)) {
                 return objectType;
@@ -305,8 +311,10 @@ public enum DBObjectType implements DynamicContentType {
         MATERIALIZED_VIEW.setGenericType(DATASET);
         PROCEDURE.setGenericType(METHOD);
         FUNCTION.setGenericType(METHOD);
+        TYPE.setGenericType(PROGRAM);
         TYPE_PROCEDURE.setGenericType(PROCEDURE);
         TYPE_FUNCTION.setGenericType(FUNCTION);
+        PACKAGE.setGenericType(PROGRAM);
         PACKAGE_PROCEDURE.setGenericType(PROCEDURE);
         PACKAGE_FUNCTION.setGenericType(FUNCTION);
 

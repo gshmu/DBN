@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
@@ -13,18 +14,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T> {
+    protected DBObjectRef parent;
+    protected DBObjectType objectType;
+    protected String objectName;
     protected String connectionId;
-    protected Node[] nodes;
+
+
+    //protected Node[] nodes;
     private WeakReference<T> reference;
+    private int hashCode = -1;
 
     public DBObjectRef(T object) {
         reference = new WeakReference<T>(object);
+/*
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         connectionId = connectionHandler == null ? null : connectionHandler.getId();
 
@@ -42,18 +47,50 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             DBObject chainObject = chain.get(i);
             nodes[i] = new Node(chainObject.getObjectType(), chainObject.getName());
         }
+*/
+        objectType = object.getObjectType();
+        objectName = object.getName();
+        DBObject parentObj = object.getParentObject();
+        if (parentObj != null) {
+            parent = parentObj.getRef();
+        } else {
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            if (connectionHandler != null) {
+                connectionId = connectionHandler.getId();
+            }
+        }
     }
 
-    public DBObjectRef(ConnectionHandler connectionHandler) {
-        this.connectionId = connectionHandler == null ? null : connectionHandler.getId();
+    public DBObjectRef(DBObjectRef parent, DBObjectType objectType, String objectName) {
+        this.parent = parent;
+        this.objectType = objectType;
+        this.objectName = objectName;
     }
 
-    public DBObjectRef(String connectionId) {
+    public DBObjectRef(String connectionId, DBObjectType objectType, String objectName) {
         this.connectionId = connectionId;
+        this.objectType = objectType;
+        this.objectName = objectName;
     }
 
     public DBObjectRef() {
 
+    }
+
+    public DBObject getParentObject(DBObjectType objectType) {
+        DBObjectRef parentRef = getParentRef(objectType);
+        return DBObjectRef.get(parentRef);
+    }
+
+    public DBObjectRef getParentRef(DBObjectType objectType) {
+        DBObjectRef parent = this;
+        while (parent != null) {
+            if (parent.objectType.matches(objectType)) {
+                return parent;
+            }
+            parent = parent.parent;
+        }
+        return null;
     }
 
     public static DBObjectRef from(Element element) {
@@ -67,24 +104,45 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     public void readState(Element element) {
         if (element != null) {
-            connectionId = element.getAttributeValue("connection-id");
+            String connectionId = element.getAttributeValue("connection-id");
             String databaseObject = element.getAttributeValue("object-ref");
             int typeEndIndex = databaseObject.lastIndexOf("]");
             StringTokenizer objectTypes = new StringTokenizer(databaseObject.substring(1, typeEndIndex), ".");
             StringTokenizer objectNames = new StringTokenizer(databaseObject.substring(typeEndIndex + 1), ".");
+
+            DBObjectRef objectRef = null;
             while (objectTypes.hasMoreTokens()) {
                 String objectTypeName = objectTypes.nextToken();
                 String objectName = objectNames.nextToken();
-                append(DBObjectType.getObjectType(objectTypeName), objectName);
+                DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+                if (objectTypes.hasMoreTokens()) {
+                    objectRef = objectRef == null ?
+                            new DBObjectRef(connectionId, objectType, objectName) :
+                            new DBObjectRef(objectRef, objectType, objectName);
+                } else {
+                    this.parent = objectRef;
+                    this.objectType = objectType;
+                    this.objectName = objectName;
+                }
+
+                //append(objectType, objectName);
             }
         }
     }
 
     public void writeState(Element element) {
-        element.setAttribute("connection-id", connectionId);
-        StringBuilder objectTypes = new StringBuilder();
-        StringBuilder objectNames = new StringBuilder();
+        element.setAttribute("connection-id", getConnectionId());
+        StringBuilder objectTypes = new StringBuilder(objectType.getName());
+        StringBuilder objectNames = new StringBuilder(objectName);
 
+        DBObjectRef parent = this.parent;
+        while (parent != null) {
+            objectTypes.insert(0, ".");
+            objectTypes.insert(0, parent.objectType.getName());
+            objectNames.insert(0, ".");
+            objectNames.insert(0, parent.objectName);
+        }
+/*
         for (Node node: nodes) {
             if (objectTypes.length() > 0) {
                 objectTypes.append(".");
@@ -93,10 +151,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             objectTypes.append(node.getType().getName());
             objectNames.append(node.getName());
         }
+*/
 
         element.setAttribute("object-ref", "[" + objectTypes.toString() + "]" + objectNames);
     }
 
+/*    @Deprecated
     public DBObjectRef append(DBObjectType objectType, String name) {
         Node node = new Node(objectType, name);
         if (nodes == null) {
@@ -109,9 +169,23 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             nodes = newNodes;
         }
         return this;
-    }
+    }*/
 
     public String getPath() {
+        DBObjectRef parent = this.parent;
+        if (parent == null) {
+            return objectName;
+        } else {
+            StringBuilder buffer = new StringBuilder(objectName);
+            while(parent != null) {
+                buffer.insert(0, ".");
+                buffer.insert(0, parent.objectName);
+                parent = parent.parent;
+            }
+            return buffer.toString();
+        }
+
+/*
         if (nodes.length == 1) {
             return nodes[0].getName();
         } else {
@@ -122,15 +196,56 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             }
             return buffer.toString();
         }
+*/
+    }
+
+    public String getTypePath() {
+        DBObjectRef parent = this.parent;
+        if (parent == null) {
+            return objectType.getName();
+        } else {
+            StringBuilder buffer = new StringBuilder(objectType.getName());
+            while(parent != null) {
+                buffer.insert(0, ".");
+                buffer.insert(0, parent.objectType.getName());
+                parent = parent.parent;
+            }
+            return buffer.toString();
+        }
+
+/*
+        if (nodes.length == 1) {
+            return nodes[0].getName();
+        } else {
+            StringBuilder buffer = new StringBuilder();
+            for (Node node : nodes) {
+                if (buffer.length() > 0) buffer.append(".");
+                buffer.append(node.getName());
+            }
+            return buffer.toString();
+        }
+*/
     }
 
 
     public String getConnectionId() {
-        return connectionId;
+        return parent == null ? connectionId : parent.getConnectionId();
     }
 
     public boolean is(@NotNull T object) {
-        if (object.getConnectionHandler().getId().equals(connectionId)) {
+        if (object.getConnectionHandler().getId().equals(getConnectionId())) {
+            DBObjectRef parent = this.parent;
+            DBObject parentObject = object.getParentObject();
+            while (parent != null) {
+                if (parentObject == null || !parent.is(parentObject)) {
+                    return false;
+                }
+                parent = parent.parent;
+                parentObject.getParentObject();
+            }
+            return true;
+
+/*
             int index = nodes.length -1;
             DBObject checkObject = object;
             while (checkObject != null) {
@@ -140,6 +255,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 index--;
             }
             return true;
+*/
         }
         return false;
     }
@@ -174,8 +290,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             }
             ConnectionHandler connectionHandler =
                     project == null ?
-                            ConnectionCache.findConnectionHandler(connectionId) :
-                            ConnectionManager.getInstance(project).getConnectionHandler(connectionId);
+                            ConnectionCache.findConnectionHandler(getConnectionId()) :
+                            ConnectionManager.getInstance(project).getConnectionHandler(getConnectionId());
             if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
                 object = lookup(connectionHandler);
                 if (object != null) {
@@ -190,6 +306,17 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Nullable
     protected T lookup(@NotNull ConnectionHandler connectionHandler) {
         DBObject object = null;
+        if (parent == null) {
+            object = connectionHandler.getObjectBundle().getObject(objectType, objectName);
+        } else {
+            DBObject parentObject = parent.get();
+            if (parentObject != null) {
+                object = parentObject.getChildObject(objectType, objectName, true);
+            }
+        }
+
+/*
+        DBObject object = null;
         for (Node node : nodes) {
             DBObjectType objectType = node.getType();
             String objectName = node.getName();
@@ -200,20 +327,43 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             }
             if (object == null) break;
         }
+*/
         return (T) object;
     }
 
     public ConnectionHandler lookupConnectionHandler() {
-        return ConnectionCache.findConnectionHandler(connectionId);
+        return ConnectionCache.findConnectionHandler(getConnectionId());
     }
 
     @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObjectRef) {
             DBObjectRef that = (DBObjectRef) o;
-            int result = this.connectionId.compareTo(that.getConnectionId());
+            int result = this.getConnectionId().compareTo(that.getConnectionId());
             if (result != 0) return result;
 
+            if (this.parent != null && that.parent != null) {
+                if (this.parent.equals(that.parent)) {
+                    result = this.objectType.compareTo(that.objectType);
+                    if (result != 0) return result;
+
+                    return this.objectName.compareTo(that.objectName);
+                } else {
+                    return this.parent.compareTo(that.parent);
+                }
+            } else if(this.parent == null && that.parent == null) {
+                result = this.objectType.compareTo(that.objectType);
+                if (result != 0) return result;
+
+                return this.objectName.compareTo(that.objectName);
+            } else if (this.parent == null) {
+                return this.objectType.compareTo(that.parent.objectType);
+            } else if (that.parent == null) {
+                return that.objectType.compareTo(this.parent.objectType);
+            }
+
+
+/*
             if (this.nodes.length != that.nodes.length) {
                 return this.nodes.length - that.nodes.length;
             }
@@ -226,8 +376,18 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 result = thisNode.getName().compareTo(thatNode.getName());
                 if (result != 0) return result;
             }
+*/
         }
         return 0;
+    }
+
+    protected DBSchema getSchema() {
+        return (DBSchema) getParentObject(DBObjectType.SCHEMA);
+    }
+
+    public String getSchemaName() {
+        DBObjectRef schemaRef = getParentRef(DBObjectType.SCHEMA);
+        return schemaRef == null ? null : schemaRef.objectName;
     }
 
     @Override
@@ -236,22 +396,19 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (o == null || getClass() != o.getClass()) return false;
 
         DBObjectRef that = (DBObjectRef) o;
-
-        if (!connectionId.equals(that.connectionId)) return false;
-        if (!Arrays.equals(nodes, that.nodes)) return false;
-
-        return true;
+        return this.hashCode() == that.hashCode();
     }
 
     @Override
     public int hashCode() {
-        int result = connectionId.hashCode();
-        result = 31 * result + Arrays.hashCode(nodes);
-        return result;
+        if (hashCode == -1) {
+            hashCode = (getConnectionId() + "#" + getTypePath() + "#" + getPath()).hashCode();
+        }
+        return hashCode;
     }
 
     public String getName() {
-        return nodes[nodes.length-1].getName();
+        return objectName;
     }
 
     public String getFileName() {
@@ -259,7 +416,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public DBObjectType getObjectType() {
-        return nodes[nodes.length-1].getType();
+        return objectType;
     }
 
     public boolean isOfType(DBObjectType objectType) {

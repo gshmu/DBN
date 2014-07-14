@@ -185,8 +185,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
      *********************************************************/
     public void readConfiguration(Element element) throws InvalidDataException {
         method.readConfiguration(element);
-        executionSchema = new DBObjectRef<DBSchema>(method.getConnectionId());
-        executionSchema.append(DBObjectType.SCHEMA, element.getAttributeValue("execution-schema"));
+        String schemaName = element.getAttributeValue("execution-schema");
+        executionSchema = new DBObjectRef<DBSchema>(method.getConnectionId(), DBObjectType.SCHEMA, schemaName);
         usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
         commitAfterExecution = SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true);
         Element argumentsElement = element.getChild("argument-list");

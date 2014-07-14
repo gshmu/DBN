@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object;
 
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public interface DBSchema extends DBObject {
     DBType getType(String name);
     DBPackage getPackage(String name);
     DBProgram getProgram(String name);
-    DBMethod getMethod(String name, String type, int overload);
+    DBMethod getMethod(String name, DBObjectType methodType, int overload);
     DBMethod getMethod(String name, int overload);
     DBProcedure getProcedure(String name, int overload);
     DBFunction getFunction(String name, int overload);
