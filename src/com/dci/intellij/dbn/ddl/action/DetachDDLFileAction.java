@@ -25,9 +25,9 @@ public class DetachDDLFileAction extends AnAction {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-            boolean hasBoundDDLFiles = fileAttachmentManager.hasBoundDDLFiles(object);
+            boolean hasAttachedDDLFiles = fileAttachmentManager.hasAttachedDDLFiles(object);
             Presentation presentation = e.getPresentation();
-            presentation.setEnabled(hasBoundDDLFiles);
+            presentation.setEnabled(hasAttachedDDLFiles);
         }
     }
 }

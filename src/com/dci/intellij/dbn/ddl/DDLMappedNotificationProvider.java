@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.ddl;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.ddl.ui.DDLMappedNotificationPanel;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
@@ -17,10 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class DDLMappedNotificationProvider extends EditorNotifications.Provider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
@@ -68,10 +68,10 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
                 DBSchemaObject schemaObject = editableObjectFile.getObject();
                 if (schemaObject != null) {
                     DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    List<VirtualFile> boundDDLFiles = attachmentManager.getBoundDDLFiles(schemaObject);
-                    if (boundDDLFiles != null) {
+                    List<VirtualFile> attachedDDLFiles = attachmentManager.getAttachedDDLFiles(schemaObject);
+                    if (attachedDDLFiles != null) {
                         EditorNotifications notifications = EditorNotifications.getInstance(project);
-                        for (VirtualFile virtualFile : boundDDLFiles) {
+                        for (VirtualFile virtualFile : attachedDDLFiles) {
                             notifications.updateNotifications(virtualFile);
                         }
                     }

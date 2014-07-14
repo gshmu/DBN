@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.object.lookup;
 
+import java.lang.ref.WeakReference;
+import java.util.StringTokenizer;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -9,12 +15,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.util.StringTokenizer;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T> {
     protected DBObjectRef parent;
@@ -141,6 +141,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             objectTypes.insert(0, parent.objectType.getName());
             objectNames.insert(0, ".");
             objectNames.insert(0, parent.objectName);
+            parent = parent.parent;
         }
 /*
         for (Node node: nodes) {
@@ -357,9 +358,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
                 return this.objectName.compareTo(that.objectName);
             } else if (this.parent == null) {
-                return this.objectType.compareTo(that.parent.objectType);
+                return -1;
             } else if (that.parent == null) {
-                return that.objectType.compareTo(this.parent.objectType);
+                return 1;
             }
 
 
