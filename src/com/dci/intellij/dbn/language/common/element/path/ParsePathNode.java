@@ -6,13 +6,14 @@ import com.intellij.lang.PsiBuilder;
 public class ParsePathNode extends BasicPathNode {
     private int startOffset;
     private int currentOffset;
-    private boolean exitParsing;
     private PsiBuilder.Marker elementMarker;
+    private int depth;
 
     public ParsePathNode(ElementType elementType, ParsePathNode parent, int startOffset, int position) {
         super(elementType, parent, position);
         this.startOffset = startOffset;
         this.currentOffset = startOffset;
+        this.depth = parent == null ? 0 : parent.getDepth() + 1;
     }
 
     public ParsePathNode getParent() {
@@ -63,20 +64,27 @@ public class ParsePathNode extends BasicPathNode {
         return index;
     }
 
-    public void setExitParsing(boolean exitParsing) {
-        this.exitParsing = exitParsing;
-    }
-
-    public boolean isExitParsing() {
-        return exitParsing;
-    }
-
     public PsiBuilder.Marker getElementMarker() {
         return elementMarker;
     }
 
     public void setElementMarker(PsiBuilder.Marker elementMarker) {
         this.elementMarker = elementMarker;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        elementMarker = null;
+    }
+
+    @Override
+    public boolean isSiblingOf(ParsePathNode parentNode) {
+        return depth < parentNode.depth && super.isSiblingOf(parentNode);
     }
 }
 
