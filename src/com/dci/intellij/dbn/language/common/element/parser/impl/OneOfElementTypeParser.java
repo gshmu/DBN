@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -10,8 +12,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfElementType> {
     public OneOfElementTypeParser(OneOfElementType elementType) {
@@ -21,8 +21,7 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         logBegin(builder, optional, depth);
-        ParsePathNode node = createParseNode(parentNode, builder.getCurrentOffset());
-        PsiBuilder.Marker marker = builder.mark(node);
+        ParsePathNode node = stepIn(parentNode, context);
 
         getElementType().sort();
         TokenType tokenType = builder.getTokenType();
@@ -34,7 +33,7 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
                 if (isDummyToken(tokenText) || elementType.getLookupCache().canStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node)) {
                     ParseResult result = elementType.getParser().parse(node, true, depth + 1, context);
                     if (result.isMatch()) {
-                        return stepOut(marker, depth, result.getType(), result.getMatchedTokens(), node, context);
+                        return stepOut(node, context, depth, result.getType(), result.getMatchedTokens());
                     }
                 }
             }
@@ -43,6 +42,6 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
             }
 
         }
-        return stepOut(marker, depth, ParseResultType.NO_MATCH, 0, node, context);
+        return stepOut(node, context, depth, ParseResultType.NO_MATCH, 0);
     }
 }

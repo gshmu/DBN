@@ -1,22 +1,18 @@
 package com.dci.intellij.dbn.language.common.element.path;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.intellij.lang.PsiBuilder;
 
 public class ParsePathNode extends BasicPathNode {
     private int startOffset;
     private int currentOffset;
     private boolean exitParsing;
+    private PsiBuilder.Marker elementMarker;
 
     public ParsePathNode(ElementType elementType, ParsePathNode parent, int startOffset, int position) {
         super(elementType, parent, position);
         this.startOffset = startOffset;
         this.currentOffset = startOffset;
-    }
-
-    public ParsePathNode createVariant(int builderOffset, int position) {
-        ParsePathNode variant = new ParsePathNode(getElementType(), getParent(), builderOffset, position);
-        detach();
-        return variant;
     }
 
     public ParsePathNode getParent() {
@@ -73,6 +69,14 @@ public class ParsePathNode extends BasicPathNode {
 
     public boolean isExitParsing() {
         return exitParsing;
+    }
+
+    public PsiBuilder.Marker getElementMarker() {
+        return elementMarker;
+    }
+
+    public void setElementMarker(PsiBuilder.Marker elementMarker) {
+        this.elementMarker = elementMarker;
     }
 }
 

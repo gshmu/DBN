@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BasicElementType;
@@ -14,7 +16,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
-import org.jetbrains.annotations.NotNull;
 
 public class IterationElementTypeParser extends AbstractElementTypeParser<IterationElementType> {
     public IterationElementTypeParser(IterationElementType elementType) {
@@ -24,9 +25,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         logBegin(builder, optional, depth);
-
-        ParsePathNode node = createParseNode(parentNode, builder.getCurrentOffset());
-        PsiBuilder.Marker marker = builder.mark(node);
+        ParsePathNode node = stepIn(parentNode, context);
 
         IterationElementType elementType = getElementType();
         ElementType iteratedElementType = elementType.getIteratedElementType();
@@ -43,7 +42,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
             // check first iteration element
             if (result.isMatch()) {
                 if (node.isRecursive(node.getStartOffset())) {
-                    return stepOut(marker, depth, ParseResultType.FULL_MATCH, matchedTokens, node, context);
+                    return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
                 }
                 while (true) {
                     elementCounter++;
@@ -61,7 +60,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                             ParseResultType resultType = matchesElementsCount(elementCounter) ?
                                     ParseResultType.FULL_MATCH :
                                     ParseResultType.PARTIAL_MATCH;
-                            return stepOut(marker, depth, resultType, matchedTokens, node, context);
+                            return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
                             node.setCurrentOffset(builder.getCurrentOffset());
                         }
@@ -78,11 +77,11 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                             ParseResultType resultType = matchesElementsCount(elementCounter) ?
                                     ParseResultType.FULL_MATCH :
                                     ParseResultType.PARTIAL_MATCH;
-                            return stepOut(marker, depth, resultType, matchedTokens, node, context);
+                            return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
                             boolean exit = advanceLexerToNextLandmark(parentNode, false, context);
                             if (exit){
-                                return stepOut(marker, depth, ParseResultType.PARTIAL_MATCH, matchedTokens, node, context);
+                                return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
                             }
                         }
                     } else {
@@ -94,7 +93,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
         if (!optional) {
             //updateBuilderError(builder, this);
         }
-        return stepOut(marker, depth, ParseResultType.NO_MATCH, matchedTokens, node, context);
+        return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
     }
 
     private boolean advanceLexerToNextLandmark(ParsePathNode parentNode, boolean lenient, ParserContext context) throws ParseException {

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -17,13 +22,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
-import com.intellij.lang.PsiBuilder;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class QualifiedIdentifierElementTypeParser extends AbstractElementTypeParser<QualifiedIdentifierElementType> {
     public QualifiedIdentifierElementTypeParser(QualifiedIdentifierElementType elementType) {
@@ -33,11 +32,9 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         logBegin(builder, optional, depth);
-        ParsePathNode node = createParseNode(parentNode, builder.getCurrentOffset());
+        ParsePathNode node = stepIn(parentNode, context);
 
         TokenElementType separatorToken = getElementType().getSeparatorToken();
-
-        PsiBuilder.Marker marker = builder.mark(node);
         int matchedTokens = 0;
 
         QualifiedIdentifierVariant variant = getMostProbableParseVariant(builder, node);
@@ -60,14 +57,14 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
                 Set<TokenType> expected = new THashSet<TokenType>();
                 expected.add(separatorToken.getTokenType());
                 ParseBuilderErrorHandler.updateBuilderError(expected, context);
-                return stepOut(marker, depth, ParseResultType.PARTIAL_MATCH, matchedTokens, node, context);
+                return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
             } else {
-                return stepOut(marker, depth, ParseResultType.FULL_MATCH, matchedTokens, node, context);
+                return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
             }
 
 
         } else {
-            return stepOut(marker, depth, ParseResultType.NO_MATCH, matchedTokens, node, context);
+            return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
         }
     }
 

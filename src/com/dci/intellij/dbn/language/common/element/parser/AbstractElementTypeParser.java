@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element.parser;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
@@ -22,10 +23,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     public AbstractElementTypeParser(T elementType) {
         this.elementType = elementType;
         errorHandler = new ParseBuilderErrorHandler(elementType);
-    }
-
-    public ParsePathNode createParseNode(ParsePathNode parentParseNode, int builderOffset) {
-        return new ParsePathNode(elementType, parentParseNode, builderOffset, 0);
     }
 
     protected boolean isDummyToken(String tokenText){
@@ -56,16 +53,32 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
         return errorHandler;
     }
 
-    protected ParseResult stepOut(PsiBuilder.Marker marker, int depth, ParseResultType resultType, int matchedTokens, ParsePathNode node, ParserContext context) {
+    public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
+        ParserBuilder builder = context.getBuilder();
+        ParsePathNode node = new ParsePathNode(elementType, parentParseNode, builder.getCurrentOffset(), 0);
+        PsiBuilder.Marker marker = builder.mark(node);
+        node.setElementMarker(marker);
+        return node;
+    }
+
+    protected ParseResult stepOut(ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
+        return stepOut(null, node, context, depth, resultType, matchedTokens);
+    }
+
+    protected ParseResult stepOut(PsiBuilder.Marker marker, ParsePathNode node, ParserContext context, int depth, ParseResultType resultType, int matchedTokens) {
         try {
+            marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
                 ParseBuilderErrorHandler.updateBuilderError(elementType.getLookupCache().getNextPossibleTokens(), context);
             }
             ParserBuilder builder = context.getBuilder();
             if (resultType == ParseResultType.NO_MATCH) {
                 builder.markerRollbackTo(marker, node);
-            } else
-                builder.markerDone(marker, elementType, node);
+            } else {
+                if (getElementType() instanceof BlockElementType)
+                    builder.markerDrop(marker); else
+                    builder.markerDone(marker, getElementType(), node);
+            }
 
 
             logEnd(resultType, depth);
