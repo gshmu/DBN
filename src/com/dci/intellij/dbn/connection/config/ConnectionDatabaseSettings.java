@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.UUID;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -7,10 +11,7 @@ import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
+import com.intellij.util.Base64Converter;
 
 public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<GenericDatabaseSettingsForm>{
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
@@ -157,6 +158,11 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
         databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
         user = element.getAttributeValue("user");
         password = element.getAttributeValue("password");
+        try {
+            password = Base64Converter.decode(password);
+        } catch (Exception e) {
+            // password may not be encoded yet
+        }
 
         updateHashCode();
     }
@@ -169,7 +175,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
         element.setAttribute("description",    nvl(description));
         element.setAttribute("database-type",  nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
         element.setAttribute("user",           nvl(user));
-        element.setAttribute("password",       nvl(password));
+        element.setAttribute("password",       nvl(Base64Converter.encode(password)));
     }
 
 
