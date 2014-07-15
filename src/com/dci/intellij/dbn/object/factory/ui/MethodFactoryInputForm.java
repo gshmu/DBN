@@ -1,6 +1,11 @@
 package com.dci.intellij.dbn.object.factory.ui;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.*;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.ui.DataTypeEditor;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -10,10 +15,9 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
 
 public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<MethodFactoryInput> {
     private JPanel mainPanel;
@@ -24,13 +28,15 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     private JPanel argumentListComponent;
     private JLabel returnArgumentIconLabel;
     JPanel returnArgumentDataTypeEditor;
+    private JPanel headerPanel;
+    private JLabel nameLabel;
 
     private ArgumentFactoryInputListPanel argumentListPanel;
-    private DBSchema schema;
+    private DBObjectRef<DBSchema> schemaRef;
 
     public MethodFactoryInputForm(DBSchema schema, DBObjectType objectType, int index) {
         super(schema.getConnectionHandler(), objectType, index);
-        this.schema = schema;
+        this.schemaRef = DBObjectRef.from(schema);
         connectionLabel.setText(getConnectionHandler().getName());
         connectionLabel.setIcon(getConnectionHandler().getIcon());
 
@@ -44,12 +50,43 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
 
         returnArgumentIconLabel.setText(null);
         returnArgumentIconLabel.setIcon(Icons.DBO_ARGUMENT_OUT);
+
+        nameLabel.setText(
+                objectType == DBObjectType.FUNCTION ? "Function Name" :
+                objectType == DBObjectType.PROCEDURE ? "Procedure Name" : "Name");
+
+        final DBNHeaderForm headerForm = createHeaderForm(schema, objectType);
+        nameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(DocumentEvent e) {
+                headerForm.setTitle(getSchema().getName() + "." + nameTextField.getText().toUpperCase());
+            }
+        });
+    }
+
+    private DBNHeaderForm createHeaderForm(DBSchema schema, DBObjectType objectType) {
+        String headerTitle = schema.getName() + ".[unnamed]";
+        Icon headerIcon = objectType.getIcon();
+        Color headerBackground = UIUtil.getPanelBackground();
+        if (getEnvironmentSettings(schema.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
+            headerBackground = schema.getEnvironmentType().getColor();
+        }
+        DBNHeaderForm headerForm = new DBNHeaderForm(
+                headerTitle,
+                headerIcon,
+                headerBackground);
+        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
+        return headerForm;
     }
 
     public MethodFactoryInput createFactoryInput(ObjectFactoryInput parent) {
-        MethodFactoryInput methodFactoryInput = new MethodFactoryInput(schema, nameTextField.getText(), getObjectType(), getIndex());
+        MethodFactoryInput methodFactoryInput = new MethodFactoryInput(getSchema(), nameTextField.getText(), getObjectType(), getIndex());
         methodFactoryInput.setArguments(argumentListPanel.createFactoryInputs(methodFactoryInput));
         return methodFactoryInput;
+    }
+
+    DBSchema getSchema() {
+        return DBObjectRef.get(schemaRef);
     }
 
     public abstract boolean hasReturnArgument();

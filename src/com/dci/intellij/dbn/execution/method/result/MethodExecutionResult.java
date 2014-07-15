@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.execution.method.result;
 
+import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -14,14 +23,6 @@ import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MethodExecutionResult implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
@@ -159,7 +160,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
 
         resultPanel = null;
         executionInput = null;
-        cursorModels.clear();
+        CollectionUtil.clearMap(cursorModels);
         argumentValues.clear();
     }
 

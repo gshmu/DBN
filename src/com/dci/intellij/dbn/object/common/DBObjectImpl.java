@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -53,17 +64,6 @@ import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBObject, ToolTipProvider {
     private DBContentType contentType = DBContentType.NONE;
@@ -381,6 +381,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
             return objectList == null ? DBObject.EMPTY_LIST : objectList.getObjects();
         }
+    }
+
+    @Override
+    public DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType) {
+        return childObjects == null ? null : childObjects.getObjectList(objectType);
     }
 
     public List<DBObjectNavigationList> getNavigationLists() {

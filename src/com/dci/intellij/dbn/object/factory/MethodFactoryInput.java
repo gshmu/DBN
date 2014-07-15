@@ -1,26 +1,27 @@
 package com.dci.intellij.dbn.object.factory;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+
 public class MethodFactoryInput extends ObjectFactoryInput{
     private List<ArgumentFactoryInput> arguments = new ArrayList<ArgumentFactoryInput>();
     private ArgumentFactoryInput returnArgument;
-    private DBSchema schema;
+    private DBObjectRef<DBSchema> schemaRef;
 
     public MethodFactoryInput(DBSchema schema, String objectName, DBObjectType methodType, int index) {
         super(objectName, methodType, null, index);
-        this.schema = schema;
+        this.schemaRef = DBObjectRef.from(schema);
     }
 
     public DBSchema getSchema() {
-        return schema;
+        return DBObjectRef.get(schemaRef);
     }
 
     public boolean isFunction() {

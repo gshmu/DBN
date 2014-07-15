@@ -1,21 +1,8 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -29,6 +16,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private JTextField textField;
@@ -44,6 +39,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         this.project = project;
         setMaximumSize(new Dimension(-1, 24));
         setPreferredSize(new Dimension(-1, 24));
+        setMinimumSize(new Dimension(180, 24));
 
         textField = new JTextField();
         textField.setMargin(new Insets(0, 1, 0, 1));
@@ -56,7 +52,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
 
         Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
         String shortcutText = KeymapUtil.getShortcutsText(shortcuts);
-        button.setToolTipText("Open editor (" + shortcutText +")");
+        button.setToolTipText("Open editor (" + shortcutText + ")");
         add(button, BorderLayout.EAST);
         textField.setPreferredSize(new Dimension(150, 24));
         textField.setMaximumSize(new Dimension(-1, 24));
