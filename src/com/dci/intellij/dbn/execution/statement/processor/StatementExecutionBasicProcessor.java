@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,11 +27,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiFile;
 import gnu.trove.THashSet;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Set;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -59,7 +59,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public boolean matches(ExecutablePsiElement executablePsiElement, boolean lenient) {
-        if (executablePsiElement.getFile().equals(file)) {
+        if (this.executablePsiElement != null && executablePsiElement.getFile().equals(file)) {
             StatementExecutionBasicResult executionResult = getExecutionResult();
             if (executionResult == null) {
                 return lenient ?
