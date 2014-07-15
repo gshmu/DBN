@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
@@ -12,16 +18,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class DatasetEditorSortingForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -90,6 +86,17 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         @Override
         public void valueSelected(DBColumn column) {
             addSortingColumn(column);
+            resetValues();
+        }
+
+        @Override
+        public boolean isVisible(DBColumn value) {
+            for (DatasetSortingColumnForm sortingColumnForm : sortingInstructionForms) {
+                if (sortingColumnForm.getSortingInstruction().getColumnName().equalsIgnoreCase(value.getName())) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
