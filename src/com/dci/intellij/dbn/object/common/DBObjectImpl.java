@@ -668,7 +668,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObject) {
             DBObject object = (DBObject) o;
-            return getRef().compareTo(object.getRef());
+            return objectRef.compareTo(object.getRef());
         }
         return -1;
     }
