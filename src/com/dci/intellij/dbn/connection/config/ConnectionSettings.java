@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -7,8 +10,6 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSettings extends CompositeConfiguration<ConnectionSettingsForm> {
     private ConnectionDatabaseSettings databaseSettings;
@@ -75,14 +76,19 @@ public class ConnectionSettings extends CompositeConfiguration<ConnectionSetting
      *                     Configuration                     *
      *********************************************************/
     public void readConfiguration(Element element) throws InvalidDataException {
+        if (element.getChild(databaseSettings.getConfigElementName()) != null) {
+            readConfiguration(element, databaseSettings);
+        } else {
+            // TODO: decommission (support old configuration)
+            databaseSettings.readConfiguration(element);
+        }
         readConfiguration(element, detailSettings);
         readConfiguration(element, filterSettings);
-        databaseSettings.readConfiguration(element);
     }
 
     public void writeConfiguration(Element element) throws WriteExternalException {
+        writeConfiguration(element, databaseSettings);
         writeConfiguration(element, detailSettings);
         writeConfiguration(element, filterSettings);
-        databaseSettings.writeConfiguration(element);
     }
 }

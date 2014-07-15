@@ -5,7 +5,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -20,7 +19,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
     protected String id;
     protected String name;
     protected String description;
-    protected DatabaseType databaseType;
+    protected DatabaseType databaseType = DatabaseType.UNKNOWN;
     protected String user;
     protected String password;
     protected int hashCode;
@@ -133,6 +132,11 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
                "User:\t"      + user;
     }
 
+    @Override
+    public String getConfigElementName() {
+        return "database";
+    }
+
     public abstract String getDriverLibrary();
 
     public abstract void updateHashCode();
@@ -150,31 +154,43 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
     *                   JDOMExternalizable                 *
     *********************************************************/
     public void readConfiguration(Element element) {
-        active = SettingsUtil.getBooleanAttribute(element, "active", active);
-        osAuthentication = SettingsUtil.getBooleanAttribute(element, "os-authentication", osAuthentication);
-        id = element.getAttributeValue("id");
-        name = element.getAttributeValue("name");
-        description = element.getAttributeValue("description");
-        databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
-        user = element.getAttributeValue("user");
-        password = element.getAttributeValue("password");
+        if (element.getName().equals(getConfigElementName())) {
+            id               = getString(element, "id", id);
+            name             = getString(element, "name", name);
+            description      = getString(element, "description", description);
+            databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
+            user             = getString(element, "user", user);
+            password         = getString(element, "password", password);
+            active           = getBoolean(element, "active", active);
+            osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
+        } else{
+            // TODO: decommission (support old configuration)
+            active = getBooleanAttribute(element, "active", active);
+            osAuthentication = getBooleanAttribute(element, "os-authentication", osAuthentication);
+            id = element.getAttributeValue("id");
+            name = element.getAttributeValue("name");
+            description = element.getAttributeValue("description");
+            databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
+            user = element.getAttributeValue("user");
+            password = element.getAttributeValue("password");
+        }
+
         try {
             password = Base64Converter.decode(nvl(password));
         } catch (Exception e) {
             // password may not be encoded yet
         }
-
         updateHashCode();
     }
 
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBooleanAttribute(element, "active", active);
-        SettingsUtil.setBooleanAttribute(element, "os-authentication", osAuthentication);
-        element.setAttribute("id",             id);
-        element.setAttribute("name",           nvl(name));
-        element.setAttribute("description",    nvl(description));
-        element.setAttribute("database-type",  nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
-        element.setAttribute("user",           nvl(user));
-        element.setAttribute("password", Base64Converter.encode(nvl(password)));
+        setString(element, "id", id);
+        setString(element, "name", nvl(name));
+        setString(element, "description", nvl(description));
+        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
+        setString(element, "user", nvl(user));
+        setString(element, "password", Base64Converter.encode(nvl(password)));
+        setBoolean(element, "active", active);
+        setBoolean(element, "os-authentication", osAuthentication);
     }
 }

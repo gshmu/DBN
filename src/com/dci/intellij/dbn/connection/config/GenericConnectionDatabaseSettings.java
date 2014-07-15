@@ -51,7 +51,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     }
 
     public GenericConnectionDatabaseSettings clone() {
-        Element connectionElement = new Element("Connection");
+        Element connectionElement = new Element(getConfigElementName());
         writeConfiguration(connectionElement);
         GenericConnectionDatabaseSettings clone = new GenericConnectionDatabaseSettings(connectionBundle);
         clone.readConfiguration(connectionElement);
@@ -71,17 +71,24 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     *                   JDOMExternalizable                 *
     *********************************************************/
     public void readConfiguration(Element element) {
-        driverLibrary = convertToAbsolutePath(element.getAttributeValue("driver-library"));
-        driver = element.getAttributeValue("driver");
-        databaseUrl = element.getAttributeValue("url");
         super.readConfiguration(element);
+        if (element.getName().equals(getConfigElementName())) {
+            driverLibrary = convertToAbsolutePath(getString(element, "driver-library", driverLibrary));
+            driver        = getString(element, "driver", driver);
+            databaseUrl   = getString(element, "url", databaseUrl);
+        } else {
+            // TODO: decommission (support old configuration)
+            driverLibrary = convertToAbsolutePath(element.getAttributeValue("driver-library"));
+            driver = element.getAttributeValue("driver");
+            databaseUrl = element.getAttributeValue("url");
+        }
     }
 
     public void writeConfiguration(Element element) {
-        element.setAttribute("driver-library", nvl(convertToRelativePath(driverLibrary)));
-        element.setAttribute("driver",         nvl(driver));
-        element.setAttribute("url",            nvl(databaseUrl));
         super.writeConfiguration(element);
+        setString(element, "driver-library", nvl(convertToRelativePath(driverLibrary)));
+        setString(element, "driver", nvl(driver));
+        setString(element, "url", nvl(databaseUrl));
     }
 
     private String convertToRelativePath(String path) {
