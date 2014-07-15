@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
-public class ConfigurationUtil {
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+
+public class ConfigurationUtil extends SettingsUtil{
 
     public static void writeConfiguration(Element element, Configuration configuration) throws WriteExternalException {
         String elementName = configuration.getConfigElementName();
