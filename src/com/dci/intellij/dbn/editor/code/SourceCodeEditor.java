@@ -57,7 +57,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile> implem
 
     /********************************************************
      *                ObjectFactoryListener                 *
-     *****************33*************************************/
+     ********************************************************/
     public void objectCreated(DBSchemaObject object) {
     }
 
