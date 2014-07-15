@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -8,7 +9,6 @@ import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryListener;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.SourceCodeFile;
@@ -34,7 +34,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile> implem
                         /*"You are not allowed to change the name of the " + object.getTypeName()*/);
             }
         }
-        DatabaseObjectFactory.getInstance(project).addFactoryListener(this);
+        EventManager.subscribe(project, ObjectFactoryListener.TOPIC, this);
     }
 
     public DBSchemaObject getObject() {
@@ -71,5 +71,11 @@ public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile> implem
             }.start();
         }
 
+    }
+
+    @Override
+    public void dispose() {
+        EventManager.unsubscribe(this);
+        super.dispose();
     }
 }

@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -27,10 +27,8 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import gnu.trove.THashSet;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
-    private Set<ObjectFactoryListener> factoryListeners = new THashSet<ObjectFactoryListener>();
     private DatabaseObjectFactory(Project project) {
         super(project);
     }
@@ -39,21 +37,13 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         return project.getComponent(DatabaseObjectFactory.class);
     }
 
-    public void addFactoryListener(ObjectFactoryListener factoryListener) {
-        factoryListeners.add(factoryListener);
-    }
-
-    public void removeFactoryListener(ObjectFactoryListener factoryListener) {
-        factoryListeners.remove(factoryListener);
-    }
-
     private void notifyFactoryEvent(ObjectFactoryEvent event) {
-        for (ObjectFactoryListener factoryListener : factoryListeners) {
-            if (event.getEventType() == ObjectFactoryEvent.EVENT_TYPE_CREATE) {
-                factoryListener.objectCreated(event.getObject());
-            } else if (event.getEventType() == ObjectFactoryEvent.EVENT_TYPE_DROP) {
-                factoryListener.objectDropped(event.getObject());
-            }
+        DBSchemaObject object = event.getObject();
+        int eventType = event.getEventType();
+        if (eventType == ObjectFactoryEvent.EVENT_TYPE_CREATE) {
+            EventManager.notify(getProject(), ObjectFactoryListener.TOPIC).objectCreated(object);
+        } else if (eventType == ObjectFactoryEvent.EVENT_TYPE_DROP) {
+            EventManager.notify(getProject(), ObjectFactoryListener.TOPIC).objectDropped(object);
         }
     }
 
