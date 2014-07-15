@@ -6,14 +6,13 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.util.containers.Stack;
 
 public class NestedRangeMonitor {
     private int stackSize = 0;
-    private Stack<NestedRangeStartMarker> rangesStack = new Stack<NestedRangeStartMarker>();
+    private Stack<NestedRangeMarker> markersStack = new Stack<NestedRangeMarker>();
     private DBLanguageDialect languageDialect;
     private PsiBuilder builder;
 
@@ -35,10 +34,10 @@ public class NestedRangeMonitor {
      */
     public void rollback() {
         int builderOffset = builder.getCurrentOffset();
-        while (rangesStack.size() > 0) {
-            NestedRangeStartMarker lastMarker = rangesStack.peek();
+        while (markersStack.size() > 0) {
+            NestedRangeMarker lastMarker = markersStack.peek();
             if (lastMarker.getOffset() >= builderOffset) {
-                rangesStack.pop();
+                markersStack.pop();
                 lastMarker.dropMarker();
                 if (stackSize > 0) stackSize--;
             } else {
@@ -51,13 +50,14 @@ public class NestedRangeMonitor {
         TokenType tokenType = (TokenType) builder.getTokenType();
         if (tokenType == leftParenthesis) {
             stackSize++;
-            NestedRangeStartMarker marker = new NestedRangeStartMarker(node, builder, mark);
-            rangesStack.push(marker);
+            NestedRangeMarker marker = new NestedRangeMarker(node, builder, mark);
+            markersStack.push(marker);
         } else if (tokenType == rightParenthesis) {
             if (stackSize > 0) stackSize--;
-            if (rangesStack.size() > 0) {
-                NestedRangeStartMarker marker = rangesStack.peek();
-                ParsePathNode markerNode = marker.getParentNode();
+            if (markersStack.size() > 0) {
+/*
+                NestedRangeMarker marker = markersStack.peek();
+                ParsePathNode markerNode = marker.getParseNode();
                 if (markerNode == node) {
 
                 } else if (markerNode.isSiblingOf(node)) {
@@ -69,6 +69,7 @@ public class NestedRangeMonitor {
 
                     }
                 }
+*/
                 cleanup(false);
             }
         }
@@ -76,8 +77,8 @@ public class NestedRangeMonitor {
 
     public void cleanup(boolean force) {
         if (force) stackSize = 0;
-        while(rangesStack.size() > stackSize) {
-            NestedRangeStartMarker lastMarker = rangesStack.pop();
+        while(markersStack.size() > stackSize) {
+            NestedRangeMarker lastMarker = markersStack.pop();
             lastMarker.dropMarker();
         }
     }
