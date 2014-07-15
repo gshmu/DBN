@@ -159,7 +159,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
         user = element.getAttributeValue("user");
         password = element.getAttributeValue("password");
         try {
-            password = Base64Converter.decode(password);
+            password = Base64Converter.decode(nvl(password));
         } catch (Exception e) {
             // password may not be encoded yet
         }
@@ -175,9 +175,6 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
         element.setAttribute("description",    nvl(description));
         element.setAttribute("database-type",  nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
         element.setAttribute("user",           nvl(user));
-        element.setAttribute("password",       nvl(Base64Converter.encode(password)));
+        element.setAttribute("password", Base64Converter.encode(nvl(password)));
     }
-
-
-
 }

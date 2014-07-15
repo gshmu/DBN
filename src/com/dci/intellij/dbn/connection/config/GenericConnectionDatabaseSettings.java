@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.io.File;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-
-import java.io.File;
 
 public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSettings {
     protected String driverLibrary;
@@ -47,7 +47,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     }
 
     public void updateHashCode() {
-        hashCode = (name + driver + driverLibrary + databaseUrl + user + osAuthentication).hashCode();
+        hashCode = (name + driver + driverLibrary + databaseUrl + user + password + osAuthentication).hashCode();
     }
 
     public GenericConnectionDatabaseSettings clone() {
