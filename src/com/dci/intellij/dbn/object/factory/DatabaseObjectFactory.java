@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.factory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -20,14 +28,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
     private Set<ObjectFactoryListener> factoryListeners = new THashSet<ObjectFactoryListener>();
@@ -89,9 +89,10 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 ConnectionHandler connectionHandler = schema.getConnectionHandler();
                 Connection connection = connectionHandler.getStandaloneConnection(schema);
                 connectionHandler.getInterfaceProvider().getDDLInterface().createMethod(methodFactoryInput, connection);
-                DBObjectList<DBMethod> methods = (DBObjectList<DBMethod>) schema.getChildObjects(methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE);
-                methods.reload();
-                DBMethod method = methods.getObject(factoryInput.getObjectName());
+                DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
+                schema.getChildObjectList(objectType).reload();
+                DBMethod method = (DBMethod) schema.getChildObject(objectType, factoryInput.getObjectName(), false);
+                method.getChildObjectList(DBObjectType.ARGUMENT).reload();
                 DatabaseFileSystem.getInstance().openEditor(method);
                 notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
             } catch (SQLException e) {

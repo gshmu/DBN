@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.object.common;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
@@ -30,12 +36,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private DBObjectType objectType;
@@ -92,7 +92,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getChildObjectList(objectType).getObject(name);
     }
 
-    private DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
+    public DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
         DBObjectListContainer childObjects = initChildObjects();
         DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType);
         if (objectList != null) {
