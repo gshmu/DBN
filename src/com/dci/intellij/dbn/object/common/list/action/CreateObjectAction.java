@@ -11,7 +11,7 @@ public class CreateObjectAction extends AnAction {
     private DBObjectList objectList;
 
     public CreateObjectAction(DBObjectList objectList) {
-        super("New " + objectList.getObjectType().getName());
+        super("New " + objectList.getObjectType().getName() + "...");
         this.objectList = objectList;
     }
 
