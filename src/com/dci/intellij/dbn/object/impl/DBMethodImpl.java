@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -22,12 +28,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
@@ -187,7 +187,8 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
         public boolean match(DBArgument argument, DynamicContent dynamicContent) {
             DBMethod method = (DBMethod) dynamicContent.getParent();
-            return argument.getMethod().equals(method) && argument.getOverload() == method.getOverload();
+            DBMethod argumentMethod = argument.getMethod();
+            return argumentMethod != null && argumentMethod.equals(method) && argument.getOverload() == method.getOverload();
         }
     };
 }
