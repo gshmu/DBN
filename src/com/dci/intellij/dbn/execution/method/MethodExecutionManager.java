@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -11,6 +19,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -19,20 +28,10 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class MethodExecutionManager extends AbstractProjectComponent implements JDOMExternalizable {
-    private List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
-    MethodBrowserSettings browserSettings = new MethodBrowserSettings();
-    private boolean groupHistoryEntries;
+    private MethodBrowserSettings browserSettings = new MethodBrowserSettings();
+    private MethodExecutionHistory executionHistory = new MethodExecutionHistory();
 
     private MethodExecutionManager(Project project) {
         super(project);
@@ -46,45 +45,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return browserSettings;
     }
 
-    public boolean isGroupHistoryEntries() {
-        return groupHistoryEntries;
-    }
-
-    public void setGroupHistoryEntries(boolean groupHistoryEntries) {
-        this.groupHistoryEntries = groupHistoryEntries;
-    }
-
-    public List<MethodExecutionInput> getExecutionInputs() {
-        return executionInputs;
+    public MethodExecutionHistory getExecutionHistory() {
+        return executionHistory;
     }
 
     public MethodExecutionInput getExecutionInput(DBMethod method) {
-        for (MethodExecutionInput executionInput : executionInputs) {
-            if (executionInput.getMethodRef().is(method)) {
-                return executionInput;
-            }
-        }
-        MethodExecutionInput executionInput = new MethodExecutionInput(method);
-        executionInputs.add(executionInput);
-        Collections.sort(executionInputs);
-        return executionInput;
+        return executionHistory.getExecutionInput(method);
     }
 
     public MethodExecutionInput getExecutionInput(DBMethodRef methodRef) {
-        for (MethodExecutionInput executionInput : executionInputs) {
-            if (executionInput.getMethodRef().equals(methodRef)) {
-                return executionInput;
-            }
-        }
-
-        DBMethod method = methodRef.get();
-        if (method != null) {
-            MethodExecutionInput executionInput = new MethodExecutionInput(method);
-            executionInputs.add(executionInput);
-            return executionInput;
-        }
-
-        return null;
+        return executionHistory.getExecutionInput(methodRef);
     }
 
     public boolean promptExecutionDialog(DBMethod method, boolean debug) {
@@ -118,19 +88,19 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
 
     public MethodExecutionHistoryDialog showExecutionHistoryDialog(boolean editable) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionInputs, null, editable);
+        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, null, editable);
         executionHistoryDialog.show();
         return executionHistoryDialog;
     }
 
     public MethodExecutionHistoryDialog showExecutionHistoryDialog(MethodExecutionInput selectedExecutionInput, boolean editable) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionInputs, selectedExecutionInput, editable);
+        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, editable);
         executionHistoryDialog.show();
         return executionHistoryDialog;
     }
 
     public MethodExecutionInput selectHistoryMethodExecutionInput(MethodExecutionInput selectedExecutionInput) {
-        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionInputs, selectedExecutionInput, false);
+        MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(getProject(), executionHistory, selectedExecutionInput, false);
         executionHistoryDialog.show();
         if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             return executionHistoryDialog.getSelectedExecutionInput();   
@@ -144,6 +114,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public void execute(final MethodExecutionInput executionInput) {
+        executionHistory.setSelection(executionInput.getMethodRef());
         executionInput.setExecuting(true);
         final DBMethod method = executionInput.getMethod();
         if (method == null) {
@@ -229,9 +200,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     @Override
     public void disposeComponent() {
-        for (MethodExecutionInput executionInput : executionInputs) {
-            executionInput.dispose();
-        }
+        executionHistory.dispose();
         super.disposeComponent();
     }
 
@@ -239,43 +208,53 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
      *                   JDOMExternalizable                  *
      *********************************************************/
     public void readExternal(Element element) throws InvalidDataException {
-        groupHistoryEntries = SettingsUtil.getBoolean(element, "group-history-entries", true);
-
         Element browserSettingsElement = element.getChild("method-browser");
-        if (browserSettingsElement != null)
+        if (browserSettingsElement != null) {
             browserSettings.readConfiguration(browserSettingsElement);
-
-        Element congfigsElement = element.getChild("execution-inputs");
-        for (Object object : congfigsElement.getChildren()) {
-            Element configElement = (Element) object;
-            MethodExecutionInput executionInput = new MethodExecutionInput();
-            executionInput.readConfiguration(configElement);
-            // backward compatibility
-            if (executionInput.getMethodRef().getSchemaName() != null) {
-                executionInputs.add(executionInput);
-            }
         }
-        Collections.sort(executionInputs);
+
+        Element executionHistoryElement = element.getChild("execution-history");
+        if (executionHistoryElement == null) {
+
+            // TODO backward compatibility (to remove)
+            executionHistory.setGroupEntries(SettingsUtil.getBoolean(element, "group-history-entries", true));
+
+            List<MethodExecutionInput> executionInputs = executionHistory.getExecutionInputs();
+            Element executionInputsElement = element.getChild("execution-inputs");
+            for (Object object : executionInputsElement.getChildren()) {
+                Element configElement = (Element) object;
+                MethodExecutionInput executionInput = new MethodExecutionInput();
+                executionInput.readConfiguration(configElement);
+                if (executionInput.getMethodRef().getSchemaName() != null) {
+                    executionInputs.add(executionInput);
+                }
+            }
+            Collections.sort(executionInputs);
+
+            Element selectionElement = element.getChild("history-selection");
+            if (selectionElement != null) {
+                DBMethodRef selection = new DBMethodRef();
+                selection.readConfiguration(selectionElement);
+                executionHistory.setSelection(selection);
+            }
+        } else {
+            executionHistory.readConfiguration(executionHistoryElement);
+        }
     }
 
     public void writeExternal(Element element) throws WriteExternalException {
-        SettingsUtil.setBoolean(element, "group-history-entries", groupHistoryEntries);
-
         Element browserSettingsElement = new Element("method-browser");
-        browserSettings.writeConfiguration(browserSettingsElement);
         element.addContent(browserSettingsElement);
+        browserSettings.writeConfiguration(browserSettingsElement);
 
-        Element configsElement = new Element("execution-inputs");
-        element.addContent(configsElement);
-        for (MethodExecutionInput executionInput : this.executionInputs) {
-            Element configElement = new Element("execution-input");
-            executionInput.writeConfiguration(configElement);
-            configsElement.addContent(configElement);
-        }
+
+        Element executionHistoryElement = new Element("execution-history");
+        element.addContent(executionHistoryElement);
+        executionHistory.writeConfiguration(executionHistoryElement);
     }
 
     public void setExecutionInputs(List<MethodExecutionInput> executionInputs) {
-        this.executionInputs = executionInputs;
+        executionHistory.setExecutionInputs(executionInputs);
     }
 
 

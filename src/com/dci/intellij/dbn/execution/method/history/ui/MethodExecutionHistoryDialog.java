@@ -1,19 +1,17 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import java.util.List;
 
 public class MethodExecutionHistoryDialog extends DBNDialog implements Disposable {
     private MethodExecutionHistoryForm mainComponent;
@@ -24,18 +22,27 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
     private boolean select;
     private MethodExecutionInput selectedExecutionInput;
 
-    public MethodExecutionHistoryDialog(Project project, List<MethodExecutionInput> executionInputs, MethodExecutionInput selectedExecutionInput, boolean select) {
+    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, MethodExecutionInput selectedExecutionInput, boolean select) {
         super(project, "Method Execution History", true);
         this.select = select;
         setModal(true);
         setResizable(true);
-        mainComponent = new MethodExecutionHistoryForm(this, executionInputs);
+        mainComponent = new MethodExecutionHistoryForm(this, executionHistory);
+        if (selectedExecutionInput == null) {
+            selectedExecutionInput = executionHistory.getLastSelection();
+        }
+
+        if (selectedExecutionInput != null) {
+            showMethodExecutionPanel(selectedExecutionInput);
+            setSelectedExecutionInput(selectedExecutionInput);
+            mainComponent.setSelectedInput(selectedExecutionInput);
+        }
         init();
-        mainComponent.setSelectedInput(selectedExecutionInput);
+        setMainButtonEnabled(selectedExecutionInput != null);
     }
 
     protected String getDimensionServiceKey() {
-        return "DBNavigator.MethodExecutionHistory";
+        return null;//"DBNavigator.MethodExecutionHistory";
     }
 
     @Nullable

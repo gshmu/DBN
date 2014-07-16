@@ -26,7 +26,7 @@ public class ShowGroupedTreeAction extends ToggleAction {
         getTemplatePresentation().setText(state ? "Ungroup" : "Group by Program");
         tree.showGrouped(state);
         Project project = ActionUtil.getProject(e);
-        MethodExecutionManager.getInstance(project).setGroupHistoryEntries(state);
+        MethodExecutionManager.getInstance(project).getExecutionHistory().setGroupEntries(state);
 
     }
 }
