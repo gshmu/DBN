@@ -309,9 +309,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            if (dependencyAdapter.isSubContent())
-                elements.clear(); else
-                DisposerUtil.dispose(elements);
+            if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
+                if (dependencyAdapter.isSubContent())
+                    elements.clear(); else
+                    DisposerUtil.dispose(elements);
+            }
             CollectionUtil.clearMap(index);
             dependencyAdapter.dispose();
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
