@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.common;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +28,6 @@ import com.dci.intellij.dbn.vfs.DatabaseObjectFile;
 import com.intellij.psi.PsiNamedElement;
 
 public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupValueProvider, Presentable, Referenceable {
-    List<DBObject> EMPTY_LIST = new ArrayList<DBObject>();
-
     DBObjectType getObjectType();
     boolean isOfType(DBObjectType objectType);
 
@@ -58,7 +55,10 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
 
     @Nullable
     DBObject getDefaultNavigationObject();
+
+    @NotNull
     List<DBObject> getChildObjects(DBObjectType objectType);
+
     DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);
 
     DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden);

@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
@@ -15,10 +19,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 public class DBObjectListContainer implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
@@ -233,16 +233,15 @@ public class DBObjectListContainer implements Disposable {
             boolean indexed,
             boolean hidden) {
         DBObjectList<T> objectList = new DBObjectListImpl<T>(objectType, treeParent, loader, dependencyAdapter, indexed);
-        objectList.setHidden(hidden);
-        addObjectList(objectList);
+        addObjectList(objectList, hidden);
 
         return objectList;
     }
 
-    public void addObjectList(DBObjectList objectList) {
+    public void addObjectList(DBObjectList objectList, boolean hidden) {
         if (objectList != null) {
             DBObjectType objectType = objectList.getObjectType();
-            if (objectList.isHidden()) {
+            if (hidden) {
                 if (hiddenObjectLists == null) hiddenObjectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
                 hiddenObjectLists.put(objectType, objectList);
             } else {

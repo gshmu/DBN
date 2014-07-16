@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 
 public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements SubcontentDependencyAdapter {
     private ContentDependency contentDependency;
-    private boolean isDisposed;
 
     public SubcontentDependencyAdapterImpl(GenericDatabaseElement sourceContentOwner, DynamicContentType sourceContentType) {
         super(sourceContentOwner.getConnectionHandler());
@@ -71,12 +70,9 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
-            contentDependency.dispose();
-            contentDependency = VoidContentDependency.INSTANCE;
-            super.dispose();
-        }
+        contentDependency.dispose();
+        contentDependency = VoidContentDependency.INSTANCE;
+        super.dispose();
     }
 
 
