@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
-
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 
 public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHistoryTreeModel {
     private List<MethodExecutionInput> executionInputs;
@@ -97,7 +97,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
             DBMethodRef methodIdentifier = executionInput.getMethodRef();
-            if (executionInput.getConnectionHandler().getId().equals(connectionNode.getConnectionHandler().getId()) &&
+            if (executionInput.getConnectionHandler().getId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodIdentifier.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
                 methodIdentifier.getMethodName().equalsIgnoreCase(methodNode.getName()) &&
                 methodIdentifier.getOverload() == methodNode.getOverload() ) {
