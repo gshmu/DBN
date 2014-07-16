@@ -14,7 +14,7 @@ public class DisposerUtil {
     }
 
     public static void dispose(Collection<? extends Disposable> collection) {
-        if (collection != null) {
+        if (collection != null && collection.size()> 0) {
             for(Disposable disposable : collection) {
                 dispose(disposable);
             }

@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3093</version>
+    <version>3.0.3094</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/v1/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,7 +27,7 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.3093</b>
+            <li><b>3.0.3094</b>
              <ul>
                 - PostgreSQL support (work in progress)<br>
                 - Multiple column sorting in dataset editor and query results (Ctrl-Click)<br>
