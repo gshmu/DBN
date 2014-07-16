@@ -1,8 +1,15 @@
 package com.dci.intellij.dbn;
 
+import javax.swing.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -18,14 +25,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.io.IOException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class DatabaseNavigator implements ApplicationComponent, JDOMExternalizable {
     private static final String SQL_PLUGIN_ID = "com.intellij.sql";
@@ -155,10 +154,6 @@ public class DatabaseNavigator implements ApplicationComponent, JDOMExternalizab
     }
 
     public String getName() {
-        return null;
-    }
-
-    public ConfigurationEditorForm createSettingsEditor() {
         return null;
     }
 
