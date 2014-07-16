@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -21,12 +25,6 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
-import java.util.List;
-
 public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
     private JPanel mainPanel;
     private JPanel actionsPanel;
@@ -44,7 +42,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     public MethodExecutionResultForm(MethodExecutionResult executionResult) {
         this.executionResult = executionResult;
         cursorOutputTabs = new TabbedPane(executionResult.getProject());
-        createActionsPanel(executionResult);
+        createActionsPanel();
         updateCursorArgumentsPanel();
 
         outputCursorsPanel.add(cursorOutputTabs, BorderLayout.CENTER);
@@ -130,13 +128,13 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
 
 
-    private void createActionsPanel(MethodExecutionResult executionResult) {
+    private void createActionsPanel() {
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.MethodExecutionResult.Controls", false,
-                new CloseExecutionResultAction(executionResult),
-                new EditMethodAction(executionResult),
-                new StartMethodExecutionAction(executionResult),
-                new PromptMethodExecutionAction(executionResult),
+                new CloseExecutionResultAction(this),
+                new EditMethodAction(this),
+                new StartMethodExecutionAction(this),
+                new PromptMethodExecutionAction(this),
                 ActionUtil.SEPARATOR,
                 new OpenSettingsAction());
         actionsPanel.add(actionToolbar.getComponent());
