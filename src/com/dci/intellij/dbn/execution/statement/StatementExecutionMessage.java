@@ -40,9 +40,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
     }
 
     public void dispose() {
-        if (executionResult != null) {
-            executionResult = null;
-        }
+        executionResult = null;
     }
 
     public void navigateToEditor() {
