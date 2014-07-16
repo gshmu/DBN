@@ -12,7 +12,7 @@ public class CollectionUtil {
     }
 
     public static void clearCollection(Collection collection) {
-        if (collection != null) {
+        if (collection != null && collection.size() > 0) {
             collection.clear();
         }
     }
