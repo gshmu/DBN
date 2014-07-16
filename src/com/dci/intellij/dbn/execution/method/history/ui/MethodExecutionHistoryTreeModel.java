@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-
-import javax.swing.Icon;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
     protected List<MethodExecutionInput> executionInputs;
@@ -41,7 +42,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     ConnectionTreeNode connectionNode = (ConnectionTreeNode) node;
-                    if (connectionNode.getConnectionHandler().getId().equals(executionInput.getMethodRef().getConnectionId())) {
+                    if (connectionNode.getConnectionHandlerId().equals(executionInput.getMethodRef().getConnectionId())) {
                         return connectionNode;
                     }
                 }
@@ -61,14 +62,18 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
             return connectionHandler;
         }
 
+        public String getConnectionHandlerId() {
+            return connectionHandler == null ? "unknown" : connectionHandler.getId();
+        }
+
         @Override
         public String getName() {
-            return connectionHandler.getName();
+            return connectionHandler == null ? "[unknown]" : connectionHandler.getName();
         }
 
         @Override
         public Icon getIcon() {
-            return connectionHandler.getIcon();
+            return connectionHandler == null ? Icons.CONNECTION_INVALID : connectionHandler.getIcon();
         }
 
         SchemaTreeNode getSchemaNode(MethodExecutionInput executionInput) {
