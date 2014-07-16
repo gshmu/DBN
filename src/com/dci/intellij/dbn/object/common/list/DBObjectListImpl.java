@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -20,16 +25,8 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
-    private boolean isHidden;
-    private boolean isTouched;
-
     private DBObjectType objectType = DBObjectType.UNKNOWN;
 
     public DBObjectListImpl(DBObjectType objectType, BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
@@ -37,19 +34,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         this.objectType = objectType;
     }
 
-    public boolean isHidden() {
-        return isHidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        isHidden = hidden;
-    }
-
     @Override
-    public Filter getFilter() {
+    public Filter<T> getFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler == null ? null :
-                connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings().getFilter(objectType);
+                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings().getFilter(objectType);
     }
 
     @NotNull
@@ -63,7 +52,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public void addObject(T object) {
-        if (elements == DynamicContentImpl.EMPTY_LIST) {
+        if (elements == EMPTY_CONTENT || elements == EMPTY_UNTOUCHED_CONTENT) {
             elements = new ArrayList<T>();
         }
         elements.add(object);
@@ -109,7 +98,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public void notifyChangeListeners() {
-        if (isTouched) {
+        if (isTouched()) {
             EventManager.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         }
     }
@@ -133,11 +122,15 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
      *********************************************************/
 
     public boolean isTreeStructureLoaded() {
-        return isTouched;
+        return isTouched();
+    }
+
+    public boolean isTouched() {
+        return elements != EMPTY_UNTOUCHED_CONTENT;
     }
 
     public boolean canExpand() {
-        return isTouched && getTreeChildCount() > 0;
+        return isTouched() && getTreeChildCount() > 0;
     }
 
     public int getTreeDepth() {
@@ -157,9 +150,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (isLoading()) {
             return elements;
         } else {
-            if (!isTouched) {
+            if (!isTouched()) {
                 load(false);
-                isTouched = true;
                 DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
             }
             return elements;

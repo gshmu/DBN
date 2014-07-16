@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -26,14 +34,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private boolean isForEachRow;
@@ -197,7 +197,7 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
 
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return BrowserTreeNode.EMPTY_LIST;
+        return EMPTY_TREE_NODE_LIST;
     }
 
     /*********************************************************

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBGrantedRole;
@@ -8,14 +13,10 @@ import com.dci.intellij.dbn.object.DBRoleGrantee;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
-    private DBRole role;
+    private DBObjectRef<DBRole> roleRef;
     private boolean isAdminOption;
     private boolean isDefaultRole;
 
@@ -26,7 +27,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         this.name = resultSet.getString("GRANTED_ROLE_NAME");
-        this.role = getConnectionHandler().getObjectBundle().getRole(name);
+        this.roleRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getRole(name));
         this.isAdminOption = resultSet.getString("IS_ADMIN_OPTION").equals("Y");
         this.isDefaultRole = resultSet.getString("IS_DEFAULT_ROLE").equals("Y");
     }
@@ -40,7 +41,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     }
 
     public DBRole getRole() {
-        return role;
+        return DBObjectRef.get(roleRef);
     }
 
     public boolean isAdminOption() {
@@ -53,7 +54,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
 
     @Override
     public DBObject getDefaultNavigationObject() {
-        return role;
+        return getRole();
     }
 
     /*********************************************************
@@ -66,7 +67,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
 
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return BrowserTreeNode.EMPTY_LIST;
+        return EMPTY_TREE_NODE_LIST;
     }
 
 }

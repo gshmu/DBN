@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -18,13 +25,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     private DBObjectRef<DBObject> underlyingObject;
@@ -155,7 +155,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
 
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return BrowserTreeNode.EMPTY_LIST;
+        return EMPTY_TREE_NODE_LIST;
     }
 
 

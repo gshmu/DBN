@@ -84,6 +84,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return false;
     }
 
+    @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
         return getChildObjectList(objectType).getObjects();
     }
@@ -141,7 +142,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return BrowserTreeNode.EMPTY_LIST;
+        return EMPTY_TREE_NODE_LIST;
     }
 
     public void navigate(boolean requestFocus) {

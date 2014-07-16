@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.common.content;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
@@ -12,16 +19,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.progress.ProgressIndicator;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> implements DynamicContent<T> {
-    public static final List EMPTY_LIST = new ArrayList(0);
+    public static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
+    public static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
 
     private final Object LOAD_LOCK = new Object();
     private final Object BACKGROUND_LOAD_LOCK = new Object();
@@ -40,7 +41,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     private Map<String, T> index;
     private int filterHashCode = 0;
 
-    protected List<T> elements = EMPTY_LIST;
+    protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
 
     protected DynamicContentImpl(GenericDatabaseElement parent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
         this.parent = parent;
@@ -50,11 +51,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean accepts(T element) {
-        Filter filter = getFilter();
+        Filter<T> filter = getFilter();
         return filter == null || filter.accepts(element);
     }
 
-    public abstract Filter getFilter();
+    public abstract Filter<T> getFilter();
 
     public GenericDatabaseElement getParent() {
         return parent;
@@ -125,7 +126,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                     performLoad();
                     isLoaded = true;
                 } catch (InterruptedException e) {
-                    setElements(EMPTY_LIST);
+                    setElements(EMPTY_CONTENT);
                     isDirty = true;
                 } finally {
                     isLoading = false;
@@ -143,7 +144,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                     performReload();
                     isLoaded = true;
                 } catch (InterruptedException e) {
-                    setElements(EMPTY_LIST);
+                    setElements(EMPTY_CONTENT);
                     isDirty = true;
                 } finally {
                     isLoading = false;
@@ -218,7 +219,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         filterHashCode = filter == null ? 0 : filter.hashCode();
 
         if (isDisposed || elements == null || elements.size() == 0) {
-            elements = EMPTY_LIST;
+            elements = EMPTY_CONTENT;
             index = null;
         } else {
             Collections.sort(elements);

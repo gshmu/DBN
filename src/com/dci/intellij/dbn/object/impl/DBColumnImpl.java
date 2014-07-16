@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -30,13 +37,6 @@ import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
@@ -74,7 +74,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
             DBObjectListContainer typeChildObjects = declaredType.getChildObjects();
             if (typeChildObjects != null) {
                 DBObjectList typeAttributes = typeChildObjects.getObjectList(DBObjectType.TYPE_ATTRIBUTE);
-                childObjects.addObjectList(typeAttributes);
+                childObjects.addObjectList(typeAttributes, false);
             }
         }
     }
@@ -314,7 +314,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return BrowserTreeNode.EMPTY_LIST;
+        return EMPTY_TREE_NODE_LIST;
     }
 
     public int compareTo(@NotNull Object o) {

@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -9,16 +15,11 @@ import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
     private List<DBNestedTableColumn> columns;
-    private DBType type;
+    private DBObjectRef<DBType> typeRef;
 
     public DBNestedTableImpl(DBTable parent, ResultSet resultSet) throws SQLException {
         super(parent, DBContentType.NONE, resultSet);
@@ -31,7 +32,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
 
         String typeOwner = resultSet.getString("DATA_TYPE_OWNER");
         String typeName = resultSet.getString("DATA_TYPE_NAME");
-        type = getConnectionHandler().getObjectBundle().getSchema(typeOwner).getType(typeName);
+        typeRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getSchema(typeOwner).getType(typeName));
         // todo !!!
     }
 
@@ -56,8 +57,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
     }
 
     public DBType getType() {
-        type = (DBType) type.getUndisposedElement();
-        return type;
+        return DBObjectRef.get(typeRef);
     }
 
     public void buildToolTip(HtmlToolTipBuilder ttb) {
@@ -69,7 +69,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
     @Override
     public void dispose() {
         super.dispose();
-        type = null;
+        typeRef = null;
     }
 
     /*********************************************************
@@ -82,7 +82,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
 
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return BrowserTreeNode.EMPTY_LIST;
+        return EMPTY_TREE_NODE_LIST;
         //return getColumns();
     }
 }

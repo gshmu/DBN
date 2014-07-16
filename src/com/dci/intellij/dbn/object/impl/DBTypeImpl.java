@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
@@ -29,13 +36,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public class DBTypeImpl extends DBProgramImpl implements DBType {
     protected DBObjectList<DBTypeAttribute> attributes;
@@ -141,8 +141,8 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
      *********************************************************/
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return isCollection() ? 
-                BrowserTreeNode.EMPTY_LIST :
+        return isCollection() ?
+                EMPTY_TREE_NODE_LIST :
                 DatabaseBrowserUtils.createList(attributes, procedures, functions);
     }
 

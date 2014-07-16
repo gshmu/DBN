@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,6 +67,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 
 public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBObject, ToolTipProvider {
+    public static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
+    public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
+
     private DBContentType contentType = DBContentType.NONE;
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
@@ -362,6 +366,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return childObjects == null ? null : childObjects.getObjectNoLoad(name);
     }
 
+    @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
         if (objectType.getFamilyTypes().size() > 1) {
             List<DBObject> list = new ArrayList<DBObject>();
@@ -370,7 +375,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
                     List<DBObject> childObjects = getChildObjects(childObjectType);
                     list.addAll(childObjects);
                 } else {
-                    DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                    DBObjectList<? extends DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
                     if (objectList != null) {
                         list.addAll(objectList.getObjects());
                     }
@@ -379,7 +384,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             return list;
         } else {
             DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
-            return objectList == null ? DBObject.EMPTY_LIST : objectList.getObjects();
+            return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
         }
     }
 
