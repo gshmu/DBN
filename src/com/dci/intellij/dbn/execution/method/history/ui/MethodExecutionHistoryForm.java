@@ -1,40 +1,39 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.history.action.DeleteHistoryEntryAction;
 import com.dci.intellij.dbn.execution.method.history.action.OpenSettingsAction;
 import com.dci.intellij.dbn.execution.method.history.action.ShowGroupedTreeAction;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.GuiUtils;
-
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JTree executionInputsTree;
     private JPanel actionsPanel;
     private JPanel argumentsPanel;
-    private List<MethodExecutionInput> executionInputs;
+    private MethodExecutionHistory executionHistory;
     private MethodExecutionHistoryDialog dialog;
     private ChangeListener changeListener;
 
     private Map<MethodExecutionInput, MethodExecutionForm> methodExecutionForms;
 
-    public MethodExecutionHistoryForm(MethodExecutionHistoryDialog dialog, List<MethodExecutionInput> executionInputs) {
+    public MethodExecutionHistoryForm(MethodExecutionHistoryDialog dialog, MethodExecutionHistory executionHistory) {
         this.dialog = dialog;
-        this.executionInputs = executionInputs;
+        this.executionHistory = executionHistory;
         MethodExecutionHistoryTree tree = getTree();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new ShowGroupedTreeAction(tree),
@@ -56,8 +55,8 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
     }
 
     private void createUIComponents() {
-        boolean group = MethodExecutionManager.getInstance(dialog.getProject()).isGroupHistoryEntries();
-        executionInputsTree = new MethodExecutionHistoryTree(dialog, executionInputs, group);
+        boolean group = executionHistory.isGroupEntries();
+        executionInputsTree = new MethodExecutionHistoryTree(dialog, executionHistory, group);
     }
 
     public MethodExecutionHistoryTree getTree() {
@@ -68,7 +67,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
         super.dispose();
         getTree().dispose();
         executionInputsTree = null;
-        executionInputs = null;
+        executionHistory = null;
         dialog = null;
     }
 

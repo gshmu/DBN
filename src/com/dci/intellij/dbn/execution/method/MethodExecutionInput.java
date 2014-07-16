@@ -27,7 +27,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput> {
-    private DBMethodRef<DBMethod> method;
+    private DBMethodRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
     private Map<String, String> valuesMap = new HashMap<String, String>();
     private boolean usePoolConnection = true;
@@ -41,12 +41,12 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     private transient boolean executionCancelled;
 
     public MethodExecutionInput() {
-        method = new DBMethodRef<DBMethod>();
+        methodRef = new DBMethodRef<DBMethod>();
         executionSchema = new DBObjectRef<DBSchema>();
     }
 
     public MethodExecutionInput(DBMethod method) {
-        this.method = new DBMethodRef<DBMethod>(method);
+        this.methodRef = new DBMethodRef<DBMethod>(method);
         this.executionSchema = method.getSchema().getRef();
     }
 
@@ -57,15 +57,15 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
 
     @Nullable
     public DBMethod getMethod() {
-        return method.get();
+        return methodRef.get();
     }
 
     public DBMethodRef getMethodRef() {
-        return method;
+        return methodRef;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return method.lookupConnectionHandler();
+        return methodRef.lookupConnectionHandler();
     }
 
     public DBSchema getExecutionSchema() {
@@ -184,9 +184,9 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
      *                   JDOMExternalizable                  *
      *********************************************************/
     public void readConfiguration(Element element) throws InvalidDataException {
-        method.readConfiguration(element);
+        methodRef.readConfiguration(element);
         String schemaName = element.getAttributeValue("execution-schema");
-        executionSchema = new DBObjectRef<DBSchema>(method.getConnectionId(), DBObjectType.SCHEMA, schemaName);
+        executionSchema = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
         usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
         commitAfterExecution = SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true);
         Element argumentsElement = element.getChild("argument-list");
@@ -199,7 +199,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public void writeConfiguration(Element element) throws WriteExternalException {
-        method.writeConfiguration(element);
+        methodRef.writeConfiguration(element);
         element.setAttribute("execution-schema", CommonUtil.nvl(executionSchema.getPath(), ""));
         SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
         SettingsUtil.setBooleanAttribute(element, "commit-after-execution", commitAfterExecution);
@@ -234,19 +234,19 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     public boolean equals(Object obj) {
         if (obj instanceof MethodExecutionInput) {
             MethodExecutionInput executionInput = (MethodExecutionInput) obj;
-            return method.equals(executionInput.getMethodRef());
+            return methodRef.equals(executionInput.getMethodRef());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return method.hashCode();
+        return methodRef.hashCode();
     }
 
     public MethodExecutionInput clone() {
         MethodExecutionInput executionInput = new MethodExecutionInput();
-        executionInput.method = method;
+        executionInput.methodRef = methodRef;
         executionInput.executionSchema = executionSchema;
         executionInput.usePoolConnection = usePoolConnection;
         executionInput.commitAfterExecution = commitAfterExecution;
