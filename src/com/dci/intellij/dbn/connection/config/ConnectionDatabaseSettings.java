@@ -1,18 +1,24 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.Arrays;
 import java.util.UUID;
+import org.apache.xmlbeans.impl.util.Base64;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.generate.tostring.util.StringUtil;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Base64Converter;
 
 public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<GenericDatabaseSettingsForm>{
+    public static final Logger LOGGER = LoggerFactory.createLogger();
+
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
     protected boolean active = true;
     protected boolean osAuthentication = false;
@@ -172,14 +178,9 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
             description = element.getAttributeValue("description");
             databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
             user = element.getAttributeValue("user");
-            password = element.getAttributeValue("password");
+            password = decodePassword(element.getAttributeValue("password"));
         }
 
-        try {
-            password = Base64Converter.decode(nvl(password));
-        } catch (Exception e) {
-            // password may not be encoded yet
-        }
         updateHashCode();
     }
 
@@ -187,10 +188,31 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
         setString(element, "id", id);
         setString(element, "name", nvl(name));
         setString(element, "description", nvl(description));
-        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
-        setString(element, "user", nvl(user));
-        setString(element, "password", Base64Converter.encode(nvl(password)));
         setBoolean(element, "active", active);
         setBoolean(element, "os-authentication", osAuthentication);
+        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
+        setString(element, "user", nvl(user));
+        setString(element, "password", encodePassword(password));
     }
+
+    private String encodePassword(String password) {
+        try {
+            password = StringUtil.isEmpty(password) ? "" : Arrays.toString(Base64.encode(nvl(password).getBytes()));
+        } catch (Exception e) {
+            // any exception would break the logic storing the connection settings
+            LOGGER.error("Error encoding password", e);
+        }
+        return password;
+    }
+
+    private String decodePassword(String password) {
+        try {
+            password = StringUtil.isEmpty(password) ? "" : Arrays.toString(Base64.decode(nvl(password).getBytes()));
+        } catch (Exception e) {
+            // password may not be encoded yet
+        }
+
+        return password;
+    }
+
 }
