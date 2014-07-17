@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import java.sql.SQLException;
+import java.util.StringTokenizer;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.DatabaseObjectIdentifierImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.util.StringTokenizer;
 
 public class OracleMessageParserInterface implements DatabaseMessageParserInterface {
     @Nullable
@@ -21,12 +21,19 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
         return null;
     }
 
+    @Override
     public boolean isTimeoutException(SQLException e) {
         return e.getErrorCode() == 1013;
     }
 
+    @Override
     public boolean isModelException(SQLException e) {
         return e.getErrorCode() == 942;
+    }
+
+    @Override
+    public boolean isAuthenticationException(SQLException e) {
+        return e.getErrorCode() == 1017;
     }
 
     private DatabaseObjectIdentifier identifyColumn(String message) {

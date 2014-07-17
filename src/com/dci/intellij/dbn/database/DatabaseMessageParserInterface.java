@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.database;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 public interface DatabaseMessageParserInterface {
 
@@ -12,4 +11,6 @@ public interface DatabaseMessageParserInterface {
     boolean isTimeoutException(SQLException e);
 
     boolean isModelException(SQLException e);
+
+    boolean isAuthenticationException(SQLException e);
 }
