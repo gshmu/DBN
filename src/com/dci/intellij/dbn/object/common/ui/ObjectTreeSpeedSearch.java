@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.ui.SpeedSearchBase;
-import com.intellij.util.ui.tree.TreeUtil;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.ui.SpeedSearchBase;
+import com.intellij.util.ui.tree.TreeUtil;
 
 public class ObjectTreeSpeedSearch extends SpeedSearchBase {
 
@@ -40,9 +40,9 @@ public class ObjectTreeSpeedSearch extends SpeedSearchBase {
     @Override
     protected String getElementText(Object obj) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
-        if (node.getUserObject() instanceof DBObject) {
-            DBObject object = (DBObject) node.getUserObject();
-            return object.getName();
+        if (node.getUserObject() instanceof DBObjectRef) {
+            DBObjectRef objectRef = (DBObjectRef) node.getUserObject();
+            return objectRef.getName();
         }
         return node.getUserObject().toString();
     }

@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
+import javax.swing.*;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -12,21 +19,15 @@ import com.dci.intellij.dbn.execution.method.browser.action.SelectSchemaComboBox
 import com.dci.intellij.dbn.execution.method.browser.action.ShowObjectTypeToggleAction;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.ui.ObjectTree;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeCellRenderer;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
 
 public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
 
@@ -92,8 +93,13 @@ public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
         TreePath selectionPath = methodsTree.getSelectionPath();
         if (selectionPath != null) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
-            if (node.getUserObject() instanceof DBMethod) {
-                return (DBMethod) node.getUserObject();
+            Object userObject = node.getUserObject();
+            if (userObject instanceof DBObjectRef) {
+                DBObjectRef objectRef = (DBObjectRef) userObject;
+                DBObject object = DBObjectRef.get(objectRef);
+                if (object instanceof DBMethod) {
+                    return (DBMethod) object;
+                }
             }
         }
         return null;
