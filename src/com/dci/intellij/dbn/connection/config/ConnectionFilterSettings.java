@@ -1,23 +1,29 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
-import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
+import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsForm;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionFilterSettingsForm> {
+public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
+    private ConnectionSettings connectionSettings;
 
-    public ConnectionFilterSettings(Project project) {
-        super(project);
+    public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
+        this.connectionSettings = connectionSettings;
+        Project project = connectionSettings.getProject();
         DatabaseBrowserSettings databaseBrowserSettings = DatabaseBrowserSettings.getInstance(project);
         ObjectTypeFilterSettings master = databaseBrowserSettings.getFilterSettings().getObjectTypeFilterSettings();
         objectTypeFilterSettings = new ObjectTypeFilterSettings(project, master);
         objectNameFilterSettings = new ObjectNameFilterSettings(project);
+    }
+
+    public ConnectionSettings getConnectionSettings() {
+        return connectionSettings;
     }
 
     public String getDisplayName() {

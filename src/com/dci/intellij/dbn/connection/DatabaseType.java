@@ -1,17 +1,26 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.*;
+
+import com.dci.intellij.dbn.common.Icons;
+
 public enum DatabaseType {
-    ORACLE("ORACLE", "Oracle"),
-    MYSQL("MYSQL", "MySQL"),
-    POSTGRES("POSTGRES", "PostgreSQL"),
-    UNKNOWN("UNKNOWN", "Unknown Database");
+    ORACLE("ORACLE", "Oracle", Icons.DB_ORACLE, Icons.DB_ORACLE_LARGE),
+    MYSQL("MYSQL", "MySQL", Icons.DB_MYSQL, Icons.DB_MYSQL_LARGE),
+    POSTGRES("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE),
+    UNKNOWN("UNKNOWN", "Unknown Database", null, null);
 
     private String name;
     private String displayName;
+    private Icon icon;
+    private Icon largeIcon;
 
-    DatabaseType(String name, String displayName) {
+
+    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon) {
         this.name = name;
         this.displayName = displayName;
+        this.icon = icon;
+        this.largeIcon = largeIcon;
     }
 
     public String getName() {
@@ -20,6 +29,14 @@ public enum DatabaseType {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public Icon getIcon() {
+        return icon;
+    }
+
+    public Icon getLargeIcon() {
+        return largeIcon;
     }
 
     public static DatabaseType get(String name) {

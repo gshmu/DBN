@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -15,7 +15,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Base64Converter;
 
-public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<GenericDatabaseSettingsForm>{
+public abstract class ConnectionDatabaseSettings extends Configuration<GenericDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
@@ -29,12 +29,17 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
     protected String password;
     protected int hashCode;
     protected ConnectionBundle connectionBundle;
+    private ConnectionSettings parent;
 
     private boolean isNew;
 
-    public ConnectionDatabaseSettings(Project project, ConnectionBundle connectionBundle) {
-        super(project);
+    public ConnectionDatabaseSettings(ConnectionBundle connectionBundle, ConnectionSettings parent) {
         this.connectionBundle = connectionBundle;
+        this.parent = parent;
+    }
+
+    public ConnectionSettings getParent() {
+        return parent;
     }
 
     public boolean isNew() {
@@ -214,4 +219,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
         return password;
     }
 
+    public Project getProject() {
+        return parent.getProject();
+    }
 }

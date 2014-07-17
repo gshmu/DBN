@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -23,20 +32,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.GuiUtils;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundle> implements ListSelectionListener {
     private static final String BLANK_PANEL_ID = "BLANK_PANEL";
 
@@ -45,7 +40,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private JPanel connectionSetupPanel;
     private JList connectionsList;
     private JSplitPane mainSplitPane;
-    
+
     private String currentPanelId;
     
     private Map<String, ConnectionSettingsForm> cachedForms = new HashMap<String, ConnectionSettingsForm>();

@@ -1,21 +1,21 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
 
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-
-public class ConnectionDetailSettings extends ProjectConfiguration<ConnectionDetailSettingsForm> {
+public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
     private Map<String, String> properties = new HashMap<String, String>();
     private Charset charset = Charset.forName("UTF-8");
     private String environmentTypeId = EnvironmentType.DEFAULT.getId();
@@ -23,11 +23,11 @@ public class ConnectionDetailSettings extends ProjectConfiguration<ConnectionDet
     private boolean ddlFileBinding = true;
     private int idleTimeToDisconnect = 30;
     private int maxConnectionPoolSize = 7;
+    private ConnectionSettings parent;
 
-    public ConnectionDetailSettings(Project project) {
-        super(project);
+    public ConnectionDetailSettings(ConnectionSettings parent) {
+        this.parent = parent;
     }
-
 
     public String getDisplayName() {
         return "Connection Detail Settings";
@@ -58,7 +58,7 @@ public class ConnectionDetailSettings extends ProjectConfiguration<ConnectionDet
     }
 
     public EnvironmentType getEnvironmentType() {
-        return EnvironmentManager.getInstance(getProject()).getEnvironmentType(environmentTypeId);
+        return EnvironmentManager.getInstance(parent.getProject()).getEnvironmentType(environmentTypeId);
     }
 
     public void setEnvironmentTypeId(String environmentTypeId) {
@@ -158,5 +158,13 @@ public class ConnectionDetailSettings extends ProjectConfiguration<ConnectionDet
             element.addContent(propertiesElement);
         }
 
+    }
+
+    public Project getProject() {
+        return parent.getProject();
+    }
+
+    public String getConnectionId() {
+        return parent.getConnectionId();
     }
 }

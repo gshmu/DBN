@@ -1,9 +1,19 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.sql.Driver;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -16,25 +26,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.sql.Driver;
-import java.util.List;
-
-public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings> implements ConnectionPresentationChangeListener{
+public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
     private JButton testButton;
     private JButton infoButton;
     private JPanel mainPanel;
@@ -47,12 +39,9 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox activeCheckBox;
-    private JPanel headerPanel;
     private JPanel connectionParametersPanel;
-    private DBNHeaderForm headerForm;
 
     private GenericConnectionDatabaseSettings temporaryConfig;
-    private String connectionId;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
@@ -83,13 +72,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
         userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
         passwordField.setEnabled(!osAuthenticationCheckBox.isSelected());
-        EventManager.subscribe(project, ConnectionPresentationChangeListener.TOPIC, this);
-        headerForm = new DBNHeaderForm();
-        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-    }
-
-    public void setConnectionId(String connectionId) {
-        this.connectionId = connectionId;
     }
 
     protected DocumentListener createDocumentListener() {
@@ -123,17 +105,8 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
         ConnectionPresentationChangeListener listener = EventManager.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
-        listener.presentationChanged(name, icon, headerForm.getBackground(), connectionId);
+        listener.presentationChanged(name, icon, null, getConfiguration().getId(), configuration.getDatabaseType());
 
-    }
-
-    @Override
-    public void presentationChanged(String name, Icon icon, Color color, String connectionId) {
-        if (this.connectionId.equals(connectionId)) {
-            if (name != null) headerForm.setTitle(name);
-            if (icon != null) headerForm.setIcon(icon);
-            headerForm.setBackground(color == null ? UIUtil.getPanelBackground() :color);
-        }
     }
 
     private void updateLibraryTextField() {
@@ -154,7 +127,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 ConnectionBundle connectionBundle = databaseSettings.getConnectionBundle();
 
                 if (source == testButton || source == infoButton) {
-                    temporaryConfig = new GenericConnectionDatabaseSettings(connectionBundle);
+                    temporaryConfig = new GenericConnectionDatabaseSettings(connectionBundle, getConfiguration().getParent());
                     applyChanges(temporaryConfig);
                     ConnectionManager connectionManager = ConnectionManager.getInstance(connectionBundle.getProject());
 

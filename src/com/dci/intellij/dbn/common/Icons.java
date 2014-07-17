@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common;
 
+import javax.swing.*;
+import java.util.Map;
+
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
-
-import javax.swing.Icon;
-import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -229,6 +229,14 @@ public class Icons {
     public static final Icon CONNECTION_NEW           = load("/img/v1/connection/ConnectionNew.png");
     public static final Icon CONNECTION_INVALID       = load("/img/v1/connection/ConnectionInvalid.png");
     public static final Icon CONNECTIONS              = load("/img/v1/connection/Connections.png");
+
+
+    public static final Icon DB_ORACLE            = load("/img/v1/database/Oracle.png");
+    public static final Icon DB_ORACLE_LARGE      = load("/img/v1/database/Oracle_large.png");
+    public static final Icon DB_POSTGRESQL        = load("/img/v1/database/PostgreSQL.png");
+    public static final Icon DB_POSTGRESQL_LARGE  = load("/img/v1/database/PostgreSQL_large.png");
+    public static final Icon DB_MYSQL             = load("/img/v1/database/MySQL.png");
+    public static final Icon DB_MYSQL_LARGE       = load("/img/v1/database/MySQL_large.png");
 
 
 //    public static final Icon DBO_ARGUMENT_IN         = createRowIcon(DBO_ARGUMENT, COMMON_DIRECTION_IN);

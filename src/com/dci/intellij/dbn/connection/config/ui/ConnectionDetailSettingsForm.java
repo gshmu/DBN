@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
@@ -10,7 +18,6 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -19,45 +26,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.ColorIcon;
-import com.intellij.util.ui.UIUtil;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-
-public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings> implements ConnectionPresentationChangeListener, EnvironmentPresentationChangeListener {
+public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings> implements EnvironmentPresentationChangeListener {
     private JComboBox encodingComboBox;
     private JCheckBox autoCommitCheckBox;
     private JPanel propertiesPanel;
     private JPanel mainPanel;
     private JComboBox environmentTypesComboBox;
-    private JPanel headerPanel;
     private JPanel generalGroupPanel;
     private JPanel propertiesGroupPanel;
     private JTextField maxPoolSizeTextField;
     private JTextField idleTimeTextField;
     private JCheckBox ddlFileBindingCheckBox;
-    private DBNHeaderForm headerForm;
-
 
     private PropertiesEditorForm propertiesEditorForm;
-    private String connectionId;
-    
+
     public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
         super(configuration);
-        final Project project = configuration.getProject();
 
         Map<String, String> properties = new HashMap<String, String>();
         properties.putAll(configuration.getProperties());
@@ -91,11 +76,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
         });
 
-        headerForm = new DBNHeaderForm();
-        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-
-        EventManager.subscribe(project, ConnectionPresentationChangeListener.TOPIC, this);
-        EventManager.subscribe(project, EnvironmentPresentationChangeListener.TOPIC, this);
+        EventManager.subscribe(configuration.getProject(), EnvironmentPresentationChangeListener.TOPIC, this);
     }
 
     public void notifyPresentationChanges() {
@@ -103,12 +84,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         ConnectionPresentationChangeListener listener = EventManager.notify(project, ConnectionPresentationChangeListener.TOPIC);
         EnvironmentType environmentType = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
         Color color = environmentType == null ? null : environmentType.getColor();
-        listener.presentationChanged(null, null, color, connectionId);
-    }
-
-    @Override
-    public void setConnectionId(String connectionId) {
-        this.connectionId = connectionId;
+        listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null);
     }
 
     private final ColoredListCellRenderer environmentTypeCellRenderer = new ColoredListCellRenderer() {
@@ -140,15 +116,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     @Override
     public JComponent getComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void presentationChanged(String name, Icon icon, Color color, String connectionId) {
-        if (this.connectionId.equals(connectionId)) {
-            if (name != null) headerForm.setTitle(name);
-            if (icon != null) headerForm.setIcon(icon);
-            headerForm.setBackground(color == null ? UIUtil.getPanelBackground() :color);
-        }
     }
 
     @Override
@@ -189,7 +156,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         if (settingsChanged) {
             ConnectionStatusListener listener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
-            listener.statusChanged(connectionId);
+            listener.statusChanged(getConfiguration().getConnectionId());
         }
 
     }
