@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.connection.config;
 
 import java.util.UUID;
+
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
