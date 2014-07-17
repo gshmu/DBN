@@ -62,21 +62,6 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod>{
         }
 
         return method != null && method.getObjectType() == objectType ? (T) method : null;
-
-/*
-        DBMethod method;
-        Node programNode = getProgramNode();
-        Node methodNode = getMethodNode();
-        DBObjectType methodObjectType = methodNode.getType();
-        if (programNode != null) {
-            DBProgram program = schema.getProgram(programNode.getName());
-            if (program == null || program.getObjectType() != programNode.getType()) return null;
-
-            method = program.getMethod(methodNode.getName(), overload);
-        } else {
-            method = schema.getMethod(methodNode.getName(), methodObjectType.getName(), overload);
-        }
-*/
     }
 
     protected DBProgram getProgram() {
@@ -155,7 +140,7 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod>{
     @Override
     public void writeState(Element element) {
         super.writeState(element);
-        SettingsUtil.setIntegerAttribute(element, "overload", overload);
+        if (overload > 0) SettingsUtil.setIntegerAttribute(element, "overload", overload);
     }
 
     /*********************************************************
