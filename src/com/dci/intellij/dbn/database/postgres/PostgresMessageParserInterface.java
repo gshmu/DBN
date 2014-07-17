@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.database.postgres;
 
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Method;
-import java.sql.SQLException;
 
 public class PostgresMessageParserInterface implements DatabaseMessageParserInterface {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -18,20 +18,31 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
          return null;
     }
 
+    @Override
     public boolean isTimeoutException(SQLException e) {
         return false;
     }
 
+    @Override
     public boolean isModelException(SQLException e) {
+        String sqlState = getSqlState(e);
+        return StringUtil.isOneOfIgnoreCase(sqlState, "3D000", "3F000", "42P01", "42703", "42704");
+    }
+
+    @Override
+    public boolean isAuthenticationException(SQLException e) {
+        String sqlState = getSqlState(e);
+        return StringUtil.isOneOfIgnoreCase(sqlState, "28P01");
+    }
+
+    private String getSqlState(SQLException e) {
         try {
             Method method = e.getClass().getMethod("getSQLState");
-            String sqlState = (String) method.invoke(e);
-            return StringUtil.isOneOfIgnoreCase(sqlState, "3D000", "3F000", "42P01", "42703", "42704");
+            return (String) method.invoke(e);
         } catch (Exception ex) {
             LOGGER.error("Could not get exception SQLState", ex);
         }
-        return false;
-
+        return "";
     }
 
 }

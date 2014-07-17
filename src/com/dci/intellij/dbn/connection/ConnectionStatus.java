@@ -5,6 +5,7 @@ public class ConnectionStatus {
     private boolean valid = true;
     private boolean resolvingIdleStatus;
     private String statusMessage;
+    private AuthenticationError authenticationError;
 
     public boolean isConnected() {
         return connected;
@@ -36,5 +37,13 @@ public class ConnectionStatus {
 
     public void setResolvingIdleStatus(boolean resolvingIdleStatus) {
         this.resolvingIdleStatus = resolvingIdleStatus;
+    }
+
+    public AuthenticationError getAuthenticationError() {
+        return authenticationError;
+    }
+
+    public void setAuthenticationError(AuthenticationError authenticationError) {
+        this.authenticationError = authenticationError;
     }
 }

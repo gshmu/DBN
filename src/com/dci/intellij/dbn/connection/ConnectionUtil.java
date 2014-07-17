@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.driver.DatabaseDriverManager;
-import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
@@ -17,6 +8,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -63,23 +64,46 @@ public class ConnectionUtil {
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
-        return connect(databaseSettings, detailSettings.getProperties(), detailSettings.isAutoCommit(), connectionStatus);
+
+        // do not retry connection on authentication error unless
+        // credentials changed (account can be locked on several invalid trials)
+        AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
+        String user = databaseSettings.getUser();
+        String password = databaseSettings.getPassword();
+        boolean osAuthentication = databaseSettings.isOsAuthentication();
+        if (authenticationError != null && authenticationError.isSame(osAuthentication, user, password)) {
+            throw authenticationError.getException();
+        }
+
+        try {
+            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isAutoCommit(), connectionStatus);
+            connectionStatus.setAuthenticationError(null);
+            return connection;
+        } catch (SQLException e) {
+            DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
+            if (messageParserInterface.isAuthenticationException(e)){
+                authenticationError = new AuthenticationError(osAuthentication, user, password, e);
+                connectionStatus.setAuthenticationError(authenticationError);
+            }
+            throw e;
+        }
     }
 
     public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Map<String, String> connectionProperties, boolean autoCommit, @Nullable ConnectionStatus connectionStatus) throws SQLException {
         try {
-            Driver driver = DatabaseDriverManager.getInstance().getDriver(
-                    databaseSettings.getDriverLibrary(),
-                    databaseSettings.getDriver());
-
             Properties properties = new Properties();
             if (!databaseSettings.isOsAuthentication()) {
                 properties.put("user", databaseSettings.getUser());
                 properties.put("password", databaseSettings.getPassword());
+
             }
             if (connectionProperties != null) {
                 properties.putAll(connectionProperties);
             }
+
+            Driver driver = DatabaseDriverManager.getInstance().getDriver(
+                    databaseSettings.getDriverLibrary(),
+                    databaseSettings.getDriver());
 
             Connection connection = driver.connect(databaseSettings.getDatabaseUrl(), properties);
             if (connection == null) {

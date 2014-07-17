@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.Arrays;
 import java.util.UUID;
-import org.apache.xmlbeans.impl.util.Base64;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.generate.tostring.util.StringUtil;
@@ -15,6 +13,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.Base64Converter;
 
 public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<GenericDatabaseSettingsForm>{
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -166,7 +165,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
             description      = getString(element, "description", description);
             databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
             user             = getString(element, "user", user);
-            password         = getString(element, "password", password);
+            password         = decodePassword(getString(element, "password", password));
             active           = getBoolean(element, "active", active);
             osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
         } else{
@@ -197,7 +196,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
 
     private String encodePassword(String password) {
         try {
-            password = StringUtil.isEmpty(password) ? "" : Arrays.toString(Base64.encode(nvl(password).getBytes()));
+            password = StringUtil.isEmpty(password) ? "" : Base64Converter.encode(nvl(password));
         } catch (Exception e) {
             // any exception would break the logic storing the connection settings
             LOGGER.error("Error encoding password", e);
@@ -207,7 +206,7 @@ public abstract class ConnectionDatabaseSettings extends ProjectConfiguration<Ge
 
     private String decodePassword(String password) {
         try {
-            password = StringUtil.isEmpty(password) ? "" : Arrays.toString(Base64.decode(nvl(password).getBytes()));
+            password = StringUtil.isEmpty(password) ? "" : Base64Converter.decode(nvl(password));
         } catch (Exception e) {
             // password may not be encoded yet
         }
