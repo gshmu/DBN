@@ -1,6 +1,11 @@
 package com.dci.intellij.dbn.object.lookup;
 
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.generate.tostring.util.StringUtil;
+
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
@@ -8,12 +13,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod> implements PersistentConfiguration {
+public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod>{
     private int overload;
 
     public DBMethodRef(T method) {
@@ -136,9 +137,31 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod> imple
         return objectType.getName() + " " + getPath();
     }
 
+    @Override
+    public void readState(Element element) {
+        if (StringUtil.isNotEmpty(element.getAttributeValue("method-name"))) {
+            // TODO remove (backward compatibility)
+            try {
+                readConfiguration(element);
+            } catch (InvalidDataException e) {
+                e.printStackTrace();
+            }
+        } else{
+            super.readState(element);
+            overload = SettingsUtil.getIntegerAttribute(element, "overload", 0);
+        }
+    }
+
+    @Override
+    public void writeState(Element element) {
+        super.writeState(element);
+        SettingsUtil.setIntegerAttribute(element, "overload", overload);
+    }
+
     /*********************************************************
      *                   JDOMExternalizable                  *
      *********************************************************/
+    @Deprecated
     public void readConfiguration(Element element) throws InvalidDataException {
         String connectionId = element.getAttributeValue("connection-id");
         String schemaName = element.getAttributeValue("schema-name");
@@ -158,21 +181,5 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod> imple
 
         String overload = element.getAttributeValue("method-overload");
         this.overload = Integer.parseInt(overload == null ? "0" : overload);
-    }
-
-    public void writeConfiguration(Element element) throws WriteExternalException {
-        element.setAttribute("connection-id", getConnectionId());
-        element.setAttribute("schema-name", getSchemaName());
-
-        DBObjectRef programRef = getParentRef(DBObjectType.PROGRAM);
-        if (programRef != null) {
-            element.setAttribute("program-type", programRef.objectType.getName());
-            element.setAttribute("program-name", programRef.objectName);
-        }
-
-        element.setAttribute("method-type", objectType.getName());
-        element.setAttribute("method-name", objectName);
-
-        element.setAttribute("method-overload", Integer.toString(overload));
     }
 }

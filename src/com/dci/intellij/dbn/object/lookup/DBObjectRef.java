@@ -109,13 +109,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     public void writeState(Element element) {
         element.setAttribute("connection-id", getConnectionId());
-        StringBuilder objectTypes = new StringBuilder(objectType.getName());
+        StringBuilder objectTypes = new StringBuilder(objectType.name());
         StringBuilder objectNames = new StringBuilder(objectName);
 
         DBObjectRef parent = this.parent;
         while (parent != null) {
             objectTypes.insert(0, ".");
-            objectTypes.insert(0, parent.objectType.getName());
+            objectTypes.insert(0, parent.objectType.name());
             objectNames.insert(0, ".");
             objectNames.insert(0, parent.objectName);
             parent = parent.parent;

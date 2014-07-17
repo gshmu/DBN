@@ -234,7 +234,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             Element selectionElement = element.getChild("history-selection");
             if (selectionElement != null) {
                 DBMethodRef selection = new DBMethodRef();
-                selection.readConfiguration(selectionElement);
+                selection.readState(selectionElement);
                 executionHistory.setSelection(selection);
             }
         } else {
