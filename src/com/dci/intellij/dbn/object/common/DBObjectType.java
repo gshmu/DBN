@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.apache.commons.lang.StringUtils;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.editor.DBContentType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-
-import javax.swing.Icon;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang.StringUtils;
 
 public enum DBObjectType implements DynamicContentType {
     
@@ -278,14 +278,18 @@ public enum DBObjectType implements DynamicContentType {
             return null;
         }
 
-        typeName = typeName.replace('_', ' ');
-        for (DBObjectType objectType: values()) {
-            if (objectType.getName().equalsIgnoreCase(typeName)) {
-                return objectType;
+        try {
+            return valueOf(typeName);
+        } catch (IllegalArgumentException e) {
+            typeName = typeName.replace('_', ' ');
+            for (DBObjectType objectType: values()) {
+                if (objectType.getName().equalsIgnoreCase(typeName)) {
+                    return objectType;
+                }
             }
+            System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeName);
+            return UNKNOWN;
         }
-        System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeName);
-        return UNKNOWN;
     }
 
     public boolean matches(DBObjectType objectType) {

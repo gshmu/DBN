@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.execution.method.browser;
 
+import java.util.Map;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -11,11 +16,6 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
-import java.util.Set;
 
 public class MethodBrowserSettings implements PersistentConfiguration {
     private String connectionId;
@@ -82,7 +82,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         Element methodElement = element.getChild("selected-method");
         if (methodElement != null) {
             method = new DBMethodRef();
-            method.readConfiguration(methodElement);
+            method.readState(methodElement);
         }
     }
 
@@ -92,7 +92,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         if (schemaName != null) element.setAttribute("schema", schemaName);
         if(method != null) {
             Element methodElement = new Element("selected-method");
-            method.writeConfiguration(methodElement);
+            method.writeState(methodElement);
             element.addContent(methodElement);
         }
     }

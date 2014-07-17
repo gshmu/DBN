@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.object.DBPackage;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -13,6 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
+
+import com.dci.intellij.dbn.object.DBPackage;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
     private DBType declaredType;
@@ -36,7 +36,9 @@ public class DBDataType {
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             if (typePackage != null) {
                 DBPackage packagee = typeSchema.getPackage(typePackage);
-                declaredType = packagee.getType(dataTypeName);
+                if (packagee != null) {
+                    declaredType = packagee.getType(dataTypeName);
+                }
             } else {
                 declaredType = typeSchema.getType(dataTypeName);
             }

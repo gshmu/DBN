@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.common.content.loader;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -12,13 +19,6 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -105,10 +105,11 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
 
             boolean modelException = false;
             if (e instanceof SQLException) {
-
                 SQLException sqlException = (SQLException) e;
-                DatabaseInterfaceProvider interfaceProvider = dynamicContent.getConnectionHandler().getInterfaceProvider();
-                modelException = interfaceProvider.getMessageParserInterface().isModelException(sqlException);
+                if (dynamicContent.isDisposed()) {
+                    DatabaseInterfaceProvider interfaceProvider = dynamicContent.getConnectionHandler().getInterfaceProvider();
+                    modelException = interfaceProvider.getMessageParserInterface().isModelException(sqlException);
+                }
             }
             throw new DynamicContentLoadException(e, modelException);
         } finally {

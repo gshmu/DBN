@@ -184,7 +184,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
      *                   JDOMExternalizable                  *
      *********************************************************/
     public void readConfiguration(Element element) throws InvalidDataException {
-        methodRef.readConfiguration(element);
+        methodRef.readState(element);
         String schemaName = element.getAttributeValue("execution-schema");
         executionSchema = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
         usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
@@ -199,7 +199,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public void writeConfiguration(Element element) throws WriteExternalException {
-        methodRef.writeConfiguration(element);
+        methodRef.writeState(element);
         element.setAttribute("execution-schema", CommonUtil.nvl(executionSchema.getPath(), ""));
         SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
         SettingsUtil.setBooleanAttribute(element, "commit-after-execution", commitAfterExecution);

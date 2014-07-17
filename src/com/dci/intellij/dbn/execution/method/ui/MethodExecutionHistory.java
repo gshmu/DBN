@@ -97,7 +97,7 @@ public class MethodExecutionHistory implements Disposable{
         Element selectionElement = element.getChild("selection");
         if (selectionElement != null) {
             selection = new DBMethodRef();
-            selection.readConfiguration(selectionElement);
+            selection.readState(selectionElement);
         }
     }
 
@@ -115,7 +115,7 @@ public class MethodExecutionHistory implements Disposable{
         if (selection != null) {
             Element selectionElement = new Element("selection");
             element.addContent(selectionElement);
-            selection.writeConfiguration(selectionElement);
+            selection.writeState(selectionElement);
         }
 
     }

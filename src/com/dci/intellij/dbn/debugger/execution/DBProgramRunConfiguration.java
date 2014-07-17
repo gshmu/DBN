@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.debugger.execution;
 
+import java.util.HashSet;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -22,11 +27,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class DBProgramRunConfiguration extends RunConfigurationBase implements LocatableConfiguration {
     private MethodExecutionInput executionInput;
@@ -120,13 +120,13 @@ public class DBProgramRunConfiguration extends RunConfigurationBase implements L
         SettingsUtil.setBoolean(element, "compile-dependencies", compileDependencies);
         if (executionInput != null) {
             Element methodIdentifierElement = new Element("method-identifier");
-            executionInput.getMethodRef().writeConfiguration(methodIdentifierElement);
+            executionInput.getMethodRef().writeState(methodIdentifierElement);
             element.addContent(methodIdentifierElement);
 
             Element methodIdentifierHistoryElement = new Element("method-identifier-history");
             for (MethodExecutionInput executionInput : methodSelectionHistory) {
                 methodIdentifierElement = new Element("method-identifier");
-                executionInput.getMethodRef().writeConfiguration(methodIdentifierElement);
+                executionInput.getMethodRef().writeState(methodIdentifierElement);
                 methodIdentifierHistoryElement.addContent(methodIdentifierElement);
             }
             element.addContent(methodIdentifierHistoryElement);
@@ -146,7 +146,7 @@ public class DBProgramRunConfiguration extends RunConfigurationBase implements L
         Element methodIdentifierElement = element.getChild("method-identifier");
         if (methodIdentifierElement != null) {
             DBMethodRef methodRef = new DBMethodRef();
-            methodRef.readConfiguration(methodIdentifierElement);
+            methodRef.readState(methodIdentifierElement);
 
             executionInput = executionManager.getExecutionInput(methodRef);
         }
@@ -156,7 +156,7 @@ public class DBProgramRunConfiguration extends RunConfigurationBase implements L
             for (Object o : methodIdentifierHistoryElement.getChildren()) {
                 methodIdentifierElement = (Element) o;
                 DBMethodRef methodRef = new DBMethodRef();
-                methodRef.readConfiguration(methodIdentifierElement);
+                methodRef.readState(methodIdentifierElement);
 
                 MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
                 methodSelectionHistory.add(executionInput);
