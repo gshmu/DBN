@@ -98,7 +98,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     protected Logger getLogger() {return Logger.getInstance(getClass().getName());}
 
     public DBObjectImpl(DBObject parentObject, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        this.parentObject = parentObject.getRef();
+        this.parentObject = DBObjectRef.from(parentObject);
         this.contentType = contentType;
         init(resultSet);
     }

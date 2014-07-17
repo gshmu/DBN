@@ -857,29 +857,33 @@
     <statement-execution-processor id="types" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                ao.OBJECT_NAME as TYPE_NAME,
+                t.TYPE_NAME as TYPE_NAME,
                 max(case ao.OBJECT_TYPE when 'TYPE' then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
                 max(case ao.OBJECT_TYPE when 'TYPE BODY' then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_BODY_VALID,
-                max(case ao.OBJECT_TYPE when 'TYPE' then decode(nvl(ao.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
-                max(case ao.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(ao.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
+                max(case ao.OBJECT_TYPE when 'TYPE' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
+                max(case ao.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
                 t.TYPECODE
             from
-                SYS.ALL_PROBE_OBJECTS ao,
-                [PREFIX]_TYPES t
+                [PREFIX]_TYPES t,
+                [PREFIX]_OBJECTS ao,
+                SYS.ALL_PROBE_OBJECTS apo
             where
-                ao.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
+                t.OWNER = 'CTXSYS' and
                 ao.OWNER = t.OWNER and
+                ao.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
                 ao.OBJECT_NAME = t.TYPE_NAME and
-                ao.OWNER = {0}
+                apo.OWNER (+) = ao.OWNER and
+                apo.OBJECT_TYPE (+) = ao.OBJECT_TYPE and
+                apo.OBJECT_NAME (+) = ao.OBJECT_NAME
             group by
-                ao.OBJECT_NAME,
+                t.TYPE_NAME,
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
                 t.TYPECODE
             order by
-                ao.OBJECT_NAME,
+                t.TYPE_NAME,
                 t.TYPECODE asc
         </statement>
         <statement prefixes="DBA, ALL">
