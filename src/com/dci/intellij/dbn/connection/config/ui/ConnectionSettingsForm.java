@@ -1,27 +1,36 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.*;
+import java.awt.*;
+
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
+import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.ui.tabs.TabInfo;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
-public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings> {
+public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings> implements ConnectionPresentationChangeListener, EnvironmentPresentationChangeListener {
     private JPanel mainPanel;
+    private JPanel contentPanel;
+    private JPanel headerPanel;
     private TabbedPane configTabbedPane;
+
+    private DBNHeaderForm headerForm;
 
     public ConnectionSettingsForm(ConnectionSettings connectionSettings) {
         super(connectionSettings);
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         configTabbedPane = new TabbedPane(databaseSettings.getProject());
-        mainPanel.add(configTabbedPane, BorderLayout.CENTER);
+        contentPanel.add(configTabbedPane, BorderLayout.CENTER);
+
 
         TabInfo connectionTabInfo = new TabInfo(databaseSettings.createComponent());
         connectionTabInfo.setText("Connection");
@@ -37,14 +46,14 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         filtersTabInfo.setText("Filters");
         configTabbedPane.addTab(filtersTabInfo);
 
-        String connectionId = connectionSettings.getId();
-        ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
-        ConnectionFilterSettingsForm filterSettingsForm = filterSettings.getSettingsEditor();
         GenericDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
+        ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
+        filterSettings.getSettingsEditor();
 
-        filterSettingsForm.setConnectionId(connectionId);
-        databaseSettingsForm.setConnectionId(connectionId);
-        detailSettingsForm.setConnectionId(connectionId);
+        headerForm = new DBNHeaderForm();
+        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
+        EventManager.subscribe(databaseSettings.getProject(), ConnectionPresentationChangeListener.TOPIC, this);
+        EventManager.subscribe(databaseSettings.getProject(), EnvironmentPresentationChangeListener.TOPIC, this);
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();
@@ -65,5 +74,21 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     @Override
     public void dispose() {
         super.dispose();
+        EventManager.unsubscribe(this);
+    }
+
+    @Override
+    public void presentationChanged(String name, Icon icon, Color color, String connectionId, DatabaseType databaseType) {
+        if (getConfiguration().getConnectionId().equals(connectionId)) {
+            if (name != null) headerForm.setTitle(name);
+            if (icon != null) headerForm.setIcon(icon);
+            if (color != null) headerForm.setBackground(color);
+            //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
+        }
+    }
+
+    @Override
+    public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
+
     }
 }

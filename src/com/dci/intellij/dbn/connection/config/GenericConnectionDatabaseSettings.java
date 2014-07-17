@@ -14,8 +14,8 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     protected String driver;
     protected String databaseUrl;
 
-    public GenericConnectionDatabaseSettings(ConnectionBundle connectionBundle) {
-        super(connectionBundle.getProject(), connectionBundle);
+    public GenericConnectionDatabaseSettings(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
+        super(connectionBundle, connectionSettings);
     }
 
     public GenericDatabaseSettingsForm createConfigurationEditor() {
@@ -53,7 +53,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     public GenericConnectionDatabaseSettings clone() {
         Element connectionElement = new Element(getConfigElementName());
         writeConfiguration(connectionElement);
-        GenericConnectionDatabaseSettings clone = new GenericConnectionDatabaseSettings(connectionBundle);
+        GenericConnectionDatabaseSettings clone = new GenericConnectionDatabaseSettings(connectionBundle, getParent());
         clone.readConfiguration(connectionElement);
         clone.setConnectivityStatus(getConnectivityStatus());
         clone.generateNewId();
