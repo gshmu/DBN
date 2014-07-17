@@ -8,7 +8,7 @@ public enum DatabaseType {
     ORACLE("ORACLE", "Oracle", Icons.DB_ORACLE, Icons.DB_ORACLE_LARGE),
     MYSQL("MYSQL", "MySQL", Icons.DB_MYSQL, Icons.DB_MYSQL_LARGE),
     POSTGRES("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE),
-    UNKNOWN("UNKNOWN", "Unknown Database", null, null);
+    UNKNOWN("UNKNOWN", "Unknown", null, null);
 
     private String name;
     private String displayName;

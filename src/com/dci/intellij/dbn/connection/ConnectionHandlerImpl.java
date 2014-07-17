@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -26,15 +34,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -43,7 +42,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private ConnectionBundle connectionBundle;
     private ConnectionStatus connectionStatus;
     private ConnectionPool connectionPool;
-    private ConnectionInfo connectionInfo;
     private ConnectionLoadMonitor loadMonitor;
     private DBObjectBundle objectBundle;
     private DatabaseInterfaceProvider interfaceProvider;
@@ -233,17 +231,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public String getUserName() {
         return connectionSettings.getDatabaseSettings().getUser() == null ? "" : connectionSettings.getDatabaseSettings().getUser();
-    }
-
-    public ConnectionInfo getConnectionInfo() throws SQLException {
-        if (connectionInfo == null) {
-            Connection connection = getStandaloneConnection();
-            DatabaseMetaData databaseMetaData = connection.getMetaData();
-            connectionInfo = new ConnectionInfo(databaseMetaData);
-        }
-
-        //System.out.println(ResultSetLister.list("Catalogs", getStandaloneConnection().getMetaData().getTypeInfo()));
-        return connectionInfo;
     }
 
     public ConnectionLoadMonitor getLoadMonitor() {
