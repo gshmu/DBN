@@ -10,6 +10,7 @@ import java.util.List;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
     protected List<MethodExecutionInput> executionInputs;
@@ -35,7 +36,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
      **********************************************************/
     protected class RootTreeNode extends MethodExecutionHistoryTreeNode {
         RootTreeNode() {
-            super(null, NODE_TYPE_ROOT, "ROOT");
+            super(null, MethodExecutionHistoryTreeNode.Type.ROOT, "ROOT");
         }
 
         ConnectionTreeNode getConnectionNode(MethodExecutionInput executionInput) {
@@ -54,7 +55,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
     protected class ConnectionTreeNode extends MethodExecutionHistoryTreeNode {
         ConnectionHandler connectionHandler;
         ConnectionTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
-            super(parent, NODE_TYPE_CONNECTION, null);
+            super(parent, MethodExecutionHistoryTreeNode.Type.CONNECTION, null);
             this.connectionHandler = executionInput.getConnectionHandler();
         }
 
@@ -90,7 +91,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
 
     protected class SchemaTreeNode extends MethodExecutionHistoryTreeNode {
         SchemaTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
-            super(parent, NODE_TYPE_SCHEMA, executionInput.getMethodRef().getSchemaName());
+            super(parent, MethodExecutionHistoryTreeNode.Type.SCHEMA, executionInput.getMethodRef().getSchemaName());
         }
 
         ProgramTreeNode getProgramNode(MethodExecutionInput executionInput) {
@@ -130,11 +131,13 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
         }
 
         MethodTreeNode getMethodNode(MethodExecutionInput executionInput) {
-            String methodName = executionInput.getMethodRef().getMethodName();
+            DBMethodRef methodRef = executionInput.getMethodRef();
+            String methodName = methodRef.getMethodName();
+            int overload = methodRef.getOverload();
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     MethodTreeNode methodNode = (MethodTreeNode) node;
-                    if (methodNode.getName().equalsIgnoreCase(methodName)) {
+                    if (methodNode.getName().equalsIgnoreCase(methodName) && methodNode.getOverload() == overload) {
                         return methodNode;
                     }
                 }
