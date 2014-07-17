@@ -52,9 +52,9 @@ public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
         methodsTree.setModel(model);
         TreePath selectionPath = model.getInitialSelection();
         if (selectionPath != null) {
-            methodsTree.setSelectionPath(selectionPath);    
+            methodsTree.setSelectionPath(selectionPath);
+            methodsTree.scrollPathToVisible(selectionPath.getParentPath());
         }
-
     }
 
     public MethodBrowserSettings getSettings() {
