@@ -858,25 +858,21 @@
         <statement prefixes="DBA, ALL">
             select
                 t.TYPE_NAME as TYPE_NAME,
-                max(case ao.OBJECT_TYPE when 'TYPE' then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
-                max(case ao.OBJECT_TYPE when 'TYPE BODY' then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_BODY_VALID,
-                max(case ao.OBJECT_TYPE when 'TYPE' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
-                max(case ao.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
+                max(case apo.OBJECT_TYPE when 'TYPE' then decode(apo.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
+                max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(apo.STATUS, 'VALID', 'Y', 'N') end) as IS_BODY_VALID,
+                max(case apo.OBJECT_TYPE when 'TYPE' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
+                max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
                 t.TYPECODE
             from
                 [PREFIX]_TYPES t,
-                [PREFIX]_OBJECTS ao,
                 SYS.ALL_PROBE_OBJECTS apo
             where
-                t.OWNER = 'CTXSYS' and
-                ao.OWNER = t.OWNER and
-                ao.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
-                ao.OBJECT_NAME = t.TYPE_NAME and
-                apo.OWNER (+) = ao.OWNER and
-                apo.OBJECT_TYPE (+) = ao.OBJECT_TYPE and
-                apo.OBJECT_NAME (+) = ao.OBJECT_NAME
+                t.OWNER = {0} and
+                apo.OWNER = t.OWNER and
+                apo.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
+                apo.OBJECT_NAME = t.TYPE_NAME
             group by
                 t.TYPE_NAME,
                 t.SUPERTYPE_OWNER,
@@ -956,7 +952,7 @@
         <statement>
             select distinct
                 ARGUMENT_NAME as ATTRIBUTE_NAME,
-                POSITION, 
+                POSITION,
                 TYPE_OWNER as DATA_TYPE_OWNER,
                 decode(TYPE_SUBNAME, null, null, TYPE_NAME) as DATA_TYPE_PACKAGE,
                 decode(TYPE_SUBNAME, null, nvl(TYPE_NAME, DATA_TYPE), TYPE_SUBNAME) as DATA_TYPE_NAME,
@@ -976,7 +972,7 @@
                        TYPE_SUBNAME = {2} and
                        DATA_LEVEL = 0 and
                        rownum = 1) and
-                SEQUENCE 
+                SEQUENCE
                      between(
                         select SEQUENCE
                         from ALL_ARGUMENTS aa2
@@ -1356,7 +1352,7 @@
 
     <statement-execution-processor id="compile-object-body">
         <statement>
-            alter {2} {0}.{1} compile {3} body 
+            alter {2} {0}.{1} compile {3} body
         </statement>
     </statement-execution-processor>
 

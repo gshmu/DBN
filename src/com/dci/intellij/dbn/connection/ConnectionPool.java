@@ -68,6 +68,7 @@ public class ConnectionPool implements Disposable {
     }
 
     public synchronized Connection allocateConnection() throws SQLException {
+        lastAccessTimestamp = System.currentTimeMillis();
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         for (ConnectionWrapper connectionWrapper : poolConnections) {
             if (!connectionWrapper.isBusy()) {
@@ -75,7 +76,6 @@ public class ConnectionPool implements Disposable {
                 if (connectionWrapper.isValid()) {
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
-                    lastAccessTimestamp = System.currentTimeMillis();
                     return connectionWrapper.getConnection();
                 } else {
                     connectionWrapper.closeConnection();
