@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.config.ui;
 import javax.swing.*;
 import java.awt.*;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 
@@ -24,7 +23,6 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
 
     @Override
     public void dispose() {
-        EventManager.unsubscribe(this);
         super.dispose();
     }
 }

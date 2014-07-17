@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.connection;
+package com.dci.intellij.dbn.connection.info;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;

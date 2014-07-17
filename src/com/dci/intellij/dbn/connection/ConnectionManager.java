@@ -1,9 +1,22 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -12,6 +25,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -26,18 +41,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ConnectionManager extends AbstractProjectComponent implements ProjectManagerListener{
     private List<ConnectionBundle> connectionBundles = new ArrayList<ConnectionBundle>();
@@ -185,6 +188,18 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         }
     }
 
+    public void showConnectionInfoDialog(ConnectionHandler connectionHandler) {
+        final ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
+        new ConditionalLaterInvocator() {
+
+            @Override
+            public void execute() {
+                infoDialog.setModal(true);
+                infoDialog.show();
+            }
+        }.start();
+    }
+
     public ConnectionInfo showConnectionInfo(ConnectionSettings connectionSettings) {
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
@@ -294,7 +309,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
             final DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             final ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
-            if (!connectionStatus.isResolvingIdleStatus()) {
+            if (connectionStatus!= null && !connectionStatus.isResolvingIdleStatus()) {
                 final int idleMinutes = connectionHandler.getIdleMinutes();
                 final int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                 if (idleMinutes > idleMinutesToDisconnect) {

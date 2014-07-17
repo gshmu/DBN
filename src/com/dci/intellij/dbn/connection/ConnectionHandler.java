@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -17,10 +21,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public interface ConnectionHandler extends Disposable{
     Project getProject();
     Module getModule();
@@ -32,7 +32,6 @@ public interface ConnectionHandler extends Disposable{
     ConnectionSettings getSettings();
     ConnectionStatus getConnectionStatus();
     ConnectionBundle getConnectionBundle();
-    ConnectionInfo getConnectionInfo() throws SQLException;
     ConnectionPool getConnectionPool();
     ConnectionLoadMonitor getLoadMonitor();
     DatabaseInterfaceProvider getInterfaceProvider();
