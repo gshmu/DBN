@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.database.common.execution;
 
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,13 +19,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private DBMethodRef<T> method;
@@ -46,7 +46,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         return null;
     }
 
-    int getParametersCount() {
+    protected int getParametersCount() {
         return getArguments().size();
     }
 

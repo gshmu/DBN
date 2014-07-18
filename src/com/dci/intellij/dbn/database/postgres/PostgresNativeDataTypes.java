@@ -80,5 +80,7 @@ public class PostgresNativeDataTypes extends DatabaseNativeDataTypes {
         createLiteralDefinition("UUID", String.class, Types.VARCHAR);
         createLiteralDefinition("XML", String.class, Types.VARCHAR);
         createLiteralDefinition("UNKNOWN", String.class, Types.VARCHAR);
+
+        createBasicDefinition("REFCURSOR", Object.class, Types.OTHER, GenericDataType.CURSOR);
     }
 }
