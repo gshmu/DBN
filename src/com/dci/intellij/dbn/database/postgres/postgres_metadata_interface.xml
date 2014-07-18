@@ -95,6 +95,7 @@
                 col.CHARACTER_MAXIMUM_LENGTH as DATA_LENGTH,
                 col.NUMERIC_PRECISION as DATA_PRECISION,
                 col.NUMERIC_SCALE as DATA_SCALE,
+                'N' as IS_SET,
                 left(col.IS_NULLABLE, 1) as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 case when pk.COLUMN_NAME is null then 'N' else 'Y' end as IS_PRIMARY_KEY,
@@ -147,6 +148,7 @@
                 col.CHARACTER_MAXIMUM_LENGTH as DATA_LENGTH,
                 col.NUMERIC_PRECISION as DATA_PRECISION,
                 col.NUMERIC_SCALE as DATA_SCALE,
+                'N' as IS_SET,
                 left(col.IS_NULLABLE, 1) as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 case when pk.COLUMN_NAME is null then 'N' else 'Y' end as IS_PRIMARY_KEY,
@@ -455,9 +457,16 @@
                 null as DATA_TYPE_PACKAGE,
                 0 as DATA_LENGTH,
                 0 as DATA_PRECISION,
-                0 as DATA_SCALE
-            from r
-            where r.OVERLOAD = {3}
+                0 as DATA_SCALE,
+                case when prc.PRORETSET then 'Y' else 'N' end as IS_SET
+            from r,
+                pg_catalog.pg_proc prc,
+                pg_catalog.pg_namespace schm
+            where
+                r.OVERLOAD = {3} and
+                r.SPECIFIC_SCHEMA = schm.NSPNAME and
+                prc.PRONAME||'_'||prc.OID = r.SPECIFIC_NAME and
+                prc.PRONAMESPACE = schm.OID
             union
             (select
                 case when p.PARAMETER_NAME is null then 'param'||p.ORDINAL_POSITION else p.PARAMETER_NAME end as ARGUMENT_NAME,
@@ -473,7 +482,8 @@
                 null as DATA_TYPE_PACKAGE,
                 0 as DATA_LENGTH,
                 0 as DATA_PRECISION,
-                0 as DATA_SCALE
+                0 as DATA_SCALE,
+                'N' as IS_SET
             from
                 INFORMATION_SCHEMA.PARAMETERS p, r
             where
@@ -518,6 +528,8 @@
                          where
                             r4.SPECIFIC_SCHEMA = {0}) r5
                     where
+                        r1.SPECIFIC_SCHEMA = {0} and
+                        r5.SPECIFIC_SCHEMA = r1.SPECIFIC_SCHEMA and
                         r5.ROUTINE_NAME = r1.ROUTINE_NAME)
                 select
                     r.SPECIFIC_SCHEMA,
@@ -535,8 +547,15 @@
                     null as DATA_TYPE_PACKAGE,
                     0 as DATA_LENGTH,
                     0 as DATA_PRECISION,
-                    0 as DATA_SCALE
-                from r
+                    0 as DATA_SCALE,
+                    case when prc.PRORETSET then 'Y' else 'N' end as IS_SET
+                from r,
+                    pg_catalog.pg_proc prc,
+                    pg_catalog.pg_namespace schm
+                where
+                    r.SPECIFIC_SCHEMA = schm.NSPNAME and
+                    prc.PRONAME||'_'||prc.OID = r.SPECIFIC_NAME and
+                    prc.PRONAMESPACE = schm.OID
                 union
                 (select
                     r.SPECIFIC_SCHEMA,
@@ -554,7 +573,8 @@
                     null as DATA_TYPE_PACKAGE,
                     0 as DATA_LENGTH,
                     0 as DATA_PRECISION,
-                    0 as DATA_SCALE
+                    0 as DATA_SCALE,
+                    'N' as IS_SET
                 from
                     INFORMATION_SCHEMA.PARAMETERS p, r
                 where

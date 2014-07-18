@@ -192,6 +192,7 @@
                 col.DATA_LENGTH,
                 col.DATA_PRECISION,
                 col.DATA_SCALE,
+                'N' as IS_SET,
                 col.NULLABLE as IS_NULLABLE,
                 decode (col.HIDDEN_COLUMN, 'YES', 'Y', 'N' ) as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
@@ -244,6 +245,7 @@
                 col.DATA_LENGTH,
                 col.DATA_PRECISION,
                 col.DATA_SCALE,
+                'N' as IS_SET,
                 col.NULLABLE as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
@@ -300,6 +302,7 @@
                 col.DATA_LENGTH,
                 col.DATA_PRECISION,
                 col.DATA_SCALE,
+                'N' as IS_SET,
                 col.NULLABLE as IS_NULLABLE,
                 decode (col.HIDDEN_COLUMN, 'YES', 'Y', 'N' ) as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
@@ -352,6 +355,7 @@
                 col.DATA_LENGTH,
                 col.DATA_PRECISION,
                 col.DATA_SCALE,
+                'N' as IS_SET,
                 col.NULLABLE as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
@@ -929,7 +933,8 @@
                  ATTR_TYPE_NAME as DATA_TYPE_NAME,
                  LENGTH as DATA_LENGTH,
                  PRECISION as DATA_PRECISION,
-                 SCALE as DATA_SCALE
+                 SCALE as DATA_SCALE,
+                'N' as IS_SET
              from  [PREFIX]_TYPE_ATTRS
              where
                  OWNER = {0} and
@@ -949,7 +954,8 @@
                  ATTR_TYPE_NAME as DATA_TYPE_NAME,
                  LENGTH as DATA_LENGTH,
                  PRECISION as DATA_PRECISION,
-                 SCALE as DATA_SCALE
+                 SCALE as DATA_SCALE,
+                 'N' as IS_SET
              from [PREFIX]_TYPE_ATTRS
              where OWNER = {0}
              order by TYPE_NAME asc
@@ -966,7 +972,8 @@
                 decode(TYPE_SUBNAME, null, nvl(TYPE_NAME, DATA_TYPE), TYPE_SUBNAME) as DATA_TYPE_NAME,
                 DATA_LENGTH,
                 DATA_PRECISION,
-                DATA_SCALE
+                DATA_SCALE,
+                'N' as IS_SET
             from ALL_ARGUMENTS aa1
             where
                 ARGUMENT_NAME is not null and
@@ -1122,7 +1129,8 @@
                 decode(TYPE_SUBNAME, null, nvl(TYPE_NAME, DATA_TYPE), TYPE_SUBNAME) as DATA_TYPE_NAME,
                 DATA_LENGTH,
                 DATA_PRECISION,
-                DATA_SCALE
+                DATA_SCALE,
+                'N' as IS_SET
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -1153,7 +1161,8 @@
                 decode(TYPE_SUBNAME, null, nvl(TYPE_NAME, DATA_TYPE), TYPE_SUBNAME) as DATA_TYPE_NAME,
                 DATA_LENGTH,
                 DATA_PRECISION,
-                DATA_SCALE
+                DATA_SCALE,
+                'N' as IS_SET
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -1183,7 +1192,8 @@
                 decode(TYPE_SUBNAME, null, nvl(TYPE_NAME, DATA_TYPE), TYPE_SUBNAME) as DATA_TYPE_NAME,
                 DATA_LENGTH,
                 DATA_PRECISION,
-                DATA_SCALE
+                DATA_SCALE,
+                'N' as IS_SET
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and

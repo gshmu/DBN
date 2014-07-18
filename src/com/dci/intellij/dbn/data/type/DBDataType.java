@@ -22,11 +22,13 @@ public class DBDataType {
     private long length;
     private int precision;
     private int scale;
+    private boolean set;
 
     public DBDataType(DBObject parent, ResultSet resultSet) throws SQLException {
         length = resultSet.getLong("DATA_LENGTH");
         precision = resultSet.getInt("DATA_PRECISION");
         scale = resultSet.getInt("DATA_SCALE");
+        set = "Y".equals(resultSet.getString("IS_SET"));
 
         String typeOwner = resultSet.getString("DATA_TYPE_OWNER");
         String typePackage = resultSet.getString("DATA_TYPE_PACKAGE");
@@ -55,6 +57,10 @@ public class DBDataType {
         this.nativeDataType = nativeDataType;
     }
 
+    public boolean isSet() {
+        return set;
+    }
+
     public boolean isDeclared() {
         return declaredType != null;
     }
@@ -64,9 +70,10 @@ public class DBDataType {
     }
 
     public String getName() {
-        return nativeDataType == null && declaredType == null ? typeName :
-                nativeDataType == null ? declaredType.getQualifiedName() :
-                nativeDataType.getName();
+        return (set ? "set of " : "") +
+                (nativeDataType == null && declaredType == null ? typeName :
+                 nativeDataType == null ? declaredType.getQualifiedName() :
+                 nativeDataType.getName());
     }
 
     public Class getTypeClass() {
