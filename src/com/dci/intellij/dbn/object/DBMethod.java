@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 public interface DBMethod extends DBSchemaObject {
     List<DBArgument> getArguments();
     DBArgument getArgument(String name);
+    DBArgument getReturnArgument();
     DBProgram getProgram();
     String getMethodType();
     boolean isProgramMethod();

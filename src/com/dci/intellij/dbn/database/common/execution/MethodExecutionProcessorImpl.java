@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
@@ -38,18 +37,15 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         return method == null ? new ArrayList<DBArgument>() : method.getArguments();
     }
 
-    public DBArgument getReturnArgument() {
-        DBMethod method = getMethod();
-        if (method instanceof DBFunction) {
-            DBFunction function = (DBFunction) method;
-            return function.getReturnArgument();
-        }
-        return null;
-    }
-
-    protected int getParametersCount() {
+    protected int getArgumentsCount() {
         return getArguments().size();
     }
+
+    protected DBArgument getReturnArgument() {
+        DBMethod method = getMethod();
+        return method == null ? null : method.getReturnArgument();
+    }
+
 
     public void execute(MethodExecutionInput executionInput) throws SQLException {
         boolean usePoolConnection = executionInput.isUsePoolConnection();
@@ -79,30 +75,19 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 connectionHandler = method.getConnectionHandler();
                 usePoolConnection = executionInput.isUsePoolConnection();
 
-                if (usePreparedStatement(method)) {
-                    PreparedStatement preparedStatement = connection.prepareStatement(command);
-                    bindParameters(executionInput, preparedStatement);
+                PreparedStatement preparedStatement = isQuery() ?
+                        connection.prepareStatement(command) :
+                        connection.prepareCall(command);
 
-                    preparedStatement.setQueryTimeout(10);
-                    preparedStatement.execute();
-                    MethodExecutionResult executionResult = executionInput.getExecutionResult();
-                    if (executionResult != null) {
-                        loadValues(executionResult, preparedStatement);
-                        executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
-                    }
+                bindParameters(executionInput, preparedStatement);
 
-                } else {
-                    CallableStatement callableStatement = connection.prepareCall (command);
+                preparedStatement.setQueryTimeout(10);
+                preparedStatement.execute();
 
-                    bindParameters(executionInput, callableStatement);
-                    callableStatement.setQueryTimeout(10);
-                    callableStatement.execute();
-
-                    MethodExecutionResult executionResult = executionInput.getExecutionResult();
-                    if (executionResult != null) {
-                        loadValues(executionResult, callableStatement);
-                        executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
-                    }
+                MethodExecutionResult executionResult = executionInput.getExecutionResult();
+                if (executionResult != null) {
+                    loadValues(executionResult, preparedStatement);
+                    executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
                 }
 
                 if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
@@ -120,42 +105,37 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         }
     }
 
-    protected boolean usePreparedStatement(T method) {
+    protected boolean isQuery() {
         return false;
     }
 
-    protected void bindParameters(MethodExecutionInput executionInput, CallableStatement callableStatement) throws SQLException {
+    protected void bindParameters(MethodExecutionInput executionInput, PreparedStatement preparedStatement) throws SQLException {
         for (DBArgument argument : getArguments()) {
             DBDataType dataType = argument.getDataType();
             if (argument.isInput()) {
                 String stringValue = executionInput.getInputValue(argument);
-                setParameterValue(callableStatement, argument.getPosition(), dataType, stringValue);
+                setParameterValue(preparedStatement, argument.getPosition(), dataType, stringValue);
             }
-            if (argument.isOutput()) {
-               callableStatement.registerOutParameter(argument.getPosition(), dataType.getSqlType());
+            if (argument.isOutput() && preparedStatement instanceof CallableStatement) {
+                CallableStatement callableStatement = (CallableStatement) preparedStatement;
+                callableStatement.registerOutParameter(argument.getPosition(), dataType.getSqlType());
             }
         }
     }
 
-    public void loadValues(MethodExecutionResult executionResult, CallableStatement callableStatement) throws SQLException {
+    public void loadValues(MethodExecutionResult executionResult, PreparedStatement preparedStatement) throws SQLException {
         for (DBArgument argument : getArguments()) {
-            if (argument.isOutput()) {
+            if (argument.isOutput() && preparedStatement instanceof CallableStatement) {
+                CallableStatement callableStatement = (CallableStatement) preparedStatement;
                 Object result = callableStatement.getObject(argument.getPosition());
                 executionResult.addArgumentValue(argument, result);
             }
         }
     }
 
-    protected void bindParameters(MethodExecutionInput executionInput, PreparedStatement preparedStatement) throws SQLException {
-
-    }
-
-    public void loadValues(MethodExecutionResult executionResult, PreparedStatement preparedStatement) throws SQLException {
-
-    }
-
     private Project getProject() {
-        return getMethod().getProject();
+        T method = getMethod();
+        return method == null ? null : method.getProject();
     }
 
     protected void setParameterValue(PreparedStatement preparedStatement, int parameterIndex, DBDataType dataType, String stringValue) throws SQLException {
