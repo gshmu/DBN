@@ -21,8 +21,9 @@ import java.io.IOException;
 @State(
     name = "DBNavigator.Project.DataExportManager",
     storages = {
-            @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-            @Storage(file = StoragePathMacros.PROJECT_FILE)}
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DataExportManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private DataExportInstructions exportInstructions = new DataExportInstructions();
