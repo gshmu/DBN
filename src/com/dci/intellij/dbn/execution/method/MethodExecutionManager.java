@@ -4,6 +4,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterGroup;
+import com.intellij.openapi.components.*;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +33,16 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
+import org.jetbrains.annotations.Nullable;
 
-public class MethodExecutionManager extends AbstractProjectComponent implements JDOMExternalizable {
+@State(
+    name = "DBNavigator.Project.MethodExecutionManager",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private MethodBrowserSettings browserSettings = new MethodBrowserSettings();
     private MethodExecutionHistory executionHistory = new MethodExecutionHistory();
 
@@ -162,31 +175,39 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public boolean debugExecute(final MethodExecutionInput executionInput, final Connection connection) {
         final DBMethod method = executionInput.getMethod();
-        DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
-        final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
-        try {
-            executionInput.initExecutionResult(true);
-            executionProcessor.execute(executionInput, connection);
-            if (!executionInput.isExecutionCancelled()) {
-                new SimpleLaterInvocator() {
-                    public void execute() {
-                        ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
-                        executionManager.showExecutionConsole(executionInput.getExecutionResult());
-                    }
-                }.start();
+        if (method != null) {
+            DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
+            final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
+            try {
+                executionInput.initExecutionResult(true);
+                executionProcessor.execute(executionInput, connection);
+                if (!executionInput.isExecutionCancelled()) {
+                    new SimpleLaterInvocator() {
+                        public void execute() {
+                            ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
+                            executionManager.showExecutionConsole(executionInput.getExecutionResult());
+                        }
+                    }.start();
+                }
+                executionInput.setExecutionCancelled(false);
+                return true;
+            } catch (final SQLException e) {
+                if (!executionInput.isExecutionCancelled()) {
+                    new SimpleLaterInvocator() {
+                        public void execute() {
+                            MessageUtil.showErrorDialog("Could not execute " + method.getTypeName() + ".", e);
+                        }
+                    }.start();
+                }
+                return false;
             }
-            executionInput.setExecutionCancelled(false);
-            return true;
-        } catch (final SQLException e) {
-            if (!executionInput.isExecutionCancelled()) {
-                new SimpleLaterInvocator() {
-                    public void execute() {
-                        MessageUtil.showErrorDialog("Could not execute " + method.getTypeName() + ".", e);
-                    }
-                }.start();
-            }
-            return false;
         }
+        return false;
+    }
+
+
+    public void setExecutionInputs(List<MethodExecutionInput> executionInputs) {
+        executionHistory.setExecutionInputs(executionInputs);
     }
 
     /*********************************************************
@@ -204,10 +225,26 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         super.disposeComponent();
     }
 
-    /*********************************************************
-     *                   JDOMExternalizable                  *
-     *********************************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    /****************************************
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        Element browserSettingsElement = new Element("method-browser");
+        element.addContent(browserSettingsElement);
+        browserSettings.writeConfiguration(browserSettingsElement);
+
+
+        Element executionHistoryElement = new Element("execution-history");
+        element.addContent(executionHistoryElement);
+        executionHistory.writeState(executionHistoryElement);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
         Element browserSettingsElement = element.getChild("method-browser");
         if (browserSettingsElement != null) {
             browserSettings.readConfiguration(browserSettingsElement);
@@ -238,23 +275,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                 executionHistory.setSelection(selection);
             }
         } else {
-            executionHistory.readConfiguration(executionHistoryElement);
+            executionHistory.readState(executionHistoryElement);
         }
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        Element browserSettingsElement = new Element("method-browser");
-        element.addContent(browserSettingsElement);
-        browserSettings.writeConfiguration(browserSettingsElement);
-
-
-        Element executionHistoryElement = new Element("execution-history");
-        element.addContent(executionHistoryElement);
-        executionHistory.writeConfiguration(executionHistoryElement);
-    }
-
-    public void setExecutionInputs(List<MethodExecutionInput> executionInputs) {
-        executionHistory.setExecutionInputs(executionInputs);
     }
 
 

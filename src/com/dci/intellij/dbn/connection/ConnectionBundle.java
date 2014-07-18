@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
@@ -22,13 +23,14 @@ import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vcs.FileStatus;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 import java.util.List;
 
 public abstract class ConnectionBundle
         extends Configuration<ConnectionBundleSettingsForm>
-        implements Comparable, BrowserTreeNode, JDOMExternalizable, Disposable {
+        implements Comparable, BrowserTreeNode, Disposable {
 
     protected Logger log = Logger.getInstance(this.getClass().getName());
 
@@ -141,17 +143,6 @@ public abstract class ConnectionBundle
             connectionSettings.writeConfiguration(connectionElement);
             connectionsElement.addContent(connectionElement);
         }
-    }
-
-    /*********************************************************
-     *                   JDOMExternalizable                  *
-     *********************************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-        readConfiguration(element);
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        writeConfiguration(element);
     }
 
     /*********************************************************
@@ -269,5 +260,19 @@ public abstract class ConnectionBundle
     *********************************************************/
     public String getToolTip() {
         return "";
-    }    
+    }
+
+    /*********************************************************
+     *                PersistentStateComponent               *
+     *********************************************************/
+    @Nullable
+    public Element getState() {
+        Element element = new Element("state");
+        writeConfiguration(element);
+        return element;
+    }
+
+    public void loadState(Element element) {
+        readConfiguration(element);
+    }
 }

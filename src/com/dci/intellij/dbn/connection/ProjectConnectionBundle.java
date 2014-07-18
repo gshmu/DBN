@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +11,14 @@ import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectConnectionBundle extends ConnectionBundle implements ProjectComponent {
+@State(
+    name = "DBNavigator.Project.ConnectionManager",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class ProjectConnectionBundle extends ConnectionBundle implements ProjectComponent, PersistentStateComponent<Element> {
     private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
     private ProjectConnectionBundle(Project project) {
         super(project);

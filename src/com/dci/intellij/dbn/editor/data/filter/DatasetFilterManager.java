@@ -22,8 +22,9 @@ import java.util.Map;
 @State(
     name = "DBNavigator.Project.DatasetFilterManager",
     storages = {
-            @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-            @Storage(file = StoragePathMacros.PROJECT_FILE)}
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatasetFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();

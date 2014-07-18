@@ -42,8 +42,9 @@ import java.util.List;
 @State(
     name = "DBNavigator.Project.DatabaseBrowserManager",
     storages = {
-            @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-            @Storage(file = StoragePathMacros.PROJECT_FILE)}
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatabaseBrowserManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String TOOL_WINDOW_ID = "DB Browser";

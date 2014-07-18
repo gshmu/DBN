@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.execution.method.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -14,7 +16,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 
-public class MethodExecutionHistory implements Disposable{
+public class MethodExecutionHistory implements PersistentStateElement<Element>, Disposable{
     private List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
     private boolean groupEntries = true;
     private DBMethodRef selection;
@@ -80,7 +82,22 @@ public class MethodExecutionHistory implements Disposable{
         DisposerUtil.dispose(executionInputs);
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public MethodExecutionInput getLastSelection() {
+        if (selection != null) {
+            for (MethodExecutionInput executionInput : executionInputs) {
+                if (executionInput.getMethodRef().equals(selection)) {
+                    return executionInput;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    /*****************************************
+     *         PersistentStateElement        *
+     *****************************************/
+    public void readState(Element element) {
         groupEntries = SettingsUtil.getBoolean(element, "group-history-entries", groupEntries);
 
         Element executionInputsElement = element.getChild("execution-inputs");
@@ -101,7 +118,7 @@ public class MethodExecutionHistory implements Disposable{
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeState(Element element) {
         SettingsUtil.setBoolean(element, "group-entries", groupEntries);
 
         Element configsElement = new Element("execution-inputs");
@@ -118,16 +135,5 @@ public class MethodExecutionHistory implements Disposable{
             selection.writeState(selectionElement);
         }
 
-    }
-
-    public MethodExecutionInput getLastSelection() {
-        if (selection != null) {
-            for (MethodExecutionInput executionInput : executionInputs) {
-                if (executionInput.getMethodRef().equals(selection)) {
-                    return executionInput;
-                }
-            }
-        }
-        return null;
     }
 }

@@ -2,17 +2,25 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMExternalizable;
+import com.intellij.openapi.util.WriteExternalException;
+import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.Icon;
 
-public class ModuleConnectionBundle extends ConnectionBundle implements ModuleComponent, Configurable {
+public class ModuleConnectionBundle extends ConnectionBundle implements ModuleComponent, Configurable, JDOMExternalizable {
 
     private Module module;
     public ModuleConnectionBundle(Module module) {
@@ -80,5 +88,18 @@ public class ModuleConnectionBundle extends ConnectionBundle implements ModuleCo
             return getModule().getName().compareTo(connectionManager.getModule().getName());
         }
         return -1;
+    }
+
+    /*********************************************************
+     *                   JDOMExternalizable                  *
+     *********************************************************/
+    @Override
+    public void readExternal(Element element) throws InvalidDataException {
+        readConfiguration(element);
+    }
+
+    @Override
+    public void writeExternal(Element element) throws WriteExternalException {
+        writeConfiguration(element);
     }
 }

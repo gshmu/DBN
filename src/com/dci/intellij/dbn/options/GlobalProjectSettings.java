@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.GlobalConnectionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -14,7 +15,7 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsEditorForm;
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -30,9 +31,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+@State(
+    name = "DBNavigator.Project.Settings",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
 public class GlobalProjectSettings
         extends CompositeProjectConfiguration<GlobalProjectSettingsEditorForm>
-        implements ProjectComponent, JDOMExternalizable, SearchableConfigurable.Parent {
+        implements ProjectComponent, PersistentStateComponent<Element>, SearchableConfigurable.Parent {
 
     private GeneralProjectSettings generalSettings;
     private DatabaseBrowserSettings browserSettings;
@@ -163,37 +171,6 @@ public class GlobalProjectSettings
                 connectionSettings};
     }
 
-/*    public void readConfiguration(Element element) throws InvalidDataException {
-        readConfiguration(element, browserSettings);
-        readConfiguration(element, navigationSettings);
-        readConfiguration(element, dataEditorSettings);
-        readConfiguration(element, codeCompletionSettings);
-        readConfiguration(element, executionEngineSettings);
-        readConfiguration(element, ddlFileSettings);
-        readConfiguration(element, generalSettings);
-    }
-
-    public void writeConfiguration(Element element) throws WriteExternalException {
-        writeConfiguration(element, browserSettings);
-        writeConfiguration(element, navigationSettings);
-        writeConfiguration(element, dataEditorSettings);
-        writeConfiguration(element, codeCompletionSettings);
-        writeConfiguration(element, executionEngineSettings);
-        writeConfiguration(element, ddlFileSettings);
-        writeConfiguration(element, generalSettings);
-    }*/
-
-    /*********************************************************
-     *                  JDOMExternalizable                   *
-     *********************************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-        readConfiguration(element);
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        writeConfiguration(element);
-    }
-
     /*********************************************************
     *              SearchableConfigurable.Parent             *
     *********************************************************/
@@ -227,4 +204,20 @@ public class GlobalProjectSettings
     public void projectClosed() {}
     public void initComponent() {}
     public void disposeComponent() {}
+
+    /****************************************
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        writeConfiguration(element);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        readConfiguration(element);
+    }
 }
