@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.editor.data.options;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorPopupSettingsForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettingsForm>{
@@ -61,14 +59,14 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
         return "text-editor-popup";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         active = SettingsUtil.getBoolean(element, "active", active);
         activeIfEmpty = SettingsUtil.getBoolean(element, "active-if-empty", activeIfEmpty);
         dataLengthThreshold = SettingsUtil.getInteger(element, "data-length-threshold", dataLengthThreshold);
         delay = SettingsUtil.getInteger(element, "popup-delay", delay);
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "active", active);
         SettingsUtil.setBoolean(element, "active-if-empty", activeIfEmpty);
         SettingsUtil.setInteger(element, "data-length-threshold", dataLengthThreshold);

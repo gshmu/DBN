@@ -9,8 +9,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +82,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         return "extensions";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         for (Object o : element.getChildren()) {
             Element fileTypeElement = (Element) o;
             String name = fileTypeElement.getAttributeValue("file-type-id");
@@ -99,7 +97,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         for (DDLFileType fileType : getDDLFileTypes()) {
             Element fileTypeElement = new Element("mapping");
             fileTypeElement.setAttribute("file-type-id", fileType.getId());

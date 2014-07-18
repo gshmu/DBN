@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.code.common.style.options;
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleFormattingSettingsForm;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.util.ArrayList;
@@ -53,7 +51,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
         return "formatting-settings";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
         for (Object object : element.getChildren()) {
             Element optionElement = (Element) object;
@@ -65,7 +63,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleFormattingOption option : options) {
             Element optionElement = new Element("option");

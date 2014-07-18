@@ -11,8 +11,6 @@ import com.dci.intellij.dbn.common.options.setting.StringSetting;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.util.Locale;
@@ -99,7 +97,7 @@ public class RegionalSettings extends Configuration<RegionalSettingsEditorForm> 
         return "regional-settings";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         String localeString = SettingsUtil.getString(element, "locale", Locale.getDefault().toString());
         boolean useSystemLocale = localeString.equals("SYSTEM_DEFAULT");
         if (useSystemLocale) {
@@ -124,7 +122,7 @@ public class RegionalSettings extends Configuration<RegionalSettingsEditorForm> 
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setEnum(element, "date-format", dateFormatOption);
         SettingsUtil.setEnum(element, "number-format", numberFormatOption);
 

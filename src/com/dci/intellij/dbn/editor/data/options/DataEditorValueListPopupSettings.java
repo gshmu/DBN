@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.editor.data.options;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.data.options.ui.DatatEditorValueListPopupSettingsForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class DataEditorValueListPopupSettings extends Configuration<DatatEditorValueListPopupSettingsForm> {
@@ -60,13 +58,13 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
         return "values-list-popup";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         activeForPrimaryKeyColumns = SettingsUtil.getBoolean(element, "active-for-primary-keys", activeForPrimaryKeyColumns);
         elementCountThreshold = SettingsUtil.getInteger(element, "element-count-threshold", elementCountThreshold);
         dataLengthThreshold = SettingsUtil.getInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "active-for-primary-keys", activeForPrimaryKeyColumns);
         SettingsUtil.setInteger(element, "element-count-threshold", elementCountThreshold);
         SettingsUtil.setInteger(element, "data-length-threshold", dataLengthThreshold);

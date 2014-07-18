@@ -8,8 +8,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelation;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashMap;
 import org.jdom.Element;
 
@@ -123,7 +121,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         return "object-name-filters";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         filters.clear();
         objectFilterMap.clear();
         objectRelationFilterMap.clear();
@@ -136,7 +134,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         for (ObjectNameFilter filter : filters) {
             Element filterElement = new Element("filter");
             filter.writeConfiguration(filterElement);

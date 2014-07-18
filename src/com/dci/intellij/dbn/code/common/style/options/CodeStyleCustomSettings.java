@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.code.common.style.options;
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEditorForm> extends CompositeConfiguration<T>{
@@ -38,7 +36,7 @@ public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEd
 
     protected abstract String getElementName();
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         Element child = element.getChild(getElementName());
         if (child != null) {
             readConfiguration(child, caseSettings);
@@ -46,7 +44,7 @@ public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEd
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
          Element child = new Element(getElementName());
          element.addContent(child);
          writeConfiguration(child, caseSettings);

@@ -7,18 +7,25 @@ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetFilterDialog;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatasetFilterManager extends AbstractProjectComponent implements JDOMExternalizable {
+@State(
+    name = "DBNavigator.Project.DatasetFilterManager",
+    storages = {
+            @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+            @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DatasetFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
     private Map<String, Map<String, DatasetFilterGroup>> filters =  new HashMap<String, Map<String, DatasetFilterGroup>>();
 
@@ -174,19 +181,13 @@ public class DatasetFilterManager extends AbstractProjectComponent implements JD
         super.disposeComponent();
     }
 
-    /*************************************************
-    *               JDOMExternalizable              *
-    *************************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-        for (Object object : element.getChildren()) {
-            Element filterListElement = (Element) object;
-            DatasetFilterGroup filterGroup = new DatasetFilterGroup(getProject());
-            filterGroup.readConfiguration(filterListElement);
-            addFilterGroup(filterGroup);
-        }
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
+    /****************************************
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
         for (String connectionId : filters.keySet()){
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             if (connectionManager.getConnectionHandler(connectionId) != null) {
@@ -199,7 +200,17 @@ public class DatasetFilterManager extends AbstractProjectComponent implements JD
                 }
             }
         }
+        return element;
+    }
 
+    @Override
+    public void loadState(Element element) {
+        for (Object object : element.getChildren()) {
+            Element filterListElement = (Element) object;
+            DatasetFilterGroup filterGroup = new DatasetFilterGroup(getProject());
+            filterGroup.readConfiguration(filterListElement);
+            addFilterGroup(filterGroup);
+        }
     }
 
 }

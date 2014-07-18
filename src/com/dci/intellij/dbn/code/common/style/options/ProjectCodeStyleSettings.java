@@ -8,8 +8,6 @@ import com.dci.intellij.dbn.code.sql.style.options.SQLCustomCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jdom.Element;
@@ -73,11 +71,11 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
                 getPSQLCodeStyleSettings()};
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
 
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
 
     }
 

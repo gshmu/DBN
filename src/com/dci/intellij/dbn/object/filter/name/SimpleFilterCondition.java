@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 
@@ -100,12 +98,12 @@ public class SimpleFilterCondition implements FilterCondition {
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         operator = ConditionOperator.valueOf(element.getAttributeValue("operator"));
         text = element.getAttributeValue("text");
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("operator", operator.name());
         element.setAttribute("text", text);
     }

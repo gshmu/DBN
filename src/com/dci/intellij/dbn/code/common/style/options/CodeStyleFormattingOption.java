@@ -58,14 +58,14 @@ public class CodeStyleFormattingOption {
     /*********************************************************
      *                   JDOMExternalizable                  *
      *********************************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    public void readExternal(Element element) {
         name = element.getAttributeValue("name");
         String presetId = element.getAttributeValue("value");
         CodeStylePreset newPreset = getCodeStylePreset(presetId);
         if (newPreset != null) preset = newPreset;
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
+    public void writeExternal(Element element) {
         element.setAttribute("name", name);
         element.setAttribute("value", preset.getId());
     }

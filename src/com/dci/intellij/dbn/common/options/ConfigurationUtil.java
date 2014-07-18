@@ -8,7 +8,7 @@ import com.intellij.openapi.util.WriteExternalException;
 
 public class ConfigurationUtil extends SettingsUtil{
 
-    public static void writeConfiguration(Element element, Configuration configuration) throws WriteExternalException {
+    public static void writeConfiguration(Element element, Configuration configuration) {
         String elementName = configuration.getConfigElementName();
         if (elementName != null) {
             Element childElement = new Element(elementName);
@@ -18,7 +18,7 @@ public class ConfigurationUtil extends SettingsUtil{
     }
 
 
-    public static void readConfiguration(Element element, Configuration configuration) throws InvalidDataException {
+    public static void readConfiguration(Element element, Configuration configuration) {
         String elementName = configuration.getConfigElementName();
         if (elementName != null) {
             Element childElement = element.getChild(elementName);

@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.util.ArrayList;
@@ -161,7 +159,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         String joinTypeString = element.getAttributeValue("join-type");
         joinType = StringUtil.isEmptyOrSpaces(joinTypeString) ? ConditionJoinType.AND : ConditionJoinType.valueOf(joinTypeString);
         for (Object o : element.getChildren()) {
@@ -177,7 +175,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("join-type", joinType.toString());
         for (FilterCondition condition : conditions) {
             Element childElement =

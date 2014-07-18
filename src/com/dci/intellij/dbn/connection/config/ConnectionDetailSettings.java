@@ -12,8 +12,6 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
     private Map<String, String> properties = new HashMap<String, String>();
@@ -115,7 +113,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     }
 
     @Override
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         String charsetName = SettingsUtil.getString(element, "charset", "UTF-8");
         charset = Charset.forName(charsetName);
         
@@ -137,7 +135,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     }
 
     @Override
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setString(element, "charset", charset.name());
         
         SettingsUtil.setBoolean(element, "auto-commit", autoCommit);

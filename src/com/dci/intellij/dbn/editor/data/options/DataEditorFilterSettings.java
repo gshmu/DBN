@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorFilterSettingsForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class DataEditorFilterSettings extends Configuration<DataEditorFilterSettingsForm> {
@@ -52,12 +50,12 @@ public class DataEditorFilterSettings extends Configuration<DataEditorFilterSett
         return "filters";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         promptFilterDialog = SettingsUtil.getBoolean(element, "prompt-filter-dialog", promptFilterDialog);
         defaultFilterType = DatasetFilterType.get(SettingsUtil.getString(element, "default-filter-type", defaultFilterType.name()));
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "prompt-filter-dialog", promptFilterDialog);
         SettingsUtil.setString(element, "default-filter-type", defaultFilterType.name());
     }

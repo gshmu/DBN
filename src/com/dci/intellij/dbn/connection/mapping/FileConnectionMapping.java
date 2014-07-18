@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class FileConnectionMapping implements PersistentConfiguration {
@@ -47,7 +46,7 @@ public class FileConnectionMapping implements PersistentConfiguration {
     /***************************************
      *          JDOMExternalizable         *
      ***************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         fileUrl = element.getAttributeValue("file-url");
         // fixme remove this backward compatibility 
         if (fileUrl == null) fileUrl = element.getAttributeValue("file-path");
@@ -55,7 +54,7 @@ public class FileConnectionMapping implements PersistentConfiguration {
         currentSchema = element.getAttributeValue("current-schema");
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("file-url", fileUrl);
         element.setAttribute("connection-id", connectionId == null ? "" : connectionId);
         element.setAttribute("current-schema", currentSchema == null ? "" : currentSchema);

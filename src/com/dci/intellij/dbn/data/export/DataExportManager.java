@@ -9,9 +9,6 @@ import com.dci.intellij.dbn.data.ui.table.sortable.SortableTable;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -119,12 +116,12 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
     @Override
     public Element getState() {
         Element element = new Element("state");
-        element.addContent(exportInstructions.getState());
+        exportInstructions.writeState(element);
         return element;
     }
 
     @Override
     public void loadState(Element element) {
-        exportInstructions.loadState(element.getChild("export-instructions"));
+        exportInstructions.readState(element);
     }
 }

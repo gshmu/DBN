@@ -1,16 +1,12 @@
 package com.dci.intellij.dbn.data.export;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class DataExportInstructions extends SettingsUtil implements PersistentStateComponent<Element>, Cloneable {
+public class DataExportInstructions extends SettingsUtil implements PersistentStateElement<Element>, Cloneable {
     private boolean createHeader = true;
     private boolean quoteValuesContainingSeparator = true;
     private boolean quoteAllValues = false;
@@ -122,36 +118,37 @@ public class DataExportInstructions extends SettingsUtil implements PersistentSt
     }
 
     /***********************************************
-     *            PersistentStateComponent         *
+     *            PersistentStateElement           *
      ***********************************************/
-    @Nullable
     @Override
-    public Element getState() {
-        Element element = new Element("export-instructions");
-        setBoolean(element, "create-header", createHeader);
-        setBoolean(element, "quote-values-containing-separator", quoteValuesContainingSeparator);
-        setBoolean(element, "quote-all-values", quoteAllValues);
-        setString(element, "value-separator", valueSeparator);
-        setString(element, "file-name", fileName);
-        setString(element, "file-location", fileLocation);
-        setString(element, "scope", scope.name());
-        setString(element, "destination", destination.name());
-        setString(element, "format", format.name());
-        return element;
+    public void writeState(Element element) {
+        Element child = new Element("export-instructions");
+        element.addContent(child);
+
+        setBoolean(child, "create-header", createHeader);
+        setBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
+        setBoolean(child, "quote-all-values", quoteAllValues);
+        setString(child, "value-separator", valueSeparator);
+        setString(child, "file-name", fileName);
+        setString(child, "file-location", fileLocation);
+        setString(child, "scope", scope.name());
+        setString(child, "destination", destination.name());
+        setString(child, "format", format.name());
     }
 
     @Override
-    public void loadState(Element element) {
-        if (element != null) {
-            createHeader = getBoolean(element, "create-header", createHeader);
-            quoteValuesContainingSeparator = getBoolean(element, "quote-values-containing-separator", quoteValuesContainingSeparator);
-            quoteAllValues = getBoolean(element, "quote-all-values", quoteAllValues);
-            valueSeparator = getString(element, "value-separator", valueSeparator);
-            fileName = getString(element, "file-name", fileName);
-            fileLocation = getString(element, "file-location", fileLocation);
-            scope = Scope.valueOf(getString(element, "scope", scope.name()));
-            destination = Destination.valueOf(getString(element, "destination", destination.name()));
-            format = DataExportFormat.valueOf(getString(element, "format", format.name()));
+    public void readState(Element element) {
+        Element child = element.getChild("export-instructions");
+        if (child != null) {
+            createHeader = getBoolean(child, "create-header", createHeader);
+            quoteValuesContainingSeparator = getBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
+            quoteAllValues = getBoolean(child, "quote-all-values", quoteAllValues);
+            valueSeparator = getString(child, "value-separator", valueSeparator);
+            fileName = getString(child, "file-name", fileName);
+            fileLocation = getString(child, "file-location", fileLocation);
+            scope = Scope.valueOf(getString(child, "scope", scope.name()));
+            destination = Destination.valueOf(getString(child, "destination", destination.name()));
+            format = DataExportFormat.valueOf(getString(child, "format", format.name()));
         }
     }
 }

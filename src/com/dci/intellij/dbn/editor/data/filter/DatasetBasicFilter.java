@@ -5,8 +5,6 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import javax.swing.Icon;
@@ -133,7 +131,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
        return dataset == null ? null : new DatasetBasicFilterForm(dataset, this);
    }
 
-   public void readConfiguration(Element element) throws InvalidDataException {
+   public void readConfiguration(Element element) {
        super.readConfiguration(element);
        String joinTypeValue = element.getAttributeValue("join-type");
        joinType = joinTypeValue.equals("AND") ? JOIN_TYPE_AND : JOIN_TYPE_OR;
@@ -145,7 +143,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
        }
    }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("type", "basic");
         String joinTypeValue = joinType == JOIN_TYPE_AND ? "AND" : "OR";

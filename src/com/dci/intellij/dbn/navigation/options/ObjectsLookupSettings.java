@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.navigation.options.ui.ObjectsLookupSettingsForm;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 
@@ -113,7 +111,7 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
         return "lookup-filters";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         Element visibleObjectsElement = element.getChild("lookup-objects");
         for (Object o : visibleObjectsElement.getChildren()) {
             Element child = (Element) o;
@@ -130,7 +128,7 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
         promptSchemaSelection.readConfiguration(element);
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         Element visibleObjectsElement = new Element("lookup-objects");
         element.addContent(visibleObjectsElement);
 

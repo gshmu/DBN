@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class CodeStyleCaseOption implements PersistentConfiguration {
@@ -45,7 +43,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     /*********************************************************
      *                   JDOMExternalizable                  *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         name = element.getAttributeValue("name");
         String style = element.getAttributeValue("value");
         styleCase =
@@ -55,7 +53,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
                 style.equals("preserve") ? CodeStyleCase.PRESERVE : CodeStyleCase.PRESERVE;
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         String value =
                 styleCase == CodeStyleCase.UPPER ? "upper" :
                 styleCase == CodeStyleCase.LOWER ? "lower" :
