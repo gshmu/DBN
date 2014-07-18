@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.GlobalConnectionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -19,17 +18,13 @@ import com.intellij.openapi.components.*;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 @State(
     name = "DBNavigator.Project.Settings",
