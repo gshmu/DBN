@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.ref.Reference;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -25,13 +32,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.ref.Reference;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile, DocumentListener {
     private static final Key<VirtualFile> FILE_KEY = Key.create("FILE_KEY");
@@ -49,7 +49,13 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
         super(databaseFile, contentType);
         DBSchemaObject object = getObject();
         if (object != null) {
-            hashCode = (object.getQualifiedNameWithConnectionId() + contentType.getDescription()).hashCode();
+            hashCode = (
+                    object.getConnectionHandler().getId() + "#" +
+                    object.getObjectType() + "#" +
+                    object.getQualifiedName() + "#" +
+                    object.getOverload() + "#" +
+                    contentType).hashCode();
+
             updateChangeTimestamp();
             setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
             try {

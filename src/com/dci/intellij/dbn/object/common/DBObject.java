@@ -38,11 +38,11 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
 
     @NotNull
     String getName();
+    int getOverload();
     String getQuotedName(boolean quoteAlways);
     boolean needsNameQuoting();
     String getQualifiedName();
     String getQualifiedNameWithType();
-    String getQualifiedNameWithConnectionId();
     String getNavigationTooltipText();
     String getTypeName();
     Icon getIcon();

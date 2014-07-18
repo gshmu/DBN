@@ -11,7 +11,6 @@ public interface DBMethod extends DBSchemaObject {
     DBArgument getArgument(String name);
     DBProgram getProgram();
     String getMethodType();
-    int getOverload();
     boolean isProgramMethod();
     boolean isDeterministic();
     boolean hasDeclaredArguments();

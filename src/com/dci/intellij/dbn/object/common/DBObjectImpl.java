@@ -208,6 +208,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     @Override
+    public int getOverload() {
+        return 0;
+    }
+
+    @Override
     public String getQuotedName(boolean quoteAlways) {
         if (quoteAlways || needsNameQuoting()) {
             char quoteChar = DatabaseCompatibilityInterface.getInstance(this).getIdentifierQuotes();
@@ -234,10 +239,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public String getQualifiedNameWithType() {
         return getTypeName() + " " + getQualifiedName();
-    }
-
-    public String getQualifiedNameWithConnectionId() {
-        return "[" + getConnectionHandler().getId() + "]" + getQualifiedName();
     }
 
     public DBUser getOwner() {
