@@ -5,8 +5,6 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetCustomFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.CDATA;
 import org.jdom.Element;
@@ -68,7 +66,7 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         return dataset == null ? null : new DatasetCustomFilterForm(dataset, this);
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         super.readConfiguration(element);
         Element conditionElement = element.getChild("condition");
         if (conditionElement.getContentSize() > 0) {
@@ -79,7 +77,7 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("type", "custom");
         Element conditionElement = new Element("condition");

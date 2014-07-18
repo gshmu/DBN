@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,12 +66,12 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return "browser-settings";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         readConfiguration(element, generalSettings);
         readConfiguration(element, filterSettings);
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         writeConfiguration(element, generalSettings);
         writeConfiguration(element, filterSettings);
     }

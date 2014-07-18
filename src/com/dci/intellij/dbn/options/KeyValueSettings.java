@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.options;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.util.HashMap;
@@ -45,7 +43,7 @@ public class KeyValueSettings extends Configuration {
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         Element optionsElement = element.getChild("general");
         if (optionsElement != null) {
             for (Object o : optionsElement.getChildren()) {
@@ -55,7 +53,7 @@ public class KeyValueSettings extends Configuration {
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         Element optionsElement = new Element("general");
         element.addContent(optionsElement);
         for (Object o : settings.keySet()) {

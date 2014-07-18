@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.awt.Color;
@@ -117,7 +115,7 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
     }
 
     @Override
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         id = element.getAttributeValue("id");
         name = element.getAttributeValue("name");
         description = element.getAttributeValue("description");
@@ -135,7 +133,7 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
     }
 
     @Override
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("id", id);
         element.setAttribute("name", name);
         element.setAttribute("description", description);

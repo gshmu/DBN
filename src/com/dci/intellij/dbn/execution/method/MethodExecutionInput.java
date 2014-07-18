@@ -23,8 +23,6 @@ import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput> {
     private DBMethodRef<DBMethod> methodRef;
@@ -184,7 +182,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     /*********************************************************
      *                   JDOMExternalizable                  *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         methodRef.readState(element);
         String schemaName = element.getAttributeValue("execution-schema");
         executionSchema = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
@@ -199,7 +197,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         methodRef.writeState(element);
         element.setAttribute("execution-schema", CommonUtil.nvl(executionSchema.getPath(), ""));
         SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);

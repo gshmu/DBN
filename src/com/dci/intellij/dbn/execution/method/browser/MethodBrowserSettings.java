@@ -12,8 +12,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
@@ -75,7 +73,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         this.method = new DBMethodRef(method);
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         connectionId = element.getAttributeValue("connection-id");
         schemaName = element.getAttributeValue("schema");
 
@@ -86,7 +84,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getId());
         if (schemaName != null) element.setAttribute("schema", schemaName);

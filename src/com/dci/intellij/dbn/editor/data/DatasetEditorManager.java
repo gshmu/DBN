@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
@@ -32,13 +33,20 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
-public class DatasetEditorManager extends AbstractProjectComponent implements JDOMExternalizable {
+@State(
+        name = "DBNavigator.Project.DataEditorManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DatasetEditorManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final DatasetLoadInstructions INITIAL_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
     public static final DatasetLoadInstructions RELOAD_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);
     private ColumnSortingType recordViewColumnSortingType = ColumnSortingType.BY_INDEX;
@@ -174,19 +182,25 @@ public class DatasetEditorManager extends AbstractProjectComponent implements JD
         EventManager.unsubscribe(fileEditorListener);
     }
 
-    /****************************************
-    *            JDOMExternalizable         *
-    *****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-        recordViewColumnSortingType = SettingsUtil.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
-        valuePreviewTextWrapping = SettingsUtil.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
-        valuePreviewTextWrapping = SettingsUtil.getBoolean(element, "value-preview-pinned", valuePreviewPinned);
-    }
 
-    public void writeExternal(Element element) throws WriteExternalException {
+    /****************************************
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
         SettingsUtil.setEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
         SettingsUtil.setBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
         SettingsUtil.setBoolean(element, "value-preview-pinned", valuePreviewPinned);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        recordViewColumnSortingType = SettingsUtil.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
+        valuePreviewTextWrapping = SettingsUtil.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
+        valuePreviewTextWrapping = SettingsUtil.getBoolean(element, "value-preview-pinned", valuePreviewPinned);
     }
 
 }

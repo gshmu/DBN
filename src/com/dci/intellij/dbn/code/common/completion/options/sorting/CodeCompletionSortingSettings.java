@@ -9,8 +9,6 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.util.ArrayList;
@@ -85,7 +83,7 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
         return "sorting";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
         for (Object child : element.getChildren()) {
             Element childElement = (Element) child;
@@ -98,7 +96,7 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
         for (CodeCompletionSortingItem sortingItem : sortingItems) {
             writeConfiguration(element, sortingItem);

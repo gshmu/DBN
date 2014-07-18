@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
     private ConnectionDatabaseSettings databaseSettings;
@@ -68,7 +66,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         if (element.getChild(databaseSettings.getConfigElementName()) != null) {
             readConfiguration(element, databaseSettings);
         } else {
@@ -79,7 +77,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         readConfiguration(element, filterSettings);
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         writeConfiguration(element, databaseSettings);
         writeConfiguration(element, detailSettings);
         writeConfiguration(element, filterSettings);

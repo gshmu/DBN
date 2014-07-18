@@ -119,7 +119,7 @@ public abstract class ConnectionBundle
     /*********************************************************
      *                      Configurable                     *
      *********************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         Element connectionsElement = element.getChild("connections");
         if (connectionsElement != null) {
             for (Object o : connectionsElement.getChildren()) {
@@ -132,7 +132,7 @@ public abstract class ConnectionBundle
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         Element connectionsElement = new Element("connections");
         element.addContent(connectionsElement);
         for (ConnectionHandler connectionHandler : connectionHandlers.getFullList()) {

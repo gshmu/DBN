@@ -6,8 +6,6 @@ import com.dci.intellij.dbn.common.environment.options.ui.EnvironmentSettingsFor
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class EnvironmentSettings extends ProjectConfiguration {
@@ -50,7 +48,7 @@ public class EnvironmentSettings extends ProjectConfiguration {
     }
 
     @Override
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         Element environmentTypesElement = element.getChild("environment-types");
         if (environmentTypesElement != null) {
             environmentTypes.clear();
@@ -69,7 +67,7 @@ public class EnvironmentSettings extends ProjectConfiguration {
     }
 
     @Override
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         Element environmentTypesElement = new Element("environment-types");
         element.addContent(environmentTypesElement);
         for (EnvironmentType environmentType : environmentTypes) {

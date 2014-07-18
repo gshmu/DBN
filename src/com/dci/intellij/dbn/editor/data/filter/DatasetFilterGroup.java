@@ -10,8 +10,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
@@ -272,7 +270,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
        return new DatasetFilterForm(this, lookupDataset());
    }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         connectionId = element.getAttributeValue("connection-id");
         datasetName = element.getAttributeValue("dataset");
         for (Object object : element.getChildren()){
@@ -292,7 +290,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         activeFilter = getFilter(activeFilterId);
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("connection-id", connectionId);
         element.setAttribute("dataset", datasetName);
         for (DatasetFilter filter : filters) {

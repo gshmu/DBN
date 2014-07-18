@@ -9,8 +9,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
@@ -153,7 +151,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         return "object-type-filter";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         useMasterSettings.readConfigurationAttribute(element);
         for (Object o : element.getChildren()) {
             Element child = (Element) o;
@@ -166,7 +164,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         if (master != null) {
             useMasterSettings.writeConfigurationAttribute(element);
         }

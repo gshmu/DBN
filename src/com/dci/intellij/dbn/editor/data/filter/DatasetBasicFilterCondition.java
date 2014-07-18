@@ -10,8 +10,6 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 import java.text.ParseException;
@@ -158,14 +156,14 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         return new DatasetBasicFilterConditionForm(dataset, this);
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
        columnName = element.getAttributeValue("column");
        operator = element.getAttributeValue("operator");
        value = element.getAttributeValue("value");
        active = Boolean.parseBoolean(element.getAttributeValue("active"));
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("column", columnName);
         element.setAttribute("operator", operator);
         element.setAttribute("value", value);

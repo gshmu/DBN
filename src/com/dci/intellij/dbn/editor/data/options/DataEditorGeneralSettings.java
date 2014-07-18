@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorGeneralSettingsForm;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSettingsForm> {
@@ -64,7 +62,7 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
         return "general";
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         fetchBlockSize.readConfiguration(element);
         fetchTimeout.readConfiguration(element);
         trimWhitespaces.readConfiguration(element);
@@ -74,7 +72,7 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
 
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         fetchBlockSize.writeConfiguration(element);
         fetchTimeout.writeConfiguration(element);
         trimWhitespaces.writeConfiguration(element);

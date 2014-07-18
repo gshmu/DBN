@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.editor.data.filter;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -124,7 +122,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         id = element.getAttributeValue("id");
         name = element.getAttributeValue("name");
         isTemporary = Boolean.parseBoolean(element.getAttributeValue("temporary"));
@@ -132,7 +130,7 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         isNew = false;
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         element.setAttribute("id", id);
         element.setAttribute("name", name);
         element.setAttribute("temporary", Boolean.toString(isTemporary));

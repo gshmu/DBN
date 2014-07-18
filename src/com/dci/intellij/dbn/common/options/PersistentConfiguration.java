@@ -5,6 +5,6 @@ import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public interface PersistentConfiguration {
-    void readConfiguration(Element element) throws InvalidDataException;
-    void writeConfiguration(Element element) throws WriteExternalException;
+    void readConfiguration(Element element);
+    void writeConfiguration(Element element);
 }

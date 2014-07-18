@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public abstract class CompositeConfiguration<T extends CompositeConfigurationEditorForm> extends Configuration<T> {
@@ -51,13 +49,13 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
         super.disposeUIResources();
     }
 
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         for (Configuration configuration : getConfigurations()) {
             readConfiguration(element, configuration);
         }
     }
 
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         for (Configuration configuration : getConfigurations()) {
             writeConfiguration(element, configuration);
         }

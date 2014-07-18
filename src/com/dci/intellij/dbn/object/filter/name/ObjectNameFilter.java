@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class ObjectNameFilter extends CompoundFilterCondition {
@@ -52,14 +50,14 @@ public class ObjectNameFilter extends CompoundFilterCondition {
      *                     Configuration                     *
      *********************************************************/
     @Override
-    public void readConfiguration(Element element) throws InvalidDataException {
+    public void readConfiguration(Element element) {
         super.readConfiguration(element);
         objectType = DBObjectType.getObjectType(element.getAttributeValue("object-type"));
         hashCode = toString().hashCode();
     }
 
     @Override
-    public void writeConfiguration(Element element) throws WriteExternalException {
+    public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("object-type", objectType.getName());
     }
