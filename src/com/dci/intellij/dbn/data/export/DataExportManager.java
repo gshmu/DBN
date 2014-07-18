@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
 import com.dci.intellij.dbn.data.ui.table.sortable.SortableTable;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.InvalidDataException;
@@ -14,12 +15,19 @@ import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
-public class DataExportManager extends AbstractProjectComponent implements JDOMExternalizable {
+@State(
+    name = "DBNavigator.Project.DataExportManager",
+    storages = {
+            @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+            @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DataExportManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private DataExportInstructions exportInstructions = new DataExportInstructions();
 
     private DataExportManager(Project project) {
@@ -105,15 +113,18 @@ public class DataExportManager extends AbstractProjectComponent implements JDOME
     }
 
     /****************************************
-    *            JDOMExternalizable         *
-    *****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-        exportInstructions.readExternal(element.getChild("export-instructions"));
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        element.addContent(exportInstructions.getState());
+        return element;
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
-        Element child = new Element("export-instructions");
-        exportInstructions.writeExternal(child);
-        element.addContent(child);
+    @Override
+    public void loadState(Element element) {
+        exportInstructions.loadState(element.getChild("export-instructions"));
     }
 }

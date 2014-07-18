@@ -21,14 +21,12 @@ import com.dci.intellij.dbn.connection.ConnectionManagerListener;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -41,7 +39,13 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseBrowserManager extends AbstractProjectComponent implements JDOMExternalizable{
+@State(
+    name = "DBNavigator.Project.DatabaseBrowserManager",
+    storages = {
+            @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+            @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DatabaseBrowserManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String TOOL_WINDOW_ID = "DB Browser";
 
     private BooleanSetting autoscrollFromEditor = new BooleanSetting("autoscroll-from-editor", true);
@@ -197,22 +201,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return browserSettings.getGeneralSettings().getDisplayMode() == BrowserDisplayMode.TABBED;
     }
 
-
-    /***************************************
-     *         JDOMExternalizable          *
-     ***************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-        autoscrollToEditor.readConfiguration(element);
-        autoscrollFromEditor.readConfiguration(element);
-        showObjectProperties.readConfiguration(element);
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        autoscrollToEditor.writeConfiguration(element);
-        autoscrollFromEditor.writeConfiguration(element);
-        showObjectProperties.writeConfiguration(element);
-    }
-
     /***************************************
      *           ModuleListener            *
      ***************************************/
@@ -317,5 +305,25 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             }
         }
         return selectedObjects;
+    }
+
+    /****************************************
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        autoscrollToEditor.writeConfiguration(element);
+        autoscrollFromEditor.writeConfiguration(element);
+        showObjectProperties.writeConfiguration(element);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        autoscrollToEditor.readConfiguration(element);
+        autoscrollFromEditor.readConfiguration(element);
+        showObjectProperties.readConfiguration(element);
     }
 }
