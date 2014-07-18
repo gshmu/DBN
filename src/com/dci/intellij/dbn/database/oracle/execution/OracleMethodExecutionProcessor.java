@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.database.oracle.execution;
 
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -10,10 +14,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-
-import java.sql.CallableStatement;
-import java.sql.SQLException;
-import java.util.List;
 
 public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl<DBMethod> {
     public OracleMethodExecutionProcessor(DBMethod method) {
@@ -128,7 +128,7 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
 
 
     @Override
-    protected void prepareCall(MethodExecutionInput executionInput, CallableStatement callableStatement) throws SQLException {
+    protected void bindParameters(MethodExecutionInput executionInput, CallableStatement callableStatement) throws SQLException {
         DBArgument returnArgument = getReturnArgument();
 
         // bind input variables

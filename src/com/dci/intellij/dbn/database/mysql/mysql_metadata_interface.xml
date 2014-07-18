@@ -131,6 +131,7 @@
                 col.CHARACTER_MAXIMUM_LENGTH as DATA_LENGTH,
                 col.NUMERIC_PRECISION as DATA_PRECISION,
                 col.NUMERIC_SCALE as DATA_SCALE,
+                'N' as IS_SET,
                 left(col.IS_NULLABLE, 1) as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 if(col.COLUMN_KEY = 'PRI', 'Y', 'N') as IS_PRIMARY_KEY,
@@ -203,6 +204,7 @@
                 col.CHARACTER_MAXIMUM_LENGTH as DATA_LENGTH,
                 col.NUMERIC_PRECISION as DATA_PRECISION,
                 col.NUMERIC_SCALE as DATA_SCALE,
+                'N' as IS_SET,
                 left(col.IS_NULLABLE, 1) as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 if(col.COLUMN_KEY = 'PRI', 'Y', 'N') as IS_PRIMARY_KEY,
@@ -511,7 +513,8 @@
                 DATA_TYPE as DATA_TYPE_NAME,
                 CHARACTER_MAXIMUM_LENGTH  as DATA_LENGTH,
                 NUMERIC_PRECISION as DATA_PRECISION,
-                NUMERIC_SCALE as DATA_SCALE
+                NUMERIC_SCALE as DATA_SCALE,
+                'N' as IS_SET
             from INFORMATION_SCHEMA.PARAMETERS
             where
                 SPECIFIC_SCHEMA = {0} and
@@ -553,7 +556,8 @@
                 DATA_TYPE as DATA_TYPE_NAME,
                 CHARACTER_MAXIMUM_LENGTH  as DATA_LENGTH,
                 NUMERIC_PRECISION as DATA_PRECISION,
-                NUMERIC_SCALE as DATA_SCALE
+                NUMERIC_SCALE as DATA_SCALE,
+                'N' as IS_SET
             from INFORMATION_SCHEMA.PARAMETERS
             where
                 SPECIFIC_SCHEMA = {0}
