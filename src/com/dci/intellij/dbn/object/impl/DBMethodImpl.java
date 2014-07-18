@@ -104,6 +104,11 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         return arguments.getObjects();
     }
 
+    @Override
+    public DBArgument getReturnArgument() {
+        return null;
+    }
+
     public DBArgument getArgument(String name) {
         return (DBArgument) getObjectByName(getArguments(), name);
     }

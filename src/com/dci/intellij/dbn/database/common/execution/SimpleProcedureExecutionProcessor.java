@@ -14,7 +14,7 @@ public class SimpleProcedureExecutionProcessor extends MethodExecutionProcessorI
         buffer.append("{call ");
         buffer.append(getMethod().getQualifiedName());
         buffer.append("(");
-        for (int i=0; i<getParametersCount(); i++) {
+        for (int i=0; i< getArgumentsCount(); i++) {
             if (i>0) buffer.append(",");
             buffer.append("?");
         }

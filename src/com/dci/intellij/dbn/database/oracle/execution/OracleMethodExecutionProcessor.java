@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.oracle.execution;
 
 import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -128,7 +129,8 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
 
 
     @Override
-    protected void bindParameters(MethodExecutionInput executionInput, CallableStatement callableStatement) throws SQLException {
+    protected void bindParameters(MethodExecutionInput executionInput, PreparedStatement preparedStatement) throws SQLException {
+        CallableStatement callableStatement = (CallableStatement) preparedStatement;
         DBArgument returnArgument = getReturnArgument();
 
         // bind input variables
@@ -191,7 +193,8 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
     }
 
     @Override
-    public void loadValues(MethodExecutionResult executionResult, CallableStatement callableStatement) throws SQLException {
+    public void loadValues(MethodExecutionResult executionResult, PreparedStatement preparedStatement) throws SQLException {
+        CallableStatement callableStatement = (CallableStatement) preparedStatement;
         DBArgument returnArgument = getReturnArgument();
 
         // increment parameter index for input variables
