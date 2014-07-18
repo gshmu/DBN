@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.object;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public interface DBMethod extends DBSchemaObject {
@@ -13,4 +15,6 @@ public interface DBMethod extends DBSchemaObject {
     boolean isProgramMethod();
     boolean isDeterministic();
     boolean hasDeclaredArguments();
+    @NotNull
+    DBLanguage getLanguage();
 }

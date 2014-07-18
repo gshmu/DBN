@@ -11,7 +11,7 @@ public class NestedRangeMarker {
     public NestedRangeMarker(ParsePathNode parseNode, PsiBuilder builder, boolean mark) {
         this.parseNode = parseNode;
         this.offset = builder.getCurrentOffset();
-        this.marker = mark ? builder.mark() : null;
+        //this.marker = mark ? builder.mark() : null;
     }
 
     public ParsePathNode getParseNode() {

@@ -654,7 +654,8 @@
                 0 as OVERLOAD,
                 decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 decode(DEBUGINFO, 'T', 'Y', 'N') as IS_DEBUG,
-                'Y' as IS_DETERMINISTIC
+                'Y' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from SYS.ALL_PROBE_OBJECTS
             where
                 OWNER = {0} and
@@ -667,7 +668,8 @@
                 0 as OVERLOAD,
                 decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 'N' as IS_DEBUG,
-                'Y' as IS_DETERMINISTIC
+                'Y' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from [PREFIX]_OBJECTS
             where
                 OWNER = {0} and
@@ -683,7 +685,8 @@
                 0 as OVERLOAD,
                 decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 decode(DEBUGINFO, 'T', 'Y', 'N') as IS_DEBUG,
-                'Y' as IS_DETERMINISTIC
+                'Y' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from SYS.ALL_PROBE_OBJECTS
             where
                 OWNER = {0} and
@@ -696,7 +699,8 @@
                 0 as OVERLOAD,
                 decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 'N' as IS_DEBUG,
-                'Y' as IS_DETERMINISTIC
+                'Y' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from [PREFIX]_OBJECTS
             where
                 OWNER = {0} and
@@ -752,7 +756,8 @@
             select
                 OBJECT_NAME as FUNCTION_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -770,7 +775,8 @@
                 PACKAGE_NAME,
                 OBJECT_NAME as FUNCTION_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -791,7 +797,8 @@
             select
                 OBJECT_NAME as PROCEDURE_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -810,7 +817,8 @@
                 PACKAGE_NAME,
                 OBJECT_NAME as PROCEDURE_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -1018,7 +1026,8 @@
             select
                 OBJECT_NAME as FUNCTION_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -1036,7 +1045,8 @@
                 PACKAGE_NAME as TYPE_NAME,
                 OBJECT_NAME as FUNCTION_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and
@@ -1057,7 +1067,8 @@
             select
                 OBJECT_NAME as PROCEDURE_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from
                 ALL_ARGUMENTS
             where
@@ -1077,7 +1088,8 @@
                 PACKAGE_NAME as TYPE_NAME,
                 OBJECT_NAME as PROCEDURE_NAME,
                 OVERLOAD,
-                'N' as IS_DETERMINISTIC
+                'N' as IS_DETERMINISTIC,
+                'PSQL' as LANGUAGE
             from ALL_ARGUMENTS
             where
                 OWNER = {0} and

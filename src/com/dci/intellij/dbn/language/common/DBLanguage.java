@@ -1,14 +1,17 @@
 package com.dci.intellij.dbn.language.common;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
@@ -69,5 +72,11 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     public DBLanguageParserDefinition getParserDefinition(ConnectionHandler connectionHandler) {
         return connectionHandler.getLanguageDialect(this).getParserDefinition();
+    }
+
+    public static DBLanguage getLanguage(String identifier) {
+        if (identifier.equalsIgnoreCase("SQL")) return SQLLanguage.INSTANCE;
+        if (identifier.equalsIgnoreCase("PSQL")) return PSQLLanguage.INSTANCE;
+        return null;
     }
 }

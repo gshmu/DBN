@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
@@ -33,6 +34,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected DBObjectList<DBArgument> arguments;
     protected int overload;
     protected boolean isDeterministic;
+    private DBLanguage language;
 
     public DBMethodImpl(DBSchemaObject parent, DBContentType contentType, ResultSet resultSet) throws SQLException {
         super(parent, contentType, resultSet);
@@ -46,6 +48,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected void initObject(ResultSet resultSet) throws SQLException {
         isDeterministic = resultSet.getString("IS_DETERMINISTIC").equals("Y");
         overload = resultSet.getInt("OVERLOAD");
+        language = DBLanguage.getLanguage(resultSet.getString("LANGUAGE"));
     }
 
     @Override
@@ -72,6 +75,11 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     @Override
     protected DBObjectRef createRef() {
         return new DBMethodRef(this);
+    }
+
+    @NotNull
+    public DBLanguage getLanguage() {
+        return language;
     }
 
     @Override
