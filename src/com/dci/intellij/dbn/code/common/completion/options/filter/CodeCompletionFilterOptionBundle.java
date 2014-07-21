@@ -37,13 +37,13 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
             CodeCompletionFilterOption option = new CodeCompletionFilterOption(filterSettings);
             Element childElement = (Element) child;
             if (childElement.getName().equals("filter-element")){
-                option.readExternal(childElement);
+                option.readConfiguration(childElement);
                 int index = options.indexOf(option);
                 if (index == -1) {
                     options.add(option);
                 } else {
                     option = options.get(index);
-                    option.readExternal(childElement);
+                    option.readConfiguration(childElement);
                 }
             }
         }
@@ -52,7 +52,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
     public void writeConfiguration(Element element){
         for (CodeCompletionFilterOption option : options) {
             Element child = new Element("filter-element");
-            option.writeExternal(child);
+            option.writeConfiguration(child);
             element.addContent(child);
         }
     }

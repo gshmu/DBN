@@ -27,8 +27,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 @State(
     name = "DBNavigator",
@@ -146,19 +144,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     }
 
     public void disposeComponent() {
-    }
-
-    public void readExternal(Element element) throws InvalidDataException {
-        debugModeEnabled = SettingsUtil.getBoolean(element, "enable-debug-mode", false);
-        developerModeEnabled = SettingsUtil.getBoolean(element, "enable-developer-mode", false);
-        showPluginConflictDialog = SettingsUtil.getBoolean(element, "show-plugin-conflict-dialog", true);
-        SettingsUtil.isDebugEnabled = debugModeEnabled;
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        SettingsUtil.setBoolean(element, "enable-debug-mode", debugModeEnabled);
-        SettingsUtil.setBoolean(element, "enable-developer-mode", developerModeEnabled);
-        SettingsUtil.setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
     }
 
     public String getName() {
