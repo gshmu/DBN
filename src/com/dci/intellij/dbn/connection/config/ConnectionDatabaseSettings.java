@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.connection.config;
 
 import java.util.UUID;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -162,7 +161,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     }
 
    /*********************************************************
-    *                   JDOMExternalizable                 *
+    *                 PersistentConfiguration               *
     *********************************************************/
     public void readConfiguration(Element element) {
         if (element.getName().equals(getConfigElementName())) {

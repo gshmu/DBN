@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleFormattingSettingsForm;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import org.jdom.Element;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyleFormattingSettingsForm> {
     private List<CodeStyleFormattingOption> options = new ArrayList<CodeStyleFormattingOption>();
@@ -58,7 +58,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
             String name = optionElement.getAttributeValue("name");
             CodeStyleFormattingOption option = getCodeStyleCaseOption(name);
             if (option != null) {
-                option.readExternal(optionElement);
+                option.readConfiguration(optionElement);
             }
         }
     }
@@ -67,7 +67,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
         SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleFormattingOption option : options) {
             Element optionElement = new Element("option");
-            option.writeExternal(optionElement);
+            option.writeConfiguration(optionElement);
             element.addContent(optionElement);
         }
     }

@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution;
 
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -10,24 +16,27 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class ExecutionManager extends AbstractProjectComponent implements JDOMExternalizable, Disposable {
+@State(
+    name = "DBNavigator.Project.ExecutionManager",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
     private ExecutionConsoleForm executionConsoleForm;
 
@@ -148,17 +157,6 @@ public class ExecutionManager extends AbstractProjectComponent implements JDOMEx
         return "DBNavigator.Project.ExecutionManager";
     }
 
-    /****************************************
-    *            JDOMExternalizable         *
-    *****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-
-    }
-
     public void dispose() {
         if (executionConsoleForm != null) {
             executionConsoleForm.dispose();
@@ -168,5 +166,18 @@ public class ExecutionManager extends AbstractProjectComponent implements JDOMEx
 
     public ExecutionResult getSelectedExecutionResult() {
         return executionConsoleForm == null ? null : executionConsoleForm.getSelectedExecutionResult();
+    }
+
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        return null;
+    }
+
+    @Override
+    public void loadState(Element element) {
     }
 }

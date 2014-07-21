@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.environment;
 
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -7,21 +13,25 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBEditorTabColorProvider;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
-public class EnvironmentManager extends AbstractProjectComponent implements JDOMExternalizable, Disposable, EnvironmentChangeListener {
+@State(
+        name = "DBNavigator.Project.EnvironmentManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable, EnvironmentChangeListener {
     private EnvironmentManager(Project project) {
         super(project);
         EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, this);
@@ -65,17 +75,6 @@ public class EnvironmentManager extends AbstractProjectComponent implements JDOM
         }
     }
 
-    /****************************************
-    *            JDOMExternalizable         *
-    *****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
-
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-
-    }
-
     public void dispose() {
         EventManager.unsubscribe(this);
     }
@@ -83,5 +82,18 @@ public class EnvironmentManager extends AbstractProjectComponent implements JDOM
     public EnvironmentType getEnvironmentType(String id) {
         EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(getProject()).getEnvironmentSettings();
         return environmentSettings.getEnvironmentType(id);
+    }
+
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        return null;
+    }
+
+    @Override
+    public void loadState(Element element) {
     }
 }

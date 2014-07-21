@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.lookup;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
@@ -144,7 +144,7 @@ public class DBMethodRef<T extends DBMethod> extends DBObjectRef<DBMethod>{
     }
 
     /*********************************************************
-     *                   JDOMExternalizable                  *
+     *                   PersistentConfiguration             *
      *********************************************************/
     @Deprecated
     public void readConfiguration(Element element) throws InvalidDataException {
