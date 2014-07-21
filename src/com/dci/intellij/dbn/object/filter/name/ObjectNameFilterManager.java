@@ -1,24 +1,34 @@
 package com.dci.intellij.dbn.object.filter.name;
 
+import javax.swing.*;
+import javax.swing.tree.TreePath;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ui.EditFilterConditionDialog;
 import com.dci.intellij.dbn.object.filter.name.ui.EditFilterConditionForm;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import javax.swing.tree.TreePath;
-import java.util.List;
-
-public class ObjectNameFilterManager extends AbstractProjectComponent implements JDOMExternalizable {
+@State(
+        name = "DBNavigator.Project.ObjectNameFilterManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class ObjectNameFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
 
     private ObjectNameFilterManager(Project project) {
         super(project);
@@ -205,12 +215,17 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
         return "DBNavigator.Project.ObjectNameFilterManager";
     }
 
-    /****************************************
-    *            JDOMExternalizable         *
-    *****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        return null;
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
+    @Override
+    public void loadState(Element element) {
+
     }
 }

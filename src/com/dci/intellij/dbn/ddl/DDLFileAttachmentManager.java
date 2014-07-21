@@ -30,6 +30,11 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -37,9 +42,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SelectFromListDialog;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileCopyEvent;
@@ -49,7 +51,14 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 
-public class DDLFileAttachmentManager extends AbstractProjectComponent implements VirtualFileListener, JDOMExternalizable {
+@State(
+    name = "DBNavigator.Project.DDLFileAttachmentManager",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DDLFileAttachmentManager extends AbstractProjectComponent implements VirtualFileListener, PersistentStateComponent<Element> {
 
     private Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<String, DBObjectRef<DBSchemaObject>>();
     private DDLFileAttachmentManager(Project project) {
@@ -348,7 +357,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         super.disposeComponent();
     }
     /************************************************
-     *               JDOMExternalizable             *
+     *               VirtualFileListener            *
      ************************************************/
 
     @Override
@@ -398,10 +407,26 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
     }
 
-    /************************************************
-     *               JDOMExternalizable             *
-     ************************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        for (String file : mappings.keySet()) {
+            Element childElement = new Element("mapping");
+            childElement.setAttribute("file", file);
+            DBObjectRef<DBSchemaObject> objectRef = mappings.get(file);
+            objectRef.writeState(childElement);
+            element.addContent(childElement);
+        }
+
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
         for (Object child : element.getChildren()) {
             Element childElement = (Element) child;
             String file = childElement.getAttributeValue("file");
@@ -411,16 +436,5 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             }
 
         }
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        for (String file : mappings.keySet()) {
-            Element childElement = new Element("mapping");
-            childElement.setAttribute("file", file);
-            DBObjectRef<DBSchemaObject> objectRef = mappings.get(file);
-            objectRef.writeState(childElement);
-            element.addContent(childElement);
-        }
-
     }
 }

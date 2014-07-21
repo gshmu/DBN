@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
-import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
-import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
-import com.intellij.ui.CheckedTreeNode;
-import org.jdom.Element;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.jdom.Element;
 
-public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider {
+import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
+import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.intellij.ui.CheckedTreeNode;
+
+public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider, PersistentConfiguration {
     private List<CodeCompletionFilterOption> options = new ArrayList<CodeCompletionFilterOption>();
     private CodeCompletionFilterSettings filterSettings;
     private String name;
@@ -30,7 +31,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
         return filterSettings;
     }
 
-    public void readExternal(Element element) {
+    public void readConfiguration(Element element) {
         List children = element.getChildren();
         for (Object child: children) {
             CodeCompletionFilterOption option = new CodeCompletionFilterOption(filterSettings);
@@ -48,7 +49,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
         }
     }
 
-    public void writeExternal(Element element){
+    public void writeConfiguration(Element element){
         for (CodeCompletionFilterOption option : options) {
             Element child = new Element("filter-element");
             option.writeExternal(child);

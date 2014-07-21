@@ -1,20 +1,31 @@
 package com.dci.intellij.dbn.code.common.completion;
 
-import com.intellij.codeInsight.intention.IntentionManager;
-import com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction;
-import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
-import com.dci.intellij.dbn.code.common.intention.SelectCurrentSchemaIntentionAction;
-import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction;
-import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class CodeCompletionManager extends AbstractProjectComponent implements JDOMExternalizable {
+import com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.SelectCurrentSchemaIntentionAction;
+import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.project.Project;
+
+@State(
+        name = "DBNavigator.Project.CodeCompletionManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class CodeCompletionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final int BASIC_CODE_COMPLETION = 0;
     public static final int SMART_CODE_COMPLETION = 1;
 
@@ -42,12 +53,16 @@ public class CodeCompletionManager extends AbstractProjectComponent implements J
         return "DBNavigator.Project.CodeCompletionManager";
     }
 
-    /***************************************
-    *            JDOMExternalizable           *
-    ****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        return null;
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
+    @Override
+    public void loadState(Element element) {
     }
 }

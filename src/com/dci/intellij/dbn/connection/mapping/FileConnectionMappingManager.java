@@ -22,17 +22,19 @@ import com.dci.intellij.dbn.vfs.DatabaseContentFile;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
@@ -41,7 +43,14 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import gnu.trove.THashSet;
 
-public class FileConnectionMappingManager extends VirtualFileAdapter implements ProjectComponent, JDOMExternalizable {
+@State(
+    name = "DBNavigator.Project.FileConnectionMappingManager",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class FileConnectionMappingManager extends VirtualFileAdapter implements ProjectComponent, PersistentStateComponent<Element> {
     private Project project;
     private Set<FileConnectionMapping> mappings = new THashSet<FileConnectionMapping>();
     private Key<ConnectionHandler> ACTIVE_CONNECTION_KEY = Key.create("DBNavigator.ActiveConnection");
@@ -314,24 +323,30 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         project = null;
     }
 
-    /***************************************
-     *          JDOMExternalizable         *
-     ***************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        for (FileConnectionMapping mapping : mappings) {
+            Element mappingElement = new Element("mapping");
+            mapping.writeState(mappingElement);
+            element.addContent(mappingElement);
+        }
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
         if (element != null) {
             for (Object child : element.getChildren()) {
                 Element mappingElement = (Element) child;
-                FileConnectionMapping mapping = new FileConnectionMapping(mappingElement);
+                FileConnectionMapping mapping = new FileConnectionMapping();
+                mapping.readState(mappingElement);
                 mappings.add(mapping);
             }
-        }
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        for (FileConnectionMapping mapping : mappings) {
-            Element mappingElement = new Element("mapping");
-            mapping.writeConfiguration(mappingElement);
-            element.addContent(mappingElement);
         }
     }
 }
