@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
@@ -7,13 +12,9 @@ import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.JTree;
-import java.awt.Color;
-import java.util.List;
-
 public class FilterSettingsTreeCellRenderer extends ColoredTreeCellRenderer{
     @Override
-    public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (value instanceof ObjectNameFilter) {
             ObjectNameFilter condition = (ObjectNameFilter) value;
             append(condition.getObjectType().getName().toUpperCase(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);

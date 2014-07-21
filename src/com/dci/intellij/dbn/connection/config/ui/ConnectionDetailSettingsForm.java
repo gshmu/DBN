@@ -147,6 +147,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle Time to Disconnect (minutes)", 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max Connection Pool Size", 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
+        configuration.setMaxConnectionPoolSize(maxPoolSize);
 
         Project project = getConfiguration().getProject();
         if (environmentChanged) {

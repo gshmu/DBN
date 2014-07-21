@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.editor.data.structure;
 
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
@@ -11,12 +17,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Arrays;
-import java.util.List;
 
 public class DatasetEditorStructureViewElement implements StructureViewTreeElement, Comparable{
     private BrowserTreeNode treeNode;
@@ -32,6 +32,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
         return treeNode;
     }
 
+    @NotNull
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
             public String getPresentableText() {
@@ -60,6 +61,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
         };
     }
 
+    @NotNull
     public StructureViewTreeElement[] getChildren() {
         if (children == null) {
             if (datasetEditor.isDisposed())  {

@@ -29,7 +29,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     @Nullable
     public T getMethod() {
-        return (T) method.get();
+        return method.get();
     }
 
     public List<DBArgument> getArguments() {

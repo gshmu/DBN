@@ -33,7 +33,7 @@ public class SetCurrentSchemaAction extends DumbAwareAction {
     }
 
     public void update(AnActionEvent e) {
-        boolean enabled = true;
+        boolean enabled;
         Project project = ActionUtil.getProject(e);
 
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.navigation.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -29,8 +31,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-
-import java.util.List;
 
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
     private ConnectionHandler latestSelection; // todo move to data context
@@ -80,6 +80,28 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                 }
                             });
 
+/*                    if (popupBuilder instanceof ListPopupImpl) {
+                        ListPopupImpl listPopup = (ListPopupImpl) popupBuilder;
+                        listPopup.getList().setCellRenderer(new DefaultListCellRenderer(){
+                            @Override
+                            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                                PopupFactoryImpl.ActionItem actionItem  = (PopupFactoryImpl.ActionItem) value;
+                                Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                                if (component instanceof JLabel) {
+                                    JLabel label = (JLabel) component;
+                                    label.setIcon(actionItem.getIcon());
+                                    label.setText(actionItem.getText().replace("&", ""));
+                                    AnAction action = actionItem.getAction();
+                                    if (!isSelected && action instanceof SelectConnectionAction) {
+                                        SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
+                                        label.setBackground(selectConnectionAction.connectionHandler.getEnvironmentType().getColor());
+                                    }
+                                }
+                                return component;
+                            }
+                        });
+                    }*/
+
                     popupBuilder.showCenteredInCurrentWindow(project);
                 } else {
                     showLookupPopup(event, project, singleConnectionHandler, null);
@@ -106,6 +128,11 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             Project project = connectionHandler.getProject();
             showLookupPopup(e, project, connectionHandler, null);
             latestSelection = connectionHandler;
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            super.update(e);
         }
     }
 

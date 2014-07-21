@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -12,11 +17,6 @@ import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 public class PSQLStructureViewModelGrouper implements Grouper {
     private ActionPresentation actionPresentation = new ActionPresentationData("Group by Object Type", "", Icons.ACTION_GROUP);
@@ -24,7 +24,7 @@ public class PSQLStructureViewModelGrouper implements Grouper {
     private static final Collection<Group> EMPTY_GROUPS = new ArrayList<Group>(0);
 
     @NotNull
-    public Collection<Group> group(AbstractTreeNode abstractTreeNode, Collection<TreeElement> treeElements) {
+    public Collection<Group> group(@NotNull AbstractTreeNode abstractTreeNode, @NotNull Collection<TreeElement> treeElements) {
         Map<DBObjectType, Group> groups = null;
         if (abstractTreeNode.getValue() instanceof PSQLStructureViewElement) {
             PSQLStructureViewElement structureViewElement = (PSQLStructureViewElement) abstractTreeNode.getValue();

@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.common.editor;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
@@ -16,8 +19,6 @@ import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class BasicTextEditorState implements FileEditorState {
     private int line;
@@ -72,7 +73,6 @@ public class BasicTextEditorState implements FileEditorState {
 
     public void loadFromEditor(@NotNull FileEditorStateLevel level, @NotNull TextEditor textEditor) {
         Editor editor = textEditor.getEditor();
-        Project project = editor.getProject();
         SelectionModel selectionModel = editor.getSelectionModel();
         LogicalPosition logicalPosition = editor.getCaretModel().getLogicalPosition();
 
@@ -94,7 +94,6 @@ public class BasicTextEditorState implements FileEditorState {
 
     public void applyToEditor(@NotNull TextEditor textEditor) {
         final Editor editor = textEditor.getEditor();
-        final Project project = editor.getProject();
         SelectionModel selectionModel = editor.getSelectionModel();
 
         LogicalPosition logicalPosition = new LogicalPosition(line, column);
