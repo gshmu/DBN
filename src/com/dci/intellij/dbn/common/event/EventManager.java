@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.common.event;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class EventManager implements ApplicationComponent{
-    private Map<Object, MessageBusConnection> connectionCache = new HashMap<Object, MessageBusConnection>();
+    private Map<Object, WeakReference<MessageBusConnection>> connectionCache = new HashMap<Object, WeakReference<MessageBusConnection>>();
     
     public static EventManager getInstance() {
         return ApplicationManager.getApplication().getComponent(EventManager.class);
@@ -21,25 +22,27 @@ public class EventManager implements ApplicationComponent{
 
     private static MessageBusConnection connect(Object handler) {
         EventManager eventManager = EventManager.getInstance();
-        MessageBusConnection connection = eventManager.connectionCache.get(handler);
-        if (connection == null) {
+        WeakReference<MessageBusConnection> connectionRef = eventManager.connectionCache.get(handler);
+        if (connectionRef == null || connectionRef.get() == null) {
             MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
-            connection = messageBus.connect();
-            eventManager.connectionCache.put(handler, connection);
+            MessageBusConnection connect = messageBus.connect();
+            connectionRef = new WeakReference<MessageBusConnection>(connect);
+            eventManager.connectionCache.put(handler, connectionRef);
         }
-        return connection;
+        return connectionRef.get();
     }
 
 
     private static MessageBusConnection connect(Project project, Object handler) {
         EventManager eventManager = EventManager.getInstance();
-        MessageBusConnection connection = eventManager.connectionCache.get(handler);
+        WeakReference<MessageBusConnection> connection = eventManager.connectionCache.get(handler);
         if (connection == null) {
             MessageBus messageBus = project.getMessageBus();
-            connection = messageBus.connect();
+            MessageBusConnection connect = messageBus.connect();
+            connection = new WeakReference<MessageBusConnection>(connect);
             eventManager.connectionCache.put(handler, connection);
         }
-        return connection;
+        return connection.get();
     }
     
     public static <T> void subscribe(Project project, Topic<T> topic, T handler) {
@@ -63,9 +66,12 @@ public class EventManager implements ApplicationComponent{
     public static void unsubscribe(Object ... handlers) {
         EventManager eventManager = EventManager.getInstance();
         for (Object handler : handlers) {
-            MessageBusConnection connection = eventManager.connectionCache.remove(handler);
-            if (connection != null) {
-                connection.disconnect();
+            WeakReference<MessageBusConnection> connectionRef = eventManager.connectionCache.remove(handler);
+            if (connectionRef != null) {
+                MessageBusConnection connection = connectionRef.get();
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
         }
     }
@@ -86,8 +92,11 @@ public class EventManager implements ApplicationComponent{
 
     @Override
     public void disposeComponent() {
-        for (MessageBusConnection connection : connectionCache.values()) {
-            connection.disconnect();
+        for (WeakReference<MessageBusConnection> connectionRef : connectionCache.values()) {
+            MessageBusConnection connection = connectionRef.get();
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
         connectionCache.clear();
     }

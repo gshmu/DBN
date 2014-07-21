@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -24,30 +33,18 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileSystem;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-public class DatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent, FileEditorManagerListener{
+public class DatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent{
     public static final String PROTOCOL = "db";
     public static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
     private static final String ERR = "File manipulation not allowed within database file system!";
-    private Map<DBObjectRef, DatabaseEditableObjectFile> openFiles = new HashMap<DBObjectRef, DatabaseEditableObjectFile>();
     private Map<DBObjectRef, DatabaseEditableObjectFile> filesCache = new HashMap<DBObjectRef, DatabaseEditableObjectFile>();
 
     public static DatabaseFileSystem getInstance() {
@@ -124,7 +121,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     public boolean isFileOpened(DBSchemaObject object) {
-        return openFiles.containsKey(object.getRef());
+        Project project = object.getProject();
+        return DatabaseFileManager.getInstance(project).isFileOpened(object);
     }
 
     public static String createPath(DBObject object, DBContentType contentType) {
@@ -373,24 +371,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             fileEditorManager.closeFile(virtualFile);
             fileEditorManager.openFile(virtualFile, false);
         }
-    }
-
-    public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
-            openFiles.put(databaseFile.getObjectRef(), databaseFile);
-        }
-    }
-
-    public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
-            openFiles.remove(databaseFile.getObjectRef());
-        }
-    }
-
-    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-
     }
 
     /*********************************************************

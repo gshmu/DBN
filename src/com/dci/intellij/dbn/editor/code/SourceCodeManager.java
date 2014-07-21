@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -31,7 +31,6 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DatabaseContentFile;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.SourceCodeFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -46,7 +45,7 @@ import com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -61,6 +60,8 @@ import com.intellij.psi.PsiManager;
 )
 public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
 
+    private DBLanguageFileEditorListener fileEditorListener;
+
     public static SourceCodeManager getInstance(Project project) {
         return project.getComponent(SourceCodeManager.class);
     }
@@ -68,44 +69,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private SourceCodeManager(Project project) {
         super(project);
         EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(OverrideReadonlyFragmentModificationHandler.INSTANCE);
-        FileEditorManager editorManager = FileEditorManager.getInstance(project);
-        editorManager.addFileEditorManagerListener(DatabaseFileSystem.getInstance());
-        editorManager.addFileEditorManagerListener(new DBLanguageFileEditorListener());
-    }
-
-    /**
-     * @deprecated
-     */
-
-    public void navigateToSpecification(DBSchemaObject parentObject, DBObjectType objectType, String objectName) {
-        DatabaseEditableObjectFile databaseFile = parentObject.getVirtualFile();
-        PsiManager psiManager = PsiManager.getInstance(parentObject.getProject());
-        PSQLFile file = (PSQLFile) psiManager.findFile(databaseFile.getContentFile(DBContentType.CODE_SPEC));
-        if (file != null) {
-            BasePsiElement basePsiElement = file.lookupObjectSpecification(objectType, objectName);
-            if (basePsiElement != null) {
-                BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, file.getVirtualFile());
-                EditorUtil.selectEditor(databaseFile, textEditor);
-                basePsiElement.navigate(true);
-            }
-        }
-    }
-
-    /**
-     * @deprecated
-     */
-    public void navigateToDeclaration(DBSchemaObject parentObject, DBObjectType objectType, String objectName) {
-        DatabaseEditableObjectFile databaseFile = parentObject.getVirtualFile();
-        PsiManager psiManager = PsiManager.getInstance(parentObject.getProject());
-        PSQLFile file = (PSQLFile) psiManager.findFile(databaseFile.getContentFile(DBContentType.CODE_BODY));
-        if (file != null) {
-            BasePsiElement basePsiElement = file.lookupObjectDeclaration(objectType, objectName);
-            if (basePsiElement != null) {
-                BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, file.getVirtualFile());
-                EditorUtil.selectEditor(databaseFile, textEditor);
-                basePsiElement.navigate(true);
-            }
-        }
+        fileEditorListener = new DBLanguageFileEditorListener();
     }
 
     public void updateSourceToDatabase(final Editor editor, final SourceCodeFile virtualFile) {
@@ -295,7 +259,15 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         basePsiElement.navigate(true);
     }
 
+    @Override
+    public void projectOpened() {
+        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+    }
 
+    @Override
+    public void projectClosed() {
+        EventManager.unsubscribe(fileEditorListener);
+    }
 
     @NonNls
     @NotNull
