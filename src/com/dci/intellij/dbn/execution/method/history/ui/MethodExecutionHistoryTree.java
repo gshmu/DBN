@@ -85,7 +85,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     }
 
     private class TreeCellRenderer extends ColoredTreeCellRenderer {
-        public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             MethodExecutionHistoryTreeNode node = (MethodExecutionHistoryTreeNode) value;
             setIcon(node.getIcon());
             append(node.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);

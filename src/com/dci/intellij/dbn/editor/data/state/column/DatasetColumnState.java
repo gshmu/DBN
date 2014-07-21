@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBColumn;
-import org.jdom.Element;
 
 public class DatasetColumnState implements Comparable<DatasetColumnState>{
     private String name;
@@ -61,7 +63,7 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>{
 
 
     @Override
-    public int compareTo(DatasetColumnState remote) {
+    public int compareTo(@NotNull DatasetColumnState remote) {
         return position-remote.position;
     }
 }

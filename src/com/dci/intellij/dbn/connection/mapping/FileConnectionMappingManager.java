@@ -274,11 +274,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
      ***************************************/
 
     @Override
-    public void fileDeleted(VirtualFileEvent event) {
+    public void fileDeleted(@NotNull VirtualFileEvent event) {
         removeMapping(event.getFile());
     }
 
-    public void fileMoved(VirtualFileMoveEvent event) {
+    public void fileMoved(@NotNull VirtualFileMoveEvent event) {
         String oldFileUrl = event.getOldParent().getUrl() + "/" + event.getFileName();
         FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
         if (fileConnectionMapping != null) {
@@ -286,7 +286,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         }
     }
 
-    public void propertyChanged(VirtualFilePropertyEvent event) {
+    public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
         VirtualFile file = event.getFile();
         VirtualFile parent = file.getParent();
         if (file.isInLocalFileSystem() && parent != null) {
