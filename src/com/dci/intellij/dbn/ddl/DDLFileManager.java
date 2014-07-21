@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -42,7 +43,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
        new WriteActionRunner() {
            public void run() {
                if (!isDisposed()) {
-                   FileTypeManager.getInstance().removeFileTypeListener(DDLFileManager.this);
+                   EventManager.unsubscribe(DDLFileManager.this);
                    FileTypeManager fileTypeManager = FileTypeManager.getInstance();
                    List<DDLFileType> ddlFileTypeList = getExtensionSettings().getDDLFileTypes();
                    for (DDLFileType ddlFileType : ddlFileTypeList) {
@@ -50,7 +51,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                            fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                        }
                    }
-                   FileTypeManager.getInstance().addFileTypeListener(DDLFileManager.this);
+                   EventManager.subscribe(FileTypeManager.TOPIC, DDLFileManager.this);
                }
            }
        }.start();
@@ -134,7 +135,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     }
 
     public void projectClosed() {
-        FileTypeManager.getInstance().removeFileTypeListener(this);
+        EventManager.unsubscribe(DDLFileManager.this);
     }
 
     /*********************************************
