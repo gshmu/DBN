@@ -188,6 +188,7 @@
         <component><implementation-class>com.dci.intellij.dbn.generator.StatementGenerationManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
     </project-components>
     <module-components>
         <component><implementation-class>com.dci.intellij.dbn.connection.ModuleConnectionBundle</implementation-class></component>

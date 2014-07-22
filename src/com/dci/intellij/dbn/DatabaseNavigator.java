@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -21,12 +22,17 @@ import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 
-public class DatabaseNavigator implements ApplicationComponent, JDOMExternalizable {
+@State(
+    name = "DBNavigator",
+    storages = {@Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml")}
+)
+public class DatabaseNavigator implements ApplicationComponent, PersistentStateComponent<Element> {
     private static final String SQL_PLUGIN_ID = "com.intellij.sql";
     public static final String DBN_PLUGIN_ID = "DBN";
     /*static {
@@ -140,19 +146,6 @@ public class DatabaseNavigator implements ApplicationComponent, JDOMExternalizab
     public void disposeComponent() {
     }
 
-    public void readExternal(Element element) throws InvalidDataException {
-        debugModeEnabled = SettingsUtil.getBoolean(element, "enable-debug-mode", false);
-        developerModeEnabled = SettingsUtil.getBoolean(element, "enable-developer-mode", false);
-        showPluginConflictDialog = SettingsUtil.getBoolean(element, "show-plugin-conflict-dialog", true);
-        SettingsUtil.isDebugEnabled = debugModeEnabled;
-    }
-
-    public void writeExternal(Element element) throws WriteExternalException {
-        SettingsUtil.setBoolean(element, "enable-debug-mode", debugModeEnabled);
-        SettingsUtil.setBoolean(element, "enable-developer-mode", developerModeEnabled);
-        SettingsUtil.setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
-    }
-
     public String getName() {
         return null;
     }
@@ -174,6 +167,27 @@ public class DatabaseNavigator implements ApplicationComponent, JDOMExternalizab
             } catch (Exception e) {
             }
         }
+    }
+
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        SettingsUtil.setBoolean(element, "enable-debug-mode", debugModeEnabled);
+        SettingsUtil.setBoolean(element, "enable-developer-mode", developerModeEnabled);
+        SettingsUtil.setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        debugModeEnabled = SettingsUtil.getBoolean(element, "enable-debug-mode", false);
+        developerModeEnabled = SettingsUtil.getBoolean(element, "enable-developer-mode", false);
+        showPluginConflictDialog = SettingsUtil.getBoolean(element, "show-plugin-conflict-dialog", true);
+        SettingsUtil.isDebugEnabled = debugModeEnabled;
     }
 }
 

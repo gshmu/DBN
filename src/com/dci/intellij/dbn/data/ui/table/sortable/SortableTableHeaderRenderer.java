@@ -1,19 +1,14 @@
 package com.dci.intellij.dbn.data.ui.table.sortable;
 
+import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 
 public class SortableTableHeaderRenderer implements TableCellRenderer {
     private JPanel mainPanel;
@@ -30,7 +25,7 @@ public class SortableTableHeaderRenderer implements TableCellRenderer {
         sortingLabel.setText(null);
         int width = 0;
         String columnName = value.toString();
-        SortingState sortingState = (SortingState) model.getSortingState();
+        SortingState sortingState = model.getSortingState();
         SortingInstruction sortingInstruction = sortingState.getSortingInstruction(columnName);
 
         if (sortingInstruction != null) {

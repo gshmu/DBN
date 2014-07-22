@@ -1,21 +1,9 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import com.intellij.util.ui.UIUtil;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -27,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.util.ui.UIUtil;
 
 public class CheckBoxList<T extends Selectable> extends JList {
     private boolean mutable;
@@ -239,7 +230,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
         }
 
         @Override
-        public int compareTo(Entry<T> o) {
+        public int compareTo(@NotNull Entry<T> o) {
             return presentable.compareTo(o.presentable);
         }
     }

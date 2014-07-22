@@ -1,22 +1,14 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.intellij.openapi.ui.Splitter;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.EventListener;
+
+import com.intellij.openapi.ui.Splitter;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
@@ -116,7 +108,7 @@ public class GUIUtil{
 
                 Class[] params = method.getParameterTypes();
                 if (params.length == 1) {
-                    EventListener[] listeners = null;
+                    EventListener[] listeners;
                     try {
                         listeners = comp.getListeners(params[0]);
                     } catch (Exception e) {

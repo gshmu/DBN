@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import javax.swing.*;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -10,11 +13,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
-
 public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
-    public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (value instanceof StatementExecutionMessagesNode) {
             BundleTreeNode node = (BundleTreeNode) value;
             append("Statement Execution Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);

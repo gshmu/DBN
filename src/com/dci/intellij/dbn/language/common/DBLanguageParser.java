@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common;
 
+import org.jdom.Document;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -11,8 +14,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
-import org.jdom.Document;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguageParser implements PsiParser {
     private DBLanguageDialect languageDialect;
@@ -57,7 +58,7 @@ public abstract class DBLanguageParser implements PsiParser {
                 int currentOffset =  builder.getCurrentOffset();
                 root.getParser().parse(rootParseNode, true, 0, context);
                 if (currentOffset == builder.getCurrentOffset()) {
-                    TokenType tokenType = (TokenType) builder.getTokenType();
+                    TokenType tokenType = builder.getTokenType();
                     /*if (tokenType.isChameleon()) {
                         PsiBuilder.Marker injectedLanguageMarker = builder.mark();
                         builder.advanceLexer();

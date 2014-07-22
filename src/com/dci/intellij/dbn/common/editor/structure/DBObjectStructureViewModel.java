@@ -1,32 +1,33 @@
 package com.dci.intellij.dbn.common.editor.structure;
 
-import com.intellij.ide.structureView.FileEditorPositionListener;
-import com.intellij.ide.structureView.ModelListener;
-import com.intellij.ide.structureView.StructureViewModel;
-import com.intellij.ide.util.treeView.smartTree.Grouper;
-import com.intellij.ide.util.treeView.smartTree.Sorter;
-import com.intellij.ide.util.treeView.smartTree.Filter;
 import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+
+import com.intellij.ide.structureView.FileEditorPositionListener;
+import com.intellij.ide.structureView.ModelListener;
+import com.intellij.ide.structureView.StructureViewModel;
+import com.intellij.ide.util.treeView.smartTree.Filter;
+import com.intellij.ide.util.treeView.smartTree.Grouper;
+import com.intellij.ide.util.treeView.smartTree.Sorter;
 
 public abstract class DBObjectStructureViewModel implements StructureViewModel {
     protected Set<FileEditorPositionListener> fileEditorPositionListeners = new HashSet<FileEditorPositionListener>();
     protected Set<ModelListener> modelListeners = new HashSet<ModelListener>();
 
-    public void addEditorPositionListener(FileEditorPositionListener listener) {
+    public void addEditorPositionListener(@NotNull FileEditorPositionListener listener) {
         fileEditorPositionListeners.add(listener);
     }
 
-    public void removeEditorPositionListener(FileEditorPositionListener listener) {
+    public void removeEditorPositionListener(@NotNull FileEditorPositionListener listener) {
         fileEditorPositionListeners.remove(listener);
     }
 
-    public void addModelListener(ModelListener modelListener) {
+    public void addModelListener(@NotNull ModelListener modelListener) {
         modelListeners.add(modelListener);
     }
 
-    public void removeModelListener(ModelListener modelListener) {
+    public void removeModelListener(@NotNull ModelListener modelListener) {
         modelListeners.remove(modelListener);
     }
 

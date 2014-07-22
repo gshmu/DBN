@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
@@ -14,13 +22,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JTree;
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.sql.ResultSet;
-import java.util.List;
 
 public class ArgumentValuesTree extends DBNTree{
     private MethodExecutionResultForm parentForm;
@@ -59,7 +60,7 @@ public class ArgumentValuesTree extends DBNTree{
 
     class CellRenderer extends ColoredTreeCellRenderer {
         @Override
-        public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) value;
             Object userValue = treeNode.getUserValue();
             if (userValue instanceof DBMethod) {

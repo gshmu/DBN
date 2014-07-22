@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.sql.structure;
 
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.DBLanguageFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -10,11 +16,6 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SQLStructureViewElement implements StructureViewTreeElement {
     PsiElement psiElement;
@@ -27,6 +28,7 @@ public class SQLStructureViewElement implements StructureViewTreeElement {
         return psiElement;
     }
 
+    @NotNull
     public ItemPresentation getPresentation() {
         if (psiElement instanceof BasePsiElement) return (ItemPresentation) psiElement;
         return new ItemPresentation() {
@@ -61,6 +63,7 @@ public class SQLStructureViewElement implements StructureViewTreeElement {
         };
     }
 
+    @NotNull
     public StructureViewTreeElement[] getChildren() {
         List<SQLStructureViewElement> elements = new ArrayList<SQLStructureViewElement>();
         getChildren(psiElement, elements);

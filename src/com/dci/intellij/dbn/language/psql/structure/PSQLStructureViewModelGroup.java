@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-
-import javax.swing.Icon;
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Font;
 
 public class PSQLStructureViewModelGroup implements Group {
     private static TextAttributesKey TEXT_ATTRIBUTES_KEY =
@@ -33,10 +33,12 @@ public class PSQLStructureViewModelGroup implements Group {
         children.add(treeElement);
     }
 
+    @NotNull
     public ItemPresentation getPresentation() {
         return itemPresentation;
     }
 
+    @NotNull
     public Collection<TreeElement> getChildren() {
         return children;
     }
