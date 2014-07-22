@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.common.ui;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -11,7 +12,7 @@ import com.intellij.ui.SimpleTextAttributes;
 
 public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
     @Override
-    public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
         Object userObject = treeNode.getUserObject();
         if (userObject instanceof DBObjectRef) {

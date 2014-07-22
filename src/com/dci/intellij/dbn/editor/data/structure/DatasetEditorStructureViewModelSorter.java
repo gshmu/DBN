@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.editor.data.structure;
 
+import javax.swing.*;
+import java.util.Comparator;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.language.psql.structure.PSQLStructureViewElement;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.util.Comparator;
 
 public class DatasetEditorStructureViewModelSorter implements Sorter {
 
@@ -31,6 +31,7 @@ public class DatasetEditorStructureViewModelSorter implements Sorter {
     }
 
     private static final ActionPresentation ACTION_PRESENTATION = new ActionPresentation() {
+        @NotNull
         public String getText() {
             return "Sort by Name";
         }

@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import org.jdom.Element;
 
 public class CodeStyleCaseOption implements PersistentConfiguration {
     private String name;
@@ -41,7 +42,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     }
 
     /*********************************************************
-     *                   JDOMExternalizable                  *
+     *                 PersistentConfiguration               *
      *********************************************************/
     public void readConfiguration(Element element) {
         name = element.getAttributeValue("name");

@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
+import javax.swing.*;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
-import org.jdom.Element;
 
-import javax.swing.Icon;
-
-public class CodeCompletionFilterOption implements CheckedTreeNodeProvider {
+public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, PersistentConfiguration{
     private CodeCompletionFilterSettings filterSettings;
     private DBObjectType objectType;
     private TokenTypeCategory tokenTypeCategory = TokenTypeCategory.UNKNOWN;
@@ -50,7 +51,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider {
         return selected;
     }
 
-    public void readExternal(Element element) {
+    public void readConfiguration(Element element) {
         if (element != null) {
             String filterElementType = element.getAttributeValue("type");
             if (filterElementType.equals("OBJECT")) {
@@ -65,7 +66,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider {
 
     }
 
-    public void writeExternal(Element element) {
+    public void writeConfiguration(Element element) {
         if (objectType != null) {
             element.setAttribute("type", "OBJECT");
             element.setAttribute("id", objectType.getName());

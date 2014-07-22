@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.data.editor.text;
 
+import javax.swing.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.list.Selectable;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class TextContentType implements Selectable<TextContentType> {
     private String name;
@@ -56,7 +57,7 @@ public class TextContentType implements Selectable<TextContentType> {
     }
 
     @Override
-    public int compareTo(TextContentType remote) {
+    public int compareTo(@NotNull TextContentType remote) {
         return name.compareTo(remote.name);
     }
 }

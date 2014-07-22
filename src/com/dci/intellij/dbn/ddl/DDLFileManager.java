@@ -1,12 +1,24 @@
 package com.dci.intellij.dbn.ddl;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
 import com.intellij.openapi.fileTypes.FileNameMatcher;
 import com.intellij.openapi.fileTypes.FileTypeEvent;
@@ -14,16 +26,15 @@ import com.intellij.openapi.fileTypes.FileTypeListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class DDLFileManager extends AbstractProjectComponent implements JDOMExternalizable, FileTypeListener {
+@State(
+    name = "DBNavigator.Project.DDLFileManager",
+    storages = {
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
+        @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class DDLFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, FileTypeListener {
     private DDLFileManager(Project project) {
         super(project);
     }
@@ -32,7 +43,7 @@ public class DDLFileManager extends AbstractProjectComponent implements JDOMExte
        new WriteActionRunner() {
            public void run() {
                if (!isDisposed()) {
-                   FileTypeManager.getInstance().removeFileTypeListener(DDLFileManager.this);
+                   EventManager.unsubscribe(DDLFileManager.this);
                    FileTypeManager fileTypeManager = FileTypeManager.getInstance();
                    List<DDLFileType> ddlFileTypeList = getExtensionSettings().getDDLFileTypes();
                    for (DDLFileType ddlFileType : ddlFileTypeList) {
@@ -40,7 +51,7 @@ public class DDLFileManager extends AbstractProjectComponent implements JDOMExte
                            fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                        }
                    }
-                   FileTypeManager.getInstance().addFileTypeListener(DDLFileManager.this);
+                   EventManager.subscribe(FileTypeManager.TOPIC, DDLFileManager.this);
                }
            }
        }.start();
@@ -124,16 +135,20 @@ public class DDLFileManager extends AbstractProjectComponent implements JDOMExte
     }
 
     public void projectClosed() {
-        FileTypeManager.getInstance().removeFileTypeListener(this);
+        EventManager.unsubscribe(DDLFileManager.this);
     }
 
-    /****************************************
-    *            JDOMExternalizable         *
-    *****************************************/
-    public void readExternal(Element element) throws InvalidDataException {
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        return null;
     }
 
-    public void writeExternal(Element element) throws WriteExternalException {
+    @Override
+    public void loadState(Element element) {
 
     }
 

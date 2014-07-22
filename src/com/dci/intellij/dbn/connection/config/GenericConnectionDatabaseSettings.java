@@ -68,7 +68,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     }
 
    /*********************************************************
-    *                   JDOMExternalizable                 *
+    *                PersistentConfiguration                *
     *********************************************************/
     public void readConfiguration(Element element) {
         super.readConfiguration(element);

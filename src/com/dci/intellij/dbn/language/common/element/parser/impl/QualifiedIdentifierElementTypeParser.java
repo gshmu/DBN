@@ -41,7 +41,6 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
         if (variant != null) {
             LeafElementType[] elementTypes = variant.getLeafs();
 
-            int currentSiblingPosition = 0;
             for (LeafElementType elementType : elementTypes) {
                 ParseResult result = elementType.getParser().parse(node, true, depth + 1, context);
                 if (result.isNoMatch()) break;  else matchedTokens = matchedTokens + result.getMatchedTokens();

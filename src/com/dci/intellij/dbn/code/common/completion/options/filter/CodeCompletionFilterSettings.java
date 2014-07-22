@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
+import java.util.Set;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterSettingsForm;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
@@ -9,9 +12,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
 import com.intellij.ui.CheckedTreeNode;
-import org.jdom.Element;
-
-import java.util.Set;
 
 public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFilterSettingsForm> implements CheckedTreeNodeProvider, ObjectTypeFilter {
     public static final int SCHEMA_TYPE_USER = 0;
@@ -139,31 +139,31 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
     }
 
     public void readConfiguration(Element element) {
-        rootFilterOptions.readExternal(element);
+        rootFilterOptions.readConfiguration(element);
 
         Element userSchemaElement = element.getChild("user-schema");
-        userSchemaOptions.readExternal(userSchemaElement);
+        userSchemaOptions.readConfiguration(userSchemaElement);
 
         Element publicSchemaElement = element.getChild("public-schema");
-        publicSchemaOptions.readExternal(publicSchemaElement);
+        publicSchemaOptions.readConfiguration(publicSchemaElement);
 
         Element anySchemaElement = element.getChild("any-schema");
-        anySchemaOptions.readExternal(anySchemaElement);
+        anySchemaOptions.readConfiguration(anySchemaElement);
     }
 
     public void writeConfiguration(Element element) {
-        rootFilterOptions.writeExternal(element);
+        rootFilterOptions.writeConfiguration(element);
 
         Element userSchemaElement = new Element("user-schema");
-        userSchemaOptions.writeExternal(userSchemaElement);
+        userSchemaOptions.writeConfiguration(userSchemaElement);
         element.addContent(userSchemaElement);
 
         Element publicSchemaElement = new Element("public-schema");
-        publicSchemaOptions.writeExternal(publicSchemaElement);
+        publicSchemaOptions.writeConfiguration(publicSchemaElement);
         element.addContent(publicSchemaElement);
 
         Element anySchemaElement = new Element("any-schema");
-        anySchemaOptions.writeExternal(anySchemaElement);
+        anySchemaOptions.writeConfiguration(anySchemaElement);
         element.addContent(anySchemaElement);
     }
 

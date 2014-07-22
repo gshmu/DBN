@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
-import java.util.List;
 import java.util.ArrayList;
-import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
+import java.util.List;
 import org.jdom.Element;
 
-public class CodeStyleFormattingOption {
+import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+
+public class CodeStyleFormattingOption implements PersistentConfiguration {
     private List<CodeStylePreset> presets = new ArrayList<CodeStylePreset>();
     private CodeStylePreset preset;
     private String name;
@@ -56,16 +56,16 @@ public class CodeStyleFormattingOption {
     }
 
     /*********************************************************
-     *                   JDOMExternalizable                  *
+     *                PersistentConfiguration                *
      *********************************************************/
-    public void readExternal(Element element) {
+    public void readConfiguration(Element element) {
         name = element.getAttributeValue("name");
         String presetId = element.getAttributeValue("value");
         CodeStylePreset newPreset = getCodeStylePreset(presetId);
         if (newPreset != null) preset = newPreset;
     }
 
-    public void writeExternal(Element element) {
+    public void writeConfiguration(Element element) {
         element.setAttribute("name", name);
         element.setAttribute("value", preset.getId());
     }

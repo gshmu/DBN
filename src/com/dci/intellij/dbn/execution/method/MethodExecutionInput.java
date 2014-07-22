@@ -180,7 +180,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     /*********************************************************
-     *                   JDOMExternalizable                  *
+     *                 PersistentConfiguration               *
      *********************************************************/
     public void readConfiguration(Element element) {
         methodRef.readState(element);

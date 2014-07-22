@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.object.filter.type;
 
+import javax.swing.*;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.list.Selectable;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
 
-import javax.swing.Icon;
 public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetting> {
     private DBObjectType objectType;
     private boolean selected = true;
@@ -82,7 +84,7 @@ public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetti
     }
 
     @Override
-    public int compareTo(ObjectTypeFilterSetting o) {
+    public int compareTo(@NotNull ObjectTypeFilterSetting o) {
         return 0;
     }
 }
