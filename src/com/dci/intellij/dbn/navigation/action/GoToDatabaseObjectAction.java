@@ -34,7 +34,10 @@ import com.intellij.openapi.util.Condition;
 
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
     private ConnectionHandler latestSelection; // todo move to data context
+    private String latestUsedText;
     private String latestPredefinedText;
+    private String latestClipboardText;
+    private ChooseByNamePopup popup;
     public void gotoActionPerformed(AnActionEvent event) {
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
         Project project = event.getData(PlatformDataKeys.PROJECT);
@@ -144,7 +147,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             GoToDatabaseObjectModel model = new GoToDatabaseObjectModel(project, connectionHandler, selectedSchema);
             String predefinedText = getPredefinedText(project);
 
-            ChooseByNamePopup popup = ChooseByNamePopup.createPopup(project, model, getPsiContext(e), predefinedText);
+            popup = ChooseByNamePopup.createPopup(project, model, getPsiContext(e), predefinedText);
             popup.invoke(new Callback(model), ModalityState.current(), false);
         }
     }
@@ -167,14 +170,24 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             }
         }
 
+        String clipboardText = StringUtil.trim(ClipboardUtil.getStringContent());
         if (predefinedText == null) {
-            predefinedText = ClipboardUtil.getStringContent();
-            if (!isValidPredefinedText(predefinedText)) {
+            if (isValidPredefinedText(clipboardText)) {
+                if (StringUtil.isNotEmpty(latestUsedText) &&
+                        clipboardText.equals(latestClipboardText) &&
+                        !latestUsedText.equals(clipboardText)) {
+
+                    predefinedText = latestUsedText;
+                } else {
+                    predefinedText = clipboardText;
+                }
+            } else {
                 predefinedText = latestPredefinedText;
+
             }
         }
 
-
+        latestClipboardText = clipboardText;
         latestPredefinedText = StringUtil.trim(predefinedText);
         return latestPredefinedText;
     }
@@ -211,6 +224,8 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         @Override
         public void onClose() {
             removeActionLock();
+            latestUsedText = popup.getEnteredText();
+            popup = null;
         }
     }
 
