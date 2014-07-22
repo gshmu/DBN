@@ -453,7 +453,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 }
 
             } catch (SQLException e) {
-                getLogger().error("Error loading data model. " + e.getMessage());
+                getLogger().warn("Error loading data model. " + e.getMessage());
             } finally {
                 ConnectionUtil.closeResultSet(resultSet);
                 connectionHandler.freePoolConnection(connection);
