@@ -80,10 +80,12 @@ public class ConnectionUtil {
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
-            DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
-            if (messageParserInterface.isAuthenticationException(e)){
-                authenticationError = new AuthenticationError(osAuthentication, user, password, e);
-                connectionStatus.setAuthenticationError(authenticationError);
+            if (connectionHandler.getDatabaseType() != DatabaseType.UNKNOWN) {
+                DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
+                if (messageParserInterface.isAuthenticationException(e)){
+                    authenticationError = new AuthenticationError(osAuthentication, user, password, e);
+                    connectionStatus.setAuthenticationError(authenticationError);
+                }
             }
             throw e;
         }
@@ -122,6 +124,8 @@ public class ConnectionUtil {
 
             return connection;
         } catch (Throwable e) {
+            DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
+            databaseSettings.setDatabaseType(databaseType);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
             if (connectionStatus != null) {
                 connectionStatus.setStatusMessage(e.getMessage());
@@ -132,6 +136,18 @@ public class ConnectionUtil {
                 throw (SQLException) e;  else
                 throw new SQLException(e.getMessage());
         }
+    }
+
+    private static DatabaseType getDatabaseType(String driver) {
+        if (driver.toUpperCase().contains("ORACLE")) {
+            return DatabaseType.ORACLE;
+        } else if (driver.toUpperCase().contains("MYSQL")) {
+            return DatabaseType.MYSQL;
+        } else if (driver.toUpperCase().contains("POSTGRESQL")) {
+            return DatabaseType.POSTGRES;
+        }
+        return DatabaseType.UNKNOWN;
+
     }
 
     public static DatabaseType getDatabaseType(Connection connection) throws SQLException {
