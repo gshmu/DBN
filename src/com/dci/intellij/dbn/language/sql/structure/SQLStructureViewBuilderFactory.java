@@ -18,14 +18,14 @@ public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
         return new TreeBasedStructureViewBuilder() {
             @NotNull
             public StructureViewModel createStructureViewModel() {
-                return psiFile == null || !psiFile.isValid() ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(psiFile);
+                return psiFile == null || !psiFile.isValid() ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(null, psiFile);
             }
 
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 PsiFile psiFile = DocumentUtil.getFile(editor);
-                return psiFile == null || !psiFile.isValid() ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(psiFile);
+                return psiFile == null || !psiFile.isValid() ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(editor, psiFile);
             }
         };
     }
