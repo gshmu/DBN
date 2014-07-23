@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
+import java.util.List;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
@@ -15,16 +17,75 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
-    private DBType declaredType;
     private DBNativeDataType nativeDataType;
-    private String typeName;
+    private DBType declaredType;
+    private String name;
     private String qualifiedName;
     private long length;
     private int precision;
     private int scale;
     private boolean set;
 
-    public DBDataType(DBObject parent, ResultSet resultSet) throws SQLException {
+    public static DBDataType get(DBObject parent, ResultSet resultSet) throws SQLException {
+        String dataTypeName = resultSet.getString("DATA_TYPE_NAME");
+        long length = resultSet.getLong("DATA_LENGTH");
+        int precision = resultSet.getInt("DATA_PRECISION");
+        int scale = resultSet.getInt("DATA_SCALE");
+        boolean set = "Y".equals(resultSet.getString("IS_SET"));
+
+        String typeOwner = resultSet.getString("DATA_TYPE_OWNER");
+        String typePackage = resultSet.getString("DATA_TYPE_PACKAGE");
+
+        String name = null;
+        DBType declaredType = null;
+        DBNativeDataType nativeDataType = null;
+
+        DBObjectBundle objectBundle = parent.getConnectionHandler().getObjectBundle();
+        if (typeOwner != null) {
+            DBSchema typeSchema = objectBundle.getSchema(typeOwner);
+            if (typePackage != null) {
+                DBPackage packagee = typeSchema.getPackage(typePackage);
+                if (packagee != null) {
+                    declaredType = packagee.getType(dataTypeName);
+                }
+            } else {
+                declaredType = typeSchema.getType(dataTypeName);
+            }
+            if (declaredType == null) name = dataTypeName;
+        } else {
+            nativeDataType = objectBundle.getNativeDataType(dataTypeName);
+            if (nativeDataType == null) name = dataTypeName;
+        }
+
+        List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
+        for (DBDataType dataType : cachedDataTypes) {
+            if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
+                CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
+                CommonUtil.safeEqual(dataType.name, name) &&
+                dataType.length == length &&
+                dataType.precision == precision &&
+                dataType.scale == scale &&
+                dataType.set == set) {
+                return dataType;
+            }
+        }
+
+        DBDataType dataType = new DBDataType();
+        dataType.nativeDataType = nativeDataType;
+        dataType.declaredType = declaredType;
+        dataType.name = name;
+        dataType.length = length;
+        dataType.precision = precision;
+        dataType.scale = scale;
+        dataType.set = set;
+        cachedDataTypes.add(dataType);
+        return dataType;
+    }
+
+    private DBDataType() {
+    }
+
+/*    public DBDataType(DBObject parent, ResultSet resultSet) throws SQLException {
         length = resultSet.getLong("DATA_LENGTH");
         precision = resultSet.getInt("DATA_PRECISION");
         scale = resultSet.getInt("DATA_SCALE");
@@ -49,7 +110,7 @@ public class DBDataType {
             nativeDataType = objectBundle.getNativeDataType(dataTypeName);
             if (nativeDataType == null) typeName = dataTypeName;
         }
-    }
+    }*/
 
     public DBDataType(DBNativeDataType nativeDataType, int precision, int scale) throws SQLException {
         this.precision = precision;
@@ -71,7 +132,7 @@ public class DBDataType {
 
     public String getName() {
         return (set ? "set of " : "") +
-                (nativeDataType == null && declaredType == null ? typeName :
+                (nativeDataType == null && declaredType == null ? name :
                  nativeDataType == null ? declaredType.getQualifiedName() :
                  nativeDataType.getName());
     }

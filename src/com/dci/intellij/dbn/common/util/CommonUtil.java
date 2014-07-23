@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import org.jdom.Document;
-import org.jdom.adapters.XML4JDOMAdapter;
-import org.jdom.input.DOMBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +11,11 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.jdom.Document;
+import org.jdom.adapters.XML4JDOMAdapter;
+import org.jdom.input.DOMBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommonUtil {
 
@@ -65,7 +64,7 @@ public class CommonUtil {
 
     private static final Object NULL_OBJECT = new Object();
 
-    public static boolean safeEqual(@Nullable Object value1, @Nullable Object value2) {
+    public static <T> boolean safeEqual(@Nullable T value1, @Nullable T value2) {
         return nvl(value1, "").equals(nvl(value2, ""));
     }
 

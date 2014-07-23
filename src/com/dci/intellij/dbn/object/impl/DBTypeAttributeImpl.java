@@ -31,7 +31,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("ATTRIBUTE_NAME");
         position = resultSet.getInt("POSITION");
-        dataType = new DBDataType(this, resultSet);    }
+        dataType = DBDataType.get(this, resultSet);    }
 
     public int getPosition() {
         return position;
