@@ -1,13 +1,10 @@
 package com.dci.intellij.dbn.object.common.status;
 
 import com.dci.intellij.dbn.editor.DBContentType;
-import gnu.trove.THashSet;
-
-import java.util.Set;
 
 public class DBObjectStatusHolder {
     private DBContentType mainContentType;
-    private Set<DBObjectStatusEntry> statusEntries;
+    private DBObjectStatusEntry[] statusEntries;
 
     public DBObjectStatusHolder(DBContentType mainContentType) {
         this.mainContentType = mainContentType;
@@ -22,13 +19,25 @@ public class DBObjectStatusHolder {
             }
         }
 
+        DBObjectStatusEntry statusEntry = null;
         if (create) {
-            DBObjectStatusEntry statusEntry = new DBObjectStatusEntry(contentType, status);
-            if (statusEntries == null) statusEntries = new THashSet<DBObjectStatusEntry>();
-            statusEntries.add(statusEntry);
-            return statusEntry;
+            if (statusEntries == null) {
+                statusEntries = new DBObjectStatusEntry[1];
+                statusEntry = new DBObjectStatusEntry(contentType, status);
+                statusEntries[0] = statusEntry;
+            } else {
+                statusEntry = get(contentType, status, false);
+                if (statusEntry == null) {
+                    int currentSize = this.statusEntries.length;
+                    DBObjectStatusEntry[] statusEntries = new DBObjectStatusEntry[currentSize + 1];
+                    System.arraycopy(this.statusEntries, 0, statusEntries, 0, currentSize);
+                    statusEntry = new DBObjectStatusEntry(contentType, status);
+                    statusEntries[currentSize] = statusEntry;
+                    this.statusEntries = statusEntries;
+                }
+            }
         }
-        return null;
+        return statusEntry;
     }
 
 

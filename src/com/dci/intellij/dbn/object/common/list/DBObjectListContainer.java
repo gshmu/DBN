@@ -167,7 +167,7 @@ public class DBObjectListContainer implements Disposable {
              boolean indexed,
              boolean hidden) {
         if (isSupported(objectType)) {
-            ContentDependencyAdapter dependencyAdapter = new BasicDependencyAdapter(treeParent.getConnectionHandler());
+            ContentDependencyAdapter dependencyAdapter = new BasicDependencyAdapter();
             return createObjectList(objectType, treeParent, loader, dependencyAdapter, indexed, hidden);
         }
         return null;
@@ -180,7 +180,7 @@ public class DBObjectListContainer implements Disposable {
             DBObjectList[] sourceContents,
             boolean indexed, boolean hidden) {
         if (isSupported(objectType)) {
-            ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(treeParent.getConnectionHandler(), sourceContents);
+            ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
             return createObjectList(objectType, treeParent, loader, dependencyAdapter, indexed, hidden);
         }
         return null;

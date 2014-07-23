@@ -4,28 +4,14 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class BasicDependencyAdapter implements ContentDependencyAdapter {
-    private ConnectionHandler connectionHandler;
 
-    public BasicDependencyAdapter(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
-    }
-
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
-    }
-
-    protected boolean isConnectionValid() {
+    protected boolean isConnectionValid(ConnectionHandler connectionHandler) {
         return connectionHandler != null && connectionHandler.isValid();
     }
 
-    public boolean shouldLoad() {
-        // should not reload just like that
-        return false;
-    }
-
-    public boolean shouldLoadIfDirty() {
+    public boolean canLoad(ConnectionHandler connectionHandler) {
         //should reload if connection is valid
-        return isConnectionValid();
+        return isConnectionValid(connectionHandler);
     }
 
     public boolean isDirty() {
@@ -58,6 +44,5 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
     }
 
     public void dispose() {
-        connectionHandler = null;
     }
 }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
     public static final VoidContentDependencyAdapter INSTANCE = new VoidContentDependencyAdapter();
@@ -10,12 +11,7 @@ public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
     }
 
     @Override
-    public boolean shouldLoad() {
-        return false;
-    }
-
-    @Override
-    public boolean shouldLoadIfDirty() {
+    public boolean canLoad(ConnectionHandler connectionHandler) {
         return false;
     }
 
