@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.common.content.dependency;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 
 public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements SubcontentDependencyAdapter {
     private ContentDependency contentDependency;
 
     public SubcontentDependencyAdapterImpl(GenericDatabaseElement sourceContentOwner, DynamicContentType sourceContentType) {
-        super(sourceContentOwner.getConnectionHandler());
         contentDependency = new LinkedContentDependency(sourceContentOwner, sourceContentType);
     }
 
@@ -18,15 +18,8 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
     @Override
-    public boolean shouldLoad() {
-        DynamicContent sourceContent = contentDependency.getSourceContent();
-        // should reload if the source has been reloaded and is not dirty
-        return !sourceContent.isDirty() && contentDependency.isDirty();
-    }
-
-    @Override
-    public boolean shouldLoadIfDirty() {
-        return isConnectionValid() && contentDependency.getSourceContent().isLoaded();
+    public boolean canLoad(ConnectionHandler connectionHandler) {
+        return isConnectionValid(connectionHandler) && contentDependency.getSourceContent().isLoaded();
     }
 
     public boolean isDirty() {

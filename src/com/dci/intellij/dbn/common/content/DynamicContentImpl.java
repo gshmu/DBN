@@ -32,7 +32,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     private volatile boolean isLoadingInBackground = false;
     private volatile boolean isLoaded = false;
     private volatile boolean isDirty = false;
-    private volatile boolean isDisposed = false;
+    private volatile boolean disposed = false;
 
     private GenericDatabaseElement parent;
     protected DynamicContentLoader<T> loader;
@@ -111,7 +111,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean isDisposed() {
-        return isDisposed;
+        return disposed;
     }
 
     public void setDirty(boolean dirty) {
@@ -138,7 +138,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public final void reload() {
         synchronized (LOAD_LOCK) {
-            if (!isDisposed && !isLoading) {
+            if (!disposed && !isLoading) {
                 isLoading = true;
                 try {
                     performReload();
@@ -218,7 +218,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         Filter filter = getFilter();
         filterHashCode = filter == null ? 0 : filter.hashCode();
 
-        if (isDisposed || elements == null || elements.size() == 0) {
+        if (disposed || elements == null || elements.size() == 0) {
             elements = EMPTY_CONTENT;
             index = null;
         } else {
@@ -299,16 +299,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean shouldLoad(boolean force) {
-        return !(isLoading || isDisposed) && (force || !isLoaded || (isDirty() && dependencyAdapter.shouldLoadIfDirty()));
+        return !(isLoading || disposed) && (force || !isLoaded || (isDirty() && dependencyAdapter.canLoad(getConnectionHandler())));
     }
 
     public void checkDisposed() throws InterruptedException {
-        if (isDisposed) throw new InterruptedException();
+        if (disposed) throw new InterruptedException();
     }
 
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!disposed) {
+            disposed = true;
             if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
                 if (dependencyAdapter.isSubContent())
                     elements.clear(); else

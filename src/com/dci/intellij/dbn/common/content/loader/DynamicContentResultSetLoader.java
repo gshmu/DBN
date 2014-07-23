@@ -106,7 +106,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             boolean modelException = false;
             if (e instanceof SQLException) {
                 SQLException sqlException = (SQLException) e;
-                if (dynamicContent.isDisposed()) {
+                if (!dynamicContent.isDisposed()) {
                     DatabaseInterfaceProvider interfaceProvider = dynamicContent.getConnectionHandler().getInterfaceProvider();
                     modelException = interfaceProvider.getMessageParserInterface().isModelException(sqlException);
                 }

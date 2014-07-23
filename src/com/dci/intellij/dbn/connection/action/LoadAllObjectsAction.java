@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
@@ -11,7 +13,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class LoadAllObjectsAction extends DumbAwareAction {
     private ConnectionHandler connectionHandler;

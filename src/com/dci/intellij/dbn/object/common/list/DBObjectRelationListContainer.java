@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
@@ -11,9 +14,6 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.intellij.openapi.Disposable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBObjectRelationListContainer implements Disposable {
     private GenericDatabaseElement owner;
@@ -53,7 +53,7 @@ public class DBObjectRelationListContainer implements Disposable {
             DynamicContentLoader loader,
             DBObjectList ... sourceContents) {
         if (isSupported(type)) {
-            ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(parent.getConnectionHandler(), sourceContents);
+            ContentDependencyAdapter dependencyAdapter = new MultipleContentDependencyAdapter(sourceContents);
             return createObjectRelationList(type, parent, name, loader, dependencyAdapter);
         }
         return null;
