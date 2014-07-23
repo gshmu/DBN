@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.editor.structure.EmptyStructureViewModel;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -9,8 +12,6 @@ import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiEditorUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory {
 
@@ -18,14 +19,14 @@ public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory 
         return new TreeBasedStructureViewBuilder() {
             @NotNull
             public StructureViewModel createStructureViewModel() {
-                return psiFile == null || !psiFile.isValid() ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(null, psiFile);
+                return psiFile == null || !psiFile.isValid() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(null, psiFile);
             }
 
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 PsiFile psiFile = DocumentUtil.getFile(editor);
-                return psiFile == null || !psiFile.isValid() ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(editor, psiFile);
+                return psiFile == null || !psiFile.isValid() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(editor, psiFile);
             }
         };
     }
