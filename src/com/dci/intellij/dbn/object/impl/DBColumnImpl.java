@@ -61,7 +61,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         isHidden = "Y".equals(resultSet.getString("IS_HIDDEN"));
         position = resultSet.getInt("POSITION");
 
-        dataType = new DBDataType(this, resultSet);
+        dataType = DBDataType.get(this, resultSet);
     }
 
     protected void initLists() {

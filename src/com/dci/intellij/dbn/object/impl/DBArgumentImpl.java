@@ -52,7 +52,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         name = resultSet.getString("ARGUMENT_NAME");
         if (name == null) name = position == 0 ? "return" : "[unnamed]";
 
-        dataType = new DBDataType(this, resultSet);
+        dataType = DBDataType.get(this, resultSet);
         if (getParentObject() instanceof DBFunction) {
             position++;
         }
