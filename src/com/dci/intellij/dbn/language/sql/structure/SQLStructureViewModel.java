@@ -6,19 +6,14 @@ import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.ide.util.treeView.smartTree.Filter;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public class SQLStructureViewModel extends TextEditorBasedStructureViewModel {
-    private PsiFile psiFile;
 
-    public SQLStructureViewModel(PsiFile psiFile) {
-        super(psiFile);
-        this.psiFile = psiFile;
-    }
-
-    protected PsiFile getPsiFile() {
-        return psiFile;
+    public SQLStructureViewModel(Editor editor, PsiFile psiFile) {
+        super(editor, psiFile);
     }
 
     @NotNull
@@ -28,7 +23,7 @@ public class SQLStructureViewModel extends TextEditorBasedStructureViewModel {
 
     @NotNull
     public StructureViewTreeElement getRoot() {
-        return new SQLStructureViewElement(psiFile);
+        return new SQLStructureViewElement(getPsiFile());
     }
 
     @NotNull

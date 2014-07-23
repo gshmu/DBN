@@ -6,21 +6,16 @@ import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.ide.util.treeView.smartTree.Filter;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public class PSQLStructureViewModel extends TextEditorBasedStructureViewModel {
-    private PsiFile psiFile;
     private Sorter[] sorters = new Sorter[] {new PSQLStructureViewModelSorter()};
     private Grouper[] groupers = new Grouper[]{new PSQLStructureViewModelGrouper()};
 
-    public PSQLStructureViewModel(PsiFile psiFile) {
-        super(psiFile);
-        this.psiFile = psiFile;
-    }
-
-    protected PsiFile getPsiFile() {
-        return psiFile;
+    public PSQLStructureViewModel(Editor editor, PsiFile psiFile) {
+        super(editor, psiFile);
     }
 
     @NotNull
@@ -30,7 +25,7 @@ public class PSQLStructureViewModel extends TextEditorBasedStructureViewModel {
 
     @NotNull
     public StructureViewTreeElement getRoot() {
-        return new PSQLStructureViewElement(psiFile);
+        return new PSQLStructureViewElement(getPsiFile());
     }
 
     @NotNull
