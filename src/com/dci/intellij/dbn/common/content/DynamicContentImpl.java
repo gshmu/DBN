@@ -159,7 +159,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         synchronized (BACKGROUND_LOAD_LOCK) {
             if (!isLoadingInBackground && shouldLoad(force)) {
                 isLoadingInBackground = true;
-                new BackgroundTask(getProject(), "Loading data dictionary", true) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ")";
+                new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
                         try {
                             DatabaseLoadMonitor.startBackgroundLoad();
