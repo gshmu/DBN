@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -22,15 +25,20 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
 
-import java.util.Iterator;
-import java.util.Set;
-
 public class PsiUtil {
 
     public static DBSchema getCurrentSchema(PsiElement psiElement) {
-        VirtualFile virtualFile = getVirtualFileForElement(psiElement);
-        FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
-        return mappingManager.getCurrentSchema(virtualFile);
+        DBSchema currentSchema = null;
+        if (psiElement instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+            currentSchema = basePsiElement.getCurrentSchema();
+        }
+        if (currentSchema == null) {
+            VirtualFile virtualFile = getVirtualFileForElement(psiElement);
+            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
+            currentSchema = mappingManager.getCurrentSchema(virtualFile);
+        }
+        return currentSchema;
     }
 
     public static VirtualFile getVirtualFileForElement(PsiElement psiElement) {
