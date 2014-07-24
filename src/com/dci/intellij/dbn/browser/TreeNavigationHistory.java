@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.browser;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeNavigationHistory{
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
+import com.intellij.openapi.Disposable;
+
+public class TreeNavigationHistory implements Disposable{
     private List<BrowserTreeNode> history = new ArrayList<BrowserTreeNode>();
     private int offset;
 
@@ -50,4 +51,8 @@ public class TreeNavigationHistory{
         return history.get(offset);
     }
 
+    @Override
+    public void dispose() {
+        history.clear();
+    }
 }

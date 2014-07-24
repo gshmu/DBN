@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -14,13 +19,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
     private TabbedPane connectionTabs;
@@ -147,7 +145,6 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     public void dispose() {
         EventManager.unsubscribe(environmentChangeListener);
-        connectionTabs.dispose();
         super.dispose();
     }
 

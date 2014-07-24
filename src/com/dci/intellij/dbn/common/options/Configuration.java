@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
+import javax.swing.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.util.Disposer;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
     private T configurationEditorForm;
@@ -68,7 +68,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     public void disposeUIResources() {
         if (configurationEditorForm != null) {
-            configurationEditorForm.dispose();
+            Disposer.dispose(configurationEditorForm);
             configurationEditorForm = null;
         }
     }
