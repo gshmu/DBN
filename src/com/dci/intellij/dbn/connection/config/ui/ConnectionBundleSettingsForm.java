@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -30,6 +31,7 @@ import com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction;
 import com.dci.intellij.dbn.connection.config.action.SortConnectionsAction;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundle> implements ListSelectionListener {
@@ -124,9 +126,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionBundle.setConnectionHandlers(newConnections);
 
         // dispose old list
-        for (ConnectionHandler connectionHandler : oldConnections) {
-            connectionHandler.dispose();
-        }
+        DisposerUtil.dispose(oldConnections);
 
         if (listChanged) {
             EventManager.notify(connectionBundle.getProject(), ConnectionBundleSettingsListener.TOPIC).settingsChanged();
@@ -162,7 +162,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     @Override
     public void dispose() {
         for (ConnectionSettingsForm settingsForm : cachedForms.values()) {
-            settingsForm.dispose();
+            Disposer.dispose(settingsForm);
         }
         cachedForms.clear();
         super.dispose();

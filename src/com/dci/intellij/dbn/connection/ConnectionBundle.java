@@ -1,11 +1,17 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.*;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -18,11 +24,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.List;
 
 public abstract class ConnectionBundle
         extends Configuration<ConnectionBundleSettingsForm>
@@ -93,10 +94,7 @@ public abstract class ConnectionBundle
 
 
     public void dispose() {
-        for (ConnectionHandler connectionHandler : connectionHandlers){
-            connectionHandler.dispose();
-        }
-        connectionHandlers.clear();
+        DisposerUtil.dispose(connectionHandlers);
         project = null;
     }
 

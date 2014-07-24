@@ -7,7 +7,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 
 public abstract class DBNDialog extends DialogWrapper implements Disposable{
     private Project project;
-    private boolean isDisposed;
+    private boolean disposed;
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
@@ -21,14 +21,14 @@ public abstract class DBNDialog extends DialogWrapper implements Disposable{
 
     @Override
     public void dispose() {
-        if (!isDisposed) {
-            isDisposed = true;
+        if (!disposed) {
+            disposed = true;
             project = null;
             super.dispose();
         }
     }
 
     public boolean isDisposed() {
-        return isDisposed;
+        return disposed;
     }
 }

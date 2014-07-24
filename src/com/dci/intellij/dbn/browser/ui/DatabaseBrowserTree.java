@@ -1,5 +1,21 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
@@ -36,23 +52,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JPopupMenu;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
 
 public class DatabaseBrowserTree extends DBNTree implements Disposable {
     public static final DefaultTreeModel EMPTY_TREE_MODEL = new DefaultTreeModel(null);
@@ -81,6 +80,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
         Disposer.register(this, speedSearch);
         Disposer.register(this, treeModel);
+        Disposer.register(this, navigationHistory);
     }
 
     public Project getProject() {
@@ -402,7 +402,6 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     public void dispose() {
         if (!isDisposed()) {
             disposed = true;
-            navigationHistory.clear();
             targetSelection = null;
             setModel(EMPTY_TREE_MODEL);
             GUIUtil.removeListeners(this);

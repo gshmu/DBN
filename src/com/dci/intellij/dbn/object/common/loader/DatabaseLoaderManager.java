@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.object.common.loader;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -13,9 +16,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 public class DatabaseLoaderManager extends AbstractProjectComponent {
     private DatabaseLoaderQueue loaderQueue;
@@ -77,7 +79,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
     public void disposeComponent() {
         super.disposeComponent();
         if (loaderQueue != null) {
-            loaderQueue.dispose();
+            Disposer.dispose(loaderQueue);
             loaderQueue = null;
         }
     }

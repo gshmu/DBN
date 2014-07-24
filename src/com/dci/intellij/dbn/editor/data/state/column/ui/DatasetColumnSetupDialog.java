@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data.state.column.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
+import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
+import com.intellij.openapi.util.Disposer;
 
 public class DatasetColumnSetupDialog extends DBNDialog {
     public static final DatasetLoadInstructions LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
@@ -20,6 +20,7 @@ public class DatasetColumnSetupDialog extends DBNDialog {
         setModal(true);
         setResizable(true);
         columnSetupForm = new DatasetColumnSetupForm(datasetEditor);
+        Disposer.register(this, columnSetupForm);
         getCancelAction().putValue(Action.NAME, "Cancel");
         init();
     }
@@ -53,9 +54,7 @@ public class DatasetColumnSetupDialog extends DBNDialog {
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            columnSetupForm.dispose();
-        }
+        super.dispose();
+        datasetEditor = null;
     }
 }
