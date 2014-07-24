@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
+import javax.swing.*;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -10,9 +12,6 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasi
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import sun.java2d.DisposerRecord;
-
-import javax.swing.Icon;
 
 public class StatementExecutionBasicResult implements StatementExecutionResult{
     private String resultName;
@@ -89,12 +88,10 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     public void updateExecutionMessage(MessageType messageType, String message, String causeMessage) {
         executionMessage = new StatementExecutionMessage(this, message, causeMessage, messageType);
-        Disposer.register(this, executionMessage);
     }
 
     public void updateExecutionMessage(MessageType messageType, String message) {
         executionMessage = new StatementExecutionMessage(this, message, "", messageType);
-        Disposer.register(this, executionMessage);
     }
 
     public void clearExecutionMessage() {
