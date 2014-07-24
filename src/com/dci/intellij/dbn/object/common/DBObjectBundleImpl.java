@@ -258,7 +258,10 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (visibleTreeChildren == null) {
             visibleTreeChildren = new ArrayList<BrowserTreeNode>();
             visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-            new BackgroundTask(getProject(), "Loading data dictionary", true) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ")";
+
+            new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     buildTreeChildren();
                 }

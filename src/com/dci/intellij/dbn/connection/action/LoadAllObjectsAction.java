@@ -25,7 +25,7 @@ public class LoadAllObjectsAction extends DumbAwareAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
-        new BackgroundTask(project, "Loading data dictionary", true) {
+        new BackgroundTask(project, "Loading data dictionary (" + connectionHandler.getName() + ")", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 try {
