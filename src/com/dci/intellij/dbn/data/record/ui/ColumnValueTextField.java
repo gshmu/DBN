@@ -1,8 +1,15 @@
 package com.dci.intellij.dbn.data.record.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
-import com.dci.intellij.dbn.data.editor.color.DataGridTextAttributesKeys;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
@@ -12,15 +19,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JDialog;
-import javax.swing.JTextField;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class ColumnValueTextField extends JTextField {
     private DatasetRecord record;

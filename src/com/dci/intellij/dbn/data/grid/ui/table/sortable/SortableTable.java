@@ -1,18 +1,18 @@
-package com.dci.intellij.dbn.data.ui.table.sortable;
+package com.dci.intellij.dbn.data.grid.ui.table.sortable;
+
+import javax.swing.*;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSpeedSearch;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableTableHeaderMouseListener;
 import com.dci.intellij.dbn.data.model.sortable.SortableTableMouseListener;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTableSpeedSearch;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.JTable;
 
 public abstract class SortableTable<T extends SortableDataModel> extends BasicTable<T> {
     protected Logger logger = LoggerFactory.createLogger();

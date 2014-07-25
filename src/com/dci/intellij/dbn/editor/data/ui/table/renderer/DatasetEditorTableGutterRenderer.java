@@ -1,8 +1,14 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTableGutter;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTableGutterCellRenderer;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutterCellRenderer;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
@@ -10,20 +16,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
 
 public class DatasetEditorTableGutterRenderer extends JPanel implements ListCellRenderer {
     public static final Color PANEL_BACKGROUND = UIUtil.getPanelBackground();

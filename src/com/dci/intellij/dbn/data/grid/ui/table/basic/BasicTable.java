@@ -1,9 +1,16 @@
-package com.dci.intellij.dbn.data.ui.table.basic;
+package com.dci.intellij.dbn.data.grid.ui.table.basic;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.data.editor.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
@@ -18,17 +25,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBViewport;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
 
 public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements EditorColorsListener, Disposable {
     private BasicTableCellRenderer cellRenderer;

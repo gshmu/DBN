@@ -1,20 +1,20 @@
 package com.dci.intellij.dbn.data.find;
 
+import java.awt.*;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindResult;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.Rectangle;
 
 public class DataSearchResultController implements Disposable{
     private SearchableDataComponent searchableComponent;

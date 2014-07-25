@@ -1,13 +1,20 @@
 package com.dci.intellij.dbn.data.preview;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.value.LazyLoadedValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -23,19 +30,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Computable;
 import com.intellij.ui.components.JBScrollPane;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.sql.SQLException;
 
 public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     public static final int INITIAL_MAX_SIZE = 4000;

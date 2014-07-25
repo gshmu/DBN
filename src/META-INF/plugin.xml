@@ -314,7 +314,7 @@
 
         <colorSettingsPage implementation="com.dci.intellij.dbn.code.sql.color.SQLColorSettingsPage"/>
         <colorSettingsPage implementation="com.dci.intellij.dbn.code.psql.color.PSQLColorSettingsPage"/>
-        <colorSettingsPage implementation="com.dci.intellij.dbn.data.editor.color.DataGridColorSettingsPage"/>
+        <colorSettingsPage implementation="com.dci.intellij.dbn.data.grid.color.DataGridColorSettingsPage"/>
 
         <syntaxHighlighter key="DBN-SQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
         <syntaxHighlighter key="DBN-PSQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>

@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.data.editor.color.DataGridTextAttributes;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTableCellRenderer;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.SimpleTextAttributes;
-
-import javax.swing.JTable;
-import javax.swing.border.Border;
-import java.awt.Color;
 
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
     public DatasetEditorTableCellRenderer(Project project) {

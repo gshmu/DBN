@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.data.ui.table.sortable;
+package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

@@ -1,17 +1,15 @@
-package com.dci.intellij.dbn.data.ui.table.basic;
+package com.dci.intellij.dbn.data.grid.ui.table.basic;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.FocusEvent;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.intellij.openapi.Disposable;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.Rectangle;
-import java.awt.event.FocusEvent;
 
 public class BasicTableGutter extends JList implements Disposable {
     private BasicTable table;

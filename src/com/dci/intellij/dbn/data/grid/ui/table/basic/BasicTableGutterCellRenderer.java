@@ -1,4 +1,10 @@
-package com.dci.intellij.dbn.data.ui.table.basic;
+package com.dci.intellij.dbn.data.grid.ui.table.basic;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -9,17 +15,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 
 public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
     public interface Colors {
