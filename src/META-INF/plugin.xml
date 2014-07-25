@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3107</b>
              <ul>
+                - Configurable tracking columns (display text attributes, visibility, editable)<br>
                 - PostgreSQL support (work in progress)<br>
                 - Multiple column sorting in dataset editor and query results (Ctrl-Click)<br>
                 - Dataset Editor - hide / move columns (persistent state)<br>

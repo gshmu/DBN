@@ -41,10 +41,10 @@ public class DatasetColumnSetupDialog extends DBNDialog {
     @Override
     protected void doOKAction() {
         boolean changed = columnSetupForm.applyChanges();
-        super.doOKAction();
         if (changed) {
             datasetEditor.loadData(LOAD_INSTRUCTIONS);
         }
+        super.doOKAction();
     }
 
     @Nullable
