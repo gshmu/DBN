@@ -25,11 +25,11 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
     }
 
     public String getDisplayName() {
-        return "Data";
+        return "Data Grid";
     }
 
     public String getHelpTopic() {
-        return "data";
+        return "dataGrid";
     }
 
     /*********************************************************

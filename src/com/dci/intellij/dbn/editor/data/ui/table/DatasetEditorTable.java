@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -240,6 +241,13 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
         int modelColumnIndex = getModelColumnIndex(columnIndex);
         ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
+
+        DataGridTrackingColumnSettings trackingColumnSettings = getDataGridSettings().getTrackingColumnSettings();
+        if (!trackingColumnSettings.isEditable()) {
+            boolean isTrackingColumn = trackingColumnSettings.isTrackingColumn(columnInfo.getName());
+            if (isTrackingColumn) return null;
+        }
+
         return cellEditorFactory.getCellEditor(columnInfo, this);
     }
 
