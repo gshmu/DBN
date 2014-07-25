@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -65,6 +66,12 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
                 textAttributes = attributes.getLoadingData(isCaretRow);
             } else if (isLazyValue) {
                 textAttributes = attributes.getReadonlyData(false, isCaretRow);
+            } else {
+                DataGridTrackingColumnSettings trackingColumnSettings = sortableTable.getDataGridSettings().getTrackingColumnSettings();
+                boolean trackingColumn = trackingColumnSettings.isTrackingColumn(cell.getColumnInfo().getName());
+                if (trackingColumn) {
+                    textAttributes = attributes.getTrackingData(false, isCaretRow);
+                }
             }
 
             Color background = CommonUtil.nvl(textAttributes.getBgColor(), table.getBackground());

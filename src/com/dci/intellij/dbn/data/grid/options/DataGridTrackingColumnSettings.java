@@ -42,6 +42,10 @@ public class DataGridTrackingColumnSettings extends Configuration<DataGridTracki
         this.editable = editable;
     }
 
+    public boolean isTrackingColumn(String columnName) {
+        return columnName!= null && columnNames.size() > 0 && columnNames.contains(columnName.toUpperCase());
+    }
+
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -68,7 +72,7 @@ public class DataGridTrackingColumnSettings extends Configuration<DataGridTracki
     public void writeConfiguration(Element element) {
         StringBuilder buffer = new StringBuilder();
         for (String columnName : columnNames) {
-            if (buffer.length() == 0) {
+            if (buffer.length() > 0) {
                 buffer.append(", ");
             }
             buffer.append(columnName);
