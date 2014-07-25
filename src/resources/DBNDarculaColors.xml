@@ -7,6 +7,7 @@
     </option>
     <option name="DBNavigator.DefaultTextAttributes.DataEditor.TrackingData">
         <value>
+            <option name="BACKGROUND" value="2B2B2B"/>
             <option name="FOREGROUND" value="6A6A6A"/>
         </value>
     </option>

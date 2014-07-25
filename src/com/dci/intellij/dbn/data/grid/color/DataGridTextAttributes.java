@@ -14,6 +14,10 @@ public class DataGridTextAttributes extends CommonUtil {
     private SimpleTextAttributes plainDataModified;
     private SimpleTextAttributes plainDataAtCaretRow;
     private SimpleTextAttributes plainDataAtCaretRowModified;
+    private SimpleTextAttributes trackingData;
+    private SimpleTextAttributes trackingDataModified;
+    private SimpleTextAttributes trackingDataAtCaretRow;
+    private SimpleTextAttributes trackingDataAtCaretRowModified;
     private SimpleTextAttributes modifiedData;
     private SimpleTextAttributes modifiedDataAtCaretRow;
     private SimpleTextAttributes deletedData;
@@ -57,6 +61,18 @@ public class DataGridTextAttributes extends CommonUtil {
                 modifiedData.getFontStyle());
         plainDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, plainData.getFgColor(), null, plainData.getFontStyle());
         plainDataAtCaretRowModified = new SimpleTextAttributes(
+                caretRowBgColor,
+                nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
+                modifiedData.getFontStyle());
+
+
+        trackingData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.TRACKING_DATA);
+        trackingDataModified = new SimpleTextAttributes(
+                nvln(modifiedData.getBgColor(), trackingData.getBgColor()),
+                nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
+                modifiedData.getFontStyle());
+        trackingDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, trackingData.getFgColor(), null, trackingData.getFontStyle());
+        trackingDataAtCaretRowModified = new SimpleTextAttributes(
                 caretRowBgColor,
                 nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
                 modifiedData.getFontStyle());
@@ -121,9 +137,10 @@ public class DataGridTextAttributes extends CommonUtil {
     }
 
     public SimpleTextAttributes getReadonlyData(boolean modified, boolean atCaretRow) {
-        return modified && atCaretRow ? readonlyDataAtCaretRowModified :
-                atCaretRow ? readonlyDataAtCaretRow :
-                        modified ? readonlyDataModified : readonlyData;
+        return
+            modified && atCaretRow ? readonlyDataAtCaretRowModified :
+            atCaretRow ? readonlyDataAtCaretRow :
+            modified ? readonlyDataModified : readonlyData;
     }
 
     public SimpleTextAttributes getLoadingData(boolean atCaretRow) {
@@ -131,15 +148,24 @@ public class DataGridTextAttributes extends CommonUtil {
     }
 
     public SimpleTextAttributes getPrimaryKey(boolean modified, boolean atCaretRow) {
-        return modified && atCaretRow ? primaryKeyAtCaretRowModified :
-                atCaretRow ? primaryKeyAtCaretRow :
-                        modified ? primaryKeyModified : primaryKey;
+        return
+            modified && atCaretRow ? primaryKeyAtCaretRowModified :
+            atCaretRow ? primaryKeyAtCaretRow :
+            modified ? primaryKeyModified : primaryKey;
     }
 
     public SimpleTextAttributes getForeignKey(boolean modified, boolean atCaretRow) {
-        return modified && atCaretRow ? foreignKeyAtCaretRowModified :
-                atCaretRow ? foreignKeyAtCaretRow :
-                        modified ? foreignKeyModified : foreignKey;
+        return
+            modified && atCaretRow ? foreignKeyAtCaretRowModified :
+            atCaretRow ? foreignKeyAtCaretRow :
+            modified ? foreignKeyModified : foreignKey;
+    }
+
+    public SimpleTextAttributes getTrackingData(boolean modified, boolean atCaretRow) {
+        return
+            modified && atCaretRow ? trackingDataAtCaretRowModified :
+            atCaretRow ? trackingDataAtCaretRow :
+            modified ? trackingDataModified : trackingData;
     }
 
     public SimpleTextAttributes getPrimaryKeyAtCaretRow() {
@@ -154,8 +180,6 @@ public class DataGridTextAttributes extends CommonUtil {
         return primaryKeyAtCaretRowModified;
     }
 
-    //    public SimpleTextAttributes getCaretRow() {
-//        return caretRow;
 //    }
 
     public SimpleTextAttributes getSelection() {

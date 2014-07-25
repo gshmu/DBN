@@ -8,7 +8,7 @@
     <properties/>
     <border type="etched" title="Tracking Columns"/>
     <children>
-      <grid id="3e1a0" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="3e1a0" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="4" left="4" bottom="4" right="4"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -22,7 +22,7 @@
             </constraints>
             <properties>
               <labelFor value="105e4"/>
-              <text value="Column &amp;names (comma separated)"/>
+              <text value="Tracking column &amp;names"/>
             </properties>
           </component>
           <component id="105e4" class="javax.swing.JTextField" binding="columnNamesTextField">
@@ -54,6 +54,14 @@
             </constraints>
             <properties>
               <text value="&amp;Editable"/>
+            </properties>
+          </component>
+          <component id="950b3" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="(comma separated)"/>
             </properties>
           </component>
         </children>

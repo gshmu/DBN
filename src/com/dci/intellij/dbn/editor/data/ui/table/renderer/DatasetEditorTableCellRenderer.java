@@ -6,6 +6,7 @@ import java.awt.*;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
@@ -24,7 +25,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
         DatasetEditorModelCell cell = (DatasetEditorModelCell) value;
         DatasetEditorTable datasetEditorTable = (DatasetEditorTable) table;
 
-        if (cell != null && !cell.isDisposed()) {
+        if (cell != null && !cell.isDisposed() && !datasetEditorTable.isDisposed() && !datasetEditorTable.getProject().isDisposed()) {
             DatasetEditorModelRow row = cell.getRow();
             DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
             boolean isLoading = datasetEditorTable.isLoading();
@@ -52,6 +53,12 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
                 textAttributes = attributes.getForeignKey(isModified, isCaretRow);
             } else if (cell.isLobValue()) {
                 textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
+            } else {
+                DataGridTrackingColumnSettings trackingColumnSettings = datasetEditorTable.getDataGridSettings().getTrackingColumnSettings();
+                boolean trackingColumn = trackingColumnSettings.isTrackingColumn(columnInfo.getName());
+                if (trackingColumn) {
+                    textAttributes = attributes.getTrackingData(isModified, isCaretRow);
+                }
             }
 
             Color background = CommonUtil.nvl(textAttributes.getBgColor(), table.getBackground());

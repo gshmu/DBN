@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
@@ -31,10 +32,13 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
     private BasicTableGutter tableGutter;
     private JBPopup valuePopup;
     private boolean isLoading;
-    protected RegionalSettings regionalSettings;
+    private RegionalSettings regionalSettings;
+    private DataGridSettings dataGridSettings;
 
     public BasicTable(Project project, T dataModel) {
         super(project, dataModel, true);
+        regionalSettings = RegionalSettings.getInstance(project);
+        dataGridSettings = DataGridSettings.getInstance(project);
         cellRenderer = createCellRenderer(project);
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
         setSelectionForeground(displayAttributes.getSelection().getFgColor());
@@ -42,6 +46,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         EditorColorsManager.getInstance().addEditorColorsListener(this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+    }
+
+    public RegionalSettings getRegionalSettings() {
+        return regionalSettings;
+    }
+
+    public DataGridSettings getDataGridSettings() {
+        return dataGridSettings;
     }
 
     protected BasicTableCellRenderer createCellRenderer(Project project) {
@@ -222,6 +234,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
 
     public void dispose() {
         super.dispose();
+        regionalSettings = null;
+        dataGridSettings = null;
         tableGutter = null;
         EditorColorsManager.getInstance().removeEditorColorsListener(this);
     }
