@@ -1,6 +1,5 @@
-package com.dci.intellij.dbn.data.ui.table.basic;
+package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;

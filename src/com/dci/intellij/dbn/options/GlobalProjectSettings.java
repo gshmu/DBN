@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.options;
 
+import javax.swing.*;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -8,23 +15,22 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.GlobalConnectionSettings;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsEditorForm;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 @State(
     name = "DBNavigator.Project.Settings",
@@ -40,6 +46,7 @@ public class GlobalProjectSettings
     private GeneralProjectSettings generalSettings;
     private DatabaseBrowserSettings browserSettings;
     private NavigationSettings navigationSettings;
+    private DataGridSettings dataGridSettings;
     private DataEditorSettings dataEditorSettings;
     private CodeCompletionSettings codeCompletionSettings;
     private ProjectCodeStyleSettings codeStyleSettings;
@@ -59,6 +66,7 @@ public class GlobalProjectSettings
         browserSettings = new DatabaseBrowserSettings(project);
         navigationSettings = new NavigationSettings(project);
         codeStyleSettings = new ProjectCodeStyleSettings(project);
+        dataGridSettings = new DataGridSettings(project);
         dataEditorSettings = new DataEditorSettings(project);
         codeCompletionSettings = new CodeCompletionSettings(project);
         executionEngineSettings = new ExecutionEngineSettings(project);
@@ -104,6 +112,10 @@ public class GlobalProjectSettings
 
     public GlobalConnectionSettings getConnectionSettings() {
         return connectionSettings;
+    }
+
+    public DataGridSettings getDataGridSettings() {
+        return dataGridSettings;
     }
 
     public DataEditorSettings getDataEditorSettings() {
@@ -159,6 +171,7 @@ public class GlobalProjectSettings
                 browserSettings,
                 navigationSettings,
                 codeStyleSettings,
+                dataGridSettings,
                 dataEditorSettings,
                 codeCompletionSettings,
                 executionEngineSettings,

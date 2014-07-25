@@ -5,6 +5,11 @@
             <option name="BACKGROUND" value="FFFFFF"/>
         </value>
     </option>
+    <option name="DBNavigator.DefaultTextAttributes.DataEditor.TrackingData">
+        <value>
+            <option name="FOREGROUND" value="7F7F7F"/>
+        </value>
+    </option>
     <option name="DBNavigator.DefaultTextAttributes.DataEditor.ModifiedData">
         <value>
             <option name="FONT_TYPE" value="1"/>

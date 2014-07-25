@@ -1,4 +1,12 @@
-package com.dci.intellij.dbn.data.editor.color;
+package com.dci.intellij.dbn.data.grid.color;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -7,14 +15,6 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class DataGridColorSettingsPage implements ColorSettingsPage {
     protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
@@ -22,6 +22,7 @@ public class DataGridColorSettingsPage implements ColorSettingsPage {
 
     public DataGridColorSettingsPage() {
         attributeDescriptors.add(new AttributesDescriptor("Plain Data", DataGridTextAttributesKeys.PLAIN_DATA));
+        attributeDescriptors.add(new AttributesDescriptor("Tracking Data", DataGridTextAttributesKeys.TRACKING_DATA));
         attributeDescriptors.add(new AttributesDescriptor("Modified Data", DataGridTextAttributesKeys.MODIFIED_DATA));
         attributeDescriptors.add(new AttributesDescriptor("Deleted Data", DataGridTextAttributesKeys.DELETED_DATA));
         attributeDescriptors.add(new AttributesDescriptor("Error Data", DataGridTextAttributesKeys.ERROR_DATA));

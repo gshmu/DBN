@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.data.ui.table.resultSet;
+package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

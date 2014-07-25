@@ -1,5 +1,20 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.EventObject;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ModalTask;
@@ -7,14 +22,14 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTableCellRenderer;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTableGutter;
-import com.dci.intellij.dbn.data.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.value.LazyLoadedValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
@@ -39,24 +54,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JPopupMenu;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.EventObject;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);

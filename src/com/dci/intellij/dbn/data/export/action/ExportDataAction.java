@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.export.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.export.ui.ExportDataDialog;
-import com.dci.intellij.dbn.data.ui.table.resultSet.ResultSetTable;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

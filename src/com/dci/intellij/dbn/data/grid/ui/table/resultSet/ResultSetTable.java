@@ -1,9 +1,9 @@
-package com.dci.intellij.dbn.data.ui.table.resultSet;
+package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordViewerDialog;
+import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
-import com.dci.intellij.dbn.data.ui.table.resultSet.record.ResultSetRecordViewerDialog;
-import com.dci.intellij.dbn.data.ui.table.sortable.SortableTable;
 
 public class ResultSetTable<T extends ResultSetDataModel> extends SortableTable<T> {
     private RecordViewInfo recordViewInfo;

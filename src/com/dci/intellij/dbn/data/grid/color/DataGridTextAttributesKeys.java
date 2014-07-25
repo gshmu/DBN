@@ -1,4 +1,6 @@
-package com.dci.intellij.dbn.data.editor.color;
+package com.dci.intellij.dbn.data.grid.color;
+
+import java.awt.*;
 
 import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -9,10 +11,9 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.ui.SimpleTextAttributes;
 
-import java.awt.Color;
-
 public interface DataGridTextAttributesKeys {
     TextAttributesKey DEFAULT_PLAIN_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.PlainData");
+    TextAttributesKey DEFAULT_TRACKING_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.TrackingData");
     TextAttributesKey DEFAULT_MODIFIED_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.ModifiedData");
     TextAttributesKey DEFAULT_DELETED_DATA   = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.DeletedData");
     TextAttributesKey DEFAULT_ERROR_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.ErrorData");
@@ -53,6 +54,7 @@ public interface DataGridTextAttributesKeys {
     ColorKey CARET_ROW_BACKGROUND = ColorKey.createColorKey("DBNavigator.TextAttributes.DataEditor.CaretRowBackground", Colors.CARET_ROW_BACKGROUND);
 
     TextAttributesKey PLAIN_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.PlainData",    DEFAULT_PLAIN_DATA);
+    TextAttributesKey TRACKING_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.TrackingData", DEFAULT_TRACKING_DATA);
     TextAttributesKey MODIFIED_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.ModifiedData", DEFAULT_MODIFIED_DATA);
     TextAttributesKey DELETED_DATA   = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.DeletedData",  DEFAULT_DELETED_DATA);
     TextAttributesKey ERROR_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.DataEditor.ErrorData",    DEFAULT_ERROR_DATA);

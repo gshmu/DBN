@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
+import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -9,7 +17,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
-import com.dci.intellij.dbn.data.ui.table.basic.BasicTable;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
@@ -20,17 +28,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatasetEditorForm extends DBNFormImpl implements DBNForm, SearchableDataComponent {
     private JPanel actionsPanel;

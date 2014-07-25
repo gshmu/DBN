@@ -1,11 +1,14 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.*;
+import java.awt.*;
+
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
-import com.dci.intellij.dbn.data.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.action.CursorResultExportAction;
 import com.dci.intellij.dbn.execution.method.result.action.CursorResultFetchNextRecordsAction;
@@ -14,11 +17,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.Dimension;
 
 public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNForm {
     private JPanel actionsPanel;

@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
-import com.dci.intellij.dbn.data.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
-
-import java.sql.SQLException;
 
 public class CursorResultFetchNextRecordsAction extends DumbAwareAction {
     private ResultSetTable<? extends ResultSetDataModel> table;

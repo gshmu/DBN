@@ -1,12 +1,11 @@
-package com.dci.intellij.dbn.data.ui.table.resultSet.record;
+package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.data.ui.table.resultSet.ResultSetTable;
+import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 
 public class ResultSetRecordViewerDialog extends DBNDialog {
     private ResultSetRecordViewerForm viewerForm;
