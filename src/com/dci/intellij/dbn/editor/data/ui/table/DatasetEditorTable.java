@@ -87,8 +87,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     @Override
-    protected BasicTableCellRenderer createCellRenderer(Project project) {
-        return new DatasetEditorTableCellRenderer(project);
+    protected BasicTableCellRenderer createCellRenderer() {
+        return new DatasetEditorTableCellRenderer();
     }
 
     public Project getProject() {
@@ -243,7 +243,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
 
         DataGridTrackingColumnSettings trackingColumnSettings = getDataGridSettings().getTrackingColumnSettings();
-        if (!trackingColumnSettings.isEditable()) {
+        if (!trackingColumnSettings.isAllowEditing()) {
             boolean isTrackingColumn = trackingColumnSettings.isTrackingColumn(columnInfo.getName());
             if (isTrackingColumn) return null;
         }
@@ -367,14 +367,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         return false;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        datasetEditor = null;
-        removeMouseListener(tableMouseListener);
-        tableMouseListener = null;
-    }
-
     public DatasetEditor getDatasetEditor() {
         return datasetEditor;
     }
@@ -491,5 +483,18 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 }
             }
         }.start();
+    }
+
+
+    /********************************************************
+     *                     Disposable                       *
+     ********************************************************/
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        datasetEditor = null;
+        removeMouseListener(tableMouseListener);
+        tableMouseListener = null;
     }
 }

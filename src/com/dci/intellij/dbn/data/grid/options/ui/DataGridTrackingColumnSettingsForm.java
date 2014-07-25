@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.intellij.openapi.options.ConfigurationException;
 
@@ -28,8 +30,10 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
     public void applyChanges() throws ConfigurationException {
         DataGridTrackingColumnSettings settings = getConfiguration();
-        settings.setVisible(visibleCheckBox.isSelected());
-        settings.setEditable(editableCheckBox.isSelected());
+        boolean trackingColumnsVisible = visibleCheckBox.isSelected();
+        boolean visibilityChanged = settings.isShowColumns() != trackingColumnsVisible;
+        settings.setShowColumns(trackingColumnsVisible);
+        settings.setAllowEditing(editableCheckBox.isSelected());
         StringTokenizer columnNames = new StringTokenizer(columnNamesTextField.getText(), ",");
         Set<String> columnNamesSet = settings.getColumnNames();
         columnNamesSet.clear();
@@ -37,12 +41,16 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
             String columnName = columnNames.nextToken().trim().toUpperCase();
             columnNamesSet.add(columnName);
         }
+
+        if (visibilityChanged) {
+            EventManager.notify(settings.getProject(), DataGridSettingsChangeListener.TOPIC).trackingColumnsVisibilityChanged(trackingColumnsVisible);
+        }
     }
 
     public void resetChanges() {
         DataGridTrackingColumnSettings settings = getConfiguration();
-        visibleCheckBox.setSelected(settings.isVisible());
-        editableCheckBox.setSelected(settings.isEditable());
+        visibleCheckBox.setSelected(settings.isShowColumns());
+        editableCheckBox.setSelected(settings.isAllowEditing());
         StringBuilder buffer = new StringBuilder();
         Set<String> columnNamesSet = settings.getColumnNames();
         for (String columnName : columnNamesSet) {

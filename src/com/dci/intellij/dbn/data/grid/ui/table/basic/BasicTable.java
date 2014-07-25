@@ -39,7 +39,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         super(project, dataModel, true);
         regionalSettings = RegionalSettings.getInstance(project);
         dataGridSettings = DataGridSettings.getInstance(project);
-        cellRenderer = createCellRenderer(project);
+        cellRenderer = createCellRenderer();
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
         setSelectionForeground(displayAttributes.getSelection().getFgColor());
         setSelectionBackground(displayAttributes.getSelection().getBgColor());
@@ -56,8 +56,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         return dataGridSettings;
     }
 
-    protected BasicTableCellRenderer createCellRenderer(Project project) {
-        return new BasicTableCellRenderer(project);
+    protected BasicTableCellRenderer createCellRenderer() {
+        return new BasicTableCellRenderer();
     }
 
     public void setLoading(boolean loading) {
