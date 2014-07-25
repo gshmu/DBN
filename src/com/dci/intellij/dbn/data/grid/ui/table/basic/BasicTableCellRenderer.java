@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.value.LazyLoadedValue;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
@@ -35,9 +34,6 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
     }
 
     private DataGridTextAttributes attributes = new DataGridTextAttributes();
-
-    public BasicTableCellRenderer(Project project) {
-    }
 
     public DataGridTextAttributes getAttributes() {
         return attributes;

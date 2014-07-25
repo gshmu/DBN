@@ -4,15 +4,20 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import org.jdom.Element;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridTrackingColumnSettingsForm;
+import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
 
-public class DataGridTrackingColumnSettings extends Configuration<DataGridTrackingColumnSettingsForm>{
+public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGridTrackingColumnSettingsForm> {
     private Set<String> columnNames = new THashSet<String>();
-    private boolean visible = true;
-    private boolean editable = true;
+    private boolean showColumns = true;
+    private boolean allowEditing = false;
+
+    public DataGridTrackingColumnSettings(Project project) {
+        super(project);
+    }
 
     /****************************************************
      *                      Custom                      *
@@ -26,24 +31,28 @@ public class DataGridTrackingColumnSettings extends Configuration<DataGridTracki
         this.columnNames = columnNames;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public boolean isShowColumns() {
+        return showColumns;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
+    public void setShowColumns(boolean showColumns) {
+        this.showColumns = showColumns;
     }
 
-    public boolean isEditable() {
-        return editable;
+    public boolean isAllowEditing() {
+        return allowEditing;
     }
 
-    public void setEditable(boolean editable) {
-        this.editable = editable;
+    public void setAllowEditing(boolean allowEditing) {
+        this.allowEditing = allowEditing;
     }
 
     public boolean isTrackingColumn(String columnName) {
         return columnName!= null && columnNames.size() > 0 && columnNames.contains(columnName.toUpperCase());
+    }
+
+    public boolean isColumnVisible(String columnName) {
+        return showColumns || columnName == null || columnNames.size() == 0 || !columnNames.contains(columnName.toUpperCase());
     }
 
     /****************************************************
@@ -65,8 +74,8 @@ public class DataGridTrackingColumnSettings extends Configuration<DataGridTracki
             this.columnNames.add(columnName);
         }
 
-        visible = SettingsUtil.getBoolean(element, "visible", visible);
-        editable = SettingsUtil.getBoolean(element, "editable", editable);
+        showColumns = SettingsUtil.getBoolean(element, "visible", showColumns);
+        allowEditing = SettingsUtil.getBoolean(element, "editable", allowEditing);
     }
 
     public void writeConfiguration(Element element) {
@@ -78,8 +87,8 @@ public class DataGridTrackingColumnSettings extends Configuration<DataGridTracki
             buffer.append(columnName);
         }
         SettingsUtil.setString(element, "columnNames", buffer.toString());
-        SettingsUtil.setBoolean(element, "visible", visible);
-        SettingsUtil.setBoolean(element, "editable", editable);
+        SettingsUtil.setBoolean(element, "visible", showColumns);
+        SettingsUtil.setBoolean(element, "editable", allowEditing);
 
     }
 

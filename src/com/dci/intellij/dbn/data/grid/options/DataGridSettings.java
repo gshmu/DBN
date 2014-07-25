@@ -8,10 +8,11 @@ import com.dci.intellij.dbn.data.grid.options.ui.DataGridSettingsForm;
 import com.intellij.openapi.project.Project;
 
 public class DataGridSettings extends CompositeProjectConfiguration<DataGridSettingsForm> {
-    private DataGridTrackingColumnSettings trackingColumnSettings = new DataGridTrackingColumnSettings();
+    private DataGridTrackingColumnSettings trackingColumnSettings;
 
     public DataGridSettings(Project project) {
         super(project);
+        trackingColumnSettings = new DataGridTrackingColumnSettings(project);
     }
 
     public static DataGridSettings getInstance(Project project) {

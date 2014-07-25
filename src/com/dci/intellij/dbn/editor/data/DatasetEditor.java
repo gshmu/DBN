@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.editor.data;
 
+import javax.swing.*;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -13,6 +20,7 @@ import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
@@ -44,19 +52,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
-
-public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, ConnectionStatusListener, TransactionListener, Disposable {
-    public static final DatasetLoadInstructions STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, false, false, false);
+public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable {
+    public static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
+    public static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, false, false, false);
     private DBObjectRef<DBDataset> datasetRef;
     private DatabaseEditableObjectFile databaseFile;
     private DatasetEditorForm editorForm;
@@ -66,7 +65,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     private Project project;
     private boolean isLoading;
 
-    private Set<PropertyChangeListener> propertyChangeListeners = new HashSet<PropertyChangeListener>();
     private String dataLoadError;
     private DatasetEditorState editorState = new DatasetEditorState();
 
@@ -88,8 +86,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 */
         Disposer.register(this, editorForm);
 
-        EventManager.subscribe(project, TransactionListener.TOPIC, this);
-        EventManager.subscribe(project, ConnectionStatusListener.TOPIC, this);
+        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
+        EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
+        EventManager.subscribe(project, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
     }
 
     @Nullable
@@ -131,7 +130,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public DBSchema getCurrentSchema() {
-        return getDataset().getSchema();
+        DBDataset dataset = getDataset();
+        return dataset == null ? null : dataset.getSchema();
     }
 
     public Project getProject() {
@@ -187,11 +187,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);
     }
 
     public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);
     }
 
     @Nullable
@@ -230,11 +228,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return null;
     }
 
-    /**
-     * *****************************************************
-     * Model operations                  *
-     * ******************************************************
-     */
+    /*******************************************************
+     *                   Model operations                  *
+     *******************************************************/
     public void fetchNextRecords(int records) {
         try {
             DatasetEditorModel model = getTableModel();
@@ -267,7 +263,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                 DatasetEditorModel tableModel = getTableModel();
                                 if (tableModel != null) {
                                     tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
-                                    getEditorTable().clearSelection();
+                                    DatasetEditorTable editorTable = getEditorTable();
+                                    if (editorTable != null) {
+                                        editorTable.clearSelection();
+                                    }
                                 }
                             } finally {
                                 if (!isDisposed()) {
@@ -457,99 +456,104 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         getState().setReadonly(readonly);
     }
 
-    public int getRowCount() {
-        return getEditorTable().getRowCount();
-    }
-
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
-    }
-
-    /**
-     * *****************************************************
-     * ConnectionStatusListener                  *
-     * ******************************************************
-     */
-    @Override
-    public void statusChanged(String connectionId) {
-        DatasetEditorTable editorTable = getEditorTable();
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (editorTable != null && connectionHandler.getId().equals(connectionId)) {
-            editorTable.updateBackground(!connectionHandler.isConnected());
-            if (connectionHandler.isConnected()) {
-                loadData(STATUS_CHANGE_LOAD_INSTRUCTIONS);
-            } else {
-                editorTable.repaint();
-            }
-        }
-    }
-
-    /**
-     * ******************************************************
-     * TransactionListener                     *
-     * ******************************************************
-     */
-    public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
-        if (connectionHandler == getConnectionHandler()) {
-            DatasetEditorModel model = getTableModel();
-            DatasetEditorTable editorTable = getEditorTable();
-            if (model != null && editorTable != null) {
-                if (action == TransactionAction.COMMIT) {
-
-                    if (editorTable.isEditing()) {
-                        editorTable.stopCellEditing();
-                    }
-
-                    if (isInserting()) {
-                        try {
-                            model.postInsertRecord(true, false);
-                        } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog("Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
-                        }
-                    }
-                }
-
-                if (action == TransactionAction.ROLLBACK || action == TransactionAction.ROLLBACK_IDLE) {
-                    if (editorTable.isEditing()) {
-                        editorTable.stopCellEditing();
-                    }
-                    if (isInserting()) {
-                        model.cancelInsert(true);
-                    }
-                }
-            }
-        }
-    }
-
-    public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
-        if (connectionHandler == getConnectionHandler()) {
-            DatasetEditorModel model = getTableModel();
-            DatasetEditorTable editorTable = getEditorTable();
-            if (model != null && editorTable != null) {
-                if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {
-                    if (succeeded && isModified()) loadData(STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                }
-
-                if (action == TransactionAction.DISCONNECT) {
-                    editorTable.stopCellEditing();
-                    model.revertChanges();
-                    editorTable.repaint();
-                }
-            }
-        }
-    }
-
     public boolean isEditable() {
         DatasetEditorModel tableModel = getTableModel();
         return tableModel != null && tableModel.isEditable() && tableModel.getConnectionHandler().isConnected();
     }
 
+    public int getRowCount() {
+        DatasetEditorTable editorTable = getEditorTable();
+        return editorTable == null ? 0 : editorTable.getRowCount();
+    }
 
-    /**
-     * *****************************************************
-     * Data Provider                     *
-     * ******************************************************
-     */
+
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandler;
+    }
+
+    /*******************************************************
+     *                      Listeners                      *
+     *******************************************************/
+    private ConnectionStatusListener connectionStatusListener = new ConnectionStatusListener() {
+        @Override
+        public void statusChanged(String connectionId) {
+            DatasetEditorTable editorTable = getEditorTable();
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (editorTable != null && connectionHandler.getId().equals(connectionId)) {
+                editorTable.updateBackground(!connectionHandler.isConnected());
+                if (connectionHandler.isConnected()) {
+                    loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                } else {
+                    editorTable.repaint();
+                }
+            }
+        }
+    };
+
+    private TransactionListener transactionListener = new TransactionListener() {
+        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
+            if (connectionHandler == getConnectionHandler()) {
+                DatasetEditorModel model = getTableModel();
+                DatasetEditorTable editorTable = getEditorTable();
+                if (model != null && editorTable != null) {
+                    if (action == TransactionAction.COMMIT) {
+
+                        if (editorTable.isEditing()) {
+                            editorTable.stopCellEditing();
+                        }
+
+                        if (isInserting()) {
+                            try {
+                                model.postInsertRecord(true, false);
+                            } catch (SQLException e1) {
+                                MessageUtil.showErrorDialog("Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                            }
+                        }
+                    }
+
+                    if (action == TransactionAction.ROLLBACK || action == TransactionAction.ROLLBACK_IDLE) {
+                        if (editorTable.isEditing()) {
+                            editorTable.stopCellEditing();
+                        }
+                        if (isInserting()) {
+                            model.cancelInsert(true);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+            if (connectionHandler == getConnectionHandler()) {
+                DatasetEditorModel model = getTableModel();
+                DatasetEditorTable editorTable = getEditorTable();
+                if (model != null && editorTable != null) {
+                    if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {
+                        if (succeeded && isModified()) loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                    }
+
+                    if (action == TransactionAction.DISCONNECT) {
+                        editorTable.stopCellEditing();
+                        model.revertChanges();
+                        editorTable.repaint();
+                    }
+                }
+            }
+        }
+    };
+
+    private DataGridSettingsChangeListener dataGridSettingsChangeListener = new DataGridSettingsChangeListener() {
+        @Override
+        public void trackingColumnsVisibilityChanged(boolean visible) {
+            loadData(COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+        }
+    };
+
+
+
+    /*******************************************************
+     *                   Data Provider                     *
+     *******************************************************/
     public DataProvider dataProvider = new DataProvider() {
         @Override
         public Object getData(@NonNls String dataId) {
@@ -584,7 +588,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            EventManager.unsubscribe(this);
+            EventManager.unsubscribe(connectionStatusListener, transactionListener, dataGridSettingsChangeListener);
             editorForm = null;
             databaseFile = null;
             structureViewModel = null;

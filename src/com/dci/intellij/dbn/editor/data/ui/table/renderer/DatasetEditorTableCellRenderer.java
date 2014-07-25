@@ -12,13 +12,9 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.SimpleTextAttributes;
 
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
-    public DatasetEditorTableCellRenderer(Project project) {
-        super(project);
-    }
 
     protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         acquireState(table, isSelected, false, rowIndex, columnIndex);

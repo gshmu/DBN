@@ -17,6 +17,8 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
+import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
+import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -84,9 +86,13 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
         Disposer.register(this, datasetEditorTable);
 
+        DataGridSettings dataGridSettings = DataGridSettings.getInstance(datasetEditorTable.getProject());
+        DataGridTrackingColumnSettings trackingColumnSettings = dataGridSettings.getTrackingColumnSettings();
+
         List<TableColumn> hiddenColumns = new ArrayList<TableColumn>();
         for (DatasetColumnState columnState : datasetEditor.getState().getColumnSetup().getColumnStates()) {
-            if (!columnState.isVisible()) {
+
+            if (!columnState.isVisible() || !trackingColumnSettings.isColumnVisible(columnState.getName())) {
                 int columnIndex = columnState.getPosition();
                 TableColumn tableColumn = datasetEditorTable.getColumnModel().getColumn(columnIndex);
                 hiddenColumns.add(tableColumn);
