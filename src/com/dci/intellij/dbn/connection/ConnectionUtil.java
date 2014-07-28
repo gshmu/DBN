@@ -139,12 +139,14 @@ public class ConnectionUtil {
     }
 
     private static DatabaseType getDatabaseType(String driver) {
-        if (driver.toUpperCase().contains("ORACLE")) {
-            return DatabaseType.ORACLE;
-        } else if (driver.toUpperCase().contains("MYSQL")) {
-            return DatabaseType.MYSQL;
-        } else if (driver.toUpperCase().contains("POSTGRESQL")) {
-            return DatabaseType.POSTGRES;
+        if (driver != null) {
+            if (driver.toUpperCase().contains("ORACLE")) {
+                return DatabaseType.ORACLE;
+            } else if (driver.toUpperCase().contains("MYSQL")) {
+                return DatabaseType.MYSQL;
+            } else if (driver.toUpperCase().contains("POSTGRESQL")) {
+                return DatabaseType.POSTGRES;
+            }
         }
         return DatabaseType.UNKNOWN;
 
