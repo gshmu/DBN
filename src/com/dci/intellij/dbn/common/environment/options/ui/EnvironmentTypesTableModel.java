@@ -1,26 +1,23 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
+import javax.swing.event.ListDataListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.awt.Color;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.DBNColor;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import java.awt.Color;
-import java.util.HashSet;
-import java.util.Set;
-
-public class EnvironmentTypesTableModel implements DBNTableModel {
+public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
-    private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
     private Project project;
 
     public EnvironmentTypesTableModel(Project project, EnvironmentTypeBundle environmentTypes) {
@@ -101,14 +98,6 @@ public class EnvironmentTypesTableModel implements DBNTableModel {
         }
     }
 
-    public void addTableModelListener(TableModelListener l) {
-        tableModelListeners.add(l);
-    }
-
-    public void removeTableModelListener(TableModelListener l) {
-        tableModelListeners.remove(l);
-    }
-
     private EnvironmentType getEnvironmentType(int rowIndex) {
         while (environmentTypes.size() <= rowIndex) {
             environmentTypes.add(new EnvironmentType());
@@ -128,13 +117,6 @@ public class EnvironmentTypesTableModel implements DBNTableModel {
         }
     }
 
-    public void notifyListeners(int firstRowIndex, int lastRowIndex, int columnIndex) {
-        TableModelEvent modelEvent = new TableModelEvent(this, firstRowIndex, lastRowIndex, columnIndex);
-        for (TableModelListener listener : tableModelListeners) {
-            listener.tableChanged(modelEvent);
-        }
-    }
-    
     public void validate() throws ConfigurationException {
         for (EnvironmentType environmentType : environmentTypes) {
             if (StringUtil.isEmpty(environmentType.getName())) {
@@ -145,23 +127,13 @@ public class EnvironmentTypesTableModel implements DBNTableModel {
 
     @Override public int getSize() {return 0;}
     @Override public Object getElementAt(int index) {return null;}
-    @Override public void addListDataListener(ListDataListener l) {}
-    @Override public void removeListDataListener(ListDataListener l) {}
+    @Override public void addListDataListener(ListDataListener listener) {}
+    @Override public void removeListDataListener(ListDataListener listener) {}
 
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            tableModelListeners.clear();
-        }
+        super.dispose();
     }
 }
