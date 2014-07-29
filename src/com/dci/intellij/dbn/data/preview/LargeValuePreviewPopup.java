@@ -1,7 +1,14 @@
 package com.dci.intellij.dbn.data.preview;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -29,13 +36,12 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Computable;
-import com.intellij.ui.components.JBScrollPane;
 
 public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     public static final int INITIAL_MAX_SIZE = 4000;
     private JPanel mainPanel;
     private JTextArea valueTextArea;
-    private JBScrollPane valueScrollPane;
+    private JScrollPane valueScrollPane;
     private JPanel actionsPanel;
     private JLabel infoLabel;
     private JPanel infoPanel;

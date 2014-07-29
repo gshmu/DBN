@@ -1,8 +1,12 @@
 package com.dci.intellij.dbn.common.ui.list;
 
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.TableCellEditor;
 import java.awt.Color;
+import java.awt.Component;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +16,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
@@ -20,6 +25,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     public EditableStringList(Project project, List<String> elements) {
         super(project, new EditableListModel(elements), false);
         setTableHeader(null);
+        setShowGrid(false);
 
 /*
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -51,12 +57,26 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                     attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
 
                 }
-                setBorder(new LineBorder(background, 2));
+                setBorder(new CompoundBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0), new LineBorder(background, 2)));
                 setBackground(background);
                 setForeground(foreground);
                 append((String) value, attributes);
             }
         });
+
+        //((JComponent)getEditorComponent()).setBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0));
+    }
+
+    @Override
+    public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
+        JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
+        component.setBorder(new CompoundBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0), new CustomLineBorder(component.getBackground(), 0, 3, 0, 0)));
+        return component;
+    }
+
+    @Override
+    public Component getEditorComponent() {
+        return super.getEditorComponent();
     }
 
     public List<String> getStringValues() {

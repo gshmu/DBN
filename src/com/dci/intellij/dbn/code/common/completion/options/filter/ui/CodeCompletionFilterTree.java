@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 
+import javax.swing.tree.TreeNode;
+
 import com.dci.intellij.dbn.common.ui.tree.DBNTreeTransferHandler;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.intellij.ui.CheckboxTree;
-
-import javax.swing.tree.TreeNode;
+import com.intellij.util.ui.UIUtil;
 
 public class CodeCompletionFilterTree extends CheckboxTree {
 
@@ -16,5 +17,6 @@ public class CodeCompletionFilterTree extends CheckboxTree {
         setExpandedState(TreeUtil.createTreePath(expandedTreeNode), true);
         installSpeedSearch();
         setTransferHandler(new DBNTreeTransferHandler());
+        setBackground(UIUtil.getTextFieldBackground());
     }
 }

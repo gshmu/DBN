@@ -1,25 +1,13 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.DBNColor;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
-import sun.swing.SwingUtilities2;
-
-import javax.swing.*;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -33,6 +21,16 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.DBNColor;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
+import sun.swing.SwingUtilities2;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
@@ -50,6 +48,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         setGridColor(GRID_COLOR);
         Font font = getFont();//UIUtil.getListFont();
         setFont(font);
+        setBackground(UIUtil.getTextFieldBackground());
 
         LineMetrics lineMetrics = font.getLineMetrics("ABC", SwingUtilities2.getFontRenderContext(this));
         int fontHeight = Math.round(lineMetrics.getHeight());
