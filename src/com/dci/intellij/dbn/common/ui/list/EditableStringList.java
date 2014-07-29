@@ -130,8 +130,18 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
         @Override
         public void setValueAt(Object value, int rowIndex, int columnIndex) {
-            data.set(rowIndex, (String) value);
-            notifyListeners(rowIndex, rowIndex, columnIndex);
+            boolean change = true;
+            if (rowIndex < data.size()) {
+                String currentValue = data.get(rowIndex);
+                if (currentValue.equals(value)) {
+                    change = false;
+                }
+            }
+
+            if (change) {
+                data.set(rowIndex, (String) value);
+                notifyListeners(rowIndex, rowIndex, columnIndex);
+            }
         }
 
         @Override
