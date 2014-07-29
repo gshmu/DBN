@@ -7,6 +7,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +22,6 @@ import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
-    private Collection<String> stringValues;
-
     public EditableStringList(Project project, List<String> elements) {
         super(project, new EditableListModel(elements), false);
         setTableHeader(null);
@@ -42,6 +42,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 }
             }
         });
+
 */
 
         setDefaultRenderer(String.class, new ColoredTableCellRenderer() {
@@ -68,9 +69,16 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     }
 
     @Override
-    public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
+    public Component prepareEditor(final TableCellEditor editor, int rowIndex, int columnIndex) {
         JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         component.setBorder(new CompoundBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0), new CustomLineBorder(component.getBackground(), 0, 3, 0, 0)));
+        component.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                editor.stopCellEditing();
+            }
+        });
+
         return component;
     }
 
