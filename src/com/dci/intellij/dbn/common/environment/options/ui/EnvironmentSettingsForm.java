@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
@@ -8,17 +19,6 @@ import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySett
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.components.JBScrollPane;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellEditor;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class EnvironmentSettingsForm extends ConfigurationEditorForm<EnvironmentSettings> {
     private JPanel mainPanel;
@@ -27,7 +27,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
     private JButton moveUpButton;
     private JButton moveDownButton;
     private JButton resetDefaultsButton;
-    private JBScrollPane environmentTypesTableScrollPane;
+    private JScrollPane environmentTypesTableScrollPane;
     private JCheckBox connectionTabsCheckBox;
     private JCheckBox objectEditorTabsCheckBox;
     private JCheckBox scriptEditorTabsCheckBox;

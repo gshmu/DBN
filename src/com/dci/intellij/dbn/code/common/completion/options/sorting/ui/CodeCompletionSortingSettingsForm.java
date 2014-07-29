@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.code.common.completion.options.sorting.ui;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingItem;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveDownAction;
@@ -12,17 +23,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<CodeCompletionSortingSettings> {
     private JPanel mainPanel;
@@ -51,7 +51,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
                 sortingItemsList.setEnabled(enableCheckBox.isSelected());
                 sortingItemsList.setBackground(
                         enableCheckBox.isSelected() ?
-                                UIUtil.getListBackground() :
+                                UIUtil.getTextFieldBackground() :
                                 UIUtil.getComboBoxDisabledBackground());
                 sortingItemsList.clearSelection();
             }

@@ -1,9 +1,19 @@
 package com.dci.intellij.dbn.common.ui.list;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -32,6 +42,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
                 ListSelectionModel.MULTIPLE_INTERVAL_SELECTION :
                 ListSelectionModel.SINGLE_SELECTION);
         setCellRenderer(new CellRenderer());
+        setBackground(UIUtil.getTextFieldBackground());
 
         mouseAdapter = new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -101,12 +112,12 @@ public class CheckBoxList<T extends Selectable> extends JList {
 
             if (mutable) {
                 Color foreground = isSelected ? UIUtil.getListSelectionForeground() : entry.isSelected() ? UIUtil.getListForeground() : UIUtil.getMenuItemDisabledForeground();
-                Color background = isSelected ? UIUtil.getListSelectionBackground() : UIUtil.getListBackground();
+                Color background = isSelected ? UIUtil.getListSelectionBackground() : UIUtil.getTextFieldBackground();
                 entry.textPanel.setBackground(background);
                 entry.checkBox.setBackground(background);
                 entry.label.setForeground(foreground);
             } else {
-                Color background = list.isEnabled() ? UIUtil.getListBackground() : UIUtil.getComboBoxDisabledBackground();
+                Color background = list.isEnabled() ? UIUtil.getTextFieldBackground() : UIUtil.getComboBoxDisabledBackground();
                 //entry.setBackground(background);
                 entry.textPanel.setBackground(background);
                 entry.checkBox.setBackground(background);

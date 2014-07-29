@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.BrowserSelectionChangeListener;
@@ -16,20 +23,13 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.components.JBScrollPane;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
 
 public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, BrowserSelectionChangeListener {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
     private JTable objectPropertiesTable;
-    private JBScrollPane objectPropertiesScrollPane;
+    private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
     private DBObject object;
     private Project project;

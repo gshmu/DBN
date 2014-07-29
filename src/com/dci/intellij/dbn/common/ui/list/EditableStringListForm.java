@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui.list;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,11 +16,10 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.ui.components.JBScrollPane;
 
 public class EditableStringListForm extends DBNFormImpl{
     private JPanel component;
-    private JBScrollPane listScrollPane;
+    private JScrollPane listScrollPane;
     private JPanel actionsPanel;
     private JLabel titleLabel;
 
