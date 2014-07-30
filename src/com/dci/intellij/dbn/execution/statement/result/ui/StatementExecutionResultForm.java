@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.BorderLayout;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -58,6 +61,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         resultScrollPane.setViewportView(resultTable);
         resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
+        resultScrollPane.getRowHeader().setBackground(UIUtil.getPanelBackground());
 
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());

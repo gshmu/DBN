@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Dimension;
 
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -36,6 +38,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNF
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         resultScrollPane.setViewportView(resultTable);
         resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
+        resultScrollPane.getRowHeader().setBackground(UIUtil.getPanelBackground());
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
 
         JPanel panel = new JPanel();

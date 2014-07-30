@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
             datasetEditorTable = new DatasetEditorTable(datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
             datasetTableScrollPane.setRowHeaderView(datasetEditorTable.getTableGutter());
+            datasetTableScrollPane.getRowHeader().setBackground(UIUtil.getPanelBackground());
 
 
             JPanel panel = new JPanel();

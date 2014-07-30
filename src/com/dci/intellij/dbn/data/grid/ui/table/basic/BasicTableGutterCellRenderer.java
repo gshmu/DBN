@@ -1,10 +1,15 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -28,12 +33,12 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         return EditorColorsManager.getInstance().getGlobalScheme();
     }
 
-    private Border border = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), new EmptyBorder(0, 3, 0, 3));
+    private static final Border BORDER = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), new EmptyBorder(0, 3, 0, 3));
     private JLabel textLabel;
 
     public BasicTableGutterCellRenderer() {
         setBackground(UIUtil.getPanelBackground());
-        setBorder(border);
+        setBorder(BORDER);
         setLayout(new BorderLayout());
         textLabel = new JLabel();
         textLabel.setForeground(Colors.LINE_NUMBER_COLOR);
