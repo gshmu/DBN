@@ -1,19 +1,5 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
- import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
- import com.dci.intellij.dbn.common.ui.MouseUtil;
- import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
- import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
- import com.dci.intellij.dbn.data.model.ColumnInfo;
- import com.dci.intellij.dbn.data.type.DBDataType;
- import com.dci.intellij.dbn.data.type.GenericDataType;
- import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
- import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
- import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
- import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
- import com.dci.intellij.dbn.object.DBColumn;
- import com.intellij.ui.SimpleTextAttributes;
-
  import javax.swing.JTextField;
  import javax.swing.border.Border;
  import javax.swing.border.CompoundBorder;
@@ -31,6 +17,20 @@
  import java.awt.event.MouseListener;
  import java.awt.event.MouseMotionAdapter;
  import java.awt.event.MouseMotionListener;
+
+ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+ import com.dci.intellij.dbn.common.ui.MouseUtil;
+ import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
+ import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+ import com.dci.intellij.dbn.data.model.ColumnInfo;
+ import com.dci.intellij.dbn.data.type.DBDataType;
+ import com.dci.intellij.dbn.data.type.GenericDataType;
+ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
+ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
+ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+ import com.dci.intellij.dbn.object.DBColumn;
+ import com.intellij.ui.SimpleTextAttributes;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
     public static final Border EMPTY_BORDER = new EmptyBorder(0, 3, 0, 3);
@@ -112,25 +112,26 @@
             final String originalText = textField.getText();
             new SimpleLaterInvocator() {
                 public void execute() {
-                    // select all only if the text didn't change
-                    if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
-                        if (originalText.equals(textField.getText())) {
-                            textField.grabFocus();
-                            textField.selectAll();
+                    if (!isDisposed()) {
+                        // select all only if the text didn't change
+                        if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
+                            if (originalText.equals(textField.getText())) {
+                                textField.grabFocus();
+                                textField.selectAll();
+                            }
+                        } else {
+                            textField.requestFocus();
+
+                            Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+                            Point textFieldLocation = textField.getLocationOnScreen();
+                            int x = (int) Math.max(mouseLocation.getX() - textFieldLocation.getX(), 0);
+                            int y = (int) Math.min(Math.max(mouseLocation.getY() - textFieldLocation.getY(), 0), 10);
+
+                            Point location = new Point(x, y);
+                            int position = textField.viewToModel(location);
+                            textField.setCaretPosition(position);
                         }
-                    } else {
-                        textField.requestFocus();
-
-                        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                        Point textFieldLocation = textField.getLocationOnScreen();
-                        int x = (int) Math.max(mouseLocation.getX() - textFieldLocation.getX(), 0);
-                        int y = (int) Math.min(Math.max(mouseLocation.getY() - textFieldLocation.getY(), 0), 10);
-
-                        Point location = new Point(x, y);
-                        int position = textField.viewToModel(location);
-                        textField.setCaretPosition(position);
                     }
-
                 }
             }.start();
         }
