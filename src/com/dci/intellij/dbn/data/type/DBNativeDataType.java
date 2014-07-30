@@ -1,20 +1,21 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.data.value.BlobValue;
-import com.dci.intellij.dbn.data.value.ClobValue;
-import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
+import java.sql.Array;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.data.value.BlobValue;
+import com.dci.intellij.dbn.data.value.ClobValue;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -72,6 +73,7 @@ public class DBNativeDataType implements DynamicContentElement{
                     clazz == Date.class ? resultSet.getDate(columnIndex) :
                     clazz == Time.class ? resultSet.getTime(columnIndex) :
                     clazz == Timestamp.class ? resultSet.getTimestamp(columnIndex) :
+                    clazz == Array.class ? resultSet.getArray(columnIndex) :
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
             LOGGER.error("Error resolving result set value", e);

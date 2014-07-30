@@ -1,8 +1,13 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -145,7 +150,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         updateButtonToolTip();
     }
 
-    public void createTextAreaPopup(boolean autoPopup) {
+    public void createTextEditorPopup(boolean autoPopup) {
         TextEditorPopupProviderForm popupProviderForm = new TextEditorPopupProviderForm(this, autoPopup);
         addPopupProvider(popupProviderForm);
         updateButtonToolTip();
@@ -155,6 +160,14 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
 
     public void createCalendarPopup(boolean autoPopup) {
         CalendarPopupProviderForm popupProviderForm = new CalendarPopupProviderForm(this, autoPopup);
+        addPopupProvider(popupProviderForm);
+        updateButtonToolTip();
+        showsButton = true;
+        button.setVisible(true);
+    }
+
+    public void createArrayEditorPopup(boolean autoPopup) {
+        ArrayEditorPopupProviderForm popupProviderForm = new ArrayEditorPopupProviderForm(this, autoPopup);
         addPopupProvider(popupProviderForm);
         updateButtonToolTip();
         showsButton = true;

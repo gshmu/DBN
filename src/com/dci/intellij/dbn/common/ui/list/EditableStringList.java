@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,9 @@ import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
+    public EditableStringList() {
+        this(null, new ArrayList<String>());
+    }
     public EditableStringList(Project project, List<String> elements) {
         super(project, new EditableListModel(elements), false);
         setTableHeader(null);
