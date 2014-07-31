@@ -1,7 +1,11 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -121,7 +125,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
             sortingInstructionForms.add(sortingInstructionForm);
             sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
             updateIndexes();
-            sortingInstructionsPanel.updateUI();
+            sortingInstructionsPanel.repaint();
         }
     }
 
@@ -137,7 +141,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         sortingInstructionForms.remove(sortingInstructionForm);
         updateIndexes();
         sortingInstructionForm.dispose();
-        sortingInstructionsPanel.updateUI();
+        sortingInstructionsPanel.repaint();
     }
 
     public void applyChanges() {

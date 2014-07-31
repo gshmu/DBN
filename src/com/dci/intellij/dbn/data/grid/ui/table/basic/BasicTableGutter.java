@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -88,7 +90,7 @@ public class BasicTableGutter extends JList implements Disposable {
     private ListSelectionListener tableSelectionListener = new ListSelectionListener() {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateUI();
+            repaint();
         }
     };
 

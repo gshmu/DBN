@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -14,17 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNForm, TransactionListener {
     private JPanel mainPanel;
@@ -105,7 +105,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
             }
             detailsPanel.add(uncommittedChangesForm.getComponent(), BorderLayout.CENTER);
         }
-        detailsPanel.updateUI();
+        detailsPanel.repaint();
     }
 
     private class ListCellRenderer extends ColoredListCellRenderer {

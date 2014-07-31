@@ -1,7 +1,13 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -143,7 +149,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
             for (ResultSetRecordViewerColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
             }
-            columnsPanel.updateUI();
+            columnsPanel.repaint();
         }
     }
 

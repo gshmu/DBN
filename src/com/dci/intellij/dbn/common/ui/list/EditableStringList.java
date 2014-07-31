@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.ui.list;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.border.CompoundBorder;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
@@ -23,13 +23,20 @@ import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
-    public EditableStringList() {
-        this(null, new ArrayList<String>());
+    private boolean sorted;
+    private boolean indexed;
+
+    public EditableStringList(boolean sorted, boolean indexed) {
+        this(null, new ArrayList<String>(), sorted, indexed);
     }
-    public EditableStringList(Project project, List<String> elements) {
-        super(project, new EditableListModel(elements), false);
+    public EditableStringList(Project project, List<String> elements, boolean sorted, boolean indexed) {
+        super(project, new EditableListModel(elements, sorted, indexed), false);
         setTableHeader(null);
-        setShowGrid(false);
+        this.sorted = sorted;
+        this.indexed = indexed;
+        if (indexed) {
+            getColumnModel().getColumn(0).setWidth(20);
+        }
 
 /*
         getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -62,12 +69,34 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                     attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
 
                 }
-                setBorder(new CompoundBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0), new LineBorder(background, 2)));
+                setBorder(new LineBorder(background, 2));
                 setBackground(background);
                 setForeground(foreground);
                 append((String) value, attributes);
             }
         });
+
+        if (indexed) {
+            setDefaultRenderer(Integer.class, new ColoredTableCellRenderer() {
+                @Override
+                protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+                    acquireState(table, false, false, row, column);
+                    Color background = UIUtil.getPanelBackground();
+                    Color foreground = table.getForeground();
+                    SimpleTextAttributes attributes = SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES;
+                    if (selected && !table.isEditing()) {
+                        background = UIUtil.getListSelectionBackground();
+                        foreground = UIUtil.getListSelectionForeground();
+                        attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
+                    }
+                    setBorder(new LineBorder(background, 2));
+                    setBackground(background);
+                    setForeground(foreground);
+                    append(value.toString(), attributes);
+                    setTextAlign(SwingConstants.RIGHT);
+                }
+            });
+        }
 
         //((JComponent)getEditorComponent()).setBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0));
     }
@@ -75,7 +104,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     @Override
     public Component prepareEditor(final TableCellEditor editor, int rowIndex, int columnIndex) {
         JTextField component = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
-        component.setBorder(new CompoundBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0), new CustomLineBorder(component.getBackground(), 0, 3, 0, 0)));
+        component.setBorder(new CustomLineBorder(component.getBackground(), 0, 3, 0, 0));
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
@@ -92,22 +121,28 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     }
 
     public List<String> getStringValues() {
-        return getModel().data;
+        return getModel().getData();
     }
 
     public void setStringValues(Collection<String> stringValues) {
-        List<String> data = getModel().data;
-        data.clear();
-        data.addAll(stringValues);
-        Collections.sort(data);
+        setModel(new EditableListModel(stringValues, sorted, indexed));
     }
 
 
     public static class EditableListModel extends DBNEditableTableModel {
         private List<String> data;
+        private boolean sorted;
+        private boolean indexed;
 
-        public EditableListModel(List<String> data) {
-            this.data = data;
+        public EditableListModel(Collection<String> data, boolean sorted, boolean indexed) {
+            this.data = new ArrayList<String>(data);
+            if (sorted) Collections.sort(this.data);
+            this.sorted = sorted;
+            this.indexed = indexed;
+        }
+
+        public List<String> getData() {
+            return data;
         }
 
         @Override
@@ -117,27 +152,27 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
         @Override
         public int getColumnCount() {
-            return 1;
+            return indexed ? 2 : 1;
         }
 
         @Override
         public String getColumnName(int columnIndex) {
-            return "DATA";
+            return indexed ? (columnIndex == 0 ? "INDEX" : "DATA") : "DATA";
         }
 
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-            return String.class;
+            return indexed ? (columnIndex == 0 ? Integer.class : String.class) : String.class;
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return true;
+            return !indexed || columnIndex == 1;
         }
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return data.get(rowIndex);
+            return indexed ? (columnIndex == 0 ? rowIndex + 1 : data.get(rowIndex)) : data.get(rowIndex);
         }
 
         @Override
@@ -164,8 +199,10 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
         @Override
         public void removeRow(int rowIndex) {
-            data.remove(rowIndex);
-            notifyListeners(rowIndex, data.size() + 1, -1);
+            if (rowIndex >-1 && rowIndex<data.size()) {
+                data.remove(rowIndex);
+                notifyListeners(rowIndex, data.size() + 1, -1);
+            }
         }
 
         @Override
@@ -175,7 +212,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
         @Override
         public Object getElementAt(int index) {
-            return data.get(index);
+            return getValueAt(index, indexed ? 1 : 0);
         }
     }
 }

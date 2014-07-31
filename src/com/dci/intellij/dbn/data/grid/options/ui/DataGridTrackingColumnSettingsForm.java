@@ -25,7 +25,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         super(settings);
         updateBorderTitleForeground(mainPanel);
 
-        editableStringListForm = new EditableStringListForm("Tracking column names");
+        editableStringListForm = new EditableStringListForm("Tracking column names", true);
         JComponent listComponent = editableStringListForm.getComponent();
         columnNameListPanel.add(listComponent, BorderLayout.CENTER);
 

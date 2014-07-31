@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -9,7 +9,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
@@ -198,7 +201,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                getTableGutter().updateUI();
+                getTableGutter().repaint();
             }
         }.start();
     }
@@ -347,7 +350,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (!getModel().isResultSetExhausted()) {
                 datasetEditor.loadData(SORT_LOAD_INSTRUCTIONS);
             }
-            updateUI();
+            repaint();
         }
     }
 
