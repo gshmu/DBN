@@ -24,7 +24,16 @@ public abstract class DBNTableGutter<T extends DBNTable> extends JList implement
 
     @Override
     public DBNTableModel getModel() {
-        return table == null ? (DBNTableModel) super.getModel() : table.getModel();
+        DBNTableModel cachedModel = (DBNTableModel) super.getModel();
+        if (table == null) {
+            return cachedModel;
+        } else {
+            DBNTableModel tableModel = table.getModel();
+            if (tableModel != cachedModel) {
+                setModel(tableModel);
+            }
+            return tableModel;
+        }
     }
 
     public T getTable() {
