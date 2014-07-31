@@ -247,15 +247,17 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return null; // do not create gutter by default
     }
 
-    public DBNTableGutter getTableGutter() {
+    public final DBNTableGutter getTableGutter() {
         if (tableGutter == null) {
             tableGutter = createTableGutter();
-            Disposer.register(this, tableGutter);
+            if (tableGutter != null) {
+                Disposer.register(this, tableGutter);
+            }
         }
         return tableGutter;
     }
 
-    public void initTableGutter() {
+    public final void initTableGutter() {
         DBNTableGutter tableGutter = getTableGutter();
         if (tableGutter != null){
             JScrollPane scrollPane = UIUtil.getParentOfType(JScrollPane.class, this);
