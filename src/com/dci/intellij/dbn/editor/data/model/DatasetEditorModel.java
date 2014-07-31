@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -18,18 +30,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isInserting;
@@ -269,6 +269,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (editorTable != null) {
             DBDataset dataset = getDataset();
             try {
+                isInserting = true;
                 editorTable.stopCellEditing();
                 resultSet.moveToInsertRow();
                 DatasetEditorModelRow newRow = createRow(getRowCount()+1);
@@ -277,7 +278,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 notifyRowsInserted(rowIndex, rowIndex);
 
                 editorTable.selectCell(rowIndex, editorTable.getSelectedColumn() == -1 ? 0 : editorTable.getSelectedColumn());
-                isInserting = true;
+
                 if (dataset != null) {
                     getConnectionHandler().notifyChanges(dataset.getVirtualFile());
                 }
@@ -294,6 +295,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         if (editorTable != null) {
             DBDataset dataset = getDataset();
             try {
+                isInserting = true;
                 editorTable.stopCellEditing();
                 int insertIndex = rowIndex + 1;
                 resultSet.moveToInsertRow();
@@ -305,7 +307,6 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 notifyRowsInserted(insertIndex, insertIndex);
 
                 editorTable.selectCell(insertIndex, editorTable.getSelectedColumn());
-                isInserting = true;
                 if (dataset != null) {
                     getConnectionHandler().notifyChanges(dataset.getVirtualFile());
                 }
@@ -352,11 +353,14 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             try {
                 editorTable.fireEditingCancel();
                 DatasetEditorModelRow insertRow = getInsertRow();
-                int rowIndex = insertRow.getIndex();
-                removeRowAtIndex(rowIndex);
+                if (insertRow != null) {
+                    int rowIndex = insertRow.getIndex();
+                    removeRowAtIndex(rowIndex);
+                    if (notifyListeners) notifyRowsDeleted(rowIndex, rowIndex);
+                }
                 resultSet.moveToCurrentRow();
                 isInserting = false;
-                if (notifyListeners) notifyRowsDeleted(rowIndex, rowIndex);
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
