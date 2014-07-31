@@ -83,6 +83,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
             }
             argumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
         }
+        argumentsPanel.revalidate();
         argumentsPanel.repaint();
     }
 

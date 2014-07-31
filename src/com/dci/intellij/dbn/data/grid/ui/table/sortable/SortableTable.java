@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
-import javax.swing.*;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
@@ -39,7 +40,11 @@ public abstract class SortableTable<T extends SortableDataModel> extends BasicTa
         ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
         if (columnInfo.isSortable()) {
             boolean sorted = model.sort(modelColumnIndex, sortDirection, keepExisting);
-            if (sorted) getTableHeader().repaint();
+            if (sorted) {
+                JTableHeader tableHeader = getTableHeader();
+                tableHeader.revalidate();
+                tableHeader.repaint();
+            }
             return sorted;
         }
         return false;

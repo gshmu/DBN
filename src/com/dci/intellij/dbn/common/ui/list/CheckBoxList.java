@@ -99,6 +99,8 @@ public class CheckBoxList<T extends Selectable> extends JList {
             Entry<T> entry = (Entry<T>) getModel().getElementAt(i);
             entry.checkBox.setSelected(true);
         }
+
+        revalidate();
         repaint();
     }
 
@@ -233,6 +235,8 @@ public class CheckBoxList<T extends Selectable> extends JList {
         private void switchSelection() {
             //if (checkBox.isEnabled()){
                 checkBox.setSelected(!checkBox.isSelected());
+
+                CheckBoxList.this.revalidate();
                 CheckBoxList.this.repaint();
                 for (ActionListener actionListener : checkBox.getActionListeners()) {
                     actionListener.actionPerformed(new ActionEvent(checkBox, 0, "selectionChanged"));

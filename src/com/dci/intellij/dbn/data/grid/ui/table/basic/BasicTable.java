@@ -5,7 +5,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -76,6 +80,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
                             attributes.getLoadingData(false).getBgColor() :
                             attributes.getPlainData(false, false).getBgColor();
                     viewport.setBackground(background);
+
+                    viewport.revalidate();
                     viewport.repaint();
                 }
             }.start();
@@ -153,6 +159,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
     @Override
     public void globalSchemeChange(EditorColorsScheme scheme) {
         cellRenderer.getAttributes().load();
+
+        revalidate();
         repaint();
     }
 
@@ -225,11 +233,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
             }
         }
         return true;
-    }
-
-    @Override
-    public void repaint() {
-        super.repaint();
     }
 
     public void dispose() {

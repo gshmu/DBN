@@ -125,6 +125,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
             sortingInstructionForms.add(sortingInstructionForm);
             sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
             updateIndexes();
+            sortingInstructionsPanel.revalidate();
             sortingInstructionsPanel.repaint();
         }
     }
@@ -141,6 +142,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         sortingInstructionForms.remove(sortingInstructionForm);
         updateIndexes();
         sortingInstructionForm.dispose();
+        sortingInstructionsPanel.revalidate();
         sortingInstructionsPanel.repaint();
     }
 

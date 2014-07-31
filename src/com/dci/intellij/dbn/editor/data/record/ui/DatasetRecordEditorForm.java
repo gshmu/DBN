@@ -143,6 +143,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
             for (DatasetRecordEditorColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
             }
+            columnsPanel.revalidate();
             columnsPanel.repaint();
         }
     }

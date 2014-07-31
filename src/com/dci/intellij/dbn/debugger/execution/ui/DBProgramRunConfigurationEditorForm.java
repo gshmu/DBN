@@ -232,8 +232,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         headerPanel.removeAll();
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-
-
+        mainPanel.revalidate();
         mainPanel.repaint();
     }
 

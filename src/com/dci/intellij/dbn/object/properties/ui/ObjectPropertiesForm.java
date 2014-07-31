@@ -89,6 +89,8 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, Browse
 
                             objectPropertiesTable.setModel(tableModel);
                             ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
+
+                            mainPanel.revalidate();
                             mainPanel.repaint();
                         }
                     }.start();

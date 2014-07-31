@@ -149,6 +149,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
             for (ResultSetRecordViewerColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
             }
+
+            columnsPanel.revalidate();
             columnsPanel.repaint();
         }
     }

@@ -142,6 +142,8 @@ public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
                 Disposer.dispose(browserForm);
                 displayMode = configDisplayMode;
                 initBrowserForm();
+
+                browserPanel.revalidate();
                 browserPanel.repaint();
             }
         }

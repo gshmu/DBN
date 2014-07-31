@@ -105,6 +105,8 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
             }
             detailsPanel.add(uncommittedChangesForm.getComponent(), BorderLayout.CENTER);
         }
+
+        detailsPanel.revalidate();
         detailsPanel.repaint();
     }
 
