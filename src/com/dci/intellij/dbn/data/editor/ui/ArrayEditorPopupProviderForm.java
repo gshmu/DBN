@@ -94,7 +94,9 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             return null;
         }
         list.setStringValues(stringValues);
-        list.selectCell(0,0);
+        if (list.getModel().getSize() > 0) {
+            list.selectCell(0,0);
+        }
 
         //editorTextArea.setText(text);
         changed = false;
