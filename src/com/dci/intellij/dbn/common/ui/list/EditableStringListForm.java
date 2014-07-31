@@ -25,12 +25,12 @@ public class EditableStringListForm extends DBNFormImpl{
 
     private EditableStringList editableStringList;
 
-    public EditableStringListForm(String title) {
-        this(title, new ArrayList<String>());
+    public EditableStringListForm(String title, boolean sorted) {
+        this(title, new ArrayList<String>(), sorted);
     }
 
-    public EditableStringListForm(String title, List<String> elements) {
-        editableStringList = new EditableStringList(null, elements);
+    public EditableStringListForm(String title, List<String> elements, boolean sorted) {
+        editableStringList = new EditableStringList(null, elements, sorted, false);
         listScrollPane.setViewportView(editableStringList);
         listScrollPane.getViewport().setBackground(editableStringList.getBackground());
         titleLabel.setText(title);

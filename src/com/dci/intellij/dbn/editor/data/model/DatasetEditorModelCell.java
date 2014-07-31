@@ -1,6 +1,12 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -16,12 +22,6 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private Object originalUserValue;
@@ -142,23 +142,26 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void edit() {
-        if (getIndex() > 0) {
+        int index = getEditorTable().convertColumnIndexToView(getIndex());
+        if (index > 0) {
             DatasetEditorTable table = getEditorTable();
-            table.editCellAt(getRow().getIndex(), getIndex());
+            table.editCellAt(getRow().getIndex(), index);
         }
     }
 
     public void editPrevious() {
-        if (getIndex() > 0) {
+        int index = getEditorTable().convertColumnIndexToView(getIndex());
+        if (index > 0) {
             DatasetEditorTable table = getEditorTable();
-            table.editCellAt(getRow().getIndex(), getIndex() -1);
+            table.editCellAt(getRow().getIndex(), index -1);
         }
     }
 
     public void editNext(){
-        if (getIndex() < getRow().getCells().size()-1) {
+        int index = getEditorTable().convertColumnIndexToView(getIndex());
+        if (index < getRow().getCells().size()-1) {
             DatasetEditorTable table = getEditorTable();
-            table.editCellAt(getRow().getIndex(), getIndex() + 1);
+            table.editCellAt(getRow().getIndex(), index + 1);
         }
     }
 

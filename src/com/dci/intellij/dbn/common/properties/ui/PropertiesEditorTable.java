@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.intellij.ui.TableUtil;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -14,6 +10,10 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 import java.util.Map;
+
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.intellij.ui.TableUtil;
+import com.intellij.util.ui.UIUtil;
 
 public class PropertiesEditorTable extends JTable {
 
@@ -89,7 +89,7 @@ public class PropertiesEditorTable extends JTable {
         rowIndex = getModel().getRowCount() == 0 ? 0 : rowIndex + 1;
         getModel().insertRow(rowIndex);
         getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-        updateUI();
+        repaint();
     }
 
 
@@ -97,7 +97,7 @@ public class PropertiesEditorTable extends JTable {
         stopCellEditing();
         int selectedRow = getSelectedRow();
         getModel().removeRow(selectedRow);
-        updateUI();
+        repaint();
         if (getModel().getRowCount() == selectedRow && selectedRow > 0) {
             getSelectionModel().setSelectionInterval(selectedRow -1, selectedRow -1);
         }

@@ -99,7 +99,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
             Entry<T> entry = (Entry<T>) getModel().getElementAt(i);
             entry.checkBox.setSelected(true);
         }
-        updateUI();
+        repaint();
     }
 
     private class CellRenderer implements ListCellRenderer {

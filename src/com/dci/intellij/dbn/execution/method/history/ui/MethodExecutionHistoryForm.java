@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
             }
             argumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
         }
-        argumentsPanel.updateUI();
+        argumentsPanel.repaint();
     }
 
     private ChangeListener getChangeListener() {

@@ -101,8 +101,8 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<
         int rowIndex = getSelectedRow();
         rowIndex = getModel().getRowCount() == 0 ? 0 : rowIndex + 1;
         getModel().insertRow(rowIndex);
+        resizeAndRepaint();
         getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
-        repaint();
     }
 
 
@@ -110,7 +110,8 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<
         stopCellEditing();
         int selectedRow = getSelectedRow();
         getModel().removeRow(selectedRow);
-        repaint();
+        resizeAndRepaint();
+
         if (getModel().getRowCount() == selectedRow && selectedRow > 0) {
             getSelectionModel().setSelectionInterval(selectedRow -1, selectedRow -1);
         }

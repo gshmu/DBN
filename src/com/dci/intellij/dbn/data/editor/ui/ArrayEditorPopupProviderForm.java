@@ -5,7 +5,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
+import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
@@ -37,7 +39,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel leftActionPanel;
     private JScrollPane listScrollPane;
 
-    private EditableStringList list;
+    private ArrayEditorList list;
     private boolean changed;
 
     public ArrayEditorPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
@@ -55,13 +57,28 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
                 new RevertAction(),
                 new AcceptAction());
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
-        list = new EditableStringList();
+        list = new ArrayEditorList();
         listScrollPane.setViewportView(list);
         listScrollPane.getViewport().setBackground(list.getBackground());
+        list.addKeyListener(this);
+        mainPanel.addKeyListener(this);
     }
 
     public JComponent getComponent() {
         return mainPanel;
+    }
+
+    private class ArrayEditorList extends EditableStringList {
+        public ArrayEditorList() {
+            super(false, true);
+        }
+
+        @Override
+        public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
+            Component component = super.prepareEditor(editor, rowIndex, columnIndex);
+            component.addKeyListener(ArrayEditorPopupProviderForm.this);
+            return component;
+        }
     }
 
     public JBPopup createPopup() {
@@ -80,8 +97,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             MessageUtil.showErrorDialog(e.getMessage(), e);
             return null;
         }
-
         list.setStringValues(stringValues);
+        list.selectCell(0,0);
 
         //editorTextArea.setText(text);
         changed = false;
@@ -164,7 +181,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         private RevertAction() {
             super("Revert changes", null, Icons.TEXT_CELL_EDIT_REVERT);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ESCAPE, 0));
-            //registerAction(this);
+            registerAction(this);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -181,7 +198,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         private DeleteAction() {
             super("Delete content", null, Icons.TEXT_CELL_EDIT_DELETE);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK));
-            //registerAction(this);
+            registerAction(this);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -195,9 +212,10 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class AddAction extends AnAction {
         private AddAction() {
-            super("Add array entry", null, Icons.ARRAY_CELL_EDIT_ADD);
+            super("Add value", null, Icons.ARRAY_CELL_EDIT_ADD);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
-            //registerAction(this);
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ADD, InputEvent.CTRL_MASK));
+            registerAction(this);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -207,9 +225,10 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class RemoveAction extends AnAction {
         private RemoveAction() {
-            super("Remove array entry", null, Icons.ARRAY_CELL_EDIT_REMOVE);
+            super("Remove value", null, Icons.ARRAY_CELL_EDIT_REMOVE);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
-            //registerAction(this);
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK));
+            registerAction(this);
         }
 
         public void actionPerformed(AnActionEvent e) {
