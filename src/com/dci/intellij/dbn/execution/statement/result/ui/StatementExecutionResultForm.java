@@ -59,9 +59,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
 
         resultScrollPane.setViewportView(resultTable);
-        resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
-        resultScrollPane.getRowHeader().setBackground(UIUtil.getPanelBackground());
+        resultTable.initTableGutter();
 
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
@@ -91,7 +90,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
                 if (executionResult != null) {
                     resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
                     resultScrollPane.setViewportView(resultTable);
-                    resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
+                    resultTable.initTableGutter();
                 }
             }
         }.start();

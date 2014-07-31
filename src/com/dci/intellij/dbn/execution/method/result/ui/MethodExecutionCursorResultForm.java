@@ -37,9 +37,8 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNF
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         resultScrollPane.setViewportView(resultTable);
-        resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
-        resultScrollPane.getRowHeader().setBackground(UIUtil.getPanelBackground());
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
+        resultTable.initTableGutter();
 
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());

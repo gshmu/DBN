@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.data.grid.ui.table.basic;
+package com.dci.intellij.dbn.common.ui.table;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -11,7 +11,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -19,7 +18,7 @@ import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
-public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
+public class IndexTableGutterCellRenderer extends JPanel implements ListCellRenderer {
     public interface Colors {
         Color LINE_NUMBER_COLOR = getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR);
         Color SELECTION_FOREGROUND_COLOR = getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR);
@@ -34,7 +33,7 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
     private static final Border BORDER = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), new EmptyBorder(0, 3, 0, 3));
     private JLabel textLabel;
 
-    public BasicTableGutterCellRenderer() {
+    public IndexTableGutterCellRenderer() {
         setBackground(UIUtil.getPanelBackground());
         setBorder(BORDER);
         setLayout(new BorderLayout());
@@ -45,8 +44,8 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
     }
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        BasicTableGutter tableGutter = (BasicTableGutter) list;
-        textLabel.setText(Integer.toString(index + 1));
+        DBNTableGutter tableGutter = (DBNTableGutter) list;
+        textLabel.setText(Integer.toString(index));
         DBNTable table = tableGutter.getTable();
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
 

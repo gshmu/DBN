@@ -60,6 +60,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         list = new ArrayEditorList();
         listScrollPane.setViewportView(list);
         listScrollPane.getViewport().setBackground(list.getBackground());
+        list.initTableGutter();
         list.addKeyListener(this);
         mainPanel.addKeyListener(this);
     }
