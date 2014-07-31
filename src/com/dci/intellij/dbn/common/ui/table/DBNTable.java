@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.event.EventListenerList;
@@ -36,6 +37,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
     public static final DBNColor GRID_COLOR = new DBNColor(new Color(0xE6E6E6), Color.DARK_GRAY);
+    protected DBNTableGutter tableGutter;
     private Project project;
     private double scrollDistance;
     private JBScrollPane scrollPane;
@@ -240,6 +242,30 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             }
         }
     }
+
+    protected DBNTableGutter createTableGutter() {
+        return null; // do not create gutter by default
+    }
+
+    public DBNTableGutter getTableGutter() {
+        if (tableGutter == null) {
+            tableGutter = createTableGutter();
+            Disposer.register(this, tableGutter);
+        }
+        return tableGutter;
+    }
+
+    public void initTableGutter() {
+        DBNTableGutter tableGutter = getTableGutter();
+        if (tableGutter != null){
+            JScrollPane scrollPane = UIUtil.getParentOfType(JScrollPane.class, this);
+            if (scrollPane != null) {
+                scrollPane.setRowHeaderView(tableGutter);
+            }
+        }
+    }
+
+
 
 
     /********************************************************

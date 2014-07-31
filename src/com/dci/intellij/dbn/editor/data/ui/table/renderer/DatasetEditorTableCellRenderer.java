@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
@@ -47,7 +47,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
                 textAttributes = attributes.getPrimaryKey(isModified, isCaretRow);
             } else if (columnInfo.isForeignKey()) {
                 textAttributes = attributes.getForeignKey(isModified, isCaretRow);
-            } else if (cell.isLobValue()) {
+            } else if (cell.isLobValue() || cell.isArrayValue()) {
                 textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
             } else {
                 DataGridTrackingColumnSettings trackingColumnSettings = datasetEditorTable.getDataGridSettings().getTrackingColumnSettings();

@@ -82,7 +82,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
         DataProvider dataProvider = datasetEditor.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);
-        ActionUtil.registerDataProvider(getTableGutter(), dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
 
         Disposer.register(this, cellEditorFactory);
@@ -121,7 +120,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     @Override
-    public BasicTableGutter createTableGutter() {
+    protected BasicTableGutter createTableGutter() {
         return new DatasetEditorTableGutter(this);
     }
 

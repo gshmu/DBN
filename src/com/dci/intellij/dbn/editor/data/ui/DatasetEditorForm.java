@@ -53,8 +53,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
         try {
             datasetEditorTable = new DatasetEditorTable(datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
-            datasetTableScrollPane.setRowHeaderView(datasetEditorTable.getTableGutter());
-            datasetTableScrollPane.getRowHeader().setBackground(UIUtil.getPanelBackground());
+            datasetEditorTable.initTableGutter();
 
 
             JPanel panel = new JPanel();
@@ -115,7 +114,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
                 public void execute() {
                     if (!isDisposed()) {
                         datasetTableScrollPane.setViewportView(datasetEditorTable);
-                        datasetTableScrollPane.setRowHeaderView(datasetEditorTable.getTableGutter());
+                        datasetEditorTable.initTableGutter();
                         datasetEditorTable.updateBackground(false);
 
                         Disposer.dispose(oldEditorTable);

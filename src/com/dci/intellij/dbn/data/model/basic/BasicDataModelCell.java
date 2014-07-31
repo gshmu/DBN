@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import java.sql.Array;
+
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -59,6 +61,9 @@ public class BasicDataModelCell implements DataModelCell {
 
     public boolean isLobValue() {
         return getUserValue() instanceof LazyLoadedValue;
+    }
+    public boolean isArrayValue() {
+        return getUserValue() instanceof Array;
     }
 
     @Override

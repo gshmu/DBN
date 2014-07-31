@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.ui.list;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.Color;
@@ -16,6 +15,8 @@ import java.util.List;
 
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -30,31 +31,20 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
         this(null, new ArrayList<String>(), sorted, indexed);
     }
     public EditableStringList(Project project, List<String> elements, boolean sorted, boolean indexed) {
-        super(project, new EditableListModel(elements, sorted, indexed), false);
+        super(project, new EditableListModel(elements, sorted), false);
         setTableHeader(null);
         this.sorted = sorted;
         this.indexed = indexed;
+
         if (indexed) {
-            getColumnModel().getColumn(0).setWidth(20);
-        }
-
-/*
-        getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (getSelectedRowCount() == 1 && !e.getValueIsAdjusting()) {
-                    new SimpleLaterInvocator() {
-                        @Override
-                        public void execute() {
-                            editCellAt(getSelectedRow(), 0);
-                        }
-                    }.start();
-
+            getColumnModel().getColumn(0).setPreferredWidth(20);
+            addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusGained(FocusEvent e) {
+                    accommodateColumnsSize();
                 }
-            }
-        });
-
-*/
+            });
+        }
 
         setDefaultRenderer(String.class, new ColoredTableCellRenderer() {
             @Override
@@ -75,30 +65,11 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 append((String) value, attributes);
             }
         });
+    }
 
-        if (indexed) {
-            setDefaultRenderer(Integer.class, new ColoredTableCellRenderer() {
-                @Override
-                protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-                    acquireState(table, false, false, row, column);
-                    Color background = UIUtil.getPanelBackground();
-                    Color foreground = table.getForeground();
-                    SimpleTextAttributes attributes = SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES;
-                    if (selected && !table.isEditing()) {
-                        background = UIUtil.getListSelectionBackground();
-                        foreground = UIUtil.getListSelectionForeground();
-                        attributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
-                    }
-                    setBorder(new LineBorder(background, 2));
-                    setBackground(background);
-                    setForeground(foreground);
-                    append(value.toString(), attributes);
-                    setTextAlign(SwingConstants.RIGHT);
-                }
-            });
-        }
-
-        //((JComponent)getEditorComponent()).setBorder(new CustomLineBorder(getGridColor(), 0, 0, 1, 0));
+    @Override
+    public DBNTableGutter createTableGutter() {
+        return indexed ? new IndexTableGutter(this) : null;
     }
 
     @Override
@@ -125,20 +96,16 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     }
 
     public void setStringValues(Collection<String> stringValues) {
-        setModel(new EditableListModel(stringValues, sorted, indexed));
+        setModel(new EditableListModel(stringValues, sorted));
     }
 
 
     public static class EditableListModel extends DBNEditableTableModel {
         private List<String> data;
-        private boolean sorted;
-        private boolean indexed;
 
-        public EditableListModel(Collection<String> data, boolean sorted, boolean indexed) {
+        public EditableListModel(Collection<String> data, boolean sorted) {
             this.data = new ArrayList<String>(data);
             if (sorted) Collections.sort(this.data);
-            this.sorted = sorted;
-            this.indexed = indexed;
         }
 
         public List<String> getData() {
@@ -152,27 +119,27 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
         @Override
         public int getColumnCount() {
-            return indexed ? 2 : 1;
+            return 1;
         }
 
         @Override
         public String getColumnName(int columnIndex) {
-            return indexed ? (columnIndex == 0 ? "INDEX" : "DATA") : "DATA";
+            return "DATA";
         }
 
         @Override
         public Class<?> getColumnClass(int columnIndex) {
-            return indexed ? (columnIndex == 0 ? Integer.class : String.class) : String.class;
+            return String.class;
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return !indexed || columnIndex == 1;
+            return true;
         }
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            return indexed ? (columnIndex == 0 ? rowIndex + 1 : data.get(rowIndex)) : data.get(rowIndex);
+            return data.get(rowIndex);
         }
 
         @Override
@@ -212,7 +179,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
         @Override
         public Object getElementAt(int index) {
-            return getValueAt(index, indexed ? 1 : 0);
+            return getValueAt(index, 0);
         }
     }
 }
