@@ -4,6 +4,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellEditor;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -15,7 +16,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorErrorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
@@ -38,8 +39,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         return (DatasetEditorColumnInfo) super.getColumnInfo();
     }
 
-    public void updateUserValue(Object userValue, boolean bulk) {
-        boolean sameValue = compareUserValues(userValue, getUserValue());
+    public void updateUserValue(Object newUserValue, boolean bulk) {
+        boolean sameValue = compareUserValues(newUserValue, userValue);
         if (hasError() || !sameValue) {
             DatasetEditorModelRow row = getRow();
             ResultSet resultSet;
@@ -50,17 +51,19 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 MessageUtil.showErrorDialog("Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }
-            DBDataType dataType = getColumnInfo().getDataType();
+            boolean isValueAdapter = userValue instanceof ValueAdapter;
 
-            boolean isLargeObject = dataType.getNativeDataType().isLOB();
             try {
                 clearError();
-                int columnIndex = getColumnInfo().getColumnIndex() + 1;
-                if (isLargeObject) {
-                    LazyLoadedValue lazyLoadedValue = (LazyLoadedValue) getUserValue();
-                    lazyLoadedValue.updateValue(resultSet, columnIndex, (String) userValue);
+                int columnIndex = getColumnInfo().getResultSetColumnIndex();
+
+                if (isValueAdapter) {
+                    ValueAdapter valueAdapter = (ValueAdapter) userValue;
+                    Connection connection = getConnectionHandler().getStandaloneConnection();
+                    valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
                 } else {
-                    dataType.setValueToResultSet(resultSet, columnIndex, userValue);
+                    DBDataType dataType = getColumnInfo().getDataType();
+                    dataType.setValueToResultSet(resultSet, columnIndex, newUserValue);
                 }
 
                 if (!row.isInsert()) resultSet.updateRow();
@@ -74,8 +77,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 if (!error.isNotified()) notifyError(error, !bulk);
             } finally {
                 if (!sameValue) {
-                    if (!isLargeObject) {
-                        setUserValue(userValue);
+                    if (!isValueAdapter) {
+                        setUserValue(newUserValue);
                     }
                     getConnectionHandler().notifyChanges(getDataset().getVirtualFile());
                     EventManager.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
@@ -133,7 +136,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         return false;
     }
 
-    private ConnectionHandler getConnectionHandler() {
+    public ConnectionHandler getConnectionHandler() {
         return getRow().getModel().getConnectionHandler();
     }
 

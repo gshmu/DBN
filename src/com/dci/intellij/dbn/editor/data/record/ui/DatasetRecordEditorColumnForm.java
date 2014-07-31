@@ -34,7 +34,7 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
@@ -150,7 +150,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
             }
             editorComponent.setText(userValue);
         } else {
-            editable = editable && !(cell.getUserValue() instanceof LazyLoadedValue);
+            editable = editable && !(cell.getUserValue() instanceof LargeObjectValue);
             editorComponent.setEditable(editable);
             String formattedUserValue = formatter.formatObject(cell.getUserValue());
             editorComponent.setText(formattedUserValue);

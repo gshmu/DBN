@@ -34,7 +34,7 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.dci.intellij.dbn.editor.data.action.DatasetEditorTableActionGroup;
@@ -301,7 +301,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     text.append("<br>");
                 }
 
-                if (editorTableCell.isModified() && !(editorTableCell.getUserValue() instanceof LazyLoadedValue)) {
+                if (editorTableCell.isModified() && !(editorTableCell.getUserValue() instanceof LargeObjectValue)) {
                     text.append("<br>Original value: <b>");
                     text.append(editorTableCell.getOriginalUserValue());
                     text.append("</b></html>");
@@ -313,7 +313,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             }
 
             if (editorTableCell.isModified() && !event.isControlDown()) {
-                if (editorTableCell.getUserValue() instanceof LazyLoadedValue) {
+                if (editorTableCell.getUserValue() instanceof LargeObjectValue) {
                     return "LOB content has changed";
                 } else {
                     return "<HTML>Original value: <b>" + editorTableCell.getOriginalUserValue() + "</b></html>";
@@ -447,12 +447,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     private void startCellEditing(ListSelectionEvent e) {
         if (!isLoading() && isEditingEnabled && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1 && !isEditing() && !e.getValueIsAdjusting() && getDataset().getConnectionHandler().isConnected()) {
             editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
-        }
-    }
-
-    public void stopCellEditing() {
-        if (isEditing()) {
-            getCellEditor().stopCellEditing();
         }
     }
 

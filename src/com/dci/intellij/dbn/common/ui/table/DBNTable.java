@@ -267,8 +267,11 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         }
     }
 
-
-
+    public void stopCellEditing() {
+        if (isEditing()) {
+            getCellEditor().stopCellEditing();
+        }
+    }
 
     /********************************************************
      *                    Disposable                        *

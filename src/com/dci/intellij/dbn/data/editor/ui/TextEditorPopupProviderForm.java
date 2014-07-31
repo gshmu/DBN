@@ -1,20 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.ui.DocumentAdapter;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -27,6 +12,21 @@ import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.ui.DocumentAdapter;
 
 public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel mainPanel;
@@ -66,10 +66,10 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
             if (userValue instanceof String) {
                 text = (String) userValue;
-            } else if (userValue instanceof LazyLoadedValue) {
-                LazyLoadedValue lazyLoadedValue = (LazyLoadedValue) userValue;
+            } else if (userValue instanceof LargeObjectValue) {
+                LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
                 try {
-                    text = lazyLoadedValue.loadValue();
+                    text = largeObjectValue.read();
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(e.getMessage(), e);
                     return null;

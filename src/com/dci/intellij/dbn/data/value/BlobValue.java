@@ -1,21 +1,22 @@
 package com.dci.intellij.dbn.data.value;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Blob;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BlobValue implements LazyLoadedValue {
+import com.dci.intellij.dbn.common.util.CommonUtil;
+
+public class BlobValue implements LargeObjectValue {
     private Blob blob;
 
     public BlobValue(Blob blob) {
         this.blob = blob;
     }
 
-    public void updateValue(ResultSet resultSet, int columnIndex, String value) throws SQLException {
+    public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
         if (blob == null) {
             value = CommonUtil.nvl(value, "");
             resultSet.updateBlob(columnIndex, new ByteArrayInputStream(value.getBytes()));
@@ -32,12 +33,12 @@ public class BlobValue implements LazyLoadedValue {
         }
     }
 
-    public String loadValue() throws SQLException {
-        return loadValue(0);
+    public String read() throws SQLException {
+        return read(0);
     }
 
     @Override
-    public String loadValue(int maxSize) throws SQLException {
+    public String read(int maxSize) throws SQLException {
         if (blob == null) {
             return null;
         } else {

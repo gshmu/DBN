@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -212,7 +212,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         DataModelCell cell = (DataModelCell) getValueAt(rowIndex, columnIndex);
         if (cell != null) {
             Object value = cell.getUserValue();
-            if (value instanceof LazyLoadedValue) {
+            if (value instanceof LargeObjectValue) {
                 return false;
             }
             if (value != null) {

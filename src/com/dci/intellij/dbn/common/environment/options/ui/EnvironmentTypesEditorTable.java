@@ -110,12 +110,6 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
         }
     }
     
-    
-
-    private void stopCellEditing() {
-        if (isEditing()) getCellEditor().stopCellEditing();
-    }
-
     @Override
     public void editingStopped(ChangeEvent e) {
         super.editingStopped(e);

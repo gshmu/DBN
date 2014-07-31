@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -101,17 +101,17 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     private void loadContent(boolean initial) {
         String text = "";
         Object userValue = cell.getUserValue();
-        if (userValue instanceof LazyLoadedValue) {
-            LazyLoadedValue lazyLoadedValue = (LazyLoadedValue) userValue;
+        if (userValue instanceof LargeObjectValue) {
+            LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
             try {
                 text = initial ?
-                        lazyLoadedValue.loadValue(INITIAL_MAX_SIZE) :
-                        lazyLoadedValue.loadValue();
+                        largeObjectValue.read(INITIAL_MAX_SIZE) :
+                        largeObjectValue.read();
                 if (text == null) {
                     text = "";
                 }
 
-                long contentSize = lazyLoadedValue.size();
+                long contentSize = largeObjectValue.size();
                 if (initial && contentSize > INITIAL_MAX_SIZE) {
                     contentInfoText = getNumberOfLines(text) + " lines, " + INITIAL_MAX_SIZE + " characters (partially loaded)";
                     loadContentVisible = true;
@@ -121,7 +121,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
                     loadContentVisible = false;
                 }
             } catch (SQLException e) {
-                contentInfoText = "Could not load " + lazyLoadedValue.getDisplayValue() + " content. Cause: " + e.getMessage();
+                contentInfoText = "Could not load " + largeObjectValue.getDisplayValue() + " content. Cause: " + e.getMessage();
                 loadContentCaption = "Reload content";
             }
         } else {
