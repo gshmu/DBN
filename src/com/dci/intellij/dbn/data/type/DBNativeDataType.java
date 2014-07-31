@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.type;
 
 import java.math.BigDecimal;
-import java.sql.Array;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
+import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.BlobValue;
 import com.dci.intellij.dbn.data.value.ClobValue;
 import com.intellij.openapi.diagnostic.Logger;
@@ -51,6 +51,7 @@ public class DBNativeDataType implements DynamicContentElement{
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.BLOB) return new BlobValue(resultSet.getBlob(columnIndex));
         if (genericDataType == GenericDataType.CLOB) return new ClobValue(resultSet.getClob(columnIndex));
+        if (genericDataType == GenericDataType.ARRAY) return new ArrayValue(resultSet.getArray(columnIndex));
         if (genericDataType == GenericDataType.ROWID) return "[ROWID]";
         if (genericDataType == GenericDataType.FILE) return "[FILE]";
 
@@ -73,7 +74,7 @@ public class DBNativeDataType implements DynamicContentElement{
                     clazz == Date.class ? resultSet.getDate(columnIndex) :
                     clazz == Time.class ? resultSet.getTime(columnIndex) :
                     clazz == Timestamp.class ? resultSet.getTimestamp(columnIndex) :
-                    clazz == Array.class ? resultSet.getArray(columnIndex) :
+                    //clazz == Array.class ? resultSet.getArray(columnIndex) :
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
             LOGGER.error("Error resolving result set value", e);
@@ -88,6 +89,7 @@ public class DBNativeDataType implements DynamicContentElement{
         if (genericDataType == GenericDataType.CLOB) return;
         if (genericDataType == GenericDataType.ROWID) return;
         if (genericDataType == GenericDataType.FILE) return;
+        if (genericDataType == GenericDataType.ARRAY) return;
 
         if (value == null) {
             resultSet.updateObject(columnIndex, null);
@@ -105,6 +107,7 @@ public class DBNativeDataType implements DynamicContentElement{
                 if(clazz == Date.class) resultSet.updateDate(columnIndex, (Date) value); else
                 if(clazz == Time.class) resultSet.updateTime(columnIndex, (Time) value); else
                 if(clazz == Timestamp.class) resultSet.updateTimestamp(columnIndex, (Timestamp) value); else
+                //if(clazz == Array.class) resultSet.updateArray(columnIndex, (Array) value); else
                         resultSet.updateObject(columnIndex, value);
             } else {
                 throw new SQLException("Can not convert \"" + value.toString() + "\" into " + dataTypeDefinition.getName());

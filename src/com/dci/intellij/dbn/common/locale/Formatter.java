@@ -1,13 +1,19 @@
 package com.dci.intellij.dbn.common.locale;
 
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
-import com.intellij.openapi.project.Project;
-
-import java.text.*;
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.project.Project;
 
 
 public class Formatter {
@@ -144,7 +150,7 @@ public class Formatter {
                 object instanceof Number ? formatNumber((Number) object) :
                 object instanceof Date ? formatDateTime((Date) object) :
                 object instanceof String ? (String) object :
-                object instanceof LazyLoadedValue ? ((LazyLoadedValue) object).getDisplayValue() :
+                object instanceof ValueAdapter ? ((ValueAdapter) object).getDisplayValue() :
                 object.toString();
         } else {
             return null;

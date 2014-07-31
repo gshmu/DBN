@@ -70,12 +70,6 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<
         }
     }
     
-    
-
-    private void stopCellEditing() {
-        if (isEditing()) getCellEditor().stopCellEditing();
-    }
-
     @Override
     public void editingStopped(ChangeEvent e) {
         super.editingStopped(e);

@@ -12,8 +12,6 @@ import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.sql.Array;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +21,7 @@ import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.list.EditableStringList;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -88,12 +87,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         List<String> stringValues = new ArrayList<String>();
         try {
             Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
-            Array array = (Array) userValue;
-            ResultSet resultSet = array.getResultSet();
-            while (resultSet.next()) {
-                Object object = resultSet.getObject(2);
-                stringValues.add(object.toString());
-            }
+            ArrayValue array = (ArrayValue) userValue;
+            stringValues.addAll(array.read());
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(e.getMessage(), e);
             return null;
@@ -157,10 +152,12 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
 
         public void actionPerformed(AnActionEvent e) {
+            list.stopCellEditing();
+            UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
+            userValueHolder.updateUserValue(list.getModel().getData(), false);
+
 /*
             String text = editorTextArea.getText().trim();
-            UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
-            userValueHolder.updateUserValue(text, false);
 
             if (userValueHolder.getUserValue() instanceof String) {
                 JTextField textField = getTextField();

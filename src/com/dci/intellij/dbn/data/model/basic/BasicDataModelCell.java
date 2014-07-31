@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import java.sql.Array;
-
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelState;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.ArrayValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.project.Project;
@@ -60,20 +59,20 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public boolean isLobValue() {
-        return getUserValue() instanceof LazyLoadedValue;
+        return getUserValue() instanceof LargeObjectValue;
     }
     public boolean isArrayValue() {
-        return getUserValue() instanceof Array;
+        return getUserValue() instanceof ArrayValue;
     }
 
     @Override
     public String getFormattedUserValue() {
-        if (formattedUserValue == null && userValue != null) {
+        if (userValue != null) {
             RegionalSettings regionalSettings = RegionalSettings.getInstance(getProject());
             Formatter formatter = regionalSettings.getFormatter();
-            formattedUserValue = formatter.formatObject(userValue);
+            return formatter.formatObject(userValue);
         }
-        return formattedUserValue;
+        return null;
     }
 
     public String getName() {

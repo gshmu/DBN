@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
@@ -50,7 +50,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
 
         DataModelCell cell = (DataModelCell) value;
         if (cell != null && !cell.isDisposed()) {
-            boolean isLazyValue = cell.getUserValue() instanceof LazyLoadedValue;
+            boolean isLazyValue = cell.getUserValue() instanceof LargeObjectValue;
 
             DataGridTextAttributes attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getPlainData(false, isCaretRow);

@@ -64,6 +64,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         ResultSet resultSet = null;
         int count = 0;
         try {
+            dynamicContent.checkDisposed();
             connectionHandler.getLoadMonitor().incrementLoaderCount();
             connection = connectionHandler.getPoolConnection();
             dynamicContent.checkDisposed();
