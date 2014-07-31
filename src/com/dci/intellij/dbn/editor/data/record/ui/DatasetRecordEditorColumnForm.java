@@ -185,7 +185,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
         String textValue = editorComponent.getText().trim();
         if (textValue.length() > 0) {
             Object value = getFormatter().parseObject(clazz, textValue);
-            return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
+            DBNativeDataType nativeDataType = dataType.getNativeDataType();
+            return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().convert(value);
         } else {
             return null;
         }

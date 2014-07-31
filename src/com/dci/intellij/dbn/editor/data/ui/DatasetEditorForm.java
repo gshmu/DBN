@@ -199,6 +199,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
     public void hideSearchHeader() {
         dataSearchComponent.resetFindModel();
         searchPanel.setVisible(false);
+        datasetEditorTable.revalidate();
         datasetEditorTable.repaint();
         datasetEditorTable.requestFocus();
     }

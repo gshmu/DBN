@@ -53,6 +53,8 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> {
         inputForms.add(inputForm);
         ObjectListItemForm listItemForm = new ObjectListItemForm(this, inputForm);
         listPanel.add(listItemForm.getComponent());
+
+        mainPanel.revalidate();
         mainPanel.repaint();
         inputForm.focus();
     }
@@ -60,6 +62,8 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> {
     public void removeObjectPanel(ObjectListItemForm child) {
         inputForms.remove(child.getObjectDetailsPanel());
         listPanel.remove(child.getComponent());
+
+        mainPanel.revalidate();
         mainPanel.repaint();
         // rebuild indexes
         for (int i=0; i< inputForms.size(); i++) {

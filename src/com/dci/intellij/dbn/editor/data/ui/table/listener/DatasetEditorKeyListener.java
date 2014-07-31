@@ -49,6 +49,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                             }
                         }
                     }
+                    table.revalidate();
                     table.repaint();
                 }
             }

@@ -201,6 +201,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
+                getTableGutter().revalidate();
                 getTableGutter().repaint();
             }
         }.start();
@@ -350,6 +351,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (!getModel().isResultSetExhausted()) {
                 datasetEditor.loadData(SORT_LOAD_INSTRUCTIONS);
             }
+            revalidate();
             repaint();
         }
     }

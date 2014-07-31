@@ -119,6 +119,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 @Override
                 public void focusGained(FocusEvent e) {
                     isActive = true;
+
+                    revalidate();
                     repaint();
                 }
 
@@ -126,6 +128,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 public void focusLost(FocusEvent e) {
                     if (!isShowingPopup) {
                         isActive = false;
+
+                        revalidate();
                         repaint();
                     }
                 }
@@ -194,6 +198,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (!isShowingPopup && !isComboBox) {
                 innerPanel.setBorder(focusBorder);
                 innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
+
+                revalidate();
                 repaint();
             }
         }
@@ -204,6 +210,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 innerPanel.setBorder(defaultBorder);
                 //innerPanel.setBorder(new EmptyBorder(21 - icon.getIconHeight(), 6, 21 - icon.getIconHeight(), 6));
                 innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
+
+                revalidate();
                 repaint();
             }
         }
@@ -245,6 +253,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                         innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
                         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+                        revalidate();
                         repaint();
                     }
                 }, 10, new Condition<AnAction>() {

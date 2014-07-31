@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -106,6 +108,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                 cursorOutputTabs.addTab(tabInfo);
             }
         }
+
+        cursorOutputTabs.revalidate();
         cursorOutputTabs.repaint();
     }
 

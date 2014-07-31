@@ -1,9 +1,23 @@
 package com.dci.intellij.dbn.data.find;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -380,11 +394,13 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
         editorTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(final FocusEvent e) {
+                editorTextField.revalidate();
                 editorTextField.repaint();
             }
 
             @Override
             public void focusLost(final FocusEvent e) {
+                editorTextField.revalidate();
                 editorTextField.repaint();
             }
         });
@@ -470,6 +486,7 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
             nothingToSearchFor();
             searchableComponent.cancelEditActions();
             searchableComponent.getTable().clearSelection();
+            searchableComponent.getTable().revalidate();
             searchableComponent.getTable().repaint();
         } else {
 

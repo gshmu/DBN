@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NonNls;
@@ -366,6 +367,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             DatasetEditorTable editorTable = getEditorTable();
             if (editorTable != null) {
                 editorTable.setLoading(loading);
+                editorTable.revalidate();
                 editorTable.repaint();
             }
         }
@@ -421,13 +423,15 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void openRecordEditor(int index) {
-        DatasetEditorTable editorTable = getEditorTable();
-        DatasetEditorModel model = getTableModel();
+        if (index > -1) {
+            DatasetEditorTable editorTable = getEditorTable();
+            DatasetEditorModel model = getTableModel();
 
-        if (editorTable != null && model != null) {
-            DatasetEditorModelRow row = model.getRowAtIndex(index);
-            DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(row);
-            editorDialog.show();
+            if (editorTable != null && model != null) {
+                DatasetEditorModelRow row = model.getRowAtIndex(index);
+                DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(row);
+                editorDialog.show();
+            }
         }
     }
 
@@ -484,6 +488,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                 if (connectionHandler.isConnected()) {
                     loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
                 } else {
+                    editorTable.revalidate();
                     editorTable.repaint();
                 }
             }
@@ -535,6 +540,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                     if (action == TransactionAction.DISCONNECT) {
                         editorTable.stopCellEditing();
                         model.revertChanges();
+                        editorTable.revalidate();
                         editorTable.repaint();
                     }
                 }

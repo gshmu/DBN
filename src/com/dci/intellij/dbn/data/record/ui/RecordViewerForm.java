@@ -123,6 +123,7 @@ public class RecordViewerForm extends DBNFormImpl implements DBNForm {
             for (RecordViewerColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
             }
+            columnsPanel.revalidate();
             columnsPanel.repaint();
         }
     }

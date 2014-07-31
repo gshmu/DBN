@@ -128,6 +128,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void highlightLoading(boolean loading) {
         resultTable.setLoading(loading);
+
+        resultTable.revalidate();
         resultTable.repaint();
     }
 
@@ -158,6 +160,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     public void hideSearchHeader() {
         dataSearchComponent.resetFindModel();
         searchPanel.setVisible(false);
+
+        resultTable.revalidate();
         resultTable.repaint();
         resultTable.requestFocus();
     }
