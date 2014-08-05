@@ -5,7 +5,6 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -14,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -23,10 +23,14 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.JBColor;
 
 public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm {
     public static final Border EMPTY_BORDER = new EmptyBorder(2, 2, 2, 2);
@@ -40,7 +44,15 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     protected TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean isAutoPopup) {
         this.editorComponent = editorComponent;
         this.isAutoPopup = isAutoPopup;
+        EventManager.subscribe(editorComponent.getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
+
+    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
+        @Override
+        public void selectionChanged(FileEditorManagerEvent event) {
+            hidePopup();
+        }
+    };
 
     public TextFieldWithPopup getEditorComponent() {
         return editorComponent;
@@ -125,7 +137,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                         Disposer.register(TextFieldPopupProviderForm.this, popup);
 
                         JPanel panel = (JPanel) popup.getContent();
-                        panel.setBorder(new LineBorder(Color.DARK_GRAY));
+                        panel.setBorder(new LineBorder(JBColor.DARK_GRAY));
 
                         editorComponent.clearSelection();
 
@@ -158,6 +170,8 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     }
 
 
+
+
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
@@ -171,7 +185,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     public void dispose() {
         if (!disposed) {
             disposed = true;
-
+            EventManager.unsubscribe(fileEditorManagerListener);
             editorComponent = null;
             popup = null;
         }

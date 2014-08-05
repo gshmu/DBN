@@ -130,14 +130,16 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-/*
         if (!e.isConsumed()) {
-            if (matchesKeyEvent(e)) {
-                editorTextArea.replaceSelection("\n");
+            if (e.getKeyCode() == 27) {
+                if (list.isEditing()) {
+                    list.stopCellEditing();
+                }
+            } else {
+                super.keyPressed(e);
             }
         }
-*/
+
     }
 
     private class DocumentListener extends DocumentAdapter {
