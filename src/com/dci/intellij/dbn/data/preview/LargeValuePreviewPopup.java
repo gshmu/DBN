@@ -203,6 +203,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
         popupBuilder.setMovable(true);
         popupBuilder.setResizable(true);
         popupBuilder.setRequestFocus(true);
+        popupBuilder.setDimensionServiceKey(cell.getProject(), "LargeValuePreview." + cell.getName(), false);
 /*
         popupBuilder.setCancelOnMouseOutCallback(new MouseChecker() {
             @Override
