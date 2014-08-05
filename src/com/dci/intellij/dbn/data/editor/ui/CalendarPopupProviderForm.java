@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.util.containers.HashSet;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,6 +32,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.util.containers.HashSet;
+import com.intellij.util.ui.UIUtil;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final Font BOLD = new Font(UIUtil.getMenuFont().getFontName(), Font.BOLD, UIUtil.getMenuFont().getSize());
@@ -150,6 +150,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, daysTable);
         popupBuilder.setRequestFocus(true);
+
         monthYearLabel.setText(tableModel.getCurrentMonthName() + " " + tableModel.getCurrentYear());
 
         timeTextField.setText(getFormatter().formatTime(date));

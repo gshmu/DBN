@@ -79,7 +79,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
 
             long dataLength = dataType.getLength();
 
-            if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.LITERAL)) {
+            if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.LITERAL, GenericDataType.ARRAY)) {
                 TextFieldWithPopup textFieldWithPopup = new TextFieldWithPopup(project);
 
                 textFieldWithPopup.setPreferredSize(new Dimension(200, -1));
