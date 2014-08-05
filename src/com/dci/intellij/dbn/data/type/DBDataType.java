@@ -10,10 +10,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
@@ -26,7 +26,7 @@ public class DBDataType {
     private int scale;
     private boolean set;
 
-    public static DBDataType get(DBObject parent, ResultSet resultSet) throws SQLException {
+    public static DBDataType get(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         String dataTypeName = resultSet.getString("DATA_TYPE_NAME");
         long length = resultSet.getLong("DATA_LENGTH");
         int precision = resultSet.getInt("DATA_PRECISION");
@@ -40,7 +40,7 @@ public class DBDataType {
         DBType declaredType = null;
         DBNativeDataType nativeDataType = null;
 
-        DBObjectBundle objectBundle = parent.getConnectionHandler().getObjectBundle();
+        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
         if (typeOwner != null) {
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             if (typePackage != null) {
