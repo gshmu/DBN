@@ -285,6 +285,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
+            getTextField().requestFocus();
             TextFieldPopupProviderForm defaultPopupProvider = getDefaultPopupProvider();
             TextFieldPopupProviderForm popupProvider = getActivePopupProvider();
             if (popupProvider == null || popupProvider != defaultPopupProvider) {
