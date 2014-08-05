@@ -24,7 +24,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, BrowserSelectionChangeListener {
+public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
@@ -45,26 +45,29 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, Browse
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventManager.subscribe(project, BrowserSelectionChangeListener.TOPIC, this);
+        EventManager.subscribe(project, BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
     }
 
     public JComponent getComponent() {
         return mainPanel;
     }
 
-    public void browserSelectionChanged() {
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        if (browserManager.getShowObjectProperties().value()) {
-            DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
-            if (activeBrowserTree != null) {
-                BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
-                if (treeNode instanceof DBObject) {
-                    DBObject object = (DBObject) treeNode;
-                    setObject(object);
+    private BrowserSelectionChangeListener browserSelectionChangeListener = new BrowserSelectionChangeListener() {
+        @Override
+        public void browserSelectionChanged() {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            if (browserManager.getShowObjectProperties().value()) {
+                DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
+                if (activeBrowserTree != null) {
+                    BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
+                    if (treeNode instanceof DBObject) {
+                        DBObject object = (DBObject) treeNode;
+                        setObject(object);
+                    }
                 }
             }
         }
-    }
+    };
 
     public DBObject getObject() {
         return object;
@@ -100,7 +103,7 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, Browse
     }
 
     public void dispose() {
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(browserSelectionChangeListener);
         super.dispose();
         object = null;
         project = null;
