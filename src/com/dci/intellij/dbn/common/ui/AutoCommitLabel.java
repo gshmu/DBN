@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.common.ui;
 
+import javax.swing.JLabel;
+import java.awt.Color;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -8,10 +11,7 @@ import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.JLabel;
-import java.awt.Color;
-
-public class AutoCommitLabel extends JLabel implements ConnectionStatusListener, Disposable {
+public class AutoCommitLabel extends JLabel implements Disposable {
     private interface Colors {
         DBNColor DISCONNECTED = new DBNColor(new Color(0x454545), new Color(0x808080));
         DBNColor AUTO_COMMIT_ON = new DBNColor(new Color(0xFF0000), new Color(0xBC3F3C));
@@ -34,7 +34,7 @@ public class AutoCommitLabel extends JLabel implements ConnectionStatusListener,
             if (!subscribed) {
                 subscribed = true;
                 project = connectionHandler.getProject();
-                EventManager.subscribe(project, ConnectionStatusListener.TOPIC, this);
+                EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
             }
         }
         update();
@@ -65,16 +65,18 @@ public class AutoCommitLabel extends JLabel implements ConnectionStatusListener,
         }.start();
     }
 
-    @Override
-    public void statusChanged(String connectionId) {
-        if (connectionHandler != null && connectionHandler.getId().equals(connectionId)) {
-            update();
+    private ConnectionStatusListener connectionStatusListener = new ConnectionStatusListener() {
+        @Override
+        public void statusChanged(String connectionId) {
+            if (connectionHandler != null && connectionHandler.getId().equals(connectionId)) {
+                update();
+            }
         }
-    }
 
+    };
     @Override
     public void dispose() {
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(connectionStatusListener);
     }
 
 

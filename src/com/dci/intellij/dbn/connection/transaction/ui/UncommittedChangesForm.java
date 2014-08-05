@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
-public class UncommittedChangesForm extends DBNFormImpl implements TransactionListener {
+public class UncommittedChangesForm extends DBNFormImpl {
     private JTable changesTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
@@ -70,7 +70,7 @@ public class UncommittedChangesForm extends DBNFormImpl implements TransactionLi
             rollbackButton.addActionListener(actionListener);
 
         }
-        EventManager.subscribe(project, TransactionListener.TOPIC, this);
+        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
     }
 
     private void createUIComponents() {
@@ -86,23 +86,26 @@ public class UncommittedChangesForm extends DBNFormImpl implements TransactionLi
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(transactionListener);
+        transactionListener = null;
         connectionHandler = null;
     }
 
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    @Override
-    public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
-    }
-
-    @Override
-    public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
-        if (connectionHandler == this.connectionHandler && succeeded) {
-            refreshForm(connectionHandler);
+    private TransactionListener transactionListener = new TransactionListener() {
+        @Override
+        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
         }
-    }
+
+        @Override
+        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+            if (connectionHandler == UncommittedChangesForm.this.connectionHandler && succeeded) {
+                refreshForm(connectionHandler);
+            }
+        }
+    };
 
     private void refreshForm(final ConnectionHandler connectionHandler) {
         new SimpleLaterInvocator() {

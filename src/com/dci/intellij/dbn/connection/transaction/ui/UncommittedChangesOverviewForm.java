@@ -26,7 +26,7 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 
-public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNForm, TransactionListener {
+public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
@@ -51,7 +51,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        EventManager.subscribe(project, TransactionListener.TOPIC, this);
+        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {
@@ -87,7 +87,8 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
 
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(transactionListener);
+        transactionListener = null;
         connectionHandlers = null;
     }
 
@@ -127,14 +128,16 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    @Override
-    public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
-    }
+    private TransactionListener transactionListener = new TransactionListener() {
+        @Override
+        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
+        }
 
-    @Override
-    public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
-        refreshForm();
-    }
+        @Override
+        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+            refreshForm();
+        }
+    };
 
     private void refreshForm() {
         new SimpleLaterInvocator() {

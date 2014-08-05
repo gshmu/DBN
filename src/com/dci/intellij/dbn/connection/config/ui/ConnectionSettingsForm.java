@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
@@ -17,7 +20,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.ui.tabs.TabInfo;
 
-public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings> implements ConnectionPresentationChangeListener, EnvironmentPresentationChangeListener {
+public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
     private JPanel mainPanel;
     private JPanel contentPanel;
     private JPanel headerPanel;
@@ -52,8 +55,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
         headerForm = new DBNHeaderForm();
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        EventManager.subscribe(databaseSettings.getProject(), ConnectionPresentationChangeListener.TOPIC, this);
-        EventManager.subscribe(databaseSettings.getProject(), EnvironmentPresentationChangeListener.TOPIC, this);
+        EventManager.subscribe(databaseSettings.getProject(), ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
+        EventManager.subscribe(databaseSettings.getProject(), EnvironmentPresentationChangeListener.TOPIC, environmentPresentationChangeListener);
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();
@@ -71,24 +74,30 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return mainPanel;
     }
 
+    ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
+        @Override
+        public void presentationChanged(String name, Icon icon, Color color, String connectionId, DatabaseType databaseType) {
+            if (getConfiguration().getConnectionId().equals(connectionId)) {
+                if (name != null) headerForm.setTitle(name);
+                if (icon != null) headerForm.setIcon(icon);
+                if (color != null) headerForm.setBackground(color);
+                //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
+            }
+        }
+
+    };
+
+    private EnvironmentPresentationChangeListener environmentPresentationChangeListener = new EnvironmentPresentationChangeListener() {
+        @Override
+        public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
+
+        }
+    };
+
+
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(this);
-    }
-
-    @Override
-    public void presentationChanged(String name, Icon icon, Color color, String connectionId, DatabaseType databaseType) {
-        if (getConfiguration().getConnectionId().equals(connectionId)) {
-            if (name != null) headerForm.setTitle(name);
-            if (icon != null) headerForm.setIcon(icon);
-            if (color != null) headerForm.setBackground(color);
-            //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
-        }
-    }
-
-    @Override
-    public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
-
+        EventManager.unsubscribe(connectionPresentationChangeListener, environmentPresentationChangeListener);
     }
 }

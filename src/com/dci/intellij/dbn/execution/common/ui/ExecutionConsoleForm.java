@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -28,20 +40,8 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
-
-public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm, EnvironmentChangeListener {
+public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
@@ -61,44 +61,45 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm, Enviro
         resultTabs.setPopupGroup(new ExecutionConsolePopupActionGroup(this), "place", false);
         resultTabs.setTabsPosition(JBTabsPosition.bottom);
         resultTabs.setBorder(null);
-        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, this);
+        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
     }
 
     public int getTabCount() {
         return resultTabs.getTabCount();
     }
 
-    @Override
-    public void environmentConfigChanged(String environmentTypeId) {
-        EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-        for (TabInfo tabInfo : resultTabs.getTabs()) {
-            ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
-            if (executionResult != null) {
-                ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-                if (connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
-                    if (visibilitySettings.getExecutionResultTabs().value()){
-                        tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
-                    } else {
-                        tabInfo.setTabColor(null);
+    private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
+        @Override
+        public void environmentConfigChanged(String environmentTypeId) {
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            for (TabInfo tabInfo : resultTabs.getTabs()) {
+                ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
+                if (executionResult != null) {
+                    ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
+                    if (connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
+                        if (visibilitySettings.getExecutionResultTabs().value()){
+                            tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
+                        } else {
+                            tabInfo.setTabColor(null);
+                        }
                     }
                 }
             }
         }
-    }
 
-    @Override
-    public void environmentVisibilitySettingsChanged() {
-        EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-        for (TabInfo tabInfo : resultTabs.getTabs()) {
-            ExecutionResult browserForm = (ExecutionResult) tabInfo.getObject();
-            EnvironmentType environmentType = browserForm.getConnectionHandler().getEnvironmentType();
-            if (visibilitySettings.getExecutionResultTabs().value()){
-                tabInfo.setTabColor(environmentType.getColor());
-            } else {
-                tabInfo.setTabColor(null);
+        @Override
+        public void environmentVisibilitySettingsChanged() {
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            for (TabInfo tabInfo : resultTabs.getTabs()) {
+                ExecutionResult browserForm = (ExecutionResult) tabInfo.getObject();
+                EnvironmentType environmentType = browserForm.getConnectionHandler().getEnvironmentType();
+                if (visibilitySettings.getExecutionResultTabs().value()){
+                    tabInfo.setTabColor(environmentType.getColor());
+                } else {
+                    tabInfo.setTabColor(null);
+                }
             }
-        }
-    }
+        }    };
 
 
     private MouseListener mouseListener = new MouseAdapter() {
@@ -352,7 +353,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm, Enviro
     }
 
     public void dispose() {
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(environmentChangeListener);
         super.dispose();
         project = null;
     }

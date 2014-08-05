@@ -240,7 +240,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
     @Override
     public void dispose() {
-        EventManager.unsubscribe(this);
         super.dispose();
     }
 }
