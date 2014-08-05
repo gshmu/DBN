@@ -85,8 +85,9 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         JTextField textField = getTextField();
 
         List<String> stringValues = new ArrayList<String>();
+        UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
         try {
-            Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
+            Object userValue = userValueHolder.getUserValue();
             ArrayValue array = (ArrayValue) userValue;
             stringValues.addAll(array.read());
         } catch (SQLException e) {
@@ -109,6 +110,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, list);
         popupBuilder.setRequestFocus(true);
         popupBuilder.setResizable(true);
+        popupBuilder.setDimensionServiceKey(getProject(), "ArrayEditor." + userValueHolder.getName(), false);
         return popupBuilder.createPopup();
     }
 

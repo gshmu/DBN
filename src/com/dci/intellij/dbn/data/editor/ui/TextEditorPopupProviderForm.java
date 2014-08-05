@@ -60,10 +60,11 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     public JBPopup createPopup() {
         JTextField textField = getTextField();
         String text = "";
+        UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
         if (textField.isEditable()) {
             text = textField.getText();
         } else {
-            Object userValue = getEditorComponent().getUserValueHolder().getUserValue();
+            Object userValue = userValueHolder.getUserValue();
             if (userValue instanceof String) {
                 text = (String) userValue;
             } else if (userValue instanceof LargeObjectValue) {
@@ -88,6 +89,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, editorTextArea);
         popupBuilder.setRequestFocus(true);
         popupBuilder.setResizable(true);
+        popupBuilder.setDimensionServiceKey(getProject(), "TextEditor." + userValueHolder.getName(), false);
         return popupBuilder.createPopup();
     }
 
