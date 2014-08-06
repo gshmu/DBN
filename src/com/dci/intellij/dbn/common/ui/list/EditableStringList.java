@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +19,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -65,6 +68,8 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 append((String) value, attributes);
             }
         });
+
+        addKeyListener(keyListener);
     }
 
     @Override
@@ -79,12 +84,44 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
         component.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                editor.stopCellEditing();
+                if (e.getOppositeComponent() != EditableStringList.this) {
+                    editor.stopCellEditing();
+                }
             }
         });
 
+        component.addKeyListener(keyListener);
         return component;
     }
+
+    private KeyAdapter keyListener = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (!e.isConsumed()) {
+                int selectedRow = getSelectedRow();
+                int keyCode = e.getKeyCode();
+                if (keyCode == KeyEvent.VK_DOWN) {
+                    if (selectedRow == getModel().getSize() - 1) {
+                        e.consume();
+                        insertRow();
+                    }
+                } else if (keyCode == KeyEvent.VK_ENTER) {
+                    e.consume();
+                    insertRow();
+                } else if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
+                    Object source = e.getSource();
+                    String value = source == EditableStringList.this ?
+                            (String) getModel().getValueAt(selectedRow, 0) :
+                            ((JTextField) source).getText();
+
+                    if (StringUtil.isEmpty(value)) {
+                        e.consume();
+                        removeRow();
+                    }
+                }
+            }
+        }
+    };
 
     @Override
     public Component getEditorComponent() {
