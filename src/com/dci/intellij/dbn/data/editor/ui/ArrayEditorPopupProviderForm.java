@@ -217,10 +217,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            JTextField textField = getTextField();
-            getEditorComponent().getUserValueHolder().updateUserValue(null, false);
-            getEditorComponent().setEditable(true);
-            textField.setText("");
+            TextFieldWithPopup editorComponent = getEditorComponent();
+            editorComponent.getUserValueHolder().updateUserValue(new ArrayList<String>(), false);
             hidePopup();
         }
     }

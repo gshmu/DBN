@@ -105,7 +105,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                         e.consume();
                         insertRow();
                     }
-                } else if (keyCode == KeyEvent.VK_ENTER) {
+                } else if (keyCode == KeyEvent.VK_ENTER && e.getModifiers() == 0) {
                     e.consume();
                     insertRow();
                 } else if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
