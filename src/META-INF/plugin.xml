@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3159</version>
+    <version>3.0.3163</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/v1/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -30,6 +30,7 @@
             <li><b>3.0.NEXT</b>
              <ul>
                 - Configurable "tracking" columns (display text attributes, visibility, editable)<br>
+                - Datagrid sorting settings (nulls first/last, max number of sorting columns)<br>
                 - Postgres table editor (support for Array editing)<br>
                 - Oracle SQL (support PIVOT clause)<br>
                 - Bug fixes and performance improvements<br>
