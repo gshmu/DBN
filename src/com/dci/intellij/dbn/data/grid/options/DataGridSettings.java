@@ -9,10 +9,12 @@ import com.intellij.openapi.project.Project;
 
 public class DataGridSettings extends CompositeProjectConfiguration<DataGridSettingsForm> {
     private DataGridTrackingColumnSettings trackingColumnSettings;
+    private DataGridSortingSettings sortingSettings;
 
     public DataGridSettings(Project project) {
         super(project);
         trackingColumnSettings = new DataGridTrackingColumnSettings(project);
+        sortingSettings = new DataGridSortingSettings(project);
     }
 
     public static DataGridSettings getInstance(Project project) {
@@ -42,6 +44,10 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
        return trackingColumnSettings;
     }
 
+    public DataGridSortingSettings getSortingSettings() {
+        return sortingSettings;
+    }
+
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
@@ -56,6 +62,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
 
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
-                trackingColumnSettings};
+                trackingColumnSettings,
+                sortingSettings};
     }
 }
