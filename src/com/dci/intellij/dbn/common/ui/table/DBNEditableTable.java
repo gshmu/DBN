@@ -80,13 +80,13 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<
         final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(new EmptyBorder(0,3,0,0));
 
+        selectCell(rowIndex, columnIndex);
         new SimpleLaterInvocator() {
             public void execute() {
-                textField.selectAll();
                 textField.grabFocus();
+                textField.selectAll();
             }
         }.start();
-        selectCell(rowIndex, columnIndex);
         return textField;
     }
 
