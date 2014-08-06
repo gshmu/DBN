@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.data.find;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.list.ReversedList;
-import com.dci.intellij.dbn.common.ui.ListUtil;
-import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.intellij.openapi.Disposable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.list.ReversedList;
+import com.dci.intellij.dbn.common.ui.ListUtil;
+import com.dci.intellij.dbn.data.model.DataModelCell;
+import com.intellij.openapi.Disposable;
 
 public class DataSearchResult implements Disposable {
     private Set<DataSearchResultListener> listeners = new HashSet<DataSearchResultListener>();

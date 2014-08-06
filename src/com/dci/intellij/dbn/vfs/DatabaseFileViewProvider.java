@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -9,7 +11,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
-import org.jetbrains.annotations.NotNull;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public DatabaseFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import com.dci.intellij.dbn.common.Icons;
 

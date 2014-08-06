@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.debugger;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.SourceCodeFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
-import org.jetbrains.annotations.Nullable;
 
 public class DBProgramDebugUtil {
 

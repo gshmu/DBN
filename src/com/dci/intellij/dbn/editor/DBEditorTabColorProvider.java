@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor;
 
+import java.awt.Color;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -12,8 +14,6 @@ import com.dci.intellij.dbn.vfs.SQLConsoleFile;
 import com.intellij.openapi.fileEditor.impl.EditorTabColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import java.awt.Color;
 
 public class DBEditorTabColorProvider implements EditorTabColorProvider{
 

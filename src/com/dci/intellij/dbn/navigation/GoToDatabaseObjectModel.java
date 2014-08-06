@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.navigation;
 
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -18,14 +26,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class GoToDatabaseObjectModel implements ChooseByNameModel {
     private Project project;

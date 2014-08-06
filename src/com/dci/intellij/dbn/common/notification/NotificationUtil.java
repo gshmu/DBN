@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.common.notification;
 
+import javax.swing.event.HyperlinkEvent;
+import java.text.MessageFormat;
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.event.HyperlinkEvent;
-import java.text.MessageFormat;
 
 public class NotificationUtil {
 

@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
@@ -17,13 +24,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class DatabaseContentFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
     protected DatabaseEditableObjectFile databaseFile;

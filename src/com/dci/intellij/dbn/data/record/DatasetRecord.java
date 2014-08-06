@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.data.record;
 
 
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.Disposable;
-import gnu.trove.THashMap;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.openapi.Disposable;
+import gnu.trove.THashMap;
 
 public class DatasetRecord implements Disposable {
     private ResultSet resultSet;

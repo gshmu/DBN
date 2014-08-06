@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.data.export;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import java.io.File;
 import org.jdom.Element;
 
-import java.io.File;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 
 public class DataExportInstructions extends SettingsUtil implements PersistentStateElement<Element>, Cloneable {
     private boolean createHeader = true;

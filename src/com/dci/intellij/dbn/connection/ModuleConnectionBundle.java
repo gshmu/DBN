@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.intellij.openapi.module.Module;
@@ -9,12 +15,6 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class ModuleConnectionBundle extends ConnectionBundle implements ModuleComponent, Configurable, JDOMExternalizable {
 

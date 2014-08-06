@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object;
 
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public interface DBConstraint extends DBSchemaObject {
     int DEFAULT = 0;

@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.generic.GenericInterfaceProvider;
 import com.dci.intellij.dbn.database.mysql.MySqlInterfaceProvider;
 import com.dci.intellij.dbn.database.oracle.OracleInterfaceProvider;
 import com.dci.intellij.dbn.database.postgres.PostgresInterfaceProvider;
-
-import java.sql.SQLException;
 
 public class DatabaseInterfaceProviderFactory {
     // fixme replace with generic data dictionary

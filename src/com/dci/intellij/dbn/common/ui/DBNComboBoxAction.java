@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ex.ComboBoxAction;
 
 public abstract class DBNComboBoxAction extends ComboBoxAction {
     public JComponent createCustomComponent(Presentation presentation) {

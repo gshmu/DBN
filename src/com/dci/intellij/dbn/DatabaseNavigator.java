@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;

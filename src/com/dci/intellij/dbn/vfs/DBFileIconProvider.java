@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.intellij.ide.FileIconProvider;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import com.intellij.ide.FileIconProvider;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class DBFileIconProvider implements FileIconProvider{
     @Override

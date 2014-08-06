@@ -7,6 +7,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
@@ -17,10 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.list.EditableStringList;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -59,8 +63,15 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         list = new ArrayEditorList();
         listScrollPane.setViewportView(list);
         listScrollPane.getViewport().setBackground(list.getBackground());
+        listScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
         list.initTableGutter();
         list.addKeyListener(this);
+        Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
+        if (bgColor != null) {
+            list.setBackground(bgColor);
+            listScrollPane.getViewport().setBackground(bgColor);
+        }
+
         mainPanel.addKeyListener(this);
     }
 

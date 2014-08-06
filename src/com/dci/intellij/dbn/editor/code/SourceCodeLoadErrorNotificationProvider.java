@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.editor.code;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -13,8 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SourceCodeLoadErrorNotificationProvider extends EditorNotifications.Provider<SourceCodeLoadErrorNotificationPanel> {
     private static final Key<SourceCodeLoadErrorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeLoadErrorNotificationPanel");

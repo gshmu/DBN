@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.common.util;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.intellij.openapi.ui.Messages;
-import org.jetbrains.annotations.Nullable;
 
 public class MessageUtil {
     public static void showErrorDialog(MessageBundle messages, String title) {

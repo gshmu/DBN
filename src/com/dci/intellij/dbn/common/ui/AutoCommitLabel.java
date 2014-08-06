@@ -10,12 +10,13 @@ import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.JBColor;
 
 public class AutoCommitLabel extends JLabel implements Disposable {
     private interface Colors {
-        DBNColor DISCONNECTED = new DBNColor(new Color(0x454545), new Color(0x808080));
-        DBNColor AUTO_COMMIT_ON = new DBNColor(new Color(0xFF0000), new Color(0xBC3F3C));
-        DBNColor AUTO_COMMIT_OFF = new DBNColor(new Color(0x009600), new Color(0x629755));
+        Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
+        Color AUTO_COMMIT_ON = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
+        Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
     private Project project;
     private ConnectionHandler connectionHandler;

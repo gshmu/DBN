@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
@@ -14,9 +16,12 @@ import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.TextAttributesUtil;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -33,6 +38,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel rightActionPanel;
     private JPanel leftActionPanel;
     private JTextArea editorTextArea;
+    private JScrollPane textEditorScrollPane;
     private boolean changed;
 
     public TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
@@ -40,6 +46,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         editorTextArea.setBorder(new EmptyBorder(4, 4, 4, 4));
         editorTextArea.addKeyListener(this);
         editorTextArea.setWrapStyleWord(true);
+        Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA).getBgColor();
+        if (bgColor != null) {
+            editorTextArea.setBackground(bgColor);
+        }
+
+        textEditorScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
 
         ActionToolbar leftActionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true);

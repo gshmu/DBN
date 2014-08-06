@@ -2,9 +2,6 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -15,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.intellij.ide.DataManager;
@@ -30,11 +28,8 @@ import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.JBColor;
 
 public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm {
-    public static final Border EMPTY_BORDER = new EmptyBorder(2, 2, 2, 2);
-
     protected TextFieldWithPopup editorComponent;
     private boolean isAutoPopup;
     private boolean isEnabled = true;
@@ -137,7 +132,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                         Disposer.register(TextFieldPopupProviderForm.this, popup);
 
                         JPanel panel = (JPanel) popup.getContent();
-                        panel.setBorder(new LineBorder(JBColor.DARK_GRAY));
+                        panel.setBorder(Borders.COMPONENT_LINE_BORDER);
 
                         editorComponent.clearSelection();
 

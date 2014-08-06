@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.ddl.options;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.StringSetting;
 import com.dci.intellij.dbn.ddl.options.ui.DDLFileGeneralSettingsForm;
-import org.jdom.Element;
 
 public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettingsForm> {
     private StringSetting statementPostfix = new StringSetting("statement-postfix", "/");

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import org.jdom.Element;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 
 /**
  * @deprecated
