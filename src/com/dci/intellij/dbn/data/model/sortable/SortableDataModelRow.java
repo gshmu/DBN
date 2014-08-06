@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.data.model.basic.BasicDataModelRow;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
-import org.jetbrains.annotations.NotNull;
 
 public class SortableDataModelRow<T extends SortableDataModelCell> extends BasicDataModelRow<T> implements Comparable {
 
@@ -36,9 +37,9 @@ public class SortableDataModelRow<T extends SortableDataModelCell> extends Basic
 
             int result =
                     remote == null && local == null ? 0 :
-                            local == null ? -compareIndex :
-                                    remote == null ? columnIndex :
-                                            compareIndex * local.compareTo(remote);
+                    local == null ? -compareIndex :
+                    remote == null ? columnIndex :
+                    compareIndex * local.compareTo(remote);
 
             if (result != 0) return result;
         }

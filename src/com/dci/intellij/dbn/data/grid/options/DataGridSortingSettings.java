@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 
 public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortingSettingsForm> {
     private boolean nullsFirst = true;
-    private int columnSortingLimit = 4;
+    private int maxSortingColumns = 4;
 
     public DataGridSortingSettings(Project project) {
         super(project);
@@ -26,12 +26,12 @@ public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortin
         return nullsFirst;
     }
 
-    public int getColumnSortingLimit() {
-        return columnSortingLimit;
+    public int getMaxSortingColumns() {
+        return maxSortingColumns;
     }
 
-    public void setColumnSortingLimit(int columnSortingLimit) {
-        this.columnSortingLimit = columnSortingLimit;
+    public void setMaxSortingColumns(int maxSortingColumns) {
+        this.maxSortingColumns = maxSortingColumns;
     }
 
     /****************************************************
@@ -48,12 +48,12 @@ public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortin
 
     public void readConfiguration(Element element) {
         nullsFirst = SettingsUtil.getBoolean(element, "nulls-first", nullsFirst);
-        columnSortingLimit = SettingsUtil.getInteger(element, "column-sorting-limit", columnSortingLimit);
+        maxSortingColumns = SettingsUtil.getInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "nulls-first", nullsFirst);
-        SettingsUtil.setInteger(element, "column-sorting-limit", columnSortingLimit);
+        SettingsUtil.setInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
 }

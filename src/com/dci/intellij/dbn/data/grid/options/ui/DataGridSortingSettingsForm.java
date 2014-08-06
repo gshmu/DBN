@@ -31,12 +31,14 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
     public void applyChanges() throws ConfigurationException {
         DataGridSortingSettings settings = getConfiguration();
         settings.setNullsFirst(nullsFirstRadioButton.isSelected());
-        ConfigurationEditorUtil.validateIntegerInputValue(maxSortingColumnsTextField, "Max sorting columns", 0, 100, "Use value 0 for unlimited number of sorting columns");
+        int maxSortingColumns = ConfigurationEditorUtil.validateIntegerInputValue(maxSortingColumnsTextField, "Max sorting columns", 0, 100, "Use value 0 for unlimited number of sorting columns");
+        settings.setMaxSortingColumns(maxSortingColumns);
     }
 
     public void resetChanges() {
         DataGridSortingSettings settings = getConfiguration();
         nullsFirstRadioButton.setSelected(settings.isNullsFirst());
-        maxSortingColumnsTextField.setText(Integer.toString(settings.getColumnSortingLimit()));
+        nullsLastRadioButton.setSelected(!settings.isNullsFirst());
+        maxSortingColumnsTextField.setText(Integer.toString(settings.getMaxSortingColumns()));
     }
 }
