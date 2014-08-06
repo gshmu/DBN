@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.common.DBObject;
-
-import java.util.List;
 
 public interface DBColumn extends DBObject {
     DBDataType getDataType();

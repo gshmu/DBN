@@ -1,15 +1,20 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
+import com.dci.intellij.dbn.common.Icons;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.project.Project;
 
 @State(
     name = "DBNavigator.Project.ConnectionManager",

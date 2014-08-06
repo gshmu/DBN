@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -12,18 +24,6 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.ui.PlatformColors;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 public class DDLMappedNotificationPanel extends JPanel{
     protected final JLabel label = new JLabel();

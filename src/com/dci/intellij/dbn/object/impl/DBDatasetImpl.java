@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
@@ -21,11 +26,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBDataset {
     protected DBObjectList<DBColumn> columns;

@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.common.options;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 public class ConfigurationUtil extends SettingsUtil{
 

@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.debugger;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
-import org.jetbrains.annotations.NotNull;
 
 public class DBProgramDebugProcessStarter extends XDebugProcessStarter {
     private ConnectionHandler connectionHandler;

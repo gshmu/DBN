@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.ddl;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

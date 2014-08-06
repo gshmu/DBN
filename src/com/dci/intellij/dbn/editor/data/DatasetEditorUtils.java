@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.object.DBColumn;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.object.DBColumn;
 
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(DBColumn column) {

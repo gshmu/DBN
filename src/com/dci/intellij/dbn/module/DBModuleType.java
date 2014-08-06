@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.module;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBModuleType<T extends DBModuleBuilder> extends ModuleType<T> {
     public static final DBModuleType MODULE_TYPE = new DBModuleType("DBNavigator.ModuleType.DatabaseModule");

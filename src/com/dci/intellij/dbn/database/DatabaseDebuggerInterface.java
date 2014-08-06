@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
@@ -8,9 +11,6 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionStatusInfo;
 import com.dci.intellij.dbn.database.common.debug.VariableInfo;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public interface DatabaseDebuggerInterface extends DatabaseInterface{
 

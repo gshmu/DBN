@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;

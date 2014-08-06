@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.error;
 
+import java.awt.Component;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.jetbrains.annotations.NonNls;
+
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -18,19 +30,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
-
-import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 

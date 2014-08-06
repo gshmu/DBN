@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.data.sorting;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import org.jdom.Element;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 
 public class SortingState{
     private int maxColumns = 3;     

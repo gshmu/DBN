@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WordTokenizer {
     List<String> tokens = new ArrayList<String>();

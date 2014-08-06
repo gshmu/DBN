@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.console;
 
+import org.jdom.CDATA;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -11,9 +15,6 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.CDATA;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class SQLConsoleEditorState extends BasicTextEditorState {
     private String content = "";
