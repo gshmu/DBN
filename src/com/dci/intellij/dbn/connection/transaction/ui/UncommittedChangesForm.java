@@ -1,13 +1,11 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,7 +18,6 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 
 public class UncommittedChangesForm extends DBNFormImpl {
     private JTable changesTable;
@@ -37,17 +34,7 @@ public class UncommittedChangesForm extends DBNFormImpl {
         this.connectionHandler = connectionHandler;
         Project project = connectionHandler.getProject();
 
-        // HEADER
-        String headerTitle = connectionHandler.getName();
-        Icon headerIcon = connectionHandler.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(connectionHandler.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = connectionHandler.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());

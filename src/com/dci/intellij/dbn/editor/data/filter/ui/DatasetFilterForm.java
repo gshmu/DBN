@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -17,18 +27,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGroup> implements ListSelectionListener {
     private Map<String, ConfigurationEditorForm> filterDetailPanels = new HashMap<String, ConfigurationEditorForm>();
@@ -49,16 +47,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         this.dataset = dataset;
         Project project = dataset.getProject();
 
-        String headerTitle = dataset.getQualifiedName();
-        Icon headerIcon = dataset.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = dataset.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         DatasetFilterList filters = getFilterList();

@@ -1,12 +1,10 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +28,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
 
 public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
     private JPanel actionsPanel;
@@ -48,16 +45,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
         DBDataset dataset = row.getModel().getDataset();
         Project project = dataset.getProject();
 
-        String headerTitle = dataset.getQualifiedName();
-        Icon headerIcon = dataset.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = dataset.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(

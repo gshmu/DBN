@@ -1,13 +1,11 @@
 package com.dci.intellij.dbn.ddl.ui;
 
 import javax.swing.DefaultListModel;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -16,7 +14,6 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.UIUtil;
 
 public class SelectDDLFileForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -27,16 +24,7 @@ public class SelectDDLFileForm extends DBNFormImpl implements DBNForm {
 
     public SelectDDLFileForm(DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
         Project project = object.getProject();
-        String headerTitle = object.getSchema().getName() + "." + object.getName();
-        Icon headerIcon = object.getOriginalIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = object.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(object);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         hintTextArea.setText(hint);
