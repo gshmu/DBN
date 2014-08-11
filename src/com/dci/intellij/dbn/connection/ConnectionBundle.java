@@ -33,7 +33,7 @@ public abstract class ConnectionBundle
 
     public static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
         public boolean accepts(ConnectionHandler connectionHandler) {
-            return connectionHandler.isActive();
+            return connectionHandler != null && connectionHandler.isActive();
         }
     };
 
