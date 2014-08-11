@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object;
 
-import com.dci.intellij.dbn.object.common.DBObject;
-
 import java.util.List;
+
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public interface DBNestedTable extends DBObject {
     List<DBNestedTableColumn> getColumns();

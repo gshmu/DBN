@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +33,7 @@ public abstract class ConnectionBundle
 
     public static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
         public boolean accepts(ConnectionHandler connectionHandler) {
-            return connectionHandler.isActive();
+            return connectionHandler != null && connectionHandler.isActive();
         }
     };
 

@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModelCell;
-import org.jetbrains.annotations.NotNull;
 
 public class SortableDataModelCell extends BasicDataModelCell implements Comparable {
 
@@ -14,10 +15,11 @@ public class SortableDataModelCell extends BasicDataModelCell implements Compara
         DataModelCell cell = (DataModelCell) o;
         Comparable local = (Comparable) getUserValue();
         Comparable remote = (Comparable) cell.getUserValue();
+        boolean nullsFirst = getModel().isSortingNullsFirst();
 
         if (local == null && remote == null) return 0;
-        if (local == null) return -1;
-        if (remote == null) return 1;
+        if (local == null) return nullsFirst ? -1 : 1;
+        if (remote == null) return nullsFirst ? 1 : -1;
         // local class may differ from remote class for
         // columns with data conversion error
         if (local.getClass().equals(remote.getClass())) {
@@ -27,6 +29,10 @@ public class SortableDataModelCell extends BasicDataModelCell implements Compara
             return local.getClass().equals(typeClass) ? 1 :
                    remote.getClass().equals(typeClass) ? -1 : 0;
         }
+    }
+
+    private SortableDataModel getModel() {
+        return (SortableDataModel) getRow().getModel();
     }
 
 }

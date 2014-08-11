@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -8,7 +13,7 @@ import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.ide.highlighter.HighlighterFactory;
@@ -20,11 +25,6 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
 
 public class TextEditorForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -79,9 +79,9 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         Object userValue = userValueHolder.getUserValue();
         if (userValue instanceof String) {
             return (String) userValue;
-        } else if (userValue instanceof LazyLoadedValue) {
-            LazyLoadedValue lazyLoadedValue = (LazyLoadedValue) userValue;
-            return lazyLoadedValue.loadValue();
+        } else if (userValue instanceof LargeObjectValue) {
+            LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
+            return largeObjectValue.read();
         }
         return null;
     }

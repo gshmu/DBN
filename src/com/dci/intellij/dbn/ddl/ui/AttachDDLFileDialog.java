@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

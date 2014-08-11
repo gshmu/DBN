@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         isHidden = "Y".equals(resultSet.getString("IS_HIDDEN"));
         position = resultSet.getInt("POSITION");
 
-        dataType = DBDataType.get(this, resultSet);
+        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
     }
 
     protected void initLists() {

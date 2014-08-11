@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.database;
 
-import com.dci.intellij.dbn.editor.code.SourceCodeContent;
-import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
-
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import com.dci.intellij.dbn.editor.code.SourceCodeContent;
+import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 
 public interface DatabaseDDLInterface extends DatabaseInterface{
     void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName);

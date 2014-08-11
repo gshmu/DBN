@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.generator;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.object.common.DBObject;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public class AliasBundle {
     private Map<DBObject, String> aliases = new HashMap<DBObject, String>();

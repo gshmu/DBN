@@ -1,20 +1,21 @@
 package com.dci.intellij.dbn.common.environment;
 
+import java.awt.Color;
+import java.util.UUID;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import org.jdom.Element;
-
-import java.awt.Color;
-import java.util.UUID;
 
 public class EnvironmentType implements Cloneable, PersistentConfiguration {
-    private interface EnvironmentColor {
+    public interface EnvironmentColor {
         DBNColor DEVELOPMENT = new DBNColor(new Color(-2430209), new Color(0x445F80));
         DBNColor INTEGRATION = new DBNColor(new Color(-2621494), new Color(0x466646));
         DBNColor PRODUCTION = new DBNColor(new Color(-11574), new Color(0x634544));
         DBNColor OTHER = new DBNColor(new Color(-1576), new Color(0x5C5B41));
+        DBNColor NONE = new DBNColor(new Color(0xffffff), Color.DARK_GRAY);
     }
 
     public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null);

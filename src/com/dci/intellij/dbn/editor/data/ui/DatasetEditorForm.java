@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +53,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
         try {
             datasetEditorTable = new DatasetEditorTable(datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
-            datasetTableScrollPane.setRowHeaderView(datasetEditorTable.getTableGutter());
+            datasetEditorTable.initTableGutter();
 
 
             JPanel panel = new JPanel();
@@ -111,7 +114,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
                 public void execute() {
                     if (!isDisposed()) {
                         datasetTableScrollPane.setViewportView(datasetEditorTable);
-                        datasetTableScrollPane.setRowHeaderView(datasetEditorTable.getTableGutter());
+                        datasetEditorTable.initTableGutter();
                         datasetEditorTable.updateBackground(false);
 
                         Disposer.dispose(oldEditorTable);
@@ -195,6 +198,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
     public void hideSearchHeader() {
         dataSearchComponent.resetFindModel();
         searchPanel.setVisible(false);
+        datasetEditorTable.revalidate();
         datasetEditorTable.repaint();
         datasetEditorTable.requestFocus();
     }

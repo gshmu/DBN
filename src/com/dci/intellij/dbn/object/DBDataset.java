@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object;
 
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-
 import java.util.List;
+
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public interface DBDataset extends DBSchemaObject {
     List<DBColumn> getColumns();

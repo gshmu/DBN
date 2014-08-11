@@ -5,7 +5,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -16,20 +20,18 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBViewport;
 import com.intellij.util.ui.UIUtil;
 
 public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements EditorColorsListener, Disposable {
     private BasicTableCellRenderer cellRenderer;
-    private BasicTableGutter tableGutter;
     private JBPopup valuePopup;
     private boolean isLoading;
     private RegionalSettings regionalSettings;
@@ -46,6 +48,10 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         EditorColorsManager.getInstance().addEditorColorsListener(this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+    }
+
+    protected BasicTableGutter createTableGutter() {
+        return new BasicTableGutter(this);
     }
 
     public RegionalSettings getRegionalSettings() {
@@ -76,6 +82,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
                             attributes.getLoadingData(false).getBgColor() :
                             attributes.getPlainData(false, false).getBgColor();
                     viewport.setBackground(background);
+
+                    viewport.revalidate();
                     viewport.repaint();
                 }
             }.start();
@@ -84,18 +92,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
 
     public boolean isLoading() {
         return isLoading;
-    }
-
-    public BasicTableGutter createTableGutter() {
-        return new BasicTableGutter(this);
-    }
-
-    public BasicTableGutter getTableGutter() {
-        if (tableGutter == null) {
-            tableGutter = createTableGutter();
-            Disposer.register(this, tableGutter);
-        }
-        return tableGutter;
     }
 
     public void selectRow(int index) {
@@ -153,6 +149,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
     @Override
     public void globalSchemeChange(EditorColorsScheme scheme) {
         cellRenderer.getAttributes().load();
+
+        revalidate();
         repaint();
     }
 
@@ -214,7 +212,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         DataModelCell cell = (DataModelCell) getValueAt(rowIndex, columnIndex);
         if (cell != null) {
             Object value = cell.getUserValue();
-            if (value instanceof LazyLoadedValue) {
+            if (value instanceof LargeObjectValue) {
                 return false;
             }
             if (value != null) {
@@ -225,11 +223,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
             }
         }
         return true;
-    }
-
-    @Override
-    public void repaint() {
-        super.repaint();
     }
 
     public void dispose() {

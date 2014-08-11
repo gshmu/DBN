@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         name = resultSet.getString("ARGUMENT_NAME");
         if (name == null) name = position == 0 ? "return" : "[unnamed]";
 
-        dataType = DBDataType.get(this, resultSet);
+        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
         if (getParentObject() instanceof DBFunction) {
             position++;
         }

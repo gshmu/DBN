@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.navigation;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.dci.intellij.dbn.language.common.DBLanguageFile;
 import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiDirectory;
@@ -10,9 +13,6 @@ import com.intellij.ide.navigationToolbar.NavBarModelExtension;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-
-import java.util.Collection;
-import java.util.Collections;
 
 public class NavigationBarExtension implements NavBarModelExtension {
     public String getPresentableText(Object object) {

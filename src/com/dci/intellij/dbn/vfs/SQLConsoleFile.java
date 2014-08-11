@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,13 +1,25 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.InsetsUIResource;
 import javax.swing.plaf.UIResource;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -107,14 +119,18 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 @Override
                 public void focusGained(FocusEvent e) {
                     isActive = true;
-                    updateUI();
+
+                    revalidate();
+                    repaint();
                 }
 
                 @Override
                 public void focusLost(FocusEvent e) {
                     if (!isShowingPopup) {
                         isActive = false;
-                        updateUI();
+
+                        revalidate();
+                        repaint();
                     }
                 }
             });
@@ -182,7 +198,9 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (!isShowingPopup && !isComboBox) {
                 innerPanel.setBorder(focusBorder);
                 innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
-                updateUI();
+
+                revalidate();
+                repaint();
             }
         }
 
@@ -192,7 +210,9 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 innerPanel.setBorder(defaultBorder);
                 //innerPanel.setBorder(new EmptyBorder(21 - icon.getIconHeight(), 6, 21 - icon.getIconHeight(), 6));
                 innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
-                updateUI();
+
+                revalidate();
+                repaint();
             }
         }
 
@@ -233,7 +253,9 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                         innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
                         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        updateUI();
+
+                        revalidate();
+                        repaint();
                     }
                 }, 10, new Condition<AnAction>() {
                     @Override

@@ -1,5 +1,24 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
@@ -15,28 +34,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -80,16 +77,7 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         //objectPanel.add(new ObjectDetailsPanel(method).getComponent(), BorderLayout.NORTH);
 
         if (showHeader) {
-            String headerTitle = method.getQualifiedName();
-            Icon headerIcon = method.getIcon();
-            Color headerBackground = UIUtil.getPanelBackground();
-            if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-                headerBackground = method.getEnvironmentType().getColor();
-            }
-            DBNHeaderForm headerForm = new DBNHeaderForm(
-                    headerTitle,
-                    headerIcon,
-                    headerBackground);
+            DBNHeaderForm headerForm = new DBNHeaderForm(method);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         headerPanel.setVisible(showHeader);

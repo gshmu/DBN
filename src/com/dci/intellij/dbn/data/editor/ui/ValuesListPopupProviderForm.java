@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.ui.DBNColor;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.PopupChooserBuilder;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -27,9 +16,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.ui.JBColor;
 
 public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
-    public static final DBNColor BACKGROUND_COLOR = new DBNColor(
+    public static final Color BACKGROUND_COLOR = new JBColor(
             new Color(0xEBF4FE),
             new Color(0x3c3f41));
     private ListPopupValuesProvider valuesProvider;

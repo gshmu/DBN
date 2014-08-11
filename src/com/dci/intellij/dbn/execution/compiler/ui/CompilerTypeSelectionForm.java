@@ -1,20 +1,17 @@
 package com.dci.intellij.dbn.execution.compiler.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Color;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompilerTypeSelectionForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -26,16 +23,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl implements DBNForm {
         if (object == null) {
             headerPanel.setVisible(false);
         } else {
-            String headerTitle = object.getQualifiedName();
-            Icon headerIcon = object.getIcon();
-            Color headerBackground = UIUtil.getPanelBackground();
-            if (getEnvironmentSettings(object.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-                headerBackground = object.getEnvironmentType().getColor();
-            }
-            DBNHeaderForm headerForm = new DBNHeaderForm(
-                    headerTitle,
-                    headerIcon,
-                    headerBackground);
+            DBNHeaderForm headerForm = new DBNHeaderForm(object);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         hintTextArea.setFont(mainPanel.getFont());

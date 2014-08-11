@@ -1,6 +1,10 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import javax.swing.table.TableCellEditor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -14,11 +18,6 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-
-import javax.swing.table.TableCellEditor;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DatasetTableCellEditorFactory implements Disposable {
     private Map<ColumnInfo, TableCellEditor> cache = new HashMap<ColumnInfo, TableCellEditor>();
@@ -49,6 +48,11 @@ public class DatasetTableCellEditorFactory implements Disposable {
             tableCellEditor.getEditorComponent().createCalendarPopup(false);
             return tableCellEditor;
         }
+        else if (genericDataType == GenericDataType.ARRAY) {
+            DatasetTableCellEditorWithPopup tableCellEditor = new DatasetTableCellEditorWithPopup(table);
+            tableCellEditor.getEditorComponent().createArrayEditorPopup(false);
+            return tableCellEditor;
+        }
         else if (genericDataType == GenericDataType.LITERAL) {
             long dataLength = dataType.getLength();
 
@@ -56,7 +60,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
             if (dataLength < dataEditorSettings.getQualifiedEditorSettings().getTextLengthThreshold()) {
                 DatasetTableCellEditorWithPopup tableCellEditor = new DatasetTableCellEditorWithPopup(table);
 
-                tableCellEditor.getEditorComponent().createTextAreaPopup(true);
+                tableCellEditor.getEditorComponent().createTextEditorPopup(true);
 
                 final DatasetEditorColumnInfo dseColumnInfo = (DatasetEditorColumnInfo) columnInfo;
                 DBColumn column = dseColumnInfo.getColumn();

@@ -1,7 +1,14 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
@@ -27,7 +34,7 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.ColorIcon;
 
-public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings> implements EnvironmentPresentationChangeListener {
+public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JComboBox encodingComboBox;
     private JCheckBox autoCommitCheckBox;
     private JPanel propertiesPanel;
@@ -76,7 +83,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
         });
 
-        EventManager.subscribe(configuration.getProject(), EnvironmentPresentationChangeListener.TOPIC, this);
+        EventManager.subscribe(configuration.getProject(), EnvironmentPresentationChangeListener.TOPIC, presentationChangeListener);
     }
 
     public void notifyPresentationChanges() {
@@ -174,29 +181,31 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));
     }
 
-    @Override
-    public void dispose() {
-        EventManager.unsubscribe(this);
-        super.dispose();
-    }
-
-    @Override
-    public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
-        EnvironmentType selectedItem = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
-        String selectedId = selectedItem == null ? EnvironmentType.DEFAULT.getId() : selectedItem.getId();
-        selectedItem = environmentTypes.getEnvironmentType(selectedId);
-
-        DefaultComboBoxModel model = createEnvironmentTypesModel(environmentTypes);
-        environmentTypesComboBox.setModel(model);
-        environmentTypesComboBox.setSelectedItem(selectedItem);
-        notifyPresentationChanges();
-    }
-
     private DefaultComboBoxModel createEnvironmentTypesModel(EnvironmentTypeBundle environmentTypes) {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         model.addElement(EnvironmentType.DEFAULT);
         ComboBoxUtil.addItems(model, environmentTypes.clone());
         return model;
+    }
+
+    private EnvironmentPresentationChangeListener presentationChangeListener = new EnvironmentPresentationChangeListener() {
+        @Override
+        public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
+            EnvironmentType selectedItem = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
+            String selectedId = selectedItem == null ? EnvironmentType.DEFAULT.getId() : selectedItem.getId();
+            selectedItem = environmentTypes.getEnvironmentType(selectedId);
+
+            DefaultComboBoxModel model = createEnvironmentTypesModel(environmentTypes);
+            environmentTypesComboBox.setModel(model);
+            environmentTypesComboBox.setSelectedItem(selectedItem);
+            notifyPresentationChanges();
+        }
+    };
+
+    @Override
+    public void dispose() {
+        EventManager.unsubscribe(presentationChangeListener);
+        super.dispose();
     }
 
 }

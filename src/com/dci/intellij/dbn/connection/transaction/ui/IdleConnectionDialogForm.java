@@ -1,16 +1,13 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Color;
+
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class IdleConnectionDialogForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -29,17 +26,7 @@ public class IdleConnectionDialogForm extends DBNFormImpl {
         hintTextArea.setText(text);
 
 
-        // HEADER
-        String headerTitle = connectionHandler.getName();
-        Icon headerIcon = connectionHandler.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(connectionHandler.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = connectionHandler.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
     }

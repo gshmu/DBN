@@ -1,22 +1,9 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.util.containers.HashSet;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -47,6 +34,24 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
+import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.border.CustomLineBorder;
+import com.intellij.util.containers.HashSet;
+import com.intellij.util.ui.UIUtil;
+
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final Font BOLD = new Font(UIUtil.getMenuFont().getFontName(), Font.BOLD, UIUtil.getMenuFont().getSize());
     private TableCellRenderer CELL_RENDERER = new CalendarTableCellRenderer();
@@ -63,6 +68,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private JTextField timeTextField;
     private JLabel timeLabel;
     private JPanel actionsPanelBottom;
+    private JSeparator headerSeparator;
 
     protected CalendarPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
         super(textField, isAutoPopup);
@@ -72,7 +78,8 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         weeksTable.setDefaultRenderer(Object.class, HEADER_CELL_RENDERER);
         weeksTable.setFocusable(false);
-        calendarPanel.setBorder(UIUtil.getTextFieldBorder());
+        calendarPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
+        headerSeparator.setBorder(new CustomLineBorder(Colors.COMPONENT_BORDER_COLOR, 0,0,1,0));
 
         daysTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         daysTable.setDefaultRenderer(Object.class, CELL_RENDERER);
@@ -150,6 +157,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, daysTable);
         popupBuilder.setRequestFocus(true);
+
         monthYearLabel.setText(tableModel.getCurrentMonthName() + " " + tableModel.getCurrentYear());
 
         timeTextField.setText(getFormatter().formatTime(date));
@@ -481,8 +489,9 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
      *                  TableCellRenderers                *
      ******************************************************/
     private static class CalendarTableCellRenderer extends DefaultTableCellRenderer {
-        static final Border SELECTION_BORDER = new CompoundBorder(new LineBorder(Color.BLACK, 1, false), new EmptyBorder(0, 0, 0, 6));
+        static final Border SELECTION_BORDER = new CompoundBorder(new LineBorder(UIUtil.getLabelForeground(), 1, false), new EmptyBorder(0, 0, 0, 6));
         static final Border EMPTY_BORDER = new EmptyBorder(1, 1, 1, 9);
+        static final Color INACTIVE_DAY_COLOR = new JBColor(new Color(0xC0C0C0), new Color(0x5B5B5B));
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -492,14 +501,12 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             boolean isFromActiveMonth = model.isFromActiveMonth(row, column);
             Color foreground =
                     isInputDate ? UIUtil.getTableForeground() :
-                            isFromActiveMonth ? UIUtil.getTableForeground() : Color.LIGHT_GRAY;
+                            isFromActiveMonth ? UIUtil.getLabelForeground() : INACTIVE_DAY_COLOR;
 
             setForeground(isSelected ? UIUtil.getTableSelectionForeground() : foreground);
             setHorizontalAlignment(RIGHT);
             setBorder(isInputDate && !isSelected ? SELECTION_BORDER : EMPTY_BORDER);
-            setBackground(isSelected ?
-                    table.hasFocus() ?  UIUtil.getListSelectionBackground() : Color.LIGHT_GRAY :
-                    UIUtil.getTableBackground());
+            setBackground(isSelected ? UIUtil.getListSelectionBackground() :  UIUtil.getTableBackground());
             //setBorder(new DottedBorder(Color.BLACK));
             return component;
         }

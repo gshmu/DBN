@@ -1,23 +1,19 @@
 package com.dci.intellij.dbn.debugger.execution.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.DefaultListModel;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesForm extends DBNFormImpl implements DBNForm {
     private JTextArea hintTextArea;
@@ -45,17 +41,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl implements DBNForm
         hintTextArea.setFont(mainPanel.getFont());
 
 
-        Project project = selectedObject.getProject();
-        String headerTitle = selectedObject.getQualifiedName();
-        Icon headerIcon = selectedObject.getOriginalIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = selectedObject.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(selectedObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 

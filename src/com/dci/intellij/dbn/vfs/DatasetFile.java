@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBDataset;
+import java.io.IOException;
+import java.io.OutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.DBDataset;
 
 public class DatasetFile extends DatabaseContentFile {
     public DatasetFile(DatabaseEditableObjectFile databaseFile, DBContentType contentType) {

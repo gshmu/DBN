@@ -310,8 +310,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
             final DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             final ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
             if (connectionStatus!= null && !connectionStatus.isResolvingIdleStatus()) {
-                final int idleMinutes = connectionHandler.getIdleMinutes();
-                final int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+                int idleMinutes = connectionHandler.getIdleMinutes();
+                int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                 if (idleMinutes > idleMinutesToDisconnect) {
                     if (connectionHandler.hasUncommittedChanges()) {
                         connectionHandler.getConnectionStatus().setResolvingIdleStatus(true);

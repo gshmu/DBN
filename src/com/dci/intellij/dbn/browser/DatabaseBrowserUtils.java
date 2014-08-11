@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.browser;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DatabaseBrowserUtils {
     public static TreePath createTreePath(BrowserTreeNode treeNode) {

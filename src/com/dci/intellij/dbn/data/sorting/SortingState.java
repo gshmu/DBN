@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.data.sorting;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import org.jdom.Element;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 
 public class SortingState{
-    private int maxColumns = 3;     
     private List<SortingInstruction> sortingInstructions = new ArrayList<SortingInstruction>();
 
-    public boolean applySorting(String columnName, SortDirection direction, boolean keepExisting) {
+    public boolean applySorting(String columnName, SortDirection direction, boolean keepExisting, int maxColumns) {
         SortingInstruction instruction = getInstruction(columnName);
         boolean isNewColumn = instruction == null;
         if (isNewColumn) {
@@ -28,6 +27,10 @@ public class SortingState{
 
 
         if (keepExisting) {
+            while (sortingInstructions.size() > maxColumns) {
+                sortingInstructions.remove(sortingInstructions.size()-1);
+            }
+
             if (isNewColumn) {
                 if (sortingInstructions.size()== maxColumns) {
                     sortingInstructions.remove(sortingInstructions.size()-1);
@@ -86,17 +89,6 @@ public class SortingState{
             }
         }
         return null;
-    }
-
-    public int getMaxColumns() {
-        return maxColumns;
-    }
-
-    public void setMaxColumns(int maxColumns) {
-        this.maxColumns = maxColumns;
-        if (sortingInstructions.size() > maxColumns) {
-            sortingInstructions = new ArrayList<SortingInstruction>(sortingInstructions.subList(0, maxColumns));
-        }
     }
 
     public boolean isValid() {

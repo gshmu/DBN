@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.common.option;
 
 
+import java.text.MessageFormat;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-
-import java.text.MessageFormat;
 
 public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
     private String title;

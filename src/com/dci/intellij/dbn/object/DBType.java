@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object;
 
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-
 import java.util.List;
+
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
 
 public interface DBType<P extends DBTypeProcedure, F extends DBTypeFunction> extends DBProgram<P, F> {
     public static final int TYPECODE_TYPE = 0;

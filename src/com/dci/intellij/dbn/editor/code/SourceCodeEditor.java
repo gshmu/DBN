@@ -17,7 +17,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
-public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile> implements ObjectFactoryListener{
+public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile>{
     private DBObjectRef<DBSchemaObject> objectRef;
     private SourceCodeOffsets offsets;
 
@@ -34,7 +34,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile> implem
                         /*"You are not allowed to change the name of the " + object.getTypeName()*/);
             }
         }
-        EventManager.subscribe(project, ObjectFactoryListener.TOPIC, this);
+        EventManager.subscribe(project, ObjectFactoryListener.TOPIC, objectFactoryListener);
     }
 
     public DBSchemaObject getObject() {
@@ -58,24 +58,26 @@ public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile> implem
     /********************************************************
      *                ObjectFactoryListener                 *
      ********************************************************/
-    public void objectCreated(DBSchemaObject object) {
-    }
-
-    public void objectDropped(DBSchemaObject object) {
-        if (objectRef.is(object)) {
-            new ConditionalLaterInvocator() {
-                public void execute() {
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                    fileEditorManager.closeFile(getVirtualFile().getDatabaseFile());
-                }
-            }.start();
+    private ObjectFactoryListener objectFactoryListener = new ObjectFactoryListener() {
+        public void objectCreated(DBSchemaObject object) {
         }
 
-    }
+        public void objectDropped(DBSchemaObject object) {
+            if (objectRef.is(object)) {
+                new ConditionalLaterInvocator() {
+                    public void execute() {
+                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                        fileEditorManager.closeFile(getVirtualFile().getDatabaseFile());
+                    }
+                }.start();
+            }
+
+        }    };
+
 
     @Override
     public void dispose() {
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(objectFactoryListener);
         super.dispose();
     }
 }

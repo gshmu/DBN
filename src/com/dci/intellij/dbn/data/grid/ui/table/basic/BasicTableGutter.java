@@ -1,49 +1,33 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
-import javax.swing.*;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
-import com.intellij.openapi.Disposable;
-import com.intellij.util.ui.UIUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 
-public class BasicTableGutter extends JList implements Disposable {
-    private BasicTable table;
-
-    public BasicTableGutter(BasicTable table) {
-        super(table.getModel());
-        this.table = table;
-        this.table.getSelectionModel().addListSelectionListener(tableSelectionListener);
-        setCellRenderer(createCellRenderer());
+public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
+    public BasicTableGutter(T table) {
+        super(table);
         addListSelectionListener(gutterSelectionListener);
-        int rowHeight = table.getRowHeight();
-        if (rowHeight != 0) setFixedCellHeight(rowHeight);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         if (getModel().getSize() == 0) {
             setFixedCellWidth(10);
         }
-        setBackground(UIUtil.getPanelBackground());
+        table.getSelectionModel().addListSelectionListener(tableSelectionListener);
     }
 
     protected ListCellRenderer createCellRenderer() {
         return new BasicTableGutterCellRenderer();
     }
 
-    public DBNTable getTable() {
-        return table;
-    }
-
-    @Override
-    public BasicDataModel getModel() {
-        return (BasicDataModel) super.getModel();
-    }
-
     public void scrollRectToVisible(Rectangle rect) {
         super.scrollRectToVisible(rect);
+
+        T table = getTable();
         Rectangle tableRect = table.getVisibleRect();
 
         tableRect.y = rect.y;
@@ -67,6 +51,7 @@ public class BasicTableGutter extends JList implements Disposable {
     private ListSelectionListener gutterSelectionListener = new ListSelectionListener() {
         @Override
         public void valueChanged(ListSelectionEvent e) {
+            T table = getTable();
             if (hasFocus()) {
                 int lastColumnIndex = table.getColumnCount() - 1;
                 if (justGainedFocus) {
@@ -88,12 +73,20 @@ public class BasicTableGutter extends JList implements Disposable {
     private ListSelectionListener tableSelectionListener = new ListSelectionListener() {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateUI();
+            revalidate();
+            repaint();
         }
     };
 
     @Override
     public void dispose() {
-        table = null;
+        if (!isDisposed()) {
+            getTable().getSelectionModel().removeListSelectionListener(tableSelectionListener);
+            removeListSelectionListener(gutterSelectionListener);
+            tableSelectionListener = null;
+            gutterSelectionListener = null;
+            super.dispose();
+
+        }
     }
 }

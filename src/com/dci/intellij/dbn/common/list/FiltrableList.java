@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.list;
 
-import com.dci.intellij.dbn.common.filter.Filter;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +8,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.filter.Filter;
 
 public class FiltrableList<T> implements List<T> {
     private List<T> list;

@@ -8,6 +8,7 @@ public class ConnectionInfo {
     private String productVersion;
     private String driverName;
     private String driverVersion;
+    private String driverJdbcType;
     private String url;
     private String userName;
 
@@ -20,6 +21,7 @@ public class ConnectionInfo {
         driverVersion = metaData.getDriverVersion();
         url = metaData.getURL();
         userName = metaData.getUserName();
+        driverJdbcType = metaData.getJDBCMajorVersion() + (metaData.getJDBCMinorVersion() > 0 ? "." + metaData.getJDBCMinorVersion() : "");
     }
 
     public String toString() {
@@ -27,6 +29,7 @@ public class ConnectionInfo {
                 "Product version:\t" + productVersion + '\n' +
                 "Driver name:\t\t" + driverName + '\n' +
                 "Driver version:\t" + driverVersion + '\n'+
+                "JDBC Type:\t\t" + driverJdbcType + '\n' +
                 "URL:\t\t" + url + '\n' +
                 "User name:\t\t" + userName;
     }
@@ -53,5 +56,9 @@ public class ConnectionInfo {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getDriverJdbcType() {
+        return driverJdbcType;
     }
 }

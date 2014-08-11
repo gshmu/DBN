@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.generator;
 
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBDataset;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBDataset;
 
 public class DatasetJoin {
     private DBDataset dataset1;

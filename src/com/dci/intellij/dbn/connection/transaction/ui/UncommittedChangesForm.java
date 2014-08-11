@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -9,24 +18,12 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-public class UncommittedChangesForm extends DBNFormImpl implements TransactionListener {
+public class UncommittedChangesForm extends DBNFormImpl {
     private JTable changesTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
-    private JBScrollPane changesTableScrollPane;
+    private JScrollPane changesTableScrollPane;
     private JButton commitButton;
     private JButton rollbackButton;
     private JPanel transactionActionsPanel;
@@ -37,19 +34,12 @@ public class UncommittedChangesForm extends DBNFormImpl implements TransactionLi
         this.connectionHandler = connectionHandler;
         Project project = connectionHandler.getProject();
 
-        // HEADER
-        String headerTitle = connectionHandler.getName();
-        Icon headerIcon = connectionHandler.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(connectionHandler.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = connectionHandler.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
+        UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
+        changesTable = new UncommittedChangesTable(model);
+        changesTableScrollPane.setViewportView(changesTable);
         changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
 
         transactionActionsPanel.setVisible(showActions);
@@ -70,12 +60,7 @@ public class UncommittedChangesForm extends DBNFormImpl implements TransactionLi
             rollbackButton.addActionListener(actionListener);
 
         }
-        EventManager.subscribe(project, TransactionListener.TOPIC, this);
-    }
-
-    private void createUIComponents() {
-        UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
-        changesTable = new UncommittedChangesTable(model);
+        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
     }
 
     @Override
@@ -86,23 +71,26 @@ public class UncommittedChangesForm extends DBNFormImpl implements TransactionLi
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(transactionListener);
+        transactionListener = null;
         connectionHandler = null;
     }
 
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    @Override
-    public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
-    }
-
-    @Override
-    public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
-        if (connectionHandler == this.connectionHandler && succeeded) {
-            refreshForm(connectionHandler);
+    private TransactionListener transactionListener = new TransactionListener() {
+        @Override
+        public void beforeAction(ConnectionHandler connectionHandler, TransactionAction action) {
         }
-    }
+
+        @Override
+        public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
+            if (connectionHandler == UncommittedChangesForm.this.connectionHandler && succeeded) {
+                refreshForm(connectionHandler);
+            }
+        }
+    };
 
     private void refreshForm(final ConnectionHandler connectionHandler) {
         new SimpleLaterInvocator() {

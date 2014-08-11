@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
-import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
-import com.dci.intellij.dbn.object.common.DBObject;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
+import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public class DatasetEditorError {
     private boolean isDirty;

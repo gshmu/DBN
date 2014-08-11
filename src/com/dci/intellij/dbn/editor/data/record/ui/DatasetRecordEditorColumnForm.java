@@ -1,29 +1,5 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
-import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
-import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.type.DataTypeDefinition;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
-import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -44,6 +20,30 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.ParseException;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
+import com.dci.intellij.dbn.data.type.DataTypeDefinition;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
+import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
+import com.dci.intellij.dbn.object.DBColumn;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
 
 public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNForm {
     private JLabel columnLabel;
@@ -79,7 +79,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
 
             long dataLength = dataType.getLength();
 
-            if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.LITERAL)) {
+            if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.LITERAL, GenericDataType.ARRAY)) {
                 TextFieldWithPopup textFieldWithPopup = new TextFieldWithPopup(project);
 
                 textFieldWithPopup.setPreferredSize(new Dimension(200, -1));
@@ -91,11 +91,11 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
                 if (cell.getRow().getModel().isEditable()) {
                     if (genericDataType == GenericDataType.DATE_TIME) {
                         textFieldWithPopup.createCalendarPopup(false);
-                    }
-
-                    if (genericDataType == GenericDataType.LITERAL) {
+                    } else if (genericDataType == GenericDataType.ARRAY) {
+                        textFieldWithPopup.createArrayEditorPopup(false);
+                    } else if (genericDataType == GenericDataType.LITERAL) {
                         if (dataLength > 20 && !column.isPrimaryKey() && !column.isForeignKey())
-                            textFieldWithPopup.createTextAreaPopup(false);
+                            textFieldWithPopup.createTextEditorPopup(false);
                         DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
                         if (column.isForeignKey() || (dataLength <= valueListPopupSettings.getDataLengthThreshold() &&
@@ -150,7 +150,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
             }
             editorComponent.setText(userValue);
         } else {
-            editable = editable && !(cell.getUserValue() instanceof LazyLoadedValue);
+            editable = editable && !(cell.getUserValue() instanceof LargeObjectValue);
             editorComponent.setEditable(editable);
             String formattedUserValue = formatter.formatObject(cell.getUserValue());
             editorComponent.setText(formattedUserValue);
@@ -185,7 +185,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
         String textValue = editorComponent.getText().trim();
         if (textValue.length() > 0) {
             Object value = getFormatter().parseObject(clazz, textValue);
-            return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
+            DBNativeDataType nativeDataType = dataType.getNativeDataType();
+            return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().convert(value);
         } else {
             return null;
         }

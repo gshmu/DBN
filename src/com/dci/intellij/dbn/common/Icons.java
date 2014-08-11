@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Map;
 
 import com.intellij.openapi.application.ApplicationInfo;
@@ -169,6 +169,8 @@ public class Icons {
     public static final Icon TEXT_CELL_EDIT_ACCEPT = load("/img/v1/CellEditAccept.png");
     public static final Icon TEXT_CELL_EDIT_REVERT = load("/img/v1/CellEditRevert.png");
     public static final Icon TEXT_CELL_EDIT_DELETE = load("/img/v1/CellEditDelete.png");
+    public static final Icon ARRAY_CELL_EDIT_ADD    = load("/img/v1/CellEditAdd.png");
+    public static final Icon ARRAY_CELL_EDIT_REMOVE = load("/img/v1/CellEditRemove.png");
 
     public static final Icon CALENDAR_CELL_EDIT_NEXT_MONTH = load("/img/v1/CalendarNextMonth.png");
     public static final Icon CALENDAR_CELL_EDIT_NEXT_YEAR = load("/img/v1/CalendarNextYear.png");

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.menu.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -17,8 +19,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-
-import java.util.List;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     private ConnectionHandler latestSelection; // todo move to data context

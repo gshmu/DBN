@@ -16,6 +16,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
@@ -28,7 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
-public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, FileEditorManagerListener {
+public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Map<DBObjectRef, DatabaseEditableObjectFile> openFiles = new HashMap<DBObjectRef, DatabaseEditableObjectFile>();
 
 
@@ -52,34 +53,36 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     }
 
     public void projectOpened() {
-        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
+        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     public void projectClosed() {
-        EventManager.unsubscribe(DatabaseFileManager.this);
+        EventManager.unsubscribe(fileEditorManagerListener);
     }
 
     /*********************************************
      *            FileEditorManagerListener       *
      *********************************************/
-    public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
-            openFiles.put(databaseFile.getObjectRef(), databaseFile);
+    private FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerAdapter() {
+        public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+            if (file instanceof DatabaseEditableObjectFile) {
+                DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
+                openFiles.put(databaseFile.getObjectRef(), databaseFile);
+            }
         }
-    }
 
-    public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
-            openFiles.remove(databaseFile.getObjectRef());
+        public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+            if (file instanceof DatabaseEditableObjectFile) {
+                DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
+                openFiles.remove(databaseFile.getObjectRef());
+            }
         }
-    }
 
-    @Override
-    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+        @Override
+        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
 
-    }
+        }
+    };
 
     /*********************************************
      *            PersistentStateComponent       *

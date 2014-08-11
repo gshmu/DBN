@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.util;
 
+import javax.swing.Icon;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
@@ -18,12 +24,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
-
-import javax.swing.Icon;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.util.List;
 
 public class EditorUtil {
     public static void selectEditor(DatabaseEditableObjectFile databaseFile, FileEditor fileEditor) {

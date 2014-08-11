@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import javax.swing.JList;
+
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -8,8 +10,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-
-import javax.swing.JList;
 
 public class FileListCellRenderer extends ColoredListCellRenderer {
     private Project project;

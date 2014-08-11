@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.ddl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
-import com.dci.intellij.dbn.common.util.StringUtil;
-
-import java.util.List;
-import java.util.ArrayList;
 
 public class DDLFileType {
     private DBLanguageFileType languageFileType;
@@ -46,8 +46,12 @@ public class DDLFileType {
         return extensions;
     }
 
-    public void setExtensions(List<String> extensions) {
-        this.extensions = extensions;
+    public boolean setExtensions(List<String> extensions) {
+        if (!extensions.containsAll(this.extensions) || !this.extensions.containsAll(extensions)) {
+            this.extensions = extensions;
+            return true;
+        }
+        return false;
     }
 
     public DBContentType getContentType() {
@@ -62,8 +66,8 @@ public class DDLFileType {
         return StringUtil.concatenate(extensions, ", ");
     }
 
-    public void setExtensionsAsString(String extensions) {
-        setExtensions(StringUtil.tokenize(extensions, ","));
+    public boolean setExtensionsAsString(String extensions) {
+        return setExtensions(StringUtil.tokenize(extensions, ","));
     }
 
 }
