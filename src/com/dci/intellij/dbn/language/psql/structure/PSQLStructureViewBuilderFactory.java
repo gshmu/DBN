@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
+import com.intellij.psi.PsiInvalidElementAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,14 +20,24 @@ public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory 
         return new TreeBasedStructureViewBuilder() {
             @NotNull
             public StructureViewModel createStructureViewModel() {
-                return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(null, psiFile);
+                try {
+                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(null, psiFile);
+                } catch (Throwable e) {
+                    // TODO dirty workaround (compatibility issue)
+                    return EmptyStructureViewModel.INSTANCE;
+                }
             }
 
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 PsiFile psiFile = DocumentUtil.getFile(editor);
-                return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(editor, psiFile);
+                try {
+                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(editor, psiFile);
+                } catch (Throwable e) {
+                    // TODO dirty workaround (compatibility issue)
+                    return EmptyStructureViewModel.INSTANCE;
+                }
             }
         };
     }
