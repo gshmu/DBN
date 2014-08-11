@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.object.common.DBObject;
 
 public abstract class DatabaseCompatibilityInterface {
@@ -18,4 +19,7 @@ public abstract class DatabaseCompatibilityInterface {
 
     public abstract char getIdentifierQuotes();
 
+    public String getOrderByClause(String columnName, SortDirection sortDirection, boolean nullsFirst) {
+        return columnName + " " + sortDirection.getSqlToken() + " nulls " + (nullsFirst ? " first" : " last");
+    }
 }

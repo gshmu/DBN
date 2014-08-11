@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.data.grid.color;
 
-import java.awt.*;
+import java.awt.Color;
 
-import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 
 public interface DataGridTextAttributesKeys {
@@ -32,13 +32,13 @@ public interface DataGridTextAttributesKeys {
     interface Colors {
         Color DEFAULT_BACKGROUND   = HighlighterColors.TEXT.getDefaultAttributes().getBackgroundColor();
         Color DEFAULT_FOREGROUND   = HighlighterColors.TEXT.getDefaultAttributes().getForegroundColor();
-        Color LIGHT_BACKGROUND     = new DBNColor(new Color(0xf4f4f4), new Color(0x393939));
-        Color LIGHT_FOREGROUND     = new DBNColor(new Color(0x7f7f7f), new Color(0x999999));
+        Color LIGHT_BACKGROUND     = new JBColor(new Color(0xf4f4f4), new Color(0x393939));
+        Color LIGHT_FOREGROUND     = new JBColor(new Color(0x7f7f7f), new Color(0x999999));
         Color ERROR_BACKGROUND     = HighlighterColors.BAD_CHARACTER.getDefaultAttributes().getBackgroundColor();
-        Color PK_FOREGROUND        = new DBNColor(new Color(0x4569A7), new Color(0x95A8B4));
-        Color PK_BACKGROUND        = new DBNColor(new Color(0xF7F7FF), new Color(0x2B3447));
-        Color FK_FOREGROUND        = new DBNColor(new Color(0x3F6B3F), new Color(0xA1A8A1));
-        Color FK_BACKGROUND        = new DBNColor(new Color(0xF7FFF7), new Color(0x2A3B2A));
+        Color PK_FOREGROUND        = new JBColor(new Color(0x4569A7), new Color(0x95A8B4));
+        Color PK_BACKGROUND        = new JBColor(new Color(0xF7F7FF), new Color(0x2B3447));
+        Color FK_FOREGROUND        = new JBColor(new Color(0x3F6B3F), new Color(0xA1A8A1));
+        Color FK_BACKGROUND        = new JBColor(new Color(0xF7FFF7), new Color(0x2A3B2A));
         Color CARET_ROW_BACKGROUND = EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR);
     }
 

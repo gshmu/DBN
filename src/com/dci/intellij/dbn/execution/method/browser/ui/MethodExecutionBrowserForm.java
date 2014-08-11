@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -114,6 +115,8 @@ public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
                 new SimpleLaterInvocator() {
                     public void execute() {
                         methodsTree.setModel(model);
+
+                        methodsTree.revalidate();
                         methodsTree.repaint();
                     }
                 }.start();

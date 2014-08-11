@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.ui.DBNColor;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import java.awt.Color;
 import org.jdom.Element;
 
-import java.awt.Color;
+import com.dci.intellij.dbn.common.ui.DBNColor;
+import com.dci.intellij.dbn.common.util.StringUtil;
 
 public class SettingsUtil {
     public static boolean isDebugEnabled;

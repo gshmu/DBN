@@ -1,20 +1,27 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
 import com.intellij.openapi.ui.Splitter;
+import com.intellij.ui.JBColor;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
     public static final Font BOLD_FONT = new Font(REGULAR_FONT.getName(), Font.BOLD, REGULAR_FONT.getSize());
     public static final String DARK_LAF_NAME = "Darcula";
-    public static final Border CONTAINER_BORDER = new LineBorder(com.intellij.util.ui.UIUtil.getBorderColor());
 
     public static void updateSplitterProportion(final JComponent root, final float proportion) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -96,7 +103,7 @@ public class GUIUtil{
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
             //titledBorder.setTitleColor(com.intellij.util.ui.GUIUtil.getLabelForeground());
-            titledBorder.setTitleColor(new DBNColor(new Color(-12029286), new Color(-10058060)));
+            titledBorder.setTitleColor(new JBColor(new Color(-12029286), new Color(-10058060)));
         }
     }
 

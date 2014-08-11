@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,7 +1,14 @@
 package com.dci.intellij.dbn.data.preview;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -15,7 +22,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModelCell;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -29,13 +36,12 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Computable;
-import com.intellij.ui.components.JBScrollPane;
 
 public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     public static final int INITIAL_MAX_SIZE = 4000;
     private JPanel mainPanel;
     private JTextArea valueTextArea;
-    private JBScrollPane valueScrollPane;
+    private JScrollPane valueScrollPane;
     private JPanel actionsPanel;
     private JLabel infoLabel;
     private JPanel infoPanel;
@@ -95,17 +101,17 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     private void loadContent(boolean initial) {
         String text = "";
         Object userValue = cell.getUserValue();
-        if (userValue instanceof LazyLoadedValue) {
-            LazyLoadedValue lazyLoadedValue = (LazyLoadedValue) userValue;
+        if (userValue instanceof LargeObjectValue) {
+            LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
             try {
                 text = initial ?
-                        lazyLoadedValue.loadValue(INITIAL_MAX_SIZE) :
-                        lazyLoadedValue.loadValue();
+                        largeObjectValue.read(INITIAL_MAX_SIZE) :
+                        largeObjectValue.read();
                 if (text == null) {
                     text = "";
                 }
 
-                long contentSize = lazyLoadedValue.size();
+                long contentSize = largeObjectValue.size();
                 if (initial && contentSize > INITIAL_MAX_SIZE) {
                     contentInfoText = getNumberOfLines(text) + " lines, " + INITIAL_MAX_SIZE + " characters (partially loaded)";
                     loadContentVisible = true;
@@ -115,7 +121,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
                     loadContentVisible = false;
                 }
             } catch (SQLException e) {
-                contentInfoText = "Could not load " + lazyLoadedValue.getDisplayValue() + " content. Cause: " + e.getMessage();
+                contentInfoText = "Could not load " + largeObjectValue.getDisplayValue() + " content. Cause: " + e.getMessage();
                 loadContentCaption = "Reload content";
             }
         } else {
@@ -197,6 +203,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
         popupBuilder.setMovable(true);
         popupBuilder.setResizable(true);
         popupBuilder.setRequestFocus(true);
+        popupBuilder.setDimensionServiceKey(cell.getProject(), "LargeValuePreview." + cell.getName(), false);
 /*
         popupBuilder.setCancelOnMouseOutCallback(new MouseChecker() {
             @Override

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.ddl.options;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -9,11 +14,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSettingsForm> {
 

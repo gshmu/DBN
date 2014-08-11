@@ -31,10 +31,10 @@ import com.intellij.openapi.vfs.VirtualFile;
                 @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
                 @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
-public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable, EnvironmentChangeListener {
+public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
     private EnvironmentManager(Project project) {
         super(project);
-        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, this);
+        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
 
     }
 
@@ -47,36 +47,39 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     public String getComponentName() {
         return "DBNavigator.Project.EnvironmentManager";
     }
-    
-    @Override
-    public void environmentConfigChanged(String environmentTypeId) {
-        FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
-        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-        Set<EditorsSplitters> splitters = fileEditorManager.getAllSplitters();
-        for (VirtualFile virtualFile : openFiles) {
-            ConnectionHandler connectionHandler = DBEditorTabColorProvider.getConnectionHandler(virtualFile, getProject());
-            if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed() && connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
+
+    private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
+        @Override
+        public void environmentConfigChanged(String environmentTypeId) {
+            FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
+            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+            Set<EditorsSplitters> splitters = fileEditorManager.getAllSplitters();
+            for (VirtualFile virtualFile : openFiles) {
+                ConnectionHandler connectionHandler = DBEditorTabColorProvider.getConnectionHandler(virtualFile, getProject());
+                if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed() && connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
+                    for (EditorsSplitters splitter : splitters) {
+                        splitter.updateFileBackgroundColor(virtualFile);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void environmentVisibilitySettingsChanged() {
+            FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
+            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+            Set<EditorsSplitters> splitters = fileEditorManager.getAllSplitters();
+            for (VirtualFile virtualFile : openFiles) {
                 for (EditorsSplitters splitter : splitters) {
                     splitter.updateFileBackgroundColor(virtualFile);
                 }
             }
         }
-    }
+    };
 
-    @Override
-    public void environmentVisibilitySettingsChanged() {
-        FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
-        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
-        Set<EditorsSplitters> splitters = fileEditorManager.getAllSplitters();
-        for (VirtualFile virtualFile : openFiles) {
-            for (EditorsSplitters splitter : splitters) {
-                splitter.updateFileBackgroundColor(virtualFile);
-            }
-        }
-    }
 
     public void dispose() {
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(environmentChangeListener);
     }
 
     public EnvironmentType getEnvironmentType(String id) {

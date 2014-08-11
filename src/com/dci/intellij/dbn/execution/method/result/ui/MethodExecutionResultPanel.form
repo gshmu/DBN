@@ -90,7 +90,6 @@
                       <background color="-1"/>
                     </properties>
                     <border type="none">
-                      <title-color color="-16777216"/>
                       <color system-color="controlShadow"/>
                     </border>
                     <children>

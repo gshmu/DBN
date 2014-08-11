@@ -1,7 +1,10 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.BorderLayout;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -56,8 +59,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
 
         resultScrollPane.setViewportView(resultTable);
-        resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
+        resultTable.initTableGutter();
 
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
@@ -87,7 +90,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
                 if (executionResult != null) {
                     resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
                     resultScrollPane.setViewportView(resultTable);
-                    resultScrollPane.setRowHeaderView(resultTable.getTableGutter());
+                    resultTable.initTableGutter();
                 }
             }
         }.start();
@@ -124,6 +127,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void highlightLoading(boolean loading) {
         resultTable.setLoading(loading);
+
+        resultTable.revalidate();
         resultTable.repaint();
     }
 
@@ -154,6 +159,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     public void hideSearchHeader() {
         dataSearchComponent.resetFindModel();
         searchPanel.setVisible(false);
+
+        resultTable.revalidate();
         resultTable.repaint();
         resultTable.requestFocus();
     }

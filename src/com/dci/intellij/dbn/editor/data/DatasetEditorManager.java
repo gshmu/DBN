@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.data;
 
+import java.awt.Component;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -18,7 +27,11 @@ import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
@@ -27,15 +40,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 
 @State(
     name = "DBNavigator.Project.DataEditorManager",

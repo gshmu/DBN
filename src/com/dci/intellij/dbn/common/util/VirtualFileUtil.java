@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.util;
 
+import javax.swing.Icon;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -9,12 +15,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.io.ReadOnlyAttributeUtil;
-
-import javax.swing.Icon;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VirtualFileUtil {
 

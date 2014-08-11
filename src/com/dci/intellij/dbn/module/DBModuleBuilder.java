@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.module;
 
+import javax.swing.JComponent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -14,15 +23,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.JDOMException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 //import com.intellij.ide.util.projectWizard.SourcePathsBuilder;
 

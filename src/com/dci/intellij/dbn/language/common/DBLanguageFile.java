@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.common;
 
+import java.util.ArrayList;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -39,12 +45,6 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 public abstract class DBLanguageFile extends PsiFileImpl implements FileConnectionMappingProvider {
     private Language language;
@@ -66,7 +66,7 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
         VirtualFile virtualFile = viewProvider.getVirtualFile();
         if (virtualFile instanceof SourceCodeFile) {
             SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
-            this.underlyingObject = sourceCodeFile.getObject().getRef();
+            this.underlyingObject = DBObjectRef.from(sourceCodeFile.getObject());
         }
 
         parseRootId = CompatibilityUtil.getParseRootId(virtualFile);

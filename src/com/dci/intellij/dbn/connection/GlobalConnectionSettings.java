@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.config.ui.GlobalConnectionSettingsForm;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class GlobalConnectionSettings extends ProjectConfiguration<GlobalConnectionSettingsForm> {
 

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object;
 
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-
 import java.util.List;
+
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public interface DBProgram<P extends DBProcedure, F extends DBFunction> extends DBSchemaObject {
     List<P> getProcedures();

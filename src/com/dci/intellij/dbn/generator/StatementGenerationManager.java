@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.generator;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class StatementGenerationManager extends AbstractProjectComponent {
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -112,7 +112,9 @@ public class DataSearchResultController implements Disposable{
                         searchableComponent.cancelEditActions();
 
                         table.clearSelection();
+                        table.revalidate();
                         table.repaint();
+
                         selectFirst(selectedRowIndex, selectedColumnIndex);
                         searchResult.notifyListeners();
 

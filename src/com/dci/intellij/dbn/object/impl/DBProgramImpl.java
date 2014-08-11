@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -12,10 +16,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
         extends DBSchemaObjectImpl implements DBProgram {

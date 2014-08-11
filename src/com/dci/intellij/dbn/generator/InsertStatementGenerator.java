@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.generator;
 
+import java.util.Iterator;
+
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBTable;
-
-import java.util.Iterator;
 
 public class InsertStatementGenerator extends StatementGenerator {
     private DBTable table;

@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNColor;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.editor.data.DatasetEditorError;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
-import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -21,8 +9,20 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.editor.data.DatasetEditorError;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.ui.JBColor;
+
 public class DatasetEditorErrorForm extends DBNFormImpl implements DBNForm, ChangeListener {
-    public static final DBNColor BACKGROUND_COLOR = new DBNColor(
+    public static final Color BACKGROUND_COLOR = new JBColor(
             new Color(0xFFCCCC),
             new Color(0x743A3A));
     private JPanel mainPanel;

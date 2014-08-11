@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -9,7 +9,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
@@ -31,7 +34,9 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
-import com.dci.intellij.dbn.data.value.LazyLoadedValue;
+import com.dci.intellij.dbn.data.value.ArrayValue;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.dci.intellij.dbn.editor.data.action.DatasetEditorTableActionGroup;
@@ -79,7 +84,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
         DataProvider dataProvider = datasetEditor.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);
-        ActionUtil.registerDataProvider(getTableGutter(), dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
 
         Disposer.register(this, cellEditorFactory);
@@ -118,7 +122,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     @Override
-    public BasicTableGutter createTableGutter() {
+    protected BasicTableGutter createTableGutter() {
         return new DatasetEditorTableGutter(this);
     }
 
@@ -198,7 +202,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                getTableGutter().updateUI();
+                getTableGutter().revalidate();
+                getTableGutter().repaint();
             }
         }.start();
     }
@@ -298,7 +303,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     text.append("<br>");
                 }
 
-                if (editorTableCell.isModified() && !(editorTableCell.getUserValue() instanceof LazyLoadedValue)) {
+                if (editorTableCell.isModified() && !(editorTableCell.getUserValue() instanceof ValueAdapter)) {
                     text.append("<br>Original value: <b>");
                     text.append(editorTableCell.getOriginalUserValue());
                     text.append("</b></html>");
@@ -310,7 +315,9 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             }
 
             if (editorTableCell.isModified() && !event.isControlDown()) {
-                if (editorTableCell.getUserValue() instanceof LazyLoadedValue) {
+                if (editorTableCell.getUserValue() instanceof ArrayValue) {
+                    return "Array value has changed";
+                } else  if (editorTableCell.getUserValue() instanceof LargeObjectValue) {
                     return "LOB content has changed";
                 } else {
                     return "<HTML>Original value: <b>" + editorTableCell.getOriginalUserValue() + "</b></html>";
@@ -347,7 +354,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (!getModel().isResultSetExhausted()) {
                 datasetEditor.loadData(SORT_LOAD_INSTRUCTIONS);
             }
-            updateUI();
+            revalidate();
+            repaint();
         }
     }
 
@@ -443,12 +451,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     private void startCellEditing(ListSelectionEvent e) {
         if (!isLoading() && isEditingEnabled && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1 && !isEditing() && !e.getValueIsAdjusting() && getDataset().getConnectionHandler().isConnected()) {
             editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
-        }
-    }
-
-    public void stopCellEditing() {
-        if (isEditing()) {
-            getCellEditor().stopCellEditing();
         }
     }
 

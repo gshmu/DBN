@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.debugger.execution.ui;
 
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Point;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -30,14 +38,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Point;
 
 public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements DBNForm {
     private JPanel headerPanel;
@@ -232,9 +232,8 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         headerPanel.removeAll();
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-
-
-        mainPanel.updateUI();
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     public void dispose() {

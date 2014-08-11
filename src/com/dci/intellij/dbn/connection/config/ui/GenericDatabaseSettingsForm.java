@@ -1,10 +1,17 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -88,7 +95,9 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
                 if (document == nameTextField.getDocument()) {
                     ConnectionBundle connectionBundle = connectionConfig.getConnectionBundle();
-                    connectionBundle.getSettingsEditor().getList().repaint();
+                    JList connectionList = connectionBundle.getSettingsEditor().getList();
+                    connectionList.revalidate();
+                    connectionList.repaint();
                     notifyPresentationChanges();
                 }
             }
@@ -143,7 +152,9 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 }
 
                 if (source == activeCheckBox || source == nameTextField || source == testButton || source == infoButton) {
-                    connectionBundle.getSettingsEditor().getList().repaint();
+                    JList connectionList = connectionBundle.getSettingsEditor().getList();
+                    connectionList.revalidate();
+                    connectionList.repaint();
                     notifyPresentationChanges();
                 }
             }
@@ -229,7 +240,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
     @Override
     public void dispose() {
-        EventManager.unsubscribe(this);
         super.dispose();
     }
 }

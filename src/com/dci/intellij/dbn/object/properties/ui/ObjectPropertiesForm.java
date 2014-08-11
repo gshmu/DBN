@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.BrowserSelectionChangeListener;
@@ -16,20 +23,13 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.components.JBScrollPane;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-
-public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, BrowserSelectionChangeListener {
+public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
     private JTable objectPropertiesTable;
-    private JBScrollPane objectPropertiesScrollPane;
+    private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
     private DBObject object;
     private Project project;
@@ -45,26 +45,29 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, Browse
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventManager.subscribe(project, BrowserSelectionChangeListener.TOPIC, this);
+        EventManager.subscribe(project, BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
     }
 
     public JComponent getComponent() {
         return mainPanel;
     }
 
-    public void browserSelectionChanged() {
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-        if (browserManager.getShowObjectProperties().value()) {
-            DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
-            if (activeBrowserTree != null) {
-                BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
-                if (treeNode instanceof DBObject) {
-                    DBObject object = (DBObject) treeNode;
-                    setObject(object);
+    private BrowserSelectionChangeListener browserSelectionChangeListener = new BrowserSelectionChangeListener() {
+        @Override
+        public void browserSelectionChanged() {
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            if (browserManager.getShowObjectProperties().value()) {
+                DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
+                if (activeBrowserTree != null) {
+                    BrowserTreeNode treeNode = activeBrowserTree.getSelectedNode();
+                    if (treeNode instanceof DBObject) {
+                        DBObject object = (DBObject) treeNode;
+                        setObject(object);
+                    }
                 }
             }
         }
-    }
+    };
 
     public DBObject getObject() {
         return object;
@@ -89,6 +92,8 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, Browse
 
                             objectPropertiesTable.setModel(tableModel);
                             ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
+
+                            mainPanel.revalidate();
                             mainPanel.repaint();
                         }
                     }.start();
@@ -98,7 +103,7 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm, Browse
     }
 
     public void dispose() {
-        EventManager.unsubscribe(this);
+        EventManager.unsubscribe(browserSelectionChangeListener);
         super.dispose();
         object = null;
         project = null;

@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
+import org.jetbrains.annotations.NotNull;
 
 public class FileUtil {
     public static File createFileByRelativePath(@NotNull final File absoluteBase, @NotNull final String relativeTail) {

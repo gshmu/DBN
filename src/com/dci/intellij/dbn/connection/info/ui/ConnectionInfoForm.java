@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.connection.info.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -32,6 +34,7 @@ public class ConnectionInfoForm extends DBNFormImpl{
     private JPanel detailsPanel;
     private JLabel statusMessageLabel;
     private JLabel setupDatabaseTypeLabel;
+    private JLabel infoDriverJdbcType;
 
     public ConnectionInfoForm(ConnectionHandler connectionHandler, boolean showHeader) {
         initHeaderPanel(connectionHandler, showHeader);
@@ -59,10 +62,11 @@ public class ConnectionInfoForm extends DBNFormImpl{
             infoProductVersionLabel.setText(connectionInfo.getProductVersion());
             infoDriverNameLabel.setText(connectionInfo.getDriverName());
             infoDriverVersionLabel.setText(connectionInfo.getDriverVersion());
+            infoDriverJdbcType.setText(connectionInfo.getDriverJdbcType());
             infoConnectionUrlLabel.setText(connectionInfo.getUrl());
             infoUserNameLabel.setText(connectionInfo.getUserName());
 
-            statusMessageLabel.setText("Conection successful");
+            statusMessageLabel.setText("Connection successful");
             statusMessageLabel.setIcon(Icons.EXEC_MESSAGES_INFO);
 
         } catch (SQLException e) {
@@ -70,6 +74,7 @@ public class ConnectionInfoForm extends DBNFormImpl{
             infoProductVersionLabel.setText("-");
             infoDriverNameLabel.setText("-");
             infoDriverVersionLabel.setText("-");
+            infoDriverJdbcType.setText("-");
             infoConnectionUrlLabel.setText("-");
             infoUserNameLabel.setText("-");
             statusMessageLabel.setText("Connection error: " + e.getMessage());

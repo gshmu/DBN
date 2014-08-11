@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -8,13 +15,6 @@ import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class ObjectListForm<T extends ObjectFactoryInput> {
     private JPanel mainPanel;
@@ -53,14 +53,18 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> {
         inputForms.add(inputForm);
         ObjectListItemForm listItemForm = new ObjectListItemForm(this, inputForm);
         listPanel.add(listItemForm.getComponent());
-        mainPanel.updateUI();
+
+        mainPanel.revalidate();
+        mainPanel.repaint();
         inputForm.focus();
     }
 
     public void removeObjectPanel(ObjectListItemForm child) {
         inputForms.remove(child.getObjectDetailsPanel());
         listPanel.remove(child.getComponent());
-        mainPanel.updateUI();
+
+        mainPanel.revalidate();
+        mainPanel.repaint();
         // rebuild indexes
         for (int i=0; i< inputForms.size(); i++) {
             inputForms.get(i).setIndex(i);

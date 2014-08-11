@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.data;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -15,9 +19,6 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 public class DatasetEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
     /*********************************************************

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.util;
 
+import java.util.List;
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
-
-import java.util.List;
-import java.util.Set;
 
 public class NamingUtil {
 
@@ -96,7 +96,7 @@ public class NamingUtil {
 
     public static boolean isVowel(char chr){
         chr  = Character.toLowerCase(chr);
-        String vowels = "aâáàäeêéèiîíìoôóòöuûúùü";
+        String vowels = "aï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½iï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½";
         return vowels.indexOf(chr) > -1;
     }
 

@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +19,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.ui.UIUtil;
 
 public class DatasetEditorSortingForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -61,16 +62,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
     }
 
     private void createHeaderForm(DBDataset dataset) {
-        String headerTitle = dataset.getQualifiedName();
-        Icon headerIcon = dataset.getIcon();
-        Color headerBackground = UIUtil.getPanelBackground();
-        if (getEnvironmentSettings(dataset.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = dataset.getEnvironmentType().getColor();
-        }
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground);
+        DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
@@ -121,7 +113,8 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
             sortingInstructionForms.add(sortingInstructionForm);
             sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
             updateIndexes();
-            sortingInstructionsPanel.updateUI();
+            sortingInstructionsPanel.revalidate();
+            sortingInstructionsPanel.repaint();
         }
     }
 
@@ -137,7 +130,8 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         sortingInstructionForms.remove(sortingInstructionForm);
         updateIndexes();
         sortingInstructionForm.dispose();
-        sortingInstructionsPanel.updateUI();
+        sortingInstructionsPanel.revalidate();
+        sortingInstructionsPanel.repaint();
     }
 
     public void applyChanges() {

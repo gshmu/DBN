@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ToolTipManager;
+import javax.swing.border.EmptyBorder;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
@@ -12,12 +18,6 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.IncorrectOperationException;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ToolTipManager;
-import javax.swing.border.EmptyBorder;
 
 public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JPanel mainPanel;
@@ -86,6 +86,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     private ObjectDisplaySettingsListener objectDisplaySettingsListener = new ObjectDisplaySettingsListener() {
         @Override
         public void displayDetailsChanged() {
+            browserTree.revalidate();
             browserTree.repaint();
         }
     };

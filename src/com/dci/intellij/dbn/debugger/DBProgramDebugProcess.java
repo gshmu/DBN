@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -45,11 +50,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
 
 public class DBProgramDebugProcess extends XDebugProcess {
     private Connection targetConnection;
