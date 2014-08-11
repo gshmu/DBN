@@ -37,6 +37,9 @@ public class UncommittedChangesForm extends DBNFormImpl {
         DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
+        UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
+        changesTable = new UncommittedChangesTable(model);
+        changesTableScrollPane.setViewportView(changesTable);
         changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
 
         transactionActionsPanel.setVisible(showActions);
@@ -58,11 +61,6 @@ public class UncommittedChangesForm extends DBNFormImpl {
 
         }
         EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
-    }
-
-    private void createUIComponents() {
-        UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
-        changesTable = new UncommittedChangesTable(model);
     }
 
     @Override
