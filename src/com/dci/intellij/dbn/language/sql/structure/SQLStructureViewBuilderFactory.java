@@ -19,14 +19,24 @@ public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
         return new TreeBasedStructureViewBuilder() {
             @NotNull
             public StructureViewModel createStructureViewModel() {
-                return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(null, psiFile);
+                try {
+                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(null, psiFile);
+                } catch (Throwable e) {
+                    // TODO dirty workaround (compatibility issue)
+                    return EmptyStructureViewModel.INSTANCE;
+                }
             }
 
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 PsiFile psiFile = DocumentUtil.getFile(editor);
-                return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(editor, psiFile);
+                try {
+                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(editor, psiFile);
+                } catch (Throwable e) {
+                    // TODO dirty workaround (compatibility issue)
+                    return EmptyStructureViewModel.INSTANCE;
+                }
             }
         };
     }
