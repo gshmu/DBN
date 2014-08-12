@@ -71,7 +71,7 @@ public class ConnectionUtil {
         String user = databaseSettings.getUser();
         String password = databaseSettings.getPassword();
         boolean osAuthentication = databaseSettings.isOsAuthentication();
-        if (authenticationError != null && authenticationError.isSame(osAuthentication, user, password)) {
+        if (authenticationError != null && authenticationError.isSame(osAuthentication, user, password) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
