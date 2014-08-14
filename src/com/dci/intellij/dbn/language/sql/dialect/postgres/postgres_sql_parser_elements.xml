@@ -129,7 +129,7 @@
         </one-of>
     </element-def>
     <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="ALTER VIEW statement" id="alter_view_statement">
-        <element optional="true" ref-id="if_exists_clause" />
+        <element optional="true" ref-id="if_exists_clause" from-version="9.2"/>
         <qualified-identifier id="000000043" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000044" optional="true" type="SCHEMA" />
@@ -170,10 +170,10 @@
                         <token id="000000070" type-id="KW_SCHEMA" />
                         <object-ref id="000000071" type="SCHEMA" />
                     </sequence>
-                    <element ref-id="view_parameters" />
+                    <element ref-id="view_parameters" from-version="9.2"/>
                 </one-of>
             </sequence>
-            <sequence id="000000072">
+            <sequence id="000000072" from-version="9.2">
                 <token id="000000073" type-id="KW_RESET" />
                 <wrapper id="000000074" template="PARENTHESES">
                     <iteration id="000000075" separator="CHR_COMMA">
@@ -196,7 +196,7 @@
     </element-def>
     <element-def description="DROP VIEW statement" id="drop_view_statement">
         <token type-id="KW_VIEW" id="000000081" />
-        <element optional="true" ref-id="if_exists_clause" />
+        <element optional="true" ref-id="if_exists_clause" from-version="8.2"/>
         <iteration separator="CHR_COMMA" id="000000082">
             <qualified-identifier id="000000083" separator="CHR_DOT">
                 <variant>
@@ -205,7 +205,7 @@
                 </variant>
             </qualified-identifier>
         </iteration>
-        <one-of optional="true" id="000000086">
+        <one-of optional="true" id="000000086" from-version="7.3">
             <token type-id="KW_CASCADE" id="000000087" />
             <token type-id="KW_RESTRICT" id="000000088" />
         </one-of>
@@ -213,7 +213,7 @@
 
     <!-- ========= INSERT ========= -->
     <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="INSERT statement" id="insert_statement">
-        <element optional="true" ref-id="with_clause" />
+        <element optional="true" ref-id="with_clause" from-version="9.1"/>
         <token exit="true" id="000000089" type-id="KW_INSERT" />
         <token id="000000090" type-id="KW_INTO" />
         <qualified-identifier id="000000091" separator="CHR_DOT">
@@ -257,11 +257,23 @@
             </sequence>
             <element ref-id="subquery" />
         </one-of>
+        <sequence id="000000156" optional="true" from-version="8.2">
+            <token id="000000157" type-id="KW_RETURNING" />
+            <iteration id="000000158" separator="CHR_COMMA">
+                <sequence id="000000159">
+                    <element ref-id="expression" />
+                    <sequence id="000000160" optional="true">
+                        <token id="000000161" type-id="KW_AS" />
+                        <alias-def id="000000162" type="ANY" />
+                    </sequence>
+                </sequence>
+            </iteration>
+        </sequence>
     </element-def>
 
     <!-- ========= UPDATE ========= -->
     <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="UPDATE statement" id="update_statement">
-        <element optional="true" ref-id="with_clause" />
+        <element optional="true" ref-id="with_clause" from-version="9.1"/>
         <token exit="true" id="000000113" type-id="KW_UPDATE" />
         <token id="000000114" optional="true" type-id="KW_ONLY" />
         <qualified-identifier id="000000115" separator="CHR_DOT">
@@ -271,7 +283,7 @@
             </variant>
         </qualified-identifier>
         <token id="000000118" optional="true" type-id="CHR_STAR" />
-        <sequence id="000000119" optional="true">
+        <sequence id="000000119" optional="true" from-version="8.2">
             <token id="000000120" optional="true" type-id="KW_AS" />
             <alias-def id="000000121" type="DATASET" />
         </sequence>
@@ -328,7 +340,7 @@
         <sequence id="000000149" optional="true">
             <token id="000000150" type-id="KW_WHERE" />
             <one-of id="000000151">
-                <sequence id="000000152">
+                <sequence id="000000152" from-version="8.3">
                     <token id="000000153" type-id="KW_CURRENT" />
                     <token id="000000154" type-id="KW_OF" />
                     <object-ref id="000000155" original-name="cursor_name" type="CURSOR" />
@@ -336,7 +348,7 @@
                 <element ref-id="condition" />
             </one-of>
         </sequence>
-        <sequence id="000000156" optional="true">
+        <sequence id="000000156" optional="true" from-version="8.2">
             <token id="000000157" type-id="KW_RETURNING" />
             <iteration id="000000158" separator="CHR_COMMA">
                 <sequence id="000000159">
@@ -366,14 +378,14 @@
                 <token id="000000171" optional="true" type-id="CHR_STAR" />
             </sequence>
         </iteration>
-        <sequence id="000000172" optional="true">
+        <sequence id="000000172" optional="true" from-version="8.3">
             <one-of id="000000173">
                 <token id="000000174" type-id="KW_RESTART" />
                 <token id="000000175" type-id="KW_CONTINUE" />
             </one-of>
             <token id="000000176" type-id="KW_IDENTITY" />
         </sequence>
-        <one-of id="000000177" optional="true">
+        <one-of id="000000177" optional="true" from-version="8.2">
             <token id="000000178" type-id="KW_CASCADE" />
             <token id="000000179" type-id="KW_RESTRICT" />
         </one-of>
@@ -381,7 +393,7 @@
 
     <!-- ========= DELETE ========= -->
     <element-def attributes="EXECUTABLE, DATA_MANIPULATION, TRANSACTIONAL, STRUCTURE" description="DELETE statement" id="delete_statement">
-        <element optional="true" ref-id="with_clause" />
+        <element optional="true" ref-id="with_clause" from-version="9.1"/>
         <token exit="true" id="000000180" type-id="KW_DELETE" />
         <token id="000000181" type-id="KW_FROM" />
         <token id="000000182" optional="true" type-id="KW_ONLY" />
@@ -391,12 +403,12 @@
                 <object-ref id="000000185" referenceable="true" type="DATASET" />
             </variant>
         </qualified-identifier>
-        <token id="000000186" optional="true" type-id="CHR_STAR" />
-        <sequence id="000000187" optional="true">
+        <token id="000000186" optional="true" type-id="CHR_STAR" from-version="8.3"/>
+        <sequence id="000000187" optional="true" from-version="8.1">
             <token id="000000188" optional="true" type-id="KW_AS" />
             <alias-def id="000000189" type="DATASET" />
         </sequence>
-        <sequence id="000000190" optional="true">
+        <sequence id="000000190" optional="true" from-version="8.1">
             <token id="000000191" type-id="KW_USING" />
             <element ref-id="expression_list" />
         </sequence>
@@ -411,7 +423,7 @@
                 <element ref-id="condition" />
             </one-of>
         </sequence>
-        <sequence id="000000199" optional="true">
+        <sequence id="000000199" optional="true" from-version="8.2">
             <token id="000000200" type-id="KW_RETURNING" />
             <iteration id="000000201" separator="CHR_COMMA">
                 <sequence id="000000202">
@@ -433,19 +445,19 @@
     <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
         <one-of id="000000206">
             <sequence id="000000207">
-                <element optional="true" ref-id="with_clause" />
+                <element optional="true" ref-id="with_clause" from-version="8.4"/>
                 <token exit="true" id="000000208" type-id="KW_SELECT" />
                 <element ref-id="select_list" />
                 <element optional="true" ref-id="from_clause" />
                 <element optional="true" ref-id="where_clause" />
                 <element optional="true" ref-id="group_by_clause" />
                 <element optional="true" ref-id="having_clause" />
-                <element optional="true" ref-id="window_clause" />
-                <element optional="true" ref-id="union_intersect_except_clause" />
+                <element optional="true" ref-id="window_clause" from-version="8.4"/>
+                <element optional="true" ref-id="union_intersect_except_clause"/>
                 <element optional="true" ref-id="order_by_clause" />
                 <element optional="true" ref-id="limit_clause" />
                 <element optional="true" ref-id="offset_clause" />
-                <element optional="true" ref-id="fetch_clause" />
+                <element optional="true" ref-id="fetch_clause" from-version="8.4"/>
                 <element optional="true" ref-id="for_clause" />
             </sequence>
             <wrapper id="000000209" template="PARENTHESES">
