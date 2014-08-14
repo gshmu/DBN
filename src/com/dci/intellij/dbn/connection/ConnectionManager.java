@@ -188,12 +188,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         }
     }
 
-    public void showConnectionInfoDialog(ConnectionHandler connectionHandler) {
-        final ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
+    public void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
         new ConditionalLaterInvocator() {
-
             @Override
             public void execute() {
+                ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
                 infoDialog.setModal(true);
                 infoDialog.show();
             }
