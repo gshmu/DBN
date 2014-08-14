@@ -22,38 +22,69 @@
         <token id="000000002" type-id="KW_CREATE" />
         <one-of id="000000003">
             <element ref-id="create_or_replace_statement" />
+            <element ref-id="create_aggregate_statement" />
+            <element ref-id="create_cast_statement" />
+            <element ref-id="create_collation_statement" />
+            <element ref-id="create_conversion_statement" />
+            <element ref-id="create_database_statement" />
+            <element ref-id="create_domain_statement" />
+            <element ref-id="create_event_trigger_statement" />
+            <element ref-id="create_extension_statement" />
+            <element ref-id="create_foreign_statement" />
+            <element ref-id="create_group_statement" />
+            <element ref-id="create_index_statement" />
+            <element ref-id="create_language_statement" />
+            <element ref-id="create_materialized_view_statement" />
+            <element ref-id="create_operator_statement" />
+            <element ref-id="create_role_statement" />
+            <element ref-id="create_schema" />
+            <element ref-id="create_sequence" />
+            <element ref-id="create_server" />
+            <element ref-id="create_table" />
+            <element ref-id="create_tablespace" />
+            <element ref-id="create_text_search" />
+            <element ref-id="create_trigger" />
+            <element ref-id="create_type" />
+            <element ref-id="create_user" />
         </one-of>
     </element-def>
     <element-def description="CREATE statement" id="create_or_replace_statement">
-        <sequence id="000000004" optional="true">
-            <token id="000000005" type-id="KW_OR" />
+        <sequence id="000000004" optional="true" from-version="7.3">
+            <token id="000000005" type-id="KW_OR"/>
             <token flavor="keyword" id="000000006" type-id="FN_REPLACE" />
         </sequence>
         <one-of id="000000007">
             <element ref-id="create_view_statement" />
+            <element ref-id="create_function_statement" />
+            <element ref-id="create_rule_statement" />
         </one-of>
     </element-def>
 
     <element-def description="CREATE view" id="create_view_statement">
-        <one-of id="000000008" optional="true">
+        <one-of id="000000008" optional="true" from-version="8.1">
             <token id="000000009" type-id="KW_TEMP" />
             <token id="000000010" type-id="KW_TEMPORARY" />
         </one-of>
-        <token id="000000011" optional="true" type-id="KW_RECURSIVE" />
+        <token id="000000011" optional="true" type-id="KW_RECURSIVE" from-version="9.3"/>
         <token id="000000012" type-id="KW_VIEW" />
-        <object-def id="000000013" type="VIEW" />
+        <qualified-identifier id="000000043" separator="CHR_DOT">
+            <variant>
+                <object-ref id="000000044" optional="true" type="SCHEMA" />
+                <object-def id="000000045" type="VIEW" />
+            </variant>
+        </qualified-identifier>
         <wrapper id="000000014" optional="true" template="PARENTHESES">
             <iteration id="000000015" separator="CHR_COMMA">
                 <object-def id="000000016" type="COLUMN" />
             </iteration>
         </wrapper>
-        <sequence id="000000017" optional="true">
+        <sequence id="000000017" optional="true" from-version="9.2">
             <token id="000000018" type-id="KW_WITH" />
             <element ref-id="view_parameters" />
         </sequence>
         <token id="000000019" type-id="KW_AS" />
         <element ref-id="subquery" />
-        <sequence id="000000020" optional="true">
+        <sequence id="000000020" optional="true" from-version="9.4">
             <token id="000000021" type-id="KW_WITH" />
             <one-of id="000000022" optional="true">
                 <token id="000000023" type-id="KW_LOCAL" />
@@ -74,7 +105,7 @@
                             <element ref-id="boolean" />
                         </sequence>
                     </sequence>
-                    <sequence id="000000034">
+                    <sequence id="000000034" from-version="9.4">
                         <token id="000000035" type-id="PRM_CHECK_OPTION" />
                         <sequence id="000000036" optional="true">
                             <token id="000000037" type-id="CHR_EQUAL" />
@@ -88,6 +119,7 @@
             </iteration>
         </wrapper>
     </element-def>
+
 
     <!-- ========= ALTER ========= -->
     <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="ALTER statement" id="alter_statement">
@@ -1238,6 +1270,11 @@
 
     <element-def description="IF EXISTS clause" id="if_exists_clause">
         <token id="000000645" type-id="KW_IF" />
+        <token id="000000646" type-id="KW_EXISTS" />
+    </element-def>
+    <element-def description="IF NOT EXISTS clause" id="if_not_exists_clause">
+        <token id="000000645" type-id="KW_IF" />
+        <token id="000000645" type-id="KW_NOT" />
         <token id="000000646" type-id="KW_EXISTS" />
     </element-def>
 
