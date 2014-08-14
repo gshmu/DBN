@@ -1171,6 +1171,8 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 
 
 
+"check_option" {return tt.getParameterTokenType(0);}
+"security_barrier" {return tt.getParameterTokenType(1);}
 
 
 {IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
