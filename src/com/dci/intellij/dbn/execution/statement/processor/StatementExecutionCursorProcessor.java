@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
@@ -7,10 +11,6 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorR
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguageFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class StatementExecutionCursorProcessor extends StatementExecutionBasicProcessor {
 
@@ -24,16 +24,18 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
 
     protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
         ResultSet resultSet = statement.getResultSet();
+        int updateCount = statement.getUpdateCount();
+        String resultName = getResultName();
         if (resultSet == null) {
             statement.close();
 
-            StatementExecutionResult executionResult = new StatementExecutionCursorResult(getResultName(), executionInput);
+            StatementExecutionResult executionResult = new StatementExecutionCursorResult(executionInput, resultName, updateCount);
             executionResult.updateExecutionMessage(MessageType.INFO, getStatementName() + " executed successfully.");
             return executionResult;
         } else {
             StatementExecutionBasicResult executionResult = getExecutionResult();
             if (executionResult == null) {
-                return new StatementExecutionCursorResult(getResultName(), executionInput, resultSet);
+                return new StatementExecutionCursorResult(executionInput, resultName, resultSet, updateCount);
             } else {
                 // if executionResult exists, just update it with the new resultSet data
                 if (executionResult instanceof StatementExecutionCursorResult){
@@ -42,7 +44,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
                     executionCursorResult.loadResultSet(resultSet);
                     return executionResult;
                 } else {
-                    return new StatementExecutionCursorResult(getResultName(), executionInput, resultSet);
+                    return new StatementExecutionCursorResult(executionInput, resultName, resultSet, updateCount);
                 }
             }
         }

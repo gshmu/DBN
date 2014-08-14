@@ -28,10 +28,11 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     private ResultSetDataModel dataModel;
 
     public StatementExecutionCursorResult(
-            String resultName,
             StatementExecutionInput executionInput,
-            ResultSet resultSet) throws SQLException {
-        super(resultName, executionInput);
+            String resultName,
+            ResultSet resultSet,
+            int updateCount) throws SQLException {
+        super(executionInput, resultName, updateCount);
         int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
         dataModel = new ResultSetDataModel(resultSet, executionInput.getConnectionHandler(), fetchBlockSize);
         resultPanel = new StatementExecutionResultForm(this);
@@ -47,9 +48,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public StatementExecutionCursorResult(
-            String resultName,
-            StatementExecutionInput executionInput) throws SQLException {
-        super(resultName, executionInput);
+            StatementExecutionInput executionInput, String resultName, int updateCount) throws SQLException {
+        super(executionInput, resultName, updateCount);
     }
 
     public StatementExecutionCursorProcessor getExecutionProcessor() {

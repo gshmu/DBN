@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
-import com.intellij.openapi.Disposable;
 
 public interface StatementExecutionResult extends ExecutionResult {
     int STATUS_SUCCESS = 0;
@@ -25,6 +24,8 @@ public interface StatementExecutionResult extends ExecutionResult {
     void clearExecutionMessage();
 
     void navigateToEditor(boolean requestFocus);
+
+    int getUpdateCount();
 
     StatementViewerPopup getStatementViewerPopup();
     void setStatementViewerPopup(StatementViewerPopup statementViewerPopup);

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -19,13 +19,16 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private StatementExecutionInput executionInput;
     private int executionDuration;
     private int executionStatus;
+    private int updateCount;
     private StatementViewerPopup statementViewerPopup;
 
-    public StatementExecutionBasicResult(String resultName,
-            StatementExecutionInput executionInput) {
+    public StatementExecutionBasicResult(
+            StatementExecutionInput executionInput,
+            String resultName,
+            int updateCount) {
         this.resultName = resultName;
         this.executionInput = executionInput;
-
+        this.updateCount = updateCount;
         Disposer.register(this, executionInput);
     }
 
@@ -75,6 +78,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     public void setExecutionStatus(int executionStatus) {
         this.executionStatus = executionStatus;
+    }
+
+    @Override
+    public int getUpdateCount() {
+        return updateCount;
     }
 
     public StatementViewerPopup getStatementViewerPopup() {

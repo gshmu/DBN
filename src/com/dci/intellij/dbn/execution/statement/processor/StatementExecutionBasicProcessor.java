@@ -152,7 +152,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     if (executablePsiElement != null) {
                         if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(file.getVirtualFile());
                         if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
+                    } else{
+                        if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(file.getVirtualFile());
                     }
+
                 }
             } catch (SQLException e) {
                 executionResult = createErrorExecutionResult(executionInput, e.getMessage());
@@ -168,9 +171,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
-        StatementExecutionResult executionResult = new StatementExecutionBasicResult(getResultName(), executionInput);
+        StatementExecutionResult executionResult = new StatementExecutionBasicResult(executionInput, getResultName(), statement.getUpdateCount());
         String message = executablePsiElement.getPresentableText() + " executed successfully";
-        int updateCount = statement.getUpdateCount();
+        int updateCount = executionResult.getUpdateCount();
         if (updateCount > -1) {
             message = message + ": " + updateCount + (updateCount != 1 ? " rows" : " row") + " affected";
         }
@@ -180,7 +183,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public StatementExecutionResult createErrorExecutionResult(StatementExecutionInput executionInput, String cause) {
-        StatementExecutionResult executionResult = new StatementExecutionBasicResult(getResultName(), executionInput);
+        StatementExecutionResult executionResult = new StatementExecutionBasicResult(executionInput, getResultName(), 0);
         executionResult.updateExecutionMessage(MessageType.ERROR, "Could not execute " + getStatementName() + ".", cause);
         executionResult.setExecutionStatus(StatementExecutionResult.STATUS_ERROR);
         return executionResult;
