@@ -1078,7 +1078,9 @@
 
 
         <!-- PARAMETERS -->
-        
+        <token index="0" id="PRM_CHECK_OPTION" value="check_option" type="parameter"/>
+        <token index="1" id="PRM_SECURITY_BARRIER" value="security_barrier" type="parameter"/>
+
     </tokens>
 
     <token-sets>
