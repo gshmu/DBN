@@ -1,24 +1,24 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class CompilerMessage extends ConsoleMessage {
     private CompilerResult compilerResult;
     private int line;
     private int position;
     private DBContentType contentType;
-    private DatabaseEditableObjectFile databaseFile;
-    private DatabaseContentFile contentFile;
+    private DatabaseEditableObjectVirtualFile databaseFile;
+    private DatabaseContentVirtualFile contentFile;
     private boolean isEcho;
     private String subjectIdentifier;
 
@@ -75,16 +75,16 @@ public class CompilerMessage extends ConsoleMessage {
         return null;
     }
 
-    public DatabaseEditableObjectFile getDatabaseFile() {
+    public DatabaseEditableObjectVirtualFile getDatabaseFile() {
         if (databaseFile == null) {
             databaseFile = compilerResult.getObject().getVirtualFile();
         }
         return databaseFile;
     }
 
-    public DatabaseContentFile getContentFile() {
+    public DatabaseContentVirtualFile getContentFile() {
         if (contentFile == null) {
-            DatabaseEditableObjectFile databaseFile = getDatabaseFile();
+            DatabaseEditableObjectVirtualFile databaseFile = getDatabaseFile();
             contentFile = databaseFile.getContentFile(contentType);
         }
         return contentFile;

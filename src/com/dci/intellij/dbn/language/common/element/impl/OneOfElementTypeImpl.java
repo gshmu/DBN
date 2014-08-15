@@ -92,8 +92,8 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
 
     private static final Comparator ONE_OF_COMPARATOR = new Comparator() {
         public int compare(Object o1, Object o2) {
-            ElementType et1 = (ElementType) o1;
-            ElementType et2 = (ElementType) o2;
+            ElementTypeRef et1 = (ElementTypeRef) o1;
+            ElementTypeRef et2 = (ElementTypeRef) o2;
 
             int i1 = et1.getLookupCache().startsWithIdentifier() ? 1 : 2;
             int i2 = et2.getLookupCache().startsWithIdentifier() ? 1 : 2;

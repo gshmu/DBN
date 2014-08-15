@@ -4,13 +4,13 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 
 public class MethodExecutionMessage extends ConsoleMessage {
     private MethodExecutionProcessor executionProcessor;
-    private DatabaseEditableObjectFile databaseFile;
-    private DatabaseContentFile contentFile;
+    private DatabaseEditableObjectVirtualFile databaseFile;
+    private DatabaseContentVirtualFile contentFile;
     private DBContentType contentType;
 
     public MethodExecutionMessage(MethodExecutionProcessor executionProcessor, String message, MessageType messageType) {
@@ -23,16 +23,16 @@ public class MethodExecutionMessage extends ConsoleMessage {
     }
 
 
-    public DatabaseEditableObjectFile getDatabaseFile() {
+    public DatabaseEditableObjectVirtualFile getDatabaseFile() {
         if (databaseFile == null) {
             databaseFile = executionProcessor.getMethod().getVirtualFile();
         }
         return databaseFile;
     }
 
-    public DatabaseContentFile getContentFile() {
+    public DatabaseContentVirtualFile getContentFile() {
         if (contentFile == null) {
-            DatabaseEditableObjectFile databaseFile = getDatabaseFile();
+            DatabaseEditableObjectVirtualFile databaseFile = getDatabaseFile();
             contentFile = databaseFile.getContentFile(contentType);
         }
         return contentFile;

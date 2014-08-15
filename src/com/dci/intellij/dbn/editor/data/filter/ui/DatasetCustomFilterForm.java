@@ -1,14 +1,22 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetCustomFilter;
-import com.dci.intellij.dbn.language.sql.SQLFile;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -17,14 +25,8 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFileFactory;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 
 public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCustomFilter> {
     private JPanel mainPanel;
@@ -53,17 +55,9 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         boolean isValidCondition = StringUtil.isNotEmptyOrSpaces(condition);
         selectStatement.append(isValidCondition ? condition : COMMENT);
 
-        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
-        SQLFile selectStatementFile = (SQLFile)
-                psiFileFactory.createFileFromText(
-                    "filter.sql",
-                    dataset.getLanguageDialect(SQLLanguage.INSTANCE),
-                    selectStatement.toString());
-        selectStatementFile.setParseRootId("subquery");
-
-        selectStatementFile.setActiveConnection(dataset.getConnectionHandler());
-        selectStatementFile.setCurrentSchema(dataset.getSchema());
-
+        DatasetFilterVirtualFile filterFile = new DatasetFilterVirtualFile(dataset, selectStatement.toString());
+        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), filterFile, true);
+        PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
         document = DocumentUtil.getDocument(selectStatementFile);
         document.createGuardedBlock(0, conditionStartOffset);

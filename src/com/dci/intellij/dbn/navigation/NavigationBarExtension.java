@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.navigation;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiFile;
@@ -31,8 +31,8 @@ public class NavigationBarExtension implements NavBarModelExtension {
     }
 
     public PsiElement adjustElement(PsiElement psiElement) {
-        if (psiElement instanceof DBLanguageFile) {
-            DBLanguageFile databaseFile = (DBLanguageFile) psiElement;
+        if (psiElement instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) psiElement;
             DBObject object = databaseFile.getUnderlyingObject();
             if (object != null) {
                 return NavigationPsiCache.getPsiFile(object);

@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 
 public class GenericInterfaceProvider extends DatabaseInterfaceProviderImpl {
     private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new GenericMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new GenericCompatibilityInterface();
+    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new GenericCompatibilityInterface(this);
     private DatabaseMetadataInterface METADATA_INTERFACE = new GenericMetadataInterface(this);
     private DatabaseDDLInterface DDL_INTERFACE = new GenericDDLInterface(this);
     private DatabaseExecutionInterface EXECUTION_INTERFACE = new GenericExecutionInterface();

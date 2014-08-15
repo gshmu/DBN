@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
@@ -12,7 +17,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
@@ -23,8 +28,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
@@ -44,11 +49,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public abstract class BasePsiElement extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
     private ElementType elementType;
@@ -159,22 +159,22 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return elementType;
     }
 
-    public DBLanguageFile getFile() {
+    public DBLanguagePsiFile getFile() {
         PsiElement parent = getParent();
-        while (parent != null && !(parent instanceof DBLanguageFile)) {
+        while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
             parent = parent.getParent();
         }
-        return (DBLanguageFile) parent;
+        return (DBLanguagePsiFile) parent;
     }
 
     @Nullable
     public ConnectionHandler getActiveConnection() {
-        DBLanguageFile file = getFile();
+        DBLanguagePsiFile file = getFile();
         return file == null ? null : file.getActiveConnection();
     }
 
     public DBSchema getCurrentSchema() {
-        DBLanguageFile file = getFile();
+        DBLanguagePsiFile file = getFile();
         return file == null ? null : file.getCurrentSchema();
     }
 
@@ -268,9 +268,9 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                 VirtualFile virtualFile = getFile().getVirtualFile();
                 FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
                 if (virtualFile != null) {
-                    if (virtualFile instanceof SourceCodeFile) {
-                        SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
-                        DatabaseEditableObjectFile databaseFile = sourceCodeFile.getDatabaseFile();
+                    if (virtualFile instanceof SourceCodeVirtualFile) {
+                        SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) virtualFile;
+                        DatabaseEditableObjectVirtualFile databaseFile = sourceCodeFile.getDatabaseFile();
                         if (!editorManager.isFileOpen(databaseFile)) {
                             editorManager.openFile(databaseFile, requestFocus);
                         }

@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import java.awt.Component;
+import java.awt.Point;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.ddl.action.AttachDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.CreateDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.DetachDDLFileAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-
-import java.awt.Component;
-import java.awt.Point;
 
 public class DDLFileAction extends AbstractSourceCodeEditorAction {
     DefaultActionGroup actionGroup;
@@ -22,7 +22,7 @@ public class DDLFileAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        SourceCodeFile sourcecodeFile = getSourcecodeFile(e);
+        SourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         if (sourcecodeFile != null) {
             DBSchemaObject object = sourcecodeFile.getObject();
             actionGroup = new DefaultActionGroup();
@@ -44,7 +44,7 @@ public class DDLFileAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(AnActionEvent e) {
-        SourceCodeFile sourcecodeFile = getSourcecodeFile(e);
+        SourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.CODE_EDITOR_DDL_FILE);
         presentation.setText("DDL Files");

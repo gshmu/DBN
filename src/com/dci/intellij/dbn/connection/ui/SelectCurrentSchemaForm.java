@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.VirtualFileUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -18,6 +8,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.VirtualFileUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+
 public class SelectCurrentSchemaForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JLabel fileLabel;
@@ -25,7 +25,7 @@ public class SelectCurrentSchemaForm extends DBNFormImpl implements DBNForm {
     private JList schemasList;
     private JLabel connectionLabel;
 
-    public SelectCurrentSchemaForm(DBLanguageFile file, ConnectionHandler connectionHandler) {
+    public SelectCurrentSchemaForm(DBLanguagePsiFile file, ConnectionHandler connectionHandler) {
         VirtualFile virtualFile = file.getVirtualFile();
         fileLabel.setText(virtualFile.getPath());
         fileLabel.setIcon(VirtualFileUtil.getIcon(virtualFile));

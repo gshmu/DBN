@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -21,11 +20,11 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
+import com.dci.intellij.dbn.vfs.DatabaseContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.DatabaseObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
@@ -46,16 +45,15 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 
-public abstract class DBLanguageFile extends PsiFileImpl implements FileConnectionMappingProvider {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider {
     private Language language;
     private DBLanguageFileType fileType;
     private ParserDefinition parserDefinition;
-    private String parseRootId;
     private ConnectionHandler activeConnection;
     private DBSchema currentSchema;
-    private DBObjectRef underlyingObject;
+    private DBObjectRef<DBSchemaObject> underlyingObjectRef;
 
-    public DBLanguageFile(FileViewProvider viewProvider, DBLanguageFileType fileType, DBLanguage language) {
+    public DBLanguagePsiFile(FileViewProvider viewProvider, DBLanguageFileType fileType, DBLanguage language) {
         super(viewProvider);
         this.language = findLanguage(language);
         this.fileType = fileType;
@@ -64,12 +62,10 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
             throw new RuntimeException("PsiFileBase: language.getParserDefinition() returned null.");
         }
         VirtualFile virtualFile = viewProvider.getVirtualFile();
-        if (virtualFile instanceof SourceCodeFile) {
-            SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
-            this.underlyingObject = DBObjectRef.from(sourceCodeFile.getObject());
+        if (virtualFile instanceof SourceCodeVirtualFile) {
+            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) virtualFile;
+            this.underlyingObjectRef = DBObjectRef.from(sourceCodeFile.getObject());
         }
-
-        parseRootId = CompatibilityUtil.getParseRootId(virtualFile);
 
         IFileElementType nodeType = parserDefinition.getFileNodeType();
         //assert nodeType.getLanguage() == this.language;
@@ -77,18 +73,18 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
     }
 
     public void setUnderlyingObject(DBObject underlyingObject) {
-        this.underlyingObject = underlyingObject.getRef();
+        this.underlyingObjectRef = underlyingObject.getRef();
     }
 
     public DBObject getUnderlyingObject() {
         VirtualFile virtualFile = getVirtualFile();
-        if (virtualFile instanceof DatabaseObjectFile) {
-            DatabaseObjectFile databaseObjectFile = (DatabaseObjectFile) virtualFile;
+        if (virtualFile instanceof DatabaseObjectVirtualFile) {
+            DatabaseObjectVirtualFile databaseObjectFile = (DatabaseObjectVirtualFile) virtualFile;
             return databaseObjectFile.getObject();
         }
 
-        if (virtualFile instanceof SourceCodeFile) {
-            SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
+        if (virtualFile instanceof SourceCodeVirtualFile) {
+            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) virtualFile;
             return sourceCodeFile.getObject();
         }
 
@@ -99,10 +95,10 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
         }
 
 
-        return underlyingObject == null ? null : underlyingObject.get();
+        return DBObjectRef.get(underlyingObjectRef);
     }
 
-    public DBLanguageFile(Project project,  DBLanguageFileType fileType, @NotNull DBLanguage language) {
+    public DBLanguagePsiFile(Project project, DBLanguageFileType fileType, @NotNull DBLanguage language) {
         this(createFileViewProvider(project), fileType, language);
     }
 
@@ -122,10 +118,6 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
                 "Language " + baseLanguage + " doesn't participate in view provider " + viewProvider + ": " + new ArrayList<Language>(languages));
     }
 
-    public void setParseRootId(String parseRootId) {
-        this.parseRootId = parseRootId;
-    }
-
     public void accept(@NotNull PsiElementVisitor visitor) {
         visitor.visitFile(this);
     }
@@ -139,8 +131,8 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
     @Nullable
     public DBLanguageDialect getLanguageDialect() {
         VirtualFile virtualFile = getVirtualFile();
-        if (virtualFile instanceof DatabaseContentFile) {
-            DatabaseContentFile contentFile = (DatabaseContentFile) virtualFile;
+        if (virtualFile instanceof DatabaseContentVirtualFile) {
+            DatabaseContentVirtualFile contentFile = (DatabaseContentVirtualFile) virtualFile;
             return contentFile.getLanguageDialect();
         }
         
@@ -165,7 +157,7 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
     }
 
     public VirtualFile getVirtualFile() {
-        DBLanguageFile originalFile = (DBLanguageFile) getOriginalFile();
+        DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
         return originalFile == null || originalFile == this ?
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
@@ -181,7 +173,7 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
         VirtualFile file = getVirtualFile();
         if (file != null) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                DBLanguageFile originalFile = (DBLanguageFile) getOriginalFile();
+                DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
                 return originalFile == null || originalFile == this ? activeConnection : originalFile.getActiveConnection();
             } else {
                 return getConnectionMappingManager().getActiveConnection(file);
@@ -205,7 +197,7 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
         VirtualFile file = getVirtualFile();
         if (file != null) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
-                DBLanguageFile originalFile = (DBLanguageFile) getOriginalFile();
+                DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
                 return originalFile == null || originalFile == this ? currentSchema : originalFile.getCurrentSchema();
             } else {
                 return getConnectionMappingManager().getCurrentSchema(file);
@@ -288,10 +280,6 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
         return fileType;
     }
 
-    public String getParseRootId() {
-        return parseRootId;
-    }
-
     public ElementTypeBundle getElementTypeBundle() {
         return getLanguageDialect().getParserDefinition().getParser().getElementTypes();
     }
@@ -313,5 +301,19 @@ public abstract class DBLanguageFile extends PsiFileImpl implements FileConnecti
         return virtualFile.getFileSystem() instanceof DatabaseFileSystem ?
                 virtualFile.isValid() :
                 super.isValid();
+    }
+
+    public String getParseRootId() {
+        VirtualFile virtualFile = getVirtualFile();
+        String parseRootId = virtualFile.getUserData(DatabaseFile.PARSE_ROOT_ID_KEY);
+        if (parseRootId == null && virtualFile instanceof SourceCodeVirtualFile) {
+            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) virtualFile;
+            parseRootId = sourceCodeFile.getParseRootId();
+            if (parseRootId != null) {
+                virtualFile.putUserData(DatabaseFile.PARSE_ROOT_ID_KEY, parseRootId);
+            }
+        }
+
+        return parseRootId;
     }
 }

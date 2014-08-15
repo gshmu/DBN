@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
@@ -20,16 +28,8 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -123,7 +123,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     @NotNull
-    public DatabaseEditableObjectFile getVirtualFile() {
+    public DatabaseEditableObjectVirtualFile getVirtualFile() {
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
     }
 

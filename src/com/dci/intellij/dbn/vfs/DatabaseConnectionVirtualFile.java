@@ -8,62 +8,49 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.ide.navigationToolbar.NavBarPresentation;
-import com.intellij.openapi.Disposable;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implements DBVirtualFile, Disposable {
-    private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
-    protected DBObjectRef<T> objectRef;
+public class DatabaseConnectionVirtualFile extends VirtualFile implements DBVirtualFile {
+    private static final byte[] EMPTY_CONTENT = new byte[0];
+    private ConnectionHandler connectionHandler;
 
-    private Project project;
     private String path;
     private String url;
+    private String name;
 
-    public DatabaseObjectFile(T object) {
-        this.objectRef = object.getRef();
-        this.project = object.getProject();
-    }
-
-    public DBObjectRef<T> getObjectRef() {
-        return objectRef;
-    }
-
-    @Nullable
-    public T getObject() {
-        return objectRef.get();
+    public DatabaseConnectionVirtualFile(ConnectionHandler connectionHandler) {
+        this.connectionHandler = connectionHandler;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return objectRef.lookupConnectionHandler();
+        return connectionHandler;
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof DatabaseObjectFile) {
-            DatabaseObjectFile objectFile = (DatabaseObjectFile) obj;
-            return objectFile.objectRef.equals(objectRef);
+        if (obj instanceof DatabaseConnectionVirtualFile) {
+            DatabaseConnectionVirtualFile databaseFile = (DatabaseConnectionVirtualFile) obj;
+            return databaseFile.getConnectionHandler().equals(getConnectionHandler());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return objectRef.hashCode();
+        return connectionHandler.getQualifiedName().hashCode();
     }
 
     public Project getProject() {
-        return project;
+        return connectionHandler.getProject();
+    }
+
+    @Override
+    public boolean isInLocalFileSystem() {
+        return false;
     }
 
     /*********************************************************
@@ -72,12 +59,20 @@ public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implemen
     @NotNull
     @NonNls
     public String getName() {
-        return objectRef.getFileName();
+        if (name == null) {
+            name = connectionHandler.getName();
+        }
+        return name;
+    }
+
+    @Override
+    public String getPresentableName() {
+        return getName();
     }
 
     @NotNull
     public FileType getFileType() {
-        return UnknownFileType.INSTANCE;
+        return SQLFileType.INSTANCE;
     }
 
     @NotNull
@@ -88,7 +83,7 @@ public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implemen
     @NotNull
     public String getPath() {
         if (path == null) {
-            path = DatabaseFileSystem.createPath(getObject());
+            path = DatabaseFileSystem.createPath(connectionHandler);
         }
         return path;
     }
@@ -96,7 +91,7 @@ public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implemen
     @NotNull
     public String getUrl() {
         if (url == null) {
-            url = DatabaseFileSystem.createUrl(getObject());
+            url = DatabaseFileSystem.createUrl(connectionHandler);
         }
         return url;
     }
@@ -113,28 +108,13 @@ public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implemen
         return true;
     }
 
-    @Override
-    public boolean isInLocalFileSystem() {
-        return false;
-    }
-
     @Nullable
     public VirtualFile getParent() {
-        if (CommonUtil.isCalledThrough(NavBarPresentation.class)) {
-            T object = getObject();
-            if (object != null) {
-                BrowserTreeNode treeParent = object.getTreeParent();
-                if (treeParent instanceof DBObjectList<?>) {
-                    DBObjectList objectList = (DBObjectList) treeParent;
-                    return NavigationPsiCache.getPsiDirectory(objectList).getVirtualFile();
-                }
-            }
-        }
         return null;
     }
 
     public Icon getIcon() {
-        return objectRef.getObjectType().getIcon();
+        return connectionHandler.getIcon();
     }
 
     public VirtualFile[] getChildren() {
@@ -148,7 +128,7 @@ public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implemen
 
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
-        return EMPTY_BYTE_CONTENT;
+        return EMPTY_CONTENT;
     }
 
     public long getTimeStamp() {
@@ -179,7 +159,7 @@ public class DatabaseObjectFile<T extends DBObject> extends VirtualFile implemen
 
     @Override
     public void dispose() {
-        this.project = null;
+        connectionHandler = null;
     }
 }
 

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
-import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
-import com.intellij.openapi.util.Disposer;
-
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
+
+import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
+import com.dci.intellij.dbn.vfs.DatabaseContentVirtualFile;
+import com.intellij.openapi.util.Disposer;
 
 public class MethodExecutionMessageNode implements MessagesTreeNode {
     private MethodExecutionMessage methodExecutionMessage;
@@ -22,7 +22,7 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
         return methodExecutionMessage;
     }
 
-    public DatabaseContentFile getVirtualFile() {
+    public DatabaseContentVirtualFile getVirtualFile() {
         return null;
     }
 

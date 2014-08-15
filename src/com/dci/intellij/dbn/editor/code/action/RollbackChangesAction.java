@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
     public RollbackChangesAction() {
@@ -24,7 +25,7 @@ public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                     final Editor editor = getEditor(e);
-                    final SourceCodeFile sourceCodeFile = getSourcecodeFile(e);
+                    final SourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
 
                     if (editor != null && sourceCodeFile != null) {
                         boolean reloaded = sourceCodeFile.reloadFromDatabase();
@@ -46,7 +47,7 @@ public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(AnActionEvent e) {
-        SourceCodeFile virtualFile = getSourcecodeFile(e);
+        SourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(virtualFile!= null && virtualFile.isModified());
         presentation.setText("Rollback changes");

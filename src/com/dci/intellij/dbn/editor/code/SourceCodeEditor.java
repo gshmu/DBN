@@ -11,17 +11,17 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryListener;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
-public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile>{
+public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeVirtualFile>{
     private DBObjectRef<DBSchemaObject> objectRef;
     private SourceCodeOffsets offsets;
 
-    public SourceCodeEditor(Project project, SourceCodeFile sourceCodeFile, String name) {
+    public SourceCodeEditor(Project project, SourceCodeVirtualFile sourceCodeFile, String name) {
         super(project, sourceCodeFile, name);
 
         objectRef = DBObjectRef.from(sourceCodeFile.getObject());

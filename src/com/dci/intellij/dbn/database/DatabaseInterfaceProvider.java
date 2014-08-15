@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -8,6 +10,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 public interface DatabaseInterfaceProvider {
     DatabaseType getDatabaseType();
 
+    @Nullable
     DBLanguageDialect getLanguageDialect(DBLanguage language);
 
     DatabaseNativeDataTypes getNativeDataTypes();

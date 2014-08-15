@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.ui.DatasetLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -44,9 +44,9 @@ public class DatasetLoadErrorNotificationProvider extends EditorNotifications.Pr
     @Nullable
     @Override
     public DatasetLoadErrorNotificationPanel createNotificationPanel(VirtualFile virtualFile, FileEditor fileEditor) {
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
+        if (virtualFile instanceof DatabaseEditableObjectVirtualFile) {
             if (fileEditor instanceof DatasetEditor) {
-                DatabaseEditableObjectFile editableObjectFile = (DatabaseEditableObjectFile) virtualFile;
+                DatabaseEditableObjectVirtualFile editableObjectFile = (DatabaseEditableObjectVirtualFile) virtualFile;
                 DBSchemaObject editableObject = editableObjectFile.getObject();
                 DatasetEditor datasetEditor = (DatasetEditor) fileEditor;
                 String sourceLoadError = datasetEditor.getDataLoadError();

@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -10,7 +18,7 @@ import com.dci.intellij.dbn.connection.ui.SelectConnectionDialog;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
@@ -20,14 +28,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     private static int sequence;
@@ -61,7 +61,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
         if (executionProcessors.size() > 0) {
-            DBLanguageFile file =  executionProcessors.get(0).getFile();
+            DBLanguagePsiFile file =  executionProcessors.get(0).getFile();
             boolean continueExecution = selectConnection(file);
             if (continueExecution) {
                 for (StatementExecutionProcessor executionProcessor : executionProcessors) {
@@ -90,7 +90,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    private boolean selectConnection(DBLanguageFile file) {
+    private boolean selectConnection(DBLanguagePsiFile file) {
         ConnectionHandler activeConnection = file.getActiveConnection();
         DBSchema currentSchema = file.getCurrentSchema();
         if (activeConnection == null || currentSchema == null || activeConnection.isVirtual()) {
@@ -130,14 +130,14 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         if (executionProcessor != null) {
             fireExecution(executionProcessor);
         } else {
-            DBLanguageFile file = (DBLanguageFile) DocumentUtil.getFile(editor);
+            DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
             List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file);
             fireExecution(executionProcessors);
         }
     }
 
     private StatementExecutionProcessor getExecutionProcessorAtCursor(Editor editor) {
-        DBLanguageFile file = (DBLanguageFile) DocumentUtil.getFile(editor);
+        DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
         String selection = editor.getSelectionModel().getSelectedText();
         if (selection != null) {
             return new StatementExecutionCursorProcessor(file, selection, getNextSequence());
@@ -151,7 +151,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         return null;
     }
 
-    public static List<StatementExecutionProcessor> getExecutionProcessors(DBLanguageFile file) {
+    public static List<StatementExecutionProcessor> getExecutionProcessors(DBLanguagePsiFile file) {
         List<StatementExecutionProcessor> statements = new ArrayList<StatementExecutionProcessor>();
 
         PsiElement child = file.getFirstChild();

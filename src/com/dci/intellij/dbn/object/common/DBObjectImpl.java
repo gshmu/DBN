@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -56,7 +56,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.ConnectionPresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.dci.intellij.dbn.vfs.DatabaseObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -87,7 +87,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     private LookupItemFactory sqlLookupItemFactory;
     private LookupItemFactory psqlLookupItemFactory;
 
-    protected DatabaseObjectFile virtualFile;
+    protected DatabaseObjectVirtualFile virtualFile;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = new DBOperationExecutor() {
         public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
@@ -469,9 +469,9 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     @NotNull
-    public DatabaseObjectFile getVirtualFile() {
+    public DatabaseObjectVirtualFile getVirtualFile() {
         if (virtualFile == null) {
-            virtualFile = new DatabaseObjectFile(this);
+            virtualFile = new DatabaseObjectVirtualFile(this);
         }
         return virtualFile;
     }

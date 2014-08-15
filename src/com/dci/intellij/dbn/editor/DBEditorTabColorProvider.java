@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
-import com.dci.intellij.dbn.vfs.DatabaseObjectFile;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.impl.EditorTabColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,7 +29,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
                 EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(connectionHandler.getProject()).getEnvironmentSettings();
                 EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
                 EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                if (file instanceof SQLConsoleFile || file instanceof DatabaseObjectFile) {
+                if (file instanceof SQLConsoleVirtualFile || file instanceof DatabaseObjectVirtualFile) {
                     if (visibilitySettings.getObjectEditorTabs().value()) {
                         return environmentType == null ? null : environmentType.getColor();
                     }
@@ -45,14 +45,14 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
     }
     
     public static ConnectionHandler getConnectionHandler(VirtualFile file, Project project) {
-        if (file instanceof SQLConsoleFile) {
-            SQLConsoleFile consoleFile = (SQLConsoleFile) file;
+        if (file instanceof SQLConsoleVirtualFile) {
+            SQLConsoleVirtualFile consoleFile = (SQLConsoleVirtualFile) file;
             return consoleFile.getConnectionHandler();
 
         } 
         
-        if (file instanceof DatabaseObjectFile) {
-            DatabaseObjectFile objectFile = (DatabaseObjectFile) file;
+        if (file instanceof DatabaseObjectVirtualFile) {
+            DatabaseObjectVirtualFile objectFile = (DatabaseObjectVirtualFile) file;
             return objectFile.getConnectionHandler();
         }
 

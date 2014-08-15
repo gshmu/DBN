@@ -29,7 +29,7 @@ import com.dci.intellij.dbn.ddl.ui.DetachDDLFileDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -237,7 +237,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                         try {
                             VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);
                             bindDDLFile(object, virtualFile);
-                            DatabaseEditableObjectFile databaseFile = object.getVirtualFile();
+                            DatabaseEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                             databaseFile.updateDDLFiles();
                             DatabaseFileSystem.getInstance().reopenEditor(object);
                         } catch (IOException e) {

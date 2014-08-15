@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,9 +13,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class SourceCodeSpecEditorProvider extends BasicSourceCodeEditorProvider {
 
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        DatabaseEditableObjectFile databaseFile = null;
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
-            databaseFile = (DatabaseEditableObjectFile) virtualFile;
+        DatabaseEditableObjectVirtualFile databaseFile = null;
+        if (virtualFile instanceof DatabaseEditableObjectVirtualFile) {
+            databaseFile = (DatabaseEditableObjectVirtualFile) virtualFile;
         }
 
 /*

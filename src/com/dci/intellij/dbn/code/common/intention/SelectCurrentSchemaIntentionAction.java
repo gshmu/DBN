@@ -1,11 +1,15 @@
 package com.dci.intellij.dbn.code.common.intention;
 
+import javax.swing.Icon;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -17,10 +21,6 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.util.List;
 
 public class SelectCurrentSchemaIntentionAction extends GenericIntentionAction {
     @NotNull
@@ -39,8 +39,8 @@ public class SelectCurrentSchemaIntentionAction extends GenericIntentionAction {
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (psiFile instanceof DBLanguageFile && virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof SQLConsoleFile) ) {
-            DBLanguageFile file = (DBLanguageFile) psiFile;
+        if (psiFile instanceof DBLanguagePsiFile && virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof SQLConsoleVirtualFile) ) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
             return file.getActiveConnection() != null;
         }
         return false;
@@ -48,7 +48,7 @@ public class SelectCurrentSchemaIntentionAction extends GenericIntentionAction {
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        DBLanguageFile dbLanguageFile = (DBLanguageFile) psiFile;
+        DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
 
         ConnectionHandler connectionHandler = dbLanguageFile.getActiveConnection();
         if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
@@ -81,9 +81,9 @@ public class SelectCurrentSchemaIntentionAction extends GenericIntentionAction {
 
     private class SelectSchemaAction extends AnAction {
         private DBSchema schema;
-        private DBLanguageFile file;
+        private DBLanguagePsiFile file;
 
-        private SelectSchemaAction(DBSchema schema, DBLanguageFile file) {
+        private SelectSchemaAction(DBSchema schema, DBLanguagePsiFile file) {
             super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
             this.file = file;
             this.schema = schema;

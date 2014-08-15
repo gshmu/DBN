@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.object.common;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 
 public interface DBSchemaObject extends DBObject {
     List<DBObject> getReferencedObjects();
@@ -33,5 +33,5 @@ public interface DBSchemaObject extends DBObject {
     DBObjectStatusHolder getStatus();
 
     @NotNull
-    DatabaseEditableObjectFile getVirtualFile();
+    DatabaseEditableObjectVirtualFile getVirtualFile();
 }
