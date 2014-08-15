@@ -2,9 +2,14 @@ package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 
 public class GenericCompatibilityInterface extends DatabaseCompatibilityInterface {
+
+    public GenericCompatibilityInterface(DatabaseInterfaceProvider parent) {
+        super(parent);
+    }
 
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return

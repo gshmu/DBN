@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.connection.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.VirtualFileUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -21,6 +7,20 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.VirtualFileUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
+import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class SelectConnectionForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -31,7 +31,7 @@ public class SelectConnectionForm extends DBNFormImpl implements DBNForm {
     private ConnectionHandler activeConnection;
     private DBSchema currentSchema;
 
-    public SelectConnectionForm(DBLanguageFile file) {
+    public SelectConnectionForm(DBLanguagePsiFile file) {
         connectionsList.setCellRenderer(new ConnectionListCellRenderer());
         connectionsList.addListSelectionListener(connectionListSelectionListener);
         schemasList.setCellRenderer(new ObjectListCellRenderer());

@@ -27,8 +27,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionManagerListener;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -255,8 +255,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (scroll()) {
-                if (file instanceof DatabaseEditableObjectFile) {
-                    DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
+                if (file instanceof DatabaseEditableObjectVirtualFile) {
+                    DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) file;
                     navigateToElement(databaseFile.getObject());
                 }
             }
@@ -268,13 +268,13 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 VirtualFile oldFile = event.getOldFile();
 
                 if (newFile != oldFile) {
-                    if (newFile instanceof DatabaseEditableObjectFile) {
-                        DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) newFile;
+                    if (newFile instanceof DatabaseEditableObjectVirtualFile) {
+                        DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) newFile;
                         navigateToElement(databaseFile.getObject());
                     }
 
-                    if (newFile instanceof SQLConsoleFile) {
-                        SQLConsoleFile sqlConsoleFile = (SQLConsoleFile) newFile;
+                    if (newFile instanceof SQLConsoleVirtualFile) {
+                        SQLConsoleVirtualFile sqlConsoleFile = (SQLConsoleVirtualFile) newFile;
                         ConnectionHandler connectionHandler = sqlConsoleFile.getConnectionHandler();
                         if (connectionHandler!= null && !connectionHandler.isDisposed()) {
                             navigateToElement(connectionHandler.getObjectBundle());

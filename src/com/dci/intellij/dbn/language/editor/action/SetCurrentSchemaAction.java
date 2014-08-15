@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.language.editor.action;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -37,11 +37,11 @@ public class SetCurrentSchemaAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
 
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
+        if (virtualFile instanceof DatabaseEditableObjectVirtualFile) {
             enabled = false;//objectFile.getObject().getSchema() == schema;
         } else {
             PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
-            enabled = currentFile instanceof DBLanguageFile;
+            enabled = currentFile instanceof DBLanguagePsiFile;
         }
 
         Presentation presentation = e.getPresentation();

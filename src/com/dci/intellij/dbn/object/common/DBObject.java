@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.dci.intellij.dbn.vfs.DatabaseObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
 import com.intellij.psi.PsiNamedElement;
 
 public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupValueProvider, Presentable, Referenceable {
@@ -80,7 +80,7 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     DBOperationExecutor getOperationExecutor();
 
     @NotNull
-    DatabaseObjectFile getVirtualFile();
+    DatabaseObjectVirtualFile getVirtualFile();
     List<PresentableProperty> getPresentableProperties();
     EnvironmentType getEnvironmentType();
     DBObjectRef getRef();

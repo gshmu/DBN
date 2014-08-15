@@ -33,7 +33,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.JBTabsPosition;
@@ -298,7 +298,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                     StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                     StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
                     if (executionInput != null && !executionInput.isDisposed()) {
-                        DBLanguageFile file = executionInput.getExecutablePsiElement().getFile();
+                        DBLanguagePsiFile file = executionInput.getExecutablePsiElement().getFile();
                         DocumentUtil.refreshEditorAnnotations(file);
                     }
                 }

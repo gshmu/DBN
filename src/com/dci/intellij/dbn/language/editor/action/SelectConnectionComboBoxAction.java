@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -8,17 +12,13 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
     private static final String NAME = "DB Connections";
@@ -44,7 +44,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
                 icon = activeConnection.getIcon();
             }
 
-            boolean isConsole = virtualFile instanceof SQLConsoleFile;
+            boolean isConsole = virtualFile instanceof SQLConsoleVirtualFile;
             presentation.setVisible(!isConsole);
 
             if (virtualFile.isInLocalFileSystem()) {

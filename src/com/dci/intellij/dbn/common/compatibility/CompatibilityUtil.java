@@ -4,13 +4,10 @@ import javax.swing.JComponent;
 import javax.swing.JTextField;
 import java.awt.Color;
 
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
 import com.intellij.find.editorHeaderActions.Utils;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.UIUtil;
 
@@ -40,17 +37,4 @@ public class CompatibilityUtil {
     public static boolean isUnderGTKLookAndFeel() {
         return UIUtil.isUnderGTKLookAndFeel();
     }
-
-    public static String getParseRootId(VirtualFile virtualFile) {
-        if (virtualFile instanceof SourceCodeFile) {
-            SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
-            return sourceCodeFile.getParseRootId();
-        } else if (virtualFile instanceof LightVirtualFile) {
-            LightVirtualFile lightVirtualFile = (LightVirtualFile) virtualFile;
-            VirtualFile originalFile = lightVirtualFile.getOriginalFile();
-            return getParseRootId(originalFile);
-        }
-        return null;
-    }
-
 }

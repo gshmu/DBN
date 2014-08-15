@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 
 public class StatementExecutionCursorProcessor extends StatementExecutionBasicProcessor {
@@ -18,7 +18,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         super(psiElement, index);
     }
 
-    public StatementExecutionCursorProcessor(DBLanguageFile file, String sqlStatement, int index) {
+    public StatementExecutionCursorProcessor(DBLanguagePsiFile file, String sqlStatement, int index) {
         super(file, sqlStatement,  index);
     }
 

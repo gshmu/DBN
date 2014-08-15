@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -24,16 +24,16 @@ import com.intellij.openapi.vfs.VirtualFile;
 public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvider implements DumbAware {
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        DatabaseEditableObjectFile databaseFile;
+        DatabaseEditableObjectVirtualFile databaseFile;
 
-        if (file instanceof SourceCodeFile) {
-            SourceCodeFile sourceCodeFile = (SourceCodeFile) file;
+        if (file instanceof SourceCodeVirtualFile) {
+            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) file;
             databaseFile = sourceCodeFile.getDatabaseFile();
         } else {
-            databaseFile = (DatabaseEditableObjectFile) file;
+            databaseFile = (DatabaseEditableObjectVirtualFile) file;
         }
 
-        SourceCodeFile sourceCodeFile = getSourceCodeFile(databaseFile);
+        SourceCodeVirtualFile sourceCodeFile = getSourceCodeFile(databaseFile);
 
         boolean isMainEditor = sourceCodeFile.getContentType() == databaseFile.getMainContentType();
 
@@ -65,7 +65,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         return textEditor;
     }
 
-    private BasicTextEditor lookupExistingEditor(Project project, DatabaseEditableObjectFile databaseFile) {
+    private BasicTextEditor lookupExistingEditor(Project project, DatabaseEditableObjectVirtualFile databaseFile) {
         FileEditor[] fileEditors = FileEditorManager.getInstance(project).getEditors(databaseFile);
         if (fileEditors.length > 0) {
             for (FileEditor fileEditor : fileEditors) {
@@ -80,8 +80,8 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         return null;
     }
 
-    private SourceCodeFile getSourceCodeFile(DatabaseEditableObjectFile databaseFile) {
-        return (SourceCodeFile) databaseFile.getContentFile(getContentType());
+    private SourceCodeVirtualFile getSourceCodeFile(DatabaseEditableObjectVirtualFile databaseFile) {
+        return (SourceCodeVirtualFile) databaseFile.getContentFile(getContentType());
     }
 
     public abstract DBContentType getContentType();

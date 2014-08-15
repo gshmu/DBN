@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -19,7 +20,8 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
+import com.intellij.lang.Language;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -53,6 +55,17 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     public EnvironmentType getEnvironmentType() {
+        return null;
+    }
+
+    @Override
+    @Nullable
+    public DBLanguageDialect resolveLanguageDialect(Language language) {
+        if (language instanceof DBLanguageDialect) {
+            return (DBLanguageDialect) language;
+        } else if (language instanceof DBLanguage) {
+            return getLanguageDialect((DBLanguage) language);
+        }
         return null;
     }
 
@@ -120,7 +133,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public DBObjectBundle getObjectBundle() {return null;}
     public DBSchema getUserSchema() {return null;}
-    public SQLConsoleFile getSQLConsoleFile() {return null;}
+    public SQLConsoleVirtualFile getSQLConsoleFile() {return null;}
 
     public boolean isValid(boolean check) {return true;}
     public boolean isValid() {return true;}

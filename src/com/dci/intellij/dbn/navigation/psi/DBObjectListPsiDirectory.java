@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.navigation.psi;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -8,7 +14,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.vfs.DatabaseObjectListFile;
+import com.dci.intellij.dbn.vfs.DatabaseObjectListVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
@@ -32,18 +38,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
-    private DatabaseObjectListFile virtualFile;
+    private DatabaseObjectListVirtualFile virtualFile;
 
     public DBObjectListPsiDirectory(DBObjectList objectList) {
-        virtualFile = new DatabaseObjectListFile(objectList);
+        virtualFile = new DatabaseObjectListVirtualFile(objectList);
     }
 
     public DBObjectList getObjectList() {

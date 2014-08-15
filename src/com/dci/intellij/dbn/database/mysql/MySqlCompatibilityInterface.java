@@ -3,9 +3,14 @@ package com.dci.intellij.dbn.database.mysql;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 
 public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface {
+
+    public MySqlCompatibilityInterface(DatabaseInterfaceProvider parent) {
+        super(parent);
+    }
 
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return

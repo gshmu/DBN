@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -13,20 +21,12 @@ import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
@@ -55,14 +55,14 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             if (selectedCompileType != null) {
                 doCompileObject(object, object.getContentType(), selectedCompileType, silently);
                 if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
-                    DatabaseEditableObjectFile databaseFile = object.getVirtualFile();
+                    DatabaseEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                     if (object.getContentType().isBundle()) {
                         for (DBContentType contentType : object.getContentType().getSubContentTypes()) {
-                            SourceCodeFile sourceCodeFile = (SourceCodeFile) databaseFile.getContentFile(contentType);
+                            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                             sourceCodeFile.updateChangeTimestamp();
                         }
                     } else {
-                        SourceCodeFile sourceCodeFile = (SourceCodeFile) databaseFile.getContentFile(object.getContentType());
+                        SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) databaseFile.getContentFile(object.getContentType());
                         sourceCodeFile.updateChangeTimestamp();
                     }
                 }
@@ -80,8 +80,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
                         doCompileObject(object, contentType, selectedCompileType, silently);
                         if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
-                            DatabaseEditableObjectFile databaseFile = object.getVirtualFile();
-                            SourceCodeFile sourceCodeFile = (SourceCodeFile) databaseFile.getContentFile(contentType);
+                            DatabaseEditableObjectVirtualFile databaseFile = object.getVirtualFile();
+                            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                             sourceCodeFile.updateChangeTimestamp();
                         }
                     }

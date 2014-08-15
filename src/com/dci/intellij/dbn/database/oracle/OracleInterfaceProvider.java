@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 
 public class OracleInterfaceProvider extends DatabaseInterfaceProviderImpl {
     private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new OracleMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new OracleCompatibilityInterface();
+    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new OracleCompatibilityInterface(this);
     private DatabaseMetadataInterface METADATA_INTERFACE = new OracleMetadataInterface(this);
     private DatabaseDebuggerInterface DEBUGGER_INTERFACE = new OracleDebuggerInterface(this);
     private DatabaseDDLInterface DDL_INTERFACE = new OracleDDLInterface(this);

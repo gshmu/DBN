@@ -29,9 +29,9 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DatabaseContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -72,7 +72,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         fileEditorListener = new DBLanguageFileEditorListener();
     }
 
-    public void updateSourceToDatabase(final Editor editor, final SourceCodeFile virtualFile) {
+    public void updateSourceToDatabase(final Editor editor, final SourceCodeVirtualFile virtualFile) {
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(virtualFile.getProject());
         final DBSchemaObject object = virtualFile.getObject();
         if (object != null) {
@@ -177,7 +177,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return true;
     }
 
-    private void showSourceDiffDialog(final String databaseContent, final SourceCodeFile virtualFile, final Editor editor) {
+    private void showSourceDiffDialog(final String databaseContent, final SourceCodeVirtualFile virtualFile, final Editor editor) {
         new SimpleLaterInvocator() {
             public void execute() {
                 DiffRequestFactory diffRequestFactory = new DiffRequestFactoryImpl();
@@ -212,7 +212,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
 
-    private void doUpdateSourceToDatabase(final DBSchemaObject object, final SourceCodeFile virtualFile, final Editor editor) {
+    private void doUpdateSourceToDatabase(final DBSchemaObject object, final SourceCodeVirtualFile virtualFile, final Editor editor) {
         new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", true) {
 
             @Override
@@ -238,9 +238,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public BasePsiElement getObjectNavigationElement(DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
-        DatabaseEditableObjectFile databaseFile = parentObject.getVirtualFile();
+        DatabaseEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
         PsiManager psiManager = PsiManager.getInstance(parentObject.getProject());
-        DatabaseContentFile contentFile = databaseFile.getContentFile(contentType);
+        DatabaseContentVirtualFile contentFile = databaseFile.getContentFile(contentType);
         if (contentFile != null) {
             PSQLFile file = (PSQLFile) psiManager.findFile(contentFile);
             if (file != null) {
@@ -253,7 +253,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
-        DatabaseEditableObjectFile databaseFile = parentObject.getVirtualFile();
+        DatabaseEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
         FileEditor fileEditor = EditorUtil.getFileEditor(databaseFile, basePsiElement.getFile().getVirtualFile());
         EditorUtil.selectEditor(databaseFile, fileEditor);
         basePsiElement.navigate(true);

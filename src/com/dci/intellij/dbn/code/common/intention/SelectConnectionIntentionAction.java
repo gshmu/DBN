@@ -1,12 +1,16 @@
 package com.dci.intellij.dbn.code.common.intention;
 
+import javax.swing.Icon;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
 import com.intellij.ide.DataManager;
@@ -20,10 +24,6 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.util.List;
 
 public class SelectConnectionIntentionAction extends GenericIntentionAction {
     @NotNull
@@ -42,7 +42,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (psiFile instanceof DBLanguageFile && virtualFile != null && virtualFile.isInLocalFileSystem()) {
+        if (psiFile instanceof DBLanguagePsiFile && virtualFile != null && virtualFile.isInLocalFileSystem()) {
             //DBLanguageFile file = (DBLanguageFile) psiFile;
             return true;
         }
@@ -54,7 +54,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
         List<ConnectionBundle> connectionBundles = connectionManager.getConnectionBundles();
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        DBLanguageFile dbLanguageFile = (DBLanguageFile) psiFile;
+        DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
 
         boolean connectionsFound = false;
         for (ConnectionBundle connectionBundle : connectionBundles) {
@@ -102,9 +102,9 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
 
     private class SelectConnectionAction extends AnAction {
         private ConnectionHandler connectionHandler;
-        private DBLanguageFile file;
+        private DBLanguagePsiFile file;
 
-        private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguageFile file) {
+        private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon());
             this.file = file;
             this.connectionHandler = connectionHandler;

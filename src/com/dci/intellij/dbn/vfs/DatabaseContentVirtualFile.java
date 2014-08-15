@@ -25,8 +25,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 
-public abstract class DatabaseContentFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
-    protected DatabaseEditableObjectFile databaseFile;
+public abstract class DatabaseContentVirtualFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
+    protected DatabaseEditableObjectVirtualFile databaseFile;
     protected DBContentType contentType;
     private FileType fileType;
     private boolean modified;
@@ -47,7 +47,7 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
         return getObject().getSchema();
     }
 
-    public DatabaseContentFile(DatabaseEditableObjectFile databaseFile, DBContentType contentType) {
+    public DatabaseContentVirtualFile(DatabaseEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         this.databaseFile = databaseFile;
         this.contentType = contentType;
 
@@ -60,7 +60,7 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 
-    public DatabaseEditableObjectFile getDatabaseFile() {
+    public DatabaseEditableObjectVirtualFile getDatabaseFile() {
         return databaseFile;
     }
 

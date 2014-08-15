@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 
 public class MySqlInterfaceProvider extends DatabaseInterfaceProviderImpl {
     private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new MySqlMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new MySqlCompatibilityInterface();
+    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new MySqlCompatibilityInterface(this);
     private DatabaseMetadataInterface METADATA_INTERFACE = new MySqlMetadataInterface(this);
     private DatabaseDDLInterface DDL_INTERFACE = new MySqlDDLInterface(this);
     private DatabaseExecutionInterface EXECUTION_INTERFACE = new MySqlExecutionInterface();

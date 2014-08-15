@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
@@ -53,7 +53,7 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
     public void loadFromEditor(@NotNull FileEditorStateLevel level, @NotNull TextEditor textEditor) {
         super.loadFromEditor(level, textEditor);
         content = textEditor.getEditor().getDocument().getText();
-        SQLConsoleFile file = (SQLConsoleFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
+        SQLConsoleVirtualFile file = (SQLConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
         DBSchema schema = file.getCurrentSchema();
         currentSchema = schema == null ? "" : schema.getName();
     }
@@ -67,7 +67,7 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
                     public void run() {
                         textEditor.getEditor().getDocument().setText(content);
                         SQLConsoleEditorState.super.applyToEditor(textEditor);
-                        SQLConsoleFile file = (SQLConsoleFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
+                        SQLConsoleVirtualFile file = (SQLConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
                         if (currentSchema != null) {
                             DBSchema schema = file.getConnectionHandler().getObjectBundle().getSchema(currentSchema);
                             if (schema != null) file.setCurrentSchema(schema);

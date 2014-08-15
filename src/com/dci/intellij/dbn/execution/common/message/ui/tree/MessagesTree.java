@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
@@ -97,7 +97,7 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
             CompilerMessage compilerMessage = compilerMessageNode.getCompilerMessage();
             FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
 
-            DatabaseEditableObjectFile databaseFile = compilerMessage.getDatabaseFile();
+            DatabaseEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
             if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
                 editorManager.openFile(databaseFile, false);
                 if (compilerMessage.getContentFile() != null) {
@@ -110,7 +110,7 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
         }
     }
 
-    private void navigateInEditor(CompilerMessage compilerMessage, BasicTextEditor textEditor, DatabaseEditableObjectFile databaseFile) {
+    private void navigateInEditor(CompilerMessage compilerMessage, BasicTextEditor textEditor, DatabaseEditableObjectVirtualFile databaseFile) {
         Editor editor = textEditor.getEditor();
         Document document = editor.getDocument();
         SourceCodeEditor codeEditor = (SourceCodeEditor) textEditor;
