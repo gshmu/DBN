@@ -883,7 +883,7 @@
             <element ref-id="inner_cross_join_clause" />
             <element ref-id="outer_join_clause" />
             <wrapper id="000000410" template="PARENTHESES">
-                <one-of exit="true" id="000000411">
+                <one-of id="000000411">
                     <element ref-id="inner_cross_join_clause" />
                     <element ref-id="outer_join_clause" />
                 </one-of>
