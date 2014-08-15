@@ -169,20 +169,23 @@ public class DBProgramDebugProcess extends XDebugProcess {
             public void executeOperation() throws SQLException {
                 XDebugSession session = getSession();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(session.getProject());
-                if (getStatus().PROCESS_IS_TERMINATING) return;
+                if (status.PROCESS_IS_TERMINATING) return;
 
-                boolean success = executionManager.debugExecute(executionInput, targetConnection);
-
-                if (!success) {
+                try {
+                    executionManager.debugExecute(executionInput, targetConnection);
+                } catch (SQLException e){
                     // if the method execution threw exception, the debugger-off statement is not reached,
                     // hence the session will hag as debuggable. To avoid this, disable debugging has
                     // to explicitly be called here
+                    status.TARGET_EXECUTION_THREW_EXCEPTION = true;
                     getDebuggerInterface().disableDebugging(targetConnection);
+
+                } finally {
+                    status.TARGET_EXECUTION_TERMINATED = true;
+                    connectionHandler.freePoolConnection(targetConnection);
+                    targetConnection = null;
                 }
 
-                getStatus().TARGET_EXECUTION_TERMINATED = true;
-                connectionHandler.freePoolConnection(targetConnection);
-                targetConnection = null;
             }
         }.start();
     }
@@ -267,32 +270,32 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void stop() {
-        executionInput.setExecutionCancelled(!getStatus().PROCESS_STOPPED_NORMALLY);
+        executionInput.setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
         final Project project = getSession().getProject();
 
-        if (getStatus().PROCESS_IS_TERMINATING) return;
+        if (status.PROCESS_IS_TERMINATING) return;
 
         new BackgroundTask(project, "Stopping debugger", true) {
             public void execute(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setText("Cancelling / resuming method execution.");
                 try {
-                    getStatus().PROCESS_IS_TERMINATING = true;
+                    status.PROCESS_IS_TERMINATING = true;
                     unregisterBreakpoints();
                     rollOutDebugger();
-                    getStatus().CAN_SET_BREAKPOINTS = false;
+                    status.CAN_SET_BREAKPOINTS = false;
 
                     if (debugConnection != null) {
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                         runtimeInfo = debuggerInterface.stopExecution(debugConnection);
                         debuggerInterface.detachSession(debugConnection);
-
-                        connectionHandler.freePoolConnection(debugConnection);
-                        debugConnection = null;
                     }
-                    getStatus().PROCESS_IS_TERMINATED = true;
+                    status.PROCESS_IS_TERMINATED = true;
                 } catch (final SQLException e) {
                     showErrorDialog(e);
                 } finally {
+                    connectionHandler.freePoolConnection(debugConnection);
+                    debugConnection = null;
+
                     DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
                 }
             }
@@ -380,10 +383,10 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     private void suspendSession() {
-        if (getStatus().PROCESS_IS_TERMINATING) return;
+        if (status.PROCESS_IS_TERMINATING) return;
 
         if (runtimeInfo.getOwnerName() == null) {
-            getStatus().PROCESS_STOPPED_NORMALLY = true;
+            status.PROCESS_STOPPED_NORMALLY = true;
             getSession().stop();
         } else {
             try {

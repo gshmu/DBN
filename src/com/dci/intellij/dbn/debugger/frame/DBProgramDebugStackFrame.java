@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebuggerBundle;
@@ -82,7 +83,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         return inhibitSourcePosition ? null : sourcePosition;
     }
 
-    public void customizePresentation(final SimpleColoredComponent component) {
+    public void customizePresentation(@NotNull ColoredTextContainer component) {
         DBSchemaObject object = DBProgramDebugUtil.getObject(sourcePosition);
         if (object != null) {
             component.append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
@@ -91,6 +92,10 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         } else {
             component.append(XDebuggerBundle.message("invalid.frame"), SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
+    }
+
+    public void customizePresentation(final SimpleColoredComponent component) {
+        customizePresentation((ColoredTextContainer) component);
     }
 
     @Override
