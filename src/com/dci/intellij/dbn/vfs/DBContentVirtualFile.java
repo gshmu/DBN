@@ -25,8 +25,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 
-public abstract class DatabaseContentFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
-    protected DatabaseEditableObjectFile databaseFile;
+public abstract class DBContentVirtualFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
+    protected DBEditableObjectVirtualFile mainDatabaseFile;
     protected DBContentType contentType;
     private FileType fileType;
     private boolean modified;
@@ -35,7 +35,8 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
     private String url;
 
     public ConnectionHandler getActiveConnection() {
-        return getObject().getConnectionHandler();
+        DBSchemaObject object = getObject();
+        return object == null ? null : object.getConnectionHandler();
     }
 
     @Override
@@ -44,14 +45,15 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
     }
 
     public DBSchema getCurrentSchema() {
-        return getObject().getSchema();
+        DBSchemaObject object = getObject();
+        return object == null ? null : object.getSchema();
     }
 
-    public DatabaseContentFile(DatabaseEditableObjectFile databaseFile, DBContentType contentType) {
-        this.databaseFile = databaseFile;
+    public DBContentVirtualFile(DBEditableObjectVirtualFile parentFile, DBContentType contentType) {
+        this.mainDatabaseFile = parentFile;
         this.contentType = contentType;
 
-        DBSchemaObject object = databaseFile.getObject();
+        DBSchemaObject object = parentFile.getObject();
         this.name = object.getName();
         this.path = DatabaseFileSystem.createPath(object, getContentType());
         this.url = DatabaseFileSystem.createUrl(object);
@@ -60,8 +62,8 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 
-    public DatabaseEditableObjectFile getDatabaseFile() {
-        return databaseFile;
+    public DBEditableObjectVirtualFile getMainDatabaseFile() {
+        return mainDatabaseFile;
     }
 
     public DBContentType getContentType() {
@@ -78,12 +80,12 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
 
     @Nullable
     public DBSchemaObject getObject() {
-        return databaseFile == null ? null : databaseFile.getObject();
+        return mainDatabaseFile == null ? null : mainDatabaseFile.getObject();
     }
 
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return databaseFile.getConnectionHandler();
+        return mainDatabaseFile.getConnectionHandler();
     }
 
     public DBLanguageDialect getLanguageDialect() {
@@ -146,7 +148,7 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
 
     @Nullable
     public VirtualFile getParent() {
-        DBSchemaObject object = databaseFile.getObject();
+        DBSchemaObject object = mainDatabaseFile.getObject();
         if (object != null) {
             DBObject parentObject = object.getParentObject();
             if (parentObject != null) {
@@ -183,6 +185,6 @@ public abstract class DatabaseContentFile extends VirtualFile implements FileCon
 
     @Override
     public void dispose() {
-        databaseFile = null;
+        mainDatabaseFile = null;
     }
 }

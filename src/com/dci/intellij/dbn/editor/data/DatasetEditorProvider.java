@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.DatasetFile;
+import com.dci.intellij.dbn.vfs.DBDatasetVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
@@ -26,8 +26,8 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
      *********************************************************/
 
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) virtualFile;
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
             return databaseFile.getObject().getContentType() == DBContentType.DATA ||
                    databaseFile.getObject().getContentType() == DBContentType.CODE_AND_DATA;
         }
@@ -36,8 +36,8 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
 
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
-        DatasetFile datasetFile = (DatasetFile) databaseFile.getContentFile(DBContentType.DATA);
+        DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
+        DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) databaseFile.getContentFile(DBContentType.DATA);
         DBDataset dataset = datasetFile.getObject();
         return new DatasetEditor(databaseFile, dataset);
     }
@@ -48,8 +48,8 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
 
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile editableObjectFile = (DatabaseEditableObjectFile) virtualFile;
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
             DBSchemaObject object = editableObjectFile.getObject();
             if (object instanceof DBDataset) {
                 DatasetEditorState editorState = new DatasetEditorState();

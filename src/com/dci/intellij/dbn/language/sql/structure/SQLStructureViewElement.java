@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.language.sql.structure;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -33,8 +33,8 @@ public class SQLStructureViewElement implements StructureViewTreeElement {
         if (psiElement instanceof BasePsiElement) return (ItemPresentation) psiElement;
         return new ItemPresentation() {
             public String getPresentableText() {
-                if (psiElement instanceof DBLanguageFile) {
-                    DBLanguageFile file = (DBLanguageFile) psiElement;
+                if (psiElement instanceof DBLanguagePsiFile) {
+                    DBLanguagePsiFile file = (DBLanguagePsiFile) psiElement;
                     return file.getName();
                 }
                 if (psiElement instanceof ChameleonPsiElement) {

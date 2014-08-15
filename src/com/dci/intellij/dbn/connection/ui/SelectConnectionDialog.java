@@ -1,23 +1,23 @@
 package com.dci.intellij.dbn.connection.ui;
 
+import javax.swing.JComponent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.editor.Editor;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 public class SelectConnectionDialog extends DBNDialog implements ListSelectionListener{
-    private DBLanguageFile file;
+    private DBLanguagePsiFile file;
     private SelectConnectionForm selectConnectionForm;
 
-    public SelectConnectionDialog(DBLanguageFile file) {
+    public SelectConnectionDialog(DBLanguagePsiFile file) {
         super(file.getProject(), "Select Connection", true);
         this.file = file;
         selectConnectionForm = new SelectConnectionForm(file);

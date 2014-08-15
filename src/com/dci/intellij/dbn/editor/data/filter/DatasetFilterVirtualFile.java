@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.vfs;
+package com.dci.intellij.dbn.editor.data.filter;
 
 import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
@@ -12,12 +12,15 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
+import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,33 +29,35 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class SQLConsoleFile extends VirtualFile implements DatabaseFile, DBVirtualFile {
+public class DatasetFilterVirtualFile extends VirtualFile implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
-    private ConnectionHandler connectionHandler;
-    private DBObjectRef<DBSchema> currentSchemaRef;
+    private DBObjectRef<DBDataset> datasetRef;
     protected String name;
     protected String path;
     protected String url;
 
 
-    public SQLConsoleFile(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
-        this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
-        name = connectionHandler.getName();
-        path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE";
-        url = DatabaseFileSystem.createUrl(connectionHandler);
-        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
+    public DatasetFilterVirtualFile(DBDataset dataset, String content) {
+        this.datasetRef = dataset.getRef();
+        this.content = content;
+        name = datasetRef.getName();
+        path = DatabaseFileSystem.createPath(dataset) + " FILTER";
+        url = DatabaseFileSystem.createUrl(dataset) + "#FILTER";
+        setCharset(getConnectionHandler().getSettings().getDetailSettings().getCharset());
+        putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
-    public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, DBLanguage language) {
+    public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) {
-            DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(language);
+            DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+
             if (languageDialect != null) {
-                DBLanguageFile file = (DBLanguageFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
+                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
                 fileViewProvider.forceCachedPsi(file);
                 Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
+                document.putUserData(FILE_KEY, this);
                 PsiDocumentManagerImpl.cachePsi(document, file);
                 return file;
             }
@@ -61,25 +66,15 @@ public class SQLConsoleFile extends VirtualFile implements DatabaseFile, DBVirtu
     }
 
     public Icon getIcon() {
-        return Icons.FILE_SQL_CONSOLE;
+        return Icons.DBO_TABLE;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return datasetRef.lookupConnectionHandler();
     }
 
     @Override
     public void dispose() {
-        connectionHandler = null;
-        currentSchemaRef = null;
-    }
-
-    public void setCurrentSchema(DBSchema currentSchema) {
-        this.currentSchemaRef = DBObjectRef.from(currentSchema);
-    }
-
-    public DBSchema getCurrentSchema() {
-        return DBObjectRef.get(currentSchemaRef);
     }
 
     @NotNull
@@ -146,7 +141,7 @@ public class SQLConsoleFile extends VirtualFile implements DatabaseFile, DBVirtu
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             public void close() {
-                SQLConsoleFile.this.modificationTimestamp = modificationTimestamp;
+                DatasetFilterVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content = toString();
             }
         };

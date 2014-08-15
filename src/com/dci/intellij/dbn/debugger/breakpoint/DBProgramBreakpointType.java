@@ -1,12 +1,15 @@
 package com.dci.intellij.dbn.debugger.breakpoint;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEditorsProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,8 +20,6 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakpointProperties> {
     public DBProgramBreakpointType() {
@@ -28,8 +29,8 @@ public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakp
     @Override
     public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
         if (file.getFileType().equals(PSQLFileType.INSTANCE)) {
-            if (file instanceof SourceCodeFile) {
-                SourceCodeFile sourceCodeFile = (SourceCodeFile) file;
+            if (file instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
                 DBContentType contentType = sourceCodeFile.getContentType();
                 if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_BODY) {
                     Document document = DocumentUtil.getDocument(file);

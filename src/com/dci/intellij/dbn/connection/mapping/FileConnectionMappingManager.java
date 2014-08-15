@@ -18,10 +18,10 @@ import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -95,8 +95,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             }
         }
 
-        if (virtualFile instanceof SQLConsoleFile) {
-            SQLConsoleFile sqlConsoleFile = (SQLConsoleFile) virtualFile;
+        if (virtualFile instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
             sqlConsoleFile.setCurrentSchema(schema);
             return true;
         }
@@ -107,17 +107,17 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     public ConnectionHandler getActiveConnection(VirtualFile virtualFile) {
         // if the file is a database content file then get the connection from the underlying database object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
-            if (virtualFile instanceof DatabaseContentFile) {
-                DatabaseContentFile contentFile = (DatabaseContentFile) virtualFile;
+            if (virtualFile instanceof DBContentVirtualFile) {
+                DBContentVirtualFile contentFile = (DBContentVirtualFile) virtualFile;
                 return contentFile.getActiveConnection();
             }
-            if (virtualFile instanceof DatabaseEditableObjectFile) {
-                DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) virtualFile;
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                 return databaseFile.getActiveConnection();
             }
 
-            if (virtualFile instanceof SQLConsoleFile) {
-                SQLConsoleFile sqlConsoleFile = (SQLConsoleFile) virtualFile;
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
                 return sqlConsoleFile.getConnectionHandler();
             }
         }
@@ -153,13 +153,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     public DBSchema getCurrentSchema(VirtualFile virtualFile) {
         // if the file is a database content file then get the schema from the underlying schema object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
-            if (virtualFile instanceof DatabaseContentFile) {
-                DatabaseContentFile contentFile = (DatabaseContentFile) virtualFile;
+            if (virtualFile instanceof DBContentVirtualFile) {
+                DBContentVirtualFile contentFile = (DBContentVirtualFile) virtualFile;
                 return contentFile.getCurrentSchema();
             }
 
-            if (virtualFile instanceof SQLConsoleFile) {
-                SQLConsoleFile sqlConsoleFile = (SQLConsoleFile) virtualFile;
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
                 return sqlConsoleFile.getCurrentSchema();
             }
         }
@@ -260,7 +260,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (editor!= null) {
             Document document = editor.getDocument();
             VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-            if (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof SQLConsoleFile) {
+            if (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile) {
                 boolean changed = setCurrentSchema(virtualFile, schema);
                 if (changed) {
                     DocumentUtil.touchDocument(editor);

@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.language.psql;
 
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -12,11 +15,8 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
-public class PSQLFile extends DBLanguageFile {
+public class PSQLFile extends DBLanguagePsiFile {
 
     public PSQLFile(FileViewProvider fileViewProvider, @NotNull PSQLLanguage language) {
         super(fileViewProvider, PSQLFileType.INSTANCE, language);

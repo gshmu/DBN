@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.VirtualObjectLookupAdapte
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -127,7 +127,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        DBLanguageFile file = underlyingPsiElement.getFile();
+        DBLanguagePsiFile file = underlyingPsiElement.getFile();
         return file == null ? null : file.getActiveConnection();
     }
 
@@ -149,7 +149,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         PsiFile containingFile = getContainingFile();
         if (containingFile != null) {
             VirtualFile virtualFile = containingFile.getVirtualFile();
-            if(virtualFile instanceof DatabaseContentFile) {
+            if(virtualFile instanceof DBContentVirtualFile) {
                 Document document = DocumentUtil.getDocument(containingFile);
                 Editor[] editors =  EditorFactory.getInstance().getEditors(document);
                 OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(relevantPsiElement);

@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
-import com.dci.intellij.dbn.vfs.DatabaseContentFile;
-import com.intellij.openapi.util.Disposer;
-
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
+
+import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
+import com.intellij.openapi.util.Disposer;
 
 public class CompilerMessageNode implements MessagesTreeNode {
     private CompilerMessage compilerMessage;
@@ -22,7 +22,7 @@ public class CompilerMessageNode implements MessagesTreeNode {
         return compilerMessage;
     }
 
-    public DatabaseContentFile getVirtualFile() {
+    public DBContentVirtualFile getVirtualFile() {
         return compilerMessage.getContentFile();
     }
 

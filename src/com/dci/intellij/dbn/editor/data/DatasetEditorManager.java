@@ -23,7 +23,7 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -158,8 +158,8 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
     FileEditorManagerAdapter fileEditorListener = new FileEditorManagerAdapter() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DatabaseEditableObjectFile) {
-                DatabaseEditableObjectFile editableObjectFile = (DatabaseEditableObjectFile) file;
+            if (file instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
                 DBSchemaObject object = editableObjectFile.getObject();
                 if (object instanceof DBDataset) {
                     FileEditor[] fileEditors = source.getEditors(file);

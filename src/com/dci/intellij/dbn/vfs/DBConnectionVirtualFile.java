@@ -15,7 +15,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DatabaseConnectionFile extends VirtualFile implements DBVirtualFile {
+public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFile {
     private static final byte[] EMPTY_CONTENT = new byte[0];
     private ConnectionHandler connectionHandler;
 
@@ -23,7 +23,7 @@ public class DatabaseConnectionFile extends VirtualFile implements DBVirtualFile
     private String url;
     private String name;
 
-    public DatabaseConnectionFile(ConnectionHandler connectionHandler) {
+    public DBConnectionVirtualFile(ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
     }
 
@@ -32,8 +32,8 @@ public class DatabaseConnectionFile extends VirtualFile implements DBVirtualFile
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof DatabaseConnectionFile) {
-            DatabaseConnectionFile databaseFile = (DatabaseConnectionFile) obj;
+        if (obj instanceof DBConnectionVirtualFile) {
+            DBConnectionVirtualFile databaseFile = (DBConnectionVirtualFile) obj;
             return databaseFile.getConnectionHandler().equals(getConnectionHandler());
         }
         return false;

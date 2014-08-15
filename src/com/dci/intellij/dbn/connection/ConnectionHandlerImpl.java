@@ -28,7 +28,8 @@ import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -51,7 +52,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private boolean checkingIdleStatus;
     private long validityCheckTimestamp = 0;
 
-    private SQLConsoleFile sqlConsoleFile;
+    private DBConsoleVirtualFile sqlConsoleFile;
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
 
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
@@ -86,9 +87,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
-    public SQLConsoleFile getSQLConsoleFile() {
+    public DBConsoleVirtualFile getSQLConsoleFile() {
         if (sqlConsoleFile == null) {
-            sqlConsoleFile = new SQLConsoleFile(this);
+            sqlConsoleFile = new DBConsoleVirtualFile(this);
         }
         return sqlConsoleFile;
     }
@@ -301,6 +302,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             }
         }
         return interfaceProvider;
+    }
+
+    @Override
+    public DBLanguageDialect resolveLanguageDialect(Language language) {
+        if (language instanceof DBLanguageDialect) {
+            return (DBLanguageDialect) language;
+        } else if (language instanceof DBLanguage) {
+            return getLanguageDialect((DBLanguage) language);
+        }
+        return null;
     }
 
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {

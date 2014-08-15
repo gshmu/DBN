@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -29,7 +29,7 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
         }
     }
 
-    protected void updateTabIcon(final DatabaseEditableObjectFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
+    protected void updateTabIcon(final DBEditableObjectVirtualFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
         new SimpleLaterInvocator() {
             public void execute() {
                 EditorUtil.setEditorIcon(databaseFile, textEditor, icon);

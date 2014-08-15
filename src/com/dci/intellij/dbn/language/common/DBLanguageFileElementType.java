@@ -15,7 +15,7 @@ public class DBLanguageFileElementType extends IFileElementType {
     }
 
     public ASTNode parseContents(ASTNode chameleon) {
-        DBLanguageFile file = (DBLanguageFile) chameleon.getPsi();
+        DBLanguagePsiFile file = (DBLanguagePsiFile) chameleon.getPsi();
         Project project = file.getProject();
         DBLanguageDialect languageDialect = file.getLanguageDialect();
         if (languageDialect == null) {

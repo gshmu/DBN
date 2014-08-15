@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
 
 public class CompareWithDatabaseAction extends AbstractDiffAction {
     public CompareWithDatabaseAction() {
@@ -26,7 +26,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
             new BackgroundTask(project, "Loading database source code", false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    SourceCodeFile virtualFile = getSourcecodeFile(e);
+                    DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
                     Editor editor = getEditor(e);
                     if (virtualFile != null && editor != null) {
                         String content = editor.getDocument().getText();

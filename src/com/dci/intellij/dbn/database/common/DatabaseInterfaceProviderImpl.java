@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database.common;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -18,6 +20,8 @@ public abstract class DatabaseInterfaceProviderImpl implements DatabaseInterface
         this.psqlLanguageDialect = psqlLanguageDialect;
     }
 
+    @Nullable
+    @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
         if (language == SQLLanguage.INSTANCE) return sqlLanguageDialect;
         if (language == PSQLLanguage.INSTANCE) return psqlLanguageDialect;

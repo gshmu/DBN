@@ -11,17 +11,17 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryListener;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
-public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile>{
+public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFile>{
     private DBObjectRef<DBSchemaObject> objectRef;
     private SourceCodeOffsets offsets;
 
-    public SourceCodeEditor(Project project, SourceCodeFile sourceCodeFile, String name) {
+    public SourceCodeEditor(Project project, DBSourceCodeVirtualFile sourceCodeFile, String name) {
         super(project, sourceCodeFile, name);
 
         objectRef = DBObjectRef.from(sourceCodeFile.getObject());
@@ -67,7 +67,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<SourceCodeFile>{
                 new ConditionalLaterInvocator() {
                     public void execute() {
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                        fileEditorManager.closeFile(getVirtualFile().getDatabaseFile());
+                        fileEditorManager.closeFile(getVirtualFile().getMainDatabaseFile());
                     }
                 }.start();
             }

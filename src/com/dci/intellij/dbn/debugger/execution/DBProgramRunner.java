@@ -64,18 +64,22 @@ public class DBProgramRunner extends GenericProgramRunner {
             final ExecutionEnvironment environment) throws ExecutionException {
 
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
+        ConnectionHandler connectionHandler = runProfile.getMethod().getConnectionHandler();
+        DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
+        boolean allowed = databaseDebuggerManager.checkForbiddenOperation(connectionHandler, "Another debug session is active on this connection. You can only run one debug session at the time.");
+        if (allowed) {
+            new BackgroundTask(runProfile.getProject(), "Checking debug privileges", false, true) {
+                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    initProgressIndicator(progressIndicator, true);
+                    performPrivilegeCheck(
+                            runProfile.getExecutionInput(),
+                            executor,
+                            environment,
+                            null);
 
-        new BackgroundTask(runProfile.getProject(), "Checking debug privileges", false, true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true);
-                performPrivilegeCheck(
-                        runProfile.getExecutionInput(),
-                        executor,
-                        environment,
-                        null);
-
-            }
-        }.start();
+                }
+            }.start();
+        }
 
         return null;
     }

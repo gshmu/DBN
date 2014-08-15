@@ -18,23 +18,21 @@ import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeLoadListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
-import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 
-public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile, DocumentListener {
-    private static final Key<VirtualFile> FILE_KEY = Key.create("FILE_KEY");
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener {
 
     private String originalContent;
     private String lastSavedContent;
@@ -45,7 +43,7 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
     private int hashCode;
     private SourceCodeOffsets offsets;
 
-    public SourceCodeFile(final DatabaseEditableObjectFile databaseFile, DBContentType contentType) {
+    public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
         DBSchemaObject object = getObject();
         if (object != null) {
@@ -79,20 +77,20 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
         return offsets;
     }
 
-    public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, DBLanguage language) {
+    public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-
-        DBSchemaObject underlyingObject = getObject();
         String parseRootId = getParseRootId();
-        if (parseRootId != null) {
-            DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(language);
+        if (connectionHandler != null && parseRootId != null) {
+            DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
             if (languageDialect != null) {
-                DBLanguageFile file = (DBLanguageFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-                file.setParseRootId(parseRootId);
+                DBSchemaObject underlyingObject = getObject();
+                fileViewProvider.getVirtualFile().putUserData(PARSE_ROOT_ID_KEY, getParseRootId());
+
+                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
                 file.setUnderlyingObject(underlyingObject);
                 fileViewProvider.forceCachedPsi(file);
                 Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                document.putUserData(FILE_KEY, getDatabaseFile());
+                document.putUserData(FILE_KEY, getMainDatabaseFile());
                 PsiDocumentManagerImpl.cachePsi(document, file);
                 return file;
             }
@@ -105,8 +103,8 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
         return schemaObject == null ? null : schemaObject.getCodeParseRootId(contentType);
     }
 
-    public DBLanguageFile getPsiFile() {
-        return (DBLanguageFile) PsiUtil.getPsiFile(getProject(), this);
+    public DBLanguagePsiFile getPsiFile() {
+        return (DBLanguagePsiFile) PsiUtil.getPsiFile(getProject(), this);
     }
 
     public void updateChangeTimestamp() {
@@ -158,7 +156,7 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
                 content = sourceCodeContent.getSourceCode();
                 offsets = sourceCodeContent.getOffsets();
 
-                getDatabaseFile().updateDDLFiles(getContentType());
+                getMainDatabaseFile().updateDDLFiles(getContentType());
                 setModified(false);
                 sourceLoadError = null;
                 return true;
@@ -167,7 +165,7 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
             }
         } catch (SQLException e) {
             sourceLoadError = e.getMessage();
-            DBSchemaObject object = databaseFile.getObject();
+            DBSchemaObject object = mainDatabaseFile.getObject();
             if (object != null) {
                 MessageUtil.showErrorDialog("Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
             }
@@ -175,7 +173,7 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
         } finally {
             Project project = getProject();
             if (project != null && !project.isDisposed()) {
-                EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(databaseFile);
+                EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
             }
         }
     }
@@ -185,7 +183,7 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
         if (object != null) {
             object.executeUpdateDDL(getContentType(), getLastSavedContent(), content);
             updateChangeTimestamp();
-            getDatabaseFile().updateDDLFiles(getContentType());
+            getMainDatabaseFile().updateDDLFiles(getContentType());
             setModified(false);
             lastSavedContent = content;
         }
@@ -231,7 +229,7 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
     @Override
     public <T> void putUserData(@NotNull Key<T> key, T value) {
         if (key == FileDocumentManagerImpl.DOCUMENT_KEY && contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_BODY) ) {
-            databaseFile.putUserData(FileDocumentManagerImpl.DOCUMENT_KEY, (Reference<Document>) value);
+            mainDatabaseFile.putUserData(FileDocumentManagerImpl.DOCUMENT_KEY, (Reference<Document>) value);
         }
         super.putUserData(key, value);
     }
@@ -250,8 +248,8 @@ public class SourceCodeFile extends DatabaseContentFile implements DatabaseFile,
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof SourceCodeFile) {
-            SourceCodeFile virtualFile = (SourceCodeFile) obj;
+        if (obj instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) obj;
             return virtualFile.hashCode() == hashCode;
         }
         return false;

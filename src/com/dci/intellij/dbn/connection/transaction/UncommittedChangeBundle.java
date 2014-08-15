@@ -1,25 +1,25 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 
-import com.dci.intellij.dbn.vfs.DatabaseObjectFile;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class UncommittedChangeBundle {
     private List<UncommittedChange> changes = new ArrayList<UncommittedChange>();
 
     public void notifyChange(VirtualFile file){
         Icon icon = file.getFileType().getIcon();
-        if (file instanceof DatabaseObjectFile) {
-            DatabaseObjectFile databaseObjectFile = (DatabaseObjectFile) file;
+        if (file instanceof DBObjectVirtualFile) {
+            DBObjectVirtualFile databaseObjectFile = (DBObjectVirtualFile) file;
             icon = databaseObjectFile.getIcon();
         }
-        if (file instanceof SQLConsoleFile) {
-            SQLConsoleFile sqlConsoleFile = (SQLConsoleFile) file;
+        if (file instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) file;
             icon = sqlConsoleFile.getIcon();
         }
 

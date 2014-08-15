@@ -5,16 +5,16 @@ import java.util.List;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ObjectToDDLContentSynchronizer implements Runnable {
-    DatabaseEditableObjectFile databaseFile;
+    DBEditableObjectVirtualFile databaseFile;
     private DBContentType sourceContentType;
 
-    public ObjectToDDLContentSynchronizer(DBContentType sourceContentType, DatabaseEditableObjectFile databaseFile) {
+    public ObjectToDDLContentSynchronizer(DBContentType sourceContentType, DBEditableObjectVirtualFile databaseFile) {
         this.sourceContentType = sourceContentType;
         this.databaseFile = databaseFile;
     }
@@ -35,7 +35,7 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                 if (fileContentType.isBundle()) {
                     DBContentType[] contentTypes = fileContentType.getSubContentTypes();
                     for (DBContentType contentType : contentTypes) {
-                        SourceCodeFile virtualFile = (SourceCodeFile) databaseFile.getContentFile(contentType);
+                        DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                         String statement = virtualFile.createDDLStatement();
                         if (statement.trim().length() > 0) {
                             buffer.append(statement);
@@ -48,7 +48,7 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                         if (contentType != contentTypes[contentTypes.length - 1]) buffer.append("\n");
                     }
                 } else {
-                    SourceCodeFile virtualFile = (SourceCodeFile) databaseFile.getContentFile(fileContentType);
+                    DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
                     buffer.append(virtualFile.createDDLStatement());
                     if (postfix.length() > 0) {
                         buffer.append("\n");

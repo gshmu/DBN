@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
 public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<OneOfElementType> {
@@ -20,15 +21,15 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
     }
 
     public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
-        for (ElementType elementType : getElementType().getPossibleElementTypes()) {
-            if (elementType.getLookupCache().containsLandmarkToken(tokenType, node)) return true;
+        for (ElementTypeRef child : getElementType().getChildren()) {
+            if (child.getLookupCache().containsLandmarkToken(tokenType, node)) return true;
         }
         return false;
     }
 
     public boolean startsWithIdentifier(PathNode node) {
-        for(ElementType elementType : getElementType().getPossibleElementTypes()){
-            if (elementType.getLookupCache().startsWithIdentifier(node)) return true;
+        for(ElementTypeRef child : getElementType().getChildren()){
+            if (child.getLookupCache().startsWithIdentifier(node)) return true;
         }
         return false;
     }

@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -51,12 +51,12 @@ public class SourceCodeLoadErrorNotificationProvider extends EditorNotifications
     @Nullable
     @Override
     public SourceCodeLoadErrorNotificationPanel createNotificationPanel(VirtualFile virtualFile, FileEditor fileEditor) {
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof SourceCodeEditor) {
-                DatabaseEditableObjectFile editableObjectFile = (DatabaseEditableObjectFile) virtualFile;
+                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
                 DBSchemaObject editableObject = editableObjectFile.getObject();
                 SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                SourceCodeFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
+                DBSourceCodeVirtualFile sourceCodeFile = sourceCodeEditor.getVirtualFile();
                 String sourceLoadError = sourceCodeFile.getSourceLoadError();
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
                     return createPanel(editableObject, sourceLoadError);

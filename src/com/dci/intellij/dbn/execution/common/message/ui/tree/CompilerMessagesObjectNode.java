@@ -8,17 +8,17 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 
 public class CompilerMessagesObjectNode extends BundleTreeNode {
-    private DatabaseEditableObjectFile databaseFile;
+    private DBEditableObjectVirtualFile databaseFile;
 
-    public CompilerMessagesObjectNode(CompilerMessagesNode parent, DatabaseEditableObjectFile databaseFile) {
+    public CompilerMessagesObjectNode(CompilerMessagesNode parent, DBEditableObjectVirtualFile databaseFile) {
         super(parent);
         this.databaseFile = databaseFile;
     }
 
-    public DatabaseEditableObjectFile getVirtualFile() {
+    public DBEditableObjectVirtualFile getVirtualFile() {
         return databaseFile;
     }
 

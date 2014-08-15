@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.code.common.intention;
 
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
-import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class SetupCodeCompletionIntentionAction extends GenericIntentionAction {
     @NotNull
@@ -28,7 +28,7 @@ public class SetupCodeCompletionIntentionAction extends GenericIntentionAction {
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        return psiFile instanceof DBLanguageFile && psiFile.getVirtualFile().getParent() != null;
+        return psiFile instanceof DBLanguagePsiFile && psiFile.getVirtualFile().getParent() != null;
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
