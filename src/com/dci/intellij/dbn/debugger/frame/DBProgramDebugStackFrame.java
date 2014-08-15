@@ -15,8 +15,8 @@ import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEvaluator;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleColoredComponent;
@@ -40,7 +40,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
     public DBProgramDebugStackFrame(DBProgramDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
         this.index = index;
-        DatabaseEditableObjectVirtualFile databaseFile = debugProcess.getDatabaseFile(runtimeInfo);
+        DBEditableObjectVirtualFile databaseFile = debugProcess.getDatabaseFile(runtimeInfo);
 
         this.debugProcess = debugProcess;
         sourcePosition = XSourcePositionImpl.create(databaseFile, runtimeInfo.getLineNumber());
@@ -97,7 +97,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
     public void computeChildren(@NotNull XCompositeNode node) {
         valuesMap = new THashMap<String, DBProgramDebugValue>();
 
-        SourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
+        DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
         PSQLFile psiFile = (PSQLFile) PsiManager.getInstance(sourceCodeFile.getProject()).findFile(sourceCodeFile);
         Document document = DocumentUtil.getDocument(sourceCodeFile);
         int offset = document.getLineStartOffset(sourcePosition.getLine());

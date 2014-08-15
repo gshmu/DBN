@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,8 +29,8 @@ public class DBProgramBreakpointType extends XLineBreakpointType<DBProgramBreakp
     @Override
     public boolean canPutAt(@NotNull VirtualFile file, int line, @NotNull Project project) {
         if (file.getFileType().equals(PSQLFileType.INSTANCE)) {
-            if (file instanceof SourceCodeVirtualFile) {
-                SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) file;
+            if (file instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
                 DBContentType contentType = sourceCodeFile.getContentType();
                 if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_BODY) {
                     Document document = DocumentUtil.getDocument(file);

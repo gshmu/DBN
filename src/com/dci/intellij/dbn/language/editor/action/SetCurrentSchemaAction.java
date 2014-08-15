@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -37,7 +37,7 @@ public class SetCurrentSchemaAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
 
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        if (virtualFile instanceof DatabaseEditableObjectVirtualFile) {
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
             enabled = false;//objectFile.getObject().getSchema() == schema;
         } else {
             PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);

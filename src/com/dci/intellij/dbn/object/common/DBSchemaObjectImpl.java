@@ -28,7 +28,7 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 
 
@@ -123,7 +123,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     @NotNull
-    public DatabaseEditableObjectVirtualFile getVirtualFile() {
+    public DBEditableObjectVirtualFile getVirtualFile() {
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
     }
 

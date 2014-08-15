@@ -11,8 +11,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -44,7 +44,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
                 icon = activeConnection.getIcon();
             }
 
-            boolean isConsole = virtualFile instanceof SQLConsoleVirtualFile;
+            boolean isConsole = virtualFile instanceof DBConsoleVirtualFile;
             presentation.setVisible(!isConsole);
 
             if (virtualFile.isInLocalFileSystem()) {

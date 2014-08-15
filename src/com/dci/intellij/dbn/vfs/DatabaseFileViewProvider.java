@@ -34,8 +34,8 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     protected PsiFile getPsiInner(@NotNull Language language) {
         if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
             VirtualFile virtualFile = getVirtualFile();
-            if (virtualFile instanceof DatabaseObjectVirtualFile) {
-                DatabaseObjectVirtualFile objectFile = (DatabaseObjectVirtualFile) virtualFile;
+            if (virtualFile instanceof DBObjectVirtualFile) {
+                DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                 DBObject object = objectFile.getObject();
                 return NavigationPsiCache.getPsiFile(object);
             }
@@ -43,9 +43,9 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             Language baseLanguage = getBaseLanguage();
             PsiFile psiFile = super.getPsiInner(baseLanguage);
             if (psiFile == null) {
-                DatabaseFile databaseFile = getDatabaseFile(virtualFile);
-                if (databaseFile != null) {
-                    databaseFile.initializePsiFile(this, language);
+                DBParseableVirtualFile parseableFile = getParseableFile(virtualFile);
+                if (parseableFile != null) {
+                    parseableFile.initializePsiFile(this, language);
                 }
             } else {
                 forceCachedPsi(psiFile);
@@ -58,16 +58,16 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
         return super.getPsiInner(language);
     }
 
-    private DatabaseFile getDatabaseFile(VirtualFile virtualFile) {
-        if (virtualFile instanceof DatabaseFile) {
-            return (DatabaseFile) virtualFile;
+    private DBParseableVirtualFile getParseableFile(VirtualFile virtualFile) {
+        if (virtualFile instanceof DBParseableVirtualFile) {
+            return (DBParseableVirtualFile) virtualFile;
         }
 
         if (virtualFile instanceof LightVirtualFile) {
             LightVirtualFile lightVirtualFile = (LightVirtualFile) virtualFile;
             VirtualFile originalFile = lightVirtualFile.getOriginalFile();
             if (originalFile != null && !originalFile.equals(virtualFile)) {
-                return getDatabaseFile(originalFile);
+                return getParseableFile(originalFile);
             }
         }
         return null;

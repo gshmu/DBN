@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
@@ -39,7 +39,7 @@ public interface ConnectionHandler extends Disposable{
     DatabaseInterfaceProvider getInterfaceProvider();
     DBObjectBundle getObjectBundle();
     DBSchema getUserSchema();
-    SQLConsoleVirtualFile getSQLConsoleFile();
+    DBConsoleVirtualFile getSQLConsoleFile();
 
     boolean isValid(boolean check);
     boolean isValid();

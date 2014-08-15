@@ -30,8 +30,8 @@ import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -210,7 +210,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     private void registerDefaultBreakpoint() {
-        SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) getMainDatabaseFile().getMainContentFile();
+        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) getMainDatabaseFile().getMainContentFile();
         PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
         if (psqlFile != null) {
             DBMethod method = executionInput.getMethod();
@@ -391,14 +391,14 @@ public class DBProgramDebugProcess extends XDebugProcess {
             } catch (SQLException e) {
                 showErrorDialog(e);
             }
-            DatabaseEditableObjectVirtualFile databaseFile = getDatabaseFile(runtimeInfo);
+            DBEditableObjectVirtualFile databaseFile = getDatabaseFile(runtimeInfo);
             DBProgramDebugSuspendContext suspendContext = new DBProgramDebugSuspendContext(this);
             getSession().positionReached(suspendContext);
             navigateInEditor(databaseFile, runtimeInfo.getLineNumber());
         }
     }
 
-    public DatabaseEditableObjectVirtualFile getDatabaseFile(DebuggerRuntimeInfo runtimeInfo) {
+    public DBEditableObjectVirtualFile getDatabaseFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
         return schemaObject.getVirtualFile();
     }
@@ -410,7 +410,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         return schemaObject;
     }
 
-    private DatabaseEditableObjectVirtualFile getMainDatabaseFile() {
+    private DBEditableObjectVirtualFile getMainDatabaseFile() {
         DBSchemaObject schemaObject = getMainDatabaseObject();
         return schemaObject.getVirtualFile();
     }
@@ -430,7 +430,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         }
     }
 
-    private void navigateInEditor(final DatabaseEditableObjectVirtualFile databaseFile, final int line) {
+    private void navigateInEditor(final DBEditableObjectVirtualFile databaseFile, final int line) {
         new SimpleLaterInvocator() {
             public void execute() {
                 // todo review this!!!

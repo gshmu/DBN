@@ -5,8 +5,8 @@ import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class UncommittedChangeBundle {
@@ -14,12 +14,12 @@ public class UncommittedChangeBundle {
 
     public void notifyChange(VirtualFile file){
         Icon icon = file.getFileType().getIcon();
-        if (file instanceof DatabaseObjectVirtualFile) {
-            DatabaseObjectVirtualFile databaseObjectFile = (DatabaseObjectVirtualFile) file;
+        if (file instanceof DBObjectVirtualFile) {
+            DBObjectVirtualFile databaseObjectFile = (DBObjectVirtualFile) file;
             icon = databaseObjectFile.getIcon();
         }
-        if (file instanceof SQLConsoleVirtualFile) {
-            SQLConsoleVirtualFile sqlConsoleFile = (SQLConsoleVirtualFile) file;
+        if (file instanceof DBConsoleVirtualFile) {
+            DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) file;
             icon = sqlConsoleFile.getIcon();
         }
 

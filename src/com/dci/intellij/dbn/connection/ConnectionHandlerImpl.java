@@ -28,7 +28,7 @@ import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -52,7 +52,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private boolean checkingIdleStatus;
     private long validityCheckTimestamp = 0;
 
-    private SQLConsoleVirtualFile sqlConsoleFile;
+    private DBConsoleVirtualFile sqlConsoleFile;
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
 
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
@@ -87,9 +87,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
-    public SQLConsoleVirtualFile getSQLConsoleFile() {
+    public DBConsoleVirtualFile getSQLConsoleFile() {
         if (sqlConsoleFile == null) {
-            sqlConsoleFile = new SQLConsoleVirtualFile(this);
+            sqlConsoleFile = new DBConsoleVirtualFile(this);
         }
         return sqlConsoleFile;
     }

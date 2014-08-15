@@ -32,7 +32,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 
-public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements DatabaseFile, DocumentListener {
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener {
 
     private String originalContent;
     private String lastSavedContent;
@@ -43,7 +43,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
     private int hashCode;
     private SourceCodeOffsets offsets;
 
-    public SourceCodeVirtualFile(final DatabaseEditableObjectVirtualFile databaseFile, DBContentType contentType) {
+    public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
         DBSchemaObject object = getObject();
         if (object != null) {
@@ -90,7 +90,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
                 file.setUnderlyingObject(underlyingObject);
                 fileViewProvider.forceCachedPsi(file);
                 Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                document.putUserData(FILE_KEY, getDatabaseFile());
+                document.putUserData(FILE_KEY, getMainDatabaseFile());
                 PsiDocumentManagerImpl.cachePsi(document, file);
                 return file;
             }
@@ -156,7 +156,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
                 content = sourceCodeContent.getSourceCode();
                 offsets = sourceCodeContent.getOffsets();
 
-                getDatabaseFile().updateDDLFiles(getContentType());
+                getMainDatabaseFile().updateDDLFiles(getContentType());
                 setModified(false);
                 sourceLoadError = null;
                 return true;
@@ -165,7 +165,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
             }
         } catch (SQLException e) {
             sourceLoadError = e.getMessage();
-            DBSchemaObject object = databaseFile.getObject();
+            DBSchemaObject object = mainDatabaseFile.getObject();
             if (object != null) {
                 MessageUtil.showErrorDialog("Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
             }
@@ -173,7 +173,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
         } finally {
             Project project = getProject();
             if (project != null && !project.isDisposed()) {
-                EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(databaseFile);
+                EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
             }
         }
     }
@@ -183,7 +183,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
         if (object != null) {
             object.executeUpdateDDL(getContentType(), getLastSavedContent(), content);
             updateChangeTimestamp();
-            getDatabaseFile().updateDDLFiles(getContentType());
+            getMainDatabaseFile().updateDDLFiles(getContentType());
             setModified(false);
             lastSavedContent = content;
         }
@@ -229,7 +229,7 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
     @Override
     public <T> void putUserData(@NotNull Key<T> key, T value) {
         if (key == FileDocumentManagerImpl.DOCUMENT_KEY && contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_BODY) ) {
-            databaseFile.putUserData(FileDocumentManagerImpl.DOCUMENT_KEY, (Reference<Document>) value);
+            mainDatabaseFile.putUserData(FileDocumentManagerImpl.DOCUMENT_KEY, (Reference<Document>) value);
         }
         super.putUserData(key, value);
     }
@@ -248,8 +248,8 @@ public class SourceCodeVirtualFile extends DatabaseContentVirtualFile implements
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof SourceCodeVirtualFile) {
-            SourceCodeVirtualFile virtualFile = (SourceCodeVirtualFile) obj;
+        if (obj instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) obj;
             return virtualFile.hashCode() == hashCode;
         }
         return false;

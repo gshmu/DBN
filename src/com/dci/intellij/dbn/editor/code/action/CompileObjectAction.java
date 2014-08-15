@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
@@ -25,7 +25,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        SourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         if (virtualFile!= null) {
             Project project = virtualFile.getProject();
             DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
@@ -38,7 +38,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(AnActionEvent e) {
-        SourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         if (virtualFile == null) {
             presentation.setEnabled(false);

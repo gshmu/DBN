@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -39,7 +39,7 @@ public class SelectCurrentSchemaIntentionAction extends GenericIntentionAction {
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (psiFile instanceof DBLanguagePsiFile && virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof SQLConsoleVirtualFile) ) {
+        if (psiFile instanceof DBLanguagePsiFile && virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof DBConsoleVirtualFile) ) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
             return file.getActiveConnection() != null;
         }

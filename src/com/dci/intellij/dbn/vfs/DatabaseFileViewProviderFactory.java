@@ -13,9 +13,9 @@ import com.intellij.testFramework.LightVirtualFile;
 public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, Language language, @NotNull PsiManager manager, boolean eventSystemEnabled) {
 
-        return file instanceof DatabaseObjectVirtualFile ||
-                file instanceof SQLConsoleVirtualFile ||
-                file instanceof SourceCodeVirtualFile ||
+        return file instanceof DBObjectVirtualFile ||
+                file instanceof DBConsoleVirtualFile ||
+                file instanceof DBSourceCodeVirtualFile ||
                 (file instanceof LightVirtualFile && file.getFileType() instanceof DBLanguageFileType) ?
                 new DatabaseFileViewProvider(manager, file, eventSystemEnabled, language) : null;
     }

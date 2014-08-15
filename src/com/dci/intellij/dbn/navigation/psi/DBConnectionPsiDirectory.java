@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.vfs.DatabaseConnectionVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConnectionVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
@@ -38,10 +38,10 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
 
 public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
-    private DatabaseConnectionVirtualFile virtualFile;
+    private DBConnectionVirtualFile virtualFile;
 
     public DBConnectionPsiDirectory(ConnectionHandler connectionHandler) {
-        this.virtualFile = new DatabaseConnectionVirtualFile(connectionHandler);
+        this.virtualFile = new DBConnectionVirtualFile(connectionHandler);
     }
 
     @NotNull

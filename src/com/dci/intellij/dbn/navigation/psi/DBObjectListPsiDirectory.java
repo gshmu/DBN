@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.vfs.DatabaseObjectListVirtualFile;
+import com.dci.intellij.dbn.vfs.DBObjectListVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
@@ -40,10 +40,10 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
 
 public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
-    private DatabaseObjectListVirtualFile virtualFile;
+    private DBObjectListVirtualFile virtualFile;
 
     public DBObjectListPsiDirectory(DBObjectList objectList) {
-        virtualFile = new DatabaseObjectListVirtualFile(objectList);
+        virtualFile = new DBObjectListVirtualFile(objectList);
     }
 
     public DBObjectList getObjectList() {

@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.psi.PsiNamedElement;
 
 public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupValueProvider, Presentable, Referenceable {
@@ -80,7 +80,7 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     DBOperationExecutor getOperationExecutor();
 
     @NotNull
-    DatabaseObjectVirtualFile getVirtualFile();
+    DBObjectVirtualFile getVirtualFile();
     List<PresentableProperty> getPresentableProperties();
     EnvironmentType getEnvironmentType();
     DBObjectRef getRef();

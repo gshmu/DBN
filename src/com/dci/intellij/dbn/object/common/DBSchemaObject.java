@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 
 public interface DBSchemaObject extends DBObject {
     List<DBObject> getReferencedObjects();
@@ -33,5 +33,5 @@ public interface DBSchemaObject extends DBObject {
     DBObjectStatusHolder getStatus();
 
     @NotNull
-    DatabaseEditableObjectVirtualFile getVirtualFile();
+    DBEditableObjectVirtualFile getVirtualFile();
 }

@@ -56,7 +56,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.ConnectionPresentableProperty;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.dci.intellij.dbn.vfs.DatabaseObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -87,7 +87,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     private LookupItemFactory sqlLookupItemFactory;
     private LookupItemFactory psqlLookupItemFactory;
 
-    protected DatabaseObjectVirtualFile virtualFile;
+    protected DBObjectVirtualFile virtualFile;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = new DBOperationExecutor() {
         public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
@@ -469,9 +469,9 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     @NotNull
-    public DatabaseObjectVirtualFile getVirtualFile() {
+    public DBObjectVirtualFile getVirtualFile() {
         if (virtualFile == null) {
-            virtualFile = new DatabaseObjectVirtualFile(this);
+            virtualFile = new DBObjectVirtualFile(this);
         }
         return virtualFile;
     }

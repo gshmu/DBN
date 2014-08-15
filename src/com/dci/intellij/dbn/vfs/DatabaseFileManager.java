@@ -30,7 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    private Map<DBObjectRef, DatabaseEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DatabaseEditableObjectVirtualFile>();
+    private Map<DBObjectRef, DBEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
 
 
     private DatabaseFileManager(Project project) {
@@ -65,15 +65,15 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
      *********************************************/
     private FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerAdapter() {
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DatabaseEditableObjectVirtualFile) {
-                DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) file;
+            if (file instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 openFiles.put(databaseFile.getObjectRef(), databaseFile);
             }
         }
 
         public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-            if (file instanceof DatabaseEditableObjectVirtualFile) {
-                DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) file;
+            if (file instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 openFiles.remove(databaseFile.getObjectRef());
             }
         }
