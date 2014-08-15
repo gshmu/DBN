@@ -27,11 +27,12 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilterCondition;
-import com.dci.intellij.dbn.language.sql.SQLFile;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -41,7 +42,9 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.psi.PsiFileFactory;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 
@@ -180,19 +183,14 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             }
 
             if (previewDocument == null) {
-                PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(dataset.getProject());
+                Project project = dataset.getProject();
+                DatasetFilterVirtualFile filterFile = new DatasetFilterVirtualFile(dataset, selectStatement.toString());
+                DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), filterFile, true);
+                PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-                SQLFile selectStatementFile = (SQLFile)
-                        psiFileFactory.createFileFromText(
-                                "filter.sql",
-                                dataset.getLanguageDialect(SQLLanguage.INSTANCE),
-                                selectStatement.toString());
-
-                selectStatementFile.setActiveConnection(dataset.getConnectionHandler());
-                selectStatementFile.setCurrentSchema(dataset.getSchema());
                 previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
-                viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, dataset.getProject());
+                viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
                 viewer.setEmbeddedIntoDialogWrapper(true);
                 JScrollPane viewerScrollPane = viewer.getScrollPane();
                 SyntaxHighlighter syntaxHighlighter = dataset.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();

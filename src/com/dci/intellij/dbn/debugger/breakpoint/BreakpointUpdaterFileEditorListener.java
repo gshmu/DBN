@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.debugger.breakpoint;
 
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -10,7 +12,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointManagerImpl;
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * WORKAROUND: Breakpoints do not seem to be registered properly in the XLineBreakpointManager.
@@ -18,14 +19,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BreakpointUpdaterFileEditorListener implements FileEditorManagerListener{
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
+        if (file instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
             XBreakpointManagerImpl breakpointManager = (XBreakpointManagerImpl) XDebuggerManager.getInstance(source.getProject()).getBreakpointManager();
             for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {
                 if (breakpoint instanceof XLineBreakpoint) {
                     XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
                     lineBreakpoint.putUserData(DBProgramBreakpointHandler.BREAKPOINT_ID_KEY, null);
-                    DatabaseEditableObjectFile breakpointDatabaseFile = DBProgramBreakpointHandler.getDatabaseFile(lineBreakpoint);
+                    DBEditableObjectVirtualFile breakpointDatabaseFile = DBProgramBreakpointHandler.getDatabaseFile(lineBreakpoint);
                     if (databaseFile == breakpointDatabaseFile) {
                         breakpointManager.getLineBreakpointManager().registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
                     }

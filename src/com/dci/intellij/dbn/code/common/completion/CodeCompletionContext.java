@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -18,7 +18,7 @@ import com.intellij.psi.PsiElement;
 
 public class CodeCompletionContext {
     private boolean extended;
-    private DBLanguageFile file;
+    private DBLanguagePsiFile file;
     private ProjectCodeStyleSettings codeStyleSettings;
     private CodeCompletionSettings codeCompletionSettings;
     private CompletionParameters parameters;
@@ -28,7 +28,7 @@ public class CodeCompletionContext {
     private String userInput;
 
 
-    public CodeCompletionContext(DBLanguageFile file, CompletionParameters parameters, CompletionResultSet result) {
+    public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
         this.file = file;
         this.parameters = parameters;
         this.result = result;
@@ -88,7 +88,7 @@ public class CodeCompletionContext {
         return codeCompletionSettings.getFilterSettings().getFilterSettings(extended);
     }
 
-    public DBLanguageFile getFile() {
+    public DBLanguagePsiFile getFile() {
         return file;
     }
 

@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicRe
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
@@ -33,7 +33,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     protected StatementExecutionVariablesBundle executionVariables;
     protected ExecutablePsiElement executablePsiElement;
     protected String executableStatement;
-    protected DBLanguageFile file;
+    protected DBLanguagePsiFile file;
 
 
     protected String resultName;
@@ -48,7 +48,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     }
 
-    public StatementExecutionBasicProcessor(DBLanguageFile file, String sqlStatement, int index) {
+    public StatementExecutionBasicProcessor(DBLanguagePsiFile file, String sqlStatement, int index) {
         this.executableStatement = sqlStatement.trim();
         this.file = file;
         this.index = index;
@@ -209,7 +209,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return file.getProject();
     }
 
-    public DBLanguageFile getFile() {
+    public DBLanguagePsiFile getFile() {
         return file;
     }
 

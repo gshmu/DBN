@@ -45,7 +45,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
     private static final String ERR = "File manipulation not allowed within database file system!";
-    private Map<DBObjectRef, DatabaseEditableObjectFile> filesCache = new HashMap<DBObjectRef, DatabaseEditableObjectFile>();
+    private Map<DBObjectRef, DBEditableObjectVirtualFile> filesCache = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
 
     public static DatabaseFileSystem getInstance() {
         return ApplicationManager.getApplication().getComponent(DatabaseFileSystem.class);
@@ -99,19 +99,19 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         return null;
     }
 
-    private DatabaseEditableObjectFile createDatabaseFile(final DBSchemaObject object) {
-        return new ReadActionRunner<DatabaseEditableObjectFile>() {
+    private DBEditableObjectVirtualFile createDatabaseFile(final DBSchemaObject object) {
+        return new ReadActionRunner<DBEditableObjectVirtualFile>() {
             @Override
-            protected DatabaseEditableObjectFile run() {
-                return new DatabaseEditableObjectFile(object);
+            protected DBEditableObjectVirtualFile run() {
+                return new DBEditableObjectVirtualFile(object);
             }
         }.start();
     }
 
     @NotNull
-    public DatabaseEditableObjectFile findDatabaseFile(DBSchemaObject object) {
+    public DBEditableObjectVirtualFile findDatabaseFile(DBSchemaObject object) {
         DBObjectRef objectRef = object.getRef();
-        DatabaseEditableObjectFile databaseFile = filesCache.get(objectRef);
+        DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
         if (databaseFile == null ){
             databaseFile = createDatabaseFile(object);
 
@@ -314,7 +314,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     private void openSchemaObject(final DBSchemaObject object, ProgressIndicator progressIndicator, final boolean scroll) {
-        final DatabaseEditableObjectFile databaseFile = findDatabaseFile(object);
+        final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(object);
         if (!progressIndicator.isCanceled()) {
             new SimpleLaterInvocator() {
                 @Override
@@ -332,7 +332,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
     private void openChildObject(final DBObject object, ProgressIndicator progressIndicator, final boolean scroll) {
         final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
-        final DatabaseEditableObjectFile databaseFile = findDatabaseFile(schemaObject);
+        final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
         if (!progressIndicator.isCanceled()) {
             new SimpleLaterInvocator() {
 
@@ -382,7 +382,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             Iterator<DBObjectRef> objectRefs = filesCache.keySet().iterator();
             while (objectRefs.hasNext()) {
                 DBObjectRef objectRef = objectRefs.next();
-                DatabaseEditableObjectFile file = filesCache.get(objectRef);
+                DBEditableObjectVirtualFile file = filesCache.get(objectRef);
                 if (file.getProject() == project) {
                     objectRefs.remove();
                     file.dispose();

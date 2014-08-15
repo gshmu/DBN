@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.BlockElementType;
@@ -8,6 +10,7 @@ import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -18,8 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
-
-import java.util.Set;
 
 public class SequencePsiElement extends BasePsiElement {
     public SequencePsiElement(ASTNode astNode, ElementType elementType) {
@@ -275,23 +276,22 @@ public class SequencePsiElement extends BasePsiElement {
         if (getElementType() instanceof SequenceElementType) {
             int offset = 0;
             SequenceElementType sequenceElementType = (SequenceElementType) getElementType();
-            ElementType[] elementTypes = sequenceElementType.getElementTypes();
+            ElementTypeRef[] children = sequenceElementType.getChildren();
 
-
-            for (int i=0; i<elementTypes.length; i++) {
+            for (int i=0; i<children.length; i++) {
                 while (offset < psiElements.length &&
                         (psiElements[offset] instanceof PsiWhiteSpace ||
                          psiElements[offset] instanceof PsiErrorElement)) offset++;
 
                 PsiElement psiElement = offset == psiElements.length ? null : psiElements[offset];
-                if (psiElement!= null && psiElement instanceof BasePsiElement && elementTypes[i] == ((BasePsiElement)psiElement).getElementType()) {
+                if (psiElement!= null && psiElement instanceof BasePsiElement && children[i].getElementType() == ((BasePsiElement)psiElement).getElementType()) {
                     offset++;
                     if (offset == psiElements.length) {
-                        boolean isLast = i == elementTypes.length-1;
+                        boolean isLast = i == children.length-1;
                         return !isLast && !sequenceElementType.isOptionalFromIndex(i+1);
                     }
                 } else {
-                    if (!sequenceElementType.isOptional(i) && !(psiElement instanceof PsiWhiteSpace) && !(psiElement instanceof PsiComment)) {
+                    if (!children[i].isOptional() && !(psiElement instanceof PsiWhiteSpace) && !(psiElement instanceof PsiComment)) {
                         return true;
                     }
                 }

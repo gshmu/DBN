@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.code.common.completion;
 
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemFactory;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemFactory;
@@ -10,7 +14,7 @@ import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
@@ -41,10 +45,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ProcessingContext;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.Set;
 
 public class CodeCompletionProvider extends CompletionProvider<CompletionParameters> {
     public static final CodeCompletionProvider INSTANCE = new CodeCompletionProvider();
@@ -70,8 +70,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
     private void doAddCompletions(CompletionParameters parameters, CompletionResultSet result) {
         PsiFile originalFile = parameters.getOriginalFile();
-        if (originalFile instanceof DBLanguageFile) {
-            DBLanguageFile file = (DBLanguageFile) originalFile;
+        if (originalFile instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) originalFile;
 
             CodeCompletionContext context = new CodeCompletionContext(file, parameters, result);
             CodeCompletionLookupConsumer consumer = new CodeCompletionLookupConsumer(context);

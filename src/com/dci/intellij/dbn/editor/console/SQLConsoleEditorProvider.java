@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.editor.console.ui.SQLConsoleEditorToolbarForm;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class SQLConsoleEditorProvider extends BasicTextEditorProvider {
 
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        return virtualFile instanceof SQLConsoleFile;
+        return virtualFile instanceof DBConsoleVirtualFile;
     }
 
     @NotNull
@@ -37,7 +37,7 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider {
 
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        SQLConsoleEditor editor = new SQLConsoleEditor(project, (SQLConsoleFile) file, "SQL Console");
+        SQLConsoleEditor editor = new SQLConsoleEditor(project, (DBConsoleVirtualFile) file, "SQL Console");
         SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(editor);
         editor.getComponent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
         return editor;

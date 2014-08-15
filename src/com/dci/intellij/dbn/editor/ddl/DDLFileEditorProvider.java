@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
@@ -30,8 +30,8 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
     }
 
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
-            DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) virtualFile;
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
             List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
             return ddlFiles != null && ddlFiles.size() > index;
         }
@@ -40,7 +40,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
 
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        DatabaseEditableObjectFile databaseFile = (DatabaseEditableObjectFile) file;
+        DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
         VirtualFile virtualFile = databaseFile.getAttachedDDLFiles().get(index);
 
         BasicTextEditor textEditor = new DDLFileEditor(project, virtualFile);

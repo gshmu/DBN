@@ -825,7 +825,7 @@
     <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY, STRUCTURE" description="EXPLAIN statement" id="explain_statement">
         <token id="000000405" type-id="KW_EXPLAIN" />
         <one-of id="000000406" optional="true">
-            <wrapper id="000000407" template="PARENTHESES">
+            <wrapper id="000000407" template="PARENTHESES" version="9.0">
                 <iteration id="000000408" separator="CHR_COMMA">
                     <one-of id="000000409">
                         <sequence id="000000410">
@@ -851,7 +851,7 @@
                 </iteration>
             </wrapper>
             <sequence id="000000424">
-                <token id="000000425" optional="true" type-id="KW_ANALYZE" />
+                <token id="000000425" optional="true" type-id="KW_ANALYZE" version="7.2"/>
                 <token id="000000426" optional="true" type-id="KW_VERBOSE" />
             </sequence>
         </one-of>

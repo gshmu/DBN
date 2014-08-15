@@ -5,6 +5,12 @@ import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.object.common.DBObject;
 
 public abstract class DatabaseCompatibilityInterface {
+    private DatabaseInterfaceProvider provider;
+
+    public DatabaseCompatibilityInterface(DatabaseInterfaceProvider parent) {
+        this.provider = parent;
+    }
+
     public static DatabaseCompatibilityInterface getInstance(DBObject object) {
         return getInstance(object.getConnectionHandler());
     }

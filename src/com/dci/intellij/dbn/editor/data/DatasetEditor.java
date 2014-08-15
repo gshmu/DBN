@@ -37,7 +37,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
@@ -58,7 +58,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
     public static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, false, false, false);
     private DBObjectRef<DBDataset> datasetRef;
-    private DatabaseEditableObjectFile databaseFile;
+    private DBEditableObjectVirtualFile databaseFile;
     private DatasetEditorForm editorForm;
     private StructureViewModel structureViewModel;
     private ConnectionHandler connectionHandler;
@@ -69,7 +69,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     private String dataLoadError;
     private DatasetEditorState editorState = new DatasetEditorState();
 
-    public DatasetEditor(DatabaseEditableObjectFile databaseFile, DBDataset dataset) {
+    public DatasetEditor(DBEditableObjectVirtualFile databaseFile, DBDataset dataset) {
         this.project = dataset.getProject();
         this.databaseFile = databaseFile;
         this.datasetRef = DBObjectRef.from(dataset);
@@ -122,7 +122,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
 
 
-    public DatabaseEditableObjectFile getDatabaseFile() {
+    public DBEditableObjectVirtualFile getDatabaseFile() {
         return databaseFile;
     }
 

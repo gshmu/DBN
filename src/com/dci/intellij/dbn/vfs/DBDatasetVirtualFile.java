@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
 
-public class DatasetFile extends DatabaseContentFile {
-    public DatasetFile(DatabaseEditableObjectFile databaseFile, DBContentType contentType) {
+public class DBDatasetVirtualFile extends DBContentVirtualFile {
+    public DBDatasetVirtualFile(DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
     }
 

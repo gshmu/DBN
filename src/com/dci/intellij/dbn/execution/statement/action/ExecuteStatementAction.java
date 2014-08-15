@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -39,7 +39,7 @@ public class ExecuteStatementAction extends AnAction {
             return false;
         } else {
             PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
-            return psiFile instanceof DBLanguageFile;
+            return psiFile instanceof DBLanguagePsiFile;
         }
     }
 }

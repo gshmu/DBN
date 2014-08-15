@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -63,8 +63,8 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         }
 
         private void updateDdlFileHeaders(VirtualFile file) {
-            if (!project.isDisposed() && file instanceof DatabaseEditableObjectFile) {
-                DatabaseEditableObjectFile editableObjectFile = (DatabaseEditableObjectFile) file;
+            if (!project.isDisposed() && file instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) file;
                 DBSchemaObject schemaObject = editableObjectFile.getObject();
                 if (schemaObject != null) {
                     DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
@@ -89,9 +89,9 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     @Nullable
     @Override
     public DDLMappedNotificationPanel createNotificationPanel(VirtualFile virtualFile, FileEditor fileEditor) {
-        if (virtualFile instanceof DatabaseEditableObjectFile) {
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof DDLFileEditor) {
-                DatabaseEditableObjectFile editableObjectFile = (DatabaseEditableObjectFile) virtualFile;
+                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
                 DBSchemaObject editableObject = editableObjectFile.getObject();
                 DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
                 VirtualFile ddlVirtualFile = ddlFileEditor.getVirtualFile();

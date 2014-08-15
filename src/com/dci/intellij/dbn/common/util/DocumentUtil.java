@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -33,8 +33,8 @@ public class DocumentUtil {
 
         // restart highlighting
         final PsiFile file = DocumentUtil.getFile(editor);
-        if (file instanceof DBLanguageFile) {
-            DBLanguageFile dbLanguageFile = (DBLanguageFile) file;
+        if (file instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {
                 ConnectionHandler connectionHandler = dbLanguageFile.getActiveConnection();

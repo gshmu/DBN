@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -14,11 +19,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
 
 public abstract class LeafElementTypeImpl extends AbstractElementType implements LeafElementType {
     private TokenType tokenType;
@@ -68,7 +68,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                 if (position > 0 ) {
-                    return sequenceElementType.getElementTypes()[position-1];
+                    return sequenceElementType.getChild(position-1).getElementType();
                 }
             }
             position = pathNode.getCurrentSiblingIndex();
@@ -92,12 +92,12 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
 
-                int elementsCount = sequenceElementType.getElementTypes().length;
+                int elementsCount = sequenceElementType.getChildCount();
 
                 for (int i=position+1; i<elementsCount; i++) {
-                    ElementType next = sequenceElementType.getElementTypes()[i];
+                    ElementTypeRef next = sequenceElementType.getChild(i);
                     possibleLeafs.addAll(next.getLookupCache().getFirstPossibleLeafs());
-                    if (!sequenceElementType.isOptional(i)) {
+                    if (!next.isOptional()) {
                         pathNode = null;
                         break;
                     }
@@ -132,11 +132,11 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
-                int elementsCount = sequenceElementType.getElementTypes().length;
+                int elementsCount = sequenceElementType.getChildCount();
 
                 for (int i=index+1; i<elementsCount; i++) {
-                    if (!sequenceElementType.isOptional(i)) {
-                        ElementType next = sequenceElementType.getElementTypes()[i];
+                    ElementTypeRef next = sequenceElementType.getChild(i);
+                    if (!next.isOptional()) {
                         requiredLeafs.addAll(next.getLookupCache().getFirstRequiredLeafs());
                         pathNode = null;
                         break;

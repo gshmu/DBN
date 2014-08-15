@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -10,15 +13,13 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-
-import java.util.Map;
-import java.util.Set;
 
 public abstract class AbstractElementTypeLookupCache<T extends ElementType> implements ElementTypeLookupCache<T> {
     private T elementType;
@@ -271,13 +272,13 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             while (parentElementType != null) {
                 if (parentElementType instanceof SequenceElementType) {
                     SequenceElementType sequenceElementType = (SequenceElementType) parentElementType;
-                    int elementsCount = sequenceElementType.getElementTypes().length;
+                    int elementsCount = sequenceElementType.getChildCount();
                     int index = sequenceElementType.indexOf(elementType, 0);
 
                     for (int i = index + 1; i < elementsCount; i++) {
-                        ElementType next = sequenceElementType.getElementTypes()[i];
+                        ElementTypeRef next = sequenceElementType.getChild(i);
                         nextPossibleTokens.addAll(next.getLookupCache().getFirstPossibleTokens());
-                        if (!sequenceElementType.isOptional(i)) {
+                        if (!next.isOptional()) {
                             parentElementType = null;
                             break;
                         }
@@ -315,13 +316,13 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             while (parentElementType != null) {
                 if (parentElementType instanceof SequenceElementType) {
                     SequenceElementType sequence = (SequenceElementType) parentElementType;
-                    int elementsCount = sequence.getElementTypes().length;
+                    int elementsCount = sequence.getChildCount();
                     int index = sequence.indexOf(elementType, 0);
 
                     for (int i = index + 1; i < elementsCount; i++) {
-                        if (!sequence.isOptional(i)) {
-                            ElementType next = sequence.getElementTypes()[i];
-                            nextRequiredTokens.addAll(next.getLookupCache().getFirstPossibleTokens());
+                        ElementTypeRef child = sequence.getChild(i);
+                        if (!child.isOptional()) {
+                            nextRequiredTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
                             parentElementType = null;
                             break;
                         }

@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -14,19 +23,14 @@ import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -166,7 +170,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public boolean debugExecute(final MethodExecutionInput executionInput, final Connection connection) {
+    public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
             DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
@@ -183,7 +187,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     }.start();
                 }
                 executionInput.setExecutionCancelled(false);
-                return true;
             } catch (final SQLException e) {
                 if (!executionInput.isExecutionCancelled()) {
                     new SimpleLaterInvocator() {
@@ -192,10 +195,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         }
                     }.start();
                 }
-                return false;
+                throw e;
             }
         }
-        return false;
     }
 
 

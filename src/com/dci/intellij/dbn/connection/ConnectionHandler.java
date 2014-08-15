@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -15,7 +16,8 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.vfs.SQLConsoleFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -37,7 +39,7 @@ public interface ConnectionHandler extends Disposable{
     DatabaseInterfaceProvider getInterfaceProvider();
     DBObjectBundle getObjectBundle();
     DBSchema getUserSchema();
-    SQLConsoleFile getSQLConsoleFile();
+    DBConsoleVirtualFile getSQLConsoleFile();
 
     boolean isValid(boolean check);
     boolean isValid();
@@ -61,6 +63,8 @@ public interface ConnectionHandler extends Disposable{
     void rollback() throws SQLException;
     void ping(boolean check);
 
+    @Nullable
+    DBLanguageDialect resolveLanguageDialect(Language language);
     DBLanguageDialect getLanguageDialect(DBLanguage language);
     boolean isActive();
 

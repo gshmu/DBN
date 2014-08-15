@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.statement.processor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -30,7 +30,7 @@ public interface StatementExecutionProcessor {
 
     Project getProject();
 
-    DBLanguageFile getFile();
+    DBLanguagePsiFile getFile();
 
     String getResultName();
 

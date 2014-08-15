@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.debugger.frame;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
@@ -8,10 +15,11 @@ import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEvaluator;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectFile;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebuggerBundle;
@@ -22,13 +30,6 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class DBProgramDebugStackFrame extends XStackFrame {
     private DBProgramDebugProcess debugProcess;
@@ -40,7 +41,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
     public DBProgramDebugStackFrame(DBProgramDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
         this.index = index;
-        DatabaseEditableObjectFile databaseFile = debugProcess.getDatabaseFile(runtimeInfo);
+        DBEditableObjectVirtualFile databaseFile = debugProcess.getDatabaseFile(runtimeInfo);
 
         this.debugProcess = debugProcess;
         sourcePosition = XSourcePositionImpl.create(databaseFile, runtimeInfo.getLineNumber());
@@ -82,7 +83,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         return inhibitSourcePosition ? null : sourcePosition;
     }
 
-    public void customizePresentation(final SimpleColoredComponent component) {
+    public void customizePresentation(@NotNull ColoredTextContainer component) {
         DBSchemaObject object = DBProgramDebugUtil.getObject(sourcePosition);
         if (object != null) {
             component.append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
@@ -93,11 +94,15 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         }
     }
 
+    public void customizePresentation(final SimpleColoredComponent component) {
+        customizePresentation((ColoredTextContainer) component);
+    }
+
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
         valuesMap = new THashMap<String, DBProgramDebugValue>();
 
-        SourceCodeFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
+        DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
         PSQLFile psiFile = (PSQLFile) PsiManager.getInstance(sourceCodeFile.getProject()).findFile(sourceCodeFile);
         Document document = DocumentUtil.getDocument(sourceCodeFile);
         int offset = document.getLineStartOffset(sourcePosition.getLine());

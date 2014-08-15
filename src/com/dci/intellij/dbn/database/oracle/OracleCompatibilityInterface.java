@@ -2,9 +2,14 @@ package com.dci.intellij.dbn.database.oracle;
 
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 
 public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface {
+
+    public OracleCompatibilityInterface(DatabaseInterfaceProvider parent) {
+        super(parent);
+    }
 
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return objectTypeId != DatabaseObjectTypeId.CHARSET;

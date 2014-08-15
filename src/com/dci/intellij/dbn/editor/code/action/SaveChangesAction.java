@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.vfs.SourceCodeFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -22,7 +22,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     public void actionPerformed(final AnActionEvent e) {
         final Project project = ActionUtil.getProject(e);
         final Editor editor = getEditor(e);
-        final SourceCodeFile virtualFile = getSourcecodeFile(e);
+        final DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
 
         new WriteActionRunner() {
             public void run() {
@@ -33,7 +33,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(AnActionEvent e) {
-        SourceCodeFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         if (virtualFile == null) {
             presentation.setEnabled(false);

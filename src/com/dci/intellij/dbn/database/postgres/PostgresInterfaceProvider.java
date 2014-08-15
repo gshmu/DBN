@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 
 public class PostgresInterfaceProvider extends DatabaseInterfaceProviderImpl {
     private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new PostgresMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new PostgresCompatibilityInterface();
+    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new PostgresCompatibilityInterface(this);
     private DatabaseMetadataInterface METADATA_INTERFACE = new PostgresMetadataInterface(this);
     private DatabaseDDLInterface DDL_INTERFACE = new PostgresDDLInterface(this);
     private DatabaseExecutionInterface EXECUTION_INTERFACE = new PostgresExecutionInterface();

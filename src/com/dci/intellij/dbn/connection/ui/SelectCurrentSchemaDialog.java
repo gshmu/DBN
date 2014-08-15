@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.connection.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.DBLanguageFile;
-import com.dci.intellij.dbn.object.DBSchema;
+import javax.swing.JComponent;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.object.DBSchema;
 
 public class SelectCurrentSchemaDialog extends DBNDialog {
-    private DBLanguageFile file;
+    private DBLanguagePsiFile file;
     private SelectCurrentSchemaForm selectCurrentSchemaForm;
 
-    public SelectCurrentSchemaDialog(DBLanguageFile file) {
+    public SelectCurrentSchemaDialog(DBLanguagePsiFile file) {
         super(file.getProject(), "Select Current Schema", true);
         this.file = file;
         ConnectionHandler activeConnection = file.getActiveConnection();
