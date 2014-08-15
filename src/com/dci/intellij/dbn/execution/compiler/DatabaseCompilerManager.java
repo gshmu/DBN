@@ -21,9 +21,9 @@ import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -55,14 +55,14 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             if (selectedCompileType != null) {
                 doCompileObject(object, object.getContentType(), selectedCompileType, silently);
                 if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
-                    DatabaseEditableObjectVirtualFile databaseFile = object.getVirtualFile();
+                    DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                     if (object.getContentType().isBundle()) {
                         for (DBContentType contentType : object.getContentType().getSubContentTypes()) {
-                            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                             sourceCodeFile.updateChangeTimestamp();
                         }
                     } else {
-                        SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) databaseFile.getContentFile(object.getContentType());
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(object.getContentType());
                         sourceCodeFile.updateChangeTimestamp();
                     }
                 }
@@ -80,8 +80,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
                         doCompileObject(object, contentType, selectedCompileType, silently);
                         if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
-                            DatabaseEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
                             sourceCodeFile.updateChangeTimestamp();
                         }
                     }

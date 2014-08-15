@@ -26,7 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class SQLConsoleVirtualFile extends VirtualFile implements DatabaseFile, DBVirtualFile {
+public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private ConnectionHandler connectionHandler;
@@ -36,7 +36,7 @@ public class SQLConsoleVirtualFile extends VirtualFile implements DatabaseFile, 
     protected String url;
 
 
-    public SQLConsoleVirtualFile(ConnectionHandler connectionHandler) {
+    public DBConsoleVirtualFile(ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
         this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
         name = connectionHandler.getName();
@@ -146,7 +146,7 @@ public class SQLConsoleVirtualFile extends VirtualFile implements DatabaseFile, 
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
             public void close() {
-                SQLConsoleVirtualFile.this.modificationTimestamp = modificationTimestamp;
+                DBConsoleVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content = toString();
             }
         };

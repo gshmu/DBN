@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.debugger;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XSourcePosition;
 
@@ -13,29 +13,29 @@ public class DBProgramDebugUtil {
     public static @Nullable DBSchemaObject getObject(@Nullable XSourcePosition sourcePosition) {
         if (sourcePosition != null) {
             VirtualFile virtualFile = sourcePosition.getFile();
-            if (virtualFile instanceof DatabaseEditableObjectVirtualFile) {
-                DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) virtualFile;
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                 return databaseFile.getObject();
             }
 
-            if (virtualFile instanceof SourceCodeVirtualFile) {
-                SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) virtualFile;
-                return sourceCodeFile.getDatabaseFile().getObject();
+            if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+                return sourceCodeFile.getMainDatabaseFile().getObject();
             }
         }
         return null;
     }
 
-    public static SourceCodeVirtualFile getSourceCodeFile(XSourcePosition sourcePosition) {
+    public static DBSourceCodeVirtualFile getSourceCodeFile(XSourcePosition sourcePosition) {
         if (sourcePosition != null) {
             VirtualFile virtualFile = sourcePosition.getFile();
-            if (virtualFile instanceof DatabaseEditableObjectVirtualFile) {
-                DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) virtualFile;
-                return (SourceCodeVirtualFile) databaseFile.getMainContentFile();
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+                return (DBSourceCodeVirtualFile) databaseFile.getMainContentFile();
             }
 
-            if (virtualFile instanceof SourceCodeVirtualFile) {
-                return (SourceCodeVirtualFile) virtualFile;
+            if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                return (DBSourceCodeVirtualFile) virtualFile;
             }
         }
         return null;

@@ -8,73 +8,62 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.ide.navigationToolbar.NavBarPresentation;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DatabaseObjectListVirtualFile<T extends DBObjectList> extends VirtualFile implements DBVirtualFile {
+public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile implements DBVirtualFile, Disposable {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
-    protected T objectList;
+    protected DBObjectRef<T> objectRef;
 
-    protected String name;
-    protected String path;
-    protected String url;
+    private Project project;
+    private String path;
+    private String url;
 
-    public DatabaseObjectListVirtualFile(T objectList) {
-        this.objectList = objectList;
-        this.name = NamingUtil.capitalize(objectList.getName());
+    public DBObjectVirtualFile(T object) {
+        this.objectRef = object.getRef();
+        this.project = object.getProject();
     }
 
-    public T getObjectList() {
-        return objectList;
+    public DBObjectRef<T> getObjectRef() {
+        return objectRef;
+    }
+
+    @Nullable
+    public T getObject() {
+        return objectRef.get();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return objectList.getConnectionHandler();
-    }
-
-    public Project getProject() {
-        return objectList.getProject();
+        return objectRef.lookupConnectionHandler();
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof DatabaseObjectListVirtualFile) {
-            DatabaseObjectListVirtualFile objectListFile = (DatabaseObjectListVirtualFile) obj;
-            return objectListFile.getObjectList().equals(getObjectList());
+        if (obj instanceof DBObjectVirtualFile) {
+            DBObjectVirtualFile objectFile = (DBObjectVirtualFile) obj;
+            return objectFile.objectRef.equals(objectRef);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        GenericDatabaseElement parent = objectList.getParent();
-        if (parent instanceof DBObject) {
-            DBObject object = (DBObject) parent;
-            String qualifiedName = object.getQualifiedNameWithType() + "." + getName();
-            return qualifiedName.hashCode();
-        }
-
-        if (parent instanceof DBObjectBundle) {
-            DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            String qualifiedName = objectBundle.getConnectionHandler().getName() + "." + getName();
-            return qualifiedName.hashCode();
-        }
-
-        return super.hashCode();
+        return objectRef.hashCode();
     }
 
-    @Override
-    public void dispose() {
-        objectList = null;
+    public Project getProject() {
+        return project;
     }
 
     /*********************************************************
@@ -83,12 +72,7 @@ public class DatabaseObjectListVirtualFile<T extends DBObjectList> extends Virtu
     @NotNull
     @NonNls
     public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getPresentableName() {
-        return name;
+        return objectRef.getFileName();
     }
 
     @NotNull
@@ -104,8 +88,7 @@ public class DatabaseObjectListVirtualFile<T extends DBObjectList> extends Virtu
     @NotNull
     public String getPath() {
         if (path == null) {
-            //path = DatabaseFileSystem.createPath(object);
-            path="";
+            path = DatabaseFileSystem.createPath(getObject());
         }
         return path;
     }
@@ -113,8 +96,7 @@ public class DatabaseObjectListVirtualFile<T extends DBObjectList> extends Virtu
     @NotNull
     public String getUrl() {
         if (url == null) {
-            //url = DatabaseFileSystem.createUrl(object);
-            url = "";
+            url = DatabaseFileSystem.createUrl(getObject());
         }
         return url;
     }
@@ -138,23 +120,21 @@ public class DatabaseObjectListVirtualFile<T extends DBObjectList> extends Virtu
 
     @Nullable
     public VirtualFile getParent() {
-        GenericDatabaseElement parent = objectList.getParent();
-        if (parent instanceof DBObject) {
-            DBObject parentObject = (DBObject) parent;
-            return NavigationPsiCache.getPsiDirectory(parentObject).getVirtualFile();
+        if (CommonUtil.isCalledThrough(NavBarPresentation.class)) {
+            T object = getObject();
+            if (object != null) {
+                BrowserTreeNode treeParent = object.getTreeParent();
+                if (treeParent instanceof DBObjectList<?>) {
+                    DBObjectList objectList = (DBObjectList) treeParent;
+                    return NavigationPsiCache.getPsiDirectory(objectList).getVirtualFile();
+                }
+            }
         }
-
-        if (parent instanceof DBObjectBundle) {
-            DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return NavigationPsiCache.getPsiDirectory(objectBundle.getConnectionHandler()).getVirtualFile();
-
-        }
-
         return null;
     }
 
     public Icon getIcon() {
-        return null;
+        return objectRef.getObjectType().getIcon();
     }
 
     public VirtualFile[] getChildren() {
@@ -197,5 +177,9 @@ public class DatabaseObjectListVirtualFile<T extends DBObjectList> extends Virtu
     }
 
 
+    @Override
+    public void dispose() {
+        this.project = null;
+    }
 }
 

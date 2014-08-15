@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.code.diff.DBSourceFileContent;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diff.DiffManager;
 import com.intellij.openapi.diff.SimpleContent;
@@ -17,7 +17,7 @@ public abstract class AbstractDiffAction extends AbstractSourceCodeEditorAction 
     }
 
     protected void openDiffWindow(AnActionEvent e, final String referenceText, final String referenceTitle, final String windowTitle) {
-        final SourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        final DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         final Project project = ActionUtil.getProject(e);
         if (project!= null && virtualFile != null) {
             new SimpleLaterInvocator() {

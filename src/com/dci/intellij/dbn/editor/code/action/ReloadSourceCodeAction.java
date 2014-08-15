@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -27,7 +27,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                     final Editor editor = getEditor(e);
-                    final SourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+                    final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
 
                     if (editor != null && sourcecodeFile != null) {
                         boolean reloaded = sourcecodeFile.reloadFromDatabase();
@@ -46,7 +46,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(AnActionEvent e) {
-        SourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         if (virtualFile == null) {
             presentation.setEnabled(false);

@@ -8,5 +8,4 @@ import com.intellij.openapi.Disposable;
 public interface DBVirtualFile extends Disposable {
     Icon getIcon();
     ConnectionHandler getConnectionHandler();
-    void dispose();
 }

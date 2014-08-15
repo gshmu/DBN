@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -26,7 +26,7 @@ import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 
 public class EditorUtil {
-    public static void selectEditor(DatabaseEditableObjectVirtualFile databaseFile, FileEditor fileEditor) {
+    public static void selectEditor(DBEditableObjectVirtualFile databaseFile, FileEditor fileEditor) {
         JBTabsImpl tabs = getEditorTabComponent(databaseFile);
         TabInfo tabInfo = getEditorTabInfo(tabs, fileEditor);
         if (tabInfo != null) {
@@ -34,7 +34,7 @@ public class EditorUtil {
         }
     }
 
-    public static void setEditorIcon(DatabaseEditableObjectVirtualFile databaseFile, FileEditor fileEditor, Icon icon) {
+    public static void setEditorIcon(DBEditableObjectVirtualFile databaseFile, FileEditor fileEditor, Icon icon) {
         JBTabsImpl tabs = getEditorTabComponent(databaseFile);
         TabInfo tabInfo = getEditorTabInfo(tabs, fileEditor);
         if (tabInfo != null) {
@@ -42,7 +42,7 @@ public class EditorUtil {
         }
     }
 
-    private static JBTabsImpl getEditorTabComponent(DatabaseEditableObjectVirtualFile databaseFile) {
+    private static JBTabsImpl getEditorTabComponent(DBEditableObjectVirtualFile databaseFile) {
         FileEditor selectedEditor = getSelectedEditor(databaseFile);
         return selectedEditor == null ? null : (JBTabsImpl) getParentComponent(selectedEditor.getComponent(), JBTabsImpl.class);
     }
@@ -68,7 +68,7 @@ public class EditorUtil {
         return component;
     }
 
-    public static BasicTextEditor getFileEditor(DatabaseEditableObjectVirtualFile databaseFile, VirtualFile virtualFile) {
+    public static BasicTextEditor getFileEditor(DBEditableObjectVirtualFile databaseFile, VirtualFile virtualFile) {
         FileEditorManager editorManager = FileEditorManager.getInstance(databaseFile.getProject());
         FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
         for (FileEditor fileEditor : fileEditors) {
@@ -83,7 +83,7 @@ public class EditorUtil {
         return null;
     }
 
-    public static FileEditor getSelectedEditor(DatabaseEditableObjectVirtualFile databaseFile) {
+    public static FileEditor getSelectedEditor(DBEditableObjectVirtualFile databaseFile) {
         return FileEditorManager.getInstance(databaseFile.getProject()).getSelectedEditor(databaseFile);
     }
 

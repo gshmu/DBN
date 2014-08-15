@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -133,7 +133,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public DBObjectBundle getObjectBundle() {return null;}
     public DBSchema getUserSchema() {return null;}
-    public SQLConsoleVirtualFile getSQLConsoleFile() {return null;}
+    public DBConsoleVirtualFile getSQLConsoleFile() {return null;}
 
     public boolean isValid(boolean check) {return true;}
     public boolean isValid() {return true;}

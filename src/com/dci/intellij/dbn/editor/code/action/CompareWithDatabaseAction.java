@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -26,7 +26,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
             new BackgroundTask(project, "Loading database source code", false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    SourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
+                    DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
                     Editor editor = getEditor(e);
                     if (virtualFile != null && editor != null) {
                         String content = editor.getDocument().getText();

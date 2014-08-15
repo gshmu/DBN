@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.language.common;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.SQLConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -52,13 +52,13 @@ public abstract class DBLanguageFileType extends LanguageFileType implements Fil
 
 
     public boolean isMyFileType(VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectVirtualFile || file instanceof SourceCodeVirtualFile) {
+        if (file instanceof DBEditableObjectVirtualFile || file instanceof DBSourceCodeVirtualFile) {
             if (this == file.getFileType()) {
                 return true;
             }
         }
 
-        if (file instanceof SQLConsoleVirtualFile) {
+        if (file instanceof DBConsoleVirtualFile) {
             return true;
         }
         return false;

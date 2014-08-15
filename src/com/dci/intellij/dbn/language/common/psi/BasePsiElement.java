@@ -28,8 +28,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
@@ -268,9 +268,9 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                 VirtualFile virtualFile = getFile().getVirtualFile();
                 FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
                 if (virtualFile != null) {
-                    if (virtualFile instanceof SourceCodeVirtualFile) {
-                        SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) virtualFile;
-                        DatabaseEditableObjectVirtualFile databaseFile = sourceCodeFile.getDatabaseFile();
+                    if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+                        DBEditableObjectVirtualFile databaseFile = sourceCodeFile.getMainDatabaseFile();
                         if (!editorManager.isFileOpen(databaseFile)) {
                             editorManager.openFile(databaseFile, requestFocus);
                         }

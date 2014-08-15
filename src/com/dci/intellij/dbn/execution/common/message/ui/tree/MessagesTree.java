@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
@@ -97,7 +97,7 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
             CompilerMessage compilerMessage = compilerMessageNode.getCompilerMessage();
             FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
 
-            DatabaseEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
+            DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
             if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
                 editorManager.openFile(databaseFile, false);
                 if (compilerMessage.getContentFile() != null) {
@@ -110,7 +110,7 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
         }
     }
 
-    private void navigateInEditor(CompilerMessage compilerMessage, BasicTextEditor textEditor, DatabaseEditableObjectVirtualFile databaseFile) {
+    private void navigateInEditor(CompilerMessage compilerMessage, BasicTextEditor textEditor, DBEditableObjectVirtualFile databaseFile) {
         Editor editor = textEditor.getEditor();
         Document document = editor.getDocument();
         SourceCodeEditor codeEditor = (SourceCodeEditor) textEditor;

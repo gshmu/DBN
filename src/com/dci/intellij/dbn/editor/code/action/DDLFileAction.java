@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.ddl.action.AttachDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.CreateDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.DetachDDLFileAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -22,7 +22,7 @@ public class DDLFileAction extends AbstractSourceCodeEditorAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        SourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         if (sourcecodeFile != null) {
             DBSchemaObject object = sourcecodeFile.getObject();
             actionGroup = new DefaultActionGroup();
@@ -44,7 +44,7 @@ public class DDLFileAction extends AbstractSourceCodeEditorAction {
     }
 
     public void update(AnActionEvent e) {
-        SourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.CODE_EDITOR_DDL_FILE);
         presentation.setText("DDL Files");

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.breakpoint;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.vfs.DatabaseEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -19,14 +19,14 @@ import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
  */
 public class BreakpointUpdaterFileEditorListener implements FileEditorManagerListener{
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        if (file instanceof DatabaseEditableObjectVirtualFile) {
-            DatabaseEditableObjectVirtualFile databaseFile = (DatabaseEditableObjectVirtualFile) file;
+        if (file instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
             XBreakpointManagerImpl breakpointManager = (XBreakpointManagerImpl) XDebuggerManager.getInstance(source.getProject()).getBreakpointManager();
             for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {
                 if (breakpoint instanceof XLineBreakpoint) {
                     XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
                     lineBreakpoint.putUserData(DBProgramBreakpointHandler.BREAKPOINT_ID_KEY, null);
-                    DatabaseEditableObjectVirtualFile breakpointDatabaseFile = DBProgramBreakpointHandler.getDatabaseFile(lineBreakpoint);
+                    DBEditableObjectVirtualFile breakpointDatabaseFile = DBProgramBreakpointHandler.getDatabaseFile(lineBreakpoint);
                     if (databaseFile == breakpointDatabaseFile) {
                         breakpointManager.getLineBreakpointManager().registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
                     }

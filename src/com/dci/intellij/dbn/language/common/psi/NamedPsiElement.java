@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.vfs.SourceCodeVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,8 +64,8 @@ public class NamedPsiElement extends SequencePsiElement {
                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;
                     if (identifierPsiElement.isObject() && identifierPsiElement.isValid()) {
                         VirtualFile file = PsiUtil.getVirtualFileForElement(identifierPsiElement);
-                        if (file instanceof SourceCodeVirtualFile) {
-                            SourceCodeVirtualFile sourceCodeFile = (SourceCodeVirtualFile) file;
+                        if (file instanceof DBSourceCodeVirtualFile) {
+                            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
                             return identifierPsiElement.getObjectType().getIcon(sourceCodeFile.getContentType());
                         }
                         return identifierPsiElement.getObjectType().getIcon();

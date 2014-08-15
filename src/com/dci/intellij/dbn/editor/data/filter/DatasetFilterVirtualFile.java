@@ -17,8 +17,7 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DBVirtualFile;
-import com.dci.intellij.dbn.vfs.DatabaseFile;
+import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
@@ -30,7 +29,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DatasetFilterVirtualFile extends VirtualFile implements DatabaseFile, DBVirtualFile {
+public class DatasetFilterVirtualFile extends VirtualFile implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private DBObjectRef<DBDataset> datasetRef;

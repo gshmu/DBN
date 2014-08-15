@@ -4,7 +4,7 @@ import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
-import com.dci.intellij.dbn.vfs.DatabaseContentVirtualFile;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.intellij.openapi.util.Disposer;
 
 public class MethodExecutionMessageNode implements MessagesTreeNode {
@@ -22,7 +22,7 @@ public class MethodExecutionMessageNode implements MessagesTreeNode {
         return methodExecutionMessage;
     }
 
-    public DatabaseContentVirtualFile getVirtualFile() {
+    public DBContentVirtualFile getVirtualFile() {
         return null;
     }
 
