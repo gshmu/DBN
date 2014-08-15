@@ -70,8 +70,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     public boolean checkForbiddenOperation(ConnectionHandler connectionHandler) {
+        return checkForbiddenOperation(connectionHandler, null);
+    }
+    public boolean checkForbiddenOperation(ConnectionHandler connectionHandler, String message) {
         if (activeDebugSessions.contains(connectionHandler)) {
-            MessageUtil.showErrorDialog("Operation not supported during active debug session.");
+            MessageUtil.showErrorDialog(message == null ? "Operation not supported during active debug session." : message);
             return false;
         }
         return true;
