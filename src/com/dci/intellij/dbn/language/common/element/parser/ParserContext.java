@@ -6,9 +6,11 @@ import com.intellij.lang.PsiBuilder;
 public class ParserContext {
     private long timestamp = System.currentTimeMillis();
     private ParserBuilder builder;
+    private double dialectVersion;
 
-    public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect) {
+    public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double version) {
         this.builder = new ParserBuilder(builder, languageDialect);
+        this.dialectVersion = version;
     }
 
     public long getTimestamp() {
@@ -17,5 +19,9 @@ public class ParserContext {
 
     public ParserBuilder getBuilder() {
         return builder;
+    }
+
+    public double getDialectVersion() {
+        return dialectVersion;
     }
 }

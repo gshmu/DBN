@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -11,19 +16,19 @@ import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-
-import java.util.List;
-import java.util.Set;
 
 public class SequenceElementTypeImpl extends AbstractElementType implements SequenceElementType {
-    protected ElementType[] elementTypes;
-    protected boolean[] optional;
+    protected ElementTypeRef[] children;
     private int containsKeywords = -1;
     private int exitIndex;
 
-    public ElementType[] getElementTypes() {
-        return elementTypes;
+    public ElementTypeRef[] getChildren() {
+        return children;
+    }
+
+    @Override
+    public ElementTypeRef getChild(int index) {
+        return children[index];
     }
 
     public SequenceElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id) {
@@ -47,14 +52,15 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         List children = def.getChildren();
-        elementTypes = new ElementType[children.size()];
-        optional = new boolean[children.size()];
+        this.children = new ElementTypeRef[children.size()];
 
         for (int i = 0; i < children.size(); i++) {
             Element child = (Element) children.get(i);
             String type = child.getName();
-            elementTypes[i] = getElementBundle().resolveElementDefinition(child, type, this);
-            optional[i] = Boolean.parseBoolean(child.getAttributeValue("optional"));
+            ElementType elementType = getElementBundle().resolveElementDefinition(child, type, this);
+            boolean optional = Boolean.parseBoolean(child.getAttributeValue("optional"));
+            double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
+            this.children[i] = new ElementTypeRef(elementType, optional, version);
             if (child.getAttributeValue("exit") != null) exitIndex = i;
         }
     }
@@ -63,8 +69,8 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return false;
     }
 
-    public int elementsCount() {
-        return elementTypes.length;
+    public int getChildCount() {
+        return children.length;
     }
 
     public PsiElement createPsiElement(ASTNode astNode) {
@@ -72,49 +78,36 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     }
 
     public boolean isOptionalFromIndex(int index) {
-        for (int i=index; i<optional.length; i++) {
-            if (!optional[i]) return false;
+        for (int i=index; i< children.length; i++) {
+            if (!children[i].isOptional()) return false;
         }
         return true;
     }
 
     public boolean isLast(int index) {
-        return index == elementTypes.length - 1;
+        return index == children.length - 1;
     }
 
     public boolean isFirst(int index) {
         return index == 0;
     }
 
-    public boolean isOptional(int index) {
-        return optional[index];
-    }
-
-    public boolean isOptional(ElementType elementType) {
-        for (int i = 0; i<elementTypes.length; i++) {
-            if (elementTypes[i] == elementType) {
-                return optional[i];
-            }
-        }
-        return true;
-    }
-
     public boolean canStartWithElement(ElementType elementType) {
-        for (int i = 0; i<optional.length; i++) {
-            if (optional[i]) {
-                if (elementType == elementTypes[i]) return true;
+        for (ElementTypeRef child : children) {
+            if (child.isOptional()) {
+                if (elementType == child.getElementType()) return true;
             } else {
-                return elementType == elementTypes[i];
+                return child.getElementType() == elementType;
             }
         }
         return false;
     }
 
     public boolean shouldStartWithElement(ElementType elementType) {
-        for (int i = 0; i<optional.length; i++) {
-            if (!optional[i]) {
-                return elementType == elementTypes[i];
-            } 
+        for (ElementTypeRef child : children) {
+            if (!child.isOptional()) {
+                return child.getElementType() == elementType;
+            }
         }
         return false;
     }
@@ -128,40 +121,36 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return "sequence (" + getId() + ")";
     }
 
-    public boolean[] getOptionalElementsMap() {
-        return optional;
-    }
-
     /*********************************************************
      *                Cached lookup helpers                  *
      *********************************************************/
     public boolean containsLandmarkTokenFromIndex(TokenType tokenType, int index) {
-        for (int i = index; i < elementTypes.length; i++) {
-            if (elementTypes[i].getLookupCache().containsLandmarkToken(tokenType)) return true;
+        for (int i = index; i < children.length; i++) {
+            if (children[i].getLookupCache().containsLandmarkToken(tokenType)) return true;
         }
         return false;
     }
 
     public Set<TokenType> getFirstPossibleTokensFromIndex(int index) {
-        if (isOptional(index)) {
+        if (children[index].isOptional()) {
             Set<TokenType> tokenTypes = new THashSet<TokenType>();
-            for (int i=index; i< elementTypes.length; i++) {
-                tokenTypes.addAll(elementTypes[i].getLookupCache().getFirstPossibleTokens());
-                if (!isOptional(i)) break;
+            for (int i=index; i< children.length; i++) {
+                tokenTypes.addAll(children[i].getLookupCache().getFirstPossibleTokens());
+                if (!children[i].isOptional()) break;
             }
             return tokenTypes;
         } else {
-            return elementTypes[index].getLookupCache().getFirstPossibleTokens();
+            return children[index].getLookupCache().getFirstPossibleTokens();
         }
     }
 
     public boolean isPossibleTokenFromIndex(TokenType tokenType, int index) {
-        if (index < elementTypes.length) {
-            for (int i= index; i<elementTypes.length; i++) {
-                if (elementTypes[i].getLookupCache().canStartWithToken(tokenType)){
+        if (index < children.length) {
+            for (int i= index; i< children.length; i++) {
+                if (children[i].getLookupCache().canStartWithToken(tokenType)){
                     return true;
                 }
-                if (!isOptional(i)) {
+                if (!children[i].isOptional()) {
                     return false;
                 }
             }
@@ -170,8 +159,8 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     }
 
     public int indexOf(ElementType elementType, int fromIndex) {
-        for (int i=fromIndex; i<elementTypes.length; i++) {
-            if (elementTypes[i] == elementType) return i;
+        for (int i=fromIndex; i< children.length; i++) {
+            if (children[i].getElementType() == elementType) return i;
         }
         return -1;
     }
