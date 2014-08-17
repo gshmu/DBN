@@ -1,7 +1,20 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -23,28 +36,13 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
 public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNForm {
     private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<StatementExecutionVariableValueForm>();
     private StatementExecutionVariablesBundle variablesBundle;
     private JPanel mainPanel;
     private JPanel variablesPanel;
     private JPanel previewPanel;
-    private JSplitPane splitPane;
-
+    private JPanel headerSeparatorPanel;
     private Document previewDocument;
     private EditorEx viewer;
     private String statementText;
@@ -54,6 +52,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         this.statementText = statementText;
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
+        headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         for (StatementExecutionVariable variable: variablesBundle.getVariables()) {
             StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(variable);
@@ -81,12 +80,6 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         }
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-
-
-        Dimension preferredSize = variablesPanel.getPreferredSize();
-        int height = (int) Math.min(preferredSize.getHeight(), 200) + 24;
-        splitPane.setDividerLocation(height);
-        mainPanel.setPreferredSize(new Dimension((int) mainPanel.getPreferredSize().getWidth(), height + 250));
     }
 
     public JComponent getComponent() {

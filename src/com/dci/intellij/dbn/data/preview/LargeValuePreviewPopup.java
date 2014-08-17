@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -82,6 +83,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
             JComponent toolbarComponent = actionToolbar.getComponent();
             actionsPanel.add(toolbarComponent, BorderLayout.WEST);
             infoPanel.setVisible(true);
+            infoPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
             DatasetEditorManager dataEditorManager = DatasetEditorManager.getInstance(table.getProject());
             isPinned = dataEditorManager.isValuePreviewPinned();

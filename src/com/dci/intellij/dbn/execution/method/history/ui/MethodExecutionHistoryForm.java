@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -43,6 +44,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
                 new OpenSettingsAction());
         actionsPanel.add(actionToolbar.getComponent());
         methodExecutionForms = new HashMap<MethodExecutionInput, MethodExecutionForm>();
+        mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
     }
 

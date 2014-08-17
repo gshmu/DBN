@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.editor.ui;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -34,7 +33,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Set;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -48,7 +46,6 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.ui.UIUtil;
 
@@ -68,7 +65,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private JTextField timeTextField;
     private JLabel timeLabel;
     private JPanel actionsPanelBottom;
-    private JSeparator headerSeparator;
+    private JPanel headerSeparatorPanel;
 
     protected CalendarPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
         super(textField, isAutoPopup);
@@ -79,7 +76,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         weeksTable.setDefaultRenderer(Object.class, HEADER_CELL_RENDERER);
         weeksTable.setFocusable(false);
         calendarPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
-        headerSeparator.setBorder(new CustomLineBorder(Colors.COMPONENT_BORDER_COLOR, 0,0,1,0));
+        headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         daysTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         daysTable.setDefaultRenderer(Object.class, CELL_RENDERER);
