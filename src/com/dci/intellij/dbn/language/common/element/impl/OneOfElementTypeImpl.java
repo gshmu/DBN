@@ -7,6 +7,7 @@ import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -34,7 +35,9 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
             String type = child.getName();
             ElementType elementType = bundle.resolveElementDefinition(child, type, this);
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
-            this.children[i] = new ElementTypeRef(elementType, false, version);
+            List<String> supportedBranches = StringUtil.toStringList(child.getAttributeValue("supported-branches"), ",");
+            List<String> requiredBranches = StringUtil.toStringList(child.getAttributeValue("required-branches"), ",");
+            this.children[i] = new ElementTypeRef(elementType, false, version, supportedBranches, requiredBranches);
         }
         sortable = Boolean.parseBoolean(def.getAttributeValue("sortable"));
     }

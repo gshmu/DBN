@@ -30,7 +30,10 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
             String tokenText = builder.getTokenText();
             // TODO !!!! if elementType is an identifier: then BUILD VARIANTS!!!
             for (ElementTypeRef child : getElementType().getChildren()) {
-                if (isDummyToken(tokenText) || child.getLookupCache().canStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node)) {
+                if (context.checkBranches(child) && (
+                        isDummyToken(tokenText) ||
+                        child.getLookupCache().canStartWithToken(tokenType) ||
+                        isSuppressibleReservedWord(tokenType, node))) {
                     ParseResult result = child.getParser().parse(node, true, depth + 1, context);
                     if (result.isMatch()) {
                         return stepOut(node, context, depth, result.getType(), result.getMatchedTokens());
