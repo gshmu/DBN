@@ -54,7 +54,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     }
 
     public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
-        context.startBranch(parentParseNode, elementType.getBranch());
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = new ParsePathNode(elementType, parentParseNode, builder.getCurrentOffset(), 0);
         PsiBuilder.Marker marker = builder.mark(node);
@@ -83,13 +82,19 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
 
 
             logEnd(resultType, depth);
-            return resultType ==
-                    ParseResultType.NO_MATCH ?
-                    ParseResult.createNoMatchResult() :
-                    ParseResult.createFullMatchResult(matchedTokens);
+            if (resultType == ParseResultType.NO_MATCH) {
+                return ParseResult.createNoMatchResult();
+            } else {
+                String branch = elementType.getBranch();
+                if (node != null && branch != null) {
+                    // if node is matched add branch marker
+                    context.addBranchMarker(node.getParent(), branch);
+                }
+                return ParseResult.createFullMatchResult(matchedTokens);
+            }
         } finally {
             if (node != null) {
-                context.endBranches(node);
+                context.removeBranchMarkers(node);
                 node.detach();
 
             }

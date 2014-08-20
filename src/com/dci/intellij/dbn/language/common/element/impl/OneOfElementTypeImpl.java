@@ -23,6 +23,7 @@ import gnu.trove.THashSet;
 public class OneOfElementTypeImpl extends AbstractElementType implements OneOfElementType {
     protected final ElementTypeRef[] children;
     private boolean sortable;
+    private boolean branchChecks = false;
 
     public OneOfElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -37,6 +38,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
             List<String> supportedBranches = StringUtil.toStringList(child.getAttributeValue("supported-branches"), ",");
             List<String> requiredBranches = StringUtil.toStringList(child.getAttributeValue("required-branches"), ",");
+            branchChecks = supportedBranches != null || requiredBranches != null;
             this.children[i] = new ElementTypeRef(elementType, false, version, supportedBranches, requiredBranches);
         }
         sortable = Boolean.parseBoolean(def.getAttributeValue("sortable"));
@@ -75,6 +77,11 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
 
     public boolean isLeaf() {
         return false;
+    }
+
+    @Override
+    public boolean hasBranchChecks() {
+        return branchChecks;
     }
 
     public String getDebugName() {
