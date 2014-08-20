@@ -32,13 +32,11 @@ public class ParserContext {
         return dialectVersion;
     }
 
-    public void startBranch(ParsePathNode parentNode, String branch) {
-        if (branch != null) {
-            branchMarkers.put(branch, parentNode);
-        }
+    public void addBranchMarker(ParsePathNode parentNode, String branch) {
+        branchMarkers.put(branch, parentNode);
     }
 
-    public void endBranches(ParsePathNode parentNode) {
+    public void removeBranchMarkers(ParsePathNode parentNode) {
         if (branchMarkers.size() > 0 && branchMarkers.containsValue(parentNode)) {
             Iterator<String> iterator = branchMarkers.keySet().iterator();
             while (iterator.hasNext()) {
