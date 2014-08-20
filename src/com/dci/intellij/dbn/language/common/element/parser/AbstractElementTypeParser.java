@@ -54,6 +54,7 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     }
 
     public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
+        context.startBranch(parentParseNode, elementType.getBranch());
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = new ParsePathNode(elementType, parentParseNode, builder.getCurrentOffset(), 0);
         PsiBuilder.Marker marker = builder.mark(node);
@@ -88,7 +89,9 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                     ParseResult.createFullMatchResult(matchedTokens);
         } finally {
             if (node != null) {
+                context.endBranches(node);
                 node.detach();
+
             }
 
         }

@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.common.element;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -15,9 +19,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
     public ChameleonElementType(DBLanguageDialect language) {
@@ -80,6 +81,12 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
 
     @Override
     public WrappingDefinition getWrapping() {
+        return null;
+    }
+
+    @Override
+    @Nullable
+    public String getBranch() {
         return null;
     }
 
