@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
-import com.intellij.openapi.options.ConfigurationException;
-
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
+import com.intellij.openapi.options.ConfigurationException;
 
 public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEditorPopupSettings> {
     private JTextField lengthThresholdTextField;
@@ -24,10 +24,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         resetChanges();
         enableDisableFields();
 
-        registerComponent(lengthThresholdTextField);
-        registerComponent(delayTextField);
-        registerComponent(activeCheckBox);
-        registerComponent(activeIfEmptyCheckBox);
+        registerComponent(mainPanel);
     }
 
     @Override

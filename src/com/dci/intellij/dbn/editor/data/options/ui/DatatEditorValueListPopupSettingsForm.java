@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorForm<DataEditorValueListPopupSettings> {
     private JTextField elementCountThresholdTextBox;
@@ -19,8 +19,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
         super(settings);
         updateBorderTitleForeground(mainPanel);
         resetChanges();
-        registerComponent(elementCountThresholdTextBox);
-        registerComponent(activeForPrimaryKeysCheckBox);
+        registerComponent(mainPanel);
     }
 
     public JPanel getComponent() {

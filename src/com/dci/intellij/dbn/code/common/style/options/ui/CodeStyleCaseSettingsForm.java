@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.code.common.style.options.ui;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JPanel;
 
 public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyleCaseSettings> implements DBNForm {
     private JPanel mainPanel;
@@ -32,12 +32,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         objectCaseComboBox.setModel(createCustomModel());
         resetChanges();
 
-        registerComponent(keywordCaseComboBox);
-        registerComponent(functionCaseComboBox);
-        registerComponent(parameterCaseComboBox);
-        registerComponent(objectCaseComboBox);
-        registerComponent(datatypeCaseComboBox);
-        registerComponent(enableCheckBox);
+        registerComponent(mainPanel);
 
         //Shortcut[] basicShortcuts = KeyUtil.getShortcuts("ReformatCode");
         //enableCheckBox.setText("Use on reformat code (" + KeymapUtil.getShortcutsText(basicShortcuts) + ")");

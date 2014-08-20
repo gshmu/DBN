@@ -118,4 +118,11 @@ public class CommonUtil {
         }
         return set;
     }
+
+    public static <T> boolean isOneOf(T[] objects, T object) {
+        for (T obj: objects ) {
+            if (obj == object) return true;
+        }
+        return false;
+    }
 }

@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.execution.compiler.options.ui;
 
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettings> {
     private JPanel mainPanel;
@@ -36,9 +36,7 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
 
         resetChanges();
 
-        registerComponent(compileTypeComboBox);
-        registerComponent(showAlwaysRadioButton);
-        registerComponent(showWhenInvalidRadioButton);
+        registerComponent(mainPanel);
     }
 
     public JPanel getComponent() {

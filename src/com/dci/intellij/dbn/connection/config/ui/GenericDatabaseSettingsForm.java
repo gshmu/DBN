@@ -60,17 +60,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         resetChanges();
         updateLibraryTextField();
 
-        registerComponent(activeCheckBox);
-        registerComponent(nameTextField);
-        registerComponent(descriptionTextField);
-        registerComponent(driverLibraryTextField.getTextField());
-        registerComponent(urlTextField);
-        registerComponent(userTextField);
-        registerComponent(passwordField);
-        registerComponent(driverComboBox);
-        registerComponent(testButton);
-        registerComponent(infoButton);
-        registerComponent(osAuthenticationCheckBox);
+        registerComponent(mainPanel);
 
         driverLibraryTextField.addBrowseFolderListener(
                 "Select driver library",

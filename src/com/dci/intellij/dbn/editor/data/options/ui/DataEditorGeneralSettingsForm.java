@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataEditorGeneralSettings> {
     private JPanel mainPanel;
@@ -23,12 +23,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         updateBorderTitleForeground(mainPanel);
         resetChanges();
 
-        registerComponent(trimWhitespacesCheckBox);
-        registerComponent(convertEmptyToNullCheckBox);
-        registerComponent(fetchBlockSizeTextField);
-        registerComponent(fetchTimeoutTextField);
-        registerComponent(selectContentOnEditCheckBox);
-        registerComponent(largeValuePreviewActiveCheckBox);
+        registerComponent(mainPanel);
     }
 
     public JPanel getComponent() {
