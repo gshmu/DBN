@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.execution.statement.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class StatementExecutionSettingsForm extends ConfigurationEditorForm<StatementExecutionSettings> {
     private JPanel mainPanel;
@@ -20,9 +20,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         updateBorderTitleForeground(mainPanel);
 
         resetChanges();
-        registerComponent(fetchBlockSizeTextField);
-        registerComponent(executionTimeoutTextField);
-        registerComponent(focusResultCheckBox);
+        registerComponent(mainPanel);
     }
 
     public JPanel getComponent() {

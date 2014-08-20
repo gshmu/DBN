@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserGeneralSettings;
 import com.dci.intellij.dbn.browser.options.ObjectDisplaySettingsListener;
@@ -8,12 +14,6 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
     private JPanel mainPanel;
@@ -28,9 +28,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         updateBorderTitleForeground(mainPanel);
         resetChanges();
 
-        registerComponent(simpleRadioButton);
-        registerComponent(tabbedRadioButton);
-        registerComponent(showObjectDetailsCheckBox);
+        registerComponent(mainPanel);
     }
 
     public JComponent getComponent() {

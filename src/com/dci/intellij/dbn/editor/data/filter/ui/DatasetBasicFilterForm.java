@@ -86,8 +86,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         joinOrRadioButton.setSelected(filter.getJoinType() == DatasetBasicFilter.JOIN_TYPE_OR);
 
         nameTextField.addKeyListener(createKeyListener());
-        registerComponent(joinAndRadioButton);
-        registerComponent(joinOrRadioButton);
+        registerComponent(mainPanel);
 
         if (filter.getError() == null) {
             errorLabel.setText("");

@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.code.common.style.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Insets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
@@ -9,15 +18,6 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Insets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<CodeStyleFormattingSettings> {
     private JPanel mainPanel;
@@ -53,16 +53,13 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         }
         resetChanges();
         
-        for (JComboBox comboBox : mappings.values()) {
-            registerComponent(comboBox);
-        }
-        registerComponent(enableCheckBox);
         settingsPanel.add(new Spacer(),
                 new GridConstraints(options.size(), 1, 1, 1,
                         GridConstraints.ANCHOR_CENTER,
                         GridConstraints.FILL_VERTICAL, 1,
                         GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 
+        registerComponent(mainPanel);
         //Shortcut[] basicShortcuts = KeyUtil.getShortcuts("ReformatCode");
         //useOnReformatCheckBox.setText("Use on reformat code (" + KeymapUtil.getShortcutsText(basicShortcuts) + ")");
     }

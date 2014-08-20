@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.locale.DBDateFormat;
-import com.dci.intellij.dbn.common.locale.DBNumberFormat;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,6 +13,16 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.Locale;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.locale.DBDateFormat;
+import com.dci.intellij.dbn.common.locale.DBNumberFormat;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
 
 public class RegionalSettingsEditorForm extends ConfigurationEditorForm<RegionalSettings> {
     private JPanel mainPanel;
@@ -60,19 +60,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         resetChanges();
         updatePreview();
 
-        registerComponent(localeComboBox);
-        registerComponent(shortRadioButton);
-        registerComponent(mediumRadioButton);
-        registerComponent(longRadioButton);
-
-        registerComponent(groupedRadioButton);
-        registerComponent(ungroupedRadioButton);
-
-        registerComponent(presetPatternsRadioButton);
-        registerComponent(customPatternsRadioButton);
-        registerComponent(customNumberFormatTextField);
-        registerComponent(customDateFormatTextField);
-        registerComponent(customTimeFormatTextField);
+        registerComponent(mainPanel);
     }
 
     @Override
