@@ -44,13 +44,25 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(@Nullable Set<LeafElementType> bucket, Set<String> parseBranches) {
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
         WrapperElementType elementType = getElementType();
         bucket.add(elementType.getBeginTokenElement());
         if (elementType.isWrappingOptional()) {
             ElementTypeLookupCache lookupCache = elementType.getWrappedElement().getLookupCache();
-            lookupCache.collectFirstPossibleLeafs(bucket, parseBranches);
+            lookupCache.collectFirstPossibleLeafs(context, bucket);
+        }
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        bucket = initBucket(bucket);
+        WrapperElementType elementType = getElementType();
+        bucket.add(elementType.getBeginTokenElement().getTokenType());
+        if (elementType.isWrappingOptional()) {
+            ElementTypeLookupCache lookupCache = elementType.getWrappedElement().getLookupCache();
+            lookupCache.collectFirstPossibleTokens(context, bucket);
         }
         return bucket;
     }

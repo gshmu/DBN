@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.SequenceElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.SequenceElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -140,16 +142,18 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return false;
     }
 
-    public Set<TokenType> getFirstPossibleTokensFromIndex(int index) {
+    public Set<TokenType> getFirstPossibleTokensFromIndex(ElementLookupContext context, int index) {
         if (children[index].isOptional()) {
             Set<TokenType> tokenTypes = new THashSet<TokenType>();
             for (int i=index; i< children.length; i++) {
-                tokenTypes.addAll(children[i].getLookupCache().getFirstPossibleTokens());
+                ElementTypeLookupCache lookupCache = children[i].getLookupCache();
+                lookupCache.collectFirstPossibleTokens(context, tokenTypes);
                 if (!children[i].isOptional()) break;
             }
             return tokenTypes;
         } else {
-            return children[index].getLookupCache().getFirstPossibleTokens();
+            ElementTypeLookupCache lookupCache = children[index].getLookupCache();
+            return lookupCache.collectFirstPossibleTokens(context);
         }
     }
 

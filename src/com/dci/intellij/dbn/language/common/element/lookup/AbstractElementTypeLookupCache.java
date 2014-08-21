@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.common.element.lookup;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -135,19 +134,13 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(Set<String> parseBranches) {
-        return collectFirstPossibleLeafs(null, parseBranches);
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
+        return collectFirstPossibleLeafs(context, null);
     }
 
     @Override
-    public Set<TokenType> collectFirstPossibleTokens(Set<String> parseBranches) {
-        return collectFirstPossibleTokens(null, parseBranches);
-    }
-
-    @Override
-    public Set<TokenType> collectFirstPossibleTokens(@Nullable Set<TokenType> bucket, Set<String> parseBranches) {
-        // TODO implement
-        return bucket;
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context) {
+        return collectFirstPossibleTokens(context, null);
     }
 
     protected <E> Set<E> initBucket(Set<E> bucket) {

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.ParseException;
@@ -9,12 +10,14 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
 
 public class IterationElementTypeParser extends AbstractElementTypeParser<IterationElementType> {
@@ -105,7 +108,9 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
         TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
         if (!lenient) {
-            getErrorHandler().updateBuilderError(iteratedElementType.getLookupCache().getFirstPossibleTokens(), context);
+            ElementTypeLookupCache lookupCache = iteratedElementType.getLookupCache();
+            Set<TokenType> expectedTokens = lookupCache.collectFirstPossibleTokens(context);
+            ParseBuilderErrorHandler.updateBuilderError(expectedTokens, context);
         }
         boolean advanced = false;
         BasicElementType unknownElementType = getElementBundle().getUnknownElementType();

@@ -33,7 +33,12 @@ public class BasicElementTypeLookupCache extends AbstractElementTypeLookupCache<
     public boolean startsWithIdentifier(PathNode node) {return false;}
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(@Nullable Set<LeafElementType> bucket, Set<String> parseBranches) {
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         return bucket;
     }
 }
