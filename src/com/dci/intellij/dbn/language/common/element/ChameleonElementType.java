@@ -106,6 +106,11 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return false;
     }
 
+    @Override
+    public boolean hasBranchChecks() {
+        return false;
+    }
+
     public DBObjectType getVirtualObjectType() {
         return null;
     }

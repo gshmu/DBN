@@ -30,19 +30,26 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private String id;
     private String name;
     private DatabaseType databaseType;
+    private double databaseVersion;
     private Project project;
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
 
-    public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, Project project){
+    public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, double databaseVersion, Project project){
         this.id = id;
         this.name = name;
         this.project = project;
         this.databaseType = databaseType;
+        this.databaseVersion = databaseVersion;
     }
 
     public DatabaseType getDatabaseType() {return databaseType;}
+
+    @Override
+    public double getDatabaseVersion() {
+        return databaseVersion;
+    }
 
     public Filter<BrowserTreeNode> getObjectFilter() {
         return null;

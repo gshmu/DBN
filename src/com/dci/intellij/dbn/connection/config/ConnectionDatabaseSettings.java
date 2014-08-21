@@ -25,6 +25,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     protected String name;
     protected String description;
     protected DatabaseType databaseType = DatabaseType.UNKNOWN;
+    protected double databaseVersion = 9999;
     protected String user;
     protected String password;
     protected int hashCode;
@@ -120,6 +121,14 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         this.databaseType = databaseType;
     }
 
+    public double getDatabaseVersion() {
+        return databaseVersion;
+    }
+
+    public void setDatabaseVersion(double databaseVersion) {
+        this.databaseVersion = databaseVersion;
+    }
+
     public String getUser() {
         return user;
     }
@@ -169,6 +178,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
             name             = getString(element, "name", name);
             description      = getString(element, "description", description);
             databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
+            databaseVersion  = getDouble(element, "database-version", databaseVersion);
             user             = getString(element, "user", user);
             password         = decodePassword(getString(element, "password", password));
             active           = getBoolean(element, "active", active);
@@ -195,6 +205,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         setBoolean(element, "active", active);
         setBoolean(element, "os-authentication", osAuthentication);
         setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
+        setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(user));
         setString(element, "password", encodePassword(password));
     }

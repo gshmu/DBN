@@ -35,12 +35,12 @@ public abstract class DBLanguageParser implements PsiParser {
 
     @NotNull
     public ASTNode parse(IElementType rootElementType, PsiBuilder builder) {
-        return parse(rootElementType, builder, defaultParseRootId);
+        return parse(rootElementType, builder, defaultParseRootId, -1);
     }
 
     @NotNull
-    public ASTNode parse(IElementType rootElementType, PsiBuilder psiBuilder, String parseRootId) {
-        ParserContext context = new ParserContext(psiBuilder, languageDialect, -1);
+    public ASTNode parse(IElementType rootElementType, PsiBuilder psiBuilder, String parseRootId, double databaseVersion) {
+        ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
         ParserBuilder builder = context.getBuilder();
         if (parseRootId == null ) parseRootId = defaultParseRootId;
         builder.setDebugMode(SettingsUtil.isDebugEnabled);
