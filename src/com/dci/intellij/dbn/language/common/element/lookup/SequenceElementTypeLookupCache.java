@@ -57,14 +57,13 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         bucket = initBucket(bucket);
 
         T elementType = getElementType();
-        boolean branchChecks = elementType.hasBranchChecks();
-        ElementTypeRef[] elementTypeRefs = elementType.getChildren();
-        for (ElementTypeRef elementTypeRef : elementTypeRefs) {
-            if (!branchChecks || context.checkBranches(elementTypeRef)) {
-                ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
+        ElementTypeRef[] children = elementType.getChildren();
+        for (ElementTypeRef child : children) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
                 lookupCache.collectFirstPossibleLeafs(context, bucket);
             }
-            if (!elementTypeRef.isOptional()) break;
+            if (!child.isOptional()) break;
         }
         return bucket;
     }
@@ -74,14 +73,13 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         bucket = initBucket(bucket);
 
         T elementType = getElementType();
-        boolean branchChecks = elementType.hasBranchChecks();
-        ElementTypeRef[] elementTypeRefs = elementType.getChildren();
-        for (ElementTypeRef elementTypeRef : elementTypeRefs) {
-            if (!branchChecks || context.checkBranches(elementTypeRef)) {
-                ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
+        ElementTypeRef[] children = elementType.getChildren();
+        for (ElementTypeRef child : children) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
                 lookupCache.collectFirstPossibleTokens(context, bucket);
             }
-            if (!elementTypeRef.isOptional()) break;
+            if (!child.isOptional()) break;
         }
         return bucket;
     }

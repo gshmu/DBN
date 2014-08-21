@@ -39,11 +39,10 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
-        boolean branchChecks = getElementType().hasBranchChecks();
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
-        for (ElementTypeRef elementTypeRef : elementTypeRefs) {
-            if (!branchChecks || context.checkBranches(elementTypeRef)) {
-                ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
+        for (ElementTypeRef child : elementTypeRefs) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
                 bucket = lookupCache.collectFirstPossibleLeafs(context, bucket);
             }
         }
@@ -51,11 +50,10 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
     }
 
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
-        boolean branchChecks = getElementType().hasBranchChecks();
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
-        for (ElementTypeRef elementTypeRef : elementTypeRefs) {
-            if (!branchChecks || context.checkBranches(elementTypeRef)) {
-                ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
+        for (ElementTypeRef child : elementTypeRefs) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
                 bucket = lookupCache.collectFirstPossibleTokens(context, bucket);
             }
         }

@@ -231,4 +231,9 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     public boolean isVirtualObjectInsideLookup() {
         return isVirtualObjectInsideLookup;
     }
+
+    @Override
+    public boolean hasBranchChecks() {
+        return false;
+    }
 }

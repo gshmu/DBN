@@ -120,6 +120,7 @@ public class ConnectionUtil {
 
             DatabaseType databaseType = getDatabaseType(connection);
             databaseSettings.setDatabaseType(databaseType);
+            databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
 
             return connection;
@@ -150,6 +151,13 @@ public class ConnectionUtil {
         }
         return DatabaseType.UNKNOWN;
 
+    }
+
+    public static double getDatabaseVersion(Connection connection) throws SQLException {
+        DatabaseMetaData databaseMetaData = connection.getMetaData();
+        int majorVersion = databaseMetaData.getDatabaseMajorVersion();
+        int minorVersion = databaseMetaData.getDatabaseMinorVersion();
+        return new Double(majorVersion + "." + minorVersion);
     }
 
     public static DatabaseType getDatabaseType(Connection connection) throws SQLException {

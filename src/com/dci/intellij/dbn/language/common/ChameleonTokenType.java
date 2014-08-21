@@ -74,6 +74,9 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         return false;
     }
 
+    @Override
+    public boolean hasBranchChecks() { return false; }
+
     public DBObjectType getVirtualObjectType() {
         return null;
     }

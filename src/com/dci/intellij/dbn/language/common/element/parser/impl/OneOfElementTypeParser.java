@@ -23,14 +23,15 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        getElementType().sort();
+        OneOfElementType elementType = getElementType();
+        elementType.sort();
         TokenType tokenType = builder.getTokenType();
 
         if (tokenType!= null && !tokenType.isChameleon()) {
             String tokenText = builder.getTokenText();
             // TODO !!!! if elementType is an identifier: then BUILD VARIANTS!!!
-            for (ElementTypeRef child : getElementType().getChildren()) {
-                if (!getElementType().hasBranchChecks() || context.checkBranches(child) && (
+            for (ElementTypeRef child : elementType.getChildren()) {
+                if (context.check(child) && (
                         isDummyToken(tokenText) ||
                         child.getLookupCache().canStartWithToken(tokenType) ||
                         isSuppressibleReservedWord(tokenType, node))) {

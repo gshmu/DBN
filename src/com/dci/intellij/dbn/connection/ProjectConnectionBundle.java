@@ -32,24 +32,28 @@ public class ProjectConnectionBundle extends ConnectionBundle implements Project
                 "virtual-oracle-connection",
                 "Virtual - Oracle 10.1",
                 DatabaseType.ORACLE,
+                10.1,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
                 "virtual-mysql-connection", 
                 "Virtual - MySQL 5.0",
                 DatabaseType.MYSQL,
+                5.0,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
                 "virtual-postgres-connection",
                 "Virtual - PostgreSQL 9.3.4",
                 DatabaseType.POSTGRES,
+                9.3,
                 project));
 
         virtualConnections.add(new VirtualConnectionHandler(
                 "virtual-iso92-sql-connection",
                 "Virtual - ISO-92 SQL",
                 DatabaseType.UNKNOWN,
+                92,
                 project));
     }
 

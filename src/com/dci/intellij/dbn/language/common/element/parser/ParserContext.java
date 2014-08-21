@@ -12,13 +12,12 @@ import com.intellij.lang.PsiBuilder;
 public class ParserContext extends ElementLookupContext {
     private long timestamp = System.currentTimeMillis();
     private ParserBuilder builder;
-    private double dialectVersion;
     private Map<String, ParsePathNode> branchMarkers = new HashMap<String, ParsePathNode>();
 
     public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double version) {
         super(null);
         this.builder = new ParserBuilder(builder, languageDialect);
-        this.dialectVersion = version;
+        this.languageVersion = version;
     }
 
     public long getTimestamp() {
@@ -27,10 +26,6 @@ public class ParserContext extends ElementLookupContext {
 
     public ParserBuilder getBuilder() {
         return builder;
-    }
-
-    public double getDialectVersion() {
-        return dialectVersion;
     }
 
     public void addBranchMarker(ParsePathNode parentNode, String branch) {

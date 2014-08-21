@@ -83,6 +83,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionSettings.getDatabaseSettings().getDatabaseType();
     }
 
+    @Override
+    public double getDatabaseVersion() {
+        return connectionSettings.getDatabaseSettings().getDatabaseVersion();
+    }
+
     public Filter<BrowserTreeNode> getObjectFilter() {
         return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
