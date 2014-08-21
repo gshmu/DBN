@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<!DOCTYPE element-defs SYSTEM "../../../common/definition/language-parser-elements.dtd">--><element-defs language="POSTGRES-SQL" version="9.3">
+<!--<!DOCTYPE element-defs SYSTEM "../../../common/definition/language-parser-elements.dtd">-->
+<element-defs language="POSTGRES-SQL" version="9.4">
     <element-def attributes="ROOT, STRUCTURE" description="SQL block" icon="FILE_BLOCK_SQL" id="sql_block">
         <iteration id="000000000">
+
             <one-of attributes="STATEMENT, SCOPE_ISOLATION" formatting-indent="ABSOLUTE_NONE" id="000000001">
                 <element ref-id="create_statement" />
                 <element ref-id="alter_statement" />
