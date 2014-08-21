@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -77,7 +78,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return null;
     }
 
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, Set<String> parseBranches) {
+    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context) {
         Set<LeafElementType> possibleLeafs = new THashSet<LeafElementType>();
         int position = 0;
         while (pathNode != null) {
@@ -90,7 +91,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 for (int i=position+1; i<elementsCount; i++) {
                     ElementTypeRef next = sequenceElementType.getChild(i);
-                    next.getLookupCache().collectFirstPossibleLeafs(possibleLeafs, parseBranches);
+                    next.getLookupCache().collectFirstPossibleLeafs(context, possibleLeafs);
                     if (!next.isOptional()) {
                         pathNode = null;
                         break;
@@ -101,7 +102,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
                     ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                    lookupCache.collectFirstPossibleLeafs(possibleLeafs, parseBranches);
+                    lookupCache.collectFirstPossibleLeafs(context, possibleLeafs);
                 } else {
                     possibleLeafs.addAll(Arrays.asList(separatorTokens));
                 }

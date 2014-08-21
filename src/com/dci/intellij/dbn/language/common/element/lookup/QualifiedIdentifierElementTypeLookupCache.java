@@ -46,11 +46,22 @@ public class QualifiedIdentifierElementTypeLookupCache extends AbstractElementTy
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(@Nullable Set<LeafElementType> bucket, Set<String> parseBranches) {
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
         for (LeafElementType[] elementTypes : getElementType().getVariants()) {
             // variants already consider optional leafs
             bucket.add(elementTypes[0]);
+        }
+
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        bucket = initBucket(bucket);
+        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
+            // variants already consider optional leafs
+            bucket.add(elementTypes[0].getTokenType());
         }
 
         return bucket;

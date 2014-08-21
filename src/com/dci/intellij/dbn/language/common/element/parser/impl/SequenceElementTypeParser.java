@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.ParseException;
@@ -122,7 +123,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         ParserBuilder builder = context.getBuilder();
         PsiBuilder.Marker marker = builder.mark(null);
         SequenceElementType elementType = getElementType();
-        ParseBuilderErrorHandler.updateBuilderError(elementType.getFirstPossibleTokensFromIndex(siblingPosition), context);
+        Set<TokenType> possibleTokens = elementType.getFirstPossibleTokensFromIndex(context, siblingPosition);
+        ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 
         TokenType tokenType = builder.getTokenType();
         siblingPosition++;

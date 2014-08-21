@@ -53,16 +53,33 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(Set<LeafElementType> bucket, Set<String> parseBranches) {
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
 
         T elementType = getElementType();
         boolean branchChecks = elementType.hasBranchChecks();
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef elementTypeRef : elementTypeRefs) {
-            if (!branchChecks || parseBranches == null || elementTypeRef.supportsBranches(parseBranches)) {
+            if (!branchChecks || context.checkBranches(elementTypeRef)) {
                 ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
-                lookupCache.collectFirstPossibleLeafs(bucket, parseBranches);
+                lookupCache.collectFirstPossibleLeafs(context, bucket);
+            }
+            if (!elementTypeRef.isOptional()) break;
+        }
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        bucket = initBucket(bucket);
+
+        T elementType = getElementType();
+        boolean branchChecks = elementType.hasBranchChecks();
+        ElementTypeRef[] elementTypeRefs = elementType.getChildren();
+        for (ElementTypeRef elementTypeRef : elementTypeRefs) {
+            if (!branchChecks || context.checkBranches(elementTypeRef)) {
+                ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
+                lookupCache.collectFirstPossibleTokens(context, bucket);
             }
             if (!elementTypeRef.isOptional()) break;
         }

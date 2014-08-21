@@ -44,8 +44,14 @@ public class IterationElementTypeLookupCache extends AbstractElementTypeLookupCa
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs(@Nullable Set<LeafElementType> bucket, Set<String> parseBranches) {
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
-        return lookupCache.collectFirstPossibleLeafs(bucket, parseBranches);
+        return lookupCache.collectFirstPossibleLeafs(context, bucket);
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
+        return lookupCache.collectFirstPossibleTokens(context, bucket);
     }
 }

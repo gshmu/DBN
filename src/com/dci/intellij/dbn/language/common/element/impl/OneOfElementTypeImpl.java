@@ -3,12 +3,10 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
@@ -18,7 +16,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
 
 public class OneOfElementTypeImpl extends AbstractElementType implements OneOfElementType {
     protected final ElementTypeRef[] children;
@@ -52,27 +49,6 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
     @Override
     protected OneOfElementTypeParser createParser() {
         return new OneOfElementTypeParser(this);
-    }
-
-    public void warnAmbiguousBranches() {
-        Set<TokenType> ambiguousTokenTypes = new THashSet<TokenType>();
-        Set<ElementType> ambiguousElementTypes = new THashSet<ElementType>();
-        for (ElementTypeRef elementTypeRef : children) {
-            Set<TokenType> possibleTokens = elementTypeRef.getLookupCache().getFirstPossibleTokens();
-            for (TokenType possibleToken : possibleTokens) {
-                if (ambiguousTokenTypes.contains(possibleToken)) {
-                    ambiguousElementTypes.add(elementTypeRef.getElementType());
-                }
-                ambiguousTokenTypes.add(possibleToken);
-            }
-        }
-        if (ambiguousElementTypes.size() > 0) {
-            StringBuilder message = new StringBuilder("WARNING - ambiguous one-of elements [").append(getId()).append("] " );
-            for (ElementType elementType : ambiguousElementTypes) {
-                message.append(elementType.getId()).append(" ");
-            }
-            System.out.println(message.toString());
-        }
     }
 
     public boolean isLeaf() {

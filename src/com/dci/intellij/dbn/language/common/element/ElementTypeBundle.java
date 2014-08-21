@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.StringWriter;
@@ -112,13 +112,6 @@ public class ElementTypeBundle {
     public TokenTypeBundle getTokenTypeBundle() {
         return tokenTypeBundle;
     }
-
-    private void warnAmbiguousBranches() {
-        for (OneOfElementType oneOfElementType : oneOfElementTypes) {
-            oneOfElementType.warnAmbiguousBranches();
-        }
-    }
-
 
     public void markIndexesDirty() {
         this.rewriteIndexes = true;

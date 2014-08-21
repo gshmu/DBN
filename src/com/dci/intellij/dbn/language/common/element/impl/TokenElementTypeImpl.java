@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.TokenElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.TokenElementTypeParser;
@@ -65,26 +66,26 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupV
         return "token (" + getId() + " - " + getTokenType().getId() + ")";
     }
 
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, Set<String> parseBranches) {
+    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context) {
         ElementType parent = getParent();
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
                 ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                return lookupCache.collectFirstPossibleLeafs(parseBranches);
+                return lookupCache.collectFirstPossibleLeafs(context);
             } else if (parent instanceof QualifiedIdentifierElementType){
-                return super.getNextPossibleLeafs(pathNode, parseBranches);
+                return super.getNextPossibleLeafs(pathNode, context);
             }
         }
         if (parent instanceof WrapperElementType) {
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
                 ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
-                return lookupCache.collectFirstPossibleLeafs(parseBranches);
+                return lookupCache.collectFirstPossibleLeafs(context);
             }
         }
 
-        return super.getNextPossibleLeafs(pathNode, parseBranches);
+        return super.getNextPossibleLeafs(pathNode, context);
     }
 
     public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode) {

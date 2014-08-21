@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.element;
 import java.util.Set;
 
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
 public interface LeafElementType extends ElementType {
@@ -20,5 +21,5 @@ public interface LeafElementType extends ElementType {
 
     boolean isSameAs(LeafElementType leaf);
 
-    Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, Set<String> parseBranches);
+    Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context);
 }

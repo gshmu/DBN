@@ -8,6 +8,4 @@ public interface OneOfElementType extends ElementType {
     void sort();
 
     ElementTypeRef[] getChildren();
-
-    void warnAmbiguousBranches();
 }
