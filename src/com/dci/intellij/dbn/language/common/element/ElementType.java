@@ -51,8 +51,6 @@ public interface ElementType {
 
     ElementTypeBundle getElementBundle();
 
-    void registerVirtualObject(DBObjectType objectType);
-
     FormattingDefinition getFormatting();
 
     void setDefaultFormatting(FormattingDefinition defaults);
