@@ -3,24 +3,29 @@
 <element-defs language="POSTGRES-SQL" version="9.4">
     <element-def attributes="ROOT, STRUCTURE" description="SQL block" icon="FILE_BLOCK_SQL" id="sql_block">
         <iteration id="000000000">
-
-            <one-of attributes="STATEMENT, SCOPE_ISOLATION" formatting-indent="ABSOLUTE_NONE" id="000000001">
-                <element ref-id="create_statement" />
-                <element ref-id="alter_statement" />
-                <element ref-id="drop_statement" />
-                <element ref-id="insert_statement" />
-                <element ref-id="update_statement" />
-                <element ref-id="delete_statement" />
-                <element ref-id="truncate_statement" />
-                <element ref-id="select_statement" />
-                <element ref-id="explain_statement" />
-                <element optional="true" ref-id="with_clause" />
-            </one-of>
+            <element ref-id="sql_statement"/>
         </iteration>
     </element-def>
 
+    <element-def attributes="STRUCTURE, EXECUTABLE, SCOPE_ISOLATION, COLLECT_ATTRIBUTES" description="SQL statement" id="sql_statement">
+        <one-of formatting-indent="ABSOLUTE_NONE" id="000000001">
+            <element ref-id="create_statement" />
+            <element ref-id="alter_statement" />
+            <element ref-id="drop_statement" />
+            <element ref-id="insert_statement" />
+            <element ref-id="update_statement" />
+            <element ref-id="delete_statement" />
+            <element ref-id="truncate_statement" />
+            <element ref-id="select_statement" />
+            <element ref-id="explain_statement" />
+            <element optional="true" ref-id="with_clause" />
+        </one-of>
+        <element ref-id="end" />
+    </element-def>
+
+
     <!-- ========= CREATE ========= -->
-    <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="CREATE statement" id="create_statement">
+    <element-def attributes="DATA_DEFINITION" description="CREATE statement" id="create_statement">
         <token id="000000002" type-id="KW_CREATE" />
         <sequence branch="create_or_replace" id="000000003" optional="true" version="7.2">
             <token id="000000004" type-id="KW_OR" />
@@ -59,9 +64,8 @@
             <element ref-id="create_user_statement" />
             <element ref-id="create_view_statement" supported-branches="create_or_replace, temporary" />
         </one-of>
-        <element ref-id="end" />
     </element-def>
-    <element-def description="CREATE VIEW statement" id="create_view_statement">
+    <element-def attributes="PUSH_ATTRIBUTES" description="CREATE VIEW statement" id="create_view_statement">
         <token id="000000010" optional="true" type-id="KW_RECURSIVE" version="9.3" />
         <token id="000000011" type-id="KW_VIEW" />
         <qualified-identifier id="000000012" separator="CHR_DOT">
@@ -182,13 +186,13 @@
             </one-of>
         </sequence>
     </element-def>
+
     <!-- ========= ALTER ========= -->
     <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="ALTER statement" id="alter_statement">
         <token id="000000080" type-id="KW_ALTER" />
         <one-of id="000000081">
             <element ref-id="alter_view_statement" />
         </one-of>
-        <element ref-id="end" />
     </element-def>
     <element-def description="ALTER VIEW statement" id="alter_view_statement">
         <element optional="true" ref-id="if_exists_clause" version="9.2" />
@@ -255,7 +259,6 @@
         <one-of id="000000119">
             <element ref-id="drop_view_statement" />
         </one-of>
-        <element ref-id="end" />
     </element-def>
     <element-def description="DROP VIEW statement" id="drop_view_statement">
         <token id="000000120" type-id="KW_VIEW" />
@@ -332,7 +335,6 @@
                 </sequence>
             </iteration>
         </sequence>
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= UPDATE ========= -->
@@ -424,7 +426,6 @@
                 </sequence>
             </iteration>
         </sequence>
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= TRUNCATE ========= -->
@@ -454,7 +455,6 @@
             <token id="000000224" type-id="KW_CASCADE" />
             <token id="000000225" type-id="KW_RESTRICT" />
         </one-of>
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= DELETE ========= -->
@@ -501,13 +501,11 @@
                 </sequence>
             </iteration>
         </sequence>
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= SELECT ========= -->
     <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY, STRUCTURE" description="SELECT statement" id="select_statement">
         <element ref-id="subquery" />
-        <element ref-id="end" />
     </element-def>
     <element-def description="Subquery" id="subquery" virtual-object="DATASET">
         <one-of id="000000252">
@@ -923,7 +921,6 @@
             </sequence>
         </one-of>
         <element ref-id="subquery" />
-        <element ref-id="end" />
     </element-def>
 
     <!-- ========= EXPRESSION ========= -->
