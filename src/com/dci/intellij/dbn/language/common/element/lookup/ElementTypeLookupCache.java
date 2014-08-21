@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -7,8 +10,6 @@ import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-
-import java.util.Set;
 
 public interface ElementTypeLookupCache<T extends ElementType> {
     void registerLeaf(LeafElementType leaf, ElementType pathChild);
@@ -28,10 +29,18 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     T getElementType();
 
 
-    Set<LeafElementType> getFirstPossibleLeafs();
+    Set<LeafElementType> collectFirstPossibleLeafs(Set<String> parseBranches);
+
+    Set<LeafElementType> collectFirstPossibleLeafs(@Nullable Set<LeafElementType> bucket, Set<String> parseBranches);
+
+    Set<TokenType> collectFirstPossibleTokens(Set<String> parseBranches);
+
+    Set<TokenType> collectFirstPossibleTokens(@Nullable Set<TokenType> bucket, Set<String> parseBranches);
+
 
     Set<TokenType> getFirstPossibleTokens();
 
+    @Deprecated
     boolean canStartWithLeaf(LeafElementType leafElementType);
 
     boolean shouldStartWithLeaf(LeafElementType leafElementType);
@@ -58,6 +67,7 @@ public interface ElementTypeLookupCache<T extends ElementType> {
 
     void init();
 
+    @Deprecated
     boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild);
 
     boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild);

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Set;
 import org.jdom.Element;
 
-import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -14,6 +13,7 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.intellij.lang.ASTNode;
@@ -77,13 +77,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return null;
     }
 
-    public Set<LeafElementType> getAlternativeLeafs(PathNode pathNode) {
-        ElementType previousElementType = getPreviousElement(pathNode);
-        // FIXME ----------- implement this
-        return previousElementType.getLookupCache().getFirstPossibleLeafs();
-    }
-
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, CodeCompletionFilterSettings filterSettings) {
+    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, Set<String> parseBranches) {
         Set<LeafElementType> possibleLeafs = new THashSet<LeafElementType>();
         int position = 0;
         while (pathNode != null) {
@@ -96,7 +90,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 for (int i=position+1; i<elementsCount; i++) {
                     ElementTypeRef next = sequenceElementType.getChild(i);
-                    possibleLeafs.addAll(next.getLookupCache().getFirstPossibleLeafs());
+                    next.getLookupCache().collectFirstPossibleLeafs(possibleLeafs, parseBranches);
                     if (!next.isOptional()) {
                         pathNode = null;
                         break;
@@ -106,7 +100,8 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 IterationElementType iterationElementType = (IterationElementType) elementType;
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
-                    possibleLeafs.addAll(iterationElementType.getIteratedElementType().getLookupCache().getFirstPossibleLeafs());
+                    ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                    lookupCache.collectFirstPossibleLeafs(possibleLeafs, parseBranches);
                 } else {
                     possibleLeafs.addAll(Arrays.asList(separatorTokens));
                 }

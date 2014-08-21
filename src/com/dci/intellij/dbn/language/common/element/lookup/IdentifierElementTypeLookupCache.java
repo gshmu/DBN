@@ -30,6 +30,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         return sharedTokenTypes.getIdentifier() == tokenType || sharedTokenTypes.getQuotedIdentifier() == tokenType;
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return false;
     }

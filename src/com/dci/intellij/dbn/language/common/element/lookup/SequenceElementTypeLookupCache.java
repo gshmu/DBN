@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -13,6 +15,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         super(elementType);
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return getElementType().canStartWithElement(pathChild) &&
                 pathChild.getLookupCache().canStartWithLeaf(leaf) &&
@@ -47,6 +50,23 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
             }
         }
         return false;
+    }
+
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(Set<LeafElementType> bucket, Set<String> parseBranches) {
+        bucket = initBucket(bucket);
+
+        T elementType = getElementType();
+        boolean branchChecks = elementType.hasBranchChecks();
+        ElementTypeRef[] elementTypeRefs = elementType.getChildren();
+        for (ElementTypeRef elementTypeRef : elementTypeRefs) {
+            if (!branchChecks || parseBranches == null || elementTypeRef.supportsBranches(parseBranches)) {
+                ElementTypeLookupCache lookupCache = elementTypeRef.getElementType().getLookupCache();
+                lookupCache.collectFirstPossibleLeafs(bucket, parseBranches);
+            }
+            if (!elementTypeRef.isOptional()) break;
+        }
+        return bucket;
     }
 }
 

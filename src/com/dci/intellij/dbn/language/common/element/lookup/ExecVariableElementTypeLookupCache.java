@@ -26,6 +26,7 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
         return sharedTokenTypes.getVariable() == tokenType;
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return false;
     }
