@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.structure.EmptyStructureViewModel;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
@@ -30,7 +29,6 @@ public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                PsiFile psiFile = DocumentUtil.getFile(editor);
                 try {
                     return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new SQLStructureViewModel(editor, psiFile);
                 } catch (Throwable e) {
