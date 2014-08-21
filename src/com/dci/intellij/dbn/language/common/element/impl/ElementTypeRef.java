@@ -9,13 +9,15 @@ import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCach
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 
 public class ElementTypeRef {
+    private ElementType parentElementType;
     private ElementType elementType;
     private boolean optional;
     private double version;
     private Set<String> supportedBranches;
     private Set<String> requiredBranches;
 
-    public ElementTypeRef(ElementType elementType, boolean optional, double version, List<String> supportedBranches, List<String> requiredBranches) {
+    public ElementTypeRef(ElementType parentElementType, ElementType elementType, boolean optional, double version, List<String> supportedBranches, List<String> requiredBranches) {
+        this.parentElementType = parentElementType;
         this.elementType = elementType;
         this.optional = optional;
         this.version = version;
@@ -31,6 +33,10 @@ public class ElementTypeRef {
 
     public boolean supportsBranches(Set<String> branches) {
         return supportedBranches != null && supportedBranches.containsAll(branches);
+    }
+
+    public ElementType getParentElementType() {
+        return parentElementType;
     }
 
     public ElementType getElementType() {

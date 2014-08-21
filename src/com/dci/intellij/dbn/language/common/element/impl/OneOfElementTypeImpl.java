@@ -36,7 +36,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
             List<String> supportedBranches = StringUtil.toStringList(child.getAttributeValue("supported-branches"), ",");
             List<String> requiredBranches = StringUtil.toStringList(child.getAttributeValue("required-branches"), ",");
             branchChecks = supportedBranches != null || requiredBranches != null;
-            this.children[i] = new ElementTypeRef(elementType, false, version, supportedBranches, requiredBranches);
+            this.children[i] = new ElementTypeRef(this, elementType, false, version, supportedBranches, requiredBranches);
         }
         sortable = Boolean.parseBoolean(def.getAttributeValue("sortable"));
     }
