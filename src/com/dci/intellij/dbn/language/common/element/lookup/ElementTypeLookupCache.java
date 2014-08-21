@@ -7,24 +7,13 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
-import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
-import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public interface ElementTypeLookupCache<T extends ElementType> {
     void registerLeaf(LeafElementType leaf, ElementType pathChild);
 
-    void registerVirtualObject(DBObjectType objectType);
-
     boolean containsLeaf(LeafElementType leafElementType);
 
     boolean containsToken(TokenType tokenType);
-
-    boolean containsIdentifier(DBObjectType objectType, IdentifierType identifierType, IdentifierCategory identifierCategory);
-
-    boolean containsIdentifier(DBObjectType objectType, IdentifierType identifierType);
-
-    boolean containsVirtualObject(DBObjectType objectType);
 
     T getElementType();
 
@@ -47,11 +36,7 @@ public interface ElementTypeLookupCache<T extends ElementType> {
 
     boolean canStartWithToken(TokenType tokenType);
 
-    boolean shouldStartWithToken(TokenType tokenType);
-
     Set<LeafElementType> getFirstRequiredLeafs();
-
-    Set<TokenType> getFirstRequiredTokens();
 
     boolean containsLandmarkToken(TokenType tokenType, PathNode node);
     boolean containsLandmarkToken(TokenType tokenType);
@@ -62,8 +47,6 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     boolean containsIdentifiers();
 
     Set<TokenType> getNextPossibleTokens();
-
-    Set<TokenType> getNextRequiredTokens();
 
     void init();
 

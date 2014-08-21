@@ -44,7 +44,6 @@ public class ElementTypeBundle {
     private Set<WrapperElementType> wrapperElementTypes = new THashSet<WrapperElementType>();
     private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
     private final Map<String, NamedElementType> namedElementTypes = new THashMap<String, NamedElementType>();
-    private final Set<ElementType> virtualObjectElementTypes = new THashSet<ElementType>();
     private final DBLanguageDialect languageDialect;
     private boolean rewriteIndexes;
 
@@ -81,10 +80,6 @@ public class ElementTypeBundle {
             for (WrapperElementType wrapperElementType : wrapperElementTypes) {
                 wrapperElementType.getBeginTokenElement().registerLeaf();
                 wrapperElementType.getEndTokenElement().registerLeaf();
-            }
-
-            for (ElementType virtualObjectElementType : virtualObjectElementTypes) {
-                virtualObjectElementType.registerVirtualObject(virtualObjectElementType.getVirtualObjectType());
             }
 
             if (rewriteIndexes) {
@@ -187,10 +182,6 @@ public class ElementTypeBundle {
         if (result instanceof LeafElementType)
             leafElementTypes.add((LeafElementType) result); else
             complexElementTypes.add(result);
-
-        if (result.isVirtualObject()) {
-            virtualObjectElementTypes.add(result);
-        }
 
         return result;
     }

@@ -20,8 +20,6 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         allPossibleTokens.add(quotedIdentifier);
         firstPossibleTokens.add(identifier);
         firstPossibleTokens.add(quotedIdentifier);
-        firstRequiredTokens.add(identifier);
-        firstRequiredTokens.add(quotedIdentifier);
     }
 
     @Override

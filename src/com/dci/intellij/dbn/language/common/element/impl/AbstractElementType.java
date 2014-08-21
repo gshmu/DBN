@@ -213,10 +213,6 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return getId().hashCode();
     }
 
-    public void registerVirtualObject(DBObjectType objectType) {
-        getLookupCache().registerVirtualObject(objectType);
-    }
-
     /*********************************************************
      *                  Virtual Object                       *
      *********************************************************/

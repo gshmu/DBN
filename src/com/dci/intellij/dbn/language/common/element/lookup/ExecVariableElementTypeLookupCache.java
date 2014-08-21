@@ -17,7 +17,6 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
         TokenType variable = sharedTokenTypes.getVariable();
         allPossibleTokens.add(variable);
         firstPossibleTokens.add(variable);
-        firstRequiredTokens.add(variable);
     }
 
     @Override
