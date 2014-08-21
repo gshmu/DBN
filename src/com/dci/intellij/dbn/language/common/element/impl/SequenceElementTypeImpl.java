@@ -66,7 +66,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
             List<String> supportedBranches = StringUtil.toStringList(child.getAttributeValue("supported-branches"), ",");
             List<String> requiredBranches = StringUtil.toStringList(child.getAttributeValue("required-branches"), ",");
             branchChecks = supportedBranches != null || requiredBranches != null;
-            this.children[i] = new ElementTypeRef(elementType, optional, version, supportedBranches, requiredBranches);
+            this.children[i] = new ElementTypeRef(this, elementType, optional, version, supportedBranches, requiredBranches);
             if (child.getAttributeValue("exit") != null) exitIndex = i;
         }
     }

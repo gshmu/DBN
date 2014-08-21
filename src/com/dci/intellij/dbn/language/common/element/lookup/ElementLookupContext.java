@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.common.element.lookup;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import gnu.trove.THashSet;
@@ -25,9 +24,7 @@ public class ElementLookupContext {
     }
 
     private boolean checkBranches(ElementTypeRef elementTypeRef) {
-        ElementType parent = elementTypeRef.getElementType().getParent();
-        boolean checkBranches = parent != null && parent.hasBranchChecks();
-        return !checkBranches || branches == null || elementTypeRef.supportsBranches(branches);
+        return !elementTypeRef.getParentElementType().hasBranchChecks() || branches == null || elementTypeRef.supportsBranches(branches);
     }
 
     private boolean checkVersion(ElementTypeRef elementTypeRef) {
