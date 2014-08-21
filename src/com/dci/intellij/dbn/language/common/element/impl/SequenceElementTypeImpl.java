@@ -5,6 +5,7 @@ import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -19,8 +20,8 @@ import gnu.trove.THashSet;
 
 public class SequenceElementTypeImpl extends AbstractElementType implements SequenceElementType {
     protected ElementTypeRef[] children;
-    private int containsKeywords = -1;
     private int exitIndex;
+    private boolean branchChecks = false;
 
     public ElementTypeRef[] getChildren() {
         return children;
@@ -60,13 +61,21 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
             ElementType elementType = getElementBundle().resolveElementDefinition(child, type, this);
             boolean optional = Boolean.parseBoolean(child.getAttributeValue("optional"));
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
-            this.children[i] = new ElementTypeRef(elementType, optional, version);
+            List<String> supportedBranches = StringUtil.toStringList(child.getAttributeValue("supported-branches"), ",");
+            List<String> requiredBranches = StringUtil.toStringList(child.getAttributeValue("required-branches"), ",");
+            branchChecks = supportedBranches != null || requiredBranches != null;
+            this.children[i] = new ElementTypeRef(elementType, optional, version, supportedBranches, requiredBranches);
             if (child.getAttributeValue("exit") != null) exitIndex = i;
         }
     }
 
     public boolean isLeaf() {
         return false;
+    }
+
+    @Override
+    public boolean hasBranchChecks() {
+        return branchChecks;
     }
 
     public int getChildCount() {

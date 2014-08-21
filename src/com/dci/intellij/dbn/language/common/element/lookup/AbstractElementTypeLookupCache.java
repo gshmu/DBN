@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -132,8 +134,25 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
                 identifierElementType.isReference() ? IdentifierCategory.REFERENCE : IdentifierCategory.DEFINITION);
     }
 
-    public Set<LeafElementType> getFirstPossibleLeafs() {
-        return firstPossibleLeafs;
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(Set<String> parseBranches) {
+        return collectFirstPossibleLeafs(null, parseBranches);
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(Set<String> parseBranches) {
+        return collectFirstPossibleTokens(null, parseBranches);
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(@Nullable Set<TokenType> bucket, Set<String> parseBranches) {
+        // TODO implement
+        return bucket;
+    }
+
+    protected <E> Set<E> initBucket(Set<E> bucket) {
+        if (bucket == null) bucket = new HashSet<E>();
+        return bucket;
     }
 
     public Set<TokenType> getFirstPossibleTokens() {
@@ -148,6 +167,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         return firstRequiredTokens;
     }
 
+    @Deprecated
     public boolean canStartWithLeaf(LeafElementType leafElementType) {
         return firstPossibleLeafs.contains(leafElementType);
     }

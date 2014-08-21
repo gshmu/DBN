@@ -33,4 +33,7 @@ public interface SequenceElementType extends ElementType {
     int indexOf(ElementType elementType, int fromIndex);
 
     int indexOf(ElementType elementType);
+
+    boolean hasBranchChecks();
+
 }
