@@ -29,12 +29,12 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     T getElementType();
 
 
+    Set<LeafElementType> collectFirstPossibleLeafs();
     Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context);
-
     Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket);
 
+    Set<TokenType> collectFirstPossibleTokens();
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context);
-
     Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket);
 
 

@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.path.ASTPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
@@ -54,7 +55,6 @@ import gnu.trove.THashMap;
 
 public class CodeCompletionProvider extends CompletionProvider<CompletionParameters> {
     public static final CodeCompletionProvider INSTANCE = new CodeCompletionProvider();
-    private static final CodeCompletionLookupContext EMPTY_LOOKUP_CONTEXT = new CodeCompletionLookupContext(null);
 
 
     public CodeCompletionProvider() {
@@ -97,7 +97,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             if (leafBeforeCaret == null) {
                 ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
                 ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
-                Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(EMPTY_LOOKUP_CONTEXT);
+                Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs();
                 for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
                     if (firstPossibleLeaf instanceof TokenElementType) {
                         TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
@@ -166,7 +166,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         if (nextPossibleLeafs.size() == 0) {
             LeafElementType elementType = (LeafElementType) element.getElementType();
             PathNode pathNode = new ASTPathNode(element.getNode());
-            CodeCompletionLookupContext lookupContext = computeParseBranches(element.getNode());
+            ElementLookupContext lookupContext = computeParseBranches(element.getNode());
             for (LeafElementType leafElementType : elementType.getNextPossibleLeafs(pathNode, lookupContext)) {
                 String leafUniqueKey = getLeafUniqueKey(leafElementType);
                 if (leafUniqueKey != null) {
@@ -257,7 +257,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     @Nullable
-    private CodeCompletionLookupContext computeParseBranches(ASTNode node) {
+    private ElementLookupContext computeParseBranches(ASTNode node) {
         Set<String> branches = null;
         while (node != null && !(node instanceof FileElement)) {
             IElementType elementType = node.getElementType();
@@ -277,7 +277,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
             node = prevNode;
         }
-        return branches == null ? EMPTY_LOOKUP_CONTEXT : new CodeCompletionLookupContext(branches);
+        return new ElementLookupContext(branches);
     }
 
     public String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {

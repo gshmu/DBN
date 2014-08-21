@@ -57,6 +57,7 @@
             <element ref-id="create_user_statement" />
             <element ref-id="create_view_statement" supported-branches="create_or_replace, temporary" />
         </one-of>
+        <element ref-id="end" />
     </element-def>
     <element-def description="CREATE VIEW statement" id="create_view_statement">
         <token id="000000010" optional="true" type-id="KW_RECURSIVE" version="9.3" />
@@ -185,8 +186,9 @@
         <one-of id="000000081">
             <element ref-id="alter_view_statement" />
         </one-of>
+        <element ref-id="end" />
     </element-def>
-    <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="ALTER VIEW statement" id="alter_view_statement">
+    <element-def description="ALTER VIEW statement" id="alter_view_statement">
         <element optional="true" ref-id="if_exists_clause" version="9.2" />
         <qualified-identifier id="000000082" separator="CHR_DOT">
             <variant>
@@ -245,12 +247,13 @@
         </one-of>
     </element-def>
 
-    <!-- ========= ALTER ========= -->
+    <!-- ========= DROP ========= -->
     <element-def attributes="EXECUTABLE, DATA_DEFINITION, STRUCTURE" description="DROP statement" id="drop_statement">
         <token id="000000118" type-id="KW_DROP" />
         <one-of id="000000119">
             <element ref-id="drop_view_statement" />
         </one-of>
+        <element ref-id="end" />
     </element-def>
     <element-def description="DROP VIEW statement" id="drop_view_statement">
         <token id="000000120" type-id="KW_VIEW" />
@@ -327,6 +330,7 @@
                 </sequence>
             </iteration>
         </sequence>
+        <element ref-id="end" />
     </element-def>
 
     <!-- ========= UPDATE ========= -->
@@ -418,6 +422,7 @@
                 </sequence>
             </iteration>
         </sequence>
+        <element ref-id="end" />
     </element-def>
 
     <!-- ========= TRUNCATE ========= -->
@@ -447,6 +452,7 @@
             <token id="000000224" type-id="KW_CASCADE" />
             <token id="000000225" type-id="KW_RESTRICT" />
         </one-of>
+        <element ref-id="end" />
     </element-def>
 
     <!-- ========= DELETE ========= -->
@@ -493,6 +499,7 @@
                 </sequence>
             </iteration>
         </sequence>
+        <element ref-id="end" />
     </element-def>
 
     <!-- ========= SELECT ========= -->
@@ -500,7 +507,7 @@
         <element ref-id="subquery" />
         <element ref-id="end" />
     </element-def>
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
+    <element-def description="Subquery" id="subquery" virtual-object="DATASET">
         <one-of id="000000252">
             <sequence id="000000253">
                 <element optional="true" ref-id="with_clause" version="8.4" />

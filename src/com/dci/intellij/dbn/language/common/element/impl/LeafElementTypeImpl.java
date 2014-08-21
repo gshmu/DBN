@@ -91,7 +91,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 for (int i=position+1; i<elementsCount; i++) {
                     ElementTypeRef next = sequenceElementType.getChild(i);
-                    next.getLookupCache().collectFirstPossibleLeafs(context, possibleLeafs);
+                    next.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
                     if (!next.isOptional()) {
                         pathNode = null;
                         break;
@@ -102,7 +102,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
                     ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                    lookupCache.collectFirstPossibleLeafs(context, possibleLeafs);
+                    lookupCache.collectFirstPossibleLeafs(context.reset(), possibleLeafs);
                 } else {
                     possibleLeafs.addAll(Arrays.asList(separatorTokens));
                 }
