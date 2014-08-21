@@ -147,13 +147,13 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
             Set<TokenType> tokenTypes = new THashSet<TokenType>();
             for (int i=index; i< children.length; i++) {
                 ElementTypeLookupCache lookupCache = children[i].getLookupCache();
-                lookupCache.collectFirstPossibleTokens(context, tokenTypes);
+                lookupCache.collectFirstPossibleTokens(context.reset(), tokenTypes);
                 if (!children[i].isOptional()) break;
             }
             return tokenTypes;
         } else {
             ElementTypeLookupCache lookupCache = children[index].getLookupCache();
-            return lookupCache.collectFirstPossibleTokens(context);
+            return lookupCache.collectFirstPossibleTokens(context.reset());
         }
     }
 

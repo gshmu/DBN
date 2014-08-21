@@ -72,7 +72,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupV
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
                 ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                return lookupCache.collectFirstPossibleLeafs(context);
+                return lookupCache.collectFirstPossibleLeafs(context.reset());
             } else if (parent instanceof QualifiedIdentifierElementType){
                 return super.getNextPossibleLeafs(pathNode, context);
             }
@@ -81,7 +81,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupV
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
                 ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
-                return lookupCache.collectFirstPossibleLeafs(context);
+                return lookupCache.collectFirstPossibleLeafs(context.reset());
             }
         }
 

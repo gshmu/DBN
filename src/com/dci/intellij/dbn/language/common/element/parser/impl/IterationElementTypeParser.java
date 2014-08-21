@@ -109,7 +109,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
 
         if (!lenient) {
             ElementTypeLookupCache lookupCache = iteratedElementType.getLookupCache();
-            Set<TokenType> expectedTokens = lookupCache.collectFirstPossibleTokens(context);
+            Set<TokenType> expectedTokens = lookupCache.collectFirstPossibleTokens(context.reset());
             ParseBuilderErrorHandler.updateBuilderError(expectedTokens, context);
         }
         boolean advanced = false;
