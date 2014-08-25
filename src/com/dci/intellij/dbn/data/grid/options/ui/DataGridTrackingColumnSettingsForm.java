@@ -4,6 +4,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
 
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -30,11 +32,26 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         columnNameListPanel.add(listComponent, BorderLayout.CENTER);
 
         resetChanges();
-        registerComponent(listComponent);
+        editableCheckBox.setEnabled(visibleCheckBox.isSelected());
+        registerComponent(mainPanel);
+        //registerComponent(visibleCheckBox);
+        //registerComponent(editableCheckBox);
     }
 
     public JPanel getComponent() {
         return mainPanel;
+    }
+
+    @Override
+    protected ActionListener createActionListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getConfiguration().setModified(true);
+                if (e.getSource() == visibleCheckBox) {
+                    editableCheckBox.setEnabled(visibleCheckBox.isSelected());
+                }
+            }
+        };
     }
 
     public void applyChanges() throws ConfigurationException {

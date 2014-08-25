@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.code.common.completion;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemFactory;
@@ -21,6 +23,8 @@ import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.path.ASTPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -40,9 +44,12 @@ import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.tree.FileElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ProcessingContext;
 import gnu.trove.THashMap;
 
@@ -89,7 +96,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
             if (leafBeforeCaret == null) {
                 ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
-                Set<LeafElementType> firstPossibleLeafs = elementTypeBundle.getRootElementType().getLookupCache().getFirstPossibleLeafs();
+                ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
+                Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs();
                 for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
                     if (firstPossibleLeaf instanceof TokenElementType) {
                         TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
@@ -158,7 +166,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         if (nextPossibleLeafs.size() == 0) {
             LeafElementType elementType = (LeafElementType) element.getElementType();
             PathNode pathNode = new ASTPathNode(element.getNode());
-            for (LeafElementType leafElementType : elementType.getNextPossibleLeafs(pathNode, filterSettings)) {
+            ElementLookupContext lookupContext = computeParseBranches(element.getNode());
+            for (LeafElementType leafElementType : elementType.getNextPossibleLeafs(pathNode, lookupContext)) {
                 String leafUniqueKey = getLeafUniqueKey(leafElementType);
                 if (leafUniqueKey != null) {
                     nextPossibleLeafs.put(leafUniqueKey, leafElementType);    
@@ -245,6 +254,30 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 }
             }
         }
+    }
+
+    @Nullable
+    private ElementLookupContext computeParseBranches(ASTNode node) {
+        Set<String> branches = null;
+        while (node != null && !(node instanceof FileElement)) {
+            IElementType elementType = node.getElementType();
+            if (elementType instanceof ElementType) {
+                ElementType basicElementType = (ElementType) elementType;
+                String branch = basicElementType.getBranch();
+                if (branch != null) {
+                    if (branches == null) {
+                        branches = new HashSet<String>();
+                    }
+                    branches.add(branch);
+                }
+            }
+            ASTNode prevNode = node.getTreePrev();
+            if (prevNode == null) {
+                prevNode = node.getTreeParent();
+            }
+            node = prevNode;
+        }
+        return new ElementLookupContext(branches);
     }
 
     public String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {

@@ -39,7 +39,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
                 new MoveUpAction(sortingItemsList, settings),
                 new MoveDownAction(sortingItemsList, settings));
         actionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
-        registerComponent(enableCheckBox);
+        registerComponent(mainPanel);
         updateBorderTitleForeground(mainPanel);
     }
 

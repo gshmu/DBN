@@ -336,5 +336,30 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         }
         return true;
     }
+
+    public static String[] toStringArray(String separatedValues, String separator) {
+        String[] array = null;
+        if (separatedValues != null) {
+            StringTokenizer tokenizer = new StringTokenizer(separatedValues, separator);
+            array = new String[tokenizer.countTokens()];
+            int index = 0;
+            while (tokenizer.hasMoreTokens()) {
+                array[index] = tokenizer.nextToken().trim();
+                index++;
+            }
+        }
+        return array;
+    }
+    public static List<String> toStringList(String separatedValues, String separator) {
+        List<String> list = null;
+        if (separatedValues != null) {
+            StringTokenizer tokenizer = new StringTokenizer(separatedValues, separator);
+            list = new ArrayList<String>(tokenizer.countTokens());
+            while (tokenizer.hasMoreTokens()) {
+                list.add(tokenizer.nextToken().trim());
+            }
+        }
+        return list;
+    }
 }
 

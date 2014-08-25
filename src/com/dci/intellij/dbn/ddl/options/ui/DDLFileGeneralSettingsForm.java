@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.ddl.options.ui;
 
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
-import com.intellij.openapi.options.ConfigurationException;
-
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
+import com.intellij.openapi.options.ConfigurationException;
 
 public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileGeneralSettings> {
     private JPanel mainPanel;
@@ -18,9 +18,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         super(settings);
         updateBorderTitleForeground(mainPanel);
         resetChanges();
-        registerComponent(statementPostfixTextField);
-        registerComponent(lookupDDLFilesCheckBox);
-        registerComponent(createDDLFileCheckBox);
+        registerComponent(mainPanel);
     }
 
     public JPanel getComponent() {

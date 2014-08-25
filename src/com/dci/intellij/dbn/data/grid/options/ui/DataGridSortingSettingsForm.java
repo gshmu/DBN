@@ -20,8 +20,7 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         updateBorderTitleForeground(mainPanel);
 
         resetChanges();
-        registerComponent(nullsFirstRadioButton);
-        registerComponent(nullsLastRadioButton);
+        registerComponent(mainPanel);
     }
 
     public JPanel getComponent() {

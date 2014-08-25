@@ -1,6 +1,14 @@
 package com.dci.intellij.dbn.common.about.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Cursor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -12,13 +20,6 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 public class AboutComponent extends DBNFormImpl{
     private JPanel mainPanel;
     private JLabel splashLabel;
@@ -27,12 +28,14 @@ public class AboutComponent extends DBNFormImpl{
     private JLabel supportPageLinkLabel;
     private JLabel requestTrackerPageLinkLabel;
     private JLabel buildLabel;
+    private JPanel linksPanel;
 
     public AboutComponent() {
         Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
         splashLabel.setIcon(Icons.DATABASE_NAVIGATOR);
         splashLabel.setText("");
+        linksPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         donateLabel.setIcon(Icons.DONATE_DISABLED);
         donateLabel.setText("");

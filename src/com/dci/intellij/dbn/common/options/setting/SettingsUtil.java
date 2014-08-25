@@ -21,6 +21,12 @@ public class SettingsUtil {
         return stringValue == null ? originalValue : stringValue;
     }
 
+    public static double getDouble(Element parent, String childName, double originalValue) {
+        Element element = parent.getChild(childName);
+        String stringValue = getStringValue(element);
+        return stringValue == null ? originalValue : Double.parseDouble(stringValue);
+    }
+
     public static boolean getBoolean(Element parent, String childName, boolean originalValue) {
         Element element = parent.getChild(childName);
         String stringValue = getStringValue(element);
@@ -53,6 +59,12 @@ public class SettingsUtil {
     public static void setString(Element parent, String childName, String value) {
         Element element = new Element(childName);
         element.setAttribute("value", value == null ? "" : value);
+        parent.addContent(element);
+    }
+
+    public static void setDouble(Element parent, String childName, double value) {
+        Element element = new Element(childName);
+        element.setAttribute("value", Double.toString(value));
         parent.addContent(element);
     }
 

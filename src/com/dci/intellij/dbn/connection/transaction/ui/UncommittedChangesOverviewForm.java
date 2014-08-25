@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -39,6 +40,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
     public UncommittedChangesOverviewForm(Project project) {
         this.project = project;
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
+        mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         connectionsList.addListSelectionListener(new ListSelectionListener() {
             @Override

@@ -20,8 +20,6 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         allPossibleTokens.add(quotedIdentifier);
         firstPossibleTokens.add(identifier);
         firstPossibleTokens.add(quotedIdentifier);
-        firstRequiredTokens.add(identifier);
-        firstRequiredTokens.add(quotedIdentifier);
     }
 
     @Override
@@ -30,6 +28,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         return sharedTokenTypes.getIdentifier() == tokenType || sharedTokenTypes.getQuotedIdentifier() == tokenType;
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return false;
     }

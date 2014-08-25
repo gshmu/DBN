@@ -286,7 +286,9 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
                     if (debugConnection != null) {
                         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                        runtimeInfo = debuggerInterface.stopExecution(debugConnection);
+                        if (!getStatus().TARGET_EXECUTION_THREW_EXCEPTION) {
+                            runtimeInfo = debuggerInterface.stopExecution(debugConnection);
+                        }
                         debuggerInterface.detachSession(debugConnection);
                     }
                     status.PROCESS_IS_TERMINATED = true;
@@ -425,7 +427,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     private void rollOutDebugger() {
         try {
-            while (runtimeInfo!= null && !runtimeInfo.isTerminated()) {
+            while (!getStatus().TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo!= null && !runtimeInfo.isTerminated()) {
                 runtimeInfo = getDebuggerInterface().stepOut(debugConnection);
             }
         } catch (SQLException e) {

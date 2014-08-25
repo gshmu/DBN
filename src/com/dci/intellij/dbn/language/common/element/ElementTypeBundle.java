@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.StringWriter;
@@ -44,7 +44,6 @@ public class ElementTypeBundle {
     private Set<WrapperElementType> wrapperElementTypes = new THashSet<WrapperElementType>();
     private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
     private final Map<String, NamedElementType> namedElementTypes = new THashMap<String, NamedElementType>();
-    private final Set<ElementType> virtualObjectElementTypes = new THashSet<ElementType>();
     private final DBLanguageDialect languageDialect;
     private boolean rewriteIndexes;
 
@@ -83,10 +82,6 @@ public class ElementTypeBundle {
                 wrapperElementType.getEndTokenElement().registerLeaf();
             }
 
-            for (ElementType virtualObjectElementType : virtualObjectElementTypes) {
-                virtualObjectElementType.registerVirtualObject(virtualObjectElementType.getVirtualObjectType());
-            }
-
             if (rewriteIndexes) {
                 StringWriter stringWriter = new StringWriter();
                 new XMLOutputter().output(elementTypesDef, stringWriter);
@@ -112,13 +107,6 @@ public class ElementTypeBundle {
     public TokenTypeBundle getTokenTypeBundle() {
         return tokenTypeBundle;
     }
-
-    private void warnAmbiguousBranches() {
-        for (OneOfElementType oneOfElementType : oneOfElementTypes) {
-            oneOfElementType.warnAmbiguousBranches();
-        }
-    }
-
 
     public void markIndexesDirty() {
         this.rewriteIndexes = true;
@@ -194,10 +182,6 @@ public class ElementTypeBundle {
         if (result instanceof LeafElementType)
             leafElementTypes.add((LeafElementType) result); else
             complexElementTypes.add(result);
-
-        if (result.isVirtualObject()) {
-            virtualObjectElementTypes.add(result);
-        }
 
         return result;
     }
