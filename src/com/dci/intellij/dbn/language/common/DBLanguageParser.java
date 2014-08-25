@@ -35,7 +35,7 @@ public abstract class DBLanguageParser implements PsiParser {
 
     @NotNull
     public ASTNode parse(IElementType rootElementType, PsiBuilder builder) {
-        return parse(rootElementType, builder, defaultParseRootId, -1);
+        return parse(rootElementType, builder, defaultParseRootId, 9999);
     }
 
     @NotNull

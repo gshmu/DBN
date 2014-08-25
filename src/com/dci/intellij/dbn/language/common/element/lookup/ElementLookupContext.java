@@ -28,7 +28,7 @@ public class ElementLookupContext {
     }
 
     private boolean checkVersion(ElementTypeRef elementTypeRef) {
-        return languageVersion > elementTypeRef.getVersion();
+        return languageVersion >= elementTypeRef.getVersion();
     }
 
     public boolean check(ElementTypeRef elementTypeRef) {
