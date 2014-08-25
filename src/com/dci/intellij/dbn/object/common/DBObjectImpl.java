@@ -557,6 +557,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return allPossibleTreeChildren;
     }
 
+
+
     public List<? extends BrowserTreeNode> getTreeChildren() {
         if (visibleTreeChildren == null) {
             visibleTreeChildren = new ArrayList<BrowserTreeNode>();

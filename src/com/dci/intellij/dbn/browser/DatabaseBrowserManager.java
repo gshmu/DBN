@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -21,12 +22,17 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionManagerListener;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -38,6 +44,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -322,13 +329,92 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         autoscrollToEditor.writeConfiguration(element);
         autoscrollFromEditor.writeConfiguration(element);
         showObjectProperties.writeConfiguration(element);
+        storeTouchedNodes(element);
         return element;
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(final Element element) {
         autoscrollToEditor.readConfiguration(element);
         autoscrollFromEditor.readConfiguration(element);
         showObjectProperties.readConfiguration(element);
+        initTouchedNodes(element);
     }
+
+    private void storeTouchedNodes(Element element) {
+        Element nodesElement = new Element("loaded-nodes");
+        element.addContent(nodesElement);
+
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        Set<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
+        for (ConnectionHandler connectionHandler : connectionHandlers) {
+            Element connectionElement = new Element("connection");
+
+            boolean addConnectionElement = false;
+            for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
+                List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
+                DBObjectListContainer childObjects = schema.getChildObjects();
+                if (childObjects != null) {
+                    List<DBObjectList<DBObject>> allObjectLists = childObjects.getAllObjectLists();
+                    for (DBObjectList<DBObject> objectList : allObjectLists) {
+                        if (objectList.isLoaded() || objectList.isLoading()) {
+                            objectTypes.add(objectList.getObjectType());
+                        }
+                    }
+                }
+                if (objectTypes.size() > 0) {
+                    Element schemaElement = new Element("schema");
+                    schemaElement.setAttribute("name", schema.getName());
+                    schemaElement.setAttribute("object-types", DBObjectType.toCommaSeparated(objectTypes));
+                    connectionElement.addContent(schemaElement);
+                    addConnectionElement = true;
+                }
+            }
+
+            if (addConnectionElement) {
+                connectionElement.setAttribute("connection-id", connectionHandler.getId());
+                nodesElement.addContent(connectionElement);
+            }
+        }
+    }
+
+
+    private void initTouchedNodes(Element element) {
+        Element nodesElement = element.getChild("loaded-nodes");
+        if (nodesElement != null) {
+            final Project project = getProject();
+            List<Element> connectionElements = nodesElement.getChildren();
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            for (final Element connectionElement : connectionElements) {
+                String connectionId = connectionElement.getAttributeValue("connection-id");
+                final ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                if (connectionHandler != null) {
+                    String connectionString = " (" + connectionHandler.getName() + ")";
+                    new BackgroundTask(project, "Loading data dictionary" + connectionString, true) {
+
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                            List<Element> schemaElements = connectionElement.getChildren();
+                            for (Element schemaElement : schemaElements) {
+                                String schemaName = schemaElement.getAttributeValue("name");
+                                DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+                                if (schema != null) {
+                                    String objectTypesAttr = schemaElement.getAttributeValue("object-types");
+                                    List<DBObjectType> objectTypes = DBObjectType.fromCommaSeparated(objectTypesAttr);
+                                    for (DBObjectType objectType : objectTypes) {
+                                        DBObjectListContainer childObjects = schema.getChildObjects();
+                                        if (childObjects != null) {
+                                            childObjects.loadObjectList(objectType);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }.start();
+                }
+            }
+        }
+    }
+
+
 }
