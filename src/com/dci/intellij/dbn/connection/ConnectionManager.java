@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.dci.intellij.dbn.connection.config.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,10 +24,6 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -43,6 +42,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashSet;
 
 public class ConnectionManager extends AbstractProjectComponent implements ProjectManagerListener{
+    private final ConnectionSettingsListener connectionSettingsListener;
     private List<ConnectionBundle> connectionBundles = new ArrayList<ConnectionBundle>();
     private Timer idleConnectionCleaner;
 
@@ -57,10 +57,20 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         return project.getComponent(ConnectionManager.class);
     }
 
-    private ConnectionManager(Project project) {
+    private ConnectionManager(final Project project) {
         super(project);
         ProjectManager projectManager = ProjectManager.getInstance();
         projectManager.addProjectManagerListener(project, this);
+        connectionSettingsListener = new ConnectionSettingsListener() {
+            @Override
+            public void settingsChanged(String connectionId) {
+                ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+                if (connectionHandler != null) {
+                    connectionHandler.getConnectionPool().closeConnectionsSilently();
+                    connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+                }
+            }
+        };
     }
 
     @Override
@@ -69,6 +79,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         Project project = getProject();
         EventManager.subscribe(project, ProjectTopics.MODULES, moduleListener);
         EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
+        EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         initConnectionBundles();
         idleConnectionCleaner = new Timer("Idle connection cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
@@ -80,7 +91,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         idleConnectionCleaner.purge();
         EventManager.unsubscribe(
                 moduleListener,
-                connectionBundleSettingsListener);
+                connectionBundleSettingsListener,
+                connectionSettingsListener);
         super.disposeComponent();
     }
 
