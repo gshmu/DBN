@@ -306,7 +306,7 @@ public enum DBObjectType implements DynamicContentType {
 
     public static List<DBObjectType> fromCommaSeparated(String objectTypes) {
         List<DBObjectType> list = new ArrayList<DBObjectType>();
-        StringTokenizer tokenizer = new StringTokenizer(objectTypes, ", ");
+        StringTokenizer tokenizer = new StringTokenizer(objectTypes, ",");
         while (tokenizer.hasMoreTokens()) {
             String objectTypeName = tokenizer.nextToken().trim();
             list.add(DBObjectType.getObjectType(objectTypeName));
