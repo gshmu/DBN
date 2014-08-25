@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3192</version>
+    <version>3.0.3215</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/v1/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,6 +27,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+             <ul>
+                - Language parsers support for database versions (postgres)<br>
+                - Bug fixes and performance improvements<br>
+            </ul>
             <li><b>3.0.3192</b>
              <ul>
                 - Configurable "tracking" columns (display text attributes, visibility, editable)<br>
