@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 
-public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, DynamicContent<T> {
+public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, DynamicContent<T>, Comparable<DBObjectList> {
     String getName();
     DBObjectType getObjectType();
     void addObject(T object);

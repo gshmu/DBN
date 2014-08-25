@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,7 +31,19 @@ public class DBObjectListContainer implements Disposable {
     public DBObjectListContainer(GenericDatabaseElement owner) {
         this.owner = owner;
     }
-    
+
+    public List<DBObjectList<DBObject>> getAllObjectLists() {
+        List<DBObjectList<DBObject>> allObjectLists = new ArrayList<DBObjectList<DBObject>>();
+        if (objectLists != null)  {
+            allObjectLists.addAll(objectLists.values());
+        }
+        if (hiddenObjectLists != null)  {
+            allObjectLists.addAll(hiddenObjectLists.values());
+        }
+        Collections.sort(allObjectLists);
+        return allObjectLists;
+    }
+
     public Collection<DBObjectList<DBObject>> getObjectLists() {
         return objectLists == null ? null : objectLists.values();
     }
@@ -283,6 +298,14 @@ public class DBObjectListContainer implements Disposable {
                     objectList.load(false);
                 }
             }
+        }
+    }
+
+    public void loadObjectList(DBObjectType objectType) {
+        DBObjectList objectList = getObjectList(objectType);
+        if (objectList == null) objectList = getHiddenObjectList(objectType);
+        if (objectList != null) {
+            objectList.getElements();
         }
     }
 }
