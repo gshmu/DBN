@@ -5,7 +5,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -22,6 +21,7 @@ import java.util.Set;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -39,13 +39,11 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JPanel argumentsPanel;
     private JPanel headerPanel;
-    private JSeparator topSeparator;
     private JPanel executionSchemaActionPanel;
     private JLabel executionSchemaLabel;
     private JLabel noArgumentsLabel;
     private JCheckBox usePoolConnectionCheckBox;
     private JCheckBox commitCheckBox;
-    private JSeparator spacer;
     private JLabel connectionLabel;
     private JScrollPane argumentsScrollPane;
     private AutoCommitLabel autoCommitLabel;
@@ -86,13 +84,12 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         int[] metrics = new int[]{0, 0};
 
         //topSeparator.setVisible(false);
-        spacer.setVisible(false);
         List<DBArgument> arguments = new ArrayList(method.getArguments());
         noArgumentsLabel.setVisible(arguments.size() == 0);
         for (DBArgument argument: arguments) {
             if (argument.isInput()) {
-                spacer.setVisible(true);
                 metrics = addArgumentPanel(argument, metrics);
+                argumentsScrollPane.setBorder(Borders.BOTTOM_LINE_BORDER);
                 //topSeparator.setVisible(true);
             }
         }

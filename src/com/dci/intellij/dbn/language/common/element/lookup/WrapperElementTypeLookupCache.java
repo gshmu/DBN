@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -12,6 +15,7 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
         super(elementType);
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         ElementTypeLookupCache startTokenLC = getElementType().getBeginTokenElement().getLookupCache();
         ElementTypeLookupCache wrappedTokenLC = getElementType().getWrappedElement().getLookupCache();
@@ -39,4 +43,27 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
                 getElementType().getWrappedElement().getLookupCache().startsWithIdentifier(node);
     }
 
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        bucket = initBucket(bucket);
+        WrapperElementType elementType = getElementType();
+        bucket.add(elementType.getBeginTokenElement());
+        if (elementType.isWrappingOptional()) {
+            ElementTypeLookupCache lookupCache = elementType.getWrappedElement().getLookupCache();
+            lookupCache.collectFirstPossibleLeafs(context, bucket);
+        }
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        bucket = initBucket(bucket);
+        WrapperElementType elementType = getElementType();
+        bucket.add(elementType.getBeginTokenElement().getTokenType());
+        if (elementType.isWrappingOptional()) {
+            ElementTypeLookupCache lookupCache = elementType.getWrappedElement().getLookupCache();
+            lookupCache.collectFirstPossibleTokens(context, bucket);
+        }
+        return bucket;
+    }
 }

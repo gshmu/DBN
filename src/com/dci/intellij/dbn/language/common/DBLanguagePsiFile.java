@@ -305,15 +305,18 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     public String getParseRootId() {
         VirtualFile virtualFile = getVirtualFile();
-        String parseRootId = virtualFile.getUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY);
-        if (parseRootId == null && virtualFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-            parseRootId = sourceCodeFile.getParseRootId();
-            if (parseRootId != null) {
-                virtualFile.putUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY, parseRootId);
+        if (virtualFile != null) {
+            String parseRootId = virtualFile.getUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY);
+            if (parseRootId == null && virtualFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+                parseRootId = sourceCodeFile.getParseRootId();
+                if (parseRootId != null) {
+                    virtualFile.putUserData(DBParseableVirtualFile.PARSE_ROOT_ID_KEY, parseRootId);
+                }
             }
-        }
 
-        return parseRootId;
+            return parseRootId;
+        }
+        return null;
     }
 }

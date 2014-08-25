@@ -4,6 +4,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,7 +75,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog {
     private AbstractAction rollbackAllAction = new AbstractAction("Rollback all", Icons.CONNECTION_ROLLBACK) {
         public void actionPerformed(ActionEvent e) {
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            List<ConnectionHandler> connectionHandlers = mainComponent.getConnectionHandlers();
+            List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(mainComponent.getConnectionHandlers());
 
             doOKAction();
             for (ConnectionHandler connectionHandler : connectionHandlers) {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.list;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -254,4 +254,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return getName();
     }
 
+    @Override
+    public int compareTo(@NotNull DBObjectList objectList) {
+        return getObjectType().compareTo(objectList.getObjectType());
+    }
 }

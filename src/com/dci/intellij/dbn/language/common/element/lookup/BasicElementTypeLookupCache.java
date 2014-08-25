@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BasicElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -16,6 +19,7 @@ public class BasicElementTypeLookupCache extends AbstractElementTypeLookupCache<
         return false;
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return false;
     }
@@ -28,4 +32,13 @@ public class BasicElementTypeLookupCache extends AbstractElementTypeLookupCache<
     
     public boolean startsWithIdentifier(PathNode node) {return false;}
 
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        return bucket;
+    }
 }

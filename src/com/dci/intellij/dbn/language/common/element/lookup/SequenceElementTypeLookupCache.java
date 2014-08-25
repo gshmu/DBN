@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -13,6 +15,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         super(elementType);
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return getElementType().canStartWithElement(pathChild) &&
                 pathChild.getLookupCache().canStartWithLeaf(leaf) &&
@@ -47,6 +50,38 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
             }
         }
         return false;
+    }
+
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+        bucket = initBucket(bucket);
+
+        T elementType = getElementType();
+        ElementTypeRef[] children = elementType.getChildren();
+        for (ElementTypeRef child : children) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
+                lookupCache.collectFirstPossibleLeafs(context, bucket);
+            }
+            if (!child.isOptional()) break;
+        }
+        return bucket;
+    }
+
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        bucket = initBucket(bucket);
+
+        T elementType = getElementType();
+        ElementTypeRef[] children = elementType.getChildren();
+        for (ElementTypeRef child : children) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
+                lookupCache.collectFirstPossibleTokens(context, bucket);
+            }
+            if (!child.isOptional()) break;
+        }
+        return bucket;
     }
 }
 

@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.options.general.ui;
 
-import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 
 public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm<GeneralProjectSettings> {
     private JPanel mainPanel;
@@ -29,8 +29,7 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         developerInfoLabel.setText("NOTE: Active developer mode enables actions that may compromise your system stability and database integrity.");
         resetChanges();
 
-        registerComponent(enableDebugCheckBox);
-        registerComponent(enableDeveloperCheckBox);
+        registerComponent(mainPanel);
 
         localeSettingsPanel.add(generalSettings.getRegionalSettings().createComponent(), BorderLayout.CENTER);
         environmentSettingsPanel.add(generalSettings.getEnvironmentSettings().createComponent(), BorderLayout.CENTER);

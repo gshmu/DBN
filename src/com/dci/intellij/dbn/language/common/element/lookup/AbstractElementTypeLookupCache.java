@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,35 +11,25 @@ import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
-import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 public abstract class AbstractElementTypeLookupCache<T extends ElementType> implements ElementTypeLookupCache<T> {
     private T elementType;
 
-    //protected Set<IdentifierCacheElement> identifierTypes;
-    protected Map<DBObjectType, Map<IdentifierType, Set<IdentifierCategory>>> identifierTypes;
-    protected Set<DBObjectType> virtualObjects;
     protected Set<LeafElementType> allPossibleLeafs = new THashSet<LeafElementType>();
     protected Set<LeafElementType> firstPossibleLeafs = new THashSet<LeafElementType>();
     protected Set<LeafElementType> firstRequiredLeafs = new THashSet<LeafElementType>();
     protected Set<TokenType> allPossibleTokens = new THashSet<TokenType>();
     protected Set<TokenType> firstPossibleTokens = new THashSet<TokenType>();
-    protected Set<TokenType> firstRequiredTokens = new THashSet<TokenType>();
     private Map<TokenType, Boolean> landmarkTokens;
     private Boolean startsWithIdentifier;
 
     private Set<TokenType> nextPossibleTokens;
-    private Set<TokenType> nextRequiredTokens;
-
 
     public AbstractElementTypeLookupCache(T elementType) {
         this.elementType = elementType;
@@ -74,66 +65,29 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         return leafElementType == getElementType() || (allPossibleLeafs != null && allPossibleLeafs.contains(leafElementType));
     }
 
-    public boolean containsVirtualObject(DBObjectType objectType) {
-        return virtualObjects != null && virtualObjects.contains(objectType);
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs() {
+        return collectFirstPossibleLeafs(new ElementLookupContext());
     }
 
-    public boolean containsIdentifier(DBObjectType objectType, IdentifierType identifierType, IdentifierCategory identifierCategory) {
-        if (identifierTypes != null) {
-            Map<IdentifierType, Set<IdentifierCategory>> identifierTypeMap = identifierTypes.get(objectType);
-            if (identifierTypeMap != null) {
-                Set<IdentifierCategory> identifierCategorySet = identifierTypeMap.get(identifierType);
-                if (identifierCategorySet != null) {
-                    return identifierCategory == IdentifierCategory.ALL || identifierCategorySet.contains(identifierCategory);
-                }
-            }
-        }
-
-        DBObjectType genericType = objectType.getGenericType() != objectType ? objectType.getGenericType() : null;
-        while (genericType != null) {
-            if (containsIdentifier(genericType, identifierType, identifierCategory)) return true;
-            genericType = genericType.getGenericType() != genericType ? genericType.getGenericType() : null;
-        }
-        return false;
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
+        return collectFirstPossibleLeafs(context.reset(), null);
     }
 
-    public boolean containsIdentifier(DBObjectType objectType, IdentifierType identifierType) {
-        return containsIdentifier(objectType, identifierType, IdentifierCategory.ALL);
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens() {
+        return collectFirstPossibleTokens(new ElementLookupContext());
     }
 
-    private void addIdentifier(DBObjectType objectType, IdentifierType identifierType, IdentifierCategory identifierCategory){
-        if (identifierTypes == null) {
-            identifierTypes = new THashMap<DBObjectType, Map<IdentifierType, Set<IdentifierCategory>>>();
-        }
-
-        Map<IdentifierType, Set<IdentifierCategory>> identifierTypeMap = identifierTypes.get(objectType);
-        if (identifierTypeMap == null) {
-            identifierTypeMap = new THashMap<IdentifierType, Set<IdentifierCategory>>();
-            identifierTypes.put(objectType, identifierTypeMap);
-        }
-
-        Set<IdentifierCategory> identifierCategorySet = identifierTypeMap.get(identifierType);
-        if (identifierCategorySet == null) {
-            identifierCategorySet = new THashSet<IdentifierCategory>();
-            identifierTypeMap.put(identifierType, identifierCategorySet);
-        }
-        identifierCategorySet.add(identifierCategory);
-
-        for (DBObjectType inheritingObjectType : objectType.getInheritingTypes()) {
-            addIdentifier(inheritingObjectType, identifierType, identifierCategory);
-        }
-
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context) {
+        return collectFirstPossibleTokens(context.reset(), null);
     }
 
-    public boolean containsIdentifier(IdentifierElementType identifierElementType) {
-        return containsIdentifier(
-                identifierElementType.getObjectType(),
-                identifierElementType.getIdentifierType(),
-                identifierElementType.isReference() ? IdentifierCategory.REFERENCE : IdentifierCategory.DEFINITION);
-    }
-
-    public Set<LeafElementType> getFirstPossibleLeafs() {
-        return firstPossibleLeafs;
+    protected <E> Set<E> initBucket(Set<E> bucket) {
+        if (bucket == null) bucket = new HashSet<E>();
+        return bucket;
     }
 
     public Set<TokenType> getFirstPossibleTokens() {
@@ -144,10 +98,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         return firstRequiredLeafs;
     }
 
-    public Set<TokenType> getFirstRequiredTokens() {
-        return firstRequiredTokens;
-    }
-
+    @Deprecated
     public boolean canStartWithLeaf(LeafElementType leafElementType) {
         return firstPossibleLeafs.contains(leafElementType);
     }
@@ -158,10 +109,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
 
     public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
         return firstRequiredLeafs.contains(leafElementType);
-    }
-
-    public boolean shouldStartWithToken(TokenType tokenType) {
-        return firstRequiredTokens.contains(tokenType);
     }
 
     public void registerLeaf(LeafElementType leaf, ElementType pathChild) {
@@ -179,7 +126,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         // register first required leafs
         if (isFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
-            firstRequiredTokens.addAll(lookupCache.getFirstRequiredTokens());
         }
 
         if (initAllElements) {
@@ -194,19 +140,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             } else {
                 allPossibleTokens.add(leaf.getTokenType());
             }
-
-            // register identifiers
-            if (leaf instanceof IdentifierElementType) {
-                IdentifierElementType identifierElementType = (IdentifierElementType) leaf;
-                if (!containsIdentifier(identifierElementType)) {
-                    addIdentifier(
-                            identifierElementType.getObjectType(),
-                            identifierElementType.getIdentifierType(),
-                            identifierElementType.isReference() ? IdentifierCategory.REFERENCE : IdentifierCategory.DEFINITION);
-                }
-
-            }
-
         }
 
         if (isFirstPossibleElements || isFirstRequiredLeaf || initAllElements) {
@@ -220,18 +153,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         if (parent != null) {
             parent.getLookupCache().registerLeaf(leaf, getElementType());
         }
-    }
-
-    public void registerVirtualObject(DBObjectType objectType) {
-        if (virtualObjects == null) {
-            virtualObjects = new THashSet<DBObjectType>();
-        }
-        virtualObjects.add(objectType);
-        ElementType parent = getElementType().getParent();
-        if (parent != null) {
-            parent.getLookupCache().registerVirtualObject(objectType);
-        }
-
     }
 
     public synchronized boolean containsLandmarkToken(TokenType tokenType) {
@@ -299,62 +220,5 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             }
         }
         return nextPossibleTokens;
-    }
-
-    /**
-     * This method returns all required tokens which may follow current element.
-     *
-     * NOTE: to be used only for limited scope, since the tree walk-up
-     * is done only until first named element is hit.
-     * (named elements do not have parents)
-     */
-    public Set<TokenType> getNextRequiredTokens() {
-        if (nextRequiredTokens == null) {
-            nextRequiredTokens = new THashSet<TokenType>();
-            ElementType elementType = getElementType();
-            ElementType parentElementType = elementType.getParent();
-            while (parentElementType != null) {
-                if (parentElementType instanceof SequenceElementType) {
-                    SequenceElementType sequence = (SequenceElementType) parentElementType;
-                    int elementsCount = sequence.getChildCount();
-                    int index = sequence.indexOf(elementType, 0);
-
-                    for (int i = index + 1; i < elementsCount; i++) {
-                        ElementTypeRef child = sequence.getChild(i);
-                        if (!child.isOptional()) {
-                            nextRequiredTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
-                            parentElementType = null;
-                            break;
-                        }
-                    }
-                } else if (parentElementType instanceof IterationElementType) {
-                    IterationElementType iteration = (IterationElementType) parentElementType;
-                    TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
-                    if (separatorTokens == null) {
-                        nextRequiredTokens.addAll(iteration.getLookupCache().getFirstPossibleTokens());
-                    } else {
-                        for (TokenElementType separatorToken : separatorTokens) {
-                            nextRequiredTokens.add(separatorToken.getTokenType());
-                        }
-                    }
-                } else if (parentElementType instanceof QualifiedIdentifierElementType){
-                    QualifiedIdentifierElementType qualifiedIdentifier = (QualifiedIdentifierElementType) parentElementType;
-                    for (LeafElementType[] variant : qualifiedIdentifier.getVariants()) {
-                        for (int i=0; i<variant.length; i++) {
-                            if (variant[i] == elementType && i < variant.length-1) {
-                                nextRequiredTokens.add(qualifiedIdentifier.getSeparatorToken().getTokenType());
-                                parentElementType = null;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (parentElementType != null) {
-                    elementType = parentElementType;
-                    parentElementType = elementType.getParent();
-                }
-            }
-        }
-        return nextRequiredTokens;
     }
 }

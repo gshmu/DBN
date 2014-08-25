@@ -17,12 +17,10 @@ import com.intellij.lang.PsiBuilder;
 
 public abstract class AbstractElementTypeParser<T extends ElementType> implements ElementTypeParser<T>{
     private T elementType;
-    private ParseBuilderErrorHandler errorHandler;
     private ElementTypeLogger logger;
 
     public AbstractElementTypeParser(T elementType) {
         this.elementType = elementType;
-        errorHandler = new ParseBuilderErrorHandler(elementType);
     }
 
     protected boolean isDummyToken(String tokenText){
@@ -49,10 +47,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
             getLogger().logEnd(resultType, depth);
         }
     }
-    public ParseBuilderErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
-
     public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         ParsePathNode node = new ParsePathNode(elementType, parentParseNode, builder.getCurrentOffset(), 0);
@@ -82,13 +76,21 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
 
 
             logEnd(resultType, depth);
-            return resultType ==
-                    ParseResultType.NO_MATCH ?
-                    ParseResult.createNoMatchResult() :
-                    ParseResult.createFullMatchResult(matchedTokens);
+            if (resultType == ParseResultType.NO_MATCH) {
+                return ParseResult.createNoMatchResult();
+            } else {
+                String branch = elementType.getBranch();
+                if (node != null && branch != null) {
+                    // if node is matched add branch marker
+                    context.addBranchMarker(node.getParent(), branch);
+                }
+                return ParseResult.createFullMatchResult(matchedTokens);
+            }
         } finally {
             if (node != null) {
+                context.removeBranchMarkers(node);
                 node.detach();
+
             }
 
         }

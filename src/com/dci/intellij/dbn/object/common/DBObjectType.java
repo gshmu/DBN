@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import org.apache.commons.lang.StringUtils;
 
 import com.dci.intellij.dbn.common.Icons;
@@ -290,6 +293,25 @@ public enum DBObjectType implements DynamicContentType {
             System.out.println("ERROR - [UNKNOWN] undefined object type: " + typeName);
             return UNKNOWN;
         }
+    }
+
+    public static String toCommaSeparated(List<DBObjectType> objectTypes) {
+        StringBuilder buffer = new StringBuilder();
+        for (DBObjectType objectType : objectTypes) {
+            if (buffer.length() != 0) buffer.append(", ");
+            buffer.append(objectType.getName());
+        }
+        return buffer.toString();
+    }
+
+    public static List<DBObjectType> fromCommaSeparated(String objectTypes) {
+        List<DBObjectType> list = new ArrayList<DBObjectType>();
+        StringTokenizer tokenizer = new StringTokenizer(objectTypes, ",");
+        while (tokenizer.hasMoreTokens()) {
+            String objectTypeName = tokenizer.nextToken().trim();
+            list.add(DBObjectType.getObjectType(objectTypeName));
+        }
+        return list;
     }
 
     public boolean matches(DBObjectType objectType) {

@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import java.util.Set;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.lookup.LookupValueProvider;
 import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -14,6 +16,8 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.TokenElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.TokenElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
@@ -21,9 +25,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jdom.Element;
-
-import java.util.Set;
 
 public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupValueProvider, TokenElementType {
     private TokenLookupItemFactory lookupItemFactory;
@@ -65,27 +66,26 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupV
         return "token (" + getId() + " - " + getTokenType().getId() + ")";
     }
 
-    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, CodeCompletionFilterSettings filterSettings) {
+    public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context) {
         ElementType parent = getParent();
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
-                /*return codeCompletionSettings.isSmart() ?
-                        iterationElementType.getIteratedElementType().getFirstPossibleLeafs() :
-                        iterationElementType.getIteratedElementType().getFirstRequiredLeafs();*/
-                return iterationElementType.getIteratedElementType().getLookupCache().getFirstPossibleLeafs();
+                ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                return lookupCache.collectFirstPossibleLeafs(context.reset());
             } else if (parent instanceof QualifiedIdentifierElementType){
-                return super.getNextPossibleLeafs(pathNode, filterSettings);
+                return super.getNextPossibleLeafs(pathNode, context);
             }
         }
         if (parent instanceof WrapperElementType) {
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
-                return wrapperElementType.getWrappedElement().getLookupCache().getFirstPossibleLeafs();
+                ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
+                return lookupCache.collectFirstPossibleLeafs(context.reset());
             }
         }
 
-        return super.getNextPossibleLeafs(pathNode, filterSettings);
+        return super.getNextPossibleLeafs(pathNode, context);
     }
 
     public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode) {

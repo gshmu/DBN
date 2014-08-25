@@ -15,14 +15,14 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
         TokenType tokenType = getElementType().getTokenType();
         allPossibleTokens.add(tokenType);
         firstPossibleTokens.add(tokenType);
-        firstRequiredTokens.add(tokenType);
     }
 
     @Override
     public boolean containsToken(TokenType tokenType) {
         return getElementType().getTokenType() == tokenType;
     }
-    
+
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return false;
     }

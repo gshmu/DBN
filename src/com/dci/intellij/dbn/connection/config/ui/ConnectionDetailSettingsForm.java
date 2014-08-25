@@ -35,10 +35,10 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.ColorIcon;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
+    private JPanel mainPanel;
     private JComboBox encodingComboBox;
     private JCheckBox autoCommitCheckBox;
     private JPanel propertiesPanel;
-    private JPanel mainPanel;
     private JComboBox environmentTypesComboBox;
     private JPanel generalGroupPanel;
     private JPanel propertiesGroupPanel;
@@ -67,13 +67,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         environmentTypesComboBox.setModel(environmentTypesModel);
         resetChanges();
 
-        registerComponent(propertiesPanel);
-        registerComponent(encodingComboBox);
-        registerComponent(autoCommitCheckBox);
-        registerComponent(ddlFileBindingCheckBox);
-        registerComponent(maxPoolSizeTextField);
-        registerComponent(idleTimeTextField);
-        registerComponent(environmentTypesComboBox);
+        registerComponent(mainPanel);
 
         environmentTypesComboBox.setRenderer(environmentTypeCellRenderer);
         environmentTypesComboBox.addActionListener(new ActionListener() {

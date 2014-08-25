@@ -58,16 +58,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         packageIconLabel.setIcon(Icons.DBO_PACKAGE);
         typeIconLabel.setIcon(Icons.DBO_TYPE);
 
-        registerComponent(viewTextField);
-        registerComponent(triggerTextField);
-        registerComponent(procedureTextField);
-        registerComponent(functionTextField);
-        registerComponent(packageTextField);
-        registerComponent(packageSpecTextField);
-        registerComponent(packageBodyTextField);
-        registerComponent(typeTextField);
-        registerComponent(typeSpecTextField);
-        registerComponent(typeBodyTextField);
+        registerComponent(mainPanel);
 
         extensionTextFields.put("View", viewTextField);
         extensionTextFields.put("Trigger", triggerTextField);

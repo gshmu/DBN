@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
@@ -12,6 +15,7 @@ public class IterationElementTypeLookupCache extends AbstractElementTypeLookupCa
         super(iterationElementType);
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         ElementType iteratedElementType = getElementType().getIteratedElementType();
         return pathChild == iteratedElementType &&
@@ -39,5 +43,15 @@ public class IterationElementTypeLookupCache extends AbstractElementTypeLookupCa
         return getElementType().getIteratedElementType().getLookupCache().startsWithIdentifier(node);
     }
 
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
+        ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
+        return lookupCache.collectFirstPossibleLeafs(context, bucket);
+    }
 
+    @Override
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
+        ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
+        return lookupCache.collectFirstPossibleTokens(context, bucket);
+    }
 }

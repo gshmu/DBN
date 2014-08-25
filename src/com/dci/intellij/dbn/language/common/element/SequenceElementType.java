@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 
 public interface SequenceElementType extends ElementType {
     ElementTypeRef[] getChildren();
@@ -26,11 +27,14 @@ public interface SequenceElementType extends ElementType {
 
     boolean containsLandmarkTokenFromIndex(TokenType tokenType, int index);
 
-    Set<TokenType> getFirstPossibleTokensFromIndex(int index);
+    Set<TokenType> getFirstPossibleTokensFromIndex(ElementLookupContext context, int index);
 
     boolean isPossibleTokenFromIndex(TokenType tokenType, int index);
 
     int indexOf(ElementType elementType, int fromIndex);
 
     int indexOf(ElementType elementType);
+
+    boolean hasBranchChecks();
+
 }

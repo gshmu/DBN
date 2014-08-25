@@ -69,6 +69,7 @@ public interface ConnectionHandler extends Disposable{
     boolean isActive();
 
     DatabaseType getDatabaseType();
+    double getDatabaseVersion();
 
     Filter<BrowserTreeNode> getObjectFilter();
     NavigationPsiCache getPsiCache();

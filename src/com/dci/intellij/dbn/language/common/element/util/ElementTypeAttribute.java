@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import gnu.trove.THashSet;
-
 import java.util.Set;
+
+import gnu.trove.THashSet;
 
 public enum ElementTypeAttribute {
     
@@ -25,7 +25,10 @@ public enum ElementTypeAttribute {
     FOLDABLE_BLOCK("FOLDABLE_BLOCK", "Foldable block"),
     DDL_STATEMENT("DDL_STATEMENT", "DDL statement"),
     EXECUTABLE_CODE("EXECUTABLE_CODE", "Executable code"),
-    BREAKPOINT_POSITION("BREAKPOINT_POSITION", "Default breakpoint position");
+    BREAKPOINT_POSITION("BREAKPOINT_POSITION", "Default breakpoint position"),
+    PUSH_ATTRIBUTES("PUSH_ATTRIBUTES", "Push attributes"),
+    COLLECT_ATTRIBUTES("COLLECT_ATTRIBUTES", "Collect attributes"),
+    ;
 
     public static final Set<ElementTypeAttribute> EMPTY_LIST = new THashSet<ElementTypeAttribute>(0);
 

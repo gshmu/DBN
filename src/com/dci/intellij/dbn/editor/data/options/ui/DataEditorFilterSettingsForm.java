@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.editor.data.options.ui;
 
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
-import com.dci.intellij.dbn.editor.data.options.DataEditorFilterSettings;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
+import com.dci.intellij.dbn.editor.data.options.DataEditorFilterSettings;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.ui.ColoredListCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 
 public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEditorFilterSettings> {
     private JPanel mainPanel;
@@ -34,8 +34,7 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
         updateBorderTitleForeground(mainPanel);
         resetChanges();
         defaultFilterTypeComboBox.setEnabled(promptFilterDialogCheckBox.isSelected());
-        registerComponent(promptFilterDialogCheckBox);
-        registerComponent(defaultFilterTypeComboBox);
+        registerComponent(mainPanel);
     }
 
     @Override

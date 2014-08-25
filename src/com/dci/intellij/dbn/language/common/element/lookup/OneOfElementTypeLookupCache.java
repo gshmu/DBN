@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -12,6 +14,7 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
         super(elementType);
     }
 
+    @Deprecated
     public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
         return pathChild.getLookupCache().canStartWithLeaf(leaf) && !canStartWithLeaf(leaf);
     }
@@ -32,5 +35,28 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
             if (child.getLookupCache().startsWithIdentifier(node)) return true;
         }
         return false;
+    }
+
+    @Override
+    public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
+        ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
+        for (ElementTypeRef child : elementTypeRefs) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
+                bucket = lookupCache.collectFirstPossibleLeafs(context, bucket);
+            }
+        }
+        return bucket;
+    }
+
+    public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
+        ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
+        for (ElementTypeRef child : elementTypeRefs) {
+            if (context.check(child)) {
+                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
+                bucket = lookupCache.collectFirstPossibleTokens(context, bucket);
+            }
+        }
+        return bucket;
     }
 }

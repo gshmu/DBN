@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
@@ -57,6 +58,8 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     private JTextField nameTextField;
     private JLabel errorLabel;
     private JPanel previewPanel;
+    private JPanel addConditionsPanel;
+    private JPanel filterNamePanel;
 
     private DBObjectRef<DBDataset> datasetRef;
     private List<DatasetBasicFilterConditionForm> conditionForms = new ArrayList<DatasetBasicFilterConditionForm>();
@@ -72,6 +75,8 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         nameTextField.setText(filter.getDisplayName());
 
         actionsPanel.add(new ColumnSelector(), BorderLayout.CENTER);
+        addConditionsPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
+        filterNamePanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         for (DatasetBasicFilterCondition condition : filter.getConditions()) {
             addConditionPanel(condition);
@@ -81,8 +86,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         joinOrRadioButton.setSelected(filter.getJoinType() == DatasetBasicFilter.JOIN_TYPE_OR);
 
         nameTextField.addKeyListener(createKeyListener());
-        registerComponent(joinAndRadioButton);
-        registerComponent(joinOrRadioButton);
+        registerComponent(mainPanel);
 
         if (filter.getError() == null) {
             errorLabel.setText("");

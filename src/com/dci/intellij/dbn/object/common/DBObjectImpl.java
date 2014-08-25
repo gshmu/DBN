@@ -557,6 +557,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return allPossibleTreeChildren;
     }
 
+
+
     public List<? extends BrowserTreeNode> getTreeChildren() {
         if (visibleTreeChildren == null) {
             visibleTreeChildren = new ArrayList<BrowserTreeNode>();
@@ -601,15 +603,17 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         treeChildrenLoaded = true;
 
 
-        EventManager.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-
-        new ConditionalLaterInvocator() {
-            public void execute() {
-                if (!isDisposed()) {
-                    DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+        Project project = getProject();
+        if (!isDisposed() && !project.isDisposed()) {
+            EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+            new ConditionalLaterInvocator() {
+                public void execute() {
+                    if (!isDisposed()) {
+                        DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public void rebuildTreeChildren() {
@@ -628,8 +632,9 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public abstract List<BrowserTreeNode> buildAllPossibleTreeChildren();
 
     public boolean isLeafTreeElement() {
-        if (!isDisposed()) {
-            Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectFilter();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null && !isDisposed()) {
+            Filter<BrowserTreeNode> filter = connectionHandler.getObjectFilter();
             for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
                 if (treeNode != null && filter.accepts(treeNode)) {
                     return false;
@@ -666,9 +671,10 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef.hashCode();
     }
 
-    @NotNull
+    @Nullable
     public Project getProject() throws PsiInvalidElementAccessException {
-        return getConnectionHandler().getProject();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? null : connectionHandler.getProject();
     }
 
     public int compareTo(@NotNull Object o) {

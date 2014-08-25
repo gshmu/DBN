@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import javax.swing.Icon;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
 import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
@@ -22,11 +27,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public abstract class AbstractElementType extends IElementType implements ElementType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -35,6 +35,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private String id;
     private String description;
     private Icon icon;
+    private String branch;
     private FormattingDefinition formatting;
     private ElementTypeLookupCache lookupCache;
     private ElementTypeParser parser;
@@ -102,6 +103,8 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         String iconKey = def.getAttributeValue("icon");
         if (iconKey != null)  icon = Icons.getIcon(iconKey);
 
+        branch = def.getAttributeValue("branch");
+
         loadWrappingAttributes(def);
     }
 
@@ -156,6 +159,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return parent;
     }
 
+    public String getBranch() {
+        return branch;
+    }
+
     public synchronized ElementTypeLookupCache getLookupCache() {
         if (lookupCache == null) {
             lookupCache = createLookupCache();
@@ -206,10 +213,6 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return getId().hashCode();
     }
 
-    public void registerVirtualObject(DBObjectType objectType) {
-        getLookupCache().registerVirtualObject(objectType);
-    }
-
     /*********************************************************
      *                  Virtual Object                       *
      *********************************************************/
@@ -223,5 +226,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     public boolean isVirtualObjectInsideLookup() {
         return isVirtualObjectInsideLookup;
+    }
+
+    @Override
+    public boolean hasBranchChecks() {
+        return false;
     }
 }
