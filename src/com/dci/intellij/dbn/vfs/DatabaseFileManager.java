@@ -1,7 +1,11 @@
 package com.dci.intellij.dbn.vfs;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +36,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Map<DBObjectRef, DBEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
 
-
     private DatabaseFileManager(Project project) {
         super(project);
     }
@@ -54,11 +57,29 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     public void projectOpened() {
         EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventManager.subscribe(getProject(), ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     public void projectClosed() {
         EventManager.unsubscribe(fileEditorManagerListener);
     }
+
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+        @Override
+        public void settingsChanged(String connectionId) {
+            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<>();
+            for (DBObjectRef objectRef : openFiles.keySet()) {
+                if (objectRef.getConnectionId().equals(connectionId)) {
+                    filesToClose.add(openFiles.get(objectRef));
+                }
+            }
+
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+            for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
+                fileEditorManager.closeFile(virtualFile);
+            }
+        }
+    };
 
     /*********************************************
      *            FileEditorManagerListener       *
