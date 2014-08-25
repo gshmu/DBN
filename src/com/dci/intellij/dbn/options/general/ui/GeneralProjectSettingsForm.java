@@ -26,7 +26,7 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         debugInfoLabel.setIcon(Icons.COMMON_WARNING);
         debugInfoLabel.setText("NOTE: Active debug mode considerably slows down your system.");
         developerInfoLabel.setIcon(Icons.COMMON_WARNING);
-        developerInfoLabel.setText("NOTE: Active developer mode enables actions that may compromise your system stability and database integrity.");
+        developerInfoLabel.setText("NOTE: Developer mode enables actions that may compromise your system stability and database integrity.");
         resetChanges();
 
         registerComponent(mainPanel);
