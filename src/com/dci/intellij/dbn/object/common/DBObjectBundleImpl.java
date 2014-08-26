@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -585,6 +585,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             DisposerUtil.dispose(objectRelationLists);
             CollectionUtil.clearCollection(visibleTreeChildren);
             CollectionUtil.clearCollection(allPossibleTreeChildren);
+            cachedDataTypes.clear();
             treeParent = null;
             connectionHandler = null;
         }

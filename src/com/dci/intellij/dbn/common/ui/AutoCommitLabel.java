@@ -6,6 +6,7 @@ import java.awt.Color;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.intellij.openapi.Disposable;
@@ -18,8 +19,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         Color AUTO_COMMIT_ON = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
         Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
-    private Project project;
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandler;
     private boolean subscribed = false;
 
     public AutoCommitLabel() {
@@ -31,10 +31,10 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         if (connectionHandler == null || connectionHandler instanceof VirtualConnectionHandler) {
             this.connectionHandler = null;
         } else {
-            this.connectionHandler = connectionHandler;
+            this.connectionHandler = connectionHandler.getRef();
             if (!subscribed) {
                 subscribed = true;
-                project = connectionHandler.getProject();
+                Project project = connectionHandler.getProject();
                 EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
             }
         }
@@ -45,6 +45,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler != null) {
                     setVisible(true);
                     boolean disconnected = !connectionHandler.isConnected();
@@ -66,9 +67,14 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         }.start();
     }
 
+    private ConnectionHandler getConnectionHandler() {
+        return this.connectionHandler == null ? null : this.connectionHandler.get();
+    }
+
     private ConnectionStatusListener connectionStatusListener = new ConnectionStatusListener() {
         @Override
         public void statusChanged(String connectionId) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null && connectionHandler.getId().equals(connectionId)) {
                 update();
             }
