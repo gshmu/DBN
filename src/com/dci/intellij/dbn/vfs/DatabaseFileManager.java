@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -67,7 +66,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void settingsChanged(String connectionId) {
-            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<>();
+            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
             for (DBObjectRef objectRef : openFiles.keySet()) {
                 if (objectRef.getConnectionId().equals(connectionId)) {
                     filesToClose.add(openFiles.get(objectRef));
