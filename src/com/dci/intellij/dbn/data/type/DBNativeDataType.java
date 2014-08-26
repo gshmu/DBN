@@ -77,8 +77,9 @@ public class DBNativeDataType implements DynamicContentElement{
                     //clazz == Array.class ? resultSet.getArray(columnIndex) :
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
-            LOGGER.error("Error resolving result set value", e);
-            return resultSet.getObject(columnIndex);
+            Object object = resultSet.getObject(columnIndex);
+            LOGGER.error("Error resolving result set value for '" + object + "'", e);
+            return object;
         }
     }
 
