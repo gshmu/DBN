@@ -21,16 +21,19 @@ import java.util.List;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.messages.Topic;
 import com.intellij.util.ui.UIUtil;
 
 public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
@@ -196,6 +199,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     }
 
     public void applyChanges(GenericConnectionDatabaseSettings connectionConfig) {
+
         connectionConfig.setActive(activeCheckBox.isSelected());
         connectionConfig.setName(nameTextField.getText());
         connectionConfig.setDescription(descriptionTextField.getText());
@@ -210,7 +214,17 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     }
 
     public void applyChanges() {
-        applyChanges(getConfiguration());
+        GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
+        boolean settingsChanged =
+                !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
+                        !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
+                        !CommonUtil.safeEqual(connectionConfig.getUser(), userTextField.getText());
+
+        applyChanges(connectionConfig);
+
+        if (settingsChanged) {
+            EventManager.notify(connectionConfig.getProject(), ConnectionSettingsListener.TOPIC).settingsChanged(connectionConfig.getId());
+        }
     }
 
 

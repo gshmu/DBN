@@ -32,6 +32,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -315,7 +316,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     @NotNull
     public VirtualFile getVirtualFile() {
         DBObject object = getObject();
-        return object == null ? NullVirtualFile.INSTANCE : object.getVirtualFile();
+        return object == null ? NULL_VIRTUAL_FILE : object.getVirtualFile();
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {
@@ -367,4 +368,5 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     }
 
+    private static final VirtualFile NULL_VIRTUAL_FILE = new LightVirtualFile();
 }
