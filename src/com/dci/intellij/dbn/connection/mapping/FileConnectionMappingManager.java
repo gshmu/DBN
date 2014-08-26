@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.connection.mapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -120,6 +122,11 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
                 return sqlConsoleFile.getConnectionHandler();
             }
+
+            if (virtualFile instanceof DatasetFilterVirtualFile) {
+                DatasetFilterVirtualFile filterVirtualFile = (DatasetFilterVirtualFile) virtualFile;
+                return filterVirtualFile.getConnectionHandler();
+            }
         }
 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
@@ -161,6 +168,12 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             if (virtualFile instanceof DBConsoleVirtualFile) {
                 DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
                 return sqlConsoleFile.getCurrentSchema();
+            }
+
+
+            if (virtualFile instanceof DatasetFilterVirtualFile) {
+                DatasetFilterVirtualFile filterVirtualFile = (DatasetFilterVirtualFile) virtualFile;
+                return filterVirtualFile.getDataset().getSchema();
             }
         }
 
