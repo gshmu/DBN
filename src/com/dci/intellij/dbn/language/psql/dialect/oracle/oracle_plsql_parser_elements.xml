@@ -619,7 +619,7 @@
         </iteration>
         <element optional="true" ref-id="order_by_clause" />
     </element-def>
-    <element-def attributes="DATA_MANIPULATION, QUERY" description="SELECT INTO statement" id="select_into_statement" virtual-object="DATASET">
+    <element-def attributes="DATA_MANIPULATION, QUERY, STRUCTURE" description="SELECT INTO statement" id="select_into_statement" virtual-object="DATASET">
         <token id="000000289" type-id="KW_SELECT" />
         <!--element ref-id="hint" optional="true"/-->
         <one-of id="000000290" optional="true">
@@ -1591,21 +1591,21 @@
         <token id="000000748" type-id="CHR_GREATER" />
     </element-def>
 
-    <element-def description="Method_call_statement" id="method_call_statement">
+    <element-def attributes="STRUCTURE" description="Method call" id="method_call_statement" icon="METHOD_CALL">
         <qualified-identifier id="000000749" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000750" optional="true" type="SCHEMA" />
                 <object-ref id="000000751" type="PACKAGE" />
-                <object-ref id="000000752" type="METHOD" />
+                <object-ref attributes="SUBJECT" id="000000752" type="METHOD" />
             </variant>
             <variant>
                 <object-ref id="000000753" optional="true" type="SCHEMA" />
                 <object-ref id="000000754" type="TYPE" />
-                <object-ref id="000000755" type="TYPE_FUNCTION" />
+                <object-ref attributes="SUBJECT" id="000000755" type="TYPE_FUNCTION" />
             </variant>
             <variant>
                 <object-ref id="000000756" optional="true" type="SCHEMA" />
-                <object-ref id="000000757" type="METHOD" />
+                <object-ref attributes="SUBJECT" id="000000757" type="METHOD" />
             </variant>
         </qualified-identifier>
         <sequence id="000000758" optional="true">
@@ -1624,7 +1624,7 @@
         </sequence>
         <token id="000000767" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="Assignment statement" id="assignment_statement">
+    <element-def attributes="STRUCTURE" description="Assignment statement" id="assignment_statement" icon="SQL_STATEMENT">
         <one-of id="000000768">
             <sequence id="000000769">
                 <variable-ref id="000000770" type="ANY" />
@@ -1649,10 +1649,10 @@
         <element ref-id="expression" />
         <token id="000000782" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="CLOSE statement" id="close_statement">
+    <element-def attributes="STRUCTURE" description="CLOSE statement" id="close_statement" icon="SQL_STATEMENT">
         <token id="000000783" type-id="KW_CLOSE" />
         <one-of id="000000784">
-            <variable-ref id="000000785" type="CURSOR" />
+            <variable-ref attributes="SUBJECT" id="000000785" type="CURSOR" />
             <sequence id="000000786">
                 <token id="000000787" type-id="CHR_COLON" />
                 <variable-ref id="000000788" type="ANY" />
@@ -1660,7 +1660,7 @@
         </one-of>
         <token id="000000789" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="EXECUTE IMMEDIATE statement" id="execute_immediate_statement">
+    <element-def attributes="STRUCTURE" description="EXECUTE IMMEDIATE statement" id="execute_immediate_statement" icon="SQL_STATEMENT">
         <token id="000000790" type-id="KW_EXECUTE" />
         <token id="000000791" type-id="KW_IMMEDIATE" />
         <element original-name="dynamic_string" ref-id="expression" />
@@ -1709,7 +1709,7 @@
         </sequence>
         <token id="000000818" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="EXIT statement" id="exit_statement">
+    <element-def attributes="STRUCTURE" description="EXIT statement" id="exit_statement" icon="SQL_STATEMENT">
         <token id="000000819" type-id="KW_EXIT" />
         <variable-ref id="000000820" optional="true" type="LABEL" />
         <sequence id="000000821" optional="true">
@@ -1718,7 +1718,7 @@
         </sequence>
         <token id="000000823" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="FETCH statement" id="fetch_statement">
+    <element-def attributes="STRUCTURE" description="FETCH statement" id="fetch_statement" icon="SQL_STATEMENT">
         <token id="000000824" type-id="KW_FETCH" />
         <token id="000000825" optional="true" type-id="CHR_COLON" />
         <variable-ref id="000000826" original-name="cursor_name, cursor_variable_name, host_cursor_variable_name" type="ANY" />
@@ -1760,7 +1760,7 @@
         </one-of>
         <token id="000000848" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="FORALL statement" id="forall_statement">
+    <element-def attributes="STRUCTURE" description="FORALL statement" id="forall_statement" icon="SQL_STATEMENT">
         <token id="000000849" type-id="KW_FORALL" />
         <variable-def id="000000850" type="ANY" />
         <token id="000000851" type-id="KW_IN" />
@@ -1798,12 +1798,12 @@
         </one-of>
     </element-def>
 
-    <element-def description="GOTO statement" id="goto_statement">
+    <element-def attributes="STRUCTURE" description="GOTO statement" id="goto_statement" icon="SQL_STATEMENT">
         <token id="000000867" type-id="KW_GOTO" />
         <variable-ref id="000000868" type="LABEL" />
         <token id="000000869" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="IF statement" id="if_statement">
+    <element-def attributes="STRUCTURE" description="IF statement" id="if_statement" icon="SQL_STATEMENT">
         <token id="000000870" type-id="KW_IF" />
         <element ref-id="boolean_expression" />
         <token id="000000871" type-id="KW_THEN" />
@@ -1830,7 +1830,7 @@
         <token id="000000882" type-id="KW_IF" />
         <token id="000000883" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="CASE statement" id="case_statement">
+    <element-def attributes="STRUCTURE" description="CASE statement" id="case_statement" icon="SQL_STATEMENT">
         <token id="000000884" type-id="KW_CASE" />
         <one-of id="000000885">
             <sequence id="000000886" original-name="searched_case_statement">
@@ -1864,7 +1864,7 @@
         <variable-def id="000000900" optional="true" type="LABEL" />
         <token id="000000901" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="LOOP statement" id="loop_statement">
+    <element-def attributes="STRUCTURE" description="LOOP statement" id="loop_statement" icon="SQL_STATEMENT">
         <one-of id="000000902">
             <element ref-id="basic_loop_statement" />
             <element ref-id="while_loop_statement" />
@@ -1924,11 +1924,11 @@
         <token id="000000925" type-id="KW_LOOP" />
         <variable-def id="000000926" optional="true" type="LABEL" />
     </element-def>
-    <element-def description="NULL statement" id="null_statement">
+    <element-def attributes="STRUCTURE" description="NULL statement" id="null_statement" icon="SQL_STATEMENT">
         <token id="000000927" type-id="KW_NULL" />
         <token id="000000928" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="OPEN statement" id="open_statement">
+    <element-def attributes="STRUCTURE" description="OPEN statement" id="open_statement" icon="SQL_STATEMENT">
         <token id="000000929" type-id="KW_OPEN" />
         <token id="000000930" optional="true" type-id="CHR_COLON" />
         <variable-ref attributes="SUBJECT" id="000000931" type="CURSOR" />
@@ -1970,12 +1970,12 @@
         </one-of>
         <token id="000000952" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="RAISE statement" id="raise_statement">
+    <element-def attributes="STRUCTURE" description="RAISE statement" id="raise_statement" icon="SQL_STATEMENT">
         <token id="000000953" type-id="KW_RAISE" />
         <element optional="true" ref-id="exception" />
         <token id="000000954" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="RETURN statement" id="return_statement">
+    <element-def attributes="STRUCTURE" description="RETURN statement" id="return_statement">
         <token id="000000955" type-id="KW_RETURN" />
         <element optional="true" ref-id="boolean_expression" />
         <token id="000000956" type-id="CHR_SEMICOLON" />
@@ -1995,7 +1995,7 @@
         </one-of>
         <token id="000000958" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def description="COMMIT statement" id="commit_statement">
+    <element-def attributes="STRUCTURE" description="COMMIT statement" id="commit_statement">
         <token id="000000959" type-id="KW_COMMIT" />
         <token id="000000960" optional="true" type-id="KW_WORK" />
         <sequence id="000000961" optional="true">
@@ -2003,7 +2003,7 @@
             <token id="000000963" type-id="STRING" />
         </sequence>
     </element-def>
-    <element-def description="DELETE statement" id="delete_statement">
+    <element-def attributes="STRUCTURE" description="DELETE statement" id="delete_statement">
         <token id="000000964" type-id="KW_DELETE" />
         <token id="000000965" optional="true" type-id="KW_FROM" />
         <one-of id="000000966">
@@ -2163,7 +2163,7 @@
         </sequence>
     </element-def>
 
-    <element-def description="INSERT statement" id="insert_statement">
+    <element-def attributes="STRUCTURE" description="INSERT statement" id="insert_statement">
         <token id="000001050" type-id="KW_INSERT" />
         <token id="000001051" type-id="KW_INTO" />
         <one-of id="000001052">
@@ -2206,7 +2206,7 @@
             <element ref-id="subquery" />
         </one-of>
     </element-def>
-    <element-def description="LOCK TABLE statement" id="lock_table_statement">
+    <element-def attributes="STRUCTURE" description="LOCK TABLE statement" id="lock_table_statement">
         <token id="000001070" type-id="KW_LOCK" />
         <token id="000001071" type-id="KW_TABLE" />
         <iteration id="000001072" separator="CHR_COMMA">
@@ -2237,7 +2237,7 @@
         </sequence>
         <token id="000001088" type-id="KW_EXCLUSIVE" />
     </element-def>
-    <element-def description="ROLLBACK statement" id="rollback_statement">
+    <element-def attributes="STRUCTURE" description="ROLLBACK statement" id="rollback_statement">
         <token id="000001089" type-id="KW_ROLLBACK" />
         <token id="000001090" optional="true" type-id="KW_WORK" />
         <sequence id="000001091" optional="true">
@@ -2246,11 +2246,11 @@
             <variable-ref id="000001094" original-name="savepoint_name" type="SAVEPOINT" />
         </sequence>
     </element-def>
-    <element-def description="SAVEPOINT statement" id="savepoint_statement">
+    <element-def attributes="STRUCTURE" description="SAVEPOINT statement" id="savepoint_statement">
         <token id="000001095" type-id="KW_SAVEPOINT" />
         <variable-def id="000001096" type="SAVEPOINT" />
     </element-def>
-    <element-def description="SET TRANSACTION statement" id="set_transaction_statement">
+    <element-def attributes="STRUCTURE" description="SET TRANSACTION statement" id="set_transaction_statement">
         <token id="000001097" type-id="KW_SET" />
         <token id="000001098" type-id="KW_TRANSACTION" />
         <one-of id="000001099">
@@ -2284,7 +2284,7 @@
             <token id="000001120" original-name="text" type-id="STRING" />
         </sequence>
     </element-def>
-    <element-def description="UPDATE statement" id="update_statement">
+    <element-def attributes="STRUCTURE" description="UPDATE statement" id="update_statement">
         <token id="000001121" type-id="KW_UPDATE" />
         <one-of id="000001122">
             <element ref-id="table_reference" />

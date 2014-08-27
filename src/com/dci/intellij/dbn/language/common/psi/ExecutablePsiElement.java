@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import javax.swing.Icon;
-import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -16,7 +14,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
 
 public class ExecutablePsiElement extends NamedPsiElement{
     private StatementExecutionBasicProcessor executionProcessor;
@@ -54,12 +51,6 @@ public class ExecutablePsiElement extends NamedPsiElement{
             }
         }
         return text;
-    }
-
-    public String createResultName() {
-        Set<IdentifierPsiElement> subjects = new THashSet<IdentifierPsiElement>();
-        collectSubjectPsiElements(subjects);
-        return subjects.size() > 0 ? NamingUtil.createNamesList(subjects, 3) : null;
     }
 
     public NamedElementType getElementType() {
@@ -105,9 +96,9 @@ public class ExecutablePsiElement extends NamedPsiElement{
      *********************************************************/
     public String getPresentableText() {
         ElementType elementType = getSpecificElementType();
-        String resultName = createResultName();
-        if (resultName != null) {
-            return elementType.getDescription() + " (" + resultName + ")";
+        String subjectList = createSubjectList();
+        if (subjectList != null) {
+            return elementType.getDescription() + " (" + subjectList + ")";
         } else {
             return elementType.getDescription();
         }
