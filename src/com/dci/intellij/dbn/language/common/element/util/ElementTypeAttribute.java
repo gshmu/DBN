@@ -9,10 +9,10 @@ public enum ElementTypeAttribute {
     ROOT("ROOT", "Executable statement"),
     EXECUTABLE("EXECUTABLE", "Executable statement"),
     TRANSACTIONAL("TRANSACTIONAL", "Transactional statement"),
-    QUERY("QUERY", "Query statement"),
-    DATA_DEFINITION("DATA_DEFINITION", "Data definition statement"),
-    DATA_MANIPULATION("DATA_MANIPULATION", "Data manipulation statement"),
-    TRANSACTION_CONTROL("TRANSACTION_CONTROL", "Transaction control statement"),
+    QUERY("QUERY", "Query statement", true),
+    DATA_DEFINITION("DATA_DEFINITION", "Data definition statement", true),
+    DATA_MANIPULATION("DATA_MANIPULATION", "Data manipulation statement", true),
+    TRANSACTION_CONTROL("TRANSACTION_CONTROL", "Transaction control statement", true),
     OBJECT_SPECIFICATION("OBJECT_SPECIFICATION", "Object specification"),
     DECLARATION("DECLARATION", "Declaration"),
     OBJECT_DECLARATION("OBJECT_DECLARATION", "Object definition"),
@@ -26,18 +26,24 @@ public enum ElementTypeAttribute {
     DDL_STATEMENT("DDL_STATEMENT", "DDL statement"),
     EXECUTABLE_CODE("EXECUTABLE_CODE", "Executable code"),
     BREAKPOINT_POSITION("BREAKPOINT_POSITION", "Default breakpoint position"),
-    PUSH_ATTRIBUTES("PUSH_ATTRIBUTES", "Push attributes"),
-    COLLECT_ATTRIBUTES("COLLECT_ATTRIBUTES", "Collect attributes"),
+    SPECIFIC_ELEMENT("SPECIFIC_ELEMENT", "Specific element"),
+    GENERIC_ELEMENT("GENERIC_ELEMENT", "Generic element"),
     ;
 
     public static final Set<ElementTypeAttribute> EMPTY_LIST = new THashSet<ElementTypeAttribute>(0);
 
     private String name;
     private String description;
+    private boolean specific;
 
     ElementTypeAttribute(String name, String description) {
+        this(name, description, false);
+    }
+
+    ElementTypeAttribute(String name, String description, boolean specific) {
         this.name = name;
         this.description = description;
+        this.specific = specific;
     }
 
     public String getName() {
@@ -51,5 +57,9 @@ public enum ElementTypeAttribute {
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean isSpecific() {
+        return specific;
     }
 }
