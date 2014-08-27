@@ -1,9 +1,17 @@
 package com.dci.intellij.dbn.language.sql;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilder;
@@ -11,13 +19,6 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.lang.folding.LanguageFolding;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class SQLFoldingBuilder implements FoldingBuilder {
 
@@ -60,7 +61,7 @@ public class SQLFoldingBuilder implements FoldingBuilder {
 
     public String getPlaceholderText(@NotNull ASTNode node) {
         BasePsiElement basePsiElement = (BasePsiElement) node.getPsi();
-        Set<BasePsiElement> subjects = new HashSet<BasePsiElement>();
+        Set<IdentifierPsiElement> subjects = new HashSet<IdentifierPsiElement>();
         basePsiElement.collectSubjectPsiElements(subjects);
         StringBuilder buffer = new StringBuilder(basePsiElement.getElementType().getDescription());
         if (subjects.size() > 0) {

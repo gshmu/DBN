@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ExecVariableElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -8,10 +12,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class ExecVariablePsiElement extends LeafPsiElement {
     public ExecVariablePsiElement(ASTNode astNode, ExecVariableElementType elementType) {
@@ -27,7 +27,7 @@ public class ExecVariablePsiElement extends LeafPsiElement {
 
 
     public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) { bucket.add(this);}
-    public void collectSubjectPsiElements(Set<BasePsiElement> bucket) {}
+    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
     public NamedPsiElement lookupNamedPsiElement(String id) {return null;}
     public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 

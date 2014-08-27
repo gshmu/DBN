@@ -318,7 +318,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public abstract Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount);
 
     public abstract void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket);
-    public abstract void collectSubjectPsiElements(Set<BasePsiElement> bucket);
+    public abstract void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket);
 
 
     public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {

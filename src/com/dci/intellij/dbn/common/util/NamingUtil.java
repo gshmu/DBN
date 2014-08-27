@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.util;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 
@@ -27,19 +27,24 @@ public class NamingUtil {
         return text.toString() + nr;
     }
 
-    public static String createNamesList(Set<BasePsiElement> identifiers, int maxItems) {
-        java.lang.Object[] array = identifiers.toArray();
-        StringBuilder buffer = new StringBuilder();
-        maxItems = Math.min(maxItems, array.length);
-
-        for (int i =0; i<maxItems; i++) {
-            IdentifierPsiElement psiElement = (IdentifierPsiElement) array[i];
-            StringUtil.appendToUpperCase(buffer, psiElement.getUnquotedText());
-            if (i<maxItems -1 ) {
-                buffer.append(", ");
+    public static String createNamesList(Set<IdentifierPsiElement> identifiers, int maxItems) {
+        boolean partial = false;
+        Set<String> names = new HashSet<String>();
+        for (IdentifierPsiElement identifier : identifiers) {
+            names.add(identifier.getUnquotedText().toString().toUpperCase());
+            if (names.size() >= maxItems) {
+                partial = true;
+                break;
             }
         }
-        if (maxItems < array.length || maxItems == 0) {
+
+        StringBuilder buffer = new StringBuilder();
+        for (String name : names) {
+            if (buffer.length() > 0) buffer.append(", ");
+            buffer.append(name);
+        }
+
+        if (partial) {
             buffer.append("...");
         }
         return buffer.toString();

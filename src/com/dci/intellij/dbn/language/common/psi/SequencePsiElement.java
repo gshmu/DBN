@@ -111,7 +111,7 @@ public class SequencePsiElement extends BasePsiElement {
         }
     }
 
-    public void collectSubjectPsiElements(Set<BasePsiElement> bucket) {
+    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof BasePsiElement) {
