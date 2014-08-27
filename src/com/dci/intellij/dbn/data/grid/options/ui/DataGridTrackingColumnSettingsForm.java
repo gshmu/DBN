@@ -6,7 +6,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
+import java.util.Collection;
 
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -34,8 +34,6 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         resetChanges();
         editableCheckBox.setEnabled(visibleCheckBox.isSelected());
         registerComponent(mainPanel);
-        //registerComponent(visibleCheckBox);
-        //registerComponent(editableCheckBox);
     }
 
     public JPanel getComponent() {
@@ -61,9 +59,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         settings.setShowColumns(trackingColumnsVisible);
         settings.setAllowEditing(editableCheckBox.isSelected());
 
-        Set<String> columnNamesSet = settings.getColumnNames();
-        columnNamesSet.clear();
-        columnNamesSet.addAll(editableStringListForm.getStringValues());
+        settings.setColumnNames(editableStringListForm.getStringValues());
 
         if (visibilityChanged) {
             EventManager.notify(settings.getProject(), DataGridSettingsChangeListener.TOPIC).trackingColumnsVisibilityChanged(trackingColumnsVisible);
@@ -74,8 +70,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         DataGridTrackingColumnSettings settings = getConfiguration();
         visibleCheckBox.setSelected(settings.isShowColumns());
         editableCheckBox.setSelected(settings.isAllowEditing());
-        StringBuilder buffer = new StringBuilder();
-        Set<String> columnNamesSet = settings.getColumnNames();
+        Collection<String> columnNamesSet = settings.getColumnNames();
         editableStringListForm.setStringValues(columnNamesSet);
     }
 }
