@@ -5,7 +5,6 @@ import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -50,17 +49,10 @@ public class NamedPsiElement extends SequencePsiElement {
      *********************************************************/
     public String getPresentableText() {
         BasePsiElement subject = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
-        if (subject != null) {
-            if (subject instanceof IdentifierPsiElement && subject.getParent() == this) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;
-                if (identifierPsiElement.isObject()) {
-                    return identifierPsiElement.getText();
-                }
-            }
-            if (is(ElementTypeAttribute.STRUCTURE)) {
-                ElementType elementType = getSpecificElementType();
-                return elementType.getDescription() + " (" + subject.getText() + ")";
-
+        if (subject instanceof IdentifierPsiElement && subject.getParent() == this) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;
+            if (identifierPsiElement.isObject()) {
+                return identifierPsiElement.getText();
             }
         }
         return super.getPresentableText();
@@ -68,6 +60,16 @@ public class NamedPsiElement extends SequencePsiElement {
 
     @Nullable
     public String getLocationString() {
+        BasePsiElement subject = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        if (subject instanceof IdentifierPsiElement && subject.getParent() == this) {
+
+        } else {
+            if (is(ElementTypeAttribute.STRUCTURE)) {
+                if (subject != null) {
+                    return subject.getText();
+                }
+            }
+        }
         return null;
     }
 
