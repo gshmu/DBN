@@ -216,7 +216,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     public synchronized String getResultName() {
         if (resultName == null) {
             if (executablePsiElement!= null) {
-                 resultName = executablePsiElement.createResultName();
+                 resultName = executablePsiElement.createSubjectList();
             }
             if (StringUtil.isEmptyOrSpaces(resultName)) {
                 resultName = "Result " + index;

@@ -79,6 +79,8 @@ public class Icons {
     public static final Icon METHOD_EXECUTION_DIALOG  = load("/img/v1/ExecuteMethodDialog.png");
     public static final Icon METHOD_EXECUTION_HISTORY = load("/img/v1/MethodExecutionHistory.png");
     public static final Icon METHOD_LOOKUP            = load("/img/v1/MethodLookup.png");
+    public static final Icon METHOD_CALL              = load("METHOD_CALL", "/img/v1/MethodCall.png");
+    public static final Icon SQL_STATEMENT            = load("SQL_STATEMENT", "/img/v1/SQLStatement.png");
 
 
     public static final Icon STMT_EXECUTION_RUN           = load("/img/v1/action/ExecuteStatement.png");
