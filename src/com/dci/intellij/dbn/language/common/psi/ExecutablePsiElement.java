@@ -57,7 +57,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
     }
 
     public String createResultName() {
-        Set<BasePsiElement> subjects = new THashSet<BasePsiElement>();
+        Set<IdentifierPsiElement> subjects = new THashSet<IdentifierPsiElement>();
         collectSubjectPsiElements(subjects);
         return subjects.size() > 0 ? NamingUtil.createNamesList(subjects, 3) : null;
     }

@@ -64,7 +64,7 @@
     <!-- ========= SAVEPOINT ========= -->
     <element-def attributes="SPECIFIC" description="SAVEPOINT statement" id="savepoint_statement">
         <token id="000000022" type-id="KW_SAVEPOINT" />
-        <object-def id="000000023" type="SAVEPOINT" />
+        <object-def attributes="SUBJECT" id="000000023" type="SAVEPOINT"/>
     </element-def>
 
     <!-- ========= CREATE ========= -->
@@ -114,7 +114,7 @@
         <qualified-identifier id="000000034" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000035" optional="true" type="SCHEMA" />
-                <object-def id="000000036" type="VIEW" />
+                <object-def attributes="SUBJECT" id="000000036" type="VIEW" />
             </variant>
         </qualified-identifier>
         <wrapper id="000000037" optional="true" template="PARENTHESES">
@@ -169,7 +169,7 @@
         <qualified-identifier id="000000065" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000066" optional="true" type="SCHEMA" />
-                <object-def id="000000067" type="SEQUENCE" />
+                <object-def attributes="SUBJECT" id="000000067" type="SEQUENCE" />
             </variant>
         </qualified-identifier>
         <sequence id="000000068" optional="true">
@@ -242,7 +242,7 @@
         <qualified-identifier id="000000104" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000105" optional="true" type="SCHEMA" />
-                <object-ref id="000000106" type="VIEW" />
+                <object-ref attributes="SUBJECT" id="000000106" type="VIEW" />
             </variant>
         </qualified-identifier>
         <one-of id="000000107">
@@ -310,7 +310,7 @@
             <qualified-identifier id="000000144" separator="CHR_DOT">
                 <variant>
                     <object-ref id="000000145" optional="true" type="SCHEMA" />
-                    <object-ref id="000000146" type="VIEW" />
+                    <object-ref attributes="SUBJECT" id="000000146" type="VIEW" />
                 </variant>
             </qualified-identifier>
         </iteration>
@@ -328,7 +328,7 @@
         <qualified-identifier id="000000152" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000153" optional="true" referenceable="true" type="SCHEMA" />
-                <object-ref id="000000154" referenceable="true" type="DATASET" />
+                <object-ref attributes="SUBJECT" id="000000154" referenceable="true" type="DATASET" />
             </variant>
         </qualified-identifier>
         <wrapper id="000000155" optional="true" template="PARENTHESES">
@@ -388,7 +388,7 @@
         <qualified-identifier id="000000183" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000184" optional="true" referenceable="true" type="SCHEMA" />
-                <object-ref id="000000185" referenceable="true" type="DATASET" />
+                <object-ref attributes="SUBJECT" id="000000185" referenceable="true" type="DATASET" />
             </variant>
         </qualified-identifier>
         <token id="000000186" optional="true" type-id="CHR_STAR" />
@@ -481,7 +481,7 @@
                 <qualified-identifier id="000000236" separator="CHR_DOT">
                     <variant>
                         <object-ref id="000000237" optional="true" referenceable="true" type="SCHEMA" />
-                        <object-ref id="000000238" referenceable="true" type="DATASET" />
+                        <object-ref attributes="SUBJECT" id="000000238" referenceable="true" type="DATASET" />
                     </variant>
                 </qualified-identifier>
                 <token id="000000239" optional="true" type-id="CHR_STAR" />
@@ -509,7 +509,7 @@
         <qualified-identifier id="000000251" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000252" optional="true" referenceable="true" type="SCHEMA" />
-                <object-ref id="000000253" referenceable="true" type="DATASET" />
+                <object-ref attributes="SUBJECT" id="000000253" referenceable="true" type="DATASET" />
             </variant>
         </qualified-identifier>
         <token id="000000254" optional="true" type-id="CHR_STAR" version="8.3" />
@@ -821,11 +821,11 @@
                     </variant>
                     <variant>
                         <object-ref id="000000415" optional="true" referenceable="true" type="SCHEMA" />
-                        <object-ref id="000000416" referenceable="true" type="DATASET" />
+                        <object-ref attributes="SUBJECT" id="000000416" referenceable="true" type="DATASET" />
                     </variant>
                     <variant>
                         <object-ref id="000000417" optional="true" referenceable="true" type="SCHEMA" />
-                        <object-ref id="000000418" type="FUNCTION" />
+                        <object-ref attributes="SUBJECT" id="000000418" type="FUNCTION" />
                     </variant>
                 </qualified-identifier>
                 <one-of id="000000419" optional="true">
