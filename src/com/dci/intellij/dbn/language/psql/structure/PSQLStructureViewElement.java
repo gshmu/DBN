@@ -73,7 +73,7 @@ public class PSQLStructureViewElement implements StructureViewTreeElement {
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                if (basePsiElement.getElementType().is(ElementTypeAttribute.STRUCTURE)) {
+                if (basePsiElement.is(ElementTypeAttribute.STRUCTURE)) {
                     if (elements == null) {
                         elements = new ArrayList<PSQLStructureViewElement>();
                     }

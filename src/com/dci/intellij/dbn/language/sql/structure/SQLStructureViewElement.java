@@ -63,7 +63,7 @@ public class SQLStructureViewElement implements StructureViewTreeElement {
         };
     }
 
-    @NotNull
+    @NotNull/**/
     public StructureViewTreeElement[] getChildren() {
         List<SQLStructureViewElement> elements = new ArrayList<SQLStructureViewElement>();
         getChildren(psiElement, elements);
@@ -75,7 +75,7 @@ public class SQLStructureViewElement implements StructureViewTreeElement {
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                if (basePsiElement.getElementType().is(ElementTypeAttribute.STRUCTURE)) {
+                if (basePsiElement.is(ElementTypeAttribute.STRUCTURE)) {
                     elements.add(new SQLStructureViewElement(child));
                 } else {
                     getChildren(basePsiElement, elements);

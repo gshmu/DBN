@@ -522,7 +522,31 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
      *                       ItemPresentation                *
      *********************************************************/
     public String getPresentableText() {
+        ElementType elementType = getSpecificElementType();
         return elementType.getDescription();
+    }
+
+    public ElementType getSpecificElementType() {
+        ElementType elementType = this.elementType;
+        if (elementType.is(ElementTypeAttribute.GENERIC_ELEMENT)) {
+            BasePsiElement specificElement = lookupFirstPsiElement(ElementTypeAttribute.SPECIFIC_ELEMENT);
+            if (specificElement != null) {
+                elementType = specificElement.getElementType();
+            }
+        }
+        return elementType;
+    }
+
+    public boolean is(ElementTypeAttribute attribute) {
+        if (elementType.is(attribute)) {
+            return true;
+        } else if (attribute.isSpecific()) {
+            ElementType specificElementType = getSpecificElementType();
+            if (specificElementType != null) {
+                return specificElementType.is(attribute);
+            }
+        }
+        return false;
     }
 
     @Nullable
