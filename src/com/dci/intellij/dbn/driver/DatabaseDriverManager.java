@@ -108,7 +108,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                 }
                 driversCache.put(libraryName, drivers);
             } catch(Exception e) {
-                LOGGER.error("Error loading drivers from library " + libraryName, e);
+                LOGGER.warn("Error loading drivers from library " + libraryName, e);
             } finally {
                 ProgressMonitor.setTaskDescription(taskDescription);
             }
