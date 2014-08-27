@@ -51,6 +51,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private boolean isDisposed;
     private boolean checkingIdleStatus;
     private long validityCheckTimestamp = 0;
+    private ConnectionHandlerRef ref;
 
     private DBConsoleVirtualFile sqlConsoleFile;
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
@@ -61,6 +62,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         connectionStatus = new ConnectionStatus();
         connectionPool = new ConnectionPool(this);
         loadMonitor = new ConnectionLoadMonitor(this);
+        ref = new ConnectionHandlerRef(this);
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -182,6 +184,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public int getIdleMinutes() {
         return connectionPool == null ? 0 : connectionPool.getIdleMinutes();
+    }
+
+    @Override
+    public ConnectionHandlerRef getRef() {
+        return ref;
     }
 
     public boolean isValid() {

@@ -1,18 +1,21 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.psi.PsiElement;
+import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.psi.PsiElement;
+
 public class PsiResolveResult {
-    private ConnectionHandler activeConnection;
-    private DBSchema currentSchema;
-    private IdentifierPsiElement element;
-    private BasePsiElement parent;
-    private PsiElement referencedElement;
+    private ConnectionHandlerRef activeConnection;
+    private DBObjectRef<DBSchema> currentSchema;
+    private WeakReference<IdentifierPsiElement> element;
+    private WeakReference<BasePsiElement> parent;
+    private WeakReference<PsiElement> referencedElement;
     private CharSequence text;
     private boolean isNew;
     private boolean isResolving;
@@ -23,10 +26,9 @@ public class PsiResolveResult {
     private int overallResolveTrials = 0;
 
     PsiResolveResult(IdentifierPsiElement element) {
-        this.activeConnection = element.getActiveConnection();
-        this.element = element;
+        this.activeConnection = new ConnectionHandlerRef(element.getActiveConnection());
+        this.element = new WeakReference<IdentifierPsiElement>(element);
         this.isNew = true;
-        IdentifierElementType elementType = element.getElementType();
     }
 
     public void preResolve(IdentifierPsiElement psiElement) {
@@ -36,13 +38,14 @@ public class PsiResolveResult {
         this.referencedElement = null;
         this.parent = null;
         this.text = psiElement.getUnquotedText();
-        this.activeConnection = connectionHandler;
-        this.currentSchema = psiElement.getCurrentSchema();
+        this.activeConnection = new ConnectionHandlerRef(connectionHandler);
+        this.currentSchema = DBObjectRef.from(psiElement.getCurrentSchema());
         this.executableTextLength = psiElement.getEnclosingScopePsiElement().getTextLength();
     }
 
     public void postResolve() {
         this.isNew = false;
+        PsiElement referencedElement = this.referencedElement == null ? null : this.referencedElement.get();
         this.resolveTrials = referencedElement == null ? resolveTrials + 1 : 0;
         this.overallResolveTrials = referencedElement == null ? overallResolveTrials + 1 : 0;
         this.isResolving = false;
@@ -66,13 +69,15 @@ public class PsiResolveResult {
             return true;
         }
 
-        ConnectionHandler activeConnection = element.getActiveConnection();
+        IdentifierPsiElement element = this.element.get();
+        ConnectionHandler activeConnection = element == null ? null : element.getActiveConnection();
         if (activeConnection == null || activeConnection.isVirtual()) {
             if (currentSchema != null) return true;
         } else {
             if (connectionBecameValid() || currentSchemaChanged()) return true;
         }
 
+        PsiElement referencedElement = this.referencedElement == null ? null : this.referencedElement.get();
         if (referencedElement == null &&
                 resolveTrials > 3 &&
                 !elementTextChanged() &&
@@ -80,12 +85,12 @@ public class PsiResolveResult {
             return false;
         }
 
-        if (referencedElement == null ||
-                !referencedElement.isValid() ||
-                !element.textMatches(referencedElement.getText())) {
+        if (referencedElement == null || !referencedElement.isValid() ||
+                (element != null && !element.textMatches(referencedElement.getText()))) {
             return true;
         }
 
+        BasePsiElement parent = getParent();
         if (parent != null) {
             if (!parent.isValid()) {
                 return true;
@@ -99,25 +104,34 @@ public class PsiResolveResult {
         return false;
     }
 
+    private BasePsiElement getParent() {
+        return parent == null ? null : parent.get();
+    }
+
     private boolean elementTextChanged() {
-        return !element.textMatches(text);
+        IdentifierPsiElement element = this.element.get();
+        return element!= null && !element.textMatches(text);
     }
 
     private boolean connectionChanged() {
-        return activeConnection != element.getActiveConnection();
+        IdentifierPsiElement element = this.element.get();
+        return element != null && getActiveConnection() != element.getActiveConnection();
     }
 
     private boolean currentSchemaChanged() {
-        return currentSchema != element.getCurrentSchema();
+        IdentifierPsiElement element = this.element.get();
+        return element != null && currentSchema != element.getCurrentSchema();
     }
 
     private boolean connectionBecameValid() {
-        ConnectionHandler activeConnection = element.getActiveConnection();
+        IdentifierPsiElement element = this.element.get();
+        ConnectionHandler activeConnection = element == null ? null : element.getActiveConnection();
         return !isConnectionValid && activeConnection!= null && !activeConnection.isVirtual() && activeConnection.getConnectionStatus().isValid();
     }
 
     private boolean enclosingExecutableChanged() {
-        return executableTextLength != element.getEnclosingScopePsiElement().getTextLength();
+        IdentifierPsiElement element = this.element.get();
+        return element != null && executableTextLength != element.getEnclosingScopePsiElement().getTextLength();
     }
 
     /*********************************************************
@@ -129,19 +143,19 @@ public class PsiResolveResult {
     }
 
     public PsiElement getReferencedElement() {
-        return referencedElement;
+        return this.referencedElement == null ? null : this.referencedElement.get();
     }
 
     public ConnectionHandler getActiveConnection() {
-        return activeConnection;
+        return activeConnection.get();
     }
 
     public void setParent(@Nullable BasePsiElement parent) {
-        this.parent = parent;
+        this.parent = new WeakReference<BasePsiElement>(parent);
     }
 
     public void setReferencedElement(PsiElement referencedElement) {
-        this.referencedElement = referencedElement;
+        this.referencedElement = referencedElement == null ? null : new WeakReference<PsiElement>(referencedElement);
     }
 
     public int getOverallResolveTrials() {

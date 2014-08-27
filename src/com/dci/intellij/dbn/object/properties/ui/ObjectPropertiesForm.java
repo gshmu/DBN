@@ -82,6 +82,7 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     initProgressIndicator(progressIndicator, true);
                     final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
+                    Disposer.register(ObjectPropertiesForm.this, tableModel);
 
                     new SimpleLaterInvocator() {
                         public void execute() {
@@ -90,11 +91,13 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
                             objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
 
 
+                            ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
                             objectPropertiesTable.setModel(tableModel);
                             ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
 
                             mainPanel.revalidate();
                             mainPanel.repaint();
+                            Disposer.dispose(oldTableModel);
                         }
                     }.start();
                 }

@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.editor.console.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import com.intellij.openapi.util.Disposer;
 
 public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -23,6 +24,7 @@ public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
 
         ConnectionHandler connectionHandler = fileEditor.getVirtualFile().getConnectionHandler();
         autoCommitLabel.setConnectionHandler(connectionHandler);
+        Disposer.register(this, autoCommitLabel);
     }
 
     @Override
@@ -33,6 +35,5 @@ public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
     @Override
     public void dispose() {
         super.dispose();
-        autoCommitLabel.dispose();
     }
 }

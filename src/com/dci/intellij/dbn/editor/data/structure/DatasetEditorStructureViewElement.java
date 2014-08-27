@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.structure;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Arrays;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
             public String getLocationString() {
                 if (treeNode instanceof DBColumn) {
                     DBColumn column  = (DBColumn) treeNode;
-                    return column.getPresentableTextDetails();
+                    return column.getDataType().getName().toLowerCase();
 
                 }
                 return null;

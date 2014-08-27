@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
@@ -9,10 +13,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class TokenPsiElement extends LeafPsiElement {
     public TokenPsiElement(ASTNode astNode, TokenElementType elementType) {
@@ -27,7 +27,7 @@ public class TokenPsiElement extends LeafPsiElement {
     public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
 
     public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {}
-    public void collectSubjectPsiElements(Set<BasePsiElement> bucket) {}
+    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
     public NamedPsiElement lookupNamedPsiElement(String id) {return null;}
     public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 
