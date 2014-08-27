@@ -14,7 +14,7 @@ public class PsiResolveResult {
     private ConnectionHandlerRef activeConnection;
     private DBObjectRef<DBSchema> currentSchema;
     private WeakReference<IdentifierPsiElement> element;
-    private BasePsiElement parent;
+    private WeakReference<BasePsiElement> parent;
     private WeakReference<PsiElement> referencedElement;
     private CharSequence text;
     private boolean isNew;
@@ -90,6 +90,7 @@ public class PsiResolveResult {
             return true;
         }
 
+        BasePsiElement parent = getParent();
         if (parent != null) {
             if (!parent.isValid()) {
                 return true;
@@ -101,6 +102,10 @@ public class PsiResolveResult {
             }
         }
         return false;
+    }
+
+    private BasePsiElement getParent() {
+        return parent == null ? null : parent.get();
     }
 
     private boolean elementTextChanged() {
@@ -146,7 +151,7 @@ public class PsiResolveResult {
     }
 
     public void setParent(@Nullable BasePsiElement parent) {
-        this.parent = parent;
+        this.parent = new WeakReference<BasePsiElement>(parent);
     }
 
     public void setReferencedElement(PsiElement referencedElement) {
