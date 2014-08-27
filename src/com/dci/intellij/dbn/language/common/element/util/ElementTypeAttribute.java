@@ -26,8 +26,8 @@ public enum ElementTypeAttribute {
     DDL_STATEMENT("DDL_STATEMENT", "DDL statement"),
     EXECUTABLE_CODE("EXECUTABLE_CODE", "Executable code"),
     BREAKPOINT_POSITION("BREAKPOINT_POSITION", "Default breakpoint position"),
-    SPECIFIC_ELEMENT("SPECIFIC_ELEMENT", "Specific element"),
-    GENERIC_ELEMENT("GENERIC_ELEMENT", "Generic element"),
+    GENERIC("GENERIC", "Generic element"),
+    SPECIFIC("SPECIFIC", "Specific element"),
     ;
 
     public static final Set<ElementTypeAttribute> EMPTY_LIST = new THashSet<ElementTypeAttribute>(0);
