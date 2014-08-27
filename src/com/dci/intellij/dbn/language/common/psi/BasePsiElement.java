@@ -528,8 +528,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public ElementType getSpecificElementType() {
         ElementType elementType = this.elementType;
-        if (elementType.is(ElementTypeAttribute.GENERIC_ELEMENT)) {
-            BasePsiElement specificElement = lookupFirstPsiElement(ElementTypeAttribute.SPECIFIC_ELEMENT);
+        if (elementType.is(ElementTypeAttribute.GENERIC)) {
+            BasePsiElement specificElement = lookupFirstPsiElement(ElementTypeAttribute.SPECIFIC);
             if (specificElement != null) {
                 elementType = specificElement.getElementType();
             }
