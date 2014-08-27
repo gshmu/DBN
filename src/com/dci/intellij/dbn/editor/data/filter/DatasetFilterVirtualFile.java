@@ -65,6 +65,10 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
         return null;
     }
 
+    public DBDataset getDataset() {
+        return DBObjectRef.get(datasetRef);
+    }
+
     public Icon getIcon() {
         return Icons.DBO_TABLE;
     }

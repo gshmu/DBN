@@ -35,6 +35,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
+    private ConnectionHandlerRef ref;
 
     public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, double databaseVersion, Project project){
         this.id = id;
@@ -42,6 +43,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         this.project = project;
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
+        this.ref = new ConnectionHandlerRef(this);
     }
 
     public DatabaseType getDatabaseType() {return databaseType;}
@@ -147,6 +149,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void disconnect() {}
     public void ping(boolean check) {}
     public int getIdleMinutes() {return 0;}
+
+    @Override
+    public ConnectionHandlerRef getRef() {
+        return ref;
+    }
 
     public ConnectionHandler clone() {return null;}
     public void notifyChanges(VirtualFile virtualFile) {}

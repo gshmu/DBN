@@ -65,7 +65,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void settingsChanged(String connectionId) {
-            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<>();
+            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
             for (DBObjectRef objectRef : openFiles.keySet()) {
                 if (objectRef.getConnectionId().equals(connectionId)) {
                     filesToClose.add(openFiles.get(objectRef));

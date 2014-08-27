@@ -1,8 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.util.NamingUtil;
+import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
+import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -11,11 +14,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class ExecutablePsiElement extends NamedPsiElement{
     private StatementExecutionBasicProcessor executionProcessor;
@@ -55,26 +53,20 @@ public class ExecutablePsiElement extends NamedPsiElement{
         return text;
     }
 
-    public String createResultName() {
-        Set<BasePsiElement> subjects = new THashSet<BasePsiElement>();
-        collectSubjectPsiElements(subjects);
-        return subjects.size() > 0 ? NamingUtil.createNamesList(subjects, 3) : null;
-    }
-
     public NamedElementType getElementType() {
         return (NamedElementType) super.getElementType();
     }
 
     public boolean isQuery() {
-        return getElementType().is(ElementTypeAttribute.QUERY);
+        return getSpecificElementType().is(ElementTypeAttribute.QUERY);
     }
 
     public boolean isTransactional() {
-        return getElementType().is(ElementTypeAttribute.TRANSACTIONAL);
+        return getSpecificElementType().is(ElementTypeAttribute.TRANSACTIONAL);
     }
 
     public boolean isTransactionControl() {
-        return getElementType().is(ElementTypeAttribute.TRANSACTION_CONTROL);
+        return getSpecificElementType().is(ElementTypeAttribute.TRANSACTION_CONTROL);
     }
 
 
@@ -103,11 +95,12 @@ public class ExecutablePsiElement extends NamedPsiElement{
      *                    ItemPresentation                   *
      *********************************************************/
     public String getPresentableText() {
-        String resultName = createResultName();
-        if (resultName != null) {
-            return getElementType().getDescription() + " (" + resultName + ")";
+        ElementType elementType = getSpecificElementType();
+        String subjectList = createSubjectList();
+        if (subjectList != null) {
+            return elementType.getDescription() + " (" + subjectList + ")";
         } else {
-            return getElementType().getDescription();
+            return elementType.getDescription();
         }
 
     }

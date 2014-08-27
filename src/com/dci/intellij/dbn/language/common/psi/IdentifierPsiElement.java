@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -26,12 +32,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElement {
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -139,7 +139,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return bucket;
     }
 
-    public void collectSubjectPsiElements(Set<BasePsiElement> bucket) {
+    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {
         if (getElementType().is(ElementTypeAttribute.SUBJECT)) {
             bucket.add(this);
         }

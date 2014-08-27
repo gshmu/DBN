@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.DocumentAdapter;
 
 public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
@@ -117,6 +118,8 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         commitCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.setEnabled(!debug);
+
+        Disposer.register(this, autoCommitLabel);
     }
 
     private class SchemaSelector extends ValueSelector<DBSchema> {
@@ -201,7 +204,6 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
 
     public void dispose() {
         super.dispose();
-        autoCommitLabel.dispose();
         DisposerUtil.dispose(argumentForms);
         changeListeners.clear();
         argumentForms = null;

@@ -318,7 +318,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public abstract Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount);
 
     public abstract void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket);
-    public abstract void collectSubjectPsiElements(Set<BasePsiElement> bucket);
+    public abstract void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket);
 
 
     public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {
@@ -522,7 +522,31 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
      *                       ItemPresentation                *
      *********************************************************/
     public String getPresentableText() {
+        ElementType elementType = getSpecificElementType();
         return elementType.getDescription();
+    }
+
+    public ElementType getSpecificElementType() {
+        ElementType elementType = this.elementType;
+        if (elementType.is(ElementTypeAttribute.GENERIC)) {
+            BasePsiElement specificElement = lookupFirstPsiElement(ElementTypeAttribute.SPECIFIC);
+            if (specificElement != null) {
+                elementType = specificElement.getElementType();
+            }
+        }
+        return elementType;
+    }
+
+    public boolean is(ElementTypeAttribute attribute) {
+        if (elementType.is(attribute)) {
+            return true;
+        } else if (attribute.isSpecific()) {
+            ElementType specificElementType = getSpecificElementType();
+            if (specificElementType != null) {
+                return specificElementType.is(attribute);
+            }
+        }
+        return false;
     }
 
     @Nullable
@@ -532,7 +556,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     @Nullable
     public Icon getIcon(boolean open) {
-        return getElementType().getIcon();
+        return getSpecificElementType().getIcon();
     }
 
     @Nullable

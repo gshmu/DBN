@@ -2,10 +2,10 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3192</version>
+    <version>3.0.3224</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
-    <vendor email="dancioca@bluewin.ch" logo="/img/v1/project/DatabaseNavigator.png">Dan Cioca</vendor>
+    <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
     <idea-version since-build="130.0001" until-build="135.9999"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+             <ul>
+                - Structure view enhancements<br>
+                - Language parsers support for database versions (postgres)<br>
+                - Bug fixes and performance improvements<br>
+            </ul>
             <li><b>3.0.3192</b>
              <ul>
                 - Configurable "tracking" columns (display text attributes, visibility, editable)<br>
@@ -216,8 +222,8 @@
             <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
-            <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/v1/file/SQLConsole.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method execution history" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory" icon="/img/v1/MethodExecutionHistory.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method execution history" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory" icon="/img/MethodExecutionHistory.png"/>
             <action class="com.dci.intellij.dbn.menu.action.OpenUncommittedChangesOverviewAction" text="Uncommitted changes" id="DBNavigator.Actions.MainMenu.OpenUncommittedChangesOverview"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
@@ -315,7 +321,7 @@
         </group>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="DB Browser" icon="/img/v1/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
+        <toolWindow id="DB Browser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
 
         <fileTypeFactory order="last" implementation="com.dci.intellij.dbn.language.sql.SQLFileTypeFactory"/>
         <fileTypeFactory order="last" implementation="com.dci.intellij.dbn.language.psql.PSQLFileTypeFactory"/>
