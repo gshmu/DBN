@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -19,6 +12,8 @@ import com.dci.intellij.dbn.ddl.ObjectToDDLContentSynchronizer;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -29,6 +24,10 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -36,6 +35,13 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> implements FileConnectionMappingProvider {
     public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
@@ -243,5 +249,33 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
 
+    public boolean isModified() {
+        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+           if (contentVirtualFile.isModified()) {
+               return true;
+           }
+        }
+        return false;
+    }
+
+    public void saveChanges() {
+        FileDocumentManager.getInstance().saveAllDocuments();
+        Project project = getProject();
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+            if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
+                FileEditor[] fileEditors = fileEditorManager.getEditors(this);
+                for (FileEditor fileEditor : fileEditors) {
+                    if (fileEditor instanceof SourceCodeEditor) {
+                        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                        Editor editor = sourceCodeEditor.getEditor();
+                        sourceCodeManager.updateSourceToDatabase(editor, (DBSourceCodeVirtualFile) contentVirtualFile);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
