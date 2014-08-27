@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.data.grid.options;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.jdom.Element;
@@ -11,7 +15,8 @@ import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
 
 public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGridTrackingColumnSettingsForm> {
-    private Set<String> columnNames = new THashSet<String>();
+    private List<String> columnNames = new ArrayList<String>();
+    private Set<String> lookupCache = new THashSet<String>();
     private boolean showColumns = true;
     private boolean allowEditing = false;
 
@@ -23,12 +28,21 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
      *                      Custom                      *
      ****************************************************/
 
-    public Set<String> getColumnNames() {
+    public Collection<String> getColumnNames() {
         return columnNames;
     }
 
-    public void setColumnNames(Set<String> columnNames) {
-        this.columnNames = columnNames;
+    public void setColumnNames(Collection<String> columnNames) {
+        this.columnNames.clear();
+        this.columnNames.addAll(columnNames);
+        updateLookupCache(columnNames);
+    }
+
+    private void updateLookupCache(Collection<String> columnNames) {
+        lookupCache = new HashSet<String>();
+        for (String columnName : columnNames) {
+            lookupCache.add(columnName.toUpperCase());
+        }
     }
 
     public boolean isShowColumns() {
@@ -48,11 +62,11 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
     }
 
     public boolean isTrackingColumn(String columnName) {
-        return columnName!= null && columnNames.size() > 0 && columnNames.contains(columnName.toUpperCase());
+        return columnName!= null && lookupCache.size() > 0 && lookupCache.contains(columnName.toUpperCase());
     }
 
     public boolean isColumnVisible(String columnName) {
-        return showColumns || columnName == null || columnNames.size() == 0 || !columnNames.contains(columnName.toUpperCase());
+        return showColumns || columnName == null || lookupCache.size() == 0 || !lookupCache.contains(columnName.toUpperCase());
     }
 
     /****************************************************
@@ -73,6 +87,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
             String columnName = columnNames.nextToken().trim().toUpperCase();
             this.columnNames.add(columnName);
         }
+        updateLookupCache(this.columnNames);
 
         showColumns = SettingsUtil.getBoolean(element, "visible", showColumns);
         allowEditing = SettingsUtil.getBoolean(element, "editable", allowEditing);

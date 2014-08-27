@@ -25,7 +25,6 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());
-        setSelectionForeground(UIUtil.getTableForeground());
         setCellSelectionEnabled(true);
     }
 
@@ -42,7 +41,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<
 
     private ListSelectionListener selectionListener = new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting()) {
+            if (!e.getValueIsAdjusting() && getSelectedRowCount() == 1) {
                 startCellEditing();
             }
         }
