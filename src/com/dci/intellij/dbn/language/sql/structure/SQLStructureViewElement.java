@@ -7,29 +7,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.intellij.ide.structureView.StructureViewTreeElement;
+import com.dci.intellij.dbn.language.common.structure.DBLanguageStructureViewElement;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 
-public class SQLStructureViewElement implements StructureViewTreeElement {
-    PsiElement psiElement;
+public class SQLStructureViewElement extends DBLanguageStructureViewElement<SQLStructureViewElement> {
 
-    SQLStructureViewElement(PsiElement psiElement) {
-        this.psiElement = psiElement;
-    }
-
-    public Object getValue() {
-        return psiElement;
+    public SQLStructureViewElement(PsiElement psiElement) {
+        super(psiElement);
     }
 
     @NotNull
     public ItemPresentation getPresentation() {
+        final PsiElement psiElement = getPsiElement();
         if (psiElement instanceof BasePsiElement) return (ItemPresentation) psiElement;
         return new ItemPresentation() {
             public String getPresentableText() {
@@ -63,44 +57,22 @@ public class SQLStructureViewElement implements StructureViewTreeElement {
         };
     }
 
-    @NotNull/**/
-    public StructureViewTreeElement[] getChildren() {
-        List<SQLStructureViewElement> elements = new ArrayList<SQLStructureViewElement>();
-        getChildren(psiElement, elements);
-        return elements.toArray(new StructureViewTreeElement[elements.size()]);
+    @Override
+    protected SQLStructureViewElement createChildElement(PsiElement child) {
+        return new SQLStructureViewElement(child);
     }
 
-    private void getChildren(PsiElement parent, List<SQLStructureViewElement> elements) {
-        PsiElement child = parent.getFirstChild();
-        while (child != null) {
-            if (child instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) child;
-                if (basePsiElement.is(ElementTypeAttribute.STRUCTURE)) {
-                    elements.add(new SQLStructureViewElement(child));
-                } else {
-                    getChildren(basePsiElement, elements);
-                }
+    @Override
+    protected List<SQLStructureViewElement> visitChild(PsiElement child, List<SQLStructureViewElement> elements) {
+        if (child instanceof ChameleonPsiElement) {
+            if (elements == null) {
+                elements = new ArrayList<SQLStructureViewElement>();
             }
-            if (child instanceof ChameleonPsiElement) {
-                elements.add(new SQLStructureViewElement(child));
-            }
-            child = child.getNextSibling();
+            elements.add(new SQLStructureViewElement(child));
+            return elements;
+        } else {
+            return super.visitChild(child, elements);
         }
     }
 
-    public void navigate(boolean requestFocus) {
-        if (psiElement instanceof NavigationItem) {
-            NavigationItem navigationItem = (NavigationItem) psiElement;
-            navigationItem.navigate(requestFocus);
-        }
-    }
-
-    public boolean canNavigate() {
-        return true;
-    }
-
-    public boolean canNavigateToSource() {
-        return true;
-    }
 }
-

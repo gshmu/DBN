@@ -556,7 +556,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     @Nullable
     public Icon getIcon(boolean open) {
-        return getElementType().getIcon();
+        return getSpecificElementType().getIcon();
     }
 
     @Nullable

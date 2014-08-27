@@ -27,7 +27,7 @@
     </element-def>
 
     <!-- ========= COMMIT ========= -->
-    <element-def attributes="TRANSACTION_CONTROL, DATA_MANIPULATION, SPECIFIC" description="COMMIT statement" id="commit_statement">
+    <element-def attributes="TRANSACTION_CONTROL, DATA_MANIPULATION, SPECIFIC" description="COMMIT statement" id="commit_statement" icon="CONNECTION_COMMIT">
         <token id="000000002" type-id="KW_COMMIT" />
         <one-of id="000000003" optional="true">
             <token id="000000004" type-id="KW_WORK" />
@@ -40,7 +40,7 @@
     </element-def>
 
     <!-- ========= ROLLBACK ========= -->
-    <element-def attributes="TRANSACTION_CONTROL, DATA_MANIPULATION, SPECIFIC" description="ROLLBACK statement" id="rollback_statement">
+    <element-def attributes="TRANSACTION_CONTROL, DATA_MANIPULATION, SPECIFIC" description="ROLLBACK statement" id="rollback_statement" icon="CONNECTION_ROLLBACK">
         <token id="000000009" type-id="KW_ROLLBACK" />
         <one-of id="000000010" optional="true">
             <sequence id="000000011">

@@ -33,7 +33,7 @@ public class NamingUtil {
         for (IdentifierPsiElement identifier : identifiers) {
             names.add(identifier.getUnquotedText().toString().toUpperCase());
             if (names.size() >= maxItems) {
-                partial = true;
+                partial = identifiers.size() > maxItems;
                 break;
             }
         }
