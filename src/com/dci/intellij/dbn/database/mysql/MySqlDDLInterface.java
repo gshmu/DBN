@@ -26,6 +26,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, String code) {
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
+        boolean makeRerunnable = ddlFileSettings.getGeneralSettings().isMakeScriptsRerunnable();
 
         CodeStyleCaseSettings caseSettings = SQLCodeStyleSettings.getInstance(project).getCaseSettings();
         CodeStyleCaseOption kco = caseSettings.getKeywordCaseOption();
@@ -33,7 +34,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
 
 
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
-            return kco.changeCase("create or replace view ") +
+            return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + " view ") +
                     oco.changeCase((useQualified ? schemaName + "." : "") + objectName) +
                     kco.changeCase(" as\n") +
                     code;
@@ -42,11 +43,12 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         if (objectTypeId == DatabaseObjectTypeId.PROCEDURE || objectTypeId == DatabaseObjectTypeId.FUNCTION) {
             String objectType = objectTypeId.toString().toLowerCase();
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, caseSettings);
-            return
-                    kco.changeCase("delimiter @@\n") +
-                            kco.changeCase("drop " + objectType + " if exists ") +
-                            oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + "@@\n\n" +
-                            kco.changeCase("create definer = current_user\n") + code + "@@\n";
+            String delimiterStatement = kco.changeCase("delimiter @@\n\n");
+            String dropStatement =
+                    kco.changeCase("drop " + objectType + " if exists ") +
+                    oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + "@@\n\n";
+            String createStatement = kco.changeCase("create definer=current_user\n") + code + "@@\n";
+            return delimiterStatement + (makeRerunnable ? dropStatement : "") + createStatement;
         }
         return code;
     }

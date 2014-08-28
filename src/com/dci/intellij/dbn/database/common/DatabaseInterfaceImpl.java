@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.database.common;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
-import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
+import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
 
 public class DatabaseInterfaceImpl implements DatabaseInterface{
     private String fileName;
@@ -62,6 +62,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         executionProcessor.executeUpdate(connection, arguments);
     }
 
-
-
+    public DatabaseInterfaceProvider getProvider() {
+        return provider;
+    }
 }

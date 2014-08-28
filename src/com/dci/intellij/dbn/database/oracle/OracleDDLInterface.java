@@ -25,17 +25,18 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, String code) {
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
+        boolean makeRerunnable = ddlFileSettings.getGeneralSettings().isMakeScriptsRerunnable();
 
         CodeStyleCaseSettings styleCaseSettings = SQLCodeStyleSettings.getInstance(project).getCaseSettings();
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
 
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
-            return kco.changeCase("create or replace view ") + oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + kco.changeCase(" as\n") + code;
+            return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + kco.changeCase(" as\n") + code;
         } else {
             String objectType = objectTypeId.toString().toLowerCase();
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, styleCaseSettings);
-            return kco.changeCase("create or replace\n") + code;
+            return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + "\n") + code;
         }
     }
 
