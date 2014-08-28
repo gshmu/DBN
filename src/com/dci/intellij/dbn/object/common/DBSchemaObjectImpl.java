@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.openapi.project.Project;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -98,8 +99,20 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     }
 
     public String createDDLStatement(String code) {
-        return getConnectionHandler().getInterfaceProvider().getMetadataInterface().
-                createDDLStatement(getObjectType().getTypeId(), getName(), code);
+        Project project = getProject();
+
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if(connectionHandler != null) {
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            return ddlInterface.createDDLStatement(project,
+                    getObjectType().getTypeId(),
+                    connectionHandler.getUserName(),
+                    getSchema().getName(),
+                    getName(),
+                    code);
+
+        }
+        return "";
     }
 
     public DDLFileType getDDLFileType(DBContentType contentType) {

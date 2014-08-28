@@ -1,15 +1,14 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 
 
 public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -44,12 +43,6 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     public ResultSet loadCharsets(Connection connection) throws SQLException {
         return executeQuery(connection, "charsets");
-    }
-
-    public String createDDLStatement(DatabaseObjectTypeId objectTypeId, String objectName, String code) {
-        return objectTypeId == DatabaseObjectTypeId.VIEW ? "create view " + objectName + " as\n" + code :
-               objectTypeId == DatabaseObjectTypeId.FUNCTION ? "create function " + objectName + " as\n" + code :
-                       "create or replace\n" + code;
     }
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -5,8 +5,11 @@ import java.sql.SQLException;
 
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
+import com.intellij.openapi.project.Project;
 
 public interface DatabaseDDLInterface extends DatabaseInterface{
+    String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, String code);
+
     void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName);
 
     boolean includesTypeAndNameInSourceContent(DatabaseObjectTypeId objectTypeId);
@@ -37,5 +40,7 @@ public interface DatabaseDDLInterface extends DatabaseInterface{
    /*********************************************************
     *                   RENAME statements                     *
     *********************************************************/
+
+
 
 }

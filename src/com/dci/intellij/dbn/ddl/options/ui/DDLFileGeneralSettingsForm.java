@@ -13,6 +13,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
     private JTextField statementPostfixTextField;
     private JCheckBox lookupDDLFilesCheckBox;
     private JCheckBox createDDLFileCheckBox;
+    private JCheckBox useQualifiedObjectNamesCheckBox;
 
     public DDLFileGeneralSettingsForm(DDLFileGeneralSettings settings) {
         super(settings);
@@ -30,6 +31,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         settings.getStatementPostfix().applyChanges(statementPostfixTextField);
         settings.getLookupDDLFilesEnabled().applyChanges(lookupDDLFilesCheckBox);
         settings.getCreateDDLFilesEnabled().applyChanges(createDDLFileCheckBox);
+        settings.getUseQualifiedObjectNames().applyChanges(useQualifiedObjectNamesCheckBox);
     }
 
     public void resetChanges() {
@@ -37,5 +39,6 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         settings.getStatementPostfix().resetChanges(statementPostfixTextField);
         settings.getLookupDDLFilesEnabled().resetChanges(lookupDDLFilesCheckBox);
         settings.getCreateDDLFilesEnabled().resetChanges(createDDLFileCheckBox);
+        settings.getUseQualifiedObjectNames().resetChanges(useQualifiedObjectNamesCheckBox);
     }
 }
