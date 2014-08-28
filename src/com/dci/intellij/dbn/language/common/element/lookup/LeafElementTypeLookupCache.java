@@ -27,6 +27,11 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     }
 
     @Override
+    public boolean canStartWithToken(TokenType tokenType) {
+        return getElementType().getTokenType() == tokenType;
+    }
+
+    @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
         bucket.add(getElementType());
