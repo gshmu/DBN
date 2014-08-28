@@ -607,8 +607,6 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     ResultSet loadObjectChangeTimestamp(String ownerName, String objectName, String objectType, Connection connection) throws SQLException;
 
-    String createDDLStatement(DatabaseObjectTypeId objectTypeId, String objectName, String code);
-
     void enableTrigger(String ownerName, String triggerName, Connection connection) throws SQLException;
 
     void disableTrigger(String ownerName, String triggerName, Connection connection) throws SQLException;

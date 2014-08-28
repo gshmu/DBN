@@ -1,15 +1,14 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 
 public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
@@ -21,14 +20,6 @@ public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     public ResultSet loadTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
         return loadObjectSourceCode(ownerName, triggerName, "TRIGGER", connection);
-    }
-
-
-    public String createDDLStatement(DatabaseObjectTypeId objectTypeId, String objectName, String code) {
-        return
-            objectTypeId == DatabaseObjectTypeId.VIEW ?
-                    "CREATE OR REPLACE VIEW " + objectName + " as\n" + code :
-                    "CREATE OR REPLACE\n" + code;
     }
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

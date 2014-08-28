@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -35,13 +42,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> implements FileConnectionMappingProvider {
     public ThreadLocal<Document> FAKE_DOCUMENT = new ThreadLocal<Document>();
@@ -82,7 +82,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                 DDLFileGeneralSettings ddlFileSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
                 ConnectionHandler connectionHandler = object.getConnectionHandler();
                 boolean ddlFileBinding = connectionHandler.getSettings().getDetailSettings().isDdlFileBinding();
-                if (ddlFileBinding && ddlFileSettings.getLookupDDLFilesEnabled().value()) {
+                if (ddlFileBinding && ddlFileSettings.isLookupDDLFilesEnabled()) {
                     List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
                     if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
                         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
@@ -90,7 +90,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                         if (virtualFiles.size() > 0) {
                             int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                             return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
-                        } else if (ddlFileSettings.getCreateDDLFilesEnabled().value()) {
+                        } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
                             int exitCode = Messages.showYesNoDialog(
                                     "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                             "(You can disable this check in \"DDL File\" options)",

@@ -11,6 +11,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
     private StringSetting statementPostfix = new StringSetting("statement-postfix", "/");
     private BooleanSetting lookupDDLFilesEnabled = new BooleanSetting("lookup-ddl-files", true);
     private BooleanSetting createDDLFilesEnabled = new BooleanSetting("create-ddl-files", false);
+    private BooleanSetting useQualifiedObjectNames = new BooleanSetting("use-qualified-names", false);
 
     public String getDisplayName() {
         return "DDL file general settings";
@@ -24,9 +25,26 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         return lookupDDLFilesEnabled;
     }
 
+    public boolean isLookupDDLFilesEnabled() {
+        return lookupDDLFilesEnabled.value();
+    }
+
     public BooleanSetting getCreateDDLFilesEnabled() {
         return createDDLFilesEnabled;
     }
+
+    public boolean isCreateDDLFilesEnabled() {
+        return createDDLFilesEnabled.value();
+    }
+
+    public BooleanSetting getUseQualifiedObjectNames() {
+        return useQualifiedObjectNames;
+    }
+
+    public boolean isUseQualifiedObjectNames() {
+        return useQualifiedObjectNames.value();
+    }
+
 
     /*********************************************************
      *                     Configuration                     *
@@ -44,11 +62,13 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         statementPostfix.readConfiguration(element);
         lookupDDLFilesEnabled.readConfiguration(element);
         createDDLFilesEnabled.readConfiguration(element);
+        useQualifiedObjectNames.readConfiguration(element);
     }
 
     public void writeConfiguration(Element element) {
         statementPostfix.writeConfiguration(element);
         lookupDDLFilesEnabled.writeConfiguration(element);
         createDDLFilesEnabled.writeConfiguration(element);
+        useQualifiedObjectNames.writeConfiguration(element);
     }
 }

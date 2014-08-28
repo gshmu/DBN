@@ -1,22 +1,54 @@
 package com.dci.intellij.dbn.database.mysql;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
+import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
+import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     public MySqlDDLInterface(DatabaseInterfaceProvider provider) {
         super("mysql_ddl_interface.xml", provider);
+    }
+
+
+    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, String code) {
+        DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
+        boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
+
+        CodeStyleCaseSettings caseSettings = SQLCodeStyleSettings.getInstance(project).getCaseSettings();
+        CodeStyleCaseOption kco = caseSettings.getKeywordCaseOption();
+        CodeStyleCaseOption oco = caseSettings.getObjectCaseOption();
+
+
+        if (objectTypeId == DatabaseObjectTypeId.VIEW) {
+            return kco.changeCase("create or replace view ") +
+                    oco.changeCase((useQualified ? schemaName + "." : "") + objectName) +
+                    kco.changeCase(" as\n") +
+                    code;
+        }
+
+        if (objectTypeId == DatabaseObjectTypeId.PROCEDURE || objectTypeId == DatabaseObjectTypeId.FUNCTION) {
+            String objectType = objectTypeId.toString().toLowerCase();
+            code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, caseSettings);
+            return
+                    kco.changeCase("delimiter @@\n") +
+                            kco.changeCase("drop " + objectType + " if exists ") +
+                            oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + "@@\n\n" +
+                            kco.changeCase("create definer = current_user\n") + code + "@@\n";
+        }
+        return code;
     }
 
     @Override
