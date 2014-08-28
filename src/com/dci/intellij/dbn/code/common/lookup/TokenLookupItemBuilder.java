@@ -84,6 +84,7 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
+        tokenElementType.getPossibleTokenChains();
         return super.createLookupItem(source, consumer);
     }
 
