@@ -90,6 +90,11 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return null;
     }
 
+    @Override
+    public int getIndexInParent() {
+        return 0;
+    }
+
     public boolean is(ElementTypeAttribute attribute) {
         return false;
     }

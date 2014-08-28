@@ -43,8 +43,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
 
         if (tokenType != null && !tokenType.isChameleon() && (isDummyToken || isSuppressibleReservedWord || elementType.getLookupCache().canStartWithToken(tokenType))) {
             ElementTypeRef[] children = elementType.getChildren();
-            while (node.getCurrentSiblingIndex() < children.length) {
-                int index = node.getCurrentSiblingIndex();
+            while (node.getCursorPosition() < children.length) {
+                int index = node.getCursorPosition();
                 ElementTypeRef child = children[index];
 
                 // is end of document
@@ -91,7 +91,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                         tokenType = builder.getTokenType();
                         isDummyToken = isDummyToken(builder.getTokenText());
 
-                        node.setCurrentSiblingIndex(index);
+                        node.setCursorPosition(index);
                         continue;
                     }
                 }
@@ -119,7 +119,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
     }
 
     private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) throws ParseException {
-        int siblingPosition = node.getCurrentSiblingIndex();
+        int siblingPosition = node.getCursorPosition();
         ParserBuilder builder = context.getBuilder();
         PsiBuilder.Marker marker = builder.mark(null);
         SequenceElementType elementType = getElementType();
@@ -161,7 +161,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 ElementType elementType = parseNode.getElementType();
                 if (elementType instanceof SequenceElementType) {
                     SequenceElementType sequenceElementType = (SequenceElementType) elementType;
-                    if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, parseNode.getCurrentSiblingIndex() + 1)) {
+                    if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, parseNode.getCursorPosition() + 1)) {
                         return -1;
                     }
                 } else  if (elementType instanceof IterationElementType) {
@@ -186,7 +186,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
 
         // scan current sequence
         ElementTypeRef[] children = getElementType().getChildren();
-        int siblingIndex = node.getCurrentSiblingIndex();
+        int siblingIndex = node.getCursorPosition();
         while (siblingIndex < children.length) {
             int builderOffset = builder.getCurrentOffset();
             siblingIndex = node.incrementIndex(builderOffset);

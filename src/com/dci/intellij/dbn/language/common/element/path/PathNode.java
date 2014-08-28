@@ -5,8 +5,6 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 public interface PathNode {
     PathNode getParent();
 
-    int getCurrentSiblingIndex();
-
     ElementType getElementType();
 
     PathNode getRootPathNode();
@@ -16,4 +14,6 @@ public interface PathNode {
     boolean isRecursive(ElementType elementType);
 
     void detach();
+
+    int getIndexInParent();
 }

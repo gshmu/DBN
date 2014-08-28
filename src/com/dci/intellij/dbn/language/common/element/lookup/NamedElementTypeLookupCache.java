@@ -41,7 +41,7 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
     }
 
     private PathNode createRecursionCheckPathNode(PathNode parentPathNode) {
-        return new BasicPathNode(getElementType(), parentPathNode, 0);
+        return new BasicPathNode(getElementType(), parentPathNode);
     }
 
     @Override

@@ -213,6 +213,15 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return getId().hashCode();
     }
 
+    @Override
+    public int getIndexInParent() {
+        if (parent instanceof SequenceElementType) {
+            SequenceElementType sequenceElementType = (SequenceElementType) parent;
+            return sequenceElementType.indexOf(this);
+        }
+        return 0;
+    }
+
     /*********************************************************
      *                  Virtual Object                       *
      *********************************************************/

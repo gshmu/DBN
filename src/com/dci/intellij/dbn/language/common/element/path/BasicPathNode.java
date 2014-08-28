@@ -1,16 +1,19 @@
 package com.dci.intellij.dbn.language.common.element.path;
 
+import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.element.NamedElementType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasicPathNode implements PathNode {
-    private int currentSiblingIndex;
     private PathNode parent;
     private ElementType elementType;
 
-    public BasicPathNode(ElementType elementType, PathNode parent, int currentSiblingIndex) {
+    public BasicPathNode(ElementType elementType, PathNode parent) {
         this.elementType = elementType;
         this.parent = parent;
-        this.currentSiblingIndex = currentSiblingIndex;
     }
 
     public PathNode getParent() {
@@ -19,14 +22,6 @@ public class BasicPathNode implements PathNode {
 
     public void setParent(PathNode parent) {
         this.parent = parent;
-    }
-
-    public int getCurrentSiblingIndex() {
-        return currentSiblingIndex;
-    }
-
-    public void setCurrentSiblingIndex(int currentSiblingIndex) {
-        this.currentSiblingIndex = currentSiblingIndex;
     }
 
     public ElementType getElementType() {
@@ -74,6 +69,11 @@ public class BasicPathNode implements PathNode {
         return false;
     }
 
+    @Override
+    public int getIndexInParent() {
+        return getElementType().getIndexInParent();
+    }
+
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         PathNode parent = this;
@@ -98,5 +98,21 @@ public class BasicPathNode implements PathNode {
             parent = parent.getParent();
         }
         return false;
+    }
+
+    public static PathNode buildPathUp(ElementType elementType) {
+        List<ElementType> path = new ArrayList<>();
+        while (elementType != null) {
+            path.add(elementType);
+            if (elementType instanceof NamedElementType) break;
+            elementType = elementType.getParent();
+        }
+
+        PathNode pathNode = null;
+        ReversedList<ElementType> reversedPath = ReversedList.get(path);
+        for (ElementType pathElement : reversedPath) {
+            pathNode = new BasicPathNode(pathElement, pathNode);
+        }
+        return pathNode;
     }
 }

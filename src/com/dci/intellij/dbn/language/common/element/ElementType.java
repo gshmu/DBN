@@ -61,4 +61,6 @@ public interface ElementType {
 
     @Nullable
     String getBranch();
+
+    int getIndexInParent();
 }
