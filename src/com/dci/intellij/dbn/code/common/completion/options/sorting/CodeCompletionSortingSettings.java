@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.code.common.completion.options.sorting;
 
 import com.dci.intellij.dbn.code.common.completion.options.sorting.ui.CodeCompletionSortingSettingsForm;
-import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemFactory;
-import com.dci.intellij.dbn.code.common.lookup.DBObjectLookupItemFactory;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemFactory;
-import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemFactory;
+import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -18,18 +18,18 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
     private boolean enabled = true;
     private List<CodeCompletionSortingItem> sortingItems = new ArrayList<CodeCompletionSortingItem>();
 
-    public int getSortingIndexFor(LookupItemFactory lookupItemFactory) {
-        if (lookupItemFactory instanceof AliasLookupItemFactory) {
+    public int getSortingIndexFor(LookupItemBuilder lookupItemBuilder) {
+        if (lookupItemBuilder instanceof AliasLookupItemBuilder) {
             return -1;
         }
-        if (lookupItemFactory instanceof DBObjectLookupItemFactory) {
-            DBObjectLookupItemFactory objectLookupItemFactory = (DBObjectLookupItemFactory) lookupItemFactory;
+        if (lookupItemBuilder instanceof ObjectLookupItemBuilder) {
+            ObjectLookupItemBuilder objectLookupItemFactory = (ObjectLookupItemBuilder) lookupItemBuilder;
             DBObjectType objectType = objectLookupItemFactory.getObject().getObjectType();
             return getSortingIndexFor(objectType);
         }
 
-        if (lookupItemFactory instanceof TokenLookupItemFactory) {
-            TokenLookupItemFactory tokenLookupItemFactory = (TokenLookupItemFactory) lookupItemFactory;
+        if (lookupItemBuilder instanceof TokenLookupItemBuilder) {
+            TokenLookupItemBuilder tokenLookupItemFactory = (TokenLookupItemBuilder) lookupItemBuilder;
             TokenTypeCategory tokenTypeCategory = tokenLookupItemFactory.getTokenTypeCategory();
             return getSortingIndexFor(tokenTypeCategory);
         }

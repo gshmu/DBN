@@ -12,25 +12,26 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.Icon;
 
-public class DBObjectLookupItemFactory extends LookupItemFactory {
+public class ObjectLookupItemBuilder extends LookupItemBuilder {
     private DBLanguage language;
-    private DBObject object;
+    private DBObjectRef objectRef;
     private String typeName;
 
-    public DBObjectLookupItemFactory(DBObject object, DBLanguage language) {
-        this.object = object;
+    public ObjectLookupItemBuilder(DBObject object, DBLanguage language) {
+        this.objectRef = object.getRef();
         this.language = language;
     }
 
     @Override
-    public DBLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
-        DBLookupItem lookupItem = super.createLookupItem(source, consumer);
-
-        if (lookupItem != null) {
+    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
+        CodeCompletionLookupItem lookupItem = super.createLookupItem(source, consumer);
+        DBObject object = getObject();
+        if (object != null && lookupItem != null) {
             if (object.needsNameQuoting()) {
                 char quoteChar = DatabaseCompatibilityInterface.getInstance(object).getIdentifierQuotes();
                 String lookupString = quoteChar + lookupItem.getLookupString() + quoteChar;
@@ -49,11 +50,12 @@ public class DBObjectLookupItemFactory extends LookupItemFactory {
     }
 
     public DBObject getObject() {
-        return object;
+        return DBObjectRef.get(objectRef);
     }
 
     public String getTextHint() {
-        if (typeName == null) {
+        DBObject object = getObject();
+        if (object != null && typeName == null) {
             DBObject parentObject = object.getParentObject();
 
             String typePrefix = "";
@@ -80,10 +82,11 @@ public class DBObjectLookupItemFactory extends LookupItemFactory {
 
     @Override
     public CharSequence getText(CodeCompletionContext context) {
+        DBObject object = getObject();
         Project project = context.getFile().getProject();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(language);
         CodeStyleCaseOption caseOption = styleCaseSettings.getObjectCaseOption();
-        String text = caseOption.changeCase(object.getName());
+        String text = caseOption.changeCase(objectRef.getName());
 
         if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
             return null;
@@ -118,12 +121,12 @@ public class DBObjectLookupItemFactory extends LookupItemFactory {
     }
 
     public Icon getIcon() {
-        return object.getIcon();
+        DBObject object = getObject();
+        return object == null ? objectRef.getObjectType().getIcon() : object.getIcon();
     }
 
     @Override
     public void dispose() {
-        object = null;
         language = null;
     }
 }

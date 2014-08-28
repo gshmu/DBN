@@ -11,27 +11,27 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Icon;
 
 
-public class DBLookupItem extends LookupItem {
-    public DBLookupItem(LookupItemFactory lookupItemFactory, @NotNull String text, CodeCompletionContext completionContext) {
-        super(lookupItemFactory, NamingUtil.unquote(text));
-        setIcon(lookupItemFactory.getIcon());
-        if (lookupItemFactory.isBold()) setBold();
-        setAttribute(LookupItem.TYPE_TEXT_ATTR, lookupItemFactory.getTextHint());
+public class CodeCompletionLookupItem extends LookupItem {
+    public CodeCompletionLookupItem(LookupItemBuilder lookupItemBuilder, @NotNull String text, CodeCompletionContext completionContext) {
+        super(lookupItemBuilder, NamingUtil.unquote(text));
+        setIcon(lookupItemBuilder.getIcon());
+        if (lookupItemBuilder.isBold()) setBold();
+        setAttribute(LookupItem.TYPE_TEXT_ATTR, lookupItemBuilder.getTextHint());
         setLookupString(text);
         setPresentableText(NamingUtil.unquote(text));
         CodeCompletionSortingSettings sortingSettings = completionContext.getCodeCompletionSettings().getSortingSettings();
         if (sortingSettings.isEnabled()) {
-            setPriority(sortingSettings.getSortingIndexFor(lookupItemFactory));
+            setPriority(sortingSettings.getSortingIndexFor(lookupItemBuilder));
         }
     }
 
-    public  DBLookupItem(Object source, Icon icon, @NotNull String text, String description, boolean bold, double sortPriority) {
+    public CodeCompletionLookupItem(Object source, Icon icon, @NotNull String text, String description, boolean bold, double sortPriority) {
         this(source, icon, text, description, bold);
         setPriority(sortPriority);
     }
 
 
-    public DBLookupItem(Object source, Icon icon, @NotNull String text, String description, boolean bold) {
+    public CodeCompletionLookupItem(Object source, Icon icon, @NotNull String text, String description, boolean bold) {
         super(source, text);
         setIcon(icon);
         if (bold) setBold();
@@ -53,8 +53,8 @@ public class DBLookupItem extends LookupItem {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof DBLookupItem) {
-            DBLookupItem lookupItem = (DBLookupItem) o;
+        if (o instanceof CodeCompletionLookupItem) {
+            CodeCompletionLookupItem lookupItem = (CodeCompletionLookupItem) o;
             return lookupItem.getLookupString().equals(getLookupString());
         }
 

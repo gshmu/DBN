@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.code.common.lookup.LookupValueProvider;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
 import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -27,7 +27,7 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.psi.PsiNamedElement;
 
-public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupValueProvider, Presentable, Referenceable {
+public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Presentable, Referenceable {
     DBObjectType getObjectType();
     boolean isOfType(DBObjectType objectType);
 
