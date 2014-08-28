@@ -69,17 +69,19 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
         CodeStyleCaseOption oco = caseSettings.getObjectCaseOption();
 
         StringBuffer buffer = new StringBuffer();
+        String q = "\\" + getProvider().getCompatibilityInterface().getIdentifierQuotes() + "?";
         if (qualified) {
-            Pattern p = Pattern.compile(objectType + "\\s+" + objectName, Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher(code);
-            if (m.find()) {
+            String regex = objectType + "\\s+(" + q + schemaName + q + "\\s*\\.)?\\s*" + q + objectName + q;
+            Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(code);
+            if (matcher.find()) {
                 String replacement = kco.changeCase(objectType) + " " + oco.changeCase(schemaName + "." + objectName);
-                m.appendReplacement(buffer, Matcher.quoteReplacement(replacement));
-                m.appendTail(buffer);
+                matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement));
+                matcher.appendTail(buffer);
                 code = buffer.toString();
             }
         } else {
-            String regex = objectType + "\\s+" + schemaName + "\\s*\\.\\s*" + objectName;
+            String regex = objectType + "\\s+(" + q + schemaName + q + "\\s*\\.)?\\s*" + q + objectName + q;
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(code);
             if (matcher.find()) {

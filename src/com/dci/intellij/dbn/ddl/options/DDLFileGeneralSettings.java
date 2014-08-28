@@ -12,6 +12,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
     private BooleanSetting lookupDDLFilesEnabled = new BooleanSetting("lookup-ddl-files", true);
     private BooleanSetting createDDLFilesEnabled = new BooleanSetting("create-ddl-files", false);
     private BooleanSetting useQualifiedObjectNames = new BooleanSetting("use-qualified-names", false);
+    private BooleanSetting makeScriptsRerunnable = new BooleanSetting("make-scripts-rerunnable", true);
 
     public String getDisplayName() {
         return "DDL file general settings";
@@ -45,6 +46,13 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         return useQualifiedObjectNames.value();
     }
 
+    public BooleanSetting getMakeScriptsRerunnable() {
+        return makeScriptsRerunnable;
+    }
+
+    public boolean isMakeScriptsRerunnable() {
+        return makeScriptsRerunnable.value();
+    }
 
     /*********************************************************
      *                     Configuration                     *
@@ -63,6 +71,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         lookupDDLFilesEnabled.readConfiguration(element);
         createDDLFilesEnabled.readConfiguration(element);
         useQualifiedObjectNames.readConfiguration(element);
+        makeScriptsRerunnable.readConfiguration(element);
     }
 
     public void writeConfiguration(Element element) {
@@ -70,5 +79,6 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         lookupDDLFilesEnabled.writeConfiguration(element);
         createDDLFilesEnabled.writeConfiguration(element);
         useQualifiedObjectNames.writeConfiguration(element);
+        makeScriptsRerunnable.writeConfiguration(element);
     }
 }
