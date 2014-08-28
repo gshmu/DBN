@@ -209,17 +209,17 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Override
     public <T> T getUserData(@NotNull Key<T> key) {
-        if (key == FileDocumentManagerImpl.DOCUMENT_KEY) {
+        if (key == FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY) {
             DBContentType mainContentType = getMainContentType();
             boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
             if (isCode) {
                 if (FAKE_DOCUMENT.get() != null) {
-                    return (T) new WeakReference<Document>(FAKE_DOCUMENT.get());
+                    return (T) FAKE_DOCUMENT.get();
                 }
 
                 DBContentVirtualFile mainContentFile = getMainContentFile();
                 Document document = DocumentUtil.getDocument(mainContentFile);
-                return (T) new WeakReference<Document>(document);
+                return (T) document;
             }
         }
         return super.getUserData(key);
