@@ -160,6 +160,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
             possibleTokenChains = new ArrayList<TokenElementTypeChain>();
             TokenElementTypeChain stump = new TokenElementTypeChain(this);
             buildPossibleChains(this, stump);
+            System.out.printf("");
         }
         return possibleTokenChains;
     }
@@ -171,10 +172,14 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
             for (LeafElementType nextPossibleLeaf : nextPossibleLeafs) {
                 if (nextPossibleLeaf instanceof TokenElementType) {
                     TokenElementType nextTokenElementType = (TokenElementType) nextPossibleLeaf;
-                    TokenElementTypeChain tokenElementTypeChain = stump.createVariant(nextTokenElementType);
-                    if (possibleTokenChains == null) possibleTokenChains = new ArrayList<TokenElementTypeChain>();
-                    possibleTokenChains.add(tokenElementTypeChain);
-                    buildPossibleChains(nextTokenElementType, tokenElementTypeChain);
+                    if (nextTokenElementType.getTokenType().isKeyword()) {
+                        TokenElementTypeChain tokenElementTypeChain = stump.createVariant(nextTokenElementType);
+                        if (possibleTokenChains == null) possibleTokenChains = new ArrayList<TokenElementTypeChain>();
+                        possibleTokenChains.add(tokenElementTypeChain);
+                        if (tokenElementTypeChain.getElementTypes().size()<3) {
+                            buildPossibleChains(nextTokenElementType, tokenElementTypeChain);
+                        }
+                    }
                 }
             }
         }
