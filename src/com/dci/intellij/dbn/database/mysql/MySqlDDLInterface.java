@@ -43,12 +43,13 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         if (objectTypeId == DatabaseObjectTypeId.PROCEDURE || objectTypeId == DatabaseObjectTypeId.FUNCTION) {
             String objectType = objectTypeId.toString().toLowerCase();
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, caseSettings);
-            String delimiterStatement = kco.changeCase("delimiter @@\n\n");
+            String delimiterChange = kco.changeCase("delimiter $$\n");
             String dropStatement =
                     kco.changeCase("drop " + objectType + " if exists ") +
-                    oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + "@@\n\n";
-            String createStatement = kco.changeCase("create definer=current_user\n") + code + "@@\n";
-            return delimiterStatement + (makeRerunnable ? dropStatement : "") + createStatement;
+                    oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + "$$\n";
+            String createStatement = kco.changeCase("create definer=current_user\n") + code + "$$\n";
+            String delimiterReset = kco.changeCase("delimiter ;");
+            return delimiterChange + (makeRerunnable ? dropStatement : "") + createStatement + delimiterReset;
         }
         return code;
     }
