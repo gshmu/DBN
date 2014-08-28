@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion;
 
-import com.dci.intellij.dbn.code.common.lookup.DBLookupItem;
+import com.dci.intellij.dbn.code.common.lookup.CodeCompletionLookupItem;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -9,10 +9,10 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 
-public class BasicInsertHandler implements InsertHandler<DBLookupItem> {
+public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupItem> {
     public static final BasicInsertHandler INSTANCE = new BasicInsertHandler();
 
-    public void handleInsert(InsertionContext insertionContext, DBLookupItem lookupElement) {
+    public void handleInsert(InsertionContext insertionContext, CodeCompletionLookupItem lookupElement) {
         char completionChar = insertionContext.getCompletionChar();
 
         Object lookupElementObject = lookupElement.getObject();

@@ -7,8 +7,8 @@ import com.intellij.openapi.Disposable;
 
 import javax.swing.Icon;
 
-public abstract class LookupItemFactory implements Disposable {
-    public DBLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
+public abstract class LookupItemBuilder implements Disposable {
+    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
 
         CharSequence text = getText(context);
@@ -18,13 +18,13 @@ public abstract class LookupItemFactory implements Disposable {
             String textHint = getTextHint();
             boolean bold = isBold();
 
-            DBLookupItem lookupItem;
+            CodeCompletionLookupItem lookupItem;
             CodeCompletionSortingSettings sortingSettings = context.getCodeCompletionSettings().getSortingSettings();
             if (sortingSettings.isEnabled()) {
                 int sortingIndex = sortingSettings.getSortingIndexFor(this);
-                lookupItem = new DBLookupItem(source, icon, text.toString(), textHint, bold, sortingIndex);
+                lookupItem = new CodeCompletionLookupItem(source, icon, text.toString(), textHint, bold, sortingIndex);
             } else {
-                lookupItem = new DBLookupItem(source, icon, text.toString(), textHint, bold);
+                lookupItem = new CodeCompletionLookupItem(source, icon, text.toString(), textHint, bold);
             }
             context.getResult().addElement(lookupItem);
             return lookupItem;

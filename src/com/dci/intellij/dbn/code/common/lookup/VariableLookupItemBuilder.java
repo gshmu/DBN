@@ -5,21 +5,22 @@ import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 
 import javax.swing.Icon;
 
-public class AliasLookupItemFactory extends LookupItemFactory {
+public class VariableLookupItemBuilder extends LookupItemBuilder {
+
     private CharSequence text;
     private boolean isDefinition;
 
-    public AliasLookupItemFactory(CharSequence text, boolean isDefinition) {
+    public VariableLookupItemBuilder(CharSequence text, boolean isDefinition) {
         this.text = text;
         this.isDefinition = isDefinition;
     }
 
     public String getTextHint() {
-        return isDefinition ? "alias def" : "alias ref";
+        return isDefinition ? "variable def" : "variable ref";
     }
 
     @Override
-    public DBLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
+    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         return super.createLookupItem(source, consumer);
     }
 

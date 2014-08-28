@@ -1,15 +1,17 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemFactory;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemFactory;
-import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemFactory;
+import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
@@ -94,26 +96,25 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             int invocationCount = parameters.getInvocationCount();
             if (invocationCount > 1) context.setExtended(true);
 
-            if (leafBeforeCaret == null) {
-                ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
-                ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
-                Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs();
-                for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
-                    if (firstPossibleLeaf instanceof TokenElementType) {
-                        TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
-                        if (context.getCodeCompletionFilterSettings().acceptReservedWord(tokenElementType.getTokenTypeCategory())) {
-                            LookupItemFactory lookupItemFactory = tokenElementType.getLookupItemFactory(language);
-                            lookupItemFactory.createLookupItem(tokenElementType, consumer);
+            try {
+
+                if (leafBeforeCaret == null) {
+                    ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
+                    ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
+                    Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs();
+                    for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
+                        if (firstPossibleLeaf instanceof TokenElementType) {
+                            TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
+                            consumer.consume(tokenElementType);
                         }
                     }
-                }
-            } else {
-                leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
-                try {
-                    buildElementRelativeVariants(leafBeforeCaret, consumer);
-                } catch (ConsumerStoppedException e) {
+                } else {
+                    leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
 
+                        buildElementRelativeVariants(leafBeforeCaret, consumer);
                 }
+            } catch (ConsumerStoppedException e) {
+
             }
         }
     }
@@ -185,9 +186,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             if (nextPossibleLeaf instanceof TokenElementType) {
                 TokenElementType tokenElementType = (TokenElementType) nextPossibleLeaf;
                 //consumer.setAddParenthesis(addParenthesis && tokenType.isFunction());
-                if (filterSettings.acceptReservedWord(tokenElementType.getTokenTypeCategory())) {
-                    consumer.consume(tokenElementType);
-                }
+                consumer.consume(tokenElementType);
             }
             else if (nextPossibleLeaf instanceof IdentifierElementType) {
                 IdentifierElementType identifierElementType = (IdentifierElementType) nextPossibleLeaf;
@@ -203,8 +202,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                                     PsiElement referencedPsiElement = identifierPsiElement.resolve();
                                     if (referencedPsiElement instanceof DBObject) {
                                         DBObject object = (DBObject) referencedPsiElement;
-                                        LookupItemFactory lookupItemFactory = object.getLookupItemFactory(identifierElementType.getLanguage());
-                                        lookupItemFactory.createLookupItem(object, consumer);
+                                        consumer.consume(object);
                                     }
                                 }
                             }
@@ -215,41 +213,24 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                                 BasePsiElement scope = element.getEnclosingScopePsiElement();
                                 collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
                             } else {
-                                for (DBObject object : parentObject.getChildObjects(identifierElementType.getObjectType())) {
-                                    consumer.check();
-                                    consumer.consume(object);
-                                }
+                                List<DBObject> childObjects = parentObject.getChildObjects(identifierElementType.getObjectType());
+                                consumer.consume(childObjects);
                             }
                         }
 
                     } else if (identifierElementType.isAlias()) {
                         PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType,  null);
-                        Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInParentScopeOf(element);
-                        if (aliasDefinitions != null) {
-                            for (PsiElement psiElement : aliasDefinitions) {
-                                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                                AliasLookupItemFactory lookupItemFactory = new AliasLookupItemFactory(identifierPsiElement.getChars(), true);
-                                lookupItemFactory.createLookupItem(identifierPsiElement, consumer);
-                            }
-                        }
+                        Set<BasePsiElement> aliasPsiElements = lookupAdapter.collectInParentScopeOf(element);
+                        consumer.consume(aliasPsiElements);
                     } else if (identifierElementType.isVariable()) {
                         PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(null, objectType, null);
-                        Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInParentScopeOf(element);
-                        if (aliasDefinitions != null) {
-                            for (BasePsiElement psiElement : aliasDefinitions) {
-                                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                                VariableLookupItemFactory lookupItemFactory = new VariableLookupItemFactory(identifierPsiElement.getChars(), true);
-                                lookupItemFactory.createLookupItem(identifierPsiElement, consumer);
-                            }
-                        }
+                        Set<BasePsiElement> variablePsiElements = lookupAdapter.collectInParentScopeOf(element);
+                        consumer.consume(variablePsiElements);
                     }
                 } else if (identifierElementType.isDefinition()) {
                     if (identifierElementType.isAlias()) {
                         String[] aliasNames = buildAliasDefinitionNames(element);
-                        for (String aliasName : aliasNames) {
-                            AliasLookupItemFactory lookupItemFactory = new AliasLookupItemFactory(aliasName, true);
-                            lookupItemFactory.createLookupItem(aliasName, consumer);
-                        }
+                        consumer.consume(aliasNames);
                     }
                 }
             }

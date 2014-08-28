@@ -9,6 +9,9 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,8 +22,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
-import com.dci.intellij.dbn.code.common.lookup.DBObjectLookupItemFactory;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemFactory;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -84,8 +85,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     private DBObjectRef parentObject;
     private DBObjectBundle objectBundle;
 
-    private LookupItemFactory sqlLookupItemFactory;
-    private LookupItemFactory psqlLookupItemFactory;
+    private LookupItemBuilder sqlLookupItemBuilder;
+    private LookupItemBuilder psqlLookupItemBuilder;
 
     protected DBObjectVirtualFile virtualFile;
 
@@ -403,18 +404,18 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return null;
     }
 
-    public LookupItemFactory getLookupItemFactory(DBLanguage language) {
+    public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
         if (language == SQLLanguage.INSTANCE) {
-            if (sqlLookupItemFactory == null) {
-                sqlLookupItemFactory = new DBObjectLookupItemFactory(this, language);
+            if (sqlLookupItemBuilder == null) {
+                sqlLookupItemBuilder = new ObjectLookupItemBuilder(this, language);
             }
-            return sqlLookupItemFactory;
+            return sqlLookupItemBuilder;
         }
         if (language == PSQLLanguage.INSTANCE) {
-            if (psqlLookupItemFactory == null) {
-                psqlLookupItemFactory = new DBObjectLookupItemFactory(this, language);
+            if (psqlLookupItemBuilder == null) {
+                psqlLookupItemBuilder = new ObjectLookupItemBuilder(this, language);
             }
-            return psqlLookupItemFactory;
+            return psqlLookupItemBuilder;
         }
         return null;
     }
@@ -715,8 +716,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             DisposerUtil.dispose(childObjectRelations);
             CollectionUtil.clearCollection(visibleTreeChildren);
             CollectionUtil.clearCollection(allPossibleTreeChildren);
-            DisposerUtil.dispose(sqlLookupItemFactory);
-            DisposerUtil.dispose(psqlLookupItemFactory);
+            DisposerUtil.dispose(sqlLookupItemBuilder);
+            DisposerUtil.dispose(psqlLookupItemBuilder);
             objectBundle = null;
         }
     }

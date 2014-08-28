@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import javax.swing.Icon;
 import java.util.Set;
+
+import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -572,5 +574,9 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     public int getResolveTrialsCount() {
         return ref == null ? 0 : ref.getOverallResolveTrials();
+    }
+
+    public IdentifierType getIdentifierType() {
+        return getElementType().getIdentifierType();
     }
 }

@@ -1,10 +1,18 @@
 package com.dci.intellij.dbn.code.common.completion;
 
-import com.dci.intellij.dbn.code.common.lookup.LookupItemFactory;
+import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.TokenChainLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
+import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -20,26 +28,53 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
     public void consume(Object object) throws ConsumerStoppedException {
         check();
 
-        LookupItemFactory lookupItemFactory = null;
+        LookupItemBuilder lookupItemBuilder = null;
         if (object instanceof DBObject) {
             DBObject dbObject = (DBObject) object;
-            lookupItemFactory = dbObject.getLookupItemFactory(context.getLanguage());
+            lookupItemBuilder = dbObject.getLookupItemBuilder(context.getLanguage());
 
         } else if (object instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) object;
-            lookupItemFactory = tokenElementType.getLookupItemFactory(context.getLanguage());
+            CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
+            TokenTypeCategory tokenTypeCategory = tokenElementType.getTokenTypeCategory();
+            if (filterSettings.acceptReservedWord(tokenTypeCategory)) {
+                lookupItemBuilder = tokenElementType.getLookupItemBuilder(context.getLanguage());
+            }
+        } else if (object instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) object;
+            if (identifierPsiElement.isValid()) {
+                CharSequence chars = identifierPsiElement.getChars();
+                IdentifierType identifierType = identifierPsiElement.getIdentifierType();
+                if (identifierType == IdentifierType.VARIABLE) {
+                    lookupItemBuilder = new VariableLookupItemBuilder(chars, true);
+                } else if (identifierType == IdentifierType.ALIAS) {
+                    lookupItemBuilder = new AliasLookupItemBuilder(chars, true);
+                }
+            }
+        } else if (object instanceof String) {
+            lookupItemBuilder = new AliasLookupItemBuilder((CharSequence) object, true);
         }
 
-        if (lookupItemFactory != null) {
-            lookupItemFactory.createLookupItem(object, this);
+        if (lookupItemBuilder != null) {
+            lookupItemBuilder.createLookupItem(object, this);
+        }
+    }
+
+    @Override
+    public void consume(Object[] objects) throws ConsumerStoppedException {
+        check();
+        for (Object object : objects) {
+            consume(object);
         }
 
     }
 
-    public void consume(Collection objects) throws ConsumerStoppedException {
-        check();
-        for (Object object : objects) {
-            consume(object);
+    public void consume(@Nullable Collection objects) throws ConsumerStoppedException {
+        if (objects != null) {
+            check();
+            for (Object object : objects) {
+                consume(object);
+            }
         }
     }
 

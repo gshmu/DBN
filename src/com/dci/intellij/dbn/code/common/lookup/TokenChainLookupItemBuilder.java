@@ -15,13 +15,13 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
-public class TokenLookupItemFactory extends LookupItemFactory {
+public class TokenChainLookupItemBuilder extends LookupItemBuilder {
 
     private TokenElementType tokenElementType;
 
-    public TokenLookupItemFactory(TokenElementType tokenElementType) {
+    public TokenChainLookupItemBuilder(TokenElementType tokenElementType) {
         this.tokenElementType = tokenElementType;
     }
 
@@ -81,12 +81,12 @@ public class TokenLookupItemFactory extends LookupItemFactory {
     }
 
     @Override
-    public DBLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
+    public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         return super.createLookupItem(source, consumer);
     }
 
     private void createLookupItem(CompletionResultSet resultSet, String presentation, CodeCompletionContext completionContext, boolean insertParenthesis) {
-        LookupItem lookupItem = new DBLookupItem(this, presentation, completionContext);
+        LookupItem lookupItem = new CodeCompletionLookupItem(this, presentation, completionContext);
         lookupItem.setInsertHandler(
                 insertParenthesis ?
                         BracketsInsertHandler.INSTANCE :
