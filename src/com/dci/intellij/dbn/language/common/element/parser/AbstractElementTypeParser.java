@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
@@ -99,12 +98,12 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     /**
      * Returns true if the token is a reserved word, but can act as an identifier in this context.
      */
-    protected boolean isSuppressibleReservedWord(TokenType tokenType, PathNode node) {
+    protected boolean isSuppressibleReservedWord(TokenType tokenType, ParsePathNode node) {
         if (tokenType != null) {
             if (tokenType.isSuppressibleReservedWord()) {
                 ElementType elementType = node.getElementType();
                 if (elementType instanceof QualifiedIdentifierElementType) {
-                    if (node.getCurrentSiblingIndex() > 0) return true;
+                    if (node.getCursorPosition() > 0) return true;
                 }
 
                 ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
@@ -119,12 +118,12 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
         return false;
     }
 
-    private boolean isFollowedByToken(TokenType tokenType, PathNode node) {
-        PathNode parent = node;
+    private boolean isFollowedByToken(TokenType tokenType, ParsePathNode node) {
+        ParsePathNode parent = node;
         while (parent != null) {
             if (parent.getElementType() instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) parent.getElementType();
-                if (sequenceElementType.isPossibleTokenFromIndex(tokenType, parent.getCurrentSiblingIndex() + 1)) {
+                if (sequenceElementType.isPossibleTokenFromIndex(tokenType, parent.getCursorPosition() + 1)) {
                     return true;
                 }
             }

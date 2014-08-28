@@ -132,7 +132,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                 while (parseNode != null) {
                     if (parseNode.getElementType() instanceof SequenceElementType) {
                         SequenceElementType sequenceElementType = (SequenceElementType) parseNode.getElementType();
-                        int index = parseNode.getCurrentSiblingIndex();
+                        int index = parseNode.getCursorPosition();
                         if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
                             if (advanced || !lenient) {
                                 builder.markerDone(marker, unknownElementType);

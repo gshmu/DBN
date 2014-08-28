@@ -6,13 +6,15 @@ import com.intellij.lang.PsiBuilder;
 public class ParsePathNode extends BasicPathNode {
     private int startOffset;
     private int currentOffset;
+    private int cursorPosition;
     private PsiBuilder.Marker elementMarker;
     private int depth;
 
-    public ParsePathNode(ElementType elementType, ParsePathNode parent, int startOffset, int position) {
-        super(elementType, parent, position);
+    public ParsePathNode(ElementType elementType, ParsePathNode parent, int startOffset, int cursorPosition) {
+        super(elementType, parent);
         this.startOffset = startOffset;
         this.currentOffset = startOffset;
+        this.cursorPosition = cursorPosition;
         this.depth = parent == null ? 0 : parent.getDepth() + 1;
     }
 
@@ -30,6 +32,15 @@ public class ParsePathNode extends BasicPathNode {
 
     public void setCurrentOffset(int currentOffset) {
         this.currentOffset = currentOffset;
+    }
+
+
+    public int getCursorPosition() {
+        return cursorPosition;
+    }
+
+    public void setCursorPosition(int cursorPosition) {
+        this.cursorPosition = cursorPosition;
     }
 
     public boolean isRecursive() {
@@ -57,11 +68,9 @@ public class ParsePathNode extends BasicPathNode {
     }
 
     public int incrementIndex(int builderOffset) {
-        int index = getCurrentSiblingIndex();
-        index++;
-        setCurrentSiblingIndex(index);
+        cursorPosition++;
         setCurrentOffset(builderOffset);
-        return index;
+        return cursorPosition;
     }
 
     public PsiBuilder.Marker getElementMarker() {

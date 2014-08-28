@@ -112,4 +112,9 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     public String getBranch() {
         return null;
     }
+
+    @Override
+    public int getIndexInParent() {
+        return 0;
+    }
 }

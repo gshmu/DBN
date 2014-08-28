@@ -1,6 +1,12 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.language.common.element.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.TokenElementTypeChain;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
@@ -27,8 +33,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 
 public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupItemBuilderProvider, TokenElementType {
-    private TokenLookupItemBuilder lookupItemFactory;
+    private TokenLookupItemBuilder lookupItemBuilder = new TokenLookupItemBuilder(this);
     private TokenTypeCategory flavor;
+    private List<TokenElementTypeChain> possibleTokenChains;
 
     public TokenElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -134,10 +141,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     }
 
     public TokenLookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        if (lookupItemFactory == null) {
-            lookupItemFactory = new TokenLookupItemBuilder(this);
-        }
-        return lookupItemFactory;
+        return lookupItemBuilder;
     }
 
     @Override
@@ -148,5 +152,31 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     @Override
     public TokenTypeCategory getTokenTypeCategory() {
         return flavor == null ? getTokenType().getCategory() : flavor;
+    }
+
+    @Override
+    public List<TokenElementTypeChain> getPossibleTokenChains() {
+        if (possibleTokenChains == null) {
+            possibleTokenChains = new ArrayList<TokenElementTypeChain>();
+            TokenElementTypeChain stump = new TokenElementTypeChain(this);
+            buildPossibleChains(this, stump);
+        }
+        return possibleTokenChains;
+    }
+
+    private void buildPossibleChains(TokenElementType tokenElementType, TokenElementTypeChain stump) {
+        PathNode pathNode = BasicPathNode.buildPathUp(tokenElementType);
+        Set<LeafElementType> nextPossibleLeafs = getNextPossibleLeafs(pathNode, new ElementLookupContext());
+        if (nextPossibleLeafs != null) {
+            for (LeafElementType nextPossibleLeaf : nextPossibleLeafs) {
+                if (nextPossibleLeaf instanceof TokenElementType) {
+                    TokenElementType nextTokenElementType = (TokenElementType) nextPossibleLeaf;
+                    TokenElementTypeChain tokenElementTypeChain = stump.createVariant(nextTokenElementType);
+                    if (possibleTokenChains == null) possibleTokenChains = new ArrayList<TokenElementTypeChain>();
+                    possibleTokenChains.add(tokenElementTypeChain);
+                    buildPossibleChains(nextTokenElementType, tokenElementTypeChain);
+                }
+            }
+        }
     }
 }

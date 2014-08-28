@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import gnu.trove.THashSet;
 
@@ -125,7 +124,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
         TokenElementType separatorToken = getElementType().getSeparatorToken();
 
         QualifiedIdentifierVariant mostProbableVariant = null;
-        int initialSiblingIndex = node.getCurrentSiblingIndex();
+        int initialCursorPosition = node.getCursorPosition();
 
         try {
             for (LeafElementType[] variants : getElementType().getVariants()) {
@@ -136,7 +135,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
                     TokenType tokenType = builder.lookAhead(offset);
                     // if no mach -> consider as partial if not first element
 
-                    node.setCurrentSiblingIndex(i);
+                    node.setCursorPosition(i);
                     if (match(variants[i], tokenType, node, true)) {
                         matchedTokens++;
                         offset++;
@@ -185,13 +184,13 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
             }
         }
         finally {
-            node.setCurrentSiblingIndex(initialSiblingIndex);
+            node.setCursorPosition(initialCursorPosition);
         }
 
         return mostProbableVariant;
     }
 
-    private boolean match(LeafElementType leafElementType, TokenType tokenType, PathNode node, boolean leniant) {
+    private boolean match(LeafElementType leafElementType, TokenType tokenType, ParsePathNode node, boolean leniant) {
         if (leafElementType instanceof IdentifierElementType) {
             return tokenType != null && (tokenType.isIdentifier() || (leniant && isSuppressibleReservedWord(tokenType, node)));
         } else if (leafElementType instanceof TokenElementType) {

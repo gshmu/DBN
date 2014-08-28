@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -19,18 +20,21 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
     private List<CodeCompletionSortingItem> sortingItems = new ArrayList<CodeCompletionSortingItem>();
 
     public int getSortingIndexFor(LookupItemBuilder lookupItemBuilder) {
+        if (lookupItemBuilder instanceof VariableLookupItemBuilder) {
+            return -2;
+        }
         if (lookupItemBuilder instanceof AliasLookupItemBuilder) {
             return -1;
         }
         if (lookupItemBuilder instanceof ObjectLookupItemBuilder) {
-            ObjectLookupItemBuilder objectLookupItemFactory = (ObjectLookupItemBuilder) lookupItemBuilder;
-            DBObjectType objectType = objectLookupItemFactory.getObject().getObjectType();
+            ObjectLookupItemBuilder objectLookupItemBuilder = (ObjectLookupItemBuilder) lookupItemBuilder;
+            DBObjectType objectType = objectLookupItemBuilder.getObject().getObjectType();
             return getSortingIndexFor(objectType);
         }
 
         if (lookupItemBuilder instanceof TokenLookupItemBuilder) {
-            TokenLookupItemBuilder tokenLookupItemFactory = (TokenLookupItemBuilder) lookupItemBuilder;
-            TokenTypeCategory tokenTypeCategory = tokenLookupItemFactory.getTokenTypeCategory();
+            TokenLookupItemBuilder tokenLookupItemBuilder = (TokenLookupItemBuilder) lookupItemBuilder;
+            TokenTypeCategory tokenTypeCategory = tokenLookupItemBuilder.getTokenTypeCategory();
             return getSortingIndexFor(tokenTypeCategory);
         }
         return 0;
