@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.vfs;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.ref.Reference;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
@@ -199,12 +198,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return content.getBytes(getCharset());
     }
 
-    public String createDDLStatement() {
+    public String createDDLStatement(DBContentType contentType) {
         DBSchemaObject object = getObject();
         if (object != null) {
             String content = this.content.trim();
             if (content.length() > 0) {
-                return object.createDDLStatement(content);
+                return object.createDDLStatement(contentType, content);
             }
         }
         return "";

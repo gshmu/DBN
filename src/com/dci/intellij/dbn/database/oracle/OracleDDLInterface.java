@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
@@ -22,7 +23,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         super("oracle_ddl_interface.xml", provider);
     }
 
-    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, String code) {
+    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code) {
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
         boolean makeRerunnable = ddlFileSettings.getGeneralSettings().isMakeScriptsRerunnable();
@@ -35,6 +36,9 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
             return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + kco.changeCase(" as\n") + code;
         } else {
             String objectType = objectTypeId.toString().toLowerCase();
+            if (contentType == DBContentType.CODE_BODY) {
+                objectType = objectType + " body";
+            }
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, styleCaseSettings);
             return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + "\n") + code;
         }

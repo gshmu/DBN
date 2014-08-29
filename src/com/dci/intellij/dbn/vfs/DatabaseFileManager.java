@@ -1,12 +1,24 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -14,14 +26,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -92,7 +96,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             if (file instanceof DBEditableObjectVirtualFile) {
                 final DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 if (databaseFile.isModified()) {
-                    String[] options = new String[]{"Save", "Cancel"};
+                    String[] options = new String[]{"Save", "Discard"};
                     int selection = Messages.showDialog(getProject(),
                             "You have unsaved changes to the " + databaseFile.getObject().getQualifiedNameWithType() + ".\n",
                             Constants.DBN_TITLE_PREFIX + "Unsaved changes", options, 0, Messages.getWarningIcon());
