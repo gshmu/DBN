@@ -8,18 +8,25 @@ import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import gnu.trove.THashSet;
 
 public class ElementLookupContext {
+    public static double MAX_DB_VERSION = 9999;
     private Set<NamedElementType> scannedElements = new THashSet<NamedElementType>();
     protected Set<Branch> branches;
-    protected double languageVersion = 9999;
+    protected double databaseVersion = MAX_DB_VERSION;
 
+    @Deprecated
     public ElementLookupContext() {}
 
-    public ElementLookupContext(Set<Branch> branches) {
+    public ElementLookupContext(double version) {
+        this.databaseVersion = version;
+    }
+
+    public ElementLookupContext(Set<Branch> branches, double version) {
         this.branches = branches;
+        this.databaseVersion = version;
     }
 
     public boolean check(ElementTypeRef elementTypeRef) {
-        return elementTypeRef.check(branches, languageVersion);
+        return elementTypeRef.check(branches, databaseVersion);
     }
 
     public ElementLookupContext reset() {

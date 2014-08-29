@@ -14,10 +14,9 @@ public class ParserContext extends ElementLookupContext {
     private ParserBuilder builder;
     private Map<Branch, ParsePathNode> branchMarkers = new HashMap<Branch, ParsePathNode>();
 
-    public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double version) {
-        super(null);
+    public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double databaseVersion) {
+        super(null, databaseVersion);
         this.builder = new ParserBuilder(builder, languageDialect);
-        this.languageVersion = version;
     }
 
     public long getTimestamp() {

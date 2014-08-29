@@ -26,6 +26,7 @@ public class CodeCompletionContext {
     private PsiElement elementAtCaret;
     private ConnectionHandler connectionHandler;
     private String userInput;
+    private double databaseVersion;
 
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
@@ -46,6 +47,8 @@ public class CodeCompletionContext {
 
         elementAtCaret = position instanceof BasePsiElement ? (BasePsiElement) position : PsiUtil.lookupLeafAtOffset(file, position.getTextOffset());
         elementAtCaret = elementAtCaret == null ? file : elementAtCaret;
+
+        databaseVersion = file.getDatabaseVersion();
     }
 
     public String getUserInput() {
@@ -95,5 +98,9 @@ public class CodeCompletionContext {
     public DBLanguage getLanguage() {
         DBLanguageDialect languageDialect = file.getLanguageDialect();
         return languageDialect == null ? SQLLanguage.INSTANCE : languageDialect.getBaseLanguage();
+    }
+
+    public double getDatabaseVersion() {
+        return databaseVersion;
     }
 }

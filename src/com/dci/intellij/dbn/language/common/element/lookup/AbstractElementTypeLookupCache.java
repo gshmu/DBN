@@ -66,18 +66,8 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     }
 
     @Override
-    public Set<LeafElementType> collectFirstPossibleLeafs() {
-        return collectFirstPossibleLeafs(new ElementLookupContext());
-    }
-
-    @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
         return collectFirstPossibleLeafs(context.reset(), null);
-    }
-
-    @Override
-    public Set<TokenType> collectFirstPossibleTokens() {
-        return collectFirstPossibleTokens(new ElementLookupContext());
     }
 
     @Override

@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -318,5 +319,10 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             return parseRootId;
         }
         return null;
+    }
+
+    public double getDatabaseVersion() {
+        ConnectionHandler activeConnection = getActiveConnection();
+        return activeConnection == null ? ElementLookupContext.MAX_DB_VERSION : activeConnection.getDatabaseVersion();
     }
 }
