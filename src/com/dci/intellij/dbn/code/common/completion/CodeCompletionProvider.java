@@ -95,7 +95,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 if (leafBeforeCaret == null) {
                     ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
                     ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
-                    Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs();
+                    ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
+                    Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(lookupContext);
                     for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
                         if (firstPossibleLeaf instanceof TokenElementType) {
                             TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
@@ -104,8 +105,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                     }
                 } else {
                     leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
-
-                        buildElementRelativeVariants(leafBeforeCaret, consumer);
+                    buildElementRelativeVariants(leafBeforeCaret, consumer);
                 }
             } catch (ConsumerStoppedException e) {
 
@@ -161,7 +161,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         if (nextPossibleLeafs.size() == 0) {
             LeafElementType elementType = (LeafElementType) element.getElementType();
             PathNode pathNode = new ASTPathNode(element.getNode());
-            ElementLookupContext lookupContext = computeParseBranches(element.getNode());
+            ElementLookupContext lookupContext = computeParseBranches(element.getNode(), context.getDatabaseVersion());
             for (LeafElementType leafElementType : elementType.getNextPossibleLeafs(pathNode, lookupContext)) {
                 String leafUniqueKey = getLeafUniqueKey(leafElementType);
                 if (leafUniqueKey != null) {
@@ -232,7 +232,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     @Nullable
-    private ElementLookupContext computeParseBranches(ASTNode node) {
+    private ElementLookupContext computeParseBranches(ASTNode node, double databaseVersion) {
         Set<Branch> lookupBranches = null;
         while (node != null && !(node instanceof FileElement)) {
             IElementType elementType = node.getElementType();
@@ -252,7 +252,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
             node = prevNode;
         }
-        return new ElementLookupContext(lookupBranches);
+        return new ElementLookupContext(lookupBranches, databaseVersion);
     }
 
     public String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {
