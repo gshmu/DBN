@@ -37,8 +37,6 @@ public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
                                     sourceCodeFile.setModified(false);
                                 }
                             }.start();
-
-                            sourceCodeFile.getMainDatabaseFile().updateDDLFiles(sourceCodeFile.getContentType());
                         }
                     }
                 }

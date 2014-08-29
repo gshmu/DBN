@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TokenElementTypeChain {
-    private List<TokenElementType> elementTypes = new ArrayList<>();
+    private List<TokenElementType> elementTypes = new ArrayList<TokenElementType>();
     private double version ;
 
     private TokenElementTypeChain(){};
