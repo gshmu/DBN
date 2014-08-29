@@ -198,17 +198,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return content.getBytes(getCharset());
     }
 
-    public String createDDLStatement(DBContentType contentType) {
-        DBSchemaObject object = getObject();
-        if (object != null) {
-            String content = this.content.trim();
-            if (content.length() > 0) {
-                return object.createDDLStatement(contentType, content);
-            }
-        }
-        return "";
-    }
-
     public long getLength() {
         return content.length();
     }
