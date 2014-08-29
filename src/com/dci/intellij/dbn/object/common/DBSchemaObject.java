@@ -26,7 +26,7 @@ public interface DBSchemaObject extends DBObject {
     String getCodeParseRootId(DBContentType contentType);
 
     void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException;
-    String createDDLStatement(String code);
+    String createDDLStatement(DBContentType contentType, String code);
     DDLFileType getDDLFileType(DBContentType contentType);
     DDLFileType[] getDDLFileTypes();
 

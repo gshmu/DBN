@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
@@ -19,7 +20,7 @@ public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
         super("postgres_ddl_interface.xml", provider);
     }
 
-    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, String code) {
+    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code) {
         return objectTypeId == DatabaseObjectTypeId.VIEW ? "create view " + objectName + " as\n" + code :
                 objectTypeId == DatabaseObjectTypeId.FUNCTION ? "create function " + objectName + " as\n" + code :
                         "create or replace\n" + code;

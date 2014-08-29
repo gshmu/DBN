@@ -36,7 +36,7 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                     DBContentType[] contentTypes = fileContentType.getSubContentTypes();
                     for (DBContentType contentType : contentTypes) {
                         DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                        String statement = virtualFile.createDDLStatement();
+                        String statement = virtualFile.createDDLStatement(contentType);
                         if (statement.trim().length() > 0) {
                             buffer.append(statement);
                             if (postfix.length() > 0) {
@@ -49,7 +49,7 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                     }
                 } else {
                     DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
-                    buffer.append(virtualFile.createDDLStatement());
+                    buffer.append(virtualFile.createDDLStatement(fileContentType));
                     if (postfix.length() > 0) {
                         buffer.append("\n");
                         buffer.append(postfix);

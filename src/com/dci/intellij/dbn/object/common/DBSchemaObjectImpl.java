@@ -98,7 +98,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return new DBObjectTimestampLoader(getTypeName().toUpperCase());
     }
 
-    public String createDDLStatement(String code) {
+    public String createDDLStatement(DBContentType contentType, String code) {
         Project project = getProject();
 
         ConnectionHandler connectionHandler = getConnectionHandler();
@@ -109,7 +109,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
                     connectionHandler.getUserName(),
                     getSchema().getName(),
                     getName(),
-                    code);
+                    contentType, code);
 
         }
         return "";

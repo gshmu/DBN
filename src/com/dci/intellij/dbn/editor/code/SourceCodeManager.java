@@ -85,7 +85,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             final DBContentType contentType = virtualFile.getContentType();
             object.getStatus().set(DBObjectStatus.SAVING, true);
 
-            new BackgroundTask(project, "Checking for third party changes on " + object.getQualifiedNameWithType(), true) {
+            new BackgroundTask(project, "Checking for third party changes on " + object.getQualifiedNameWithType(), false) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
                         String content = editor.getDocument().getText();
@@ -213,7 +213,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
 
     private void doUpdateSourceToDatabase(final DBSchemaObject object, final DBSourceCodeVirtualFile virtualFile, final Editor editor) {
-        new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", true) {
+        new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", false) {
 
             @Override
             public void execute(@NotNull ProgressIndicator indicator) {
