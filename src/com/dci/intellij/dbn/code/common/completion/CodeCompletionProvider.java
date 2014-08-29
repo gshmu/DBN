@@ -4,20 +4,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
@@ -27,6 +22,7 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.path.ASTPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -84,8 +80,6 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
             CodeCompletionContext context = new CodeCompletionContext(file, parameters, result);
             CodeCompletionLookupConsumer consumer = new CodeCompletionLookupConsumer(context);
-            DBLanguage language = context.getLanguage();
-
 
             int caretOffset = parameters.getOffset();
             if (file.findElementAt(caretOffset) instanceof PsiComment) return;
@@ -239,17 +233,17 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
     @Nullable
     private ElementLookupContext computeParseBranches(ASTNode node) {
-        Set<String> branches = null;
+        Set<Branch> lookupBranches = null;
         while (node != null && !(node instanceof FileElement)) {
             IElementType elementType = node.getElementType();
             if (elementType instanceof ElementType) {
                 ElementType basicElementType = (ElementType) elementType;
-                String branch = basicElementType.getBranch();
+                Branch branch = basicElementType.getBranch();
                 if (branch != null) {
-                    if (branches == null) {
-                        branches = new HashSet<String>();
+                    if (lookupBranches == null) {
+                        lookupBranches = new HashSet<Branch>();
                     }
-                    branches.add(branch);
+                    lookupBranches.add(branch);
                 }
             }
             ASTNode prevNode = node.getTreePrev();
@@ -258,7 +252,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
             node = prevNode;
         }
-        return new ElementLookupContext(branches);
+        return new ElementLookupContext(lookupBranches);
     }
 
     public String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {

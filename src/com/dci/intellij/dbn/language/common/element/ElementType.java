@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
+import java.util.Set;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
@@ -43,7 +44,7 @@ public interface ElementType {
 
     boolean isVirtualObjectInsideLookup();
 
-    boolean hasBranchChecks();
+    Set<Branch> getCheckedBranches();
 
     DBObjectType getVirtualObjectType();
 
@@ -59,8 +60,7 @@ public interface ElementType {
 
     WrappingDefinition getWrapping();
 
-    @Nullable
-    String getBranch();
+    Branch getBranch();
 
     int getIndexInParent();
 }

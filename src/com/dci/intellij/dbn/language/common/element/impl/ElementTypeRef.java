@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 
 public class ElementTypeRef {
@@ -13,16 +12,14 @@ public class ElementTypeRef {
     private ElementType elementType;
     private boolean optional;
     private double version;
-    private Set<String> supportedBranches;
-    private Set<String> requiredBranches;
+    private Set<Branch> supportedBranches;
 
-    public ElementTypeRef(ElementType parentElementType, ElementType elementType, boolean optional, double version, List<String> supportedBranches, List<String> requiredBranches) {
+    public ElementTypeRef(ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<Branch> supportedBranches) {
         this.parentElementType = parentElementType;
         this.elementType = elementType;
         this.optional = optional;
         this.version = version;
-        this.supportedBranches = supportedBranches == null ? null : new HashSet<String>(supportedBranches);
-        this.requiredBranches = requiredBranches == null ? null : new HashSet<String>(requiredBranches);
+        this.supportedBranches = supportedBranches;
     }
 
     public ElementTypeRef(ElementType elementType, boolean optional, double version) {
@@ -31,8 +28,32 @@ public class ElementTypeRef {
         this.version = version;
     }
 
-    public boolean supportsBranches(Set<String> branches) {
-        return supportedBranches != null && supportedBranches.containsAll(branches);
+    public boolean check(Set<Branch> branches, double currentVersion) {
+        if (getVersion() > currentVersion) {
+            return false;
+        }
+
+        if (branches != null) {
+            Set<Branch> checkedBranches = getParentElementType().getCheckedBranches();
+            if (checkedBranches != null) {
+                if (supportedBranches != null) {
+                    for (Branch branch : branches) {
+                        if (checkedBranches.contains(branch)) {
+                            for (Branch supportedBranch : supportedBranches) {
+                                if (supportedBranch.equals(branch) && currentVersion >= supportedBranch.getVersion()) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public ElementType getParentElementType() {
@@ -58,4 +79,5 @@ public class ElementTypeRef {
     public ElementTypeParser getParser() {
         return elementType.getParser();
     }
+
 }

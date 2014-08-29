@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
+import javax.swing.Icon;
+
 import com.dci.intellij.dbn.code.common.completion.BasicInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.BracketsInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
@@ -11,13 +13,9 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementTypeChain;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.Icon;
-import java.util.List;
 
 public class TokenLookupItemBuilder extends LookupItemBuilder {
 
@@ -72,19 +70,11 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
 
     public String getTextHint() {
         return getTokenTypeCategory().getName();
-/*
-        TokenType tokenType = tokenElementType.getTokenType();
-        return
-                tokenType.isKeyword() ? "keyword" :
-                tokenType.isFunction() ? "function" :
-                tokenType.isParameter() ? "parameter" :
-                tokenType.isDataType() ? "datatype" :null;
-*/
     }
 
     @Override
     public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
-        tokenElementType.getPossibleTokenChains();
+        //tokenElementType.getPossibleTokenChains();
         return super.createLookupItem(source, consumer);
     }
 

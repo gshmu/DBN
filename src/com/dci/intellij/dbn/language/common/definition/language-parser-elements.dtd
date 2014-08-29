@@ -49,7 +49,8 @@
         optional (true | false) #IMPLIED
         version CDATA #IMPLIED
         exit (true | false) #IMPLIED
-        supported-branches CDATA #IMPLIED
+        branch CDATA #IMPLIED
+        branch-check CDATA #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED

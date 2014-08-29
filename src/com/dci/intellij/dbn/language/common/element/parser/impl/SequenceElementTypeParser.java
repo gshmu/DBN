@@ -112,7 +112,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
     private boolean ignoreFirstMatch() {
         ElementTypeRef firstChild = getElementType().getChild(0);
         if (firstChild.getElementType() instanceof IdentifierElementType) {
-            IdentifierElementType identifierElementType = (IdentifierElementType) firstChild;
+            IdentifierElementType identifierElementType = (IdentifierElementType) firstChild.getElementType();
             return !identifierElementType.isDefinition();
         }
         return false;

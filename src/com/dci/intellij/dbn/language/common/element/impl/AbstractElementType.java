@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import javax.swing.Icon;
+import java.util.Set;
+import java.util.StringTokenizer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,7 @@ import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementTypeTemplate;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
@@ -27,6 +30,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
+import gnu.trove.THashSet;
 
 public abstract class AbstractElementType extends IElementType implements ElementType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -35,7 +39,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private String id;
     private String description;
     private Icon icon;
-    private String branch;
+    private Branch branch;
     private FormattingDefinition formatting;
     private ElementTypeLookupCache lookupCache;
     private ElementTypeParser parser;
@@ -72,6 +76,19 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         loadDefinition(def);
     }
 
+    protected Set<Branch> parseBranchDefinitions(String definitions) {
+        Set<Branch> branches = null;
+        if (definitions != null) {
+            branches = new THashSet<Branch>();
+            StringTokenizer tokenizer = new StringTokenizer(definitions, ",");
+            while (tokenizer.hasMoreTokens()) {
+                String branchDef = tokenizer.nextToken().trim();
+                branches.add(new Branch(branchDef));
+            }
+        }
+        return branches;
+    }
+
     public WrappingDefinition getWrapping() {
         return wrapping;
     }
@@ -103,7 +120,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         String iconKey = def.getAttributeValue("icon");
         if (iconKey != null)  icon = Icons.getIcon(iconKey);
 
-        branch = def.getAttributeValue("branch");
+        String branchDef = def.getAttributeValue("branch");
+        if (branchDef != null) {
+            branch = new Branch(branchDef);
+        }
 
         loadWrappingAttributes(def);
     }
@@ -159,7 +179,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return parent;
     }
 
-    public String getBranch() {
+    public Branch getBranch() {
         return branch;
     }
 
@@ -238,7 +258,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
-    public boolean hasBranchChecks() {
-        return false;
+    public Set<Branch> getCheckedBranches() {
+        return null;
     }
 }
