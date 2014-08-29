@@ -5,14 +5,15 @@ import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.SequenceElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.impl.SequenceElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
@@ -23,7 +24,7 @@ import gnu.trove.THashSet;
 public class SequenceElementTypeImpl extends AbstractElementType implements SequenceElementType {
     protected ElementTypeRef[] children;
     private int exitIndex;
-    private boolean branchChecks = false;
+    private Set<Branch> checkedBranches;
 
     public ElementTypeRef[] getChildren() {
         return children;
@@ -63,10 +64,14 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
             ElementType elementType = getElementBundle().resolveElementDefinition(child, type, this);
             boolean optional = Boolean.parseBoolean(child.getAttributeValue("optional"));
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
-            List<String> supportedBranches = StringUtil.toStringList(child.getAttributeValue("supported-branches"), ",");
-            List<String> requiredBranches = StringUtil.toStringList(child.getAttributeValue("required-branches"), ",");
-            branchChecks = supportedBranches != null || requiredBranches != null;
-            this.children[i] = new ElementTypeRef(this, elementType, optional, version, supportedBranches, requiredBranches);
+            Set<Branch> supportedBranches = parseBranchDefinitions(child.getAttributeValue("branch-check"));
+            if (supportedBranches != null) {
+                if (checkedBranches == null) {
+                    checkedBranches = new THashSet<Branch>();
+                }
+                checkedBranches.addAll(supportedBranches);
+            }
+            this.children[i] = new ElementTypeRef(this, elementType, optional, version, supportedBranches);
             if (child.getAttributeValue("exit") != null) exitIndex = i;
         }
     }
@@ -76,8 +81,8 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     }
 
     @Override
-    public boolean hasBranchChecks() {
-        return branchChecks;
+    public Set<Branch> getCheckedBranches() {
+        return checkedBranches;
     }
 
     public int getChildCount() {
@@ -172,6 +177,13 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     }
 
     public int indexOf(ElementType elementType, int fromIndex) {
+        WrappingDefinition wrapping = getWrapping();
+        if (wrapping != null && elementType instanceof TokenElementType) {
+            TokenElementType tokenElementType = (TokenElementType) elementType;
+            if (wrapping.getEndElementType().getTokenType() == tokenElementType.getTokenType()) {
+                return children.length-1;
+            }
+        }
         for (int i=fromIndex; i< children.length; i++) {
             if (children[i].getElementType() == elementType) return i;
         }

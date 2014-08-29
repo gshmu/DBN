@@ -12,7 +12,7 @@ import com.intellij.lang.PsiBuilder;
 public class ParserContext extends ElementLookupContext {
     private long timestamp = System.currentTimeMillis();
     private ParserBuilder builder;
-    private Map<String, ParsePathNode> branchMarkers = new HashMap<String, ParsePathNode>();
+    private Map<Branch, ParsePathNode> branchMarkers = new HashMap<Branch, ParsePathNode>();
 
     public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double version) {
         super(null);
@@ -28,16 +28,16 @@ public class ParserContext extends ElementLookupContext {
         return builder;
     }
 
-    public void addBranchMarker(ParsePathNode parentNode, String branch) {
+    public void addBranchMarker(ParsePathNode parentNode, Branch branch) {
         branchMarkers.put(branch, parentNode);
-        branches = branchMarkers.keySet();
+        this.branches = branchMarkers.keySet();
     }
 
     public void removeBranchMarkers(ParsePathNode parentNode) {
         if (branchMarkers.size() > 0 && branchMarkers.containsValue(parentNode)) {
-            Iterator<String> iterator = branchMarkers.keySet().iterator();
+            Iterator<Branch> iterator = branchMarkers.keySet().iterator();
             while (iterator.hasNext()) {
-                String key = iterator.next();
+                Branch key = iterator.next();
                 if (branchMarkers.get(key) == parentNode) {
                     iterator.remove();
                 }

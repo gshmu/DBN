@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import javax.swing.Icon;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
@@ -86,7 +88,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
 
     @Override
     @Nullable
-    public String getBranch() {
+    public Branch getBranch() {
         return null;
     }
 
@@ -112,8 +114,8 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
-    public boolean hasBranchChecks() {
-        return false;
+    public Set<Branch> getCheckedBranches() {
+        return null;
     }
 
     public DBObjectType getVirtualObjectType() {

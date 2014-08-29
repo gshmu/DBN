@@ -89,12 +89,14 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 int elementsCount = sequenceElementType.getChildCount();
 
-                for (int i=position+1; i<elementsCount; i++) {
-                    ElementTypeRef next = sequenceElementType.getChild(i);
-                    next.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
-                    if (!next.isOptional()) {
-                        pathNode = null;
-                        break;
+                if (position < elementsCount) {
+                    for (int i=position+1; i<elementsCount; i++) {
+                        ElementTypeRef next = sequenceElementType.getChild(i);
+                        next.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
+                        if (!next.isOptional()) {
+                            pathNode = null;
+                            break;
+                        }
                     }
                 }
             } else if (elementType instanceof IterationElementType) {

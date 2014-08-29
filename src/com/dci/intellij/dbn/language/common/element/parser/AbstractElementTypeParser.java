@@ -78,9 +78,9 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
             if (resultType == ParseResultType.NO_MATCH) {
                 return ParseResult.createNoMatchResult();
             } else {
-                String branch = elementType.getBranch();
+                Branch branch = elementType.getBranch();
                 if (node != null && branch != null) {
-                    // if node is matched add branch marker
+                    // if node is matched add branches marker
                     context.addBranchMarker(node.getParent(), branch);
                 }
                 return ParseResult.createFullMatchResult(matchedTokens);
