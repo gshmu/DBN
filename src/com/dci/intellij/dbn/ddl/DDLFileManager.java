@@ -11,9 +11,14 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -72,6 +77,32 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     public DDLFileType getDDLFileTypeForExtension(String extension) {
         return getExtensionSettings().getDDLFileTypeForExtension(extension);
     }
+
+    public String createDDLStatement(DBSourceCodeVirtualFile virtualFile, DBContentType contentType) {
+        DBSchemaObject object = virtualFile.getObject();
+        if (object != null) {
+            String content = virtualFile.getContent().trim();
+            if (content.length() > 0) {
+                Project project = getProject();
+
+                ConnectionHandler connectionHandler = object.getConnectionHandler();
+                if(connectionHandler != null) {
+                    DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+                    return ddlInterface.createDDLStatement(project,
+                            object.getObjectType().getTypeId(),
+                            connectionHandler.getUserName(),
+                            object.getSchema().getName(),
+                            object.getName(),
+                            contentType,
+                            content);
+
+                }
+                return "";
+            }
+        }
+        return "";
+    }
+
 
     /***************************************
      *            FileTypeListener         *
@@ -154,5 +185,4 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     public void loadState(Element element) {
 
     }
-
 }

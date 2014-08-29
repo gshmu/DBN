@@ -30,7 +30,6 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.project.Project;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -96,23 +95,6 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
         return new DBObjectTimestampLoader(getTypeName().toUpperCase());
-    }
-
-    public String createDDLStatement(DBContentType contentType, String code) {
-        Project project = getProject();
-
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if(connectionHandler != null) {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            return ddlInterface.createDDLStatement(project,
-                    getObjectType().getTypeId(),
-                    connectionHandler.getUserName(),
-                    getSchema().getName(),
-                    getName(),
-                    contentType, code);
-
-        }
-        return "";
     }
 
     public DDLFileType getDDLFileType(DBContentType contentType) {
