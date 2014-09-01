@@ -140,7 +140,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     try {
                         initProgressIndicator(progressIndicator, true, "Executing " + method.getQualifiedNameWithType());
                         executionInput.initExecutionResult(false);
-                        executionProcessor.execute(executionInput);
+                        executionProcessor.execute(executionInput, false);
                         if (!executionInput.isExecutionCancelled()) {
                             new SimpleLaterInvocator() {
                                 public void execute() {
@@ -177,7 +177,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
             try {
                 executionInput.initExecutionResult(true);
-                executionProcessor.execute(executionInput, connection);
+                executionProcessor.execute(executionInput, connection, true);
                 if (!executionInput.isExecutionCancelled()) {
                     new SimpleLaterInvocator() {
                         public void execute() {

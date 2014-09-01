@@ -1,19 +1,18 @@
-package com.dci.intellij.dbn.execution.statement.options;
+package com.dci.intellij.dbn.execution.method.options;
 
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
+import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
 
-public class StatementExecutionSettings extends Configuration{
-    private int resultSetFetchBlockSize = 100;
-    private int executionTimeout = 20;
-    private boolean focusResult = false;
+public class MethodExecutionSettings extends Configuration{
+    private int executionTimeout = 30;
+    private int debugExecutionTimeout = 600;
 
     public String getDisplayName() {
-        return "Statement execution settings";
+        return "Method execution settings";
     }
 
     public String getHelpTopic() {
@@ -24,14 +23,6 @@ public class StatementExecutionSettings extends Configuration{
     *                       Settings                        *
     *********************************************************/
 
-    public int getResultSetFetchBlockSize() {
-        return resultSetFetchBlockSize;
-    }
-
-    public void setResultSetFetchBlockSize(int resultSetFetchBlockSize) {
-        this.resultSetFetchBlockSize = resultSetFetchBlockSize;
-    }
-
     public int getExecutionTimeout() {
         return executionTimeout;
     }
@@ -40,19 +31,19 @@ public class StatementExecutionSettings extends Configuration{
         this.executionTimeout = executionTimeout;
     }
 
-    public void setFocusResult(boolean focusResult) {
-        this.focusResult = focusResult;
+    public int getDebugExecutionTimeout() {
+        return debugExecutionTimeout;
     }
 
-    public boolean isFocusResult() {
-        return focusResult;
+    public void setDebugExecutionTimeout(int debugExecutionTimeout) {
+        this.debugExecutionTimeout = debugExecutionTimeout;
     }
 
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
     public ConfigurationEditorForm createConfigurationEditor() {
-        return new StatementExecutionSettingsForm(this);
+        return new MethodExecutionSettingsForm(this);
     }
 
     @Override
@@ -61,15 +52,13 @@ public class StatementExecutionSettings extends Configuration{
     }
 
     public void readConfiguration(Element element) {
-        resultSetFetchBlockSize = SettingsUtil.getInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
-        focusResult = SettingsUtil.getBoolean(element, "focus-result", focusResult);
+        debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
 
     }
 
     public void writeConfiguration(Element element) {
-        SettingsUtil.setInteger(element, "fetch-block-size", resultSetFetchBlockSize);
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
-        SettingsUtil.setBoolean(element, "focus-result", focusResult);
+        SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
     }
 }
