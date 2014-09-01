@@ -50,7 +50,7 @@ public class EditorUtil {
 
     private static TabInfo getEditorTabInfo(JBTabsImpl tabs, FileEditor fileEditor) {
         if (tabs != null) {
-            Component editorComponent = getParentComponent(fileEditor.getComponent(), TabbedPaneWrapper.TabWrapper.class);
+            Component editorComponent = UIUtil.getParentOfType(TabbedPaneWrapper.TabWrapper.class, fileEditor.getComponent());
             List<TabInfo> tabInfos = tabs.getTabs();
             for (TabInfo tabInfo : tabInfos) {
                 if (tabInfo.getComponent() == editorComponent) {
@@ -59,14 +59,6 @@ public class EditorUtil {
             }
         }
         return null;
-    }
-
-
-    private static Component getParentComponent(Component component, Class parentClass) {
-        while (component != null && /*!parentClass.isAssignableFrom(component.getClass())*/ parentClass != component.getClass()) {
-            component = component.getParent();
-        }
-        return component;
     }
 
     public static BasicTextEditor getFileEditor(DBEditableObjectVirtualFile databaseFile, VirtualFile virtualFile) {
