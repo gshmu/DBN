@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
@@ -76,13 +77,19 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
-        public void presentationChanged(String name, Icon icon, Color color, String connectionId, DatabaseType databaseType) {
-            if (getConfiguration().getConnectionId().equals(connectionId)) {
-                if (name != null) headerForm.setTitle(name);
-                if (icon != null) headerForm.setIcon(icon);
-                if (color != null) headerForm.setBackground(color);
-                //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
-            }
+        public void presentationChanged(final String name, final Icon icon, final Color color, final String connectionId, DatabaseType databaseType) {
+            new SimpleLaterInvocator() {
+
+                @Override
+                public void execute() {
+                    if (getConfiguration().getConnectionId().equals(connectionId)) {
+                        if (name != null) headerForm.setTitle(name);
+                        if (icon != null) headerForm.setIcon(icon);
+                        if (color != null) headerForm.setBackground(color);
+                        //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
+                    }
+                }
+            }.start();
         }
 
     };
