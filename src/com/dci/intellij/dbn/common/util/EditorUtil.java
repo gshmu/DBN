@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
+import com.intellij.util.ui.UIUtil;
 
 public class EditorUtil {
     public static void selectEditor(DBEditableObjectVirtualFile databaseFile, FileEditor fileEditor) {
@@ -44,7 +45,7 @@ public class EditorUtil {
 
     private static JBTabsImpl getEditorTabComponent(DBEditableObjectVirtualFile databaseFile) {
         FileEditor selectedEditor = getSelectedEditor(databaseFile);
-        return selectedEditor == null ? null : (JBTabsImpl) getParentComponent(selectedEditor.getComponent(), JBTabsImpl.class);
+        return selectedEditor == null ? null : UIUtil.getParentOfType(JBTabsImpl.class, selectedEditor.getComponent());
     }
 
     private static TabInfo getEditorTabInfo(JBTabsImpl tabs, FileEditor fileEditor) {
