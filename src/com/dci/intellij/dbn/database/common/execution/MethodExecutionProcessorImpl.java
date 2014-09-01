@@ -12,7 +12,9 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -47,7 +49,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
 
-    public void execute(MethodExecutionInput executionInput) throws SQLException {
+    public void execute(MethodExecutionInput executionInput, boolean debug) throws SQLException {
         boolean usePoolConnection = executionInput.isUsePoolConnection();
         T method = getMethod();
         if (method != null) {
@@ -59,11 +61,11 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             if (usePoolConnection) {
                 connection.setAutoCommit(false);
             }
-            execute(executionInput, connection);
+            execute(executionInput, connection, debug);
         }
     }
 
-    public void execute(MethodExecutionInput executionInput, Connection connection) throws SQLException {
+    public void execute(MethodExecutionInput executionInput, Connection connection, boolean debug) throws SQLException {
         ConnectionHandler connectionHandler = null;
         boolean usePoolConnection = false;
         try {
@@ -81,7 +83,12 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
                 bindParameters(executionInput, preparedStatement);
 
-                preparedStatement.setQueryTimeout(10);
+                MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getMethodExecutionSettings();
+                int timeout = debug ?
+                        methodExecutionSettings.getDebugExecutionTimeout() :
+                        methodExecutionSettings.getExecutionTimeout();
+
+                preparedStatement.setQueryTimeout(timeout);
                 preparedStatement.execute();
 
                 MethodExecutionResult executionResult = executionInput.getExecutionResult();
