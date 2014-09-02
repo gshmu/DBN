@@ -90,7 +90,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }
 
     public boolean isIdentifier() {
-        return getSharedTokenTypes().isIdentifier(this);
+        return category == TokenTypeCategory.IDENTIFIER;
     }
 
     public boolean isVariable() {
