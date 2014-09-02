@@ -24,6 +24,7 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
 
 public class PsiUtil {
 
@@ -164,6 +165,7 @@ public class PsiUtil {
         return false;
     }
 
+    @Nullable
     public static LeafPsiElement lookupLeafBeforeOffset(PsiFile file, int originalOffset) {
         int offset = originalOffset;
         if (offset > 0 && offset == file.getTextLength()) {
@@ -172,14 +174,15 @@ public class PsiUtil {
         PsiElement element = file.findElementAt(offset);
         while (element != null && offset >= 0) {
             int elementEndOffset = element.getTextOffset() + element.getTextLength();
-            if (elementEndOffset <= originalOffset && element.getParent() instanceof LeafPsiElement) {
-                LeafPsiElement leafPsiElement = (LeafPsiElement) element.getParent();
+            PsiElement parent = element.getParent();
+            if (elementEndOffset <= originalOffset && parent instanceof LeafPsiElement) {
+                LeafPsiElement leafPsiElement = (LeafPsiElement) parent;
                 if (leafPsiElement instanceof IdentifierPsiElement) {
                     if (elementEndOffset < originalOffset) {
                         return leafPsiElement;
                     }
                 } else {
-                    return (LeafPsiElement) element.getParent();
+                    return (LeafPsiElement) parent;
                 }
             }
             offset = element.getTextOffset() - 1;
