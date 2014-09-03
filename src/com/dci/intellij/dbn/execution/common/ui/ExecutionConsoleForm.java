@@ -76,11 +76,13 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                 ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
                 if (executionResult != null) {
                     ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-                    if (connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
-                        if (visibilitySettings.getExecutionResultTabs().value()){
-                            tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
-                        } else {
-                            tabInfo.setTabColor(null);
+                    if (connectionHandler != null) {
+                        if (connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
+                            if (visibilitySettings.getExecutionResultTabs().value()){
+                                tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
+                            } else {
+                                tabInfo.setTabColor(null);
+                            }
                         }
                     }
                 }
@@ -91,15 +93,19 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         public void environmentVisibilitySettingsChanged() {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult browserForm = (ExecutionResult) tabInfo.getObject();
-                EnvironmentType environmentType = browserForm.getConnectionHandler().getEnvironmentType();
-                if (visibilitySettings.getExecutionResultTabs().value()){
-                    tabInfo.setTabColor(environmentType.getColor());
-                } else {
-                    tabInfo.setTabColor(null);
+                ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
+                ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
+                if (connectionHandler != null) {
+                    EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+                    if (visibilitySettings.getExecutionResultTabs().value()){
+                        tabInfo.setTabColor(environmentType.getColor());
+                    } else {
+                        tabInfo.setTabColor(null);
+                    }
                 }
             }
-        }    };
+        }
+    };
 
 
     private MouseListener mouseListener = new MouseAdapter() {

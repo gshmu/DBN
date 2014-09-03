@@ -29,7 +29,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 %}
 
 
-PLSQL_BLOCK_START = "create"({ws}"or"{ws}"replace")? {ws} ("function"|"procedure"|"type"|"trigger"|"package") | "declare"
+PLSQL_BLOCK_START = "create"({ws}"or"{ws}"replace")? {ws} ("function"|"procedure"|"type"|"trigger"|"package") | "declare" | "begin"
 PLSQL_BLOCK_END = ";"{wso}"/"
 PLSQL_BLOCK = {PLSQL_BLOCK_START}([^/;] | ";"{wso}[^/] | [^;]{wso}"/" | {ws})*{PLSQL_BLOCK_END}?
 
