@@ -323,6 +323,7 @@
         </group>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
+        <!--<projectConfigurable groupId="tools" instance="com.dci.intellij.dbn.options.GlobalProjectSettings" bundle="com.dci.intellij.dbn.common.SQLBundle" />-->
         <toolWindow id="DB Browser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
 
         <fileTypeFactory order="last" implementation="com.dci.intellij.dbn.language.sql.SQLFileTypeFactory"/>
