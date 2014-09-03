@@ -39,8 +39,8 @@
         <token id="LINE_COMMENT"/>
         <token id="BLOCK_COMMENT"/>
 
-        <token id="IDENTIFIER"/>
-        <token id="QUOTED_IDENTIFIER"/>
+        <token id="IDENTIFIER" type="identifier"/>
+        <token id="QUOTED_IDENTIFIER" type="identifier"/>
 
         <token id="INTEGER"/>
         <token id="NUMBER"/>

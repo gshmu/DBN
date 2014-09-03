@@ -23,6 +23,11 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
     }
 
     @Override
+    public boolean canStartWithToken(TokenType tokenType) {
+        return getElementType().getTokenType().isIdentifier();
+    }
+
+    @Override
     public boolean containsToken(TokenType tokenType) {
         SharedTokenTypeBundle sharedTokenTypes = getElementType().getLanguage().getSharedTokenTypes();
         return sharedTokenTypes.getIdentifier() == tokenType || sharedTokenTypes.getQuotedIdentifier() == tokenType;

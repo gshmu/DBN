@@ -5,7 +5,7 @@ REM (please do not add a trailing backslash)
 set JFLEX_HOME=../
 
 REM only needed for JDK 1.1.x:
-REM set JAVA_HOME=C:\Programs\Java\jdk1.7.0_55
+set JAVA_HOME="C:\Program Files (x86)\Java\jdk1.7"
 
 
 REM ------------------------------------------------------------------- 
