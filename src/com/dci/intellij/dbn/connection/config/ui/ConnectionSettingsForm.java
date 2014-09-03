@@ -82,7 +82,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
                 @Override
                 public void execute() {
-                    if (getConfiguration().getConnectionId().equals(connectionId)) {
+                    ConnectionSettings configuration = getConfiguration();
+                    if (configuration != null && configuration.getConnectionId().equals(connectionId)) {
                         if (name != null) headerForm.setTitle(name);
                         if (icon != null) headerForm.setIcon(icon);
                         if (color != null) headerForm.setBackground(color);

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
@@ -63,8 +64,13 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public void reset() {
-        if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) configurationEditorForm.resetChanges();
-        isModified = false;
+        new ConditionalLaterInvocator() {
+            @Override
+            public void execute() {
+                if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) configurationEditorForm.resetChanges();
+                isModified = false;
+            }
+        }.start();
     }
 
     public void disposeUIResources() {
