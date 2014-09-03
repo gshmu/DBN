@@ -24,7 +24,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
 
     @Override
     public boolean canStartWithToken(TokenType tokenType) {
-        return getElementType().getTokenType().isIdentifier();
+        return tokenType.isIdentifier();
     }
 
     @Override
