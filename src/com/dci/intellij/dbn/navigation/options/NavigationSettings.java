@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.navigation.options;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.navigation.options.ui.NavigationSettingsForm;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
     }
 
     public static NavigationSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getNavigationSettings();
+        return ProjectSettings.getInstance(project).getNavigationSettings();
     }
 
     @NotNull

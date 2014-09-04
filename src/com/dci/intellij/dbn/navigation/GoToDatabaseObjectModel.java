@@ -5,6 +5,8 @@ import javax.swing.ListCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +42,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = project;
         this.selectedConnection = selectedConnection;
-        objectsLookupSettings = GlobalProjectSettings.getInstance(project).getNavigationSettings().getObjectsLookupSettings();
+        objectsLookupSettings = ProjectSettings.getInstance(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
     public String getPromptText() {

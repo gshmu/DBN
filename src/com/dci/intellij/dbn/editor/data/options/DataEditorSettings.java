@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.options;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorSettingsForm;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
     }
 
     public static DataEditorSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getDataEditorSettings();
+        return ProjectSettings.getInstance(project).getDataEditorSettings();
     }
 
     @NotNull
