@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.options.GlobalProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -28,7 +29,7 @@ public class GlobalProjectSettingsDialog extends DBNDialog {
         setResizable(true);
         //setHorizontalStretch(1.5f);
 
-        globalSettings = GlobalProjectSettings.getInstance(project);
+        globalSettings = getGlobalProjectSettings();
         init();
     }
 
@@ -37,7 +38,11 @@ public class GlobalProjectSettingsDialog extends DBNDialog {
     }
 
     protected JComponent createCenterPanel() {
-        return GlobalProjectSettings.getInstance(getProject()).createCustomComponent();
+        return getGlobalProjectSettings().createCustomComponent();
+    }
+
+    private GlobalProjectSettings getGlobalProjectSettings() {
+        return ProjectSettings.getInstance(getProject()).getGlobalProjectSettings();
     }
 
     public void dispose() {

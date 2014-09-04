@@ -33,16 +33,9 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 
-@State(
-    name = "DBNavigator.Project.Settings",
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_FILE)}
-)
 public class GlobalProjectSettings
         extends CompositeProjectConfiguration<GlobalProjectSettingsEditorForm>
-        implements ProjectComponent, PersistentStateComponent<Element>, SearchableConfigurable.Parent {
+        implements SearchableConfigurable.Parent {
 
     private GeneralProjectSettings generalSettings;
     private DatabaseBrowserSettings browserSettings;
@@ -56,12 +49,7 @@ public class GlobalProjectSettings
     private GlobalConnectionSettings connectionSettings;
 
 
-
-    public static GlobalProjectSettings getInstance(Project project) {
-        return project.getComponent(GlobalProjectSettings.class);
-    }
-
-    private GlobalProjectSettings(Project project) {
+    public GlobalProjectSettings(Project project) {
         super(project);
         generalSettings = new GeneralProjectSettings(project);
         browserSettings = new DatabaseBrowserSettings(project);
@@ -168,7 +156,7 @@ public class GlobalProjectSettings
 
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
-                generalSettings,
+                connectionSettings,
                 browserSettings,
                 navigationSettings,
                 codeStyleSettings,
@@ -177,7 +165,7 @@ public class GlobalProjectSettings
                 codeCompletionSettings,
                 executionEngineSettings,
                 ddlFileSettings,
-                connectionSettings};
+                generalSettings};
     }
 
     /*********************************************************
@@ -213,20 +201,4 @@ public class GlobalProjectSettings
     public void projectClosed() {}
     public void initComponent() {}
     public void disposeComponent() {}
-
-    /****************************************
-     *       PersistentStateComponent       *
-     *****************************************/
-    @Nullable
-    @Override
-    public Element getState() {
-        Element element = new Element("state");
-        writeConfiguration(element);
-        return element;
-    }
-
-    @Override
-    public void loadState(Element element) {
-        readConfiguration(element);
-    }
 }

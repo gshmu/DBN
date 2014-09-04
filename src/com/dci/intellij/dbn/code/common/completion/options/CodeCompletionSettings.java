@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.ui.CodeCompletionSett
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.openapi.project.Project;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -23,7 +24,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     }
 
     public static CodeCompletionSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getCodeCompletionSettings();
+        return ProjectSettings.getInstance(project).getCodeCompletionSettings();
     }
 
     @NotNull

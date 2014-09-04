@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.general.ui.GeneralProjectSettingsForm;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
     }
 
     public static GeneralProjectSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getGeneralSettings();
+        return ProjectSettings.getInstance(project).getGeneralSettings();
     }
 
     @NotNull

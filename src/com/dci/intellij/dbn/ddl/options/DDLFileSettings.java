@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.ddl.options;
 
+import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -18,7 +19,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
     }
 
     public static DDLFileSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getDdlFileSettings();
+        return ProjectSettings.getInstance(project).getDdlFileSettings();
     }
 
     public DDLFileExtensionSettings getExtensionSettings() {
