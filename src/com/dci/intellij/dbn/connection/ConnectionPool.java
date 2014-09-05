@@ -37,6 +37,9 @@ public class ConnectionPool implements Disposable {
     }
 
     public synchronized Connection getStandaloneConnection(boolean recover) throws SQLException {
+        if (connectionHandler == null || connectionHandler.isDisposed()) {
+            throw new SQLException("Connection handler is disposed");
+        }
         if (standaloneConnection != null) {
             if (recover && !standaloneConnection.isValid()) {
                 standaloneConnection = null;
