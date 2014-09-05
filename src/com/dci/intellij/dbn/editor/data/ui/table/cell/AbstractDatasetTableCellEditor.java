@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCellValueListener;
-import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -28,6 +15,20 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCellValueListener;
+import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
+import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, Disposable {
     private DataEditorComponent editorComponent;
     private int clickCountToStart = 1;
@@ -38,7 +39,12 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         @Override
         public void valueChanged(DatasetEditorModelCell cell) {
             if (cell == AbstractDatasetTableCellEditor.this.cell) {
-                setCellValueToEditor();
+                new ConditionalLaterInvocator() {
+                    @Override
+                    public void execute() {
+                        setCellValueToEditor();
+                    }
+                }.start();
             }
         }
     };
