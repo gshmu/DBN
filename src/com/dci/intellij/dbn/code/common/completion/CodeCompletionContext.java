@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.options.GlobalProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
@@ -41,9 +42,9 @@ public class CodeCompletionContext {
             userInput = position.getText().substring(0, parameters.getOffset() - position.getTextOffset());
         }
 
-        GlobalProjectSettings globalSettings = GlobalProjectSettings.getInstance(file.getProject());
-        codeStyleSettings = globalSettings.getCodeStyleSettings();
-        codeCompletionSettings = globalSettings.getCodeCompletionSettings();
+        ProjectSettings projectSettings = ProjectSettings.getInstance(file.getProject());
+        codeStyleSettings = projectSettings.getCodeStyleSettings();
+        codeCompletionSettings = projectSettings.getCodeCompletionSettings();
 
         elementAtCaret = position instanceof BasePsiElement ? (BasePsiElement) position : PsiUtil.lookupLeafAtOffset(file, position.getTextOffset());
         elementAtCaret = elementAtCaret == null ? file : elementAtCaret;

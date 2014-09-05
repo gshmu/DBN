@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.common.options;
 
+import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -19,7 +20,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
     }
 
     public static ExecutionEngineSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getExecutionEngineSettings();
+        return ProjectSettings.getInstance(project).getExecutionEngineSettings();
     }
 
     @NotNull

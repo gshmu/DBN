@@ -14,8 +14,4 @@ public abstract class CompositeProjectConfiguration<T extends CompositeConfigura
     public Project getProject() {
         return project;
     }
-
-    protected static GlobalProjectSettings getGlobalProjectSettings(Project project) {
-        return GlobalProjectSettings.getInstance(project);
-    }
 }

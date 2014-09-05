@@ -14,8 +14,4 @@ public abstract class ProjectConfiguration<T extends ConfigurationEditorForm> ex
     public Project getProject() {
         return project;
     }
-
-    protected static GlobalProjectSettings getGlobalProjectSettings(Project project) {
-        return GlobalProjectSettings.getInstance(project);
-    }
 }
