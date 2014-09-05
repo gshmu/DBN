@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.options;
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
     }
 
     public static DatabaseBrowserSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getBrowserSettings();
+        return ProjectSettings.getInstance(project).getBrowserSettings();
     }
 
     @NotNull

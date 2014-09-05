@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class GlobalConnectionSettings extends ProjectConfiguration<GlobalConnect
     }
 
     public static GlobalConnectionSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getConnectionSettings();
+        return ProjectSettings.getInstance(project).getConnectionSettings();
     }
 
     @NotNull

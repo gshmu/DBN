@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.options;
 
+import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -18,7 +19,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
     }
 
     public static DataGridSettings getInstance(Project project) {
-        return getGlobalProjectSettings(project).getDataGridSettings();
+        return ProjectSettings.getInstance(project).getDataGridSettings();
     }
 
     @NotNull
