@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -54,7 +56,13 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
         filterSettings.getSettingsEditor();
 
-        headerForm = new DBNHeaderForm();
+        ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
+        Icon icon = databaseSettings.isNew() ? Icons.CONNECTION_NEW :
+                   !databaseSettings.isActive() ? Icons.CONNECTION_DISABLED :
+                   connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
+                   connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
+
+        headerForm = new DBNHeaderForm(connectionSettings.getDatabaseSettings().getName(), icon, detailSettings.getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         EventManager.subscribe(databaseSettings.getProject(), ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
         EventManager.subscribe(databaseSettings.getProject(), EnvironmentPresentationChangeListener.TOPIC, environmentPresentationChangeListener);

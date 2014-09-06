@@ -31,7 +31,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     @NotNull
     public String getId() {
-        return null;
+        return getClass().getName();
     }
 
     public Runnable enableSearch(String option) {
