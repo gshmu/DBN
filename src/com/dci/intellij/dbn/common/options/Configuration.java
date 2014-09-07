@@ -14,7 +14,7 @@ import com.intellij.openapi.util.Disposer;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
     private T configurationEditorForm;
-    private boolean isModified;
+    private boolean isModified = false;
 
     public String getHelpTopic() {
         return null;
@@ -64,11 +64,11 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public void reset() {
+        isModified = false;
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
                 if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) configurationEditorForm.resetChanges();
-                isModified = false;
             }
         }.start();
     }
