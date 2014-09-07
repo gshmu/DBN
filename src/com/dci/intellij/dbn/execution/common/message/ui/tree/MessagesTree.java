@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
@@ -95,15 +96,19 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
         else if (object instanceof CompilerMessageNode) {
             CompilerMessageNode compilerMessageNode = (CompilerMessageNode) object;
             CompilerMessage compilerMessage = compilerMessageNode.getCompilerMessage();
-            FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
 
-            DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
-            if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
-                editorManager.openFile(databaseFile, false);
-                if (compilerMessage.getContentFile() != null) {
-                    BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, compilerMessage.getContentFile());
-                    if (textEditor != null) {
-                        navigateInEditor(compilerMessage, textEditor, databaseFile);
+            Project project = compilerMessage.getProject();
+            if (project != null) {
+                FileEditorManager editorManager = FileEditorManager.getInstance(project);
+
+                DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
+                if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
+                    editorManager.openFile(databaseFile, false);
+                    if (compilerMessage.getContentFile() != null) {
+                        BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, compilerMessage.getContentFile());
+                        if (textEditor != null) {
+                            navigateInEditor(compilerMessage, textEditor, databaseFile);
+                        }
                     }
                 }
             }
