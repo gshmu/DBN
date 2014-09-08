@@ -45,6 +45,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JTextField maxPoolSizeTextField;
     private JTextField idleTimeTextField;
     private JCheckBox ddlFileBindingCheckBox;
+    private JTextField alternativeStatementDelimiterTextField;
 
     private PropertiesEditorForm propertiesEditorForm;
 
@@ -145,6 +146,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setCharset(newCharset);
         configuration.setAutoCommit(newAutoCommit);
         configuration.setDdlFileBinding(newDdlFileBinding);
+        configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle Time to Disconnect (minutes)", 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max Connection Pool Size", 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
@@ -173,6 +175,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         environmentTypesComboBox.setSelectedItem(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));
+        alternativeStatementDelimiterTextField.setText(configuration.getAlternativeStatementDelimiter());
     }
 
     private DefaultComboBoxModel createEnvironmentTypesModel(EnvironmentTypeBundle environmentTypes) {

@@ -24,7 +24,11 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     }
 
 
-    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code) {
+    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
+        if (StringUtil.isEmpty(alternativeDelimiter)) {
+            alternativeDelimiter = getProvider().getCompatibilityInterface().getDefaultAlternativeStatementDelimiter();
+        }
+
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
         boolean makeRerunnable = ddlFileSettings.getGeneralSettings().isMakeScriptsRerunnable();
@@ -44,11 +48,11 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         if (objectTypeId == DatabaseObjectTypeId.PROCEDURE || objectTypeId == DatabaseObjectTypeId.FUNCTION) {
             String objectType = objectTypeId.toString().toLowerCase();
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, caseSettings);
-            String delimiterChange = kco.changeCase("delimiter $$\n");
+            String delimiterChange = kco.changeCase("delimiter ") + alternativeDelimiter + "\n";
             String dropStatement =
                     kco.changeCase("drop " + objectType + " if exists ") +
-                    oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + "$$\n";
-            String createStatement = kco.changeCase("create definer=current_user\n") + code + "$$\n";
+                    oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + alternativeDelimiter + "\n";
+            String createStatement = kco.changeCase("create definer=current_user\n") + code + alternativeDelimiter + "\n";
             String delimiterReset = kco.changeCase("delimiter ;");
             return delimiterChange + (makeRerunnable ? dropStatement : "") + createStatement + delimiterReset;
         }

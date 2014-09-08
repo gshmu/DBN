@@ -54,4 +54,9 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
     public char getIdentifierQuotes() {
         return '`';
     }
+
+    @Override
+    public String getDefaultAlternativeStatementDelimiter() {
+        return null;
+    }
 }
