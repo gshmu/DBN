@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.options.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
@@ -19,6 +20,7 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.GlobalProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 
 public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEditorForm<GlobalProjectSettings> {
@@ -57,7 +59,8 @@ public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEdito
 
     private void addSettingsPanel(Configuration configuration) {
         JComponent component = configuration.createComponent();
-        TabInfo tabInfo = new TabInfo(component);
+        JBScrollPane scrollPane = new JBScrollPane(component);
+        TabInfo tabInfo = new TabInfo(scrollPane);
         tabInfo.setText(configuration.getDisplayName());
         tabInfo.setObject(configuration);
         //tabInfo.setTabColor(GUIUtil.getWindowColor());
@@ -87,7 +90,8 @@ public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEdito
 
     private TabInfo getTabInfo(JComponent component) {
         for (TabInfo tabInfo : configurationTabs.getTabs()) {
-            if (tabInfo.getComponent() == component) {
+            JBScrollPane scrollPane = (JBScrollPane) tabInfo.getComponent();
+            if (scrollPane.getViewport().getView() == component) {
                 return tabInfo;
             }
         }
