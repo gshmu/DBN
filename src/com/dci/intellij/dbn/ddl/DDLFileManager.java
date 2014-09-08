@@ -87,6 +87,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
                 ConnectionHandler connectionHandler = object.getConnectionHandler();
                 if(connectionHandler != null) {
+                    String alternativeStatementDelimiter = connectionHandler.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
                     DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
                     return ddlInterface.createDDLStatement(project,
                             object.getObjectType().getTypeId(),
@@ -94,7 +95,8 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                             object.getSchema().getName(),
                             object.getName(),
                             contentType,
-                            content);
+                            content,
+                            alternativeStatementDelimiter);
 
                 }
                 return "";

@@ -33,4 +33,9 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
     public char getIdentifierQuotes() {
         return '"';
     }
+
+    @Override
+    public String getDefaultAlternativeStatementDelimiter() {
+        return null;
+    }
 }

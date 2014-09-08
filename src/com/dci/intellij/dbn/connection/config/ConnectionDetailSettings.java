@@ -21,6 +21,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private boolean ddlFileBinding = true;
     private int idleTimeToDisconnect = 30;
     private int maxConnectionPoolSize = 7;
+    private String alternativeStatementDelimiter;
     private ConnectionSettings parent;
 
     public ConnectionDetailSettings(ConnectionSettings parent) {
@@ -99,6 +100,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.idleTimeToDisconnect = idleTimeToDisconnect;
     }
 
+    public String getAlternativeStatementDelimiter() {
+        return alternativeStatementDelimiter;
+    }
+
+    public void setAlternativeStatementDelimiter(String alternativeStatementDelimiter) {
+        this.alternativeStatementDelimiter = alternativeStatementDelimiter;
+    }
+
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
@@ -122,6 +131,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         environmentTypeId = SettingsUtil.getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
         idleTimeToDisconnect = SettingsUtil.getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         maxConnectionPoolSize = SettingsUtil.getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
+        alternativeStatementDelimiter = SettingsUtil.getString(element, "alternative-statement-delimiter", null);
 
         Element propertiesElement = element.getChild("properties");
         if (propertiesElement != null) {
@@ -143,6 +153,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         SettingsUtil.setString(element, "environment-type", environmentTypeId);
         SettingsUtil.setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         SettingsUtil.setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
+        SettingsUtil.setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
 
         if (properties.size() > 0) {
             Element propertiesElement = new Element("properties");

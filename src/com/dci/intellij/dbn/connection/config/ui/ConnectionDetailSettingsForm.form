@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="4" left="4" bottom="4" right="4"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="341"/>
+      <xy x="20" y="20" width="500" height="368"/>
     </constraints>
     <properties/>
     <border type="none">
@@ -11,7 +11,7 @@
       <title-color color="-16777216"/>
     </border>
     <children>
-      <grid id="a15ae" binding="generalGroupPanel" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="a15ae" binding="generalGroupPanel" layout-manager="GridLayoutManager" row-count="7" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="8" left="8" bottom="8" right="8"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -31,12 +31,12 @@
             </constraints>
             <properties>
               <labelFor value="ce9a4"/>
-              <text value="Content &amp;Encoding"/>
+              <text value="Content &amp;encoding"/>
             </properties>
           </component>
           <component id="3212" class="javax.swing.JCheckBox" binding="autoCommitCheckBox">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <enabled value="true"/>
@@ -49,7 +49,7 @@
             </constraints>
             <properties>
               <labelFor value="803ff"/>
-              <text value="Environment &amp;Type"/>
+              <text value="Environment &amp;type"/>
             </properties>
           </component>
           <component id="803ff" class="javax.swing.JComboBox" binding="environmentTypesComboBox">
@@ -64,7 +64,7 @@
             </constraints>
             <properties>
               <labelFor value="830d9"/>
-              <text value="&amp;Idle Time to Disconnect"/>
+              <text value="&amp;Idle time to disconnect"/>
             </properties>
           </component>
           <hspacer id="78cbf">
@@ -95,10 +95,10 @@
           </component>
           <component id="5aa76" class="javax.swing.JCheckBox" binding="ddlFileBindingCheckBox">
             <constraints>
-              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Enable Project DDL File Lookup"/>
+              <text value="Enable project DDL file lookup"/>
             </properties>
           </component>
           <component id="959b1" class="javax.swing.JLabel">
@@ -106,12 +106,30 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="&amp;Max Connection Pool Size"/>
+              <labelFor value="98cc2"/>
+              <text value="&amp;Max connection-pool size"/>
             </properties>
           </component>
           <component id="98cc2" class="javax.swing.JTextField" binding="maxPoolSizeTextField">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="80" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="1897" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="5a1ed"/>
+              <text value="Alternative statement &amp;delimiter "/>
+            </properties>
+          </component>
+          <component id="5a1ed" class="javax.swing.JTextField" binding="alternativeStatementDelimiterTextField">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="80" height="-1"/>
               </grid>
             </constraints>
