@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.object.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -16,8 +18,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-
-import java.util.List;
 
 public class ObjectActionGroup extends DefaultActionGroup {
 
@@ -64,15 +64,17 @@ public class ObjectActionGroup extends DefaultActionGroup {
             }
         }
 
-        if (properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
-            add(new DropObjectAction((DBSchemaObject) object));
+        if(object instanceof DBSchemaObject) {
+            if (properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                add(new DropObjectAction((DBSchemaObject) object));
 
-            //add(new TestAction(object));
-        }
+                //add(new TestAction(object));
+            }
 
-        if(properties.is(DBObjectProperty.REFERENCEABLE) && compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_DEPENDENCIES)) {
-            addSeparator();
-            add (new DependenciesActionGroup((DBSchemaObject) object));
+            if(properties.is(DBObjectProperty.REFERENCEABLE) && compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_DEPENDENCIES)) {
+                addSeparator();
+                add (new DependenciesActionGroup((DBSchemaObject) object));
+            }
         }
 
         List<DBObjectNavigationList> navigationLists = object.getNavigationLists();

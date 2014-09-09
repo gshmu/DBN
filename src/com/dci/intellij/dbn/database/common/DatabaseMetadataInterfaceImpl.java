@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.database.common;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.diagnostic.Logger;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
     private Logger logger = Logger.getInstance(getClass().getName());
@@ -265,16 +265,19 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return executeQuery(connection, "synonyms", ownerName);
     }
 
-   /*********************************************************
-    *                      REFERENCES                       *
-    *********************************************************/
-
+    /*********************************************************
+     *                      REFERENCES                       *
+     *********************************************************/
     public ResultSet loadReferencedObjects(String ownerName, String objectName, Connection connection) throws SQLException {
         return executeQuery(connection, "referenced-objects", ownerName, objectName);
     }
 
     public ResultSet loadReferencingObjects(String ownerName, String objectName, Connection connection) throws SQLException {
         return executeQuery(connection, "referencing-objects", ownerName, objectName);
+    }
+
+    public ResultSet loadReferencingSchemas(String ownerName, String objectName, Connection connection) throws SQLException {
+        return executeQuery(connection, "referencing-schemas", ownerName, objectName);
     }
 
 
