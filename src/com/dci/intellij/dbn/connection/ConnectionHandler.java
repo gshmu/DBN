@@ -71,7 +71,7 @@ public interface ConnectionHandler extends Disposable{
     DatabaseType getDatabaseType();
     double getDatabaseVersion();
 
-    Filter<BrowserTreeNode> getObjectFilter();
+    Filter<BrowserTreeNode> getObjectTypeFilter();
     NavigationPsiCache getPsiCache();
 
     EnvironmentType getEnvironmentType();

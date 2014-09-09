@@ -3,9 +3,13 @@ package com.dci.intellij.dbn.connection.config;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
+import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsForm;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.project.Project;
@@ -15,6 +19,15 @@ public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionF
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
     private ConnectionSettings connectionSettings;
+
+    private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = new Filter<DBSchema>() {
+        @Override
+        public boolean accepts(DBSchema schema) {
+            return !schema.isEmptySchema();
+        }
+    };
+
+    private transient Filter<DBSchema> cachedSchemaFilter;
 
     public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
         this.connectionSettings = connectionSettings;
@@ -84,5 +97,39 @@ public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionF
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
         super.writeConfiguration(element);
+    }
+
+    @Override
+    protected void onApply() {
+        super.onApply();
+        cachedSchemaFilter = null;
+    }
+
+    public Filter<? extends DBObject> getNameFilter(DBObjectType objectType) {
+        final Filter<DBObject> filter = objectNameFilterSettings.getFilter(objectType);
+        if (objectType == DBObjectType.SCHEMA) {
+            if (hideEmptySchemas) {
+                if (filter == null) {
+                    return EMPTY_SCHEMAS_FILTER;
+                } else {
+                    if (cachedSchemaFilter == null) {
+                        cachedSchemaFilter = new Filter<DBSchema>() {
+                            @Override
+                            public int hashCode() {
+                                return filter.hashCode() + super.hashCode();
+                            }
+
+                            @Override
+                            public boolean accepts(DBSchema schema) {
+                                return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
+                            }
+                        };
+
+                    }
+                    return cachedSchemaFilter;
+                }
+            }
+        }
+        return filter;
     }
 }

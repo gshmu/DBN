@@ -19,6 +19,8 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         super(settings);
         objectTypesFilterPanel.add(settings.getObjectTypeFilterSettings().createComponent(), BorderLayout.CENTER);
         objectNameFiltersPanel.add(settings.getObjectNameFilterSettings().createComponent(), BorderLayout.CENTER);
+
+        hideEmptySchemasCheckBox.setSelected(settings.isHideEmptySchemas());
         registerComponent(hideEmptySchemasCheckBox);
     }
 
@@ -28,13 +30,9 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
 
     @Override
     public void applyChanges() throws ConfigurationException {
-        super.resetChanges();
-
-    }
-
-    @Override
-    public void resetChanges() {
-        super.resetChanges();
+        super.applyChanges();
+        ConnectionFilterSettings configuration = getConfiguration();
+        configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
     }
 
     @Override

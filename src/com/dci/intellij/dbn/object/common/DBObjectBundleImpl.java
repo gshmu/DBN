@@ -273,7 +273,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     private void buildTreeChildren() {
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectFilter();
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
             newTreeChildren = new ArrayList<BrowserTreeNode>();
             for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
@@ -309,7 +309,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public void rebuildTreeChildren() {
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectFilter();
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
             buildTreeChildren();
         }
