@@ -141,7 +141,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             if (!silently) compilerManager.createErrorCompilerResult(object, e);
         }  finally{
             connectionHandler.freePoolConnection(connection);
-            if (!silently) connectionHandler.getObjectBundle().refreshObjectsStatus();
+            if (!silently) connectionHandler.getObjectBundle().refreshObjectsStatus(object);
             object.getStatus().set(contentType, DBObjectStatus.COMPILING, false);
         }
     }
@@ -159,7 +159,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, selectedCompileType);
                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, selectedCompileType);
                         doCompileInvalidObjects(schema.getTriggers(), "triggers", progressIndicator, selectedCompileType);
-                        connectionHandler.getObjectBundle().refreshObjectsStatus();
+                        connectionHandler.getObjectBundle().refreshObjectsStatus(null);
 
                         if (!progressIndicator.isCanceled()) {
                             List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();

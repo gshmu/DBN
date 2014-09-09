@@ -87,6 +87,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     boolean isUserSchema;
     boolean isPublicSchema;
     boolean isSystemSchema;
+    boolean isEmptySchema;
 
     public DBSchemaImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler.getObjectBundle(), DBContentType.NONE, resultSet);
@@ -97,6 +98,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         name = resultSet.getString("SCHEMA_NAME");
         isPublicSchema = resultSet.getString("IS_PUBLIC").equals("Y");
         isSystemSchema = resultSet.getString("IS_SYSTEM").equals("Y");
+        isEmptySchema = resultSet.getString("IS_EMPTY").equals("Y");
         isUserSchema = getName().equalsIgnoreCase(getConnectionHandler().getUserName());
     }
 
@@ -170,6 +172,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
     public boolean isSystemSchema() {
         return isSystemSchema;
+    }
+
+    @Override
+    public boolean isEmptySchema() {
+        return isEmptySchema;
     }
 
     @Override

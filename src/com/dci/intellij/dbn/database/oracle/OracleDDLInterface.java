@@ -23,7 +23,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         super("oracle_ddl_interface.xml", provider);
     }
 
-    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code) {
+    public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
         boolean makeRerunnable = ddlFileSettings.getGeneralSettings().isMakeScriptsRerunnable();

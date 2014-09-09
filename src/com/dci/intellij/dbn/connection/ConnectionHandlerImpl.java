@@ -90,7 +90,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionSettings.getDatabaseSettings().getDatabaseVersion();
     }
 
-    public Filter<BrowserTreeNode> getObjectFilter() {
+    public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 

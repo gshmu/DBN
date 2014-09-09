@@ -148,11 +148,13 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     @Nullable
     public VirtualFile getParent() {
-        DBSchemaObject object = mainDatabaseFile.getObject();
-        if (object != null) {
-            DBObject parentObject = object.getParentObject();
-            if (parentObject != null) {
-                return parentObject.getVirtualFile();
+        if (mainDatabaseFile != null) {
+            DBSchemaObject object = mainDatabaseFile.getObject();
+            if (object != null) {
+                DBObject parentObject = object.getParentObject();
+                if (parentObject != null) {
+                    return parentObject.getVirtualFile();
+                }
             }
         }
         return null;

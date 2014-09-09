@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionManagerListener;
@@ -230,31 +229,21 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     };
 
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
-        public void filterChanged(Filter<BrowserTreeNode> filter) {
-            if (filter == getObjectFilter()) {
-                getToolWindowForm().getBrowserForm().updateTree();
+        public void typeFiltersChanged(ConnectionHandler connectionHandler) {
+            if (connectionHandler == null) {
+                getToolWindowForm().getBrowserForm().rebuildTree();
             } else {
-                ConnectionHandler connectionHandler = getConnectionHandler(filter);
-                if (connectionHandler != null) {
-                    connectionHandler.getObjectBundle().rebuildTreeChildren();
-                }
+                connectionHandler.getObjectBundle().rebuildTreeChildren();
             }
         }
 
-        private ConnectionHandler getConnectionHandler(Filter<BrowserTreeNode> filter) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-            for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                    if (filter == connectionHandler.getObjectFilter()) {
-                        return connectionHandler;
-                    }
-                }
-            }
-            return null;
+        @Override
+        public void nameFiltersChanged(ConnectionHandler connectionHandler, @Nullable DBObjectType objectType) {
+            connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
         }
     };
 
-    public Filter<BrowserTreeNode> getObjectFilter() {
+    public Filter<BrowserTreeNode> getObjectTypeFilter() {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         return browserSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }

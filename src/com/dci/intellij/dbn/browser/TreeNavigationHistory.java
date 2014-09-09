@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
@@ -41,14 +42,30 @@ public class TreeNavigationHistory implements Disposable{
         return offset > 0;
     }
 
-    public BrowserTreeNode next() {
-        offset = offset + 1;
-        return history.get(offset);
+    public @Nullable BrowserTreeNode next() {
+        if (offset < history.size() -1) {
+            offset = offset + 1;
+            BrowserTreeNode browserTreeNode = history.get(offset);
+            if (browserTreeNode.isDisposed()) {
+                history.remove(browserTreeNode);
+                return next();
+            }
+            return browserTreeNode;
+        }
+        return null;
     }
 
-    public BrowserTreeNode previous() {
-        offset = offset -1;
-        return history.get(offset);
+    public @Nullable BrowserTreeNode previous() {
+        if (offset > 0) {
+            offset = offset-1;
+            BrowserTreeNode browserTreeNode = history.get(offset);
+            if (browserTreeNode.isDisposed()) {
+                history.remove(browserTreeNode);
+                return previous();
+            }
+            return browserTreeNode;
+        }
+        return null;
     }
 
     @Override

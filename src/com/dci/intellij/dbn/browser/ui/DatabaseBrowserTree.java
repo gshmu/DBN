@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -112,8 +113,8 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     public void selectElement(BrowserTreeNode treeNode, boolean requestFocus) {
         ConnectionHandler connectionHandler = treeNode.getConnectionHandler();
         Filter<BrowserTreeNode> filter = connectionHandler == null ?
-                DatabaseBrowserManager.getInstance(getProject()).getObjectFilter() :
-                connectionHandler.getObjectFilter();
+                DatabaseBrowserManager.getInstance(getProject()).getObjectTypeFilter() :
+                connectionHandler.getObjectTypeFilter();
 
         if (filter.accepts(treeNode)) {
             targetSelection = treeNode;
@@ -198,12 +199,16 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
     public void navigateBack() {
         BrowserTreeNode treeNode = navigationHistory.previous();
-        selectPathSilently(DatabaseBrowserUtils.createTreePath(treeNode));
+        if (treeNode != null) {
+            selectPathSilently(DatabaseBrowserUtils.createTreePath(treeNode));
+        }
     }
 
     public void navigateForward() {
         BrowserTreeNode treeNode = navigationHistory.next();
-        selectPathSilently(DatabaseBrowserUtils.createTreePath(treeNode));
+        if (treeNode != null) {
+            selectPathSilently(DatabaseBrowserUtils.createTreePath(treeNode));
+        }
     }
 
 

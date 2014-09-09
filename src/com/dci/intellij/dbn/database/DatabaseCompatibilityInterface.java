@@ -25,6 +25,8 @@ public abstract class DatabaseCompatibilityInterface {
 
     public abstract char getIdentifierQuotes();
 
+    public abstract String getDefaultAlternativeStatementDelimiter();
+
     public String getOrderByClause(String columnName, SortDirection sortDirection, boolean nullsFirst) {
         return columnName + " " + sortDirection.getSqlToken() + " nulls " + (nullsFirst ? " first" : " last");
     }

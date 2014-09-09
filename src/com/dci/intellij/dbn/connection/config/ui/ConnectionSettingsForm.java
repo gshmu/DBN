@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
@@ -38,17 +39,17 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         contentPanel.add(configTabbedPane, BorderLayout.CENTER);
 
 
-        TabInfo connectionTabInfo = new TabInfo(databaseSettings.createComponent());
+        TabInfo connectionTabInfo = new TabInfo(new JBScrollPane(databaseSettings.createComponent()));
         connectionTabInfo.setText("Connection");
         configTabbedPane.addTab(connectionTabInfo);
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
-        TabInfo detailsTabInfo = new TabInfo(detailSettings.createComponent());
+        TabInfo detailsTabInfo = new TabInfo(new JBScrollPane(detailSettings.createComponent()));
         detailsTabInfo.setText("Details");
         configTabbedPane.addTab(detailsTabInfo);
 
         ConnectionFilterSettings filterSettings = connectionSettings.getFilterSettings();
-        TabInfo filtersTabInfo = new TabInfo(filterSettings.createComponent());
+        TabInfo filtersTabInfo = new TabInfo(new JBScrollPane(filterSettings.createComponent()));
         filtersTabInfo.setText("Filters");
         configTabbedPane.addTab(filtersTabInfo);
 
