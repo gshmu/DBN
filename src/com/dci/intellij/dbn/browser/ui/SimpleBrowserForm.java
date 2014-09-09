@@ -65,7 +65,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserTree.selectElement(treeNode, requestFocus);
     }
 
-    public void updateTree() {
+    public void rebuildTree() {
         browserTree.getModel().getRoot().rebuildTreeChildren();
     }
 

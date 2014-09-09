@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -33,4 +34,6 @@ public interface DBSchemaObject extends DBObject {
 
     @NotNull
     DBEditableObjectVirtualFile getVirtualFile();
+
+    List<DBSchema> getReferencingSchemas() throws SQLException;
 }

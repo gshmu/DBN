@@ -80,7 +80,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
                         CodeStyleCaseOption caseOption = null;
                         if (child instanceof IdentifierPsiElement) {
                             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) child;
-                            if (identifierPsiElement.isObject()) {
+                            if (identifierPsiElement.isObject() && !identifierPsiElement.isQuoted()) {
                                 caseOption = styleCaseSettings.getObjectCaseOption();
                             }
                         }

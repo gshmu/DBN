@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -122,14 +123,42 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return DatabaseFileSystem.getInstance().findDatabaseFile(this);
     }
 
+    @Override
+    public List<DBSchema> getReferencingSchemas() throws SQLException {
+        List<DBSchema> schemas = new ArrayList<DBSchema>();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null) {
+            Connection connection = connectionHandler.getPoolConnection(getSchema());
+            ResultSet resultSet = null;
+            try {
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                resultSet = metadataInterface.loadReferencingSchemas(getSchema().getName(), getName(), connection);
+                while (resultSet.next()) {
+                    String schemaName = resultSet.getString("SCHEMA_NAME");
+                    DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
+                    if (schema != null)  {
+                        schemas.add(schema);
+                    }
+                }
+
+            } finally {
+                ConnectionUtil.closeResultSet(resultSet);
+                connectionHandler.freePoolConnection(connection);
+            }
+        }
+        return schemas;
+    }
+
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema());
-        try {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
-        } finally {
-            connectionHandler.freePoolConnection(connection);
+        if (connectionHandler != null) {
+            Connection connection = connectionHandler.getPoolConnection(getSchema());
+            try {
+                DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+                ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
+            } finally {
+                connectionHandler.freePoolConnection(connection);
+            }
         }
     }
 

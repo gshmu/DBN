@@ -205,7 +205,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                                         compilerManager.compileObject(schemaObject, CompileType.DEBUG, true);
                                     }
                                 }
-                                executionInput.getConnectionHandler().getObjectBundle().refreshObjectsStatus();
+                                executionInput.getConnectionHandler().getObjectBundle().refreshObjectsStatus(null);
                                 if (!progressIndicator.isCanceled()) {
                                     performExecution(
                                             executionInput,

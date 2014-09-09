@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.browser.model;
 
+import javax.swing.Icon;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
@@ -7,13 +11,11 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-
-import javax.swing.Icon;
-import java.util.List;
 
 public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     private List<ConnectionBundle> connectionBundles;
@@ -51,6 +53,13 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
 
     public List<? extends BrowserTreeNode> getTreeChildren() {
         return connectionBundles;
+    }
+
+    @Override
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+        for (ConnectionBundle connectionBundle : connectionBundles) {
+            connectionBundle.refreshTreeChildren(objectType);
+        }
     }
 
     public void rebuildTreeChildren() {

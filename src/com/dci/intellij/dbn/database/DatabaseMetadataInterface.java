@@ -546,6 +546,8 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      */
     ResultSet loadReferencedObjects(String ownerName, String objectName, Connection connection) throws SQLException;
 
+    ResultSet loadReferencingSchemas(String ownerName, String objectName, Connection connection) throws SQLException;
+
     /**
      * Loads the referencing objects for the given object (objects depending on it)
      * Column names of the returned ResultSet

@@ -53,7 +53,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return databaseVersion;
     }
 
-    public Filter<BrowserTreeNode> getObjectFilter() {
+    public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return null;
     }
 

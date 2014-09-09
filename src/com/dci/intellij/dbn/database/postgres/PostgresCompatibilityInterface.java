@@ -55,4 +55,9 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
     public char getIdentifierQuotes() {
         return '"';
     }
+
+    @Override
+    public String getDefaultAlternativeStatementDelimiter() {
+        return null;
+    }
 }

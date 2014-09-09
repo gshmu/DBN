@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -38,7 +39,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public Filter<T> getFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler == null ? null :
-                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings().getFilter(objectType);
+                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
     @NotNull
@@ -155,6 +156,18 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
             }
             return elements;
+        }
+    }
+
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+        if (isLoaded()) {
+            if (objectType == null || getObjectType() == objectType) {
+                getElements();
+            }
+
+            for (DBObject object : getObjects()) {
+                object.refreshTreeChildren(objectType);
+            }
         }
     }
 

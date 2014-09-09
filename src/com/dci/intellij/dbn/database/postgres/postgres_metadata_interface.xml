@@ -14,7 +14,8 @@
             select
                 SCHEMA_NAME,
                 case when lower(SCHEMA_NAME)='pg_catalog' then 'Y' else 'N' end as IS_PUBLIC,
-                case when lower(SCHEMA_NAME)='information_schema' then 'Y' else 'N' end as IS_SYSTEM
+                case when lower(SCHEMA_NAME)='information_schema' then 'Y' else 'N' end as IS_SYSTEM,
+                'N' as IS_EMPTY
             from INFORMATION_SCHEMA.SCHEMATA
             order by SCHEMA_NAME asc
         </statement>

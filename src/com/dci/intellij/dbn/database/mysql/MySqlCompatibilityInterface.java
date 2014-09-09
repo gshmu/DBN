@@ -58,6 +58,11 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     }
 
     @Override
+    public String getDefaultAlternativeStatementDelimiter() {
+        return "$$";
+    }
+
+    @Override
     public String getOrderByClause(String columnName, SortDirection sortDirection, boolean nullsFirst) {
         nullsFirst = (nullsFirst && sortDirection == SortDirection.ASCENDING) || (!nullsFirst && sortDirection == SortDirection.DESCENDING);
         return "(" + columnName + " is" + (nullsFirst ? "" : " not") + " null), " + columnName + " " + sortDirection.getSqlToken();

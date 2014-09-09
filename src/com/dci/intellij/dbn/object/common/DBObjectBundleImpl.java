@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
@@ -34,6 +35,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionPool;
@@ -273,7 +275,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     private void buildTreeChildren() {
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectFilter();
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
             newTreeChildren = new ArrayList<BrowserTreeNode>();
             for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
@@ -308,8 +310,17 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         }
     }
 
+    @Override
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+        if (visibleTreeChildren != null) {
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.refreshTreeChildren(objectType);
+            }
+        }
+    }
+
     public void rebuildTreeChildren() {
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectFilter();
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
             buildTreeChildren();
         }
@@ -522,16 +533,21 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         }
     }
 
-    public void refreshObjectsStatus() {
+    public void refreshObjectsStatus(final DBSchemaObject requester) {
         if (DatabaseCompatibilityInterface.getInstance(getConnectionHandler()).supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
             new BackgroundTask(getProject(), "Updating objects status", true) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
-                    List<DBSchema> schemas = getSchemas();
-                    for (int i=0; i<schemas.size(); i++) {
-                        DBSchema schema = schemas.get(i);
-                        progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
-                        progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, schemas.size()));
-                        schema.refreshObjectsStatus();
+                    try {
+                        List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
+
+                        for (int i=0; i<schemas.size(); i++) {
+                            DBSchema schema = schemas.get(i);
+                            progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
+                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, schemas.size()));
+                            schema.refreshObjectsStatus();
+                        }
+                    } catch (SQLException e) {
+                        MessageUtil.showErrorDialog("Could not refresh dependencies", e, "Object Dependencies Refresh");
                     }
                 }
 
