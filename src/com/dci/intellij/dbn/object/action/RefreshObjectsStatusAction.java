@@ -14,6 +14,6 @@ public class RefreshObjectsStatusAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
-        connectionHandler.getObjectBundle().refreshObjectsStatus();
+        connectionHandler.getObjectBundle().refreshObjectsStatus(null);
     }
 }

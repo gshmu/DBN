@@ -1241,6 +1241,18 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="referencing-schemas" is-query="true" is-prepared-statement="true">
+        <statement prefixes="DBA, ALL">
+            select distinct OWNER as SCHEMA_NAME
+            from [PREFIX]_DEPENDENCIES
+            where
+                REFERENCED_OWNER = {0} and
+                REFERENCED_NAME = {1}
+            order by
+                OWNER
+        </statement>
+    </statement-execution-processor>
+
     <statement-execution-processor id="sequences" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select SEQUENCE_NAME

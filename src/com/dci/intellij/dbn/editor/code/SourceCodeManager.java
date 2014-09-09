@@ -222,7 +222,12 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     virtualFile.setContent(content);
                     virtualFile.updateToDatabase();
 
-                    object.getConnectionHandler().getObjectBundle().refreshObjectsStatus();
+                    ConnectionHandler connectionHandler = object.getConnectionHandler();
+                    DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+                    if (compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
+                        connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+                    }
+
                     if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
                         DatabaseCompilerManager.getInstance(editor.getProject()).createCompilerResult(object);
                     }
