@@ -199,7 +199,9 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
     public void navigateBack() {
         BrowserTreeNode treeNode = navigationHistory.previous();
-        selectPathSilently(DatabaseBrowserUtils.createTreePath(treeNode));
+        if (!treeNode.isDisposed()) {
+            selectPathSilently(DatabaseBrowserUtils.createTreePath(treeNode));
+        }
     }
 
     public void navigateForward() {
