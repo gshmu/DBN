@@ -10,6 +10,7 @@ public interface DBSchema extends DBObject {
     boolean isPublicSchema();
     boolean isUserSchema();
     boolean isSystemSchema();
+    boolean isEmptySchema();
     List<DBDataset> getDatasets();
     List<DBTable> getTables();
     List<DBView> getViews();
