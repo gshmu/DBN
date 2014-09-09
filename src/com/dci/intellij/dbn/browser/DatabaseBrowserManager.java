@@ -231,7 +231,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
         public void filterChanged(Filter<BrowserTreeNode> filter) {
-            if (filter == getObjectFilter()) {
+            if (filter == getObjectTypeFilter()) {
                 getToolWindowForm().getBrowserForm().updateTree();
             } else {
                 ConnectionHandler connectionHandler = getConnectionHandler(filter);
@@ -245,7 +245,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
                 for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                    if (filter == connectionHandler.getObjectFilter()) {
+                    if (filter == connectionHandler.getObjectTypeFilter()) {
                         return connectionHandler;
                     }
                 }
@@ -254,7 +254,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
     };
 
-    public Filter<BrowserTreeNode> getObjectFilter() {
+    public Filter<BrowserTreeNode> getObjectTypeFilter() {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         return browserSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }

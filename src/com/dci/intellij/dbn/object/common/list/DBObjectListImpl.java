@@ -38,7 +38,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public Filter<T> getFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler == null ? null :
-                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings().getFilter(objectType);
+                (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
     @NotNull
