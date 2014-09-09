@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -11,6 +13,7 @@ import com.intellij.openapi.project.Project;
 public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
+    private boolean hideEmptySchemas = false;
     private ConnectionSettings connectionSettings;
 
     public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
@@ -20,6 +23,14 @@ public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionF
         ObjectTypeFilterSettings master = databaseBrowserSettings.getFilterSettings().getObjectTypeFilterSettings();
         objectTypeFilterSettings = new ObjectTypeFilterSettings(project, master);
         objectNameFilterSettings = new ObjectNameFilterSettings(project);
+    }
+
+    public boolean isHideEmptySchemas() {
+        return hideEmptySchemas;
+    }
+
+    public void setHideEmptySchemas(boolean hideEmptySchemas) {
+        this.hideEmptySchemas = hideEmptySchemas;
     }
 
     public ConnectionSettings getConnectionSettings() {
@@ -61,5 +72,17 @@ public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionF
 
     protected Configuration[] createConfigurations() {
         return new Configuration[] {objectTypeFilterSettings, objectNameFilterSettings};
+    }
+
+    @Override
+    public void readConfiguration(Element element) {
+        hideEmptySchemas = getBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
+        super.readConfiguration(element);
+    }
+
+    @Override
+    public void writeConfiguration(Element element) {
+        setBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
+        super.writeConfiguration(element);
     }
 }

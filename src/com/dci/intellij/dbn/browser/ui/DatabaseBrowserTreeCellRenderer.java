@@ -1,8 +1,13 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.tree.TreeCellRenderer;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Font;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -93,12 +98,14 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                 */
             } else {
                 boolean showBold = false;
+                boolean showGrey = false;
                 boolean isError = false;
                 if (treeNode instanceof DBObject) {
                     DBObject object = (DBObject) treeNode;
                     if (object.isOfType(DBObjectType.SCHEMA)) {
                         DBSchema schema = (DBSchema) object;
                         showBold = schema.isUserSchema();
+                        showGrey = schema.isEmptySchema();
                     }
 
                     isError = !object.isValid();
@@ -106,8 +113,8 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
                 SimpleTextAttributes textAttributes =
                         isError ? SimpleTextAttributes.ERROR_ATTRIBUTES :
-                        showBold ? SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES :
-                        SimpleTextAttributes.REGULAR_ATTRIBUTES;
+                        showBold ? (showGrey ? SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES) :
+                                (showGrey ? SimpleTextAttributes.GRAYED_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
                 if (displayName == null) displayName = "displayName null!!";
 
