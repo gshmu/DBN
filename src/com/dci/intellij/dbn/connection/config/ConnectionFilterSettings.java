@@ -4,7 +4,7 @@ import org.jdom.Element;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.options.CompositeConfiguration;
+import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsForm;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionFilterSettingsForm> {
+public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
@@ -30,6 +30,7 @@ public class ConnectionFilterSettings extends CompositeConfiguration<ConnectionF
     private transient Filter<DBSchema> cachedSchemaFilter;
 
     public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
+        super(connectionSettings.getProject());
         this.connectionSettings = connectionSettings;
         Project project = connectionSettings.getProject();
         DatabaseBrowserSettings databaseBrowserSettings = DatabaseBrowserSettings.getInstance(project);

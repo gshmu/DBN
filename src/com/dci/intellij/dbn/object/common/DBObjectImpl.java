@@ -619,6 +619,18 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         }
     }
 
+    @Override
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null && !isDisposed()) {
+            if (visibleTreeChildren != null) {
+                for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                    treeNode.refreshTreeChildren(objectType);
+                }
+            }
+        }
+    }
+
     public void rebuildTreeChildren() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null && !isDisposed()) {

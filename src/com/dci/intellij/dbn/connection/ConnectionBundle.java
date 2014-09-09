@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
@@ -203,6 +204,12 @@ public abstract class ConnectionBundle
 
     public List<? extends BrowserTreeNode> getTreeChildren() {
         return null;  //should never be used
+    }
+
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+        for (ConnectionHandler connectionHandler : getConnectionHandlers()) {
+            connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
+        }
     }
 
     public void rebuildTreeChildren() {

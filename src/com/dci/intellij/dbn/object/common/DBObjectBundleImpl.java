@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
@@ -305,6 +306,15 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
                 }
             }.start();
+        }
+    }
+
+    @Override
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {
+        if (visibleTreeChildren != null) {
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.refreshTreeChildren(objectType);
+            }
         }
     }
 
