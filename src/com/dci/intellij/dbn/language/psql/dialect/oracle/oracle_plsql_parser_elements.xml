@@ -1993,6 +1993,7 @@
             <element ref-id="select_into_statement" />
             <element ref-id="set_transaction_statement" />
             <element ref-id="update_statement" />
+            <element ref-id="execute_immediate_statement" />
         </one-of>
         <token id="000000959" type-id="CHR_SEMICOLON" />
     </element-def>

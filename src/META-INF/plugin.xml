@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3264</version>
+    <version>3.0.3272</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,8 +27,10 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.3264</b>
+            <li><b>3.0.3272</b>
              <ul>
+                - Support for anonymous "begin / end" blocks (Oracle)<br>
+                - Support for alternative delimiter configuration (MySQL)<br>
                 - "Hide empty schemas" feature for object browser<br>
                 - MySQL DDL file support<br>
                 - DDL file formatting and configuration enhancements<br>
