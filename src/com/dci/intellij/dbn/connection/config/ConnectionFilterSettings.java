@@ -117,7 +117,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
                         cachedSchemaFilter = new Filter<DBSchema>() {
                             @Override
                             public int hashCode() {
-                                return filter.hashCode() + super.hashCode();
+                                return filter.hashCode() + EMPTY_SCHEMAS_FILTER.hashCode();
                             }
 
                             @Override

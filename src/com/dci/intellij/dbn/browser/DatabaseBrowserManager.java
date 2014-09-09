@@ -238,7 +238,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
 
         @Override
-        public void nameFiltersChanged(ConnectionHandler connectionHandler, DBObjectType objectType) {
+        public void nameFiltersChanged(ConnectionHandler connectionHandler, @Nullable DBObjectType objectType) {
             connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
         }
     };
