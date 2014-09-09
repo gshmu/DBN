@@ -1,21 +1,22 @@
 package com.dci.intellij.dbn.browser.model;
 
+import javax.swing.Icon;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.FileStatus;
-
-import javax.swing.Icon;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class LoadInProgressTreeNode implements BrowserTreeNode {
     public static final LoadInProgressTreeNode LOOSE_INSTANCE = new LoadInProgressTreeNode(null);
@@ -71,8 +72,10 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return null;
     }
 
-    public void rebuildTreeChildren() {
-    }
+    @Override
+    public void refreshTreeChildren(@Nullable DBObjectType objectType) {}
+
+    public void rebuildTreeChildren() {}
 
     public int getTreeChildCount() {
         return 0;

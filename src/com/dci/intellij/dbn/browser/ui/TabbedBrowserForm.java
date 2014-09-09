@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.util.ArrayList;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,10 +134,10 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         }
     }
 
-    public void updateTree() {
+    public void rebuildTree() {
         for (TabInfo tabInfo : connectionTabs.getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-            browserForm.updateTree();
+            browserForm.rebuildTree();
         }
     }
 
