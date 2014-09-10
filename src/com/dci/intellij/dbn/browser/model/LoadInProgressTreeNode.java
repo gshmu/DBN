@@ -57,7 +57,7 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     }
 
     public int getTreeDepth() {
-        return parent.getTreeDepth() + 1;
+        return parent == null ? 0 : parent.getTreeDepth() + 1;
     }
 
     public BrowserTreeNode getTreeChild(int index) {
