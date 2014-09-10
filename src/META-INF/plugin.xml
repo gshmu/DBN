@@ -27,6 +27,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+             <ul>
+                - Support for Oracle trigger syntax<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.3272</b>
              <ul>
                 - Support for anonymous "begin / end" blocks (Oracle)<br>
@@ -289,18 +294,18 @@
             <action id="DBNavigator.Actions.DataEditor.OpenSettings" class="com.dci.intellij.dbn.editor.data.action.OpenSettingsAction" text="Data Editor - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.StatementExecutionResult">
-            <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View record"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View statement"/>
+            <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View record" icon="/img/RecordViewer.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View statement" icon="/img/file/SQLBlock.png"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.OpenVariablesDialog" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultVariablesDialogAction" text="Execution Result - Open variables dialog"/>
             <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun statement"/>
             <action id="DBNavigator.Actions.ExecutionResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultResumeAction" text="Execution Result - Fetch next records"/>
             <separator/>
-            <action id="DBNavigator.Actions.ExecutionResult.FindData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultFindDataAction" text="Execution Result - Fetch next records">
+            <action id="DBNavigator.Actions.ExecutionResult.FindData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultFindDataAction" text="Execution Result - Find data" icon="/img/action/Find.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>
             </action>
-            <action id="DBNavigator.Actions.ExecutionResult.ExportData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultExportAction" text="Execution Result - Export data"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ExportData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultExportAction" text="Execution Result - Export data" icon="/img/action/DataExport.png"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.Settings" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultSettingsAction" text="Execution Result - Settings"/>
         </group>

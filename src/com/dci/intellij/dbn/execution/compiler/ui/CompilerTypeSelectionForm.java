@@ -32,7 +32,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl implements DBNForm {
                 "The compile option type \"Debug\" enables you to use the selected object(s) in debugging activities (i.e. pause/trace execution). " +
                 "For runtime performance reasons, it is recommended to use normal compile option, unless you plan to debug the selected element(s)." +
                 "\"Keep current\" will carry over the existing compile type.\n\n" +
-                "Please select your compile option.", 90, ": ,."));
+                "Please select your compile option.", 80, ": ,."));
     }
 
     protected boolean rememberSelection() {
