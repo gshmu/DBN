@@ -16,7 +16,7 @@ import com.intellij.openapi.project.Project;
 
 public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     public SaveChangesAction() {
-        super("", null, Icons.CODE_EDITOR_SAVE);
+        super("", null, Icons.CODE_EDITOR_SAVE_TO_DATABASE);
     }
 
     public void actionPerformed(final AnActionEvent e) {
