@@ -188,7 +188,8 @@ public class Icons {
     public static final Icon FILE_CONNECTION_MAPPING = load("/img/FileConnection.png");
     public static final Icon FILE_SCHEMA_MAPPING = load("/img/FileSchema.png");
 
-    public static final Icon CODE_EDITOR_SAVE = load("/img/action/SaveToDatabase.png");
+    public static final Icon CODE_EDITOR_SAVE_TO_DATABASE = load("/img/action/SaveToDatabase.png");
+    public static final Icon CODE_EDITOR_SAVE_TO_FILE = load("/img/action/SaveToFile.png");
     public static final Icon CODE_EDITOR_RESET = load("/img/action/Reset.png");
     public static final Icon CODE_EDITOR_RELOAD = load("/img/action/Refresh.png");
     public static final Icon CODE_EDITOR_DIFF = load("/img/action/ShowDiff.png");
