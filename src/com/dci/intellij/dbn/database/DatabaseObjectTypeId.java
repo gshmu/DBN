@@ -62,6 +62,7 @@ public enum DatabaseObjectTypeId {
     VIEW,
 
     CURSOR,
+    RECORD,
     PARAMETER,
     LABEL,
     SAVEPOINT,

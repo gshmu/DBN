@@ -556,18 +556,18 @@
                 t.TRIGGER_TYPE,
                 t.TRIGGERING_EVENT,
                 decode(t.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
-                decode(o.STATUS, 'VALID', 'Y', 'N') as IS_VALID,
-                decode(o.DEBUGINFO, 'T', 'Y', 'N') as IS_DEBUG,
+                decode(nvl(o.STATUS, 'VALID'), 'VALID', 'Y', 'N') as IS_VALID,
+                decode(nvl(o.DEBUGINFO, 'F'), 'T', 'Y', 'N') as IS_DEBUG,
                 case when t.TRIGGER_TYPE like '%EACH ROW%' then 'Y' else 'N' end as IS_FOR_EACH_ROW
             from
                 [PREFIX]_TRIGGERS t,
                 SYS.ALL_PROBE_OBJECTS o
             where
-                o.OWNER = t.OWNER and
-                o.OBJECT_NAME = t.TRIGGER_NAME and
-                o.OBJECT_TYPE = 'TRIGGER' and
                 t.TABLE_OWNER = {0} and
                 t.TABLE_NAME = {1}
+                o.OWNER (+) = t.OWNER and
+                o.OBJECT_NAME (+) = t.TRIGGER_NAME and
+                o.OBJECT_TYPE (+)= 'TRIGGER'
             order by TRIGGER_NAME asc
         </statement>
         <statement prefixes="DBA, ALL">
@@ -601,21 +601,21 @@
                 t.TRIGGER_TYPE,
                 t.TRIGGERING_EVENT,
                 decode(t.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
-                decode(o.STATUS, 'VALID', 'Y', 'N') as IS_VALID,
-                decode(o.DEBUGINFO, 'T', 'Y', 'N') as IS_DEBUG,
+                decode(nvl(o.STATUS, 'VALID'), 'VALID', 'Y', 'N') as IS_VALID,
+                decode(nvl(o.DEBUGINFO, 'F'), 'T', 'Y', 'N') as IS_DEBUG,
                 case when t.TRIGGER_TYPE like '%EACH ROW%' then 'Y' else 'N' end as IS_FOR_EACH_ROW
             from
                 [PREFIX]_TRIGGERS t,
                 SYS.ALL_PROBE_OBJECTS o
             where
-                o.OWNER = t.OWNER and
-                o.OBJECT_NAME = t.TRIGGER_NAME and
-                o.OBJECT_TYPE = 'TRIGGER' and
                 t.TABLE_OWNER = {0} and
-                t.BASE_OBJECT_TYPE in ('TABLE', 'VIEW' )
+                t.BASE_OBJECT_TYPE in ('TABLE', 'VIEW') and
+                o.OWNER (+) = t.OWNER and
+                o.OBJECT_NAME (+) = t.TRIGGER_NAME and
+                o.OBJECT_TYPE (+) = 'TRIGGER'
             order by
-                TABLE_NAME,
-                TRIGGER_NAME asc
+                t.TABLE_NAME,
+                t.TRIGGER_NAME asc
         </statement>
         <statement prefixes="DBA, ALL">
             select distinct
@@ -643,19 +643,24 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="functions" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select
-                OBJECT_NAME as FUNCTION_NAME,
+                ao.OBJECT_NAME as FUNCTION_NAME,
                 0 as OVERLOAD,
-                decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
-                decode(DEBUGINFO, 'T', 'Y', 'N') as IS_DEBUG,
+                decode(ao.STATUS, 'VALID', 'Y', 'N') as IS_VALID,
+                decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') as IS_DEBUG,
                 'Y' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from SYS.ALL_PROBE_OBJECTS
+            from
+                [PREFIX]_OBJECTS ao,
+                SYS.ALL_PROBE_OBJECTS apo
             where
-                OWNER = {0} and
-                OBJECT_TYPE = 'FUNCTION'
-            order by OBJECT_NAME asc
+                ao.OWNER = {0} and
+                ao.OBJECT_TYPE = 'FUNCTION' and
+                apo.OWNER (+) = ao.OWNER and
+                apo.OBJECT_NAME (+) = ao.OBJECT_NAME and
+                apo.OBJECT_TYPE (+) = ao.OBJECT_TYPE
+            order by ao.OBJECT_NAME asc
         </statement>
         <statement prefixes="DBA, ALL">
             select
@@ -674,19 +679,24 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="procedures" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select
-                OBJECT_NAME as PROCEDURE_NAME,
+                ao.OBJECT_NAME as PROCEDURE_NAME,
                 0 as OVERLOAD,
-                decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
-                decode(DEBUGINFO, 'T', 'Y', 'N') as IS_DEBUG,
+                decode(ao.STATUS, 'VALID', 'Y', 'N') as IS_VALID,
+                decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') as IS_DEBUG,
                 'Y' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from SYS.ALL_PROBE_OBJECTS
+            from
+                [PREFIX]_OBJECTS ao,
+                SYS.ALL_PROBE_OBJECTS apo
             where
-                OWNER = {0} and
-                OBJECT_TYPE = 'PROCEDURE'
-            order by OBJECT_NAME asc
+                ao.OWNER = {0} and
+                ao.OBJECT_TYPE = 'PROCEDURE' and
+                apo.OWNER (+) = ao.OWNER and
+                apo.OBJECT_NAME (+) = ao.OBJECT_NAME and
+                apo.OBJECT_TYPE (+) = ao.OBJECT_TYPE
+            order by ao.OBJECT_NAME asc
         </statement>
         <statement prefixes="DBA, ALL">
             select
@@ -717,15 +727,19 @@
         <statement>
             select
                 ao.OBJECT_NAME as PACKAGE_NAME,
-                max(case ao.OBJECT_TYPE when 'PACKAGE' then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
+                max(case ao.OBJECT_TYPE when 'PACKAGE'      then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
                 max(case ao.OBJECT_TYPE when 'PACKAGE BODY' then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_BODY_VALID,
-                max(case ao.OBJECT_TYPE when 'PACKAGE' then decode(nvl(ao.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
-                max(case ao.OBJECT_TYPE when 'PACKAGE BODY' then decode(nvl(ao.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG
+                max(case ao.OBJECT_TYPE when 'PACKAGE'      then decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
+                max(case ao.OBJECT_TYPE when 'PACKAGE BODY' then decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG
             from
-                SYS.ALL_PROBE_OBJECTS ao
+                [PREFIX]_OBJECTS ao,
+                SYS.ALL_PROBE_OBJECTS apo
             where
                 ao.OBJECT_TYPE in ('PACKAGE', 'PACKAGE BODY') and
-                ao.OWNER = {0}
+                ao.OWNER = {0} and
+                apo.OWNER (+) = ao.OWNER and
+                apo.OBJECT_NAME (+) = ao.OBJECT_NAME and
+                apo.OBJECT_TYPE (+) = ao.OBJECT_TYPE
             group by ao.OBJECT_NAME
             order by ao.OBJECT_NAME
         </statement>        
@@ -861,10 +875,10 @@
         <statement prefixes="DBA, ALL">
             select
                 t.TYPE_NAME as TYPE_NAME,
-                max(case apo.OBJECT_TYPE when 'TYPE' then decode(apo.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
-                max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(apo.STATUS, 'VALID', 'Y', 'N') end) as IS_BODY_VALID,
-                max(case apo.OBJECT_TYPE when 'TYPE' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
-                max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.DEBUGINFO, 'T'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
+                max(case apo.OBJECT_TYPE when 'TYPE'      then decode(nvl(apo.STATUS, 'VALID'), 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
+                max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.STATUS, 'VALID'), 'VALID', 'Y', 'N') end) as IS_BODY_VALID,
+                max(case apo.OBJECT_TYPE when 'TYPE'      then decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') end) as IS_SPEC_DEBUG,
+                max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
                 t.TYPECODE
@@ -873,9 +887,9 @@
                 SYS.ALL_PROBE_OBJECTS apo
             where
                 t.OWNER = {0} and
-                apo.OWNER = t.OWNER and
-                apo.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
-                apo.OBJECT_NAME = t.TYPE_NAME
+                apo.OWNER (+) = t.OWNER and
+                apo.OBJECT_NAME (+) = t.TYPE_NAME and
+                apo.OBJECT_TYPE in ('TYPE', 'TYPE BODY')
             group by
                 t.TYPE_NAME,
                 t.SUPERTYPE_OWNER,

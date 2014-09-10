@@ -78,6 +78,7 @@ public enum DBObjectType implements DynamicContentType {
     VIEW(DatabaseObjectTypeId.VIEW, "view", "views", Icons.DBO_VIEW, Icons.DBO_VIEWS, false),
 
     CURSOR(DatabaseObjectTypeId.CURSOR, "cursor", "cursors", null, null, false),
+    RECORD(DatabaseObjectTypeId.RECORD, "record", "records", null, null, false),
     PARAMETER(DatabaseObjectTypeId.PARAMETER, "parameter", "parameters", null, null, false),
     EXCEPTION(DatabaseObjectTypeId.EXCEPTION, "exception", "exceptions", null, null, false),
     SAVEPOINT(DatabaseObjectTypeId.SAVEPOINT, "savepoint", "savepoints", null, null, false),
