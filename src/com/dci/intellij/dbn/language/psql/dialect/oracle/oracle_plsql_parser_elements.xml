@@ -1860,7 +1860,7 @@
                 <object-ref id="000000904" type="DBLINK" />
             </sequence>
         </sequence>
-        <wrapper id="000000905" template="PARENTHESES">
+        <wrapper id="000000905" template="PARENTHESES" optional="true">
             <iteration id="000000906" optional="true" separator="CHR_COMMA">
                 <sequence id="000000907">
                     <sequence id="000000908" optional="true">
