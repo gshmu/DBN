@@ -38,7 +38,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         boolean isDummyToken = isDummyToken(builder.getTokenText());
         boolean isSuppressibleReservedWord =
                 !elementType.is(ElementTypeAttribute.STATEMENT) &&
-                isSuppressibleReservedWord(tokenType, node);
+                isSuppressibleReservedWord(tokenType, node, context);
 
 
         if (tokenType != null && !tokenType.isChameleon() && (isDummyToken || isSuppressibleReservedWord || elementType.getLookupCache().canStartWithToken(tokenType))) {
@@ -58,7 +58,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 ParseResult result = ParseResult.createNoMatchResult();
                 // current token can still be part of the iterated element.
                 //if (elementTypes[i].containsToken(tokenType)) {
-                if (isDummyToken || child.getLookupCache().canStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node)) {
+                if (isDummyToken || child.getLookupCache().canStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node, context)) {
 
                     //node = node.createVariant(builder.getCurrentOffset(), i);
                     result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
