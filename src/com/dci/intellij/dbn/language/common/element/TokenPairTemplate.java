@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
-public enum WrapperElementTypeTemplate {
+public enum TokenPairTemplate {
     PARENTHESES("CHR_LEFT_PARENTHESIS", "CHR_RIGHT_PARENTHESIS", false),
     BRACKETS("CHR_LEFT_BRACKET", "CHR_RIGHT_BRACKET", false),
     BEGIN_END("KW_BEGIN", "KW_END", true);
@@ -9,7 +9,7 @@ public enum WrapperElementTypeTemplate {
     private String endToken;
     private boolean block;
 
-    private WrapperElementTypeTemplate(String beginToken, String endToken, boolean block) {
+    private TokenPairTemplate(String beginToken, String endToken, boolean block) {
         this.beginToken = beginToken;
         this.endToken = endToken;
         this.block = block;
@@ -25,5 +25,14 @@ public enum WrapperElementTypeTemplate {
 
     public boolean isBlock() {
         return block;
+    }
+
+    public static TokenPairTemplate get(String tokenTypeId) {
+        for (TokenPairTemplate tokenPairTemplate : values()) {
+            if (tokenPairTemplate.getBeginToken().equals(tokenTypeId) || tokenPairTemplate.getEndToken().equals(tokenTypeId)) {
+                return tokenPairTemplate;
+            }
+        }
+        return null;
     }
 }

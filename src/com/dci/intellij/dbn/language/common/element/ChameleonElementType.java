@@ -73,6 +73,11 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
+    public TokenPairTemplate getTokenPairTemplate() {
+        return null;
+    }
+
+    @Override
     public void setDefaultFormatting(FormattingDefinition defaults) {
     }
 

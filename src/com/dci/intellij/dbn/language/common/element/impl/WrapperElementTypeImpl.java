@@ -1,21 +1,21 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.List;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
-import com.dci.intellij.dbn.language.common.element.WrapperElementTypeTemplate;
 import com.dci.intellij.dbn.language.common.element.lookup.WrapperElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.WrapperElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jdom.Element;
-
-import java.util.List;
 
 public class WrapperElementTypeImpl extends AbstractElementType implements WrapperElementType {
     private WrappingDefinition wrappingDefinition;
@@ -41,7 +41,7 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
             beginTokenElement = new TokenElementTypeImpl(bundle, this, startTokenId, "begin-token");
             endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, "end-token");
         } else {
-            WrapperElementTypeTemplate template = WrapperElementTypeTemplate.valueOf(templateId);
+            TokenPairTemplate template = TokenPairTemplate.valueOf(templateId);
             beginTokenElement = new TokenElementTypeImpl(bundle, this, template.getBeginToken(), "begin-token");
             endTokenElement = new TokenElementTypeImpl(bundle, this, template.getEndToken(), "end-token");
 
@@ -96,6 +96,7 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         return wrappedElement;
     }
 
+    @Deprecated
     public boolean isWrappingOptional() {
         return isWrappingOptional;
     }

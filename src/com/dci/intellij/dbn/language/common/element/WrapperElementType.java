@@ -8,5 +8,6 @@ public interface WrapperElementType extends ElementType {
 
     ElementType getWrappedElement();
 
+    @Deprecated
     boolean isWrappingOptional();
 }
