@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
@@ -98,13 +97,18 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     /**
      * Returns true if the token is a reserved word, but can act as an identifier in this context.
      */
-    protected boolean isSuppressibleReservedWord(TokenType tokenType, ParsePathNode node) {
+    protected boolean isSuppressibleReservedWord(TokenType tokenType, ParsePathNode node, ParserContext context) {
         if (tokenType != null) {
             if (tokenType.isSuppressibleReservedWord()) {
+                if (context.getBuilder().lookBack(1) == getElementBundle().getTokenTypeBundle().getSharedTokenTypes().getDot()) {
+                    return true;
+                }
+/*
                 ElementType elementType = node.getElementType();
                 if (elementType instanceof QualifiedIdentifierElementType) {
                     if (node.getCursorPosition() > 0) return true;
                 }
+*/
 
                 ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
                 if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {

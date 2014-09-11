@@ -10,7 +10,10 @@ public enum TokenTypeCategory {
     OPERATOR("operator"),
     CHARACTER("character"),
     IDENTIFIER("identifier"),
-    CHAMELEON("chameleon");
+    CHAMELEON("chameleon"),
+    WHITESPACE("whitespace"),
+    COMMENT("comment")
+    ;
 
     private String name;
     TokenTypeCategory(String name) {

@@ -2,7 +2,7 @@
 
 <token-def>
     <tokens>
-        <token id="WHITE_SPACE"/>
+        <token id="WHITE_SPACE" type="whitespace"/>
 
         <!-- CHARACTERS -->
         <token index="0" id="CHR_AT" value="@" type="character"/>
@@ -36,8 +36,8 @@
         <token index="3" id="OPR_CAST_PREFIX" value="::" type="operator" formatting-spacing-before="NO_SPACE" formatting-spacing-after="NO_SPACE"/>
 
 
-        <token id="LINE_COMMENT"/>
-        <token id="BLOCK_COMMENT"/>
+        <token id="LINE_COMMENT" type="comment"/>
+        <token id="BLOCK_COMMENT" type="comment"/>
 
         <token id="IDENTIFIER" type="identifier"/>
         <token id="QUOTED_IDENTIFIER" type="identifier"/>

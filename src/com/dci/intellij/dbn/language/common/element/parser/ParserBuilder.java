@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
@@ -53,6 +54,24 @@ public class ParserBuilder {
     public TokenType lookAhead(int steps) {
         return (TokenType) builder.lookAhead(steps);
     }
+
+
+    public TokenType lookBack(int steps) {
+        int cursor = -1;
+        int count = 0;
+        TokenType tokenType = (TokenType) builder.rawLookup(cursor);
+        while (tokenType != null && count <= steps) {
+            TokenTypeCategory category = tokenType.getCategory();
+            if (category != TokenTypeCategory.WHITESPACE && category != TokenTypeCategory.COMMENT) {
+                count++;
+                if (count == steps) return tokenType;
+            }
+            cursor--;
+            tokenType = (TokenType) builder.rawLookup(cursor);
+        }
+        return null;
+    }
+
 
     public void error(String messageText) {
         builder.error(messageText);

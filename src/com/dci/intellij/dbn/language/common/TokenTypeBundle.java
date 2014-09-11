@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.language.common;
 
+import org.jdom.Document;
+
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jdom.Document;
 
 public class TokenTypeBundle extends DBLanguageTokenTypeBundle {
     private DBLanguage language;
+
     public TokenTypeBundle(DBLanguageDialect languageDialect, Document document) {
         super(languageDialect, document);
         language = languageDialect.getBaseLanguage();
@@ -75,5 +77,4 @@ public class TokenTypeBundle extends DBLanguageTokenTypeBundle {
     public ChameleonElementType getChameleon(DBLanguageDialectIdentifier dialectIdentifier) {
         return getLanguageDialect().getChameleonTokenType(dialectIdentifier);
     }
-
 }

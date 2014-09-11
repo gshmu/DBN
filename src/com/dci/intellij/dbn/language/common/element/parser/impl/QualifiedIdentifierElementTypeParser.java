@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
@@ -119,7 +118,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
         return mostProbableVariant;
     }
 
-    private QualifiedIdentifierVariant getMostProbableParseVariant_(ParserBuilder builder, ParsePathNode node) {
+/*    private QualifiedIdentifierVariant getMostProbableParseVariant_(ParserBuilder builder, ParsePathNode node) {
 
         TokenElementType separatorToken = getElementType().getSeparatorToken();
 
@@ -192,11 +191,11 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
 
     private boolean match(LeafElementType leafElementType, TokenType tokenType, ParsePathNode node, boolean leniant) {
         if (leafElementType instanceof IdentifierElementType) {
-            return tokenType != null && (tokenType.isIdentifier() || (leniant && isSuppressibleReservedWord(tokenType, node)));
+            return tokenType != null && (tokenType.isIdentifier() || (leniant && isSuppressibleReservedWord(tokenType, node, context)));
         } else if (leafElementType instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) leafElementType;
             return tokenElementType.getTokenType() == tokenType;
         }
         return false;
-    }
+    }*/
 }
