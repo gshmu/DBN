@@ -1,14 +1,16 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
-import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.lang.Language;
-import com.intellij.psi.tree.IElementType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
+import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
+import com.intellij.lang.Language;
+import com.intellij.psi.tree.IElementType;
 
 public class SimpleTokenType extends IElementType implements TokenType {
     private String id;
@@ -19,6 +21,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
     private int idx;
     private int hashCode;
     private FormattingDefinition formatting;
+    private TokenPairTemplate tokenPairTemplate;
 
     public SimpleTokenType(@NotNull @NonNls String debugName, @Nullable Language language) {
         super(debugName, language);
@@ -34,6 +37,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         this.idx = source.getIdx();
 
         formatting = FormattingDefinitionFactory.cloneDefinition(source.getFormatting());
+        tokenPairTemplate = TokenPairTemplate.get(id);
     }
 
     public SimpleTokenType(Element element, Language language) {
@@ -53,6 +57,12 @@ public class SimpleTokenType extends IElementType implements TokenType {
         hashCode = (language.getDisplayName() + id).hashCode();
 
         formatting = FormattingDefinitionFactory.loadDefinition(element);
+        tokenPairTemplate = TokenPairTemplate.get(id);
+    }
+
+    @Override
+    public TokenPairTemplate getTokenPairTemplate() {
+        return tokenPairTemplate;
     }
 
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {

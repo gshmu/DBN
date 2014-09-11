@@ -3,30 +3,29 @@ package com.dci.intellij.dbn.language.common.element.parser;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.TokenTypeBundle;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.util.containers.Stack;
 
-public class NestedRangeMonitor {
+public class TokenPairRangeMonitor {
     private int stackSize = 0;
-    private Stack<NestedRangeMarker> markersStack = new Stack<NestedRangeMarker>();
-    private DBLanguageDialect languageDialect;
+    private Stack<TokenPairRangeMarker> markersStack = new Stack<TokenPairRangeMarker>();
     private PsiBuilder builder;
 
-    private SimpleTokenType leftParenthesis;
-    private SimpleTokenType rightParenthesis;
+    private SimpleTokenType beginTokenType;
+    private SimpleTokenType endTokenType;
 
 
-    public NestedRangeMonitor(PsiBuilder builder, DBLanguageDialect languageDialect) {
+    public TokenPairRangeMonitor(PsiBuilder builder, DBLanguageDialect languageDialect, TokenPairTemplate template) {
         this.builder = builder;
-        this.languageDialect = languageDialect;
 
-        SharedTokenTypeBundle sharedTokenTypes = languageDialect.getParserTokenTypes().getSharedTokenTypes();
-        leftParenthesis = sharedTokenTypes.getLeftParenthesis();
-        rightParenthesis = sharedTokenTypes.getRightParenthesis();
+        TokenTypeBundle parserTokenTypes = languageDialect.getParserTokenTypes();
+        beginTokenType = parserTokenTypes.getTokenType(template.getBeginToken());
+        endTokenType = parserTokenTypes.getTokenType(template.getEndToken());
     }
 
     /**
@@ -35,7 +34,7 @@ public class NestedRangeMonitor {
     public void rollback() {
         int builderOffset = builder.getCurrentOffset();
         while (markersStack.size() > 0) {
-            NestedRangeMarker lastMarker = markersStack.peek();
+            TokenPairRangeMarker lastMarker = markersStack.peek();
             if (lastMarker.getOffset() >= builderOffset) {
                 markersStack.pop();
                 lastMarker.dropMarker();
@@ -46,13 +45,13 @@ public class NestedRangeMonitor {
         }
     }
 
-    public void compute(@NotNull ParsePathNode node, boolean mark) {
+    public void compute(@NotNull ParsePathNode node, boolean explicit) {
         TokenType tokenType = (TokenType) builder.getTokenType();
-        if (tokenType == leftParenthesis) {
+        if (tokenType == beginTokenType) {
             stackSize++;
-            NestedRangeMarker marker = new NestedRangeMarker(node, builder, mark);
+            TokenPairRangeMarker marker = new TokenPairRangeMarker(node, builder, explicit);
             markersStack.push(marker);
-        } else if (tokenType == rightParenthesis) {
+        } else if (tokenType == endTokenType) {
             if (stackSize > 0) stackSize--;
             if (markersStack.size() > 0) {
 /*
@@ -78,8 +77,17 @@ public class NestedRangeMonitor {
     public void cleanup(boolean force) {
         if (force) stackSize = 0;
         while(markersStack.size() > stackSize) {
-            NestedRangeMarker lastMarker = markersStack.pop();
+            TokenPairRangeMarker lastMarker = markersStack.pop();
             lastMarker.dropMarker();
         }
+    }
+
+    public boolean isExplicitRange() {
+        if (!markersStack.isEmpty()) {
+            TokenPairRangeMarker tokenPairRangeMarker = markersStack.peek();
+            return tokenPairRangeMarker.isExplicit();
+        }
+
+        return false;
     }
 }

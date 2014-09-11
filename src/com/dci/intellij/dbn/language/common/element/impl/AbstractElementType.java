@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.WrapperElementTypeTemplate;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
@@ -141,7 +141,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
                 endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, getId());
             }
         } else {
-            WrapperElementTypeTemplate template = WrapperElementTypeTemplate.valueOf(templateId);
+            TokenPairTemplate template = TokenPairTemplate.valueOf(templateId);
             String beginTokenId = template.getBeginToken();
             String endTokenId = template.getEndToken();
             beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, getId());

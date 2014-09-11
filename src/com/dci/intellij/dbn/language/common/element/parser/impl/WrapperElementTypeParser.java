@@ -3,8 +3,11 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.ParseException;
+import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
@@ -24,8 +27,8 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
 
         boolean isWrappingOptional = getElementType().isWrappingOptional();
         ElementType wrappedElement = getElementType().getWrappedElement();
-        ElementType beginTokenElement = getElementType().getBeginTokenElement();
-        ElementType endTokenElement = getElementType().getEndTokenElement();
+        TokenElementType beginTokenElement = getElementType().getBeginTokenElement();
+        TokenElementType endTokenElement = getElementType().getEndTokenElement();
 
         int matchedTokens = 0;
         boolean isWrapped = false;
@@ -45,12 +48,14 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         // parse begin token
         ParseResult beginTokenResult = beginTokenElement.getParser().parse(node, optional, depth + 1, context);
 
-        if (beginTokenResult.isMatch()) {
+        TokenType beginTokenType = beginTokenElement.getTokenType();
+        boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && builder.isExplicitRange(beginTokenType));
+        if (beginMatched) {
             isWrapped = true;
             matchedTokens++;
         }
 
-        if (beginTokenResult.isMatch() || isWrappingOptional) {
+        if (beginMatched || isWrappingOptional) {
             ParseResult wrappedResult = wrappedElement.getParser().parse(node, false, depth -1, context);
             matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
 
@@ -69,5 +74,17 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         }
 
         return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+    }
+
+    private boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {
+        ParsePathNode parent = node.getParent();
+        while (parent != null && parent.getCursorPosition() == 0) {
+            WrappingDefinition parentWrapping = parent.getElementType().getWrapping();
+            if (parentWrapping != null && parentWrapping.getBeginElementType().getTokenType() == tokenType) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
     }
 }

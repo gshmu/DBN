@@ -3,15 +3,16 @@ package com.dci.intellij.dbn.language.common.element.parser;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
 
-public class NestedRangeMarker {
+public class TokenPairRangeMarker {
     private ParsePathNode parseNode;
     private PsiBuilder.Marker marker;
     private int offset;
+    private boolean explicit;
 
-    public NestedRangeMarker(ParsePathNode parseNode, PsiBuilder builder, boolean mark) {
+    public TokenPairRangeMarker(ParsePathNode parseNode, PsiBuilder builder, boolean explicit) {
         this.parseNode = parseNode;
         this.offset = builder.getCurrentOffset();
-        //this.marker = mark ? builder.mark() : null;
+        this.explicit = explicit;
     }
 
     public ParsePathNode getParseNode() {
@@ -28,8 +29,12 @@ public class NestedRangeMarker {
         }
     }
 
+    public boolean isExplicit() {
+        return explicit;
+    }
+
     @Override
     public String toString() {
-        return offset + " " + (marker != null);
+        return offset + " " + explicit + " " + (marker != null);
     }
 }

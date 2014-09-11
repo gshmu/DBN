@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementTypeImpl;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementTypeImpl;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.NestedRangeElementType;
 import com.dci.intellij.dbn.language.common.element.impl.OneOfElementTypeImpl;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementTypeImpl;
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementTypeImpl;
@@ -35,7 +34,6 @@ import gnu.trove.THashSet;
 public class ElementTypeBundle {
     private final Logger log = Logger.getInstance(getClass().getName());
     private TokenTypeBundle tokenTypeBundle;
-    private NestedRangeElementType nestedRangeElementType;
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
 
@@ -233,14 +231,6 @@ public class ElementTypeBundle {
             unknownElementType = new BasicElementTypeImpl(this);
         }
         return unknownElementType;
-    }
-
-    @Deprecated
-    public NestedRangeElementType getNestedRangeElementType() {
-        if (nestedRangeElementType == null) {
-            nestedRangeElementType = new NestedRangeElementType(this);
-        }
-        return nestedRangeElementType;
     }
 
     public String createId() {

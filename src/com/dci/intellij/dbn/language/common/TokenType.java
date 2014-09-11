@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 
 public interface TokenType {
     String getId();
@@ -42,6 +43,8 @@ public interface TokenType {
     TokenTypeCategory getCategory();
 
     FormattingDefinition getFormatting();
+
+    TokenPairTemplate getTokenPairTemplate();
 
     void setDefaultFormatting(FormattingDefinition defaults);
 
