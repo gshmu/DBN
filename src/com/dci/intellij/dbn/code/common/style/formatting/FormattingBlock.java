@@ -275,7 +275,7 @@ public class FormattingBlock implements Block {
         if (childBlocks == null) {
             PsiElement child = psiElement.getFirstChild();
             while (child != null) {
-                if (!(child instanceof PsiWhiteSpace) && !(child instanceof PsiErrorElement) && child.getTextLength() > 0) {
+                if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
                     if (childBlocks == null) childBlocks = new ArrayList<Block>();
                     CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
                     FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
