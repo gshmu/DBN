@@ -34,7 +34,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
         ElementType iteratedElementType = elementType.getIteratedElementType();
         TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
-        int elementCounter = 0;
+        int iterations = 0;
         int matchedTokens = 0;
         //TokenType tokenType = (TokenType) builder.getTokenType();
         // check if the token objectType can be part of this iteration
@@ -45,10 +45,11 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
             // check first iteration element
             if (result.isMatch()) {
                 if (node.isRecursive(node.getStartOffset())) {
-                    return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
+                    ParseResultType resultType = matchesMinIterations(iterations) ? ParseResultType.FULL_MATCH : ParseResultType.NO_MATCH;
+                    return stepOut(node, context, depth, resultType, matchedTokens);
                 }
                 while (true) {
-                    elementCounter++;
+                    iterations++;
                     // check separator
                     // if not matched just step out
                     if (separatorTokens != null) {
@@ -60,9 +61,12 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
 
                         if (result.isNoMatch()) {
                             // if NO_MATCH, no additional separator found, hence then iteration should exit with MATCH
-                            ParseResultType resultType = matchesElementsCount(elementCounter) ?
-                                    ParseResultType.FULL_MATCH :
-                                    ParseResultType.PARTIAL_MATCH;
+                            ParseResultType resultType =
+                                    matchesMinIterations(iterations) ?
+                                        matchesIterations(iterations) ?
+                                            ParseResultType.FULL_MATCH :
+                                            ParseResultType.PARTIAL_MATCH :
+                                    ParseResultType.NO_MATCH;
                             return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
                             node.setCurrentOffset(builder.getCurrentOffset());
@@ -77,14 +81,21 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                     if (result.isNoMatch()) {
                         // missing separators permit ending the iteration as valid at any time
                         if (separatorTokens == null) {
-                            ParseResultType resultType = matchesElementsCount(elementCounter) ?
-                                    ParseResultType.FULL_MATCH :
-                                    ParseResultType.PARTIAL_MATCH;
+                            ParseResultType resultType =
+                                    matchesMinIterations(iterations) ?
+                                        matchesIterations(iterations) ?
+                                            ParseResultType.FULL_MATCH :
+                                            ParseResultType.PARTIAL_MATCH :
+                                    ParseResultType.NO_MATCH;
                             return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
-                            boolean exit = advanceLexerToNextLandmark(parentNode, false, context);
-                            if (exit){
-                                return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
+                            if (matchesMinIterations(iterations)) {
+                                boolean exit = advanceLexerToNextLandmark(parentNode, false, context);
+                                if (exit){
+                                    return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
+                                }
+                            } else {
+                                return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
                             }
                         }
                     } else {
@@ -155,11 +166,16 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
         return true;
     }
 
-    private boolean matchesElementsCount(int elementsCount) {
+    private boolean matchesMinIterations(int iterations) {
+        Integer minIterations = getElementType().getMinIterations();
+        return minIterations == null || minIterations <= iterations;
+    }
+
+    private boolean matchesIterations(int iterations) {
         int[]elementsCountVariants = getElementType().getElementsCountVariants();
         if (elementsCountVariants != null) {
             for (int elementsCountVariant: elementsCountVariants) {
-                if (elementsCountVariant == elementsCount) {
+                if (elementsCountVariant == iterations) {
                     return true;
                 }
             }

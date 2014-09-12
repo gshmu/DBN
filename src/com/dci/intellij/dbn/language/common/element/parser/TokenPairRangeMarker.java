@@ -33,6 +33,10 @@ public class TokenPairRangeMarker {
         return explicit;
     }
 
+    public void setExplicit(boolean explicit) {
+        this.explicit = explicit;
+    }
+
     @Override
     public String toString() {
         return offset + " " + explicit + " " + (marker != null);

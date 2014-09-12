@@ -144,13 +144,10 @@ public class ParserBuilder {
                 if (wrapping != null) {
                     TokenElementType endElementType = wrapping.getEndElementType();
                     TokenType endTokenType = endElementType.getTokenType();
-                    TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(endTokenType);
-                    if (tokenPairRangeMonitor == null || !tokenPairRangeMonitor.isExplicitRange()) {
-                        while (builder.getTokenType() == endTokenType) {
-                            PsiBuilder.Marker endTokenMarker = builder.mark();
-                            advanceLexer(node, false);
-                            endTokenMarker.done((IElementType) endElementType);
-                        }
+                    while (builder.getTokenType() == endTokenType && !isExplicitRange(endTokenType)) {
+                        PsiBuilder.Marker endTokenMarker = builder.mark();
+                        advanceLexer(node, false);
+                        endTokenMarker.done((IElementType) endElementType);
                     }
                 }
             }
@@ -167,5 +164,10 @@ public class ParserBuilder {
     public boolean isExplicitRange(TokenType tokenType) {
         TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(tokenType);
         return tokenPairRangeMonitor != null && tokenPairRangeMonitor.isExplicitRange();
+    }
+
+    public void setExplicitRange(TokenType tokenType, boolean value) {
+        TokenPairRangeMonitor tokenPairRangeMonitor = getTokenPairRangeMonitor(tokenType);
+        if (tokenPairRangeMonitor != null) tokenPairRangeMonitor.setExplicitRange(value);
     }
 }
