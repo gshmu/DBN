@@ -50,6 +50,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;
+    private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
 
@@ -63,6 +64,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         connectionPool = new ConnectionPool(this);
         loadMonitor = new ConnectionLoadMonitor(this);
         ref = new ConnectionHandlerRef(this);
+    }
+
+    @Override
+    public boolean isAllowConnection() {
+        return allowConnection;
+    }
+
+    @Override
+    public void setAllowConnection(boolean allowConnection) {
+        this.allowConnection = allowConnection;
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -271,28 +282,35 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public Connection getStandaloneConnection() throws SQLException {
+        checkAllowConnection();
         return connectionPool.getStandaloneConnection(true);
     }
 
+    public Connection getPoolConnection() throws SQLException {
+        checkAllowConnection();
+        return connectionPool.allocateConnection();
+    }
+
     public Connection getStandaloneConnection(DBSchema schema) throws SQLException {
-        Connection connection = connectionPool.getStandaloneConnection(true);
+        Connection connection = getStandaloneConnection();
         if (!schema.isPublicSchema()) {
             getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
         }
         return connection;
     }
 
-    @Nullable
-    public Connection getPoolConnection() throws SQLException {
-        return connectionPool.allocateConnection();
-    }
-
     public Connection getPoolConnection(DBSchema schema) throws SQLException {
-        Connection connection = connectionPool.allocateConnection();
+        Connection connection = getPoolConnection();
         //if (!schema.isPublicSchema()) {
-            getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
+        getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
         //}
         return connection;
+    }
+
+    private void checkAllowConnection() throws SQLException {
+        if (!allowConnection && !getSettings().getDatabaseSettings().isConnectAutomatically()) {
+            throw DBN_NOT_CONNECTED_EXCEPTION;
+        }
     }
 
     public void freePoolConnection(Connection connection) {

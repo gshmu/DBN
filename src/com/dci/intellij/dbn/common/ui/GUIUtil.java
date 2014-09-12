@@ -15,6 +15,7 @@ import java.awt.PointerInfo;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.ui.JBColor;
 
@@ -103,7 +104,7 @@ public class GUIUtil{
         if (border instanceof TitledBorder) {
             TitledBorder titledBorder = (TitledBorder) border;
             //titledBorder.setTitleColor(com.intellij.util.ui.GUIUtil.getLabelForeground());
-            titledBorder.setTitleColor(new JBColor(new Color(-12029286), new Color(-10058060)));
+            titledBorder.setTitleColor(Colors.HINT_COLOR);
         }
     }
 

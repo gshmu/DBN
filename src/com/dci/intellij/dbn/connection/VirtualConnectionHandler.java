@@ -131,6 +131,12 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public ConnectionSettings getSettings() {return null;}
     public ConnectionStatus getConnectionStatus() {return null;}
+
+    @Override
+    public boolean isAllowConnection() {return false;}
+    @Override
+    public void setAllowConnection(boolean allowConnection) {}
+
     public ConnectionBundle getConnectionBundle() {return null;}
     public ConnectionInfo getConnectionInfo() throws SQLException {return null;}
     public ConnectionPool getConnectionPool() {return null;}

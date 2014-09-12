@@ -564,7 +564,7 @@
                 SYS.ALL_PROBE_OBJECTS o
             where
                 t.TABLE_OWNER = {0} and
-                t.TABLE_NAME = {1}
+                t.TABLE_NAME = {1} and
                 o.OWNER (+) = t.OWNER and
                 o.OBJECT_NAME (+) = t.TRIGGER_NAME and
                 o.OBJECT_TYPE (+)= 'TRIGGER'
@@ -724,7 +724,7 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="packages" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select
                 ao.OBJECT_NAME as PACKAGE_NAME,
                 max(case ao.OBJECT_TYPE when 'PACKAGE'      then decode(ao.STATUS, 'VALID', 'Y', 'N') end) as IS_SPEC_VALID,
