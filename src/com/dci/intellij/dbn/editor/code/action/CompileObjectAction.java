@@ -60,9 +60,10 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
 
                     boolean isPresent = status.is(contentType, DBObjectStatus.PRESENT);
                     boolean isValid = status.is(contentType, DBObjectStatus.VALID);
+                    boolean isModified = virtualFile.isModified();
 
                     boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
-                    boolean isEnabled = isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
+                    boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
 
                     presentation.setEnabled(isEnabled);
                     String text =
