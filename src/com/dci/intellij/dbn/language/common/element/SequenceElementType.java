@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.language.common.element.parser.Branch;
 public interface SequenceElementType extends ElementType {
     ElementTypeRef[] getChildren();
 
+    public ElementTypeRef getFirstChild();
+
     ElementTypeRef getChild(int index);
 
     int getChildCount();
@@ -19,10 +21,6 @@ public interface SequenceElementType extends ElementType {
     boolean isLast(int index);
 
     boolean isFirst(int index);
-
-    boolean canStartWithElement(ElementType elementType);
-
-    boolean shouldStartWithElement(ElementType elementType);
 
     boolean isExitIndex(int index);
 

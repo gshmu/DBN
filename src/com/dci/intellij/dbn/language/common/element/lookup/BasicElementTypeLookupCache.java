@@ -15,16 +15,17 @@ public class BasicElementTypeLookupCache extends AbstractElementTypeLookupCache<
     }
 
     @Override
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
+        return false;
+    }
+
+    @Override
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
+        return false;
+    }
+
+    @Override
     public boolean containsToken(TokenType tokenType) {
-        return false;
-    }
-
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
-        return false;
-    }
-
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
         return false;
     }
 

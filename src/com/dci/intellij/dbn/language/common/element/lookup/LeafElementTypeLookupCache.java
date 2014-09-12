@@ -16,18 +16,13 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     }
 
     @Override
-    public boolean containsLeaf(LeafElementType leafElementType) {
-        return getElementType() == leafElementType;
-    }
-
-    @Override
     @Deprecated
-    public boolean canStartWithLeaf(LeafElementType leafElementType) {
+    public boolean couldStartWithLeaf(LeafElementType leafElementType) {
         return getElementType() == leafElementType;
     }
 
     @Override
-    public boolean canStartWithToken(TokenType tokenType) {
+    public boolean couldStartWithToken(TokenType tokenType) {
         return getElementType().getTokenType() == tokenType;
     }
 

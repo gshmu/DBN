@@ -9,9 +9,7 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
 public interface ElementTypeLookupCache<T extends ElementType> {
-    void registerLeaf(LeafElementType leaf, ElementType pathChild);
-
-    boolean containsLeaf(LeafElementType leafElementType);
+    void registerLeaf(LeafElementType leaf, ElementType source);
 
     boolean containsToken(TokenType tokenType);
 
@@ -27,12 +25,11 @@ public interface ElementTypeLookupCache<T extends ElementType> {
 
     Set<TokenType> getFirstPossibleTokens();
 
-    @Deprecated
-    boolean canStartWithLeaf(LeafElementType leafElementType);
+    boolean couldStartWithLeaf(LeafElementType leafElementType);
 
     boolean shouldStartWithLeaf(LeafElementType leafElementType);
 
-    boolean canStartWithToken(TokenType tokenType);
+    boolean couldStartWithToken(TokenType tokenType);
 
     Set<LeafElementType> getFirstRequiredLeafs();
 
@@ -47,9 +44,4 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     Set<TokenType> getNextPossibleTokens();
 
     void init();
-
-    @Deprecated
-    boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild);
-
-    boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild);
 }

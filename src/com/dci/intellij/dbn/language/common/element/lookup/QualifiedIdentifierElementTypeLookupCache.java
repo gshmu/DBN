@@ -14,17 +14,18 @@ public class QualifiedIdentifierElementTypeLookupCache extends AbstractElementTy
         super(elementType);
     }
 
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
+    @Override
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
         for (LeafElementType[] variant : getElementType().getVariants()) {
-            if (variant[0] == pathChild) return true;
+            if (variant[0] == source) return true;
         }
         return false;
     }
 
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
+    @Override
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         for (LeafElementType[] variant : getElementType().getVariants()) {
-            if (variant[0] == pathChild && !variant[0].isOptional()) return true;
+            if (variant[0] == source && !variant[0].isOptional()) return true;
         }
         return false;
     }

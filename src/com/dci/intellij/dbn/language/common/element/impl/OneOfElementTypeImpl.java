@@ -30,6 +30,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
 
         this.children = new ElementTypeRef[children.size()];
 
+        ElementTypeRef previous = null;
         for (int i=0; i<children.size(); i++) {
             Element child = (Element) children.get(i);
             String type = child.getName();
@@ -43,6 +44,9 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
                 checkedBranches.addAll(supportedBranches);
             }
             this.children[i] = new ElementTypeRef(this, elementType, false, version, supportedBranches);
+            this.children[i].setPrevious(previous);
+            previous = this.children[i];
+
         }
         sortable = Boolean.parseBoolean(def.getAttributeValue("sortable"));
     }
@@ -95,5 +99,10 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
 
     public ElementTypeRef[] getChildren() {
         return children;
+    }
+
+    @Override
+    public ElementTypeRef getFirstChild() {
+        return children[0];
     }
 }

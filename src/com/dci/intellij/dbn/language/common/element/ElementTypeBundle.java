@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElem
 import com.dci.intellij.dbn.language.common.element.impl.SequenceElementTypeImpl;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementTypeImpl;
 import com.dci.intellij.dbn.language.common.element.impl.WrapperElementTypeImpl;
+import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -37,9 +38,9 @@ public class ElementTypeBundle {
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
 
-    private Set<ElementType> complexElementTypes = new THashSet<ElementType>();
     private Set<LeafElementType> leafElementTypes = new THashSet<LeafElementType>();
     private Set<WrapperElementType> wrapperElementTypes = new THashSet<WrapperElementType>();
+    private Set<ElementType> wrappedElementTypes = new THashSet<ElementType>();
     private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
     private final Map<String, NamedElementType> namedElementTypes = new THashMap<String, NamedElementType>();
     private final DBLanguageDialect languageDialect;
@@ -80,6 +81,12 @@ public class ElementTypeBundle {
                 wrapperElementType.getEndTokenElement().registerLeaf();
             }
 
+            for (ElementType wrappedElementType : wrappedElementTypes) {
+                WrappingDefinition wrapping = wrappedElementType.getWrapping();
+                wrapping.getBeginElementType().registerLeaf();
+                wrapping.getEndElementType().registerLeaf();
+            }
+
             if (rewriteIndexes) {
                 StringWriter stringWriter = new StringWriter();
                 new XMLOutputter().output(elementTypesDef, stringWriter);
@@ -96,10 +103,6 @@ public class ElementTypeBundle {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public Set<ElementType> getComplexElementTypes() {
-        return complexElementTypes;
     }
 
     public TokenTypeBundle getTokenTypeBundle() {
@@ -177,10 +180,13 @@ public class ElementTypeBundle {
         }  else {
             throw new ElementTypeDefinitionException("Could not resolve element definition '" + type + "'");
         }
-        if (result instanceof LeafElementType)
-            leafElementTypes.add((LeafElementType) result); else
-            complexElementTypes.add(result);
-
+        if (result instanceof LeafElementType) {
+            leafElementTypes.add((LeafElementType) result);
+        }
+        WrappingDefinition wrapping = result.getWrapping();
+        if (wrapping != null) {
+            wrappedElementTypes.add(result);
+        }
         return result;
     }
 

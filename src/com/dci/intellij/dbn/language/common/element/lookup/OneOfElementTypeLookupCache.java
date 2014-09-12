@@ -14,13 +14,16 @@ public class OneOfElementTypeLookupCache extends AbstractElementTypeLookupCache<
         super(elementType);
     }
 
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
-        return pathChild.getLookupCache().canStartWithLeaf(leaf) && !canStartWithLeaf(leaf);
+    @Override
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
+        boolean notInitialized = !firstPossibleLeafs.contains(leaf);
+        return notInitialized && (isWrapperBeginLeaf(leaf) || source.getLookupCache().couldStartWithLeaf(leaf));
     }
 
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
-        return pathChild.getLookupCache().shouldStartWithLeaf(leaf) && !shouldStartWithLeaf(leaf);
+    @Override
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
+        boolean notInitialized = !firstRequiredLeafs.contains(leaf);
+        return notInitialized && source.getLookupCache().shouldStartWithLeaf(leaf);
     }
 
     public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
