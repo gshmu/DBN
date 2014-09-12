@@ -15,19 +15,19 @@ public class IterationElementTypeLookupCache extends AbstractElementTypeLookupCa
         super(iterationElementType);
     }
 
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
+    @Override
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
+        boolean notInitialized = !firstPossibleLeafs.contains(leaf);
         ElementType iteratedElementType = getElementType().getIteratedElementType();
-        return pathChild == iteratedElementType &&
-                !canStartWithLeaf(leaf) &&
-                iteratedElementType.getLookupCache().canStartWithLeaf(leaf);
+        return notInitialized && (isWrapperBeginLeaf(leaf) || (source == iteratedElementType && iteratedElementType.getLookupCache().couldStartWithLeaf(leaf)));
+
     }
 
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
+    @Override
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         ElementType iteratedElementType = getElementType().getIteratedElementType();
-        return pathChild == iteratedElementType &&
-                !shouldStartWithLeaf(leaf) &&
-                iteratedElementType.getLookupCache().shouldStartWithLeaf(leaf);
+        boolean notInitialized = !firstRequiredLeafs.contains(leaf);
+        return notInitialized && source == iteratedElementType && iteratedElementType.getLookupCache().shouldStartWithLeaf(leaf);
     }
 
     public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {

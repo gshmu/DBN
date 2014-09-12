@@ -1581,7 +1581,7 @@
             <element ref-id="trigger_event_condition" />
             <sequence id="000000769">
                 <element ref-id="expression" />
-                <one-of exit="true" id="000000770">
+                <one-of optional="true" id="000000770">
                     <sequence id="000000771">
                         <token id="000000772" optional="true" type-id="KW_NOT" />
                         <one-of id="000000773">
@@ -1691,7 +1691,7 @@
                         </iteration>
                     </one-of>
                 </wrapper>
-                <one-of id="000000833">
+                <one-of id="000000833" optional="true">
                     <sequence id="000000834">
                         <element ref-id="equality_operator" />
                         <one-of id="000000835">
@@ -1823,9 +1823,7 @@
     <element-def attributes="STRUCTURE, STATEMENT, SCOPE_DEMARCATION, GENERIC" description="Statement" id="statement">
         <element optional="true" ref-id="label" />
         <one-of id="000000895">
-            <element ref-id="assignment_statement" />
             <element ref-id="collection_method_call_statement" />
-            <element ref-id="method_call_statement" />
             <element ref-id="close_statement" />
             <element ref-id="exit_statement" />
             <element ref-id="fetch_statement" />
@@ -1841,6 +1839,8 @@
             <element ref-id="raise_statement" />
             <element ref-id="return_statement" />
             <element ref-id="sql_statement" />
+            <element ref-id="assignment_statement" />
+            <element ref-id="method_call_statement" />
         </one-of>
         <token id="000000896" type-id="CHR_SEMICOLON" />
     </element-def>
@@ -2725,7 +2725,6 @@
             <sequence id="000001348" wrapping-template="PARENTHESES">
                 <token id="000001349" optional="true" type-id="KW_NOT" />
                 <one-of id="000001350">
-                    <element ref-id="boolean_expression" />
                     <element ref-id="condition" />
                     <element ref-id="expression" />
                 </one-of>

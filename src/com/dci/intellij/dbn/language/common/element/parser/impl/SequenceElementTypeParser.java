@@ -41,7 +41,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 isSuppressibleReservedWord(tokenType, node, context);
 
 
-        if (tokenType != null && !tokenType.isChameleon() && (isDummyToken || isSuppressibleReservedWord || elementType.getLookupCache().canStartWithToken(tokenType))) {
+        if (tokenType != null && !tokenType.isChameleon() && (isDummyToken || isSuppressibleReservedWord || elementType.getLookupCache().couldStartWithToken(tokenType))) {
             ElementTypeRef[] children = elementType.getChildren();
             while (node.getCursorPosition() < children.length) {
                 int index = node.getCursorPosition();
@@ -58,7 +58,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 ParseResult result = ParseResult.createNoMatchResult();
                 // current token can still be part of the iterated element.
                 //if (elementTypes[i].containsToken(tokenType)) {
-                if (isDummyToken || child.getLookupCache().canStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node, context)) {
+                if (isDummyToken || child.getLookupCache().couldStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node, context)) {
 
                     //node = node.createVariant(builder.getCurrentOffset(), i);
                     result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
@@ -151,7 +151,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
             ElementTypeRef[] children = getElementType().getChildren();
             for (int i=index; i< children.length; i++) {
                 // check children landmarks
-                if (children[i].getLookupCache().canStartWithToken(tokenType)) {
+                if (children[i].getLookupCache().couldStartWithToken(tokenType)) {
                     return i;
                 }
             }
@@ -191,7 +191,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
             int builderOffset = builder.getCurrentOffset();
             siblingIndex = node.incrementIndex(builderOffset);
             // check children landmarks
-            if (children[siblingIndex].getLookupCache().canStartWithToken(tokenType)) {
+            if (children[siblingIndex].getLookupCache().couldStartWithToken(tokenType)) {
                 return node;
             }
         }

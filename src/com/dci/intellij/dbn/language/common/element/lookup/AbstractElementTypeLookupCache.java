@@ -36,14 +36,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         if (!elementType.isLeaf()) {
             landmarkTokens = new THashMap<TokenType, Boolean>();
         }
-        WrappingDefinition wrapping = getElementType().getWrapping();
-        if (wrapping != null) {
-            TokenType wrappingBeginTokenType = wrapping.getBeginElementType().getTokenType();
-            TokenType wrappingEndTokenType = wrapping.getEndElementType().getTokenType();
-            allPossibleTokens.add(wrappingBeginTokenType);
-            allPossibleTokens.add(wrappingEndTokenType);
-            firstPossibleTokens.add(wrappingBeginTokenType);
-        }
     }
 
     public void init() {}
@@ -59,10 +51,6 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
 
     public boolean containsToken(TokenType tokenType) {
         return allPossibleTokens != null && allPossibleTokens.contains(tokenType);
-    }
-
-    public boolean containsLeaf(LeafElementType leafElementType) {
-        return leafElementType == getElementType() || (allPossibleLeafs != null && allPossibleLeafs.contains(leafElementType));
     }
 
     @Override
@@ -88,12 +76,11 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         return firstRequiredLeafs;
     }
 
-    @Deprecated
-    public boolean canStartWithLeaf(LeafElementType leafElementType) {
+    public boolean couldStartWithLeaf(LeafElementType leafElementType) {
         return firstPossibleLeafs.contains(leafElementType);
     }
 
-    public boolean canStartWithToken(TokenType tokenType) {
+    public boolean couldStartWithToken(TokenType tokenType) {
         return firstPossibleTokens.contains(tokenType);
     }
 
@@ -101,20 +88,20 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         return firstRequiredLeafs.contains(leafElementType);
     }
 
-    public void registerLeaf(LeafElementType leaf, ElementType pathChild) {
-        boolean initAllElements = !containsLeaf(leaf);
-        boolean isFirstPossibleElements = isFirstPossibleLeaf(leaf, pathChild);
-        boolean isFirstRequiredLeaf = isFirstRequiredLeaf(leaf, pathChild);
+    public void registerLeaf(LeafElementType leaf, ElementType source) {
+        boolean initAllElements = initAllElements(leaf);
+        boolean initAsFirstPossibleLeaf = initAsFirstPossibleLeaf(leaf, source);
+        boolean initAsFirstRequiredLeaf = initAsFirstRequiredLeaf(leaf, source);
 
         // register first possible leafs
         ElementTypeLookupCache lookupCache = leaf.getLookupCache();
-        if (isFirstPossibleElements) {
+        if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
             firstPossibleTokens.addAll(lookupCache.getFirstPossibleTokens());
         }
 
         // register first required leafs
-        if (isFirstRequiredLeaf) {
+        if (initAsFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
         }
 
@@ -132,10 +119,16 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             }
         }
 
-        if (isFirstPossibleElements || isFirstRequiredLeaf || initAllElements) {
+        if (initAsFirstPossibleLeaf || initAsFirstRequiredLeaf || initAllElements) {
             // walk the tree up
             registerLeafInParent(leaf);
         }
+    }
+
+    abstract boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source);
+    abstract boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source);
+    private boolean initAllElements(LeafElementType leafElementType) {
+        return leafElementType != getElementType() && !allPossibleLeafs.contains(leafElementType);
     }
 
     protected void registerLeafInParent(LeafElementType leaf) {
@@ -210,5 +203,15 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
             }
         }
         return nextPossibleTokens;
+    }
+
+    protected boolean isWrapperBeginLeaf(LeafElementType leaf) {
+        WrappingDefinition wrapping = getElementType().getWrapping();
+        if (wrapping != null) {
+            if (wrapping.getBeginElementType() == leaf) {
+                return true;
+            }
+        }
+        return false;
     }
 }

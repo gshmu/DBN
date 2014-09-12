@@ -30,6 +30,8 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return children;
     }
 
+    public ElementTypeRef getFirstChild() {return children[0];}
+
     @Override
     public ElementTypeRef getChild(int index) {
         return children[index];
@@ -58,6 +60,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         List children = def.getChildren();
         this.children = new ElementTypeRef[children.size()];
 
+        ElementTypeRef previous = null;
         for (int i = 0; i < children.size(); i++) {
             Element child = (Element) children.get(i);
             String type = child.getName();
@@ -72,6 +75,9 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
                 checkedBranches.addAll(supportedBranches);
             }
             this.children[i] = new ElementTypeRef(this, elementType, optional, version, supportedBranches);
+            this.children[i].setPrevious(previous);
+            previous = this.children[i];
+
             if (child.getAttributeValue("exit") != null) exitIndex = i;
         }
     }
@@ -107,27 +113,6 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     public boolean isFirst(int index) {
         return index == 0;
     }
-
-    public boolean canStartWithElement(ElementType elementType) {
-        for (ElementTypeRef child : children) {
-            if (child.isOptional()) {
-                if (elementType == child.getElementType()) return true;
-            } else {
-                return child.getElementType() == elementType;
-            }
-        }
-        return false;
-    }
-
-    public boolean shouldStartWithElement(ElementType elementType) {
-        for (ElementTypeRef child : children) {
-            if (!child.isOptional()) {
-                return child.getElementType() == elementType;
-            }
-        }
-        return false;
-    }
-
 
     public boolean isExitIndex(int index) {
         return index <= exitIndex;
@@ -165,7 +150,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     public boolean isPossibleTokenFromIndex(TokenType tokenType, int index) {
         if (index < children.length) {
             for (int i= index; i< children.length; i++) {
-                if (children[i].getLookupCache().canStartWithToken(tokenType)){
+                if (children[i].getLookupCache().couldStartWithToken(tokenType)){
                     return true;
                 }
                 if (!children[i].isOptional()) {

@@ -15,18 +15,45 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         super(elementType);
     }
 
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
-        return getElementType().canStartWithElement(pathChild) &&
-                pathChild.getLookupCache().canStartWithLeaf(leaf) &&
-                !canStartWithLeaf(leaf);
+    @Override
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
+        boolean notInitialized = !firstPossibleLeafs.contains(leaf);
+        return notInitialized && (
+                isWrapperBeginLeaf(leaf) ||
+                    (couldStartWithElement(source) &&
+                     source.getLookupCache().couldStartWithLeaf(leaf)));
     }
 
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
-        return getElementType().shouldStartWithElement(pathChild) &&
-                pathChild.getLookupCache().shouldStartWithLeaf(leaf) &&
-                !shouldStartWithLeaf(leaf);
+    @Override
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
+        boolean notInitialized = !firstRequiredLeafs.contains(leaf);
+        return notInitialized &&
+                shouldStartWithElement(source) &&
+                source.getLookupCache().shouldStartWithLeaf(leaf);
     }
+
+    private boolean couldStartWithElement(ElementType elementType) {
+        ElementTypeRef[] children = getElementType().getChildren();
+        for (ElementTypeRef child : children) {
+            if (child.isOptional()) {
+                if (elementType == child.getElementType()) return true;
+            } else {
+                return child.getElementType() == elementType;
+            }
+        }
+        return false;
+    }
+
+    private boolean shouldStartWithElement(ElementType elementType) {
+        ElementTypeRef[] children = getElementType().getChildren();
+        for (ElementTypeRef child : children) {
+            if (!child.isOptional()) {
+                return child.getElementType() == elementType;
+            }
+        }
+        return false;
+    }
+
 
     public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
         //check only first landmarks within first mandatory element

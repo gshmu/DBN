@@ -14,18 +14,15 @@ public class ElementTypeRef {
     private double version;
     private Set<Branch> supportedBranches;
 
+    private ElementTypeRef previous;
+    private ElementTypeRef next;
+
     public ElementTypeRef(ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<Branch> supportedBranches) {
         this.parentElementType = parentElementType;
         this.elementType = elementType;
         this.optional = optional;
         this.version = version;
         this.supportedBranches = supportedBranches;
-    }
-
-    public ElementTypeRef(ElementType elementType, boolean optional, double version) {
-        this.elementType = elementType;
-        this.optional = optional;
-        this.version = version;
     }
 
     public boolean check(Set<Branch> branches, double currentVersion) {
@@ -80,4 +77,22 @@ public class ElementTypeRef {
         return elementType.getParser();
     }
 
+    public ElementTypeRef getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(ElementTypeRef previous) {
+        if (previous != null) {
+            previous.setNext(this);
+            this.previous = previous;
+        }
+    }
+
+    public ElementTypeRef getNext() {
+        return next;
+    }
+
+    public void setNext(ElementTypeRef next) {
+        this.next = next;
+    }
 }

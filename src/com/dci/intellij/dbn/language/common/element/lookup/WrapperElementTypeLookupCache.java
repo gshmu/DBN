@@ -15,15 +15,16 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
         super(elementType);
     }
 
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
+    @Override
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
         ElementTypeLookupCache startTokenLC = getElementType().getBeginTokenElement().getLookupCache();
         ElementTypeLookupCache wrappedTokenLC = getElementType().getWrappedElement().getLookupCache();
-        return startTokenLC.canStartWithLeaf(leaf) ||
-               (getElementType().isWrappingOptional() && wrappedTokenLC.canStartWithLeaf(leaf));
+        return startTokenLC.couldStartWithLeaf(leaf) ||
+               (/*getElementType().isWrappingOptional() && */wrappedTokenLC.couldStartWithLeaf(leaf));
     }
 
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
+    @Override
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         ElementTypeLookupCache startTokenLC = getElementType().getBeginTokenElement().getLookupCache();
         ElementTypeLookupCache wrappedTokenLC = getElementType().getWrappedElement().getLookupCache();
 

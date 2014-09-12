@@ -25,12 +25,11 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
         return sharedTokenTypes.getVariable() == tokenType;
     }
 
-    @Deprecated
-    public boolean isFirstPossibleLeaf(LeafElementType leaf, ElementType pathChild) {
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
         return false;
     }
 
-    public boolean isFirstRequiredLeaf(LeafElementType leaf, ElementType pathChild) {
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         return false;
     }
 
