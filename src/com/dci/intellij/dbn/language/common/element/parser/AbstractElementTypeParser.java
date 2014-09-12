@@ -112,9 +112,13 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                     if (node.getCursorPosition() > 0) return true;
                 }
 */
-
+/*
+                if (tokenType.isFunction() && builder.lookAhead(1) != getElementBundle().getTokenTypeBundle().getSharedTokenTypes().getLeftParenthesis()) {
+                    return true;
+                }
+*/
                 ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
-                 if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
+                if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
                     return false;
                 }
 
