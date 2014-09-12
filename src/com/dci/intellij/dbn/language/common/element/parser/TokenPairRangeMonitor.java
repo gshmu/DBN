@@ -90,4 +90,11 @@ public class TokenPairRangeMonitor {
 
         return false;
     }
+
+    public void setExplicitRange(boolean value) {
+        if (!markersStack.isEmpty()) {
+            TokenPairRangeMarker tokenPairRangeMarker = markersStack.peek();
+            tokenPairRangeMarker.setExplicit(value);
+        }
+    }
 }

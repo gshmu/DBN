@@ -22,6 +22,8 @@
         id ID #REQUIRED
         type-id CDATA #REQUIRED
         version CDATA #IMPLIED
+        branch CDATA #IMPLIED
+        branch-check CDATA #IMPLIED
         optional (true | false) #IMPLIED
         exit (true | false) #IMPLIED
         flavor CDATA #IMPLIED
@@ -63,6 +65,7 @@
         optional (true | false) #IMPLIED
         version CDATA #IMPLIED
         branch CDATA #IMPLIED
+        branch-check CDATA #IMPLIED
         exit (true | false) #IMPLIED
         wrapping-template (PARENTHESES) #IMPLIED
         virtual-object CDATA #IMPLIED
@@ -87,7 +90,7 @@
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
         formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
         original-name CDATA #IMPLIED>
-<!ELEMENT one-of (token|element|sequence|iteration|wrapper|qualified-identifier|object-ref|alias-ref|alias-def|variable-ref|exec-variable)*>
+<!ELEMENT one-of (token|element|sequence|iteration|wrapper|qualified-identifier|object-ref|alias-ref|alias-def|variable-ref|variable-def|exec-variable)*>
 <!ATTLIST one-of
         id ID #REQUIRED
         attributes CDATA #IMPLIED
@@ -97,6 +100,7 @@
         exit (true | false) #IMPLIED
         ambiguity-level CDATA #IMPLIED
         sortable (true | false) #IMPLIED
+        wrapping-template (PARENTHESES) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE | LINE_BREAK) #IMPLIED

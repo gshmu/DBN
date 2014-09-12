@@ -9,6 +9,8 @@ public interface IterationElementType extends ElementType {
 
     int[] getElementsCountVariants();
 
+    Integer getMinIterations();
+
     boolean isSeparator(TokenElementType tokenElementType);
 
     boolean isSeparator(TokenType tokenType);

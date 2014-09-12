@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -12,17 +17,13 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jdom.Element;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public class IterationElementTypeImpl extends AbstractElementType implements IterationElementType {
 
     protected ElementType iteratedElementType;
     protected TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
+    private int minIterations;
 
     public IterationElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -88,6 +89,11 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
                 elementsCountVariants[i] = variants.get(i);
             }
         }
+
+        String minIterationsDef = def.getAttributeValue("min-iterations");
+        if (minIterationsDef != null) {
+            minIterations = Integer.parseInt(minIterationsDef);
+        }
     }
 
     public boolean isLeaf() {
@@ -112,6 +118,11 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
 
     public int[] getElementsCountVariants() {
         return elementsCountVariants;
+    }
+
+    @Override
+    public Integer getMinIterations() {
+        return minIterations;
     }
 
     public boolean isSeparator(TokenElementType tokenElementType) {
