@@ -18,6 +18,7 @@ public class ConnectionActionGroup extends DefaultActionGroup {
         add(new OpenSQLConsoleAction(connectionHandler));
         addSeparator();
         add(new ShowDatabaseInformationAction(connectionHandler));
+        add(new ConnectAction(connectionHandler));
         add(new DisconnectAction(connectionHandler));
         add(new TestConnectivityAction(connectionHandler));
         add(new LoadAllObjectsAction(connectionHandler));

@@ -17,5 +17,6 @@ public class DisconnectAction extends DumbAwareAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(connectionHandler.getProject());
         transactionManager.disconnect(connectionHandler);
+        connectionHandler.setAllowConnection(false);
     }
 }
