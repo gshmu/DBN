@@ -427,7 +427,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     initProgressIndicator(progressIndicator, true);
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                    connectionManager.testConnection(ConnectionHandlerImpl.this, false);
+                    connectionManager.testConnection(ConnectionHandlerImpl.this, false, false);
                     //fixme check if the connection is pointing to a new database and reload if this is the case
                     //objectBundle.checkForDatabaseChange();
 
