@@ -151,12 +151,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
         EventManager.notify(project, ConnectionManagerListener.TOPIC).connectionsChanged();
     }
 
-    public void testConnection(ConnectionHandler connectionHandler, boolean showMessageDialog) {
+    public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
         Project project = getProject();
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         try {
             connectionHandler.getStandaloneConnection();
-            if (showMessageDialog) {
+            if (showSuccessMessage) {
                 MessageDialog.showInfoDialog(
                         project,
                         "Successfully connected to \"" + connectionHandler.getName() + "\".",
@@ -164,7 +164,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Proje
                         false);
             }
         } catch (Exception e) {
-            if (showMessageDialog) {
+            if (showErrorMessage) {
                 MessageDialog.showErrorDialog(
                         project,
                         "Could not connect to \"" + connectionHandler.getName() + "\".",

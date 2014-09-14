@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import java.lang.ref.WeakReference;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -74,7 +76,9 @@ public class PsiResolveResult {
         if (activeConnection == null || activeConnection.isVirtual()) {
             if (currentSchema != null) return true;
         } else {
-            if (connectionBecameValid() || currentSchemaChanged()) return true;
+            if (connectionBecameValid() || currentSchemaChanged()) {
+                return true;
+            }
         }
 
         PsiElement referencedElement = this.referencedElement == null ? null : this.referencedElement.get();
@@ -120,7 +124,7 @@ public class PsiResolveResult {
 
     private boolean currentSchemaChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && currentSchema != element.getCurrentSchema();
+        return element != null && !CommonUtil.safeEqual(currentSchema, element.getCurrentSchema());
     }
 
     private boolean connectionBecameValid() {
