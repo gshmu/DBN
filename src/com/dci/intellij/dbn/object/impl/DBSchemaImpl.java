@@ -67,6 +67,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelation;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 
@@ -402,6 +403,16 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
     public DBMethod getMethod(String name, int overload) {
         return getMethod(name, null, overload);
+    }
+
+    @Override
+    public boolean isParentOf(DBObject object) {
+        if (object instanceof DBSchemaObject) {
+            DBSchemaObject schemaObject = (DBSchemaObject) object;
+            return schemaObject.getProperties().is(DBObjectProperty.SCHEMA_OBJECT) && this.equals(schemaObject.getSchema());
+
+        }
+        return false;
     }
 
     public synchronized void refreshObjectsStatus() {

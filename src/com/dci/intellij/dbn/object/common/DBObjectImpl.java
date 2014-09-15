@@ -153,6 +153,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef;
     }
 
+    @Override
+    public boolean isParentOf(DBObject object) {
+        return this.equals(object.getParentObject());
+    }
+
     protected DBObjectRef createRef() throws SQLException {
         checkConnection();
         return new DBObjectRef(this);

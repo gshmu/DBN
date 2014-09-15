@@ -85,4 +85,5 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     EnvironmentType getEnvironmentType();
     DBObjectRef getRef();
 
+    boolean isParentOf(DBObject object);
 }
