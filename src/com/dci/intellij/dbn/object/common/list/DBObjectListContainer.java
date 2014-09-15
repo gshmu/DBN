@@ -166,8 +166,13 @@ public class DBObjectListContainer implements Disposable {
         for (DBObjectList objectList : objectLists.values()) {
             if (objectList.isLoaded() && !objectList.isDirty()) {
                 DBObject object = objectList.getObject(name);
-                if (object != null && object.getParentObject().equals(owner)) {
-                    return object;
+                if (object != null) {
+                    if (owner instanceof DBObject) {
+                        DBObject ownerObject = (DBObject) owner;
+                        if (ownerObject.isParentOf(object)) {
+                            return object;
+                        }
+                    }
                 }
             }
         }

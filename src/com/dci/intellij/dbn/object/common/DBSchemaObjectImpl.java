@@ -140,6 +140,9 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
                         schemas.add(schema);
                     }
                 }
+                if (schemas.isEmpty()) {
+                    schemas.add(getSchema());
+                }
 
             } finally {
                 ConnectionUtil.closeResultSet(resultSet);
