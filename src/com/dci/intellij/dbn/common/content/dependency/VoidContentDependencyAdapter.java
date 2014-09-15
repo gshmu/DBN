@@ -11,6 +11,11 @@ public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
     }
 
     @Override
+    public boolean canConnect(ConnectionHandler connectionHandler) {
+        return false;
+    }
+
+    @Override
     public boolean canLoad(ConnectionHandler connectionHandler) {
         return false;
     }

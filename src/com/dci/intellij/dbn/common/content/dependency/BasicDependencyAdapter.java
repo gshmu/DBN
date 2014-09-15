@@ -5,13 +5,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class BasicDependencyAdapter implements ContentDependencyAdapter {
 
-    protected boolean isConnectionValid(ConnectionHandler connectionHandler) {
-        return connectionHandler != null && connectionHandler.isValid();
+    @Override
+    public boolean canConnect(ConnectionHandler connectionHandler) {
+        return connectionHandler != null && connectionHandler.canConnect() && connectionHandler.isValid();
     }
 
     public boolean canLoad(ConnectionHandler connectionHandler) {
         //should reload if connection is valid
-        return isConnectionValid(connectionHandler);
+        return canConnect(connectionHandler);
     }
 
     public boolean isDirty() {

@@ -39,6 +39,8 @@ public interface ConnectionHandler extends Disposable{
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);
 
+    boolean canConnect();
+
     ConnectionBundle getConnectionBundle();
     ConnectionPool getConnectionPool();
     ConnectionLoadMonitor getLoadMonitor();

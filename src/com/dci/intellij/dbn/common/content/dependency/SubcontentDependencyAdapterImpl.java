@@ -19,7 +19,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
 
     @Override
     public boolean canLoad(ConnectionHandler connectionHandler) {
-        return isConnectionValid(connectionHandler) && contentDependency.getSourceContent().isLoaded();
+        return canConnect(connectionHandler) && contentDependency.getSourceContent().isLoaded();
     }
 
     public boolean isDirty() {

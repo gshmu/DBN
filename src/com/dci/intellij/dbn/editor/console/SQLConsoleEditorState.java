@@ -69,8 +69,7 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
                         SQLConsoleEditorState.super.applyToEditor(textEditor);
                         DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
                         if (currentSchema != null) {
-                            DBSchema schema = file.getConnectionHandler().getObjectBundle().getSchema(currentSchema);
-                            if (schema != null) file.setCurrentSchema(schema);
+                            file.setCurrentSchemaName(currentSchema);
                         }
                     }
                 }.start();

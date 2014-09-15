@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
 import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -61,7 +62,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
             BrowserTreeNode treeNode = (BrowserTreeNode) value;
             setIcon(treeNode.getIcon(0));
 
-            boolean isLoading = false;
+            boolean isDirty = false;
             String displayName;
             if (treeNode instanceof ModuleConnectionBundle) {
                 ModuleConnectionBundle connectionManager = (ModuleConnectionBundle) treeNode;
@@ -75,9 +76,9 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
             if (treeNode instanceof DBObjectList) {
                 DBObjectList objectsList = (DBObjectList) treeNode;
                 boolean isEmpty = objectsList.getTreeChildCount() == 0;
-                isLoading = objectsList.isLoading();
+                isDirty = objectsList.isLoading() || (!objectsList.isLoaded() && !hasConnectivity(objectsList));
                 SimpleTextAttributes textAttributes =
-                        isLoading ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
+                        isDirty ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
                         isEmpty ? SimpleTextAttributes.REGULAR_ATTRIBUTES :
                         SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
 
@@ -122,7 +123,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
             }
             String displayDetails = treeNode.getPresentableTextDetails();
             if (!StringUtil.isEmptyOrSpaces(displayDetails)) {
-                append(" " + displayDetails, isLoading ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.GRAY_ATTRIBUTES);
+                append(" " + displayDetails, isDirty ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
 
 
@@ -133,6 +134,11 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                 }
 
             }
+        }
+
+        private boolean hasConnectivity(DBObjectList objectsList) {
+            ConnectionHandler connectionHandler = objectsList.getConnectionHandler();
+            return connectionHandler != null && objectsList.getConnectionHandler().canConnect() && connectionHandler.isValid();
         }
     }
 }

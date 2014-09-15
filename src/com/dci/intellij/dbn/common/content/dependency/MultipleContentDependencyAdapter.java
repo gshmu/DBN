@@ -16,7 +16,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     }
 
     public boolean canLoad(ConnectionHandler connectionHandler) {
-        if (dependencies != null && isConnectionValid(connectionHandler)) {
+        if (dependencies != null && canConnect(connectionHandler)) {
             for (ContentDependency dependency : dependencies) {
                 if (!dependency.getSourceContent().isLoaded()) {
                     return false;

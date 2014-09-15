@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -74,6 +73,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public void setAllowConnection(boolean allowConnection) {
         this.allowConnection = allowConnection;
+    }
+
+    @Override
+    public boolean canConnect() {
+        return !isDisposed() && (allowConnection || getSettings().getDatabaseSettings().isConnectAutomatically());
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -207,19 +211,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             long currentTimestamp = System.currentTimeMillis();
             if (validityCheckTimestamp < currentTimestamp - 30000) {
                 validityCheckTimestamp = currentTimestamp;
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            getStandaloneConnection();
-                        } catch (SQLException e) {
-                            if (SettingsUtil.isDebugEnabled) {
-                                LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
-                            }
-                        }
+                try {
+                    getStandaloneConnection();
+                } catch (SQLException e) {
+                    if (SettingsUtil.isDebugEnabled) {
+                        LOGGER.warn("[DBN-INFO] Could not connect to database [" + getName() + "]: " + e.getMessage());
                     }
-                }.start();
-
+                }
             }
             return connectionStatus.isValid();
         }
@@ -282,12 +280,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public Connection getStandaloneConnection() throws SQLException {
-        checkAllowConnection();
+        assertCanConnect();
         return connectionPool.getStandaloneConnection(true);
     }
 
     public Connection getPoolConnection() throws SQLException {
-        checkAllowConnection();
+        assertCanConnect();
         return connectionPool.allocateConnection();
     }
 
@@ -307,8 +305,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connection;
     }
 
-    private void checkAllowConnection() throws SQLException {
-        if (!allowConnection && !getSettings().getDatabaseSettings().isConnectAutomatically()) {
+    private void assertCanConnect() throws SQLException {
+        if (!canConnect()) {
             throw DBN_NOT_CONNECTED_EXCEPTION;
         }
     }

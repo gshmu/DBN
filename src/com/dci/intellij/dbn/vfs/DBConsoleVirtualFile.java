@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
@@ -76,6 +77,10 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     public void setCurrentSchema(DBSchema currentSchema) {
         this.currentSchemaRef = DBObjectRef.from(currentSchema);
+    }
+
+    public void setCurrentSchemaName(String currentSchemaName) {
+        this.currentSchemaRef = new DBObjectRef<DBSchema>(connectionHandler.getId(), DBObjectType.SCHEMA, currentSchemaName);
     }
 
     public DBSchema getCurrentSchema() {

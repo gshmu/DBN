@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import java.lang.ref.WeakReference;
-
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -22,6 +21,7 @@ public class PsiResolveResult {
     private boolean isNew;
     private boolean isResolving;
     private boolean isConnectionValid;
+    private boolean isConnectionActive;
     private long lastResolveInvocation = 0;
     private int executableTextLength;
     private int resolveTrials = 0;
@@ -37,6 +37,7 @@ public class PsiResolveResult {
         this.isResolving = true;
         ConnectionHandler connectionHandler = psiElement.getActiveConnection();
         this.isConnectionValid = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.getConnectionStatus().isValid();
+        this.isConnectionActive = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
         this.referencedElement = null;
         this.parent = null;
         this.text = psiElement.getUnquotedText();
@@ -76,7 +77,7 @@ public class PsiResolveResult {
         if (activeConnection == null || activeConnection.isVirtual()) {
             if (currentSchema != null) return true;
         } else {
-            if (connectionBecameValid() || currentSchemaChanged()) {
+            if (connectionBecameActive(activeConnection) || connectionBecameValid(activeConnection) || currentSchemaChanged()) {
                 return true;
             }
         }
@@ -124,13 +125,15 @@ public class PsiResolveResult {
 
     private boolean currentSchemaChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && !CommonUtil.safeEqual(currentSchema, element.getCurrentSchema());
+        return element != null && !CommonUtil.safeEqual(DBObjectRef.get(currentSchema), element.getCurrentSchema());
     }
 
-    private boolean connectionBecameValid() {
-        IdentifierPsiElement element = this.element.get();
-        ConnectionHandler activeConnection = element == null ? null : element.getActiveConnection();
-        return !isConnectionValid && activeConnection!= null && !activeConnection.isVirtual() && activeConnection.getConnectionStatus().isValid();
+    private boolean connectionBecameValid(ConnectionHandler connectionHandler) {
+        return !isConnectionValid && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.getConnectionStatus().isValid();
+    }
+
+    private boolean connectionBecameActive(ConnectionHandler connectionHandler) {
+        return !isConnectionActive && connectionHandler!= null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
     }
 
     private boolean enclosingExecutableChanged() {
