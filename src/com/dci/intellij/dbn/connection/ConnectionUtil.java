@@ -183,14 +183,14 @@ public class ConnectionUtil {
 
     public static void rollback(Connection connection) {
         try {
-            if (connection != null && !connection.getAutoCommit()) connection.rollback();
+            if (connection != null && !connection.isClosed() && !connection.getAutoCommit()) connection.rollback();
         } catch (SQLException e) {
             LOGGER.warn("Error rolling connection back", e);
         }
     }
     public static void setAutocommit(Connection connection, boolean autoCommit) {
         try {
-            if (connection != null) connection.setAutoCommit(autoCommit);
+            if (connection != null && !connection.isClosed()) connection.setAutoCommit(autoCommit);
         } catch (SQLException e) {
             LOGGER.warn("Error setting autocommit to connection", e);
         }

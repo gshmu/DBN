@@ -301,7 +301,20 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public boolean shouldLoad(boolean force) {
-        return !(isLoading || disposed) && (force || !isLoaded || (isDirty() && dependencyAdapter.canLoad(getConnectionHandler())));
+        if (isLoading || disposed) {
+            return false;
+        }
+
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (force || !isLoaded) {
+            return dependencyAdapter.canConnect(connectionHandler);
+        }
+
+        if (isDirty()) {
+            return dependencyAdapter.canLoad(connectionHandler);
+        }
+
+        return false;
     }
 
     public void checkDisposed() throws InterruptedException {
