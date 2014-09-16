@@ -77,7 +77,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean canConnect() {
-        return !isDisposed() && (allowConnection || getSettings().getDatabaseSettings().isConnectAutomatically());
+        return !isDisposed() && (allowConnection || getSettings().getDetailSettings().isConnectAutomatically());
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -230,13 +230,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean isAutoCommit() {
-        return connectionSettings.getDetailSettings().isAutoCommit();
+        return connectionSettings.getDetailSettings().isEnableAutoCommit();
     }
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         connectionPool.setAutoCommit(autoCommit);
-        connectionSettings.getDetailSettings().setAutoCommit(autoCommit);
+        connectionSettings.getDetailSettings().setEnableAutoCommit(autoCommit);
     }
 
     public void disconnect() throws SQLException {

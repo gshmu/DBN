@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +80,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
                 DDLFileGeneralSettings ddlFileSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
                 ConnectionHandler connectionHandler = object.getConnectionHandler();
-                boolean ddlFileBinding = connectionHandler.getSettings().getDetailSettings().isDdlFileBinding();
+                boolean ddlFileBinding = connectionHandler.getSettings().getDetailSettings().isEnableDdlFileBinding();
                 if (ddlFileBinding && ddlFileSettings.isLookupDDLFilesEnabled()) {
                     List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
                     if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {

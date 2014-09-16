@@ -4,11 +4,9 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -20,7 +18,6 @@ import java.io.File;
 import java.sql.Driver;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -52,9 +49,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox activeCheckBox;
     private JPanel connectionParametersPanel;
-    private JCheckBox autoConnectCheckBox;
-    private JLabel autoConnectHintLabel;
-    private JTextArea autoConnectTextArea;
 
     private GenericConnectionDatabaseSettings temporaryConfig;
 
@@ -77,16 +71,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
         userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
         passwordField.setEnabled(!osAuthenticationCheckBox.isSelected());
-        autoConnectHintLabel.setText("");
-        autoConnectHintLabel.setIcon(Icons.COMMON_INFO);
-        autoConnectTextArea.setBackground(UIUtil.getPanelBackground());
-        autoConnectTextArea.setText("NOTE: If \"Connect automatically\" is not selected, the system will not restore the entire workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).");
-        autoConnectTextArea.setFont(UIUtil.getLabelFont());
-        autoConnectTextArea.setForeground(Colors.HINT_COLOR);
-
-        boolean visibleHint = !autoConnectCheckBox.isSelected();
-        autoConnectHintLabel.setVisible(visibleHint);
-        autoConnectTextArea.setVisible(visibleHint);
     }
 
     protected DocumentListener createDocumentListener() {
@@ -155,10 +139,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                     userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
                     passwordField.setEnabled(!osAuthenticationCheckBox.isSelected());
                     getConfiguration().setModified(true);
-                } else if (source == autoConnectCheckBox){
-                    boolean visibleHint = !autoConnectCheckBox.isSelected();
-                    autoConnectHintLabel.setVisible(visibleHint);
-                    autoConnectTextArea.setVisible(visibleHint);
                 } else {
                     getConfiguration().setModified(true);
                 }
@@ -228,7 +208,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         connectionConfig.setUser(userTextField.getText());
         connectionConfig.setPassword(new String(passwordField.getPassword()));
         connectionConfig.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-        connectionConfig.setConnectAutomatically(autoConnectCheckBox.isSelected());
         connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
         connectionConfig.updateHashCode();
     }
@@ -259,7 +238,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         userTextField.setText(connectionConfig.getUser());
         passwordField.setText(connectionConfig.getPassword());
         osAuthenticationCheckBox.setSelected(connectionConfig.isOsAuthentication());
-        autoConnectCheckBox.setSelected(connectionConfig.isConnectAutomatically());
         populateDriverList(connectionConfig.getDriverLibrary());
     }
 

@@ -76,7 +76,7 @@ public class ConnectionUtil {
         }
 
         try {
-            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isAutoCommit(), connectionStatus);
+            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isEnableAutoCommit(), connectionStatus);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
