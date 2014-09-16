@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -24,7 +25,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 
 @State(
@@ -97,11 +97,15 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 final DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 if (databaseFile.isModified()) {
                     String[] options = new String[]{"Save", "Discard"};
-                    int selection = Messages.showDialog(getProject(),
-                            "You have unsaved changes to the " + databaseFile.getObject().getQualifiedNameWithType() + ".\n",
-                            Constants.DBN_TITLE_PREFIX + "Unsaved changes", options, 0, Messages.getWarningIcon());
-                    if (selection == 0) {
-                        databaseFile.saveChanges();
+                    DBSchemaObject object = databaseFile.getObject();
+
+                    if (object != null) {
+                        int selection = MessageUtil.showWarningDialog(
+                                "You have unsaved changes to the " + object.getQualifiedNameWithType() + ".\n",
+                                Constants.DBN_TITLE_PREFIX + "Unsaved changes", options, 0);
+                        if (selection == 0) {
+                            databaseFile.saveChanges();
+                        }
                     }
                 }
             }

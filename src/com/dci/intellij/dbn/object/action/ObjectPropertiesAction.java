@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.ui.Messages;
 
 public class ObjectPropertiesAction extends AnAction {
     private DBObject object;
@@ -15,6 +14,6 @@ public class ObjectPropertiesAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent event) {
-        Messages.showInfoMessage("This feature is not implemented yet.", Constants.DBN_TITLE_PREFIX + "Not implemented!");
+        MessageUtil.showInfoDialog("This feature is not implemented yet.", "Not implemented!");
     }
 }

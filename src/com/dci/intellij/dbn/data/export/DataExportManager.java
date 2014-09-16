@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
@@ -20,7 +19,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 
 @State(
     name = "DBNavigator.Project.DataExportManager",
@@ -51,9 +49,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             processor.export(exportModel, instructions, connectionHandler);
             DataExportInstructions.Destination destination = instructions.getDestination();
             if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                Messages.showInfoMessage(
-                        "Content exported to clipboard.",
-                        Constants.DBN_TITLE_PREFIX + "Export info");
+                MessageUtil.showInfoDialog("Content exported to clipboard.", "Export info");
 
             } else if (destination == DataExportInstructions.Destination.FILE) {
                 File file = instructions.getFile();
@@ -61,26 +57,25 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                     //FileSystemView view = FileSystemView.getFileSystemView();
                     //Icon icon = view.getSystemIcon(file);
 
-                    int selection = Messages.showDialog(
+                    int selection = MessageUtil.showInfoDialog(
                             "Content exported to file " + file.getPath(),
-                            Constants.DBN_TITLE_PREFIX + "Export info",
-                            new String[]{"Ok", "Open File"}, 0,
-                            Messages.getInformationIcon());
+                            "Export info",
+                            new String[]{"OK", "Open File"}, 0);
 
                     if (selection == 1) {
                         try {
                             Desktop.getDesktop().open(file);
                         } catch (IOException e) {
-                            Messages.showErrorDialog(
+                            MessageUtil.showErrorDialog(
                                     "Could not open file " + file.getPath() + ".\nThe file type is most probably not associated with any program." ,
-                                    Constants.DBN_TITLE_PREFIX + "Open file");
+                                    "Open file");
                         }
                     }
 
                 } else {
-                    Messages.showInfoMessage(
+                    MessageUtil.showInfoDialog(
                             "Content exported to file " + file.getPath(),
-                            Constants.DBN_TITLE_PREFIX + "Export info");
+                            "Export info");
                 }
             }
 

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -26,9 +25,9 @@ import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
+
     private DatabaseObjectFactory(Project project) {
         super(project);
     }
@@ -97,10 +96,10 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     public void dropObject(final DBSchemaObject object) {
         final ConnectionHandler connectionHandler = object.getConnectionHandler();
         final DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-        int response = Messages.showYesNoDialog(
+        int response = MessageUtil.showQuestionDialog(
                 "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
-                Constants.DBN_TITLE_PREFIX + "Drop object",
-                Messages.getQuestionIcon());
+                "Drop object",
+                MessageUtil.OPTIONS_YES_NO, 0);
         if (response == 0) {
             new BackgroundTask(object.getProject(), "Dropping " + object.getQualifiedNameWithType(), false) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {

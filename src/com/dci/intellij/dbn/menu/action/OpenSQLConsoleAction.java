@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -15,7 +16,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
@@ -73,9 +73,9 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                 if (singleConnectionHandler != null) {
                     openSQLConsole(singleConnectionHandler);
                 } else {
-                    int selection = Messages.showDialog(project,
+                    int selection = MessageUtil.showInfoDialog(
                             "No database connections found. Please setup a connection first",
-                            "No connections available.", new String[] {"Setup Connection", "Cancel"}, 0, Messages.getInformationIcon());
+                            "No connections available.", new String[]{"Setup Connection", "Cancel"}, 0);
                     if (selection == 0) {
                         GlobalProjectSettingsDialog globalSettingsDialog = new GlobalProjectSettingsDialog(project);
                         globalSettingsDialog.show();

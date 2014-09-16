@@ -4,9 +4,9 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -31,7 +31,6 @@ import com.intellij.history.LocalHistory;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 
@@ -106,11 +105,10 @@ public class DBProgramRunner extends GenericProgramRunner {
                         buffer.append(" - ").append(missingPrivilege).append("\n");
                     }
 
-                    int response = Messages.showDialog(
-                                    buffer.toString(),
-                                    Constants.DBN_TITLE_PREFIX + "Insufficient privileges",
-                                    new String[]{"Continue anyway", "Cancel"}, 0,
-                                    Messages.getWarningIcon());
+                    int response = MessageUtil.showWarningDialog(
+                            buffer.toString(),
+                            "Insufficient privileges",
+                            new String[]{"Continue anyway", "Cancel"}, 0);
                     if (response == 0) {
                         performInitialize(
                                 executionInput,

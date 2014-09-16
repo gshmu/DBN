@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn;
 
-import javax.swing.Icon;
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -12,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -26,7 +26,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.ui.Messages;
 
 @State(
     name = "DBNavigator",
@@ -98,8 +97,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                             "Disable IDEA SQL plugin (restart)",
                             "Disable DBN plugin (restart)",
                             "Ignore and continue (not recommended)"};
-                    Icon icon = Messages.getWarningIcon();
-                    int exitCode = Messages.showDialog(message, title, options, 0, icon);
+                    int exitCode = MessageUtil.showWarningDialog(message, title, options, 0);
                     if (exitCode == 0 || exitCode == 1) {
                         try {
                             disabledList.add(exitCode == 1 ? DBN_PLUGIN_ID : SQL_PLUGIN_ID);

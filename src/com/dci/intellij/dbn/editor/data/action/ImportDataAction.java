@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.ui.Messages;
 
 public class ImportDataAction extends AbstractDataEditorAction {
 
@@ -14,7 +13,7 @@ public class ImportDataAction extends AbstractDataEditorAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        Messages.showInfoMessage("Data import is not implemented yet.", Constants.DBN_TITLE_PREFIX + "Not implemented");
+        MessageUtil.showInfoDialog("Data import is not implemented yet.", "Not implemented");
     }
 
     public void update(AnActionEvent e) {

@@ -6,10 +6,10 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -38,7 +38,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -90,10 +89,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                             int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                             return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                         } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
-                            int exitCode = Messages.showYesNoDialog(
+                            int exitCode = MessageUtil.showQuestionDialog(
                                     "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                             "(You can disable this check in \"DDL File\" options)",
-                                    Constants.DBN_TITLE_PREFIX + "No DDL file found", Messages.getQuestionIcon());
+                                    "No DDL file found", MessageUtil.OPTIONS_YES_NO, 0);
                             if (exitCode == DialogWrapper.OK_EXIT_CODE) {
                                 fileAttachmentManager.createDDLFile(object);
                             }
