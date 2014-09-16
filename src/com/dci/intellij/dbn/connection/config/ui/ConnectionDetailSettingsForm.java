@@ -4,8 +4,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,6 +17,8 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
@@ -33,6 +37,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.ColorIcon;
+import com.intellij.util.ui.UIUtil;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
@@ -46,6 +51,9 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JTextField idleTimeTextField;
     private JCheckBox ddlFileBindingCheckBox;
     private JTextField alternativeStatementDelimiterTextField;
+    private JCheckBox autoConnectCheckBox;
+    private JLabel autoConnectHintLabel;
+    private JTextArea autoConnectTextArea;
 
     private PropertiesEditorForm propertiesEditorForm;
 
@@ -78,6 +86,18 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
         });
 
+        autoConnectHintLabel.setText("");
+        autoConnectHintLabel.setIcon(Icons.COMMON_INFO);
+        autoConnectTextArea.setBackground(UIUtil.getPanelBackground());
+        autoConnectTextArea.setText("NOTE: If \"Connect automatically\" is not selected, the system will not restore the entire workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).");
+        autoConnectTextArea.setFont(UIUtil.getLabelFont());
+        autoConnectTextArea.setForeground(Colors.HINT_COLOR);
+
+        boolean visibleHint = !autoConnectCheckBox.isSelected();
+        autoConnectHintLabel.setVisible(visibleHint);
+        autoConnectTextArea.setVisible(visibleHint);
+
+
         EventManager.subscribe(configuration.getProject(), EnvironmentPresentationChangeListener.TOPIC, presentationChangeListener);
     }
 
@@ -87,6 +107,20 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         EnvironmentType environmentType = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
         Color color = environmentType == null ? null : environmentType.getColor();
         listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null);
+    }
+
+    protected ActionListener createActionListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source == autoConnectCheckBox){
+                    boolean visibleHint = !autoConnectCheckBox.isSelected();
+                    autoConnectHintLabel.setVisible(visibleHint);
+                    autoConnectTextArea.setVisible(visibleHint);
+                }
+                getConfiguration().setModified(true);
+            }
+        };
     }
 
     private final ColoredListCellRenderer environmentTypeCellRenderer = new ColoredListCellRenderer() {
@@ -134,8 +168,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         boolean settingsChanged =
                 !configuration.getProperties().equals(newProperties) ||
                 !configuration.getCharset().equals(newCharset) ||
-                configuration.isAutoCommit() != newAutoCommit ||
-                configuration.isDdlFileBinding() != newDdlFileBinding;
+                configuration.isEnableAutoCommit() != newAutoCommit ||
+                configuration.isEnableDdlFileBinding() != newDdlFileBinding;
 
         boolean environmentChanged =
                 !configuration.getEnvironmentType().getId().equals(newEnvironmentTypeId);
@@ -144,8 +178,9 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnvironmentTypeId(newEnvironmentTypeId);
         configuration.setProperties(newProperties);
         configuration.setCharset(newCharset);
-        configuration.setAutoCommit(newAutoCommit);
-        configuration.setDdlFileBinding(newDdlFileBinding);
+        configuration.setEnableAutoCommit(newAutoCommit);
+        configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
+        configuration.setEnableDdlFileBinding(newDdlFileBinding);
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle Time to Disconnect (minutes)", 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max Connection Pool Size", 3, 20, "");
@@ -170,8 +205,9 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         ConnectionDetailSettings configuration = getConfiguration();
         encodingComboBox.setSelectedItem(configuration.getCharset());
         propertiesEditorForm.setProperties(configuration.getProperties());
-        autoCommitCheckBox.setSelected(configuration.isAutoCommit());
-        ddlFileBindingCheckBox.setSelected(configuration.isDdlFileBinding());
+        autoCommitCheckBox.setSelected(configuration.isEnableAutoCommit());
+        ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
+        autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
         environmentTypesComboBox.setSelectedItem(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));

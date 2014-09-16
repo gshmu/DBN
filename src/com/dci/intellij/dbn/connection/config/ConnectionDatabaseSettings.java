@@ -21,7 +21,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
     protected boolean active = true;
     protected boolean osAuthentication = false;
-    protected boolean connectAutomatically = true;
     protected String id;
     protected String name;
     protected String description;
@@ -70,14 +69,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     public boolean isOsAuthentication() {
         return osAuthentication;
-    }
-
-    public boolean isConnectAutomatically() {
-        return connectAutomatically;
-    }
-
-    public void setConnectAutomatically(boolean connectAutomatically) {
-        this.connectAutomatically = connectAutomatically;
     }
 
     public void setOsAuthentication(boolean osAuthentication) {
@@ -192,12 +183,10 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
             password         = decodePassword(getString(element, "password", password));
             active           = getBoolean(element, "active", active);
             osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
-            connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
         } else{
             // TODO: decommission (support old configuration)
             active = getBooleanAttribute(element, "active", active);
             osAuthentication = getBooleanAttribute(element, "os-authentication", osAuthentication);
-            connectAutomatically = getBooleanAttribute(element, "connect-automatically", connectAutomatically);
             id = element.getAttributeValue("id");
             name = element.getAttributeValue("name");
             description = element.getAttributeValue("description");
@@ -215,7 +204,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         setString(element, "description", nvl(description));
         setBoolean(element, "active", active);
         setBoolean(element, "os-authentication", osAuthentication);
-        setBoolean(element, "connect-automatically", connectAutomatically);
         setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
         setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(user));

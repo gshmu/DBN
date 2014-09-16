@@ -64,7 +64,7 @@ public class AttachDDLFileDialog extends DBNDialog {
         public void actionPerformed(ActionEvent e) {
             fileForm.selectNone();
             if (showLookupOption && fileForm.isDoNotPromptSelected()) {
-                object.getConnectionHandler().getSettings().getDetailSettings().setDdlFileBinding(false);
+                object.getConnectionHandler().getSettings().getDetailSettings().setEnableDdlFileBinding(false);
             }
             close(2);
         }
@@ -78,7 +78,7 @@ public class AttachDDLFileDialog extends DBNDialog {
             fileAttachmentManager.bindDDLFile(object, virtualFile);
         }
         if (showLookupOption && fileForm.isDoNotPromptSelected()) {
-            object.getConnectionHandler().getSettings().getDetailSettings().setDdlFileBinding(false);
+            object.getConnectionHandler().getSettings().getDetailSettings().setEnableDdlFileBinding(false);
         }
 
         super.doOKAction();
