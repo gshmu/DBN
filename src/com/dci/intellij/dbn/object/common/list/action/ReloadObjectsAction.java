@@ -1,12 +1,16 @@
 package com.dci.intellij.dbn.object.common.list.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.Project;
 
 public class ReloadObjectsAction extends AnAction {
 
@@ -17,14 +21,19 @@ public class ReloadObjectsAction extends AnAction {
         this.objectList = objectList;
     }
 
-    public void actionPerformed(AnActionEvent anActionEvent) {
-        new BackgroundTask(objectList.getProject(), "Reloading " + objectList.getContentDescription() + ".", false) {
-            @Override
-            public void execute(@NotNull final ProgressIndicator progressIndicator) throws InterruptedException {
-                initProgressIndicator(progressIndicator, true);
-                objectList.reload();
+    public void actionPerformed(AnActionEvent event) {
+        Project project = ActionUtil.getProject(event);
+        if (project != null) {
+            boolean canConnect = ConnectionUtil.assertCanConnect(objectList.getConnectionHandler(), "reloading the " + objectList.getObjectType().getListName());
+            if (canConnect) {
+                new BackgroundTask(objectList.getProject(), "Reloading " + objectList.getContentDescription() + ".", false) {
+                    @Override
+                    public void execute(@NotNull final ProgressIndicator progressIndicator) throws InterruptedException {
+                        initProgressIndicator(progressIndicator, true);
+                        objectList.reload();
+                    }
+                }.start();
             }
-        }.start();
-
+        }
     }
 }

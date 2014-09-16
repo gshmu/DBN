@@ -14,6 +14,8 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -73,25 +75,29 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public boolean promptExecutionDialog(MethodExecutionInput executionInput, boolean debug) {
-        if (executionInput.getConnectionHandler().isValid(true)) {
-            DBMethod method = executionInput.getMethod();
-            if (method == null) {
-                String message =
-                        "Can not execute method " +
-                         executionInput.getMethodRef().getPath() + ".\nMethod not found!";
-                MessageUtil.showErrorDialog(message);
-            } else {
-                MethodExecutionDialog executionDialog = new MethodExecutionDialog(executionInput, debug);
-                executionDialog.show();
+        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "method execution");
+        if (canConnect) {
+            if (connectionHandler.isValid(true)) {
+                DBMethod method = executionInput.getMethod();
+                if (method == null) {
+                    String message =
+                            "Can not execute method " +
+                                    executionInput.getMethodRef().getPath() + ".\nMethod not found!";
+                    MessageUtil.showErrorDialog(message);
+                } else {
+                    MethodExecutionDialog executionDialog = new MethodExecutionDialog(executionInput, debug);
+                    executionDialog.show();
 
-                return executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
+                    return executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
+                }
+            } else {
+                String message =
+                        "Can not execute method " + executionInput.getMethodRef().getPath() + ".\n" +
+                                "No connectivity to '" + connectionHandler.getQualifiedName() + "'. " +
+                                "Please check your connection settings and try again.";
+                MessageUtil.showErrorDialog(message);
             }
-        } else {
-            String message =
-                    "Can not execute method " + executionInput.getMethodRef().getPath() + ".\n" +
-                    "No connectivity to '" + executionInput.getConnectionHandler().getQualifiedName() + "'. " +
-                    "Please check your connection settings and try again.";
-            MessageUtil.showErrorDialog(message);
         }
         return false;
     }

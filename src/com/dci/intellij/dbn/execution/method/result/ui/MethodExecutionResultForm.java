@@ -36,6 +36,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     private JPanel outputCursorsPanel;
     private JTree argumentValuesTree;
     private JPanel argumentValuesPanel;
+    private JPanel executionResultPanel;
     private TabbedPane cursorOutputTabs;
 
 
@@ -51,6 +52,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
         argumentValuesPanel.setBorder(IdeBorderFactory.createBorder());
         updateStatusBarLabels();
+        executionResultPanel.setSize(800, -1);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
 
