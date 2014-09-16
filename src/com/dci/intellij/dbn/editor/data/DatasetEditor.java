@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -50,7 +49,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 
@@ -325,7 +323,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                             "Database error message: " + e.getMessage());
                             String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                            int option = Messages.showDialog(message, Constants.DBN_TITLE_PREFIX + "Error", options, 0, Messages.getErrorIcon());
+                            int option = MessageUtil.showErrorDialog(message, "Error", options, 0);
 
                             DatasetLoadInstructions instructions = instr.clone();
                             instructions.setDeliberateAction(true);

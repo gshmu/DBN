@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.generator.action;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -15,11 +20,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 
 public abstract class GenerateStatementAction extends AnAction {
     public GenerateStatementAction(String text) {
@@ -59,7 +59,7 @@ public abstract class GenerateStatementAction extends AnAction {
     private void pasteToClipboard(StatementGeneratorResult result) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(result.getStatement()), null);
-        MessageUtil.showInfoMessage("SQL statement exported to clipboard.", "Statement extracted");
+        MessageUtil.showInfoDialog("SQL statement exported to clipboard.", "Statement extracted");
     }
 
     private void pasteToEditor(final Editor editor, final StatementGeneratorResult generatorResult) {

@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -30,7 +30,6 @@ import com.intellij.openapi.fileTypes.FileTypeEvent;
 import com.intellij.openapi.fileTypes.FileTypeListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 
 @State(
     name = "DBNavigator.Project.DDLFileManager",
@@ -150,7 +149,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                         "Following file associations have been restored: \"" + restoredAssociations.toString() + "\". " +
                                 "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
                                 "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).";
-                Messages.showWarningDialog(getProject(), message, Constants.DBN_TITLE_PREFIX + "Restored file extensions");
+                MessageUtil.showWarningDialog(message, "Restored file extensions");
             }
         }    };
 

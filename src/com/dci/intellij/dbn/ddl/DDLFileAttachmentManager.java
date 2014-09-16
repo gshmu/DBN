@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.ListUtil;
@@ -41,7 +40,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SelectFromListDialog;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -280,7 +278,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             }
 
             String[] options = {"OK", "Create new..."};
-            int optionIndex = Messages.showDialog(project, message.toString(), Constants.DBN_TITLE_PREFIX + "No DDL Files found", options, 0, Messages.getInformationIcon() );
+            int optionIndex = MessageUtil.showInfoDialog(message.toString(), "No DDL Files found", options, 0);
             if (optionIndex == 1) {
                 createDDLFile(object);
             }

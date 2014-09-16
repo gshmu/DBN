@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.ui.SelectConnectionDialog;
@@ -27,10 +27,10 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
+    public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
     private static int sequence;
     public int getNextSequence() {
         sequence++;
@@ -112,7 +112,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
             String[] options = {okOption, "Cancel"};
 
-            int response = Messages.showDialog(message, Constants.DBN_TITLE_PREFIX + "No valid Connection / Schema", options, 0, Messages.getWarningIcon());
+            int response = MessageUtil.showWarningDialog(message, "No valid Connection / Schema", options, 0);
 
             if (response == 0) {
                 SelectConnectionDialog selectConnectionDialog = new SelectConnectionDialog(file);
@@ -134,11 +134,10 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             if (executionProcessor != null) {
                 fireExecution(executionProcessor);
             } else {
-                int exitCode = Messages.showDialog(
+                int exitCode = MessageUtil.showQuestionDialog(
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                        Constants.DBN_TITLE_PREFIX + "Multiple Statement Execution",
-                        new String[]{"Execute All", "Execute All from Caret", "Cancel"}, 0,
-                        Messages.getQuestionIcon());
+                        "Multiple Statement Execution",
+                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0);
                 if (exitCode == 0 || exitCode == 1) {
                     int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
                     List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file, offset);

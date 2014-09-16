@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Properties;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -20,10 +20,10 @@ import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+    public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
 
     public static void closeResultSet(final ResultSet resultSet) {
         if (resultSet != null) {
@@ -203,10 +203,10 @@ public class ConnectionUtil {
     public static boolean assertAllowConnection(ConnectionHandler connectionHandler, String operation) {
         if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.canConnect()) {
             Project project = connectionHandler.getProject();
-            int selection = Messages.showDialog(project,
+            int selection = MessageUtil.showInfoDialog(
                     "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
                             "If you want to continue with " + operation + ", you need to connect.",
-                    Constants.DBN_TITLE_PREFIX + "Not Connected to Database", new String[]{"Connect", "Cancel"}, 0, Messages.getInformationIcon());
+                    "Not Connected to Database", OPTIONS_CONNECT_CANCEL, 0);
             if (selection == 0) {
                 connectionHandler.setAllowConnection(true);
             }

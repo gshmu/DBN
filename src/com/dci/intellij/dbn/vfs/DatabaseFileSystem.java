@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -18,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
@@ -37,7 +37,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileSystem;
@@ -297,20 +296,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public void openEditor(final DBObject object, final boolean scrollBrowser, final boolean focusEditor) {
         final Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        boolean open = true;
-        if (!connectionHandler.canConnect()) {
-            int selection = Messages.showDialog(project,
-                    "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
-                    "If you want to open the " + object.getQualifiedNameWithType() + " you need to connect.",
-                    Constants.DBN_TITLE_PREFIX + "Not Connected to Database", new String[]{"Connect", "Cancel"}, 0, Messages.getInformationIcon());
-
-            if (selection == 0) {
-                open = true;
-                connectionHandler.setAllowConnection(true);
-            } else {
-                open = false;
-            }
-        }
+        boolean open = ConnectionUtil.assertAllowConnection(connectionHandler, "opening the " + object.getQualifiedNameWithType());
 
         if (open) {
             new BackgroundTask(project, "Opening editor", false, true) {

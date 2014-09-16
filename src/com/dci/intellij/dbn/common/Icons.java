@@ -69,7 +69,7 @@ public class Icons {
     public static final Icon DIALOG_INFO     = load("/img/dialog/Information.png");
     public static final Icon DIALOG_WARNING  = load("/img/dialog/Warning.png");
     public static final Icon DIALOG_ERROR    = load("/img/dialog/Error.png");
-    public static final Icon DIALOG_QUESTION = load("/img/dialog/Dialog.png");
+    public static final Icon DIALOG_QUESTION = load("/img/dialog/Question.png");
 
 
     public static final Icon METHOD_EXECUTION_RUN     = load("/img/action/ExecuteMethod.png");

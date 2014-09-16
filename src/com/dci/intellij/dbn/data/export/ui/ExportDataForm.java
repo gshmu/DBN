@@ -1,6 +1,17 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import com.dci.intellij.dbn.common.Constants;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -15,22 +26,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
 public class ExportDataForm extends DBNFormImpl implements DBNForm {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);
@@ -199,10 +196,9 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
         if (destinationFileRadioButton.isSelected()) {
             File file = getExportInstructions().getFile();
             if (file.exists()) {
-                int response = Messages.showYesNoDialog(
-                        "File " + file.getPath() + " already exists. Overwrite?", Constants.DBN_TITLE_PREFIX + "Warning",
-                        Messages.getQuestionIcon());
-                return response == DialogWrapper.OK_EXIT_CODE;
+                int response = MessageUtil.showQuestionDialog(
+                        "File " + file.getPath() + " already exists. Overwrite?", "File exists", MessageUtil.OPTIONS_YES_NO, 0);
+                return response == 0;
             }
         }
 
