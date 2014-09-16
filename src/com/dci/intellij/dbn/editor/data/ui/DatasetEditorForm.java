@@ -15,8 +15,8 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
@@ -72,10 +72,8 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
             Disposer.register(this, autoCommitLabel);
             Disposer.register(this, datasetEditorTable);
         } catch (SQLException e) {
-
-            MessageDialog.showErrorDialog(
-                    datasetEditor.getProject(),
-                    "Error opening data editor for " + dataset.getQualifiedNameWithType(), e.getMessage(), false);
+            MessageUtil.showErrorDialog(
+                    "Error opening data editor for " + dataset.getQualifiedNameWithType(), e, "Error");
         }
 
         if (dataset.isEditable(DBContentType.DATA)) {

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -14,22 +15,24 @@ public class ShowDatabaseInformationAction extends DumbAwareAction {
     private ConnectionHandler connectionHandler;
 
     public ShowDatabaseInformationAction(ConnectionHandler connectionHandler) {
-        super("Connection Information", null, null);
+        super("Connection Info", null, null);
         this.connectionHandler = connectionHandler;
         //getTemplatePresentation().setEnabled(connectionHandler.getConnectionStatus().isConnected());
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
-        final Project project = connectionHandler.getProject();
-        new BackgroundTask(project, "Loading database information for " + connectionHandler.getName(), false) {
-            @Override
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true);
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "displaying connection information");
+        if (canConnect) {
+            final Project project = connectionHandler.getProject();
+            new BackgroundTask(project, "Loading database information for " + connectionHandler.getName(), false) {
+                @Override
+                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    initProgressIndicator(progressIndicator, true);
 
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionManager.showConnectionInfoDialog(connectionHandler);
-            }
-        }.start();
-
+                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                    connectionManager.showConnectionInfoDialog(connectionHandler);
+                }
+            }.start();
+        }
     }
 }

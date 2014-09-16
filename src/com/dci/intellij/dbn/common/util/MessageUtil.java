@@ -37,16 +37,14 @@ public class MessageUtil {
         showErrorDialog(message, null, null);
     }
 
-    public static int showErrorDialog(final String message, @Nullable final Exception exception, @Nullable final String title) {
-        String localMessage = message;
-        String localTitle = title;
+    public static int showErrorDialog(String message, @Nullable Exception exception, @Nullable String title) {
         if (exception != null) {
             //String className = NamingUtil.getClassName(exception.getClass());
             //message = message + "\nCause: [" + className + "] " + exception.getMessage();
-            localMessage = localMessage + "\n" + exception.getMessage();
+            message = message + "\n" + exception.getMessage();
         }
-        if (localTitle == null) localTitle = "Error";
-        return showDialog(localMessage, localTitle, OPTIONS_OK, 0, Icons.DIALOG_ERROR);
+        if (title == null) title = "Error";
+        return showDialog(message, title, OPTIONS_OK, 0, Icons.DIALOG_ERROR);
     }
 
     public static int showErrorDialog(final String message, final String title, String[] options, int defaultOptionIndex) {
@@ -71,7 +69,7 @@ public class MessageUtil {
     }
 
     public static int showInfoDialog(final String message, final String title, String[] options, int defaultOptionIndex) {
-        return showDialog(message, title, options, defaultOptionIndex, Icons.DIALOG_INFO);
+        return showDialog(message, title, options, defaultOptionIndex, Icons.DIALOG_INFORMATION);
     }
 
     private static int showDialog(final String message, final String title, final String[] options, final int defaultOptionIndex, final Icon icon) {
