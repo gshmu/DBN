@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -200,9 +199,8 @@ public class ConnectionUtil {
     }
 
 
-    public static boolean assertAllowConnection(ConnectionHandler connectionHandler, String operation) {
+    public static boolean assertCanConnect(ConnectionHandler connectionHandler, String operation) {
         if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.canConnect()) {
-            Project project = connectionHandler.getProject();
             int selection = MessageUtil.showInfoDialog(
                     "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
                             "If you want to continue with " + operation + ", you need to connect.",

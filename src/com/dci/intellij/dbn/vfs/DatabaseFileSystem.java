@@ -296,9 +296,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public void openEditor(final DBObject object, final boolean scrollBrowser, final boolean focusEditor) {
         final Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        boolean open = ConnectionUtil.assertAllowConnection(connectionHandler, "opening the " + object.getQualifiedNameWithType());
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "opening the " + object.getQualifiedNameWithType());
 
-        if (open) {
+        if (canConnect) {
             new BackgroundTask(project, "Opening editor", false, true) {
                 @Override
                 public void execute(@NotNull ProgressIndicator progressIndicator) {

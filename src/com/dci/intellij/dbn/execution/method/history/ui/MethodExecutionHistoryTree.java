@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -118,31 +119,35 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener(){
         public void valueChanged(TreeSelectionEvent e) {
             final MethodExecutionInput executionInput = getSelectedExecutionInput();
-
-            new BackgroundTask(getProject(), "Loading Method details", false, false) {
-                @Override
-                public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    final DBMethod method = executionInput == null ? null : executionInput.getMethod();
-                    if (method != null) {
-                        method.getArguments();
-                    }
-
-                    new SimpleLaterInvocator() {
+            if (executionInput != null) {
+                boolean continueSelection = ConnectionUtil.assertCanConnect(executionInput.getConnectionHandler(), "method selection");
+                if (continueSelection) {
+                    new BackgroundTask(getProject(), "Loading Method details", false, false) {
                         @Override
-                        public void execute() {
-                            if (dialog != null) {
-                                dialog.showMethodExecutionPanel(executionInput);
-                                dialog.setSelectedExecutionInput(executionInput);
-                                dialog.setMainButtonEnabled(executionInput != null);
-                                if (executionInput != null) {
-                                    executionHistory.setSelection(executionInput.getMethodRef());
-                                }
+                        public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                            final DBMethod method = executionInput.getMethod();
+                            if (method != null) {
+                                method.getArguments();
                             }
+
+                            new SimpleLaterInvocator() {
+                                @Override
+                                public void execute() {
+                                    if (dialog != null) {
+                                        dialog.showMethodExecutionPanel(executionInput);
+                                        dialog.setSelectedExecutionInput(executionInput);
+                                        dialog.setMainButtonEnabled(method != null);
+                                        if (method != null) {
+                                            executionHistory.setSelection(executionInput.getMethodRef());
+                                        }
+                                    }
+                                }
+                            }.start();
+
                         }
                     }.start();
-
                 }
-            }.start();
+            }
         }
     };
 
