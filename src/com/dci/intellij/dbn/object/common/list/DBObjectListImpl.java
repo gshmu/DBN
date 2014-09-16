@@ -152,7 +152,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             return elements;
         } else {
             boolean scroll = !isTouched();
-            load(false);
+            if (!isLoaded()) {
+                loadInBackground(false);
+                return elements;
+            }
             if (scroll) {
                 DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
             }
