@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.ui.SelectConnectionDialog;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -126,13 +127,24 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     public void executeSelectedStatement(Editor editor) {
-        StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
-        if (executionProcessor != null) {
-            fireExecution(executionProcessor);
-        } else {
-            DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-            List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file);
-            fireExecution(executionProcessors);
+        DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
+        boolean continueExecution = ConnectionUtil.assertAllowConnection(file.getActiveConnection(), "the statement execution");
+        if (continueExecution) {
+            StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
+            if (executionProcessor != null) {
+                fireExecution(executionProcessor);
+            } else {
+                int exitCode = Messages.showDialog(
+                        "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
+                        Constants.DBN_TITLE_PREFIX + "Multiple Statement Execution",
+                        new String[]{"Execute All", "Execute All from Caret", "Cancel"}, 0,
+                        Messages.getQuestionIcon());
+                if (exitCode == 0 || exitCode == 1) {
+                    int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
+                    List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file, offset);
+                    fireExecution(executionProcessors);
+                }
+            }
         }
     }
 
@@ -143,7 +155,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             return new StatementExecutionCursorProcessor(file, selection, getNextSequence());
         }
 
-        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(file);
+        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         if (executable != null) {
             return executable.getExecutionProcessor();
         }
@@ -151,7 +163,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         return null;
     }
 
-    public static List<StatementExecutionProcessor> getExecutionProcessors(DBLanguagePsiFile file) {
+    public static List<StatementExecutionProcessor> getExecutionProcessors(DBLanguagePsiFile file, int offset) {
         List<StatementExecutionProcessor> statements = new ArrayList<StatementExecutionProcessor>();
 
         PsiElement child = file.getFirstChild();
@@ -160,8 +172,10 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 RootPsiElement root = (RootPsiElement) child;
 
                 for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                    StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
-                    statements.add(executionProcessor);
+                    if (executable.getTextOffset() > offset) {
+                        StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
+                        statements.add(executionProcessor);
+                    }
                 }
             }
             child = child.getNextSibling();
