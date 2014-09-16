@@ -14,7 +14,7 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     @Nullable
-    public DatabaseObjectIdentifier identifyObject(String message) {
+    public DatabaseObjectIdentifier identifyObject(SQLException exception) {
          return null;
     }
 

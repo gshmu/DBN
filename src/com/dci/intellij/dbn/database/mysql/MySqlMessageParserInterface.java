@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 
 public class MySqlMessageParserInterface implements DatabaseMessageParserInterface {
     @Nullable
-    public DatabaseObjectIdentifier identifyObject(String message) {
+    public DatabaseObjectIdentifier identifyObject(SQLException exception) {
          return null;
     }
 
