@@ -15,7 +15,7 @@ public class EditMethodAction extends MethodExecutionResultAction {
     public void actionPerformed(AnActionEvent e) {
         MethodExecutionResult executionResult = getExecutionResult();
         if (executionResult != null) {
-            DatabaseFileSystem.getInstance().openEditor(executionResult.getMethod(), true);
+            DatabaseFileSystem.getInstance().openEditor(executionResult.getMethod(), true, true);
         }
     }
 }

@@ -79,7 +79,7 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
         DBDataset dataset = filterInput.getDataset();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
         filterManager.createBasicFilter(filterInput);
-        DatabaseFileSystem.getInstance().openEditor(dataset);
+        DatabaseFileSystem.getInstance().openEditor(dataset, true);
     }
     
     public void openRecordViewer(DatasetFilterInput filterInput) {

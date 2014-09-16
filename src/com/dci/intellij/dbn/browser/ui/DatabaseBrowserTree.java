@@ -259,10 +259,10 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                 DBObjectProperties properties = object.getProperties();
                 if (properties.is(DBObjectProperty.EDITABLE)) {
                     DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    DatabaseFileSystem.getInstance().openEditor(schemaObject);
+                    DatabaseFileSystem.getInstance().openEditor(schemaObject, deliberate);
                     event.consume();
                 } else if (properties.is(DBObjectProperty.NAVIGABLE)) {
-                    DatabaseFileSystem.getInstance().openEditor(object);
+                    DatabaseFileSystem.getInstance().openEditor(object, deliberate);
                     event.consume();
                 } else if (deliberate) {
                     new BackgroundTask(getProject(), "Loading Object Reference", false, false) {
@@ -284,7 +284,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
                 ConnectionHandler connectionHandler = objectBundle.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                fileEditorManager.openFile(connectionHandler.getSQLConsoleFile(), true);
+                fileEditorManager.openFile(connectionHandler.getSQLConsoleFile(), deliberate);
             }
         }
     }

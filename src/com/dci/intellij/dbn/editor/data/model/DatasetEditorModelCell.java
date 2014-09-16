@@ -251,15 +251,18 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     public void showErrorPopup() {
         new SimpleLaterInvocator() {
             public void execute() {
-                if (!isDisposed()) {
-                    DatasetEditorModel model = getRow().getModel();
-                    if (!model.getEditorTable().isShowing()) {
-                        DBDataset dataset = getDataset();
-                        DatabaseFileSystem.getInstance().openEditor(dataset);
-                    }
-                    if (error != null) {
-                        DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
-                        errorForm.show();
+                DatasetEditorModel model = getRow().getModel();
+                if (!isDisposed() && model != null) {
+                    DatasetEditorTable editorTable = model.getEditorTable();
+                    if (editorTable != null) {
+                        if (!editorTable.isShowing()) {
+                            DBDataset dataset = getDataset();
+                            DatabaseFileSystem.getInstance().openEditor(dataset, true);
+                        }
+                        if (error != null) {
+                            DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
+                            errorForm.show();
+                        }
                     }
                 }
             }
