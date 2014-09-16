@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import java.util.Iterator;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -13,7 +14,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageDialect;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
@@ -24,7 +24,6 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.Nullable;
 
 public class PsiUtil {
 
@@ -102,10 +101,27 @@ public class PsiUtil {
         return null;
     }
 
-    public static ExecutablePsiElement lookupExecutableAtCaret(PsiFile file) {
+    public static ExecutablePsiElement lookupExecutableAtCaret(Editor editor, boolean lenient) {
         // GTK: PsiElement psiElement = PsiFile.findElementA(offset)
-        int offset = getCaretOffset(file);
-        PsiElement current = file.findElementAt(offset);
+
+        int offset = editor.getCaretModel().getOffset();
+
+        PsiFile file = DocumentUtil.getFile(editor);
+        PsiElement current = null;
+
+        if (lenient) {
+            int lineStart = editor.getCaretModel().getVisualLineStart();
+            int lineEnd = editor.getCaretModel().getVisualLineEnd();
+            current = file.findElementAt(lineStart);
+            while (ignore(current)) {
+                offset = current.getTextOffset() + current.getTextLength();
+                if (offset >= lineEnd) break;
+                current = file.findElementAt(offset);
+            }
+        } else {
+            current = file.findElementAt(offset);
+        }
+
         if (current != null) {
             PsiElement parent = current.getParent();
             while (parent != null) {
@@ -134,35 +150,6 @@ public class PsiUtil {
             psiElement = psiElement.getParent();
         }
         return null;
-    }
-
-    public static BasePsiElement lookupRootAtCaret(PsiFile file) {
-        int offset = getCaretOffset(file);
-        PsiElement current = file.findElementAt(offset);
-        if (current != null) {
-            PsiElement parent = current.getParent();
-            while (parent != null) {
-                if (parent instanceof BasePsiElement){
-                    BasePsiElement basePsiElement = (BasePsiElement) parent;
-                    if (basePsiElement.getElementType().is(ElementTypeAttribute.ROOT)) {
-                        return basePsiElement;
-                    }
-
-                }
-                parent = parent.getParent();
-            }
-        }
-        return null;
-    }
-
-
-    public static boolean introduceWhitespace(PsiFile file, int caretOffset) {
-        PsiFile originalFile = file.getOriginalFile();
-        if (originalFile != null && originalFile != file) {
-            PsiElement elementAtCaret = originalFile.findElementAt(caretOffset);
-            return !(elementAtCaret instanceof PsiWhiteSpace) || elementAtCaret.getNextSibling() == null;
-        }
-        return false;
     }
 
     @Nullable
@@ -217,31 +204,8 @@ public class PsiUtil {
         return null;
     }
 
-    public static int getCaretOffset(PsiFile file) {
-        PsiFile originalFile = file.getOriginalFile();
-        if (originalFile != null) file = originalFile;
-        Document document = DocumentUtil.getDocument(file);
-        Editor[] editors = EditorFactory.getInstance().getEditors(document);
-
-        //Editor editor = FileEditorManager.getInstance(file.getProject()).getSelectedTextEditor();
-
-        return editors.length == 0 ? -1 : editors[0].getCaretModel().getOffset();
-    }
-
-    public static int getCodeCompletionCaretOffset(PsiFile file) {
-        int caretOffset = getCaretOffset(file);
-        PsiElement elementAtCaret = file.findElementAt(caretOffset-1);
-
-        if (elementAtCaret != null && !(elementAtCaret instanceof PsiWhiteSpace || elementAtCaret.getTextLength() == 1) ) {
-            caretOffset = elementAtCaret.getTextOffset();
-        }
-        return caretOffset;
-    }
-
     public static void moveCaretOutsideExecutable(Editor editor) {
-        PsiFile file = DocumentUtil.getFile(editor);
-
-        ExecutablePsiElement executablePsiElement = lookupExecutableAtCaret(file);
+        ExecutablePsiElement executablePsiElement = lookupExecutableAtCaret(editor, false);
         if (executablePsiElement != null) {
             int offset = executablePsiElement.getTextOffset();
             editor.getCaretModel().moveToOffset(offset);
@@ -279,7 +243,7 @@ public class PsiUtil {
 
     public static PsiElement getNextSibling(PsiElement psiElement) {
         PsiElement nextPsiElement = psiElement.getNextSibling();
-        while (nextPsiElement instanceof PsiWhiteSpace || nextPsiElement instanceof PsiComment) {
+        while (ignore(nextPsiElement)) {
             nextPsiElement = nextPsiElement.getNextSibling();
         }
         return nextPsiElement;

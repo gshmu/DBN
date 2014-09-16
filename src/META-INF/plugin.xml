@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.NEXT</b>
              <ul>
+                - Statement execution shortcut improvements<br>
                 - Support for Oracle trigger syntax<br>
                 - Bug fixes<br>
             </ul>

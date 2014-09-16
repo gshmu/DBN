@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -18,6 +19,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -194,6 +197,22 @@ public class ConnectionUtil {
         } catch (SQLException e) {
             LOGGER.warn("Error setting autocommit to connection", e);
         }
+    }
+
+
+    public static boolean assertAllowConnection(ConnectionHandler connectionHandler, String operation) {
+        if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.canConnect()) {
+            Project project = connectionHandler.getProject();
+            int selection = Messages.showDialog(project,
+                    "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
+                            "If you want to continue with " + operation + ", you need to connect.",
+                    Constants.DBN_TITLE_PREFIX + "Not Connected to Database", new String[]{"Connect", "Cancel"}, 0, Messages.getInformationIcon());
+            if (selection == 0) {
+                connectionHandler.setAllowConnection(true);
+            }
+            return selection == 0;
+        }
+        return true;
     }
 
 
