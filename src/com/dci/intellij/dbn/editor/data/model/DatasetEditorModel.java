@@ -334,12 +334,10 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             } catch (SQLException e) {
                 DatasetEditorError error = new DatasetEditorError(getConnectionHandler(), e);
                 row.notifyError(error, true, true);
-                if (error.isNotified()) {
-                    try {
-                        resultSet.moveToInsertRow();
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    }
+                try {
+                    resultSet.moveToInsertRow();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
                 }
 
                 if (!error.isNotified() || propagateError) throw e;

@@ -23,6 +23,6 @@ public class ShowUncommittedChangesAction extends DumbAwareAction {
 
     @Override
     public void update(AnActionEvent e) {
-        e.getPresentation().setVisible(connectionHandler.hasUncommittedChanges());
+        e.getPresentation().setEnabled(connectionHandler.hasUncommittedChanges());
     }
 }
