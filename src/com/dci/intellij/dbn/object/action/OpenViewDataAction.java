@@ -16,6 +16,6 @@ public class OpenViewDataAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        DatabaseFileSystem.getInstance().openEditor(view);
+        DatabaseFileSystem.getInstance().openEditor(view, true);
     }
 }

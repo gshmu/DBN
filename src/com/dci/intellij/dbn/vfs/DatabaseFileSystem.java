@@ -290,11 +290,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     /*********************************************************
      *              FileEditorManagerListener                *
      *********************************************************/
-    public void openEditor(final DBObject object) {
-        openEditor(object, false);
+    public void openEditor(final DBObject object, boolean focusEditor) {
+        openEditor(object, false, focusEditor);
     }
 
-    public void openEditor(final DBObject object, final boolean scroll) {
+    public void openEditor(final DBObject object, final boolean scrollBrowser, final boolean focusEditor) {
         final Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         boolean open = true;
@@ -320,12 +320,12 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                         DBObjectListContainer childObjects = object.getChildObjects();
                         if (childObjects != null) childObjects.load();
-                        openSchemaObject((DBSchemaObject) object, progressIndicator, scroll);
+                        openSchemaObject((DBSchemaObject) object, progressIndicator, scrollBrowser, focusEditor);
 
                     } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                         DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
                         if (childObjects != null) childObjects.load();
-                        openChildObject(object, progressIndicator, scroll);
+                        openChildObject(object, progressIndicator, scrollBrowser, focusEditor);
                     }
 
                 }
@@ -333,16 +333,16 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }
     }
 
-    private void openSchemaObject(final DBSchemaObject object, ProgressIndicator progressIndicator, final boolean scroll) {
+    private void openSchemaObject(final DBSchemaObject object, ProgressIndicator progressIndicator, final boolean scrollBrowser, final boolean focusEditor) {
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(object);
         if (!progressIndicator.isCanceled()) {
             new SimpleLaterInvocator() {
                 @Override
                 public void execute() {
                     if (isFileOpened(object) || databaseFile.preOpen()) {
-                        DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scroll);
+                        DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
-                        fileEditorManager.openFile(databaseFile, true);
+                        fileEditorManager.openFile(databaseFile, focusEditor);
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(true);
                     }
                 }
@@ -350,7 +350,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }
     }
 
-    private void openChildObject(final DBObject object, ProgressIndicator progressIndicator, final boolean scroll) {
+    private void openChildObject(final DBObject object, ProgressIndicator progressIndicator, final boolean scrollBrowser, final boolean focusEditor) {
         final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
         if (!progressIndicator.isCanceled()) {
@@ -359,9 +359,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                 @Override
                 public void execute() {
                     if (isFileOpened(schemaObject) || databaseFile.preOpen()) {
-                        DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scroll);
+                        DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
-                        FileEditor[] fileEditors = fileEditorManager.openFile(databaseFile, true);
+                        FileEditor[] fileEditors = fileEditorManager.openFile(databaseFile, focusEditor);
                         for (FileEditor fileEditor : fileEditors) {
                             if (fileEditor instanceof SourceCodeMainEditor) {
                                 SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;

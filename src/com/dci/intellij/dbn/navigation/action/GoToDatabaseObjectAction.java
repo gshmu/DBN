@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
-import com.dci.intellij.dbn.options.GlobalProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.actions.GotoActionBase;
@@ -215,7 +214,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             if (element instanceof DBObject) {
                 DBObject object = (DBObject) element;
                 if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                    DatabaseFileSystem.getInstance().openEditor(object);
+                    DatabaseFileSystem.getInstance().openEditor(object, true);
                 } else {
                     object.navigate(true);
                 }

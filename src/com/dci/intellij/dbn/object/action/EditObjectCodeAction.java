@@ -15,6 +15,6 @@ public class EditObjectCodeAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        DatabaseFileSystem.getInstance().openEditor(object);
+        DatabaseFileSystem.getInstance().openEditor(object, true);
     }
 }
