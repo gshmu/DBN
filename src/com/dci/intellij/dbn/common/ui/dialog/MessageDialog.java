@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogBuilder;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -13,6 +7,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import java.awt.Component;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.uiDesigner.core.GridConstraints;
 
 public class MessageDialog extends DialogBuilder {
     private JTextArea messageTextArea;
@@ -27,19 +27,19 @@ public class MessageDialog extends DialogBuilder {
     }
 
     public static boolean showInfoDialog(Project project, String message, String extendedMessage, boolean allowIgnore) {
-        return showDialog(project, UIUtil.getInformationIcon(), "Information", message, extendedMessage, allowIgnore);
+        return showDialog(project, Icons.DIALOG_INFORMATION, "Information", message, extendedMessage, allowIgnore);
     }
 
     public static boolean showInfoDialog(Project project, String message, Component component) {
-        return showDialog(project, UIUtil.getInformationIcon(), "Information", message, component);
+        return showDialog(project, Icons.DIALOG_INFORMATION, "Information", message, component);
     }
 
     public static boolean showWarningDialog(Project project, String message, String extendedMessage, boolean allowIgnore) {
-        return showDialog(project, UIUtil.getWarningIcon(), "Warning", message, extendedMessage, allowIgnore);
+        return showDialog(project, Icons.DIALOG_WARNING, "Warning", message, extendedMessage, allowIgnore);
     }
 
     public static boolean showErrorDialog(Project project, String message, String extendedMessage, boolean allowIgnore) {
-        return showDialog(project, UIUtil.getErrorIcon(), "Error", message, extendedMessage, allowIgnore);
+        return showDialog(project, Icons.DIALOG_ERROR, "Error", message, extendedMessage, allowIgnore);
     }
 
 

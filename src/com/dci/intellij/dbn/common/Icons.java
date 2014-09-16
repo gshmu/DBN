@@ -66,7 +66,8 @@ public class Icons {
     public static final Icon FILE_BLOCK_SQL = load("FILE_BLOCK_SQL", "/img/file/SQLBlock.png");
 
 
-    public static final Icon DIALOG_INFO     = load("/img/dialog/Information.png");
+    public static final Icon DIALOG_INFO = load("/img/dialog/Info.png");
+    public static final Icon DIALOG_INFORMATION = load("/img/dialog/Information.png");
     public static final Icon DIALOG_WARNING  = load("/img/dialog/Warning.png");
     public static final Icon DIALOG_ERROR    = load("/img/dialog/Error.png");
     public static final Icon DIALOG_QUESTION = load("/img/dialog/Question.png");
