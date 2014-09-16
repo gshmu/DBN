@@ -11,7 +11,8 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public class OracleMessageParserInterface implements DatabaseMessageParserInterface {
     @Nullable
-    public DatabaseObjectIdentifier identifyObject(String message) {
+    public DatabaseObjectIdentifier identifyObject(SQLException exception) {
+        String message = exception.getMessage();
         if (message.startsWith("ORA-01400")) return identifyColumn(message);
         if (message.startsWith("ORA-12899")) return identifyColumn(message);
         if (message.startsWith("ORA-00001")) return identifyConstraint(message);

@@ -23,7 +23,7 @@ public class DatasetEditorError {
         this.message = exception.getMessage();
         if (exception instanceof SQLException) {
             DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
-            DatabaseObjectIdentifier objectIdentifier = messageParserInterface.identifyObject(exception.getMessage());
+            DatabaseObjectIdentifier objectIdentifier = messageParserInterface.identifyObject((SQLException) exception);
             if (objectIdentifier != null) {
                 messageObject = connectionHandler.getObjectBundle().getObject(objectIdentifier);
             }

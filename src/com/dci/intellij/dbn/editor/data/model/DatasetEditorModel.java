@@ -101,7 +101,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             String selectStatement = filter.createSelectStatement(dataset, getState().getSortingState());
             Statement statement = isReadonly() ?
                     connection.createStatement() :
-                    connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
             checkDisposed();
             int timeout = settings.getGeneralSettings().getFetchTimeout().value();
             if (timeout != -1) {
@@ -341,6 +341,8 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 }
 
                 if (!error.isNotified() || propagateError) throw e;
+            } finally {
+
             }
         }
     }

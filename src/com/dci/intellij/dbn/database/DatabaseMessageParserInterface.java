@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 public interface DatabaseMessageParserInterface {
 
     @Nullable
-    DatabaseObjectIdentifier identifyObject(String message);
+    DatabaseObjectIdentifier identifyObject(SQLException exception);
 
     boolean isTimeoutException(SQLException e);
 
