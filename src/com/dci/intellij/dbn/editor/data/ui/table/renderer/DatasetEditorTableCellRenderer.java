@@ -6,7 +6,6 @@ import java.awt.Color;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
-import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
@@ -31,28 +30,28 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             boolean isInsertRow = row.isInsert();
             boolean isCaretRow = !isInsertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
             boolean isModified = cell.isModified();
+            boolean isTrackingColumn = columnInfo.isTrackingColumn();
+            boolean isConnected = datasetEditorTable.getDatasetEditor().getConnectionHandler().isConnected();
 
             DataGridTextAttributes attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getPlainData(isModified, isCaretRow);
 
             if (isSelected) {
                 textAttributes = attributes.getSelection();
-            } else if (isLoading || !datasetEditorTable.getDatasetEditor().getConnectionHandler().isConnected()) {
-                textAttributes = attributes.getLoadingData(isCaretRow);
-            } else if (isDeletedRow) {
-                textAttributes = attributes.getDeletedData();
-            } else if ((isInserting && !isInsertRow)) {
-                textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
-            } else if (columnInfo.isPrimaryKey()) {
-                textAttributes = attributes.getPrimaryKey(isModified, isCaretRow);
-            } else if (columnInfo.isForeignKey()) {
-                textAttributes = attributes.getForeignKey(isModified, isCaretRow);
-            } else if (cell.isLobValue() || cell.isArrayValue()) {
-                textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
             } else {
-                DataGridTrackingColumnSettings trackingColumnSettings = datasetEditorTable.getDataGridSettings().getTrackingColumnSettings();
-                boolean trackingColumn = trackingColumnSettings.isTrackingColumn(columnInfo.getName());
-                if (trackingColumn) {
+                if (isLoading || !isConnected) {
+                    textAttributes = attributes.getLoadingData(isCaretRow);
+                } else if (isDeletedRow) {
+                    textAttributes = attributes.getDeletedData();
+                } else if ((isInserting && !isInsertRow)) {
+                    textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
+                } else if (columnInfo.isPrimaryKey()) {
+                    textAttributes = attributes.getPrimaryKey(isModified, isCaretRow);
+                } else if (columnInfo.isForeignKey()) {
+                    textAttributes = attributes.getForeignKey(isModified, isCaretRow);
+                } else if (cell.isLobValue() || cell.isArrayValue()) {
+                    textAttributes = attributes.getReadonlyData(isModified, isCaretRow);
+                } else if (isTrackingColumn) {
                     textAttributes = attributes.getTrackingData(isModified, isCaretRow);
                 }
             }
@@ -63,12 +62,16 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 
             Border border = getLineBorder(background);
 
-            if (cell.hasError()) {
+            if (cell.hasError() && isConnected) {
                 border = getLineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
                 SimpleTextAttributes errorData = attributes.getErrorData();
                 background = errorData.getBgColor();
                 foreground = errorData.getFgColor();
                 textAttributes = textAttributes.derive(errorData.getStyle(), foreground, background, null);
+            } else if (isTrackingColumn && !isSelected) {
+                SimpleTextAttributes trackingDataAttr = attributes.getTrackingData(isModified, isCaretRow);
+                foreground = CommonUtil.nvl(trackingDataAttr.getFgColor(), foreground);
+                textAttributes = textAttributes.derive(textAttributes.getStyle(), foreground, background, null);
             }
 
             setBorder(border);

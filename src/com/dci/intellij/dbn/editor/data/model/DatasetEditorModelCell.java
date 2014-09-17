@@ -44,8 +44,9 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         if (hasError() || !sameValue) {
             DatasetEditorModelRow row = getRow();
             ResultSet resultSet;
+            boolean isInsertRow = row.isInsert();
             try {
-                resultSet = row.isInsert() ? row.getResultSet() : row.scrollResultSet();
+                resultSet = isInsertRow ? row.getResultSet() : row.scrollResultSet();
             } catch (Exception e) {
                 e.printStackTrace();
                 MessageUtil.showErrorDialog("Could not update cell value for " + getColumnInfo().getName() + ".", e);
@@ -53,22 +54,23 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             }
             boolean isValueAdapter = userValue instanceof ValueAdapter;
 
+            ConnectionHandler connectionHandler = getConnectionHandler();
             try {
                 clearError();
                 int columnIndex = getColumnInfo().getResultSetColumnIndex();
 
                 if (isValueAdapter) {
                     ValueAdapter valueAdapter = (ValueAdapter) userValue;
-                    Connection connection = getConnectionHandler().getStandaloneConnection();
+                    Connection connection = connectionHandler.getStandaloneConnection();
                     valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
                 } else {
                     DBDataType dataType = getColumnInfo().getDataType();
                     dataType.setValueToResultSet(resultSet, columnIndex, newUserValue);
                 }
 
-                if (!row.isInsert()) resultSet.updateRow();
+                if (!isInsertRow) resultSet.updateRow();
             } catch (Exception e) {
-                DatasetEditorError error = new DatasetEditorError(getConnectionHandler(), e);
+                DatasetEditorError error = new DatasetEditorError(connectionHandler, e);
 
                 // error may affect other cells in the row (e.g. foreign key constraint for multiple primary key)
                 if (e instanceof SQLException) getRow().notifyError(error, false, !bulk);
@@ -80,13 +82,17 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     if (!isValueAdapter) {
                         setUserValue(newUserValue);
                     }
-                    getConnectionHandler().notifyChanges(getDataset().getVirtualFile());
+                    connectionHandler.notifyChanges(getDataset().getVirtualFile());
                     EventManager.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
                 }
-
+                try {
+                    if (!isInsertRow) resultSet.refreshRow();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
-            if (!row.isInsert() && !getConnectionHandler().isAutoCommit()) {
+            if (!isInsertRow && !connectionHandler.isAutoCommit()) {
                 isModified = true;
                 row.setModified(true);
             }
