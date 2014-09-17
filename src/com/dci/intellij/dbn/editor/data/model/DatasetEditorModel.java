@@ -342,7 +342,6 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
                 if (!error.isNotified() || propagateError) throw e;
             } finally {
-
             }
         }
     }
