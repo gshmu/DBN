@@ -135,7 +135,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     }
 
     public boolean isSelected(ObjectTypeFilterSetting objectFilterEntry) {
-        for (ObjectTypeFilterSetting entry : objectTypeFilterSettings) {
+        for (ObjectTypeFilterSetting entry : getSettings()) {
             if (entry.equals(objectFilterEntry)) {
                 return entry.isSelected();
             }

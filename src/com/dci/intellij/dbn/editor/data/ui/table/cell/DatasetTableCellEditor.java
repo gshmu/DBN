@@ -74,7 +74,7 @@
         ColumnInfo columnInfo = cell.getColumnInfo();
         DBDataType dataType = columnInfo.getDataType();
         if (dataType.isNative()) {
-            GenericDataType genericDataType = dataType.getNativeDataType().getBasicDataType();
+            GenericDataType genericDataType = dataType.getGenericDataType();
             highlight(cell.hasError() ? HIGHLIGHT_TYPE_ERROR : HIGHLIGHT_TYPE_NONE);
             Object userValue = cell.getUserValue();
             if (genericDataType == GenericDataType.LITERAL) {
