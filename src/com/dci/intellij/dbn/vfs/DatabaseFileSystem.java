@@ -73,7 +73,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                 String objectPath = url.substring(index + 1);
                 if (objectPath.startsWith("console#")) {
                     String consoleName = objectPath.substring(8);
-                    return connectionHandler.getConsole(consoleName, true);
+                    return connectionHandler.getConsole(consoleName, false);
                 } else {
                     StringTokenizer path = new StringTokenizer(objectPath, ".");
                     DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());

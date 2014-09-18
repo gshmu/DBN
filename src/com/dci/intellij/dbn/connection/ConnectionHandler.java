@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,7 @@ public interface ConnectionHandler extends Disposable{
     DBObjectBundle getObjectBundle();
     DBSchema getUserSchema();
 
-    Collection<DBConsoleVirtualFile> getConsoles();
+    List<DBConsoleVirtualFile> getConsoles();
     Set<String> getConsoleNames();
 
     @NotNull

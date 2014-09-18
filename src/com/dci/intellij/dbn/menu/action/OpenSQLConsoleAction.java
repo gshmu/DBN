@@ -64,7 +64,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                         actionGroup,
                         e.getDataContext(),
                         //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                        true,
+                        false,
                         true,
                         true,
                         null,
@@ -122,19 +122,6 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
             for (DBConsoleVirtualFile console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
-            Collections.sort(actions, new Comparator<AnAction>() {
-                @Override
-                public int compare(AnAction o1, AnAction o2) {
-                    if (o1 instanceof SelectConsoleAction && o2 instanceof SelectConsoleAction) {
-                        SelectConsoleAction a1 = (SelectConsoleAction) o1;
-                        SelectConsoleAction a2 = (SelectConsoleAction) o2;
-                        if (a1.consoleVirtualFile != null && a2.consoleVirtualFile != null) {
-                            return a1.consoleVirtualFile.getName().compareTo(a2.consoleVirtualFile.getName());
-                        }
-                    }
-                    return 0;
-                }
-            });
             actions.add(Separator.getInstance());
             actions.add(new SelectConsoleAction(connectionHandler));
 

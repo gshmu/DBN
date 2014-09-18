@@ -67,7 +67,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
             super("Select method", null, Icons.DBO_METHOD);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DefaultActionGroup actionGroup = new DefaultActionGroup();
             OpenMethodHistoryAction historyAction = new OpenMethodHistoryAction();
             OpenMethodBrowserAction browserAction = new OpenMethodBrowserAction();
