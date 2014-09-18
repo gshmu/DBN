@@ -25,6 +25,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -33,7 +34,7 @@ public class SaveToFileEditorAction extends DumbAwareAction {
         super("Save to file", "Save console to file", Icons.CODE_EDITOR_SAVE_TO_FILE);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (project != null && virtualFile instanceof DBConsoleVirtualFile) {
@@ -42,8 +43,9 @@ public class SaveToFileEditorAction extends DumbAwareAction {
             FileSaverDescriptor fileSaverDescriptor = new FileSaverDescriptor(
                     Constants.DBN_TITLE_PREFIX + "Save Console to File",
                     "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
+
             FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
-            VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save(null, null);
+            VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save(null, consoleVirtualFile.getName());
             if (virtualFileWrapper != null) {
                 Document document = DocumentUtil.getDocument(virtualFile);
                 try {
@@ -64,7 +66,7 @@ public class SaveToFileEditorAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
         presentation.setText("Save to file");

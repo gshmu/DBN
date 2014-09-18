@@ -150,6 +150,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
+    public void removeConsole(String name) {
+        DBConsoleVirtualFile consoleVirtualFile = sqlConsoleFiles.remove(name);
+        DisposerUtil.dispose(consoleVirtualFile);
+    }
+
+    @Override
     public NavigationPsiCache getPsiCache() {
         return psiCache;
     }

@@ -29,6 +29,8 @@
         <ul>
             <li><b>3.0.NEXT</b>
              <ul>
+                - Support for multiple SQL consoles per connection<br>
+                - "Save Console To File" functionality<br>
                 - Statement execution shortcut improvements<br>
                 - Support for Oracle trigger syntax<br>
                 - Bug fixes<br>
@@ -232,7 +234,8 @@
             <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction"/>
             <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction"/>
             <separator/>
-            <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file"/>
+            <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
+            <action id="DBNavigator.Actions.DeleteConsole" class="com.dci.intellij.dbn.language.editor.action.DeleteConsoleEditorAction" text="Console - Delete" icon="/img/action/Delete.png"/>
             <separator/>
             <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
         </group>
@@ -330,8 +333,8 @@
             <action id="DBNavigator.Actions.Browser.ExpandTree" class="com.dci.intellij.dbn.browser.action.ExpandTreeAction" text="Browser - Expand all"/>
             <action id="DBNavigator.Actions.Browser.CollapseTree" class="com.dci.intellij.dbn.browser.action.CollapseTreeAction" text="Browser - Collapse all"/>
             <separator/>
-            <action id="DBNavigator.Actions.Browser.ShowObjectProperties" class="com.dci.intellij.dbn.browser.action.ShowObjectPropertiesAction" text="Browser - Show object properties"/>
             <action id="DBNavigator.Actions.Browser.OpenSQLConsole" class="com.dci.intellij.dbn.browser.action.OpenSQLConsoleAction" text="Browser - SQL Console" icon="/img/file/SQLConsole.png"/>
+            <action id="DBNavigator.Actions.Browser.ShowObjectProperties" class="com.dci.intellij.dbn.browser.action.ShowObjectPropertiesAction" text="Browser - Show object properties"/>
             <separator/>
             <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.OpenSettingsAction" text="Browser - Settings"/>
         </group>

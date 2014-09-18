@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.console;
 
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,5 +46,15 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
 
     public void disposeComponent() {
         super.disposeComponent();
+    }
+
+    public void deleteConsole(DBConsoleVirtualFile consoleVirtualFile) {
+        int exitCode = MessageUtil.showQuestionDialog("You will loose the information contained in this console. Are you sure you want to delete the console?", "Delete Console", MessageUtil.OPTIONS_YES_NO, 0);
+        if (exitCode == 0) {
+            FileEditorManager.getInstance(getProject()).closeFile(consoleVirtualFile);
+            ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
+            connectionHandler.removeConsole(consoleVirtualFile.getName());
+        }
+
     }
 }
