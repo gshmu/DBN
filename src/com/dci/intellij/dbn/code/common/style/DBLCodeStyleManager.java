@@ -34,7 +34,6 @@ import com.intellij.psi.PsiFile;
     name = "DBNavigator.Project.CodeStyleManager",
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DBLCodeStyleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {

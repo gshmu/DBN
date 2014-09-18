@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 import java.util.List;
 import org.jdom.Element;
@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.DialogWrapper;
         name = "DBNavigator.Project.ObjectNameFilterManager",
         storages = {
                 @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
                 @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class ObjectNameFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {

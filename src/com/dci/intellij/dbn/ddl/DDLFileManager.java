@@ -35,7 +35,6 @@ import com.intellij.openapi.project.Project;
     name = "DBNavigator.Project.DDLFileManager",
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DDLFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element>{

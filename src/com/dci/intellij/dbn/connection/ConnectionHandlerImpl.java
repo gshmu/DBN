@@ -3,9 +3,13 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -34,6 +38,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import gnu.trove.THashMap;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -53,7 +58,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
 
-    private DBConsoleVirtualFile sqlConsoleFile;
+    private Map<String, DBConsoleVirtualFile> sqlConsoleFiles = new THashMap<String, DBConsoleVirtualFile>();
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
 
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
@@ -109,11 +114,31 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
-    public DBConsoleVirtualFile getSQLConsoleFile() {
-        if (sqlConsoleFile == null) {
-            sqlConsoleFile = new DBConsoleVirtualFile(this);
+    @Override
+    public Collection<DBConsoleVirtualFile> getConsoles() {
+        return sqlConsoleFiles.values();
+    }
+
+    @Override
+    public Set<String> getConsoleNames() {
+        return sqlConsoleFiles.keySet();
+    }
+
+    @Override
+    @NotNull
+    public DBConsoleVirtualFile getDefaultConsole() {
+        return getConsole(getName(), true);
+    }
+
+    @Override
+    @Nullable
+    public DBConsoleVirtualFile getConsole(String name, boolean create) {
+        DBConsoleVirtualFile consoleVirtualFile = sqlConsoleFiles.get(name);
+        if (consoleVirtualFile == null && create) {
+            consoleVirtualFile = new DBConsoleVirtualFile(this, name);
+            sqlConsoleFiles.put(name, consoleVirtualFile);
         }
-        return sqlConsoleFile;
+        return consoleVirtualFile;
     }
 
     @Override
@@ -401,7 +426,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             isDisposed = true;
             DisposerUtil.dispose(objectBundle);
             DisposerUtil.dispose(connectionPool);
-            DisposerUtil.dispose(sqlConsoleFile);
+            DisposerUtil.dispose(sqlConsoleFiles);
             DisposerUtil.dispose(psiCache);
             DisposerUtil.dispose(loadMonitor);
             connectionPool = null;

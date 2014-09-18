@@ -38,7 +38,6 @@ import com.intellij.openapi.ui.DialogWrapper;
     name = "DBNavigator.Project.MethodExecutionManager",
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {

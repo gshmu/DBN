@@ -3,8 +3,10 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -153,7 +155,23 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public DBObjectBundle getObjectBundle() {return null;}
     public DBSchema getUserSchema() {return null;}
-    public DBConsoleVirtualFile getSQLConsoleFile() {return null;}
+
+    @Override
+    public Collection<DBConsoleVirtualFile> getConsoles() {
+        return null;
+    }
+
+    @Override
+    public Set<String> getConsoleNames() {
+        return null;
+    }
+
+    @Override
+    public DBConsoleVirtualFile getDefaultConsole() {
+        return null;
+    }
+
+    public DBConsoleVirtualFile getConsole(String name, boolean create) {return null;}
 
     public boolean isValid(boolean check) {return true;}
     public boolean isValid() {return true;}
