@@ -126,6 +126,8 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         return true;
     }
 
+    public boolean isDefault() {return name.equals(connectionHandler.getName());}
+
     @Override
     public boolean isInLocalFileSystem() {
         return false;

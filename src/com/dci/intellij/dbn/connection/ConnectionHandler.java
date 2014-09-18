@@ -60,6 +60,7 @@ public interface ConnectionHandler extends Disposable{
 
     @Nullable
     DBConsoleVirtualFile getConsole(String name, boolean create);
+    void removeConsole(String name);
 
     boolean isValid(boolean check);
     boolean isValid();

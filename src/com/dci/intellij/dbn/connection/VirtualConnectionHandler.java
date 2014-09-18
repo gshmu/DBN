@@ -174,6 +174,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public DBConsoleVirtualFile getConsole(String name, boolean create) {return null;}
 
+    @Override
+    public void removeConsole(String name) {
+
+    }
+
     public boolean isValid(boolean check) {return true;}
     public boolean isValid() {return true;}
     public void disconnect() {}
