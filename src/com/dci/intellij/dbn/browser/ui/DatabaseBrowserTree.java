@@ -284,7 +284,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
                 ConnectionHandler connectionHandler = objectBundle.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                fileEditorManager.openFile(connectionHandler.getSQLConsoleFile(), deliberate);
+                fileEditorManager.openFile(connectionHandler.getDefaultConsole(), deliberate);
             }
         }
     }

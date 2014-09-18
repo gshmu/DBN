@@ -31,7 +31,6 @@ import com.intellij.openapi.vfs.VirtualFile;
     name = "DBNavigator.Project.DatabaseFileManager",
     storages = {
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-        @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/misc.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {

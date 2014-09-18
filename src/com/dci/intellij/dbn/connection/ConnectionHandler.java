@@ -3,6 +3,9 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -47,7 +50,15 @@ public interface ConnectionHandler extends Disposable{
     DatabaseInterfaceProvider getInterfaceProvider();
     DBObjectBundle getObjectBundle();
     DBSchema getUserSchema();
-    DBConsoleVirtualFile getSQLConsoleFile();
+
+    Collection<DBConsoleVirtualFile> getConsoles();
+    Set<String> getConsoleNames();
+
+    @NotNull
+    DBConsoleVirtualFile getDefaultConsole();
+
+    @Nullable
+    DBConsoleVirtualFile getConsole(String name, boolean create);
 
     boolean isValid(boolean check);
     boolean isValid();

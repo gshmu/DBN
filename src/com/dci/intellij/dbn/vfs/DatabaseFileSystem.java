@@ -66,36 +66,39 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
 
         int index = url.indexOf("/", startIndex);
 
-        String connectionId = url.substring(startIndex, index == -1 ? url.length() : index);
-        ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-        if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
-            if (index > -1) {
-                StringTokenizer path = new StringTokenizer(url.substring(index + 1), ".");
-                DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());
-                if (object != null) {
-                    while (path.hasMoreElements() && object != null) {
-                        String token = path.nextToken();
-                        if (path.hasMoreTokens()) {
-                            int idx = token.indexOf("#");
-                            if (idx > -1) {
-                                String type = token.substring(0, idx);
-                                String name = token.substring(idx + 1);
-                                DBObjectType objectType = DBObjectType.getObjectType(type);
-                                object = object.getChildObject(objectType, name, false);
-                            } else {
-                                object = object.getChildObject(token, false);
+        if (index > -1) {
+            String connectionId = url.substring(startIndex, index);
+            ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
+            if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
+                String objectPath = url.substring(index + 1);
+                if (objectPath.startsWith("console#")) {
+                    String consoleName = objectPath.substring(8);
+                    return connectionHandler.getConsole(consoleName, true);
+                } else {
+                    StringTokenizer path = new StringTokenizer(objectPath, ".");
+                    DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());
+                    if (object != null) {
+                        while (path.hasMoreElements() && object != null) {
+                            String token = path.nextToken();
+                            if (path.hasMoreTokens()) {
+                                int idx = token.indexOf("#");
+                                if (idx > -1) {
+                                    String type = token.substring(0, idx);
+                                    String name = token.substring(idx + 1);
+                                    DBObjectType objectType = DBObjectType.getObjectType(type);
+                                    object = object.getChildObject(objectType, name, false);
+                                } else {
+                                    object = object.getChildObject(token, false);
+                                }
                             }
                         }
-                    }
-                    // object may have been deleted by another party
-                    if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                        return findDatabaseFile((DBSchemaObject) object);
+                        // object may have been deleted by another party
+                        if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                            return findDatabaseFile((DBSchemaObject) object);
+                        }
                     }
                 }
-            } else {
-                return connectionHandler.getSQLConsoleFile();
             }
-
         }
         return null;
     }

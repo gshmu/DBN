@@ -37,12 +37,12 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     protected String url;
 
 
-    public DBConsoleVirtualFile(ConnectionHandler connectionHandler) {
+    public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
         this.connectionHandler = connectionHandler;
         this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
-        name = connectionHandler.getName();
-        path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE";
-        url = DatabaseFileSystem.createUrl(connectionHandler);
+        this.name = name;
+        path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE - " + name;
+        url = DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name.replace(" ", "_");
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
