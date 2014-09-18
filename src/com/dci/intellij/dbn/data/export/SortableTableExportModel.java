@@ -64,7 +64,7 @@ public class SortableTableExportModel implements DataExportModel{
 
         return nativeDataType == null ?
                 GenericDataType.LITERAL :
-                nativeDataType.getDataTypeDefinition().getGenericDataType();
+                nativeDataType.getGenericDataType();
 
     }
 

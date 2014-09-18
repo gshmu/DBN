@@ -38,12 +38,12 @@ public class DBNativeDataType implements DynamicContentElement{
         return dataTypeDefinition;
     }
     
-    public GenericDataType getBasicDataType() {
+    public GenericDataType getGenericDataType() {
         return dataTypeDefinition.getGenericDataType();
     }
 
     public boolean isLOB() {
-        return getBasicDataType().isLOB();
+        return getGenericDataType().isLOB();
     }
 
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {

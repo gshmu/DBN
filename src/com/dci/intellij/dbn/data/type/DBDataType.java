@@ -235,4 +235,9 @@ public class DBDataType {
     public int hashCode() {
         return toString().hashCode();
     }
+
+    public GenericDataType getGenericDataType() {
+        return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
+
+    }
 }

@@ -256,8 +256,7 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
     }
 
     private boolean isBoolean(DBDataType dataType) {
-        DBNativeDataType nativeDataType = dataType.getNativeDataType();
-        return nativeDataType != null && nativeDataType.getDataTypeDefinition().getGenericDataType() == GenericDataType.BOOLEAN;
+        return dataType.getGenericDataType() == GenericDataType.BOOLEAN;
     }
 
     private static String parseBoolean(String argumentName, String booleanString) throws SQLException {
