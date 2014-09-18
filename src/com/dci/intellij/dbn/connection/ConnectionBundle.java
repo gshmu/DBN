@@ -130,7 +130,7 @@ public abstract class ConnectionBundle
                 if (consolesElement != null) {
                     for (Element consoleElement : consolesElement.getChildren()) {
                         String consoleName = consoleElement.getAttributeValue("name");
-                        connectionHandler.getConsole(consoleName, true);
+                        connectionHandler.getConsoleBundle().createConsole(consoleName);
                     }
                 }
             }
@@ -148,7 +148,7 @@ public abstract class ConnectionBundle
 
             Element consolesElement = new Element("consoles");
             connectionElement.addContent(consolesElement);
-            for (String consoleName : connectionHandler.getConsoleNames()) {
+            for (String consoleName : connectionHandler.getConsoleBundle().getConsoleNames()) {
                 Element consoleElement = new Element("console");
                 consoleElement.setAttribute("name", consoleName);
                 consolesElement.addContent(consoleElement);

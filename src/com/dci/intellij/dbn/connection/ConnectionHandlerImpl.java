@@ -3,15 +3,11 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -33,14 +29,12 @@ import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashMap;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -53,6 +47,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private DBObjectBundle objectBundle;
     private DatabaseInterfaceProvider interfaceProvider;
     private UncommittedChangeBundle changesBundle;
+    private DatabaseConsoleBundle consoleBundle;
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;
@@ -60,7 +55,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
 
-    private Map<String, DBConsoleVirtualFile> sqlConsoleFiles = new THashMap<String, DBConsoleVirtualFile>();
     private NavigationPsiCache psiCache = new NavigationPsiCache(this);
 
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
@@ -69,6 +63,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         connectionStatus = new ConnectionStatus();
         connectionPool = new ConnectionPool(this);
         loadMonitor = new ConnectionLoadMonitor(this);
+        consoleBundle = new DatabaseConsoleBundle(this);
         ref = new ConnectionHandlerRef(this);
     }
 
@@ -99,6 +94,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionStatus;
     }
 
+    @Override
+    public DatabaseConsoleBundle getConsoleBundle() {
+        return consoleBundle;
+    }
+
     public boolean isActive() {
         return connectionSettings.getDatabaseSettings().isActive();
     }
@@ -114,45 +114,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
-    }
-
-    @Override
-    public List<DBConsoleVirtualFile> getConsoles() {
-        if (sqlConsoleFiles.size() == 0) {
-            String name = getName();
-            sqlConsoleFiles.put(name, new DBConsoleVirtualFile(this, name));
-        }
-        ArrayList<DBConsoleVirtualFile> consoles = new ArrayList<>(sqlConsoleFiles.values());
-        Collections.sort(consoles);
-        return consoles;
-    }
-
-    @Override
-    public Set<String> getConsoleNames() {
-        return sqlConsoleFiles.keySet();
-    }
-
-    @Override
-    @NotNull
-    public DBConsoleVirtualFile getDefaultConsole() {
-        return getConsole(getName(), true);
-    }
-
-    @Override
-    @Nullable
-    public DBConsoleVirtualFile getConsole(String name, boolean create) {
-        DBConsoleVirtualFile consoleVirtualFile = sqlConsoleFiles.get(name);
-        if (consoleVirtualFile == null && create) {
-            consoleVirtualFile = new DBConsoleVirtualFile(this, name);
-            sqlConsoleFiles.put(name, consoleVirtualFile);
-        }
-        return consoleVirtualFile;
-    }
-
-    @Override
-    public void removeConsole(String name) {
-        DBConsoleVirtualFile consoleVirtualFile = sqlConsoleFiles.remove(name);
-        DisposerUtil.dispose(consoleVirtualFile);
     }
 
     @Override
@@ -440,7 +401,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             isDisposed = true;
             DisposerUtil.dispose(objectBundle);
             DisposerUtil.dispose(connectionPool);
-            DisposerUtil.dispose(sqlConsoleFiles);
+            DisposerUtil.dispose(consoleBundle);
             DisposerUtil.dispose(psiCache);
             DisposerUtil.dispose(loadMonitor);
             connectionPool = null;

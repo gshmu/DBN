@@ -34,6 +34,7 @@ public class Icons {
     public static final Icon ACTION_MOVE_DOWN = load("/img/action/MoveDown.png");
     public static final Icon ACTION_EDIT = load("/img/action/EditSource.png");
     public static final Icon ACTION_SETTINGS = load("/img/action/Properties.png");
+    public static final Icon ACTION_LOCAL_SETTINGS = load("/img/action/LocalSettings.png");
     public static final Icon ACTION_COLLAPSE_ALL = load("/img/action/CollapseAll.png");
     public static final Icon ACTION_EXPAND_ALL = load("/img/action/ExpandAll.png");
     public static final Icon ACTION_GROUP = load("/img/action/Group.png");

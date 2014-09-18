@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +41,7 @@ public interface ConnectionHandler extends Disposable{
     void freePoolConnection(Connection connection);
     ConnectionSettings getSettings();
     ConnectionStatus getConnectionStatus();
+    DatabaseConsoleBundle getConsoleBundle();
 
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);
@@ -51,16 +54,6 @@ public interface ConnectionHandler extends Disposable{
     DatabaseInterfaceProvider getInterfaceProvider();
     DBObjectBundle getObjectBundle();
     DBSchema getUserSchema();
-
-    List<DBConsoleVirtualFile> getConsoles();
-    Set<String> getConsoleNames();
-
-    @NotNull
-    DBConsoleVirtualFile getDefaultConsole();
-
-    @Nullable
-    DBConsoleVirtualFile getConsole(String name, boolean create);
-    void removeConsole(String name);
 
     boolean isValid(boolean check);
     boolean isValid();

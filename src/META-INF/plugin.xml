@@ -228,14 +228,18 @@
 
     <actions>
         <group id="DBNavigator.ActionGroup.FileEditor" text="File Editor Controls">
+            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings"/>
+            <separator/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute statement"/>
             <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction"/>
             <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction"/>
+<!--
             <separator/>
             <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
             <action id="DBNavigator.Actions.DeleteConsole" class="com.dci.intellij.dbn.language.editor.action.DeleteConsoleEditorAction" text="Console - Delete" icon="/img/action/Delete.png"/>
+-->
             <separator/>
             <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
         </group>
@@ -278,9 +282,12 @@
             <action id="DBNavigator.Actions.DataEditor.Reload" class="com.dci.intellij.dbn.editor.data.action.ReloadDataAction" text="Data Editor - Reload"/>
             <action id="DBNavigator.Actions.DataEditor.SelectDatasetFilter" class="com.dci.intellij.dbn.editor.data.action.SelectDatasetFilterComboBoxAction" text="Data Editor - Select Filter"/>
             <action id="DBNavigator.Actions.DataEditor.CreateEditFilter" class="com.dci.intellij.dbn.editor.data.action.CreateEditDatasetFilterAction" text="Data Editor - Create / Edit Filter"/>
+            <action id="DBNavigator.Actions.DataEditor.Options" class="com.dci.intellij.dbn.editor.data.action.DatasetEditorOptionsAction" text="Data Editor - Options"/>
+<!--
             <separator/>
             <action id="DBNavigator.Actions.DataEditor.OpenColumnVisibilityDialog" class="com.dci.intellij.dbn.editor.data.action.OpenColumnSetupDialogAction" text="Data Editor - Column Setup..."/>
             <action id="DBNavigator.Actions.DataEditor.OpenSortingDialog" class="com.dci.intellij.dbn.editor.data.action.OpenSortingDialogAction" text="Data Editor - Sorting..."/>
+-->
             <separator/>
             <action id="DBNavigator.Actions.DataEditor.DuplicateRecord" class="com.dci.intellij.dbn.editor.data.action.DuplicateRecordAction" text="Data Editor - Duplicate Record">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl D"/>

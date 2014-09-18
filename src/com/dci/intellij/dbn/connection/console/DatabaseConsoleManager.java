@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.console.ui.CreateConsoleDialog;
+import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -21,11 +21,11 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         return project.getComponent(DatabaseConsoleManager.class);
     }
 
-    public void showCreateConsoleDialog(final ConnectionHandler connectionHandler) {
+    public void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile) {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                CreateConsoleDialog createConsoleDialog = new CreateConsoleDialog(connectionHandler);
+                CreateRenameConsoleDialog createConsoleDialog = new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
                 createConsoleDialog.setModal(true);
                 createConsoleDialog.show();
             }
@@ -33,9 +33,14 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
     }
 
     public void createConsole(ConnectionHandler connectionHandler, String name) {
-        DBConsoleVirtualFile console = connectionHandler.getConsole(name, true);
+        DBConsoleVirtualFile console = connectionHandler.getConsoleBundle().createConsole(name);
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
         fileEditorManager.openFile(console, true);
+    }
+
+    public void renameConsole(DBConsoleVirtualFile consoleVirtualFile, String name) {
+        ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
+        connectionHandler.getConsoleBundle().renameConsole(consoleVirtualFile.getName(), name);
     }
 
     @NonNls
@@ -53,7 +58,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         if (exitCode == 0) {
             FileEditorManager.getInstance(getProject()).closeFile(consoleVirtualFile);
             ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
-            connectionHandler.removeConsole(consoleVirtualFile.getName());
+            connectionHandler.getConsoleBundle().removeConsole(consoleVirtualFile.getName());
         }
 
     }

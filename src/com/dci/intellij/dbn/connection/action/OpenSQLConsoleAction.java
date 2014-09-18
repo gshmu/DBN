@@ -19,6 +19,6 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-        fileEditorManager.openFile(connectionHandler.getDefaultConsole(), true);
+        fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), true);
     }
 }

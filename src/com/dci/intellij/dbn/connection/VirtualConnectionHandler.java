@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -158,27 +160,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public DBSchema getUserSchema() {return null;}
 
     @Override
-    public List<DBConsoleVirtualFile> getConsoles() {
-        return null;
-    }
-
-    @Override
-    public Set<String> getConsoleNames() {
-        return null;
-    }
-
-    @Override
-    public DBConsoleVirtualFile getDefaultConsole() {
-        return null;
-    }
-
-    public DBConsoleVirtualFile getConsole(String name, boolean create) {return null;}
-
-    @Override
-    public void removeConsole(String name) {
-
-    }
-
+    public DatabaseConsoleBundle getConsoleBundle() {return null;}
     public boolean isValid(boolean check) {return true;}
     public boolean isValid() {return true;}
     public void disconnect() {}
