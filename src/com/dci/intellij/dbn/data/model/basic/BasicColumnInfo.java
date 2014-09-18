@@ -32,7 +32,7 @@ public class BasicColumnInfo implements ColumnInfo {
     }
 
     public boolean isSortable() {
-        return dataType.isNative() && dataType.getNativeDataType().getBasicDataType().is(GenericDataType.LITERAL, GenericDataType.NUMERIC, GenericDataType.DATE_TIME);
+        return dataType.isNative() && dataType.getGenericDataType().is(GenericDataType.LITERAL, GenericDataType.NUMERIC, GenericDataType.DATE_TIME);
     }
 
 }

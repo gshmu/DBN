@@ -109,7 +109,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         DBColumn column = getColumn();
         DBDataType type = column == null ? null : column.getDataType();
         return type != null && type.isNative() &&
-                type.getNativeDataType().getBasicDataType().is(
+                type.getGenericDataType().is(
                         GenericDataType.LITERAL,
                         GenericDataType.NUMERIC,
                         GenericDataType.DATE_TIME);

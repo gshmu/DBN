@@ -62,7 +62,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         String text = getClipboardContent((int) dataType.getLength());
         if (text != null) {
             filterActionGroup.add(new CreateClipboardFilterAction(text, false));
-            if (dataType.isNative() && dataType.getNativeDataType().getBasicDataType() == GenericDataType.LITERAL) {
+            if (dataType.getGenericDataType() == GenericDataType.LITERAL) {
                 filterActionGroup.add(new CreateClipboardFilterAction(text, true));
             }
         }

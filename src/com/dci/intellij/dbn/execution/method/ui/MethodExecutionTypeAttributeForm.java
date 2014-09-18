@@ -44,9 +44,7 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
         attributeTypeLabel.setText(typeAttribute.getDataType().getQualifiedName());
 
         DBDataType dataType = typeAttribute.getDataType();
-        DBNativeDataType nativeDataType = dataType.getNativeDataType();
-        DataTypeDefinition dataTypeDefinition = nativeDataType.getDataTypeDefinition();
-        GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
+        GenericDataType genericDataType = dataType.getGenericDataType();
 
 
         if (genericDataType == GenericDataType.DATE_TIME) {
