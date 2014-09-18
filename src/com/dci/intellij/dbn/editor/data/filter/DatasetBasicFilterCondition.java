@@ -113,7 +113,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
             if (dataType != null && dataType.isNative()) {
                 ConnectionHandler connectionHandler = dataset.getConnectionHandler();
                 RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
-                GenericDataType genericDataType = dataType.getNativeDataType().getBasicDataType();
+                GenericDataType genericDataType = dataType.getGenericDataType();
                 if (genericDataType == GenericDataType.LITERAL) {
                     value = com.intellij.openapi.util.text.StringUtil.replace(value, "'", "''");
                     value = "'" + value + "'";

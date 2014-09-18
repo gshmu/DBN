@@ -63,13 +63,13 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         DBColumn column = dataset.getColumn(condition.getColumnName());
         if (column == null) {
             for (DBColumn col : dataset.getColumns()) {
-                if (col.getDataType().getNativeDataType() != null) {
+                if (col.getDataType().isNative()) {
                     column = col;
                     break;
                 }
             }
         }
-        GenericDataType dataType = column.getDataType().getNativeDataType().getBasicDataType();
+        GenericDataType dataType = column == null ? null : column.getDataType().getGenericDataType();
 
 
         columnSelector = new ColumnSelector(column);
@@ -124,8 +124,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         @Override
         public void valueSelected(DBColumn column) {
             if (column != null) {
-                DBNativeDataType nativeDataType = column.getDataType().getNativeDataType();
-                GenericDataType dataType = nativeDataType == null ? null : nativeDataType.getBasicDataType();
+                GenericDataType dataType = column.getDataType().getGenericDataType();
                 editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataType == GenericDataType.DATE_TIME);
             }
             if (basicFilterForm != null) {

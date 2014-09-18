@@ -37,9 +37,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
     private TableCellEditor createEditorForNativeType(ColumnInfo columnInfo, DatasetEditorTable table) {
         DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(table.getDatasetEditor().getProject());
         DBDataType dataType = columnInfo.getDataType();
-        DBNativeDataType nativeDataType = dataType.getNativeDataType();
-        DataTypeDefinition dataTypeDefinition = nativeDataType.getDataTypeDefinition();
-        GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
+        GenericDataType genericDataType = dataType.getGenericDataType();
         if (genericDataType == GenericDataType.NUMERIC) {
             return new DatasetTableCellEditor(table);
         }

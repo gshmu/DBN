@@ -66,7 +66,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
         }
 
 
-        if (argument.isInput() && !dataType.isDeclared() && dataType.getNativeDataType() != null) {
+        if (argument.isInput() && !dataType.isDeclared() && dataType.isNative()) {
             DBNativeDataType nativeDataType = dataType.getNativeDataType();
             DataTypeDefinition dataTypeDefinition = nativeDataType.getDataTypeDefinition();
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();

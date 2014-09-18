@@ -50,7 +50,7 @@ public class StatementExecutionVariablesBundle {
             if (variable.getDataType() == null) {
                 DBDataType dataType = lookupDataType(variablePsiElement);
                 if (dataType != null && dataType.isNative()) {
-                    variable.setDataType(dataType.getNativeDataType().getBasicDataType());
+                    variable.setDataType(dataType.getGenericDataType());
                 } else {
                     variable.setDataType(GenericDataType.LITERAL);
                 }
