@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile {
+public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private ConnectionHandler connectionHandler;
@@ -42,7 +42,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
         this.name = name;
         path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE - " + name;
-        url = DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name.replace(" ", "_");
+        url = DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
@@ -195,5 +195,10 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     @Override
     public String getExtension() {
         return "sql";
+    }
+
+    @Override
+    public int compareTo(DBConsoleVirtualFile o) {
+        return getName().compareTo(o.getName());
     }
 }

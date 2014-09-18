@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
@@ -157,7 +158,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public DBSchema getUserSchema() {return null;}
 
     @Override
-    public Collection<DBConsoleVirtualFile> getConsoles() {
+    public List<DBConsoleVirtualFile> getConsoles() {
         return null;
     }
 

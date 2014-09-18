@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -115,8 +117,14 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
-    public Collection<DBConsoleVirtualFile> getConsoles() {
-        return sqlConsoleFiles.values();
+    public List<DBConsoleVirtualFile> getConsoles() {
+        if (sqlConsoleFiles.size() == 0) {
+            String name = getName();
+            sqlConsoleFiles.put(name, new DBConsoleVirtualFile(this, name));
+        }
+        ArrayList<DBConsoleVirtualFile> consoles = new ArrayList<>(sqlConsoleFiles.values());
+        Collections.sort(consoles);
+        return consoles;
     }
 
     @Override

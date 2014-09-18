@@ -125,6 +125,14 @@ public abstract class ConnectionBundle
                 connectionConfig.readConfiguration(connectionElement);
                 ConnectionHandler connectionHandler = new ConnectionHandlerImpl(this, connectionConfig);
                 connectionHandlers.add(connectionHandler);
+
+                Element consolesElement = connectionElement.getChild("consoles");
+                if (consolesElement != null) {
+                    for (Element consoleElement : consolesElement.getChildren()) {
+                        String consoleName = consoleElement.getAttributeValue("name");
+                        connectionHandler.getConsole(consoleName, true);
+                    }
+                }
             }
         }
     }
@@ -137,6 +145,14 @@ public abstract class ConnectionBundle
             ConnectionSettings connectionSettings = connectionHandler.getSettings();
             connectionSettings.writeConfiguration(connectionElement);
             connectionsElement.addContent(connectionElement);
+
+            Element consolesElement = new Element("consoles");
+            connectionElement.addContent(consolesElement);
+            for (String consoleName : connectionHandler.getConsoleNames()) {
+                Element consoleElement = new Element("console");
+                consoleElement.setAttribute("name", consoleName);
+                consolesElement.addContent(consoleElement);
+            }
         }
     }
 

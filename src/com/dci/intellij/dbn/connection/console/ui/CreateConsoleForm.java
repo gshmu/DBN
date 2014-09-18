@@ -35,7 +35,7 @@ public class CreateConsoleForm extends DBNFormImpl {
 
         final Set<String> consoleNames = connectionHandler.getConsoleNames();
 
-        String name = connectionHandler.getName() + "1";
+        String name = connectionHandler.getName() + " 1";
         while (consoleNames.contains(name)) {
             name = NamingUtil.getNextNumberedName(name, true);
         }
