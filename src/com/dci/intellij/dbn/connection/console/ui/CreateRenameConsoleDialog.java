@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.connection.console.ui;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,13 +11,13 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 
-public class CreateConsoleDialog extends DBNDialog {
-    private CreateConsoleForm createConsoleForm;
+public class CreateRenameConsoleDialog extends DBNDialog {
+    private CreateRenameConsoleForm createConsoleForm;
 
-    public CreateConsoleDialog(ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject(), "Create SQL Console", true);
-        createConsoleForm = new CreateConsoleForm(this, connectionHandler);
-        getOKAction().putValue(Action.NAME, "Create");
+    public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, DBConsoleVirtualFile console) {
+        super(connectionHandler.getProject(), console == null ? "Create SQL Console" : "Rename SQL Console", true);
+        createConsoleForm = new CreateRenameConsoleForm(this, connectionHandler, console);
+        getOKAction().putValue(Action.NAME, console == null ? "Create" : "Rename");
         init();
     }
 
@@ -34,9 +36,14 @@ public class CreateConsoleDialog extends DBNDialog {
     @Override
     protected void doOKAction() {
         DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(getProject());
-        databaseConsoleManager.createConsole(
-                createConsoleForm.getConnectionHandler(),
-                createConsoleForm.getConsoleName());
+        DBConsoleVirtualFile console = createConsoleForm.getConsole();
+        if (console == null) {
+            databaseConsoleManager.createConsole(
+                    createConsoleForm.getConnectionHandler(),
+                    createConsoleForm.getConsoleName());
+        } else {
+            databaseConsoleManager.renameConsole(console, createConsoleForm.getConsoleName());
+        }
         super.doOKAction();
     }
 

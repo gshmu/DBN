@@ -156,7 +156,7 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         return unicodeString.toString();
     }
 
-    public static String trim(String message) {
+    public static @NotNull String trim(@Nullable String message) {
         return isEmptyOrSpaces(message) ? "" : message.trim();
     }
 

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.browser.action;
 
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -22,11 +21,7 @@ import com.intellij.openapi.project.Project;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     public OpenSQLConsoleAction() {
@@ -54,7 +49,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
 
         if (connectionHandler != null) {
             DefaultActionGroup actionGroup = new DefaultActionGroup();
-            Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoles();
+            Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
                 actionGroup.add(new SelectConsoleAction(console));
             }
@@ -101,7 +96,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
+                databaseConsoleManager.showCreateRenameConsoleDialog(connectionHandler, null);
             } else {
                 ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());

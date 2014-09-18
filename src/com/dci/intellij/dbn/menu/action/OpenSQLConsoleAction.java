@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.menu.action;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,7 +116,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         @Override
         public AnAction[] getChildren(AnActionEvent e) {
             List<AnAction> actions = new ArrayList<AnAction>();
-            Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoles();
+            Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
@@ -148,7 +146,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
+                databaseConsoleManager.showCreateRenameConsoleDialog(connectionHandler, null);
             } else {
                 ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
@@ -159,7 +157,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
 
     private void openSQLConsole(ConnectionHandler connectionHandler) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-        fileEditorManager.openFile(connectionHandler.getDefaultConsole(), true);
+        fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), true);
     }
 
     public void update(@NotNull AnActionEvent e) {

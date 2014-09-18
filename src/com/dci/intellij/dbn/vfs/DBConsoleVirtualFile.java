@@ -40,9 +40,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
         this.connectionHandler = connectionHandler;
         this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
-        this.name = name;
-        path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE - " + name;
-        url = DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
+        setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
@@ -59,6 +57,12 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
             }
         }
         return null;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE - " + name;
+        url = DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
     }
 
     public Icon getIcon() {
