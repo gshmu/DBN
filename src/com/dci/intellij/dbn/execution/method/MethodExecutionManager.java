@@ -75,7 +75,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public boolean promptExecutionDialog(MethodExecutionInput executionInput, boolean debug) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "method execution");
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
         if (canConnect) {
             if (connectionHandler.isValid(true)) {
                 DBMethod method = executionInput.getMethod();

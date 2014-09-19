@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction;
@@ -33,6 +34,7 @@ public class CodeCompletionManager extends AbstractProjectComponent implements P
         // fixme move these calls to a more appropriate place (nothing to do with code completion)
         IntentionManager intentionManager = IntentionManager.getInstance(project);
         intentionManager.addAction(new ExecuteStatementIntentionAction());
+        intentionManager.addAction(new DatabaseConnectIntentionAction());
         intentionManager.addAction(new JumpToExecutionResultIntentionAction());
         intentionManager.addAction(new SelectConnectionIntentionAction());
         intentionManager.addAction(new SelectCurrentSchemaIntentionAction());

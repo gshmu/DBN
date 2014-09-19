@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
@@ -249,7 +250,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void loadData(final DatasetLoadInstructions instructions) {
-        if (!isLoading) {
+        boolean canConnect = ConnectionUtil.assertCanConnect(getConnectionHandler());
+        if (!isLoading && canConnect) {
             setLoading(true);
             new SimpleBackgroundTask() {
                 public void execute() {

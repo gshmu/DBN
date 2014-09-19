@@ -368,26 +368,27 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return new HtmlToolTipBuilder() {
             public void buildToolTip() {
                 append(true, "connection", true);
-                if (getConnectionHandler().getConnectionStatus().isConnected()) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                if (connectionHandler.getConnectionStatus().isConnected()) {
                     append(false, " - active", true);
-                } else if (!getConnectionHandler().isValid()) {
+                } else if (connectionHandler.canConnect() && !connectionHandler.isValid()) {
                     append(false, " - invalid", true);
-                    append(true, getConnectionHandler().getConnectionStatus().getStatusMessage(), "-2", "red", false);
+                    append(true, connectionHandler.getConnectionStatus().getStatusMessage(), "-2", "red", false);
                 }
                 createEmptyRow();
 
-                append(true, getConnectionHandler().getProject().getName(), false);
+                append(true, connectionHandler.getProject().getName(), false);
                 append(false, "/", false);
-                ConnectionBundle connectionBundle = getConnectionHandler().getConnectionBundle();
+                ConnectionBundle connectionBundle = connectionHandler.getConnectionBundle();
                 if (connectionBundle instanceof ModuleConnectionBundle) {
                     ModuleConnectionBundle moduleConnectionManager = (ModuleConnectionBundle) connectionBundle;
                     append(false, moduleConnectionManager.getModule().getName(), false);
                     append(false, "/", false);
                 }
 
-                append(false, getConnectionHandler().getName(), false);
+                append(false, connectionHandler.getName(), false);
 
-                ConnectionPool connectionPool = getConnectionHandler().getConnectionPool();
+                ConnectionPool connectionPool = connectionHandler.getConnectionPool();
                 append(true, "Pool size: ", "-2", null, false);
                 append(false, "" + connectionPool.getSize(), false);
                 append(false, " (", false);

@@ -21,7 +21,7 @@ public class ShowDatabaseInformationAction extends DumbAwareAction {
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
-        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "displaying connection information");
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
         if (canConnect) {
             final Project project = connectionHandler.getProject();
             new BackgroundTask(project, "Loading database information for " + connectionHandler.getName(), false) {

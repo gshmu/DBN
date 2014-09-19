@@ -120,7 +120,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent e) {
             final MethodExecutionInput executionInput = getSelectedExecutionInput();
             if (executionInput != null) {
-                boolean continueSelection = ConnectionUtil.assertCanConnect(executionInput.getConnectionHandler(), "method selection");
+                boolean continueSelection = ConnectionUtil.assertCanConnect(executionInput.getConnectionHandler());
                 if (continueSelection) {
                     new BackgroundTask(getProject(), "Loading Method details", false, false) {
                         @Override

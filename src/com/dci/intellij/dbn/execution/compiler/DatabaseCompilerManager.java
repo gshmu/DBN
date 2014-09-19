@@ -73,7 +73,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
     public void compileObject(final DBSchemaObject object, final DBContentType contentType, CompileType compileType, final boolean silently) {
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "compiling object");
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
         if (canConnect) {
             Project project = object.getProject();
             boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(connectionHandler);
@@ -154,7 +154,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     public void compileInvalidObjects(final DBSchema schema, final CompileType compileType) {
         final Project project = schema.getProject();
         final ConnectionHandler connectionHandler = schema.getConnectionHandler();
-        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "compiling invalid objects");
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
         if (canConnect) {
             boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(connectionHandler);
             if (allowed) {

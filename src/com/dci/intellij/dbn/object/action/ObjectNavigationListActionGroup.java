@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.object.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
+import com.dci.intellij.dbn.object.common.list.ObjectListProvider;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-
-import java.util.List;
 
 public class ObjectNavigationListActionGroup extends DefaultActionGroup {
     public static final int MAX_ITEMS = 30;
@@ -33,7 +34,13 @@ public class ObjectNavigationListActionGroup extends DefaultActionGroup {
 
     private List<DBObject> getObjects() {
         List<DBObject> objects = navigationList.getObjects();
-        if (objects == null) objects = navigationList.getObjectsProvider().getObjects();
+        if (objects == null) {
+            ObjectListProvider objectsProvider = navigationList.getObjectsProvider();
+            if (objectsProvider != null) {
+                objects = objectsProvider.getObjects();
+            }
+
+        }
         return objects;
     }
 
