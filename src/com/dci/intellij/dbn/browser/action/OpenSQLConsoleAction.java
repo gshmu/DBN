@@ -1,27 +1,26 @@
 package com.dci.intellij.dbn.browser.action;
 
-import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
+import java.awt.Component;
+import java.awt.Point;
+import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-
-import java.awt.Component;
-import java.awt.Point;
-import java.util.Collection;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     public OpenSQLConsoleAction() {
@@ -96,7 +95,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateRenameConsoleDialog(connectionHandler, null);
+                databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
             } else {
                 ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());

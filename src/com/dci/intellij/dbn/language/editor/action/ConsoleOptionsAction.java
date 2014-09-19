@@ -1,25 +1,16 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
+import java.awt.Component;
+import java.awt.Point;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-import org.jetbrains.annotations.NotNull;
-
-import java.awt.Component;
-import java.awt.Point;
-import java.util.Collection;
 
 public class ConsoleOptionsAction extends DumbAwareAction {
     public ConsoleOptionsAction() {
@@ -29,9 +20,11 @@ public class ConsoleOptionsAction extends DumbAwareAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-        actionGroup.add(new SaveToFileEditorAction());
+        //actionGroup.add(new SaveToFileEditorAction());
         actionGroup.add(new RenameConsoleEditorAction());
         actionGroup.add(new DeleteConsoleEditorAction());
+        actionGroup.addSeparator();
+        actionGroup.add(new CreateConsoleEditorAction());
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
                 "Options",
                 actionGroup,
