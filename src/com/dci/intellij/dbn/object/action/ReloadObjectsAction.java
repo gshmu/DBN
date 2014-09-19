@@ -23,7 +23,7 @@ public class ReloadObjectsAction extends AnAction {
     public void actionPerformed(AnActionEvent event) {
         Project project = ActionUtil.getProject(event);
         if (project != null) {
-            boolean canConnect = ConnectionUtil.assertCanConnect(objectList.getConnectionHandler(), "reloading the " + objectList.getObjectType().getListName());
+            boolean canConnect = ConnectionUtil.assertCanConnect(objectList.getConnectionHandler());
             if (canConnect) {
                 new BackgroundTask(project, "Reloading " + objectList.getObjectType().getListName(), false) {
                     @Override

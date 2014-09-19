@@ -66,7 +66,7 @@ public class DBProgramRunner extends GenericProgramRunner {
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
         ConnectionHandler connectionHandler = runProfile.getMethod().getConnectionHandler();
 
-        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler, "the debug operation");
+        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
         if (canConnect) {
             DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
             boolean allowed = databaseDebuggerManager.checkForbiddenOperation(connectionHandler, "Another debug session is active on this connection. You can only run one debug session at the time.");

@@ -128,7 +128,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public void executeSelectedStatement(Editor editor) {
         DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-        boolean canConnect = ConnectionUtil.assertCanConnect(file.getActiveConnection(), "the statement execution");
+        boolean canConnect = ConnectionUtil.assertCanConnect(file.getActiveConnection());
         if (canConnect) {
             StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
             if (executionProcessor != null) {

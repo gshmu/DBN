@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -14,10 +17,13 @@ public class ReloadDataAction extends AbstractDataEditorAction {
         super("Reload", Icons.DATA_EDITOR_RELOAD_DATA);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
-            datasetEditor.loadData(LOAD_INSTRUCTIONS);
+            boolean canConnect = ConnectionUtil.assertCanConnect(datasetEditor.getConnectionHandler());
+            if (canConnect) {
+                datasetEditor.loadData(LOAD_INSTRUCTIONS);
+            }
         }
     }
 
