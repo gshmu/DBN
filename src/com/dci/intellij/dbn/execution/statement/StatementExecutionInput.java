@@ -25,7 +25,7 @@ public class StatementExecutionInput implements Disposable {
 
     public StatementExecutionInput(String originalStatement, String executeStatement, StatementExecutionProcessor executionProcessor) {
         this.executionProcessor = executionProcessor;
-        this.connectionHandler = executionProcessor.getActiveConnection();
+        this.connectionHandler = executionProcessor.getConnectionHandler();
         this.schemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatement = originalStatement;
         this.executeStatement = executeStatement;
@@ -61,7 +61,7 @@ public class StatementExecutionInput implements Disposable {
 
     public boolean isObsolete() {
         return  executionProcessor == null || executionProcessor.isOrphan() ||
-                executionProcessor.getActiveConnection() != connectionHandler || // connection changed since execution
+                executionProcessor.getConnectionHandler() != connectionHandler || // connection changed since execution
                 executionProcessor.getCurrentSchema() != getSchema() || // current schema changed since execution
                 (executionProcessor.getExecutablePsiElement() != null &&
                         executionProcessor.getExecutablePsiElement().matches(getExecutablePsiElement()) &&

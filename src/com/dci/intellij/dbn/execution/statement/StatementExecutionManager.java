@@ -9,12 +9,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.ui.SelectConnectionDialog;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -47,17 +48,20 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public void fireExecution(final StatementExecutionProcessor executionProcessor) {
         boolean continueExecution = selectConnection(executionProcessor.getFile());
-        if (continueExecution) {
-            continueExecution = executionProcessor.promptVariablesDialog();
-            if (continueExecution) {
-                new BackgroundTask(getProject(), "Executing statement", false, true) {
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        initProgressIndicator(progressIndicator, true);
-                        executionProcessor.execute(progressIndicator);
-                    }
-                }.start();
+        new ConnectionAction(executionProcessor, continueExecution) {
+            @Override
+            protected void execute() {
+                boolean continueExecution = executionProcessor.promptVariablesDialog();
+                if (continueExecution) {
+                    new BackgroundTask(getProject(), "Executing statement", false, true) {
+                        public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            initProgressIndicator(progressIndicator, true);
+                            executionProcessor.execute(progressIndicator);
+                        }
+                    }.start();
+                }
             }
-        }
+        }.start();
     }
 
     public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
@@ -126,25 +130,27 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    public void executeSelectedStatement(Editor editor) {
-        DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-        boolean canConnect = ConnectionUtil.assertCanConnect(file.getActiveConnection());
-        if (canConnect) {
-            StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
-            if (executionProcessor != null) {
-                fireExecution(executionProcessor);
-            } else {
-                int exitCode = MessageUtil.showQuestionDialog(
-                        "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                        "Multiple Statement Execution",
-                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0);
-                if (exitCode == 0 || exitCode == 1) {
-                    int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
-                    List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file, offset);
-                    fireExecution(executionProcessors);
+    public void executeSelectedStatement(final Editor editor) {
+        final DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
+        new ConnectionAction(file) {
+            @Override
+            protected void execute() {
+                StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
+                if (executionProcessor != null) {
+                    fireExecution(executionProcessor);
+                } else {
+                    int exitCode = MessageUtil.showQuestionDialog(
+                            "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
+                            "Multiple Statement Execution",
+                            OPTIONS_MULTIPLE_STATEMENT_EXEC, 0);
+                    if (exitCode == 0 || exitCode == 1) {
+                        int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
+                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file, offset);
+                        fireExecution(executionProcessors);
+                    }
                 }
             }
-        }
+        }.start();
     }
 
     private StatementExecutionProcessor getExecutionProcessorAtCursor(Editor editor) {
@@ -223,6 +229,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 StatementExecutionProcessor executionProcessor = (StatementExecutionProcessor) iterator.next();
                 if (executionProcessor.isOrphan()) {
                     iterator.remove();
+                    DisposerUtil.dispose(executionProcessor);
                 }
             }
             if (executionProcessors.size() == 0) {

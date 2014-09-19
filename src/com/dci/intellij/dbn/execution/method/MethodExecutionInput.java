@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -24,7 +25,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 
-public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput> {
+public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
     private DBMethodRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
     private Map<String, String> valuesMap = new HashMap<String, String>();
@@ -173,12 +174,6 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return isExecuting;
     }
 
-    public void dispose() {
-        executionResult = null;
-        valuesMap.clear();
-        argumentValues.clear();
-    }
-
     /*********************************************************
      *                 PersistentConfiguration               *
      *********************************************************/
@@ -252,4 +247,19 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         executionInput.valuesMap = new HashMap<String, String>(valuesMap);
         return executionInput;
     }
+
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    public void dispose() {
+        disposed = true;
+        executionResult = null;
+        valuesMap.clear();
+        argumentValues.clear();
+    }
+
 }

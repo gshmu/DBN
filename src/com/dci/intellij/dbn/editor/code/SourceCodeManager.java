@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -79,48 +80,51 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 object.getStatus().set(DBObjectStatus.SAVING, false);
                 return;
             }
+            new ConnectionAction(object) {
+                @Override
+                protected void execute() {
+                    object.getStatus().set(DBObjectStatus.SAVING, true);
+                    Project project = virtualFile.getProject();
+                    final DBContentType contentType = virtualFile.getContentType();
 
-            final Project project = virtualFile.getProject();
-            final DBContentType contentType = virtualFile.getContentType();
-            object.getStatus().set(DBObjectStatus.SAVING, true);
+                    new BackgroundTask(project, "Checking for third party changes on " + object.getQualifiedNameWithType(), false) {
+                        public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            try {
+                                String content = editor.getDocument().getText();
+                                if (isValidObjectTypeAndName(content, object, contentType)) {
+                                    Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
+                                    if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
 
-            new BackgroundTask(project, "Checking for third party changes on " + object.getQualifiedNameWithType(), false) {
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
-                    try {
-                        String content = editor.getDocument().getText();
-                        if (isValidObjectTypeAndName(content, object, contentType)) {
-                            Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
-                            if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
+                                        virtualFile.setContent(content);
+                                        String message =
+                                                "The " + object.getQualifiedNameWithType() +
+                                                        " has been changed by another user. \nYou will be prompted to merge the changes";
+                                        MessageUtil.showErrorDialog(message, "Version conflict");
 
-                                virtualFile.setContent(content);
-                                String message =
-                                        "The " + object.getQualifiedNameWithType() +
-                                                " has been changed by another user. \nYou will be prompted to merge the changes";
-                                MessageUtil.showErrorDialog(message, "Version conflict");
+                                        String databaseContent = loadSourceCodeFromDatabase(object, contentType);
+                                        showSourceDiffDialog(databaseContent, virtualFile, editor);
+                                    } else {
+                                        doUpdateSourceToDatabase(object, virtualFile, editor);
+                                        //sourceCodeEditor.afterSave();
+                                    }
 
-                                String databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                showSourceDiffDialog(databaseContent, virtualFile, editor);
-                            } else {
-                                doUpdateSourceToDatabase(object, virtualFile, editor);
-                                //sourceCodeEditor.afterSave();
+                                } else {
+                                    String message = "You are not allowed to change the name or the type of the object";
+                                    object.getStatus().set(DBObjectStatus.SAVING, false);
+                                    MessageUtil.showErrorDialog(message, "Illegal action");
+                                }
+                            } catch (SQLException ex) {
+                                if (!DatabaseCompatibilityInterface.getInstance(object).supportsFeature(DatabaseFeature.OBJECT_REPLACING)) {
+                                    virtualFile.updateChangeTimestamp();
+                                }
+                                MessageUtil.showErrorDialog("Could not save changes to database.", ex);
+                                object.getStatus().set(DBObjectStatus.SAVING, false);
                             }
-
-                        } else {
-                            String message = "You are not allowed to change the name or the type of the object";
-                            object.getStatus().set(DBObjectStatus.SAVING, false);
-                            MessageUtil.showErrorDialog(message, "Illegal action");
                         }
-                    } catch (SQLException ex) {
-                        if (!DatabaseCompatibilityInterface.getInstance(object).supportsFeature(DatabaseFeature.OBJECT_REPLACING)) {
-                            virtualFile.updateChangeTimestamp();
-                        }
-                        MessageUtil.showErrorDialog("Could not save changes to database.", ex);
-                        object.getStatus().set(DBObjectStatus.SAVING, false);
-                    }
+                    }.start();
                 }
             }.start();
         }
-
     }
 
     public String loadSourceCodeFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {

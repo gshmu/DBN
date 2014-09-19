@@ -187,7 +187,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
                 loaderCache.setObject(objectOwner,  schema);
             }
 
-            return schema.getChildObject(objectName, true);
+            return schema == null ? null : schema.getChildObject(objectName, true);
         }
     };
 

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -20,11 +20,11 @@ public class ReloadObjectsAction extends AnAction {
         this.objectList = objectList;
     }
 
-    public void actionPerformed(AnActionEvent event) {
-        Project project = ActionUtil.getProject(event);
-        if (project != null) {
-            boolean canConnect = ConnectionUtil.assertCanConnect(objectList.getConnectionHandler());
-            if (canConnect) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        final Project project = ActionUtil.getProject(e);
+        new ConnectionAction(objectList, project != null){
+            @Override
+            protected void execute() {
                 new BackgroundTask(project, "Reloading " + objectList.getObjectType().getListName(), false) {
                     @Override
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -33,6 +33,6 @@ public class ReloadObjectsAction extends AnAction {
                     }
                 }.start();
             }
-        }
+        }.start();
     }
 }

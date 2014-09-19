@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -46,7 +47,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 
-public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, ConnectionProvider {
     private Language language;
     private DBLanguageFileType fileType;
     private ParserDefinition parserDefinition;
@@ -97,6 +98,11 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
 
         return DBObjectRef.get(underlyingObjectRef);
+    }
+
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return getActiveConnection();
     }
 
     public DBLanguagePsiFile(Project project, DBLanguageFileType fileType, @NotNull DBLanguage language) {
@@ -324,5 +330,22 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public double getDatabaseVersion() {
         ConnectionHandler activeConnection = getActiveConnection();
         return activeConnection == null ? ElementLookupContext.MAX_DB_VERSION : activeConnection.getDatabaseVersion();
+    }
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        if (!isDisposed()) {
+            disposed = true;
+        }
     }
 }

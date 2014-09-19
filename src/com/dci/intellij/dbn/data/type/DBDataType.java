@@ -43,13 +43,15 @@ public class DBDataType {
         DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
         if (typeOwner != null) {
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
-            if (typePackage != null) {
-                DBPackage packagee = typeSchema.getPackage(typePackage);
-                if (packagee != null) {
-                    declaredType = packagee.getType(dataTypeName);
+            if (typeSchema != null) {
+                if (typePackage != null) {
+                    DBPackage packagee = typeSchema.getPackage(typePackage);
+                    if (packagee != null) {
+                        declaredType = packagee.getType(dataTypeName);
+                    }
+                } else {
+                    declaredType = typeSchema.getType(dataTypeName);
                 }
-            } else {
-                declaredType = typeSchema.getType(dataTypeName);
             }
             if (declaredType == null) name = dataTypeName;
         } else {

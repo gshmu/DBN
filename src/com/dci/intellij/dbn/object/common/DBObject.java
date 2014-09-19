@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -27,7 +28,7 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.psi.PsiNamedElement;
 
-public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Presentable, Referenceable {
+public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicContentElement, LookupItemBuilderProvider, Presentable, Referenceable, ConnectionProvider {
     DBObjectType getObjectType();
     boolean isOfType(DBObjectType objectType);
 

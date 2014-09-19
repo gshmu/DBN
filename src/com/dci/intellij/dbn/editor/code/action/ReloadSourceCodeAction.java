@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -19,30 +20,35 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
         super("", null, Icons.CODE_EDITOR_RELOAD);
     }
 
-    public void actionPerformed(final AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            new BackgroundTask(project, "Loading database source code", false, true) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
+        final Project project = ActionUtil.getProject(e);
+        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+        new ConnectionAction(sourcecodeFile, project != null){
+            @Override
+            protected void execute() {
+                new BackgroundTask(project, "Loading database source code", false, true) {
 
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    final Editor editor = getEditor(e);
-                    final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        final Editor editor = getEditor(e);
+                        final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
 
-                    if (editor != null && sourcecodeFile != null) {
-                        boolean reloaded = sourcecodeFile.reloadFromDatabase();
-                        if (reloaded) {
-                            new WriteActionRunner() {
-                                public void run() {
-                                    editor.getDocument().setText(sourcecodeFile.getContent());
-                                    sourcecodeFile.setModified(false);
-                                }
-                            }.start();
+                        if (editor != null && sourcecodeFile != null) {
+                            boolean reloaded = sourcecodeFile.reloadFromDatabase();
+                            if (reloaded) {
+                                new WriteActionRunner() {
+                                    public void run() {
+                                        editor.getDocument().setText(sourcecodeFile.getContent());
+                                        sourcecodeFile.setModified(false);
+                                    }
+                                }.start();
+                            }
                         }
                     }
-                }
-            }.start();
-        }
+                }.start();
+
+            }
+        }.start();
     }
 
     public void update(AnActionEvent e) {

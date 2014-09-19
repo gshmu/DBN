@@ -106,7 +106,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             executionVariables = null;
         } else {
             if (executionVariables == null)
-                executionVariables = new StatementExecutionVariablesBundle(getActiveConnection(), getCurrentSchema(), bucket); else
+                executionVariables = new StatementExecutionVariablesBundle(getConnectionHandler(), getCurrentSchema(), bucket); else
                 executionVariables.initialize(bucket);
         }
 
@@ -122,7 +122,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         progressIndicator.setText("Executing " + getStatementName());
         long startTimeMillis = System.currentTimeMillis();
         resultName = null;
-        ConnectionHandler activeConnection = getActiveConnection();
+        ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
         String originalStatementText = executablePsiElement == null ? executableStatement : executablePsiElement.getText();
         String executeStatementText = executablePsiElement == null ? executableStatement : executablePsiElement.prepareStatementText();
@@ -193,7 +193,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
     }
 
-    public ConnectionHandler getActiveConnection() {
+    public ConnectionHandler getConnectionHandler() {
         return file.getActiveConnection();
     }
 
@@ -245,5 +245,25 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (executablePsiElement != null) {
             executablePsiElement.navigate(requestFocus);
         }
+    }
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    @Override
+    public void dispose() {
+        if (!isDisposed()) {
+            disposed = true;
+            executablePsiElement = null;
+            file = null;
+
+        }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
     }
 }
