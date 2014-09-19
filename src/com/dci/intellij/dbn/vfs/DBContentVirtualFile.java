@@ -185,8 +185,15 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         return 1;
     }
 
+    private boolean disposed;
+
+    public boolean isDisposed() {
+        return disposed;
+    }
+
     @Override
     public void dispose() {
+        disposed = true;
         mainDatabaseFile = null;
     }
 }

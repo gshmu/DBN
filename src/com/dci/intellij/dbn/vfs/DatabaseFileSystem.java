@@ -15,9 +15,9 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
@@ -297,29 +297,28 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     public void openEditor(final DBObject object, final boolean scrollBrowser, final boolean focusEditor) {
-        final Project project = object.getProject();
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
-        boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
+        new ConnectionAction(object) {
+            @Override
+            protected void execute() {
+                new BackgroundTask(object.getProject(), "Opening editor", false, true) {
+                    @Override
+                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                        initProgressIndicator(progressIndicator, true);
+                        if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                            DBObjectListContainer childObjects = object.getChildObjects();
+                            if (childObjects != null) childObjects.load();
+                            openSchemaObject((DBSchemaObject) object, progressIndicator, scrollBrowser, focusEditor);
 
-        if (canConnect) {
-            new BackgroundTask(project, "Opening editor", false, true) {
-                @Override
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
-                    initProgressIndicator(progressIndicator, true);
-                    if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                        DBObjectListContainer childObjects = object.getChildObjects();
-                        if (childObjects != null) childObjects.load();
-                        openSchemaObject((DBSchemaObject) object, progressIndicator, scrollBrowser, focusEditor);
+                        } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                            DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
+                            if (childObjects != null) childObjects.load();
+                            openChildObject(object, progressIndicator, scrollBrowser, focusEditor);
+                        }
 
-                    } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                        DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
-                        if (childObjects != null) childObjects.load();
-                        openChildObject(object, progressIndicator, scrollBrowser, focusEditor);
                     }
-
-                }
-            }.start();
-        }
+                }.start();
+            }
+        }.start();
     }
 
     private void openSchemaObject(final DBSchemaObject object, ProgressIndicator progressIndicator, final boolean scrollBrowser, final boolean focusEditor) {

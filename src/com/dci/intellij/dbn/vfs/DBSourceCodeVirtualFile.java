@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeLoadListener;
@@ -31,7 +32,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 
-public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener {
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, ConnectionProvider {
 
     private String originalContent;
     private String lastSavedContent;
@@ -250,10 +251,10 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @Override
     public void dispose() {
+        super.dispose();
         originalContent = null;
         lastSavedContent = null;
         content = null;
-        super.dispose();
     }
 
     public int getGuardedBlockEndOffset() {

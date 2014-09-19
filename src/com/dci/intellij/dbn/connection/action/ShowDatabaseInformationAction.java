@@ -20,7 +20,7 @@ public class ShowDatabaseInformationAction extends DumbAwareAction {
         //getTemplatePresentation().setEnabled(connectionHandler.getConnectionStatus().isConnected());
     }
 
-    public void actionPerformed(AnActionEvent anActionEvent) {
+    public void actionPerformed(AnActionEvent e) {
         boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
         if (canConnect) {
             final Project project = connectionHandler.getProject();

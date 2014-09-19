@@ -15,9 +15,10 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
@@ -53,7 +54,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 
-public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable {
+public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable, ConnectionProvider {
     public static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
     public static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, false, false, false);
     private DBObjectRef<DBDataset> datasetRef;
@@ -250,48 +251,50 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void loadData(final DatasetLoadInstructions instructions) {
-        boolean canConnect = ConnectionUtil.assertCanConnect(getConnectionHandler());
-        if (!isLoading && canConnect) {
-            setLoading(true);
-            new SimpleBackgroundTask() {
-                public void execute() {
-                    try {
-                        if (!isDisposed()) {
-                            editorForm.showLoadingHint();
-                            editorForm.getEditorTable().cancelEditing();
-                            DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
-                            try {
-                                DatasetEditorModel tableModel = getTableModel();
-                                if (tableModel != null) {
-                                    tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
-                                    DatasetEditorTable editorTable = getEditorTable();
-                                    if (editorTable != null) {
-                                        editorTable.clearSelection();
+        new ConnectionAction(this, !isLoading) {
+            @Override
+            protected void execute() {
+                setLoading(true);
+                new SimpleBackgroundTask() {
+                    public void execute() {
+                        try {
+                            if (!isDisposed()) {
+                                editorForm.showLoadingHint();
+                                editorForm.getEditorTable().cancelEditing();
+                                DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
+                                try {
+                                    DatasetEditorModel tableModel = getTableModel();
+                                    if (tableModel != null) {
+                                        tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
+                                        DatasetEditorTable editorTable = getEditorTable();
+                                        if (editorTable != null) {
+                                            editorTable.clearSelection();
+                                        }
+                                    }
+                                } finally {
+                                    if (!isDisposed()) {
+                                        editorForm.afterRebuild(oldEditorTable);
                                     }
                                 }
-                            } finally {
-                                if (!isDisposed()) {
-                                    editorForm.afterRebuild(oldEditorTable);
-                                }
                             }
+                            dataLoadError = null;
+                        } catch (final SQLException e) {
+                            if (e != DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION) {
+                                dataLoadError = e.getMessage();
+                                handleLoadError(e, instructions);
+                            }
+                        } finally {
+                            if (editorForm != null) {
+                                editorForm.hideLoadingHint();
+                            }
+                            setLoading(false);
+                            EventManager.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
                         }
-                        dataLoadError = null;
-                    } catch (final SQLException e) {
-                        if (e != DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION) {
-                            dataLoadError = e.getMessage();
-                            handleLoadError(e, instructions);
-                        }
-                    } finally {
-                        if (editorForm != null) {
-                            editorForm.hideLoadingHint();
-                        }
-                        setLoading(false);
-                        EventManager.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
                     }
-                }
 
-            }.start();
-        }
+                }.start();
+            }
+        }.start();
     }
 
     private void handleLoadError(final SQLException e, final DatasetLoadInstructions instr) {

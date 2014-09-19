@@ -4,13 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
 
 public class ReloadObjectsAction extends AnAction {
 
@@ -21,11 +19,10 @@ public class ReloadObjectsAction extends AnAction {
         this.objectList = objectList;
     }
 
-    public void actionPerformed(AnActionEvent event) {
-        Project project = ActionUtil.getProject(event);
-        if (project != null) {
-            boolean canConnect = ConnectionUtil.assertCanConnect(objectList.getConnectionHandler());
-            if (canConnect) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        new ConnectionAction(objectList) {
+            @Override
+            protected void execute() {
                 new BackgroundTask(objectList.getProject(), "Reloading " + objectList.getContentDescription() + ".", false) {
                     @Override
                     public void execute(@NotNull final ProgressIndicator progressIndicator) throws InterruptedException {
@@ -33,7 +30,8 @@ public class ReloadObjectsAction extends AnAction {
                         objectList.reload();
                     }
                 }.start();
+
             }
-        }
+        }.start();
     }
 }
