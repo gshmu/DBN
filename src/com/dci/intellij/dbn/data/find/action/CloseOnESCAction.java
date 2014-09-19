@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.data.find.action;
 
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.data.find.DataSearchComponent;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CustomShortcutSet;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.project.DumbAware;
-
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
@@ -15,6 +7,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.data.find.DataSearchComponent;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CustomShortcutSet;
+import com.intellij.openapi.actionSystem.KeyboardShortcut;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.project.DumbAware;
 
 public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAware {
     public CloseOnESCAction(DataSearchComponent searchComponent, JComponent component) {
@@ -41,7 +42,7 @@ public class CloseOnESCAction extends DataSearchHeaderAction implements DumbAwar
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         getSearchComponent().close();
     }
 }

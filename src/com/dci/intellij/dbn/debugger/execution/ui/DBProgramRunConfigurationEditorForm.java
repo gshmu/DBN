@@ -78,7 +78,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             final Project project = ActionUtil.getProject(e);
             if (project != null) {
                 BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable elements", false) {
@@ -122,7 +122,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
@@ -143,12 +143,12 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             configuration.setExecutionInput(executionInput);
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             DBMethod method = executionInput.getMethod();
             if (method == null) {
