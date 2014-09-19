@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -168,7 +169,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             list.stopCellEditing();
             UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
             userValueHolder.updateUserValue(list.getModel().getData(), false);
@@ -187,7 +188,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
 
         @Override
-        public void update(AnActionEvent anActionEvent) {
+        public void update(@NotNull AnActionEvent e) {
             getTemplatePresentation().setEnabled(changed);
         }
     }
@@ -199,12 +200,12 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             hidePopup();
         }
 
         @Override
-        public void update(AnActionEvent anActionEvent) {
+        public void update(@NotNull AnActionEvent e) {
             getTemplatePresentation().setEnabled(changed);
         }
     }
@@ -216,7 +217,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             TextFieldWithPopup editorComponent = getEditorComponent();
             editorComponent.getUserValueHolder().updateUserValue(new ArrayList<String>(), false);
             hidePopup();
@@ -231,7 +232,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             list.insertRow();
         }
     }
@@ -244,7 +245,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             list.removeRow();
         }
     }
