@@ -1,49 +1,26 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import java.awt.Component;
-import java.awt.Point;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.ddl.action.AttachDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.CreateDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.DetachDDLFileAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.vfs.VirtualFile;
 
-public class DDLFileAction extends AbstractSourceCodeEditorAction {
-    DefaultActionGroup actionGroup;
+public class DDLFileAction extends GroupPopupAction {
     public DDLFileAction() {
-        super("DDL File", null, Icons.CODE_EDITOR_DDL_FILE);
+        super("DDL File", "DDL File", Icons.CODE_EDITOR_DDL_FILE);
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
-        if (sourcecodeFile != null) {
-            DBSchemaObject object = sourcecodeFile.getObject();
-            actionGroup = new DefaultActionGroup();
-            actionGroup.add(new CreateDDLFileAction(object));
-            actionGroup.add(new AttachDDLFileAction(object));
-            actionGroup.add(new DetachDDLFileAction(object));
-
-            ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "DDL File",
-                    actionGroup,
-                    e.getDataContext(),
-                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    true, null, 10);
-
-            //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
-            Component component = (Component) e.getInputEvent().getSource();
-            showBelowComponent(popup, component);
-        }
-    }
-
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.CODE_EDITOR_DDL_FILE);
@@ -51,11 +28,25 @@ public class DDLFileAction extends AbstractSourceCodeEditorAction {
         presentation.setEnabled(sourcecodeFile != null);
     }
 
-    private static void showBelowComponent(ListPopup popup, Component component) {
-        Point locationOnScreen = component.getLocationOnScreen();
-        Point location = new Point(
-                (int) (locationOnScreen.getX()),
-                (int) locationOnScreen.getY() + component.getHeight());
-        popup.showInScreenCoordinates(component, location);
+    @Override
+    protected AnAction[] getActions(AnActionEvent e) {
+        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+        if (sourcecodeFile != null) {
+            DBSchemaObject object = sourcecodeFile.getObject();
+            if (object != null) {
+                return new AnAction[]{
+                        new CreateDDLFileAction(object),
+                        new AttachDDLFileAction(object),
+                        new DetachDDLFileAction(object)
+                };
+            }
+        }
+        return new AnAction[0];
     }
+
+    protected DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
+        VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+        return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
+    }
+
 }

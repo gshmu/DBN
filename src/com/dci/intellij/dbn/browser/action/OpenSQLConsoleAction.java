@@ -1,30 +1,27 @@
 package com.dci.intellij.dbn.browser.action;
 
-import java.awt.Component;
-import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
 
-public class OpenSQLConsoleAction extends DumbAwareAction {
+public class OpenSQLConsoleAction extends GroupPopupAction {
     public OpenSQLConsoleAction() {
-        super("Open SQL Console", null, Icons.FILE_SQL_CONSOLE);
+        super("Open SQL Console", "SQL Console", Icons.FILE_SQL_CONSOLE);
     }
 
     private ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
@@ -43,37 +40,19 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         presentation.setText("Open SQL Console");
     }
 
-    public void actionPerformed(@NotNull AnActionEvent e) {
+    @Override
+    protected AnAction[] getActions(AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler(e);
-
+        List<AnAction> actions = new ArrayList<AnAction>();
         if (connectionHandler != null) {
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
             Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
-                actionGroup.add(new SelectConsoleAction(console));
+                actions.add(new SelectConsoleAction(console));
             }
-            actionGroup.add(Separator.getInstance());
-            actionGroup.add(new SelectConsoleAction(connectionHandler));
-
-            ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "Open SQL Console",
-                    actionGroup,
-                    e.getDataContext(),
-                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    true, null, 10);
-
-            //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
-            Component component = (Component) e.getInputEvent().getSource();
-            showBelowComponent(popup, component);
+            actions.add(Separator.getInstance());
+            actions.add(new SelectConsoleAction(connectionHandler));
         }
-    }
-
-    private static void showBelowComponent(ListPopup popup, Component component) {
-        Point locationOnScreen = component.getLocationOnScreen();
-        Point location = new Point(
-                (int) (locationOnScreen.getX()),
-                (int) locationOnScreen.getY() + component.getHeight());
-        popup.showInScreenCoordinates(component, location);
+        return actions.toArray(new AnAction[actions.size()]);
     }
 
 
