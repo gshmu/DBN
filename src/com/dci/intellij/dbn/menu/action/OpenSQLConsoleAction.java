@@ -146,7 +146,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
-                databaseConsoleManager.showCreateRenameConsoleDialog(connectionHandler, null);
+                databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
             } else {
                 ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());

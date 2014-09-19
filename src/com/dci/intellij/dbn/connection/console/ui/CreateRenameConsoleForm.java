@@ -6,11 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
-import java.util.HashSet;
 import java.util.Set;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +14,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 
@@ -41,7 +39,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl {
         DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        final Set<String> consoleNames = new HashSet<>(connectionHandler.getConsoleBundle().getConsoleNames());
+        final Set<String> consoleNames = connectionHandler.getConsoleBundle().getConsoleNames();
 
         String name;
         if (console == null) {
@@ -77,6 +75,10 @@ public class CreateRenameConsoleForm extends DBNFormImpl {
                 }
             }
         });
+    }
+
+    public JTextField getConsoleNameTextField() {
+        return consoleNameTextField;
     }
 
     public String getConsoleName() {
