@@ -21,7 +21,7 @@ public class CreateRenameConsoleDialog extends DBNDialog {
     }
 
     protected String getDimensionServiceKey() {
-        return null;//"DBNavigator.CreateSQLConsole";
+        return "DBNavigator.CreateSQLConsole";
     }      
 
     @NotNull

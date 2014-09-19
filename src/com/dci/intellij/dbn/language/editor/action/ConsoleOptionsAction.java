@@ -1,54 +1,23 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import java.awt.Component;
-import java.awt.Point;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.actionSystem.Separator;
 
-public class ConsoleOptionsAction extends DumbAwareAction {
+public class ConsoleOptionsAction extends GroupPopupAction {
     public ConsoleOptionsAction() {
-        super("Options", null, Icons.ACTION_LOCAL_SETTINGS);
+        super("Options", "Options", Icons.ACTION_OPTIONS);
     }
 
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        DefaultActionGroup actionGroup = new DefaultActionGroup();
-
-        //actionGroup.add(new SaveToFileEditorAction());
-        actionGroup.add(new RenameConsoleEditorAction());
-        actionGroup.add(new DeleteConsoleEditorAction());
-        actionGroup.addSeparator();
-        actionGroup.add(new CreateConsoleEditorAction());
-        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                "Options",
-                actionGroup,
-                e.getDataContext(),
-                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true, null, 10);
-
-        //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
-        Component component = (Component) e.getInputEvent().getSource();
-        showBelowComponent(popup, component);
-    }
-
-    private static void showBelowComponent(ListPopup popup, Component component) {
-        Point locationOnScreen = component.getLocationOnScreen();
-        Point location = new Point(
-                (int) (locationOnScreen.getX() + 10),
-                (int) locationOnScreen.getY() + component.getHeight());
-        popup.showInScreenCoordinates(component, location);
-    }
-
-
-    public void update(@NotNull AnActionEvent e) {
-        Presentation presentation = e.getPresentation();
-        presentation.setIcon(Icons.ACTION_OPTIONS);
-        presentation.setText("Options");
+    @Override
+    protected AnAction[] getActions(AnActionEvent e) {
+        return new AnAction[]{
+                new RenameConsoleEditorAction(),
+                new DeleteConsoleEditorAction(),
+                Separator.getInstance(),
+                new CreateConsoleEditorAction()
+        };
     }
 }

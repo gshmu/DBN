@@ -5,10 +5,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Point;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -26,17 +26,13 @@ import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.util.ui.UIUtil;
 
 public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements DBNForm {
@@ -62,38 +58,17 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         return mainPanel;
     }
 
-    public class SelectMethodAction extends AnAction {
+    public class SelectMethodAction extends GroupPopupAction {
         public SelectMethodAction()  {
-            super("Select method", null, Icons.DBO_METHOD);
+            super("Select method", "Select method", Icons.DBO_METHOD);
         }
 
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
-            OpenMethodHistoryAction historyAction = new OpenMethodHistoryAction();
-            OpenMethodBrowserAction browserAction = new OpenMethodBrowserAction();
-            actionGroup.add(historyAction);
-            actionGroup.add(browserAction);
-            if (configuration.getMethodSelectionHistory().size() > 0) {
-                actionGroup.addSeparator();
-                for (MethodExecutionInput methodExecutionInput : configuration.getMethodSelectionHistory()) {
-                    if (!methodExecutionInput.equals(configuration.getExecutionInput())) {
-                        actionGroup.add(new SelectHistoryMethodAction(methodExecutionInput));
-                    }
-                }
-            }
-
-            ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "Select method",
-                    actionGroup,
-                    DataManager.getInstance().getDataContext(getComponent()),
-                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    true, null, 10);
-
-            Point locationOnScreen = selectMethodActionPanel.getLocationOnScreen();
-            Point location = new Point(
-                    (int) (locationOnScreen.getX()),
-                    (int) locationOnScreen.getY() + selectMethodActionPanel.getHeight());
-            popup.showInScreenCoordinates(selectMethodActionPanel, location);
+        @Override
+        protected AnAction[] getActions(AnActionEvent e) {
+            return new AnAction[]{
+                    new OpenMethodHistoryAction(),
+                    new OpenMethodBrowserAction()
+            };
         }
     }
 
