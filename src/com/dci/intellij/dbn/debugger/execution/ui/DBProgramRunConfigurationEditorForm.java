@@ -186,17 +186,19 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
         Color headerBackground = UIUtil.getPanelBackground();
 
         methodArgumentsPanel.removeAll();
-        if (executionInput != null && executionInput.getMethod() != null) {
-            headerTitle = executionInput.getMethodRef().getPath();
-            methodExecutionForm = new MethodExecutionForm(executionInput, false, true);
-            methodArgumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
-            if (touchForm) methodExecutionForm.touch();
+        if (executionInput != null) {
             DBMethodRef methodRef = executionInput.getMethodRef();
-            methodRef.getPath();
-            headerIcon = executionInput.getMethod().getOriginalIcon();
-            DBMethod method = methodRef.get();
-            if (method != null && getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-                headerBackground = method.getEnvironmentType().getColor();
+            headerTitle = methodRef.getPath();
+            headerIcon = methodRef.getObjectType().getIcon();
+            DBMethod method = executionInput.getMethod();
+            if (method != null) {
+                methodExecutionForm = new MethodExecutionForm(executionInput, false, true);
+                methodArgumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
+                if (touchForm) methodExecutionForm.touch();
+                headerIcon = method.getOriginalIcon();
+                if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
+                    headerBackground = method.getEnvironmentType().getColor();
+                }
             }
         }
 
