@@ -40,7 +40,11 @@ public class ASTPathNode implements PathNode{
                     child = child.getTreeNext();
                 }
             }
-            return sequenceElementType.indexOf((ElementType) astNode.getElementType(), index);
+            IElementType elementType = astNode.getElementType();
+            if (elementType instanceof ElementType) {
+                return sequenceElementType.indexOf((ElementType) elementType, index);
+            }
+
         }
         return 0;
     }
