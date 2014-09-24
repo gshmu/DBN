@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     public ExecutionResultCloseAction() {
@@ -12,9 +13,9 @@ public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null && executionResult.getProject() != null) {
+        if (executionResult != null && !executionResult.isDisposed()) {
             Project project = executionResult.getProject();
             ExecutionManager executionManager = ExecutionManager.getInstance(project);
             executionManager.removeResultTab(executionResult);

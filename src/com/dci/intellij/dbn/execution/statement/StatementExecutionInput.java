@@ -42,7 +42,7 @@ public class StatementExecutionInput implements Disposable {
 
     public ExecutablePsiElement getExecutablePsiElement() {
         if (originalPsiElement == null) {
-            PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(executionProcessor.getProject());
+            PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
             PsiFile previewFile = psiFileFactory.createFileFromText("preview", connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE), originalStatement);
 
             PsiElement firstChild = previewFile.getFirstChild();
@@ -55,7 +55,7 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public PsiFile getPreviewFile() {
-        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(executionProcessor.getProject());
+        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
         return psiFileFactory.createFileFromText("preview", connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE), executeStatement);
     }
 
@@ -73,7 +73,7 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public Project getProject() {
-        return executionProcessor.getProject();
+        return connectionHandler.getProject();
     }
 
     public ConnectionHandler getConnectionHandler() {
