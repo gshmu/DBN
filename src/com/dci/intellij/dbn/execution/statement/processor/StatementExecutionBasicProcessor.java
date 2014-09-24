@@ -85,6 +85,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return rootPsiElement == null || !PsiUtil.contains(file, rootPsiElement, true);
     }
 
+    @Override
+    public String toString() {
+        return executablePsiElement.getText();
+    }
+
     public boolean isDirty() {
         return executablePsiElement == null || !executablePsiElement.isValid();
     }

@@ -534,11 +534,11 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         } else {
             if (basePsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                if (identifierPsiElement.getElementType().isSameAs(getElementType())) {
+                //if (identifierPsiElement.getElementType().isSameAs(getElementType())) {
                     CharSequence localText = getChars();
                     CharSequence remoteText = identifierPsiElement.getChars();
                     return StringUtil.equalsIgnoreCase(localText, remoteText);
-                }
+                //}
             }
 
             return false;
@@ -552,7 +552,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         } else {
             if (basePsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                return identifierPsiElement.getElementType().isSameAs(getElementType()) &&
+                return /*identifierPsiElement.getElementType().isSameAs(getElementType()) &&*/
                         StringUtil.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
             }
 
