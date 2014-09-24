@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -45,11 +46,11 @@ import com.intellij.openapi.diff.MergeRequest;
 import com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 
 @State(
@@ -262,9 +263,14 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
         DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
-        FileEditor fileEditor = EditorUtil.getFileEditor(databaseFile, basePsiElement.getFile().getVirtualFile());
-        EditorUtil.selectEditor(databaseFile, fileEditor);
-        basePsiElement.navigate(true);
+        VirtualFile virtualFile = basePsiElement.getFile().getVirtualFile();
+        if (virtualFile instanceof DBSourceCodeVirtualFile) {
+            BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
+            if (textEditor != null) {
+                EditorUtil.selectEditor(databaseFile, textEditor);
+                basePsiElement.navigate(true);
+            }
+        }
     }
 
     @Override

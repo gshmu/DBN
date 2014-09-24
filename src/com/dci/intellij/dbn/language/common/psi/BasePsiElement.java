@@ -273,7 +273,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         if (!editorManager.isFileOpen(databaseFile)) {
                             editorManager.openFile(databaseFile, requestFocus);
                         }
-                        BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
+                        BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
                         if (textEditor != null) {
                             descriptor.navigateIn(textEditor.getEditor());
                         }
@@ -282,7 +282,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
                     if (virtualFile instanceof DBConsoleVirtualFile) {
                         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                        BasicTextEditor textEditor = EditorUtil.getFileEditor(consoleVirtualFile);
+                        BasicTextEditor textEditor = EditorUtil.getTextEditor(consoleVirtualFile);
                         if (textEditor != null) {
                             descriptor.navigateIn(textEditor.getEditor());
                         }

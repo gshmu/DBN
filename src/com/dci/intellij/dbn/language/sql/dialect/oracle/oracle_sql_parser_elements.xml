@@ -5294,7 +5294,7 @@
 
 
     <!-- ========= EXPLAIN ========= -->
-    <element-def attributes="TRANSACTIONAL, SPECIFIC" description="EXPLAIN statement" id="explain_statement">
+    <element-def attributes="TRANSACTIONAL, SPECIFIC" description="EXPLAIN PLAN statement" id="explain_statement">
         <token id="000002964" type-id="KW_EXPLAIN" />
         <token id="000002965" type-id="KW_PLAN" />
         <sequence id="000002966" optional="true">
@@ -5319,16 +5319,13 @@
         <token id="000002979" type-id="KW_FOR" />
         <one-of id="000002980">
             <element ref-id="alter_statement" />
-            <element ref-id="commit_statement" />
             <element ref-id="create_statement" />
             <element ref-id="delete_statement" />
             <element ref-id="drop_statement" />
             <element ref-id="insert_statement" />
             <element ref-id="merge_statement" />
-            <element ref-id="rollback_statement" />
             <element ref-id="rename_statement" />
             <element ref-id="select_statement" />
-            <element ref-id="truncate_statement" />
             <element ref-id="update_statement" />
         </one-of>
     </element-def>
