@@ -63,7 +63,7 @@ public class SQLFoldingBuilder implements FoldingBuilder {
         BasePsiElement basePsiElement = (BasePsiElement) node.getPsi();
         Set<IdentifierPsiElement> subjects = new HashSet<IdentifierPsiElement>();
         basePsiElement.collectSubjectPsiElements(subjects);
-        StringBuilder buffer = new StringBuilder(basePsiElement.getElementType().getDescription());
+        StringBuilder buffer = new StringBuilder(basePsiElement.getSpecificElementType().getDescription());
         if (subjects.size() > 0) {
             buffer.append(" (");
             buffer.append(NamingUtil.createNamesList(subjects, 3));
