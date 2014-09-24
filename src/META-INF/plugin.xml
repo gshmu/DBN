@@ -9,8 +9,8 @@
     <idea-version since-build="138.0001" until-build="138.9999"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
-            This product aims to add extensive database development and maintenance capabilities to the IntelliJ
-            IDEA development environment. Along with a qualified and IDE-compliant SQL and PL/SQL editor, it provides advanced database connection management,
+            This product adds extensive database development and maintenance capabilities to the IntelliJ IDEA development environment and related products.
+            Along with a qualified and IDE-compliant SQL and PL/SQL editor, it provides advanced database connection management,
             script execution support, database objects browsing, data and code editor, support for database compiler operations, method execution and debugging,
             database objects factory, as well as various navigation capabilities between all its components.<br>
             See features overview on the <a href="http://www.jetbrains.net/confluence/display/CONTEST/Database+Navigator" target="new">support page</a>.<br><br>
