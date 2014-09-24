@@ -198,7 +198,6 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 }
             }
 
-
             for (StatementExecutionBasicProcessor executionProcessor : executionProcessors) {
                 if (executionProcessor.isDirty() && executionProcessor.matches(executablePsiElement, true)) {
                     executionProcessor.bind(executablePsiElement);
@@ -229,7 +228,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 StatementExecutionProcessor executionProcessor = (StatementExecutionProcessor) iterator.next();
                 if (executionProcessor.isDisposed()) {
                     iterator.remove();
-                } else if (executionProcessor.isOrphan()) {
+                } else if (executionProcessor.isOrphan() && executionProcessor.getExecutionResult() == null) {
                     iterator.remove();
                     DisposerUtil.dispose(executionProcessor);
                 }
