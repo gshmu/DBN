@@ -110,8 +110,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     }
 
     public Project getProject() {
-        StatementExecutionBasicProcessor executionProcessor = getExecutionProcessor();
-        return executionProcessor == null ? null : executionProcessor.getProject();
+        return executionInput == null ? null : executionInput.getProject();
     }
 
     public ConnectionHandler getConnectionHandler() {
