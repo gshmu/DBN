@@ -128,7 +128,8 @@ public abstract class ConnectionBundle
 
                 Element consolesElement = connectionElement.getChild("consoles");
                 if (consolesElement != null) {
-                    for (Element consoleElement : consolesElement.getChildren()) {
+                    for (Object c : consolesElement.getChildren()) {
+                        Element consoleElement = (Element) c;
                         String consoleName = consoleElement.getAttributeValue("name");
                         connectionHandler.getConsoleBundle().createConsole(consoleName);
                     }
