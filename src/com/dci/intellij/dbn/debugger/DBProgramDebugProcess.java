@@ -440,6 +440,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
             public void execute() {
                 // todo review this!!!
                 SourceCodeEditor sourceCodeEditor = null;
+                DBSourceCodeVirtualFile mainContentFile = (DBSourceCodeVirtualFile) databaseFile.getMainContentFile();
                 if (databaseFile.getContentFiles().size() > 1) {
                     FileEditorManager editorManager = FileEditorManager.getInstance(databaseFile.getProject());
                     FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
@@ -448,13 +449,13 @@ public class DBProgramDebugProcess extends XDebugProcess {
                         sourceCodeEditor = (SourceCodeEditor) fileEditor;
                         databaseFile.FAKE_DOCUMENT.set(sourceCodeEditor.getEditor().getDocument());
                     } else {
-                        FileEditor fileEditor = EditorUtil.getFileEditor(databaseFile, databaseFile.getMainContentFile());
+                        FileEditor fileEditor = EditorUtil.getTextEditor(databaseFile, mainContentFile);
                         if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
                             sourceCodeEditor = (SourceCodeEditor) fileEditor;
                         }
                     }
                 } else {
-                    FileEditor fileEditor = EditorUtil.getFileEditor(databaseFile, databaseFile.getMainContentFile());
+                    FileEditor fileEditor = EditorUtil.getTextEditor(databaseFile, mainContentFile);
                     if (fileEditor != null && fileEditor instanceof SourceCodeEditor) {
                         sourceCodeEditor = (SourceCodeEditor) fileEditor;
                     }

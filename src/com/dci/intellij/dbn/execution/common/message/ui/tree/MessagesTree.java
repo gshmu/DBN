@@ -18,7 +18,9 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
@@ -104,8 +106,9 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
                 DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
                 if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
                     editorManager.openFile(databaseFile, false);
-                    if (compilerMessage.getContentFile() != null) {
-                        BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, compilerMessage.getContentFile());
+                    DBContentVirtualFile contentFile = compilerMessage.getContentFile();
+                    if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
+                        BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) contentFile);
                         if (textEditor != null) {
                             navigateInEditor(compilerMessage, textEditor, databaseFile);
                         }

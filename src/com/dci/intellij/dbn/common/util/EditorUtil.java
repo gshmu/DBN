@@ -65,7 +65,7 @@ public class EditorUtil {
     }
 
     @Nullable
-    public static BasicTextEditor getFileEditor(DBEditableObjectVirtualFile databaseFile, DBSourceCodeVirtualFile sourceCodeVirtualFile) {
+    public static BasicTextEditor getTextEditor(DBEditableObjectVirtualFile databaseFile, DBSourceCodeVirtualFile sourceCodeVirtualFile) {
         FileEditorManager editorManager = FileEditorManager.getInstance(databaseFile.getProject());
         FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
         for (FileEditor fileEditor : fileEditors) {
@@ -81,7 +81,7 @@ public class EditorUtil {
     }
 
     @Nullable
-    public static BasicTextEditor getFileEditor(DBConsoleVirtualFile consoleVirtualFile) {
+    public static BasicTextEditor getTextEditor(DBConsoleVirtualFile consoleVirtualFile) {
         FileEditorManager editorManager = FileEditorManager.getInstance(consoleVirtualFile.getProject());
         FileEditor[] fileEditors = editorManager.getEditors(consoleVirtualFile);
         for (FileEditor fileEditor : fileEditors) {
