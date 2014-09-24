@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -28,6 +27,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -35,7 +35,6 @@ import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -274,14 +273,19 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         if (!editorManager.isFileOpen(databaseFile)) {
                             editorManager.openFile(databaseFile, requestFocus);
                         }
-                        BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, virtualFile);
-                        descriptor.navigateIn(textEditor.getEditor());
+                        BasicTextEditor textEditor = EditorUtil.getFileEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
+                        if (textEditor != null) {
+                            descriptor.navigateIn(textEditor.getEditor());
+                        }
                         return;
                     }
 
-                    Editor editor = editorManager.getSelectedTextEditor();
-                    if (editor != null && virtualFile == DocumentUtil.getVirtualFile(editor)) {
-                        super.navigate(requestFocus);
+                    if (virtualFile instanceof DBConsoleVirtualFile) {
+                        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                        BasicTextEditor textEditor = EditorUtil.getFileEditor(consoleVirtualFile);
+                        if (textEditor != null) {
+                            descriptor.navigateIn(textEditor.getEditor());
+                        }
                         return;
                     }
 
@@ -289,7 +293,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof DDLFileEditor) {
                             DDLFileEditor textEditor = (DDLFileEditor) fileEditor;
-                            if (textEditor.getVirtualFile() == virtualFile) {
+                            if (textEditor.getVirtualFile().equals(virtualFile)) {
                                 descriptor.navigateIn(textEditor.getEditor());
                                 return;
                             }

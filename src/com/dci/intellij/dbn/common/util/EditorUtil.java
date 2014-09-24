@@ -5,10 +5,13 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -61,14 +64,31 @@ public class EditorUtil {
         return null;
     }
 
-    public static BasicTextEditor getFileEditor(DBEditableObjectVirtualFile databaseFile, VirtualFile virtualFile) {
+    @Nullable
+    public static BasicTextEditor getFileEditor(DBEditableObjectVirtualFile databaseFile, DBSourceCodeVirtualFile sourceCodeVirtualFile) {
         FileEditorManager editorManager = FileEditorManager.getInstance(databaseFile.getProject());
         FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
         for (FileEditor fileEditor : fileEditors) {
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
                 VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
-                if (file!= null && file.equals(virtualFile)) {
+                if (file!= null && file.equals(sourceCodeVirtualFile)) {
+                    return basicTextEditor;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static BasicTextEditor getFileEditor(DBConsoleVirtualFile consoleVirtualFile) {
+        FileEditorManager editorManager = FileEditorManager.getInstance(consoleVirtualFile.getProject());
+        FileEditor[] fileEditors = editorManager.getEditors(consoleVirtualFile);
+        for (FileEditor fileEditor : fileEditors) {
+            if (fileEditor instanceof BasicTextEditor) {
+                BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+                VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
+                if (file!= null && file.equals(consoleVirtualFile)) {
                     return basicTextEditor;
                 }
             }

@@ -5294,7 +5294,7 @@
 
 
     <!-- ========= EXPLAIN ========= -->
-    <element-def attributes="EXECUTABLE, TRANSACTIONAL, STRUCTURE" description="EXPLAIN statement" id="explain_statement">
+    <element-def attributes="TRANSACTIONAL, SPECIFIC" description="EXPLAIN statement" id="explain_statement">
         <token id="000002964" type-id="KW_EXPLAIN" />
         <token id="000002965" type-id="KW_PLAN" />
         <sequence id="000002966" optional="true">

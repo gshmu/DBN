@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
@@ -77,6 +78,10 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     public void dispose() {
         connectionHandler = null;
         currentSchemaRef = null;
+    }
+
+    public Project getProject() {
+        return connectionHandler == null ? null : connectionHandler.getProject();
     }
 
     public void setCurrentSchema(DBSchema currentSchema) {
