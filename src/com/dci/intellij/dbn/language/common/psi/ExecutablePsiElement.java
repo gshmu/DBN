@@ -25,7 +25,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
     public synchronized StatementExecutionBasicProcessor getExecutionProcessor() {
         VirtualFileSystem fileSystem = getContainingFile().getVirtualFile().getFileSystem();
         if (fileSystem instanceof LocalFileSystem || fileSystem instanceof DatabaseFileSystem) {
-            if (executionProcessor == null || !executionProcessor.matches(this, false)) {
+            if (executionProcessor == null || executionProcessor.isDisposed() || !executionProcessor.matches(this, false)) {
                 StatementExecutionManager  statementExecutionManager = StatementExecutionManager.getInstance(getProject());
                 executionProcessor = statementExecutionManager.locateExecutionProcessor(this);
                 if (executionProcessor == null) {

@@ -227,7 +227,9 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             Iterator iterator = executionProcessors.iterator();
             while (iterator.hasNext()) {
                 StatementExecutionProcessor executionProcessor = (StatementExecutionProcessor) iterator.next();
-                if (executionProcessor.isOrphan()) {
+                if (executionProcessor.isDisposed()) {
+                    iterator.remove();
+                } else if (executionProcessor.isOrphan()) {
                     iterator.remove();
                     DisposerUtil.dispose(executionProcessor);
                 }

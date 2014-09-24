@@ -82,7 +82,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (!psiFile.equals(file)) return true;
 
         NamedPsiElement rootPsiElement = executablePsiElement.lookupEnclosingRootPsiElement();
-        return rootPsiElement == null || !file.contains(rootPsiElement, true);
+        return rootPsiElement == null || !PsiUtil.contains(file, rootPsiElement, true);
     }
 
     public boolean isDirty() {
@@ -198,7 +198,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public DBSchema getCurrentSchema() {
-        return file.getCurrentSchema();
+        return file == null ? null : file.getCurrentSchema();
     }
 
     public ExecutablePsiElement getExecutablePsiElement() {
@@ -206,7 +206,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public Project getProject() {
-        return file.getProject();
+        return file == null ? null : file.getProject();
     }
 
     public DBLanguagePsiFile getFile() {
@@ -234,7 +234,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public boolean canExecute() {
-        return true;
+        return !isDisposed();
     }
 
     public void navigateToResult() {

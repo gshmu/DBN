@@ -16,6 +16,8 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -222,33 +224,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 getConnectionMappingManager().setCurrentSchema(file, schema);
             }
         }
-    }
-
-    public boolean contains(NamedPsiElement element, boolean leniant) {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            if (child instanceof NamedPsiElement) {
-                NamedPsiElement namedPsiElement = (NamedPsiElement) child;
-                if (namedPsiElement == element) {
-                    return true;
-                }
-            }
-            child = child.getNextSibling();
-        }
-        if (leniant) {
-            child = getFirstChild();
-            while (child != null) {
-                if (child instanceof NamedPsiElement) {
-                    NamedPsiElement namedPsiElement = (NamedPsiElement) child;
-                    if (namedPsiElement.matches(element)) {
-                        return true;
-                    }
-                }
-                child = child.getNextSibling();
-            }
-        }
-
-        return false;
     }
 
     @NotNull
