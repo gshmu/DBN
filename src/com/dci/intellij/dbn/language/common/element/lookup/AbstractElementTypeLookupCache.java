@@ -75,6 +75,12 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     public Set<LeafElementType> getFirstRequiredLeafs() {
         return firstRequiredLeafs;
     }
+    @Override
+    public Set<LeafElementType> getFirstPossibleLeafs() {
+        return firstPossibleLeafs;
+    }
+
+
 
     public boolean couldStartWithLeaf(LeafElementType leafElementType) {
         return firstPossibleLeafs.contains(leafElementType);

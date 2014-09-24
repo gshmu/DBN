@@ -60,6 +60,10 @@ public interface ElementType {
 
     WrappingDefinition getWrapping();
 
+    boolean isWrappingBegin(LeafElementType elementType);
+
+    boolean isWrappingEnd(LeafElementType elementType);
+
     Branch getBranch();
 
     int getIndexInParent();
