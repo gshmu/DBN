@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
@@ -107,6 +108,16 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     @Override
     public WrappingDefinition getWrapping() {
         return null;
+    }
+
+    @Override
+    public boolean isWrappingBegin(LeafElementType elementType) {
+        return false;
+    }
+
+    @Override
+    public boolean isWrappingEnd(LeafElementType elementType) {
+        return false;
     }
 
     @Nullable

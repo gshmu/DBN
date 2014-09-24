@@ -92,6 +92,16 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
+    public boolean isWrappingBegin(LeafElementType elementType) {
+        return false;
+    }
+
+    @Override
+    public boolean isWrappingEnd(LeafElementType elementType) {
+        return false;
+    }
+
+    @Override
     @Nullable
     public Branch getBranch() {
         return null;

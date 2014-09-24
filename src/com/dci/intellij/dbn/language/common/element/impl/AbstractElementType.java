@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
@@ -91,6 +92,16 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     public WrappingDefinition getWrapping() {
         return wrapping;
+    }
+
+    @Override
+    public boolean isWrappingBegin(LeafElementType elementType) {
+        return wrapping != null && wrapping.getBeginElementType() == elementType;
+    }
+
+    @Override
+    public boolean isWrappingEnd(LeafElementType elementType) {
+        return wrapping != null && wrapping.getEndElementType() == elementType;
     }
 
     protected abstract ElementTypeLookupCache createLookupCache();

@@ -31,6 +31,8 @@ public interface ElementTypeLookupCache<T extends ElementType> {
 
     boolean couldStartWithToken(TokenType tokenType);
 
+    Set<LeafElementType> getFirstPossibleLeafs();
+
     Set<LeafElementType> getFirstRequiredLeafs();
 
     boolean containsLandmarkToken(TokenType tokenType, PathNode node);

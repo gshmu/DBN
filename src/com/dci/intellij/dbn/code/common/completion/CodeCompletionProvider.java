@@ -132,8 +132,9 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
         Map<String, LeafElementType> nextPossibleLeafs = new THashMap<String, LeafElementType>();
         DBObject parentObject = null;
-        if (element.getParent() instanceof QualifiedIdentifierPsiElement) {
-            QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) element.getParent();
+        PsiElement parent = element.getParent();
+        if (parent instanceof QualifiedIdentifierPsiElement) {
+            QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) parent;
             ElementType separator = qualifiedIdentifier.getElementType().getSeparatorToken();
 
             if (element.getElementType() == separator){
@@ -156,10 +157,22 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                     }
                 }
             }
+        } else if (parent instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) parent;
+            ElementType elementType = basePsiElement.getElementType();
+            if (elementType.isWrappingBegin(element.getElementType())) {
+                Set<LeafElementType> firstPossibleLeafs = elementType.getLookupCache().getFirstPossibleLeafs();
+                for (LeafElementType leafElementType : firstPossibleLeafs) {
+                    String leafUniqueKey = getLeafUniqueKey(leafElementType);
+                    if (leafUniqueKey != null) {
+                        nextPossibleLeafs.put(leafUniqueKey, leafElementType);
+                    }
+                }
+            }
         }
 
-        if (nextPossibleLeafs.size() == 0) {
-            LeafElementType elementType = (LeafElementType) element.getElementType();
+        if (nextPossibleLeafs.isEmpty()) {
+            LeafElementType elementType = element.getElementType();
             PathNode pathNode = new ASTPathNode(element.getNode());
             ElementLookupContext lookupContext = computeParseBranches(element.getNode(), context.getDatabaseVersion());
             for (LeafElementType leafElementType : elementType.getNextPossibleLeafs(pathNode, lookupContext)) {
