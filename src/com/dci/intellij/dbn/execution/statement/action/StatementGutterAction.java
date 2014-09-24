@@ -53,16 +53,18 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     public String getTooltipText() {
-        if (executionProcessor.canExecute()) {
-            return "<html>Execute <b>" + executionProcessor.getStatementName() + "</b></html>";
-        } else {
-            StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-            if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_SUCCESS) {
-                return "<html>Show execution result <br> <b>" + executionResult.getResultName() + "</b></html>";
-            } else if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR) {
-                return "<html>Error executing statement <br> <font color='red'>" + executionResult.getExecutionMessage().getCauseMessage() + "</font></html>";
-            }
+        if (!executionProcessor.isDisposed()) {
+            if (executionProcessor.canExecute()) {
+                return "<html>Execute <b>" + executionProcessor.getStatementName() + "</b></html>";
+            } else {
+                StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+                if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_SUCCESS) {
+                    return "<html>Show execution result <br> <b>" + executionResult.getResultName() + "</b></html>";
+                } else if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR) {
+                    return "<html>Error executing statement <br> <font color='red'>" + executionResult.getExecutionMessage().getCauseMessage() + "</font></html>";
+                }
 
+            }
         }
         return null;
     }

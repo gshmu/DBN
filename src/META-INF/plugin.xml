@@ -33,6 +33,7 @@
                 - "Save Console To File" functionality<br>
                 - Statement execution shortcut improvements<br>
                 - Support for Oracle trigger syntax<br>
+                - Support for Oracle explain plan syntax<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.3272</b>

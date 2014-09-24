@@ -55,10 +55,13 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
     }
 
     public boolean canExecute() {
-        StatementExecutionBasicResult executionResult = getExecutionResult();
-        return executionResult == null ||
-                executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR ||
-                executionResult.getExecutionInput().isObsolete() || isDirty();
+        if (super.canExecute()) {
+            StatementExecutionBasicResult executionResult = getExecutionResult();
+            return executionResult == null ||
+                    executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR ||
+                    executionResult.getExecutionInput().isObsolete() || isDirty();
+        }
+        return false;
     }
 
     public void navigateToResult() {
