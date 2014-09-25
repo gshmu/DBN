@@ -242,6 +242,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public void disconnect() throws SQLException {
         try {
             connectionPool.closeConnections();
+            changesBundle = null;
         } finally {
             getConnectionStatus().setConnected(false);
         }
