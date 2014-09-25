@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.compiler.CompileSourceAction;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
@@ -18,13 +19,14 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     public CompileObjectAction() {
         super("", "", Icons.OBEJCT_COMPILE);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         if (virtualFile!= null) {
             Project project = virtualFile.getProject();
@@ -33,11 +35,11 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
             compilerManager.compileObject(
                     virtualFile.getObject(),
                     virtualFile.getContentType(),
-                    compilerSettings.getCompileType(), false);
+                    compilerSettings.getCompileType(), CompileSourceAction.COMPILE);
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         if (virtualFile == null) {

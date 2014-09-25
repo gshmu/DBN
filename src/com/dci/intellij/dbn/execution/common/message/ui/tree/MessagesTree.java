@@ -4,6 +4,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -21,6 +22,7 @@ import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
@@ -31,12 +33,14 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 
-public class MessagesTree extends DBNTree implements TreeSelectionListener, MouseListener {
-    public MessagesTree() {
+public class MessagesTree extends DBNTree implements Disposable {
+    private Project project;
+    public MessagesTree(Project project) {
         super(new MessagesTreeModel());
+        this.project = project;
         setCellRenderer(new MessagesTreeCellRenderer());
-        addTreeSelectionListener(this);
-        addMouseListener(this);
+        addTreeSelectionListener(treeSelectionListener);
+        addMouseListener(mouseListener);
         setRootVisible(false);
         setShowsRootHandles(true);
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
@@ -78,15 +82,6 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
 
     }
 
-
-    public void valueChanged(TreeSelectionEvent event) {
-        if (event.isAddedPath()) {
-            Object object = event.getPath().getLastPathComponent();
-            navigateToCode(object);
-            grabFocus();
-        }
-    }
-
     private void navigateToCode(Object object) {
         if (object instanceof StatementExecutionMessageNode) {
             StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) object;
@@ -99,7 +94,6 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
             CompilerMessageNode compilerMessageNode = (CompilerMessageNode) object;
             CompilerMessage compilerMessage = compilerMessageNode.getCompilerMessage();
 
-            Project project = compilerMessage.getProject();
             if (project != null) {
                 FileEditorManager editorManager = FileEditorManager.getInstance(project);
 
@@ -148,35 +142,53 @@ public class MessagesTree extends DBNTree implements TreeSelectionListener, Mous
 
         EditorUtil.selectEditor(databaseFile, textEditor);
         VirtualFile virtualFile = DocumentUtil.getVirtualFile(textEditor.getEditor());
-        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(compilerMessage.getProject(), virtualFile);
+        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
         codeEditor.navigateTo(openFileDescriptor);
     }
 
     /*********************************************************
+     *                   TreeSelectionListener               *
+     *********************************************************/
+    private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
+        @Override
+        public void valueChanged(TreeSelectionEvent event) {
+            if (event.isAddedPath()) {
+                Object object = event.getPath().getLastPathComponent();
+                navigateToCode(object);
+                grabFocus();
+            }
+        }
+    };
+
+
+    /*********************************************************
      *                        MouseListener                  *
      *********************************************************/
-    public void mouseClicked(MouseEvent event) {
-        if (event.getButton() == MouseEvent.BUTTON1) {
-            TreePath selectionPath = getSelectionPath();
-            if (selectionPath != null) {
-                if (event.getClickCount() > 1 ) {
-                    Object value = selectionPath.getLastPathComponent();
-                    if (value instanceof StatementExecutionMessageNode) {
-                        StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) value;
-                        StatementExecutionResult executionResult = execMessageNode.getExecutionMessage().getExecutionResult();
-                        StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
-                        statementViewer.show(event.getComponent(), event.getPoint());
-                        event.consume();
+    private MouseListener mouseListener = new MouseAdapter() {
+        public void mouseClicked(MouseEvent event) {
+            if (event.getButton() == MouseEvent.BUTTON1) {
+                TreePath selectionPath = getSelectionPath();
+                if (selectionPath != null) {
+                    if (event.getClickCount() > 1 ) {
+                        Object value = selectionPath.getLastPathComponent();
+                        if (value instanceof StatementExecutionMessageNode) {
+                            StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) value;
+                            StatementExecutionResult executionResult = execMessageNode.getExecutionMessage().getExecutionResult();
+                            StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
+                            statementViewer.show(event.getComponent(), event.getPoint());
+                            event.consume();
+                        }
+                    } else {
+                        Object value = selectionPath.getLastPathComponent();
+                        navigateToCode(value);
                     }
-                } else {
-                    Object value = selectionPath.getLastPathComponent();
-                    navigateToCode(value);
                 }
             }
         }
+    };
+
+    @Override
+    public void dispose() {
+        project = null;
     }
-    public void mousePressed(MouseEvent event) {}
-    public void mouseEntered(MouseEvent event) {}
-    public void mouseExited(MouseEvent event) {}
-    public void mouseReleased(MouseEvent event) {}
 }
