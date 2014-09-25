@@ -491,6 +491,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                 if (connectionHandler.isConnected()) {
                     loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
                 } else {
+                    editorTable.cancelEditing();
                     editorTable.revalidate();
                     editorTable.repaint();
                 }

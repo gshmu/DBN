@@ -930,7 +930,7 @@
     </element-def>
 
     <!-- ========= EXPLAIN ========= -->
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY, SCOPE_ISOLATION, STRUCTURE" description="EXPLAIN statement" id="explain_statement">
+    <element-def attributes="DATA_MANIPULATION, QUERY, SPECIFIC" description="EXPLAIN statement" id="explain_statement">
         <token id="000000466" type-id="KW_EXPLAIN" />
         <one-of id="000000467" optional="true">
             <wrapper id="000000468" template="PARENTHESES" version="9.0">
