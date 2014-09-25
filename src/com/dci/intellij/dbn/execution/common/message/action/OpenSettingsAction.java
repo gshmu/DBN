@@ -7,13 +7,14 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class OpenSettingsAction extends ExecutionMessagesAction {
     public OpenSettingsAction(MessagesTree messagesTree) {
         super(messagesTree, "Close", Icons.EXEC_RESULT_OPTIONS);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             GlobalProjectSettingsDialog globalSettingsDialog = new GlobalProjectSettingsDialog(project);

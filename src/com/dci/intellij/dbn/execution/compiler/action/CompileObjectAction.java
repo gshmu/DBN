@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.compiler.action;
 
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.compiler.CompileSourceAction;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
@@ -12,6 +13,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CompileObjectAction extends AnAction {
     private DBSchemaObject object;
@@ -23,13 +25,13 @@ public class CompileObjectAction extends AnAction {
         this.contentType = contentType;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(object.getProject());
         CompileType compileType = getCompilerSettings(object.getProject()).getCompileType();
-        compilerManager.compileObject(object, contentType, compileType, false);
+        compilerManager.compileObject(object, contentType, compileType, CompileSourceAction.COMPILE);
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
 
         CompilerSettings compilerSettings = getCompilerSettings(object.getProject());

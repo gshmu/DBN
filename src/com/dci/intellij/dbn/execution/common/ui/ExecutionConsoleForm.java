@@ -226,7 +226,8 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
      *********************************************************/
     private ExecutionMessagesPanel getMessagesPanel() {
         if (executionMessagesPanel == null) {
-            executionMessagesPanel = new ExecutionMessagesPanel();
+            executionMessagesPanel = new ExecutionMessagesPanel(project);
+            Disposer.register(this, executionMessagesPanel);
         }
         return executionMessagesPanel;
     }

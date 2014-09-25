@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.CloseMessagesWindowAction;
 import com.dci.intellij.dbn.execution.common.message.action.CollapseMessagesTreeAction;
@@ -10,47 +11,50 @@ import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class ExecutionMessagesPanel {
+public class ExecutionMessagesPanel extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
     private JScrollPane messagesScrollPane;
     private JPanel messagesPanel;
 
-    private MessagesTree tMessages;
+    private MessagesTree messagesTree;
 
-    public ExecutionMessagesPanel() {
-        tMessages = new MessagesTree();
-        messagesScrollPane.setViewportView(tMessages);
+    public ExecutionMessagesPanel(Project project) {
+        messagesTree = new MessagesTree(project);
+        messagesScrollPane.setViewportView(messagesTree);
         messagesPanel.setBorder(IdeBorderFactory.createBorder());
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.ExecutionMessages.Controls", false,
-                new CloseMessagesWindowAction(tMessages),
-                new ViewExecutedStatementAction(tMessages),
-                new ExpandMessagesTreeAction(tMessages),
-                new CollapseMessagesTreeAction(tMessages),
+                new CloseMessagesWindowAction(messagesTree),
+                new ViewExecutedStatementAction(messagesTree),
+                new ExpandMessagesTreeAction(messagesTree),
+                new CollapseMessagesTreeAction(messagesTree),
                 ActionUtil.SEPARATOR,
-                new OpenSettingsAction(tMessages));
+                new OpenSettingsAction(messagesTree));
         actionsPanel.add(actionToolbar.getComponent());
 
+        Disposer.register(this, messagesTree);
     }
 
     public void addExecutionMessage(StatementExecutionMessage executionMessage, boolean focus) {
-        tMessages.addExecutionMessage(executionMessage, focus);
+        messagesTree.addExecutionMessage(executionMessage, focus);
     }
 
     public void addCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
-        tMessages.addCompilerMessage(compilerMessage, focus);
+        messagesTree.addCompilerMessage(compilerMessage, focus);
     }
 
     public void reset() {
-        tMessages.reset();
+        messagesTree.reset();
     }
 
     public JComponent getComponent() {
@@ -58,6 +62,6 @@ public class ExecutionMessagesPanel {
     }
 
     public void select(CompilerMessage compilerMessage) {
-        tMessages.selectCompilerMessage(compilerMessage);
+        messagesTree.selectCompilerMessage(compilerMessage);
     }
 }
