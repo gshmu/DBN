@@ -52,11 +52,10 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
     private ConnectionHandler getConnectionHandler() {
         ConnectionFilterSettings configuration = getConfiguration();
         ConnectionManager connectionManager = ConnectionManager.getInstance(configuration.getProject());
-        for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                if (configuration == connectionHandler.getSettings().getFilterSettings()) {
-                    return connectionHandler;
-                }
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (configuration == connectionHandler.getSettings().getFilterSettings()) {
+                return connectionHandler;
             }
         }
         return null;

@@ -139,8 +139,14 @@ public abstract class ConnectionBundle
     }
 
     public void writeConfiguration(Element element) {
-        Element connectionsElement = new Element("connections");
-        element.addContent(connectionsElement);
+        Element connectionsElement;
+        if (element.getName().equals("connections")) {
+            connectionsElement = element;
+        } else {
+            connectionsElement = new Element("connections");
+            element.addContent(connectionsElement);
+        }
+
         for (ConnectionHandler connectionHandler : connectionHandlers.getFullList()) {
             Element connectionElement = new Element("connection");
             ConnectionSettings connectionSettings = connectionHandler.getSettings();

@@ -33,7 +33,6 @@ public interface ConnectionHandler extends Disposable{
     SQLException DBN_NOT_CONNECTED_EXCEPTION = new SQLException("DBN_NOT_CONNECTED_EXCEPTION");
 
     Project getProject();
-    Module getModule();
     Connection getPoolConnection() throws SQLException;
     Connection getPoolConnection(DBSchema schema) throws SQLException;
     Connection getStandaloneConnection() throws SQLException;

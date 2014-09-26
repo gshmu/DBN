@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.menu.action;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -26,6 +21,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     private ConnectionHandler latestSelection; // todo move to data context
@@ -40,19 +40,17 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            List<ConnectionBundle> connectionBundles = connectionManager.getConnectionBundles();
+            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
 
             ConnectionHandler singleConnectionHandler = null;
             DefaultActionGroup actionGroup = new DefaultActionGroup();
-            for (ConnectionBundle connectionBundle : connectionBundles) {
-                if (connectionBundle.getConnectionHandlers().size() > 0) {
-                    actionGroup.addSeparator();
-                    for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                        SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
-                        actionGroup.add(connectionAction);
-                        singleConnectionHandler = connectionHandler;
-                    }
+            if (connectionBundle.getConnectionHandlers().size() > 0) {
+                actionGroup.addSeparator();
+                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+                    SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
+                    actionGroup.add(connectionAction);
+                    singleConnectionHandler = connectionHandler;
                 }
             }
 

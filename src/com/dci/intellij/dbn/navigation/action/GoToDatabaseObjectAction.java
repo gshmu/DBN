@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.navigation.action;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -49,18 +47,16 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                 DefaultActionGroup actionGroup = new DefaultActionGroup();
 
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                List<ConnectionBundle> connectionBundles = connectionManager.getConnectionBundles();
-                for (ConnectionBundle connectionBundle : connectionBundles) {
-                    if (connectionBundle.getConnectionHandlers().size() > 0) {
-                        if ((actionGroup.getChildrenCount() > 1)) {
-                            actionGroup.addSeparator();
-                        }
+                ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+                if (connectionBundle.getConnectionHandlers().size() > 0) {
+                    if ((actionGroup.getChildrenCount() > 1)) {
+                        actionGroup.addSeparator();
+                    }
 
-                        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                            SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
-                            actionGroup.add(connectionAction);
-                            singleConnectionHandler = connectionHandler;
-                        }
+                    for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+                        SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler);
+                        actionGroup.add(connectionAction);
+                        singleConnectionHandler = connectionHandler;
                     }
                 }
 

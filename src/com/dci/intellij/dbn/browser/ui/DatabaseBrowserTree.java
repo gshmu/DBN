@@ -101,11 +101,9 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
         new SimpleLaterInvocator() {
             public void execute() {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-                List<ConnectionBundle> connectionBundles = connectionManager.getConnectionBundles();
-                for (ConnectionBundle connectionBundle : connectionBundles) {
-                    TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
-                    setExpandedState(treePath, true);
-                }
+                ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+                TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
+                setExpandedState(treePath, true);
             }
         }.start();
     }

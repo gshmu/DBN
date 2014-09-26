@@ -148,11 +148,10 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
     private ConnectionHandler getConnectionHandler() {
         ObjectNameFilterSettings nameFilterSettings = getConfiguration();
         ConnectionManager connectionManager = ConnectionManager.getInstance(nameFilterSettings.getProject());
-        for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                if (nameFilterSettings == connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings()) {
-                    return connectionHandler;
-                }
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (nameFilterSettings == connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings()) {
+                return connectionHandler;
             }
         }
         return null;

@@ -177,14 +177,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionBundle.getProject();
     }
 
-    public Module getModule() {
-        if (connectionBundle instanceof ModuleConnectionBundle) {
-            ModuleConnectionBundle moduleConnectionManager = (ModuleConnectionBundle) connectionBundle;
-            return moduleConnectionManager.getModule();
-        }
-        return null;
-    }
-
     public boolean isValid(boolean check) {
         if (check) {
             try {
@@ -367,13 +359,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
      *                       TreeElement                     *
      *********************************************************/
     public String getQualifiedName() {
-        if (connectionBundle instanceof ProjectConnectionBundle) {
-            return "Project - " + getPresentableText();
-        } else {
-            ModuleConnectionBundle connectionManager = (ModuleConnectionBundle) this.connectionBundle;
-            Module module = connectionManager.getModule();
-            return module.getName() + " - " + getPresentableText();
-        }
+        return getPresentableText();
     }
 
     public String getName() {

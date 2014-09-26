@@ -1,15 +1,12 @@
 package com.dci.intellij.dbn.connection;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.config.ui.GlobalConnectionSettingsForm;
 import com.dci.intellij.dbn.options.ProjectSettings;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class GlobalConnectionSettings extends ProjectConfiguration<GlobalConnectionSettingsForm> {
 
@@ -35,6 +32,11 @@ public class GlobalConnectionSettings extends ProjectConfiguration<GlobalConnect
         return "connectionBundle";
     }
 
+    @Override
+    public String getConfigElementName() {
+        return "connections";
+    }
+
     /*********************************************************
     *                   UnnamedConfigurable                 *
     *********************************************************/
@@ -44,58 +46,33 @@ public class GlobalConnectionSettings extends ProjectConfiguration<GlobalConnect
 
     public boolean isModified() {
         ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(getProject());
-        if (projectConnectionManager.isModified()) return true;
-
-        Module[] modules =  ModuleManager.getInstance(getProject()).getModules();
-        for (Module module : modules) {
-            ModuleConnectionBundle moduleConnectionManager = ModuleConnectionBundle.getInstance(module);
-            if (moduleConnectionManager.isModified()) return true;
-        }
-        return false;
+        return projectConnectionManager.isModified();
     }
 
     public void apply() throws ConfigurationException {
         ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(getProject());
         projectConnectionManager.apply();
-
-        Module[] modules =  ModuleManager.getInstance(getProject()).getModules();
-        for (Module module : modules) {
-            ModuleConnectionBundle moduleConnectionManager = ModuleConnectionBundle.getInstance(module);
-            moduleConnectionManager.apply();
-        }
     }
 
     public void reset() {
         ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(getProject());
         projectConnectionManager.reset();
-
-        Module[] modules =  ModuleManager.getInstance(getProject()).getModules();
-        for (Module module : modules) {
-            ModuleConnectionBundle moduleConnectionManager = ModuleConnectionBundle.getInstance(module);
-            moduleConnectionManager.reset();
-        }
     }
 
     @Override
     public void disposeUIResources() {
         ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(getProject());
         projectConnectionManager.disposeUIResources();
-
-        Module[] modules =  ModuleManager.getInstance(getProject()).getModules();
-        for (Module module : modules) {
-            ModuleConnectionBundle moduleConnectionManager = ModuleConnectionBundle.getInstance(module);
-            moduleConnectionManager.disposeUIResources();
-        }
         super.disposeUIResources();
     }
 
     public void readConfiguration(Element element) {
-        ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(getProject());
-
     }
 
     public void writeConfiguration(Element element) {
+/*
         ProjectConnectionBundle connectionBundle = ProjectConnectionBundle.getInstance(getProject());
         connectionBundle.writeConfiguration(element);
+*/
     }
 }
