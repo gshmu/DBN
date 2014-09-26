@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +27,10 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiManagerImpl;
+import com.intellij.psi.impl.file.impl.FileManagerImpl;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -131,6 +136,30 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
         }
     };
+
+    @Override
+    public void projectClosing(Project project) {
+        if (project == getProject()) {
+            PsiManagerImpl psiManager = (PsiManagerImpl) PsiManager.getInstance(project);
+            FileManagerImpl fileManager = (FileManagerImpl) psiManager.getFileManager();
+            ConcurrentMap<VirtualFile, FileViewProvider> fileViewProviderCache = fileManager.getVFileToViewProviderMap();
+            for (VirtualFile virtualFile : fileViewProviderCache.keySet()) {
+                if (virtualFile instanceof DBContentVirtualFile) {
+                    DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
+                    if (contentVirtualFile.isDisposed() || contentVirtualFile.getProject() == project) {
+                        fileViewProviderCache.remove(virtualFile);
+                    }
+                } else if (virtualFile instanceof DBObjectVirtualFile) {
+                    DBObjectVirtualFile objectVirtualFile = (DBObjectVirtualFile) virtualFile;
+                    if (objectVirtualFile.isDisposed() || objectVirtualFile.getProject() == project) {
+                        fileViewProviderCache.remove(virtualFile);
+                    }
+                }
+            }
+
+            DatabaseFileSystem.getInstance().clearCachedFiles(project);
+        }
+    }
 
     /*********************************************
      *            PersistentStateComponent       *

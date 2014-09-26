@@ -242,8 +242,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Override
     public void dispose() {
-        DisposerUtil.dispose(contentFiles);
         super.dispose();
+        DisposerUtil.dispose(contentFiles);
     }
 
 
