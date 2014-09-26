@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -36,17 +35,20 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.impl.ProjectLifecycleListener;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 
-public class DatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent{
+public class DatabaseFileSystem extends VirtualFileSystem implements ApplicationComponent {
     public static final String PROTOCOL = "db";
     public static final String PROTOCOL_PREFIX = PROTOCOL + "://";
 
     private static final String ERR = "File manipulation not allowed within database file system!";
     private Map<DBObjectRef, DBEditableObjectVirtualFile> filesCache = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
+
+    public DatabaseFileSystem() {
+    }
 
     public static DatabaseFileSystem getInstance() {
         return ApplicationManager.getApplication().getComponent(DatabaseFileSystem.class);
@@ -281,13 +283,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         return "DBNavigator.DatabaseFileSystem";
     }
 
-    public void initComponent() {
-        EventManager.subscribe(ProjectLifecycleListener.TOPIC, projectLifecycleListener);
-    }
+    public void initComponent() {}
 
-    public void disposeComponent() {
-        EventManager.unsubscribe(projectLifecycleListener);
-    }
+    public void disposeComponent() {}
 
     /*********************************************************
      *              FileEditorManagerListener                *
@@ -381,21 +379,15 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }
     }
 
-    /*********************************************************
-     *              ProjectLifecycleListener                 *
-     *********************************************************/
-    private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener.Adapter() {
-        @Override
-        public void afterProjectClosed(@NotNull Project project) {
-            Iterator<DBObjectRef> objectRefs = filesCache.keySet().iterator();
-            while (objectRefs.hasNext()) {
-                DBObjectRef objectRef = objectRefs.next();
-                DBEditableObjectVirtualFile file = filesCache.get(objectRef);
-                if (file.getProject() == project) {
-                    objectRefs.remove();
-                    file.dispose();
-                }
+    public void clearCachedFiles(Project project) {
+        Iterator<DBObjectRef> objectRefs = filesCache.keySet().iterator();
+        while (objectRefs.hasNext()) {
+            DBObjectRef objectRef = objectRefs.next();
+            DBEditableObjectVirtualFile file = filesCache.get(objectRef);
+            if (file.getProject() == project) {
+                objectRefs.remove();
+                Disposer.dispose(file);
             }
         }
-    };
+    }
 }

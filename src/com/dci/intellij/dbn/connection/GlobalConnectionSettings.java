@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.config.ui.GlobalConnectionSettingsForm;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -90,10 +90,12 @@ public class GlobalConnectionSettings extends ProjectConfiguration<GlobalConnect
     }
 
     public void readConfiguration(Element element) {
+        ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(getProject());
 
     }
 
     public void writeConfiguration(Element element) {
-        
+        ProjectConnectionBundle connectionBundle = ProjectConnectionBundle.getInstance(getProject());
+        connectionBundle.writeConfiguration(element);
     }
 }

@@ -185,6 +185,9 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         return 1;
     }
 
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
     private boolean disposed;
 
     public boolean isDisposed() {
