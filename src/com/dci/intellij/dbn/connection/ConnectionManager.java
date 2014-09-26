@@ -22,23 +22,18 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ConnectionManager extends AbstractProjectComponent {
     private final ConnectionSettingsListener connectionSettingsListener;
-    private List<ConnectionBundle> connectionBundles = new ArrayList<ConnectionBundle>();
     private ConnectionBundle connectionBundle;
     private Timer idleConnectionCleaner;
 
@@ -108,9 +103,7 @@ public class ConnectionManager extends AbstractProjectComponent {
 
     private synchronized void initConnectionBundles() {
         Project project = getProject();
-        connectionBundles.clear();
         connectionBundle = ProjectConnectionBundle.getInstance(project);
-        connectionBundles.add(connectionBundle);
         EventManager.notify(project, ConnectionManagerListener.TOPIC).connectionsChanged();
     }
 
@@ -207,22 +200,16 @@ public class ConnectionManager extends AbstractProjectComponent {
      *                     Miscellaneous                     *
      *********************************************************/
      public ConnectionHandler getConnectionHandler(String connectionId) {
-         for (ConnectionBundle connectionBundle : connectionBundles) {
-             for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers().getFullList()) {
-                if (connectionHandler.getId().equals(connectionId)) {
-                    return connectionHandler;
-                }
-             }
+         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers().getFullList()) {
+            if (connectionHandler.getId().equals(connectionId)) {
+                return connectionHandler;
+            }
          }
          return null;
      }
 
-     public Set<ConnectionHandler> getConnectionHandlers() {
-         Set<ConnectionHandler> connectionHandlers = new THashSet<ConnectionHandler>();
-         for (ConnectionBundle connectionBundle : connectionBundles) {
-             connectionHandlers.addAll(connectionBundle.getConnectionHandlers());
-         }
-         return connectionHandlers;
+     public List<ConnectionHandler> getConnectionHandlers() {
+         return connectionBundle.getConnectionHandlers();
      }
 
      public ConnectionHandler getActiveConnection(Project project) {

@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.browser;
 
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
@@ -48,6 +39,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DatabaseBrowserManager",
@@ -334,7 +333,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         element.addContent(nodesElement);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
-        Set<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
+        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             Element connectionElement = new Element("connection");
 
