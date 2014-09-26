@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3305</b>
              <ul>
+                - Support connecting on demand only (i.e. disable auto-connect)<br>
                 - Support for multiple SQL consoles per connection<br>
                 - "Save Console To File" functionality<br>
                 - Statement execution shortcut improvements<br>

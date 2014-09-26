@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.execution.common.message.ui.tree.StatementExecutionM
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.Component;
 
 public class ViewExecutedStatementAction extends ExecutionMessagesAction {
@@ -14,7 +16,7 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
         super(messagesTree, "View SQL statement", Icons.EXEC_RESULT_VIEW_STATEMENT);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         getMessagesTree().grabFocus();
         StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) getMessagesTree().getSelectionPath().getLastPathComponent();
         StatementExecutionResult executionResult = execMessageNode.getExecutionMessage().getExecutionResult();
@@ -22,7 +24,7 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
         statementViewer.show((Component) e.getInputEvent().getSource());
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         boolean enabled =
                 getMessagesTree().getSelectionPath() != null &&
                  getMessagesTree().getSelectionPath().getLastPathComponent() instanceof StatementExecutionMessageNode;
