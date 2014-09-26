@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.editor.code;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import com.dci.intellij.dbn.execution.compiler.CompileSourceAction;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -233,7 +235,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     }
 
                     if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
-                        DatabaseCompilerManager.getInstance(editor.getProject()).createCompilerResult(object);
+                        DatabaseCompilerManager.getInstance(editor.getProject()).createCompilerResult(object, CompileSourceAction.SAVE);
                     }
                     object.reload();
                 } catch (SQLException e) {

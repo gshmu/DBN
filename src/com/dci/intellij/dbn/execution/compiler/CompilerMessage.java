@@ -126,10 +126,6 @@ public class CompilerMessage extends ConsoleMessage {
         return isEcho;
     }
 
-    public Project getProject() {
-        return compilerResult.getProject();
-    }
-
     public void dispose() {
         compilerResult = null;
         databaseFile = null;

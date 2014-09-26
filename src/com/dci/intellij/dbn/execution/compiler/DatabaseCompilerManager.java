@@ -38,8 +38,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         return project.getComponent(DatabaseCompilerManager.class);
     }
 
-    public void createCompilerResult(DBSchemaObject object) {
-        CompilerResult compilerResult = new CompilerResult(object);
+    public void createCompilerResult(DBSchemaObject object, CompileSourceAction sourceAction) {
+        CompilerResult compilerResult = new CompilerResult(object, sourceAction);
         ExecutionManager.getInstance(object.getProject()).showExecutionConsole(compilerResult);
     }
 
@@ -48,13 +48,13 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         ExecutionManager.getInstance(object.getProject()).showExecutionConsole(compilerResult);
     }
 
-    public void compileObject(DBSchemaObject object, CompileType compileType, boolean silently) {
+    public void compileObject(DBSchemaObject object, CompileType compileType, CompileSourceAction sourceAction) {
         Project project = object.getProject();
         boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(object.getConnectionHandler());
         if (allowed) {
             CompileType selectedCompileType = getCompileTypeSelection(compileType, object);
             if (selectedCompileType != null) {
-                doCompileObject(object, object.getContentType(), selectedCompileType, silently);
+                doCompileObject(object, object.getContentType(), selectedCompileType, sourceAction);
                 if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
                     DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                     if (object.getContentType().isBundle()) {
@@ -71,7 +71,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    public void compileObject(final DBSchemaObject object, final DBContentType contentType, final CompileType compileType, final boolean silently) {
+    public void compileObject(final DBSchemaObject object, final DBContentType contentType, final CompileType compileType, final CompileSourceAction sourceAction) {
         new ConnectionAction(object) {
             @Override
             protected void execute() {
@@ -83,7 +83,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     if (selectedCompileType != null) {
                         new BackgroundTask(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
                             public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                doCompileObject(object, contentType, selectedCompileType, silently);
+                                doCompileObject(object, contentType, selectedCompileType, sourceAction);
                                 if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
                                     DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                                     DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
@@ -97,11 +97,12 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }.start();
     }
 
-    private void doCompileObject(DBSchemaObject object, DBContentType contentType, CompileType compileType, boolean silently) {
+    private void doCompileObject(DBSchemaObject object, DBContentType contentType, CompileType compileType, CompileSourceAction sourceAction) {
         object.getStatus().set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
         ConnectionHandler connectionHandler = object.getConnectionHandler();
+        boolean verbose = sourceAction != CompileSourceAction.BULK_COMPILE;
         try {
             connection = connectionHandler.getPoolConnection();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
@@ -143,12 +144,12 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                             connection);
             }
 
-            if (!silently) compilerManager.createCompilerResult(object);
+            if (verbose) compilerManager.createCompilerResult(object, sourceAction);
         } catch (SQLException e) {
-            if (!silently) compilerManager.createErrorCompilerResult(object, e);
+            if (verbose) compilerManager.createErrorCompilerResult(object, e);
         }  finally{
             connectionHandler.freePoolConnection(connection);
-            if (!silently) connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+            if (verbose) connectionHandler.getObjectBundle().refreshObjectsStatus(object);
             object.getStatus().set(contentType, DBObjectStatus.COMPILING, false);
         }
     }
@@ -203,13 +204,13 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 if (object.getContentType().isBundle()) {
                     for (DBContentType contentType : object.getContentType().getSubContentTypes()) {
                         if (!object.getStatus().is(contentType, DBObjectStatus.VALID)) {
-                            doCompileObject(object, contentType, compileType, true);
+                            doCompileObject(object, contentType, compileType, CompileSourceAction.BULK_COMPILE);
                             progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
                         }
                     }
                 } else {
                     if (!object.getStatus().is(DBObjectStatus.VALID)) {
-                        doCompileObject(object, object.getContentType(), compileType, true);
+                        doCompileObject(object, object.getContentType(), compileType, CompileSourceAction.BULK_COMPILE);
                         progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
                     }
                 }
@@ -220,7 +221,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     private void buildCompilationErrors(List<? extends DBSchemaObject> objects, List<CompilerResult> compilerErrors) {
         for (DBSchemaObject object : objects) {
             if (!object.getStatus().is(DBObjectStatus.VALID)) {
-                CompilerResult compilerResult = new CompilerResult(object);
+                CompilerResult compilerResult = new CompilerResult(object, CompileSourceAction.COMPILE);
                 if (compilerResult.isError()) {
                     compilerErrors.add(compilerResult);
                 }
