@@ -34,7 +34,6 @@ import java.util.TimerTask;
 
 public class ConnectionManager extends AbstractProjectComponent {
     private final ConnectionSettingsListener connectionSettingsListener;
-    private ConnectionBundle connectionBundle;
     private Timer idleConnectionCleaner;
 
     private InteractiveOptionHandler closeProjectOptionHandler =
@@ -68,7 +67,6 @@ public class ConnectionManager extends AbstractProjectComponent {
         Project project = getProject();
         EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
         EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
-        initConnectionBundles();
         idleConnectionCleaner = new Timer("Idle connection cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
     }
@@ -90,7 +88,7 @@ public class ConnectionManager extends AbstractProjectComponent {
     private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
         @Override
         public void settingsChanged() {
-            initConnectionBundles();
+            EventManager.notify(getProject(), ConnectionManagerListener.TOPIC).connectionsChanged();
         }
     };
 
@@ -98,13 +96,7 @@ public class ConnectionManager extends AbstractProjectComponent {
     *                        Custom                         *
     *********************************************************/
     public ConnectionBundle getConnectionBundle() {
-        return connectionBundle;
-    }
-
-    private synchronized void initConnectionBundles() {
-        Project project = getProject();
-        connectionBundle = ProjectConnectionBundle.getInstance(project);
-        EventManager.notify(project, ConnectionManagerListener.TOPIC).connectionsChanged();
+        return ProjectConnectionBundle.getInstance(getProject());
     }
 
     public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
@@ -200,7 +192,7 @@ public class ConnectionManager extends AbstractProjectComponent {
      *                     Miscellaneous                     *
      *********************************************************/
      public ConnectionHandler getConnectionHandler(String connectionId) {
-         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers().getFullList()) {
+         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers().getFullList()) {
             if (connectionHandler.getId().equals(connectionId)) {
                 return connectionHandler;
             }
@@ -209,7 +201,7 @@ public class ConnectionManager extends AbstractProjectComponent {
      }
 
      public List<ConnectionHandler> getConnectionHandlers() {
-         return connectionBundle.getConnectionHandlers();
+         return getConnectionBundle().getConnectionHandlers();
      }
 
      public ConnectionHandler getActiveConnection(Project project) {
