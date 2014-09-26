@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.ddl;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -37,7 +23,6 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.SelectFromListDialog;
@@ -49,6 +34,20 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @State(
     name = "DBNavigator.Project.DDLFileAttachmentManager",
@@ -167,21 +166,14 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     }
 
     private List<VirtualFile> lookupApplicableDDLFiles(DBSchemaObject object) {
-        Module module = object.getConnectionHandler().getModule();
         Project project = object.getConnectionHandler().getProject();
         List<VirtualFile> fileList = new ArrayList<VirtualFile>();
 
         for (DDLFileType ddlFileType : object.getDDLFileTypes()) {
             for (String extension : ddlFileType.getExtensions()) {
                 String fileName = object.getName().toLowerCase() + "." + extension;
-
-                if (module == null) {
-                    VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
-                    fileList.addAll(Arrays.asList(files));
-                } else {
-                    VirtualFile[] files = VirtualFileUtil.lookupFilesForName(module, fileName);
-                    fileList.addAll(Arrays.asList(files));
-                }
+                VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
+                fileList.addAll(Arrays.asList(files));
             }
         }
         return fileList;
@@ -250,21 +242,13 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         Project project = object.getProject();
         List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(object);
         if (virtualFiles.size() == 0) {
-            Module module = object.getConnectionHandler().getModule();
             List<String> attachedFiles = getAttachedFilePaths(object);
 
             StringBuilder message = new StringBuilder();
             message.append(attachedFiles.size() == 0 ?
                     "No DDL Files were found in " :
                     "No additional DDL Files were found in ");
-            if (module == null) {
-                message.append("project scope.");
-            } else {
-                message.append("scope of module\"");
-                message.append(module.getName());
-                message.append("\".");
-            }
-
+            message.append("project scope.");
 
             if (attachedFiles.size() > 0) {
                 message.append("\n\nFollowing files are already attached to ");

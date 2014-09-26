@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.model;
 
 import javax.swing.Icon;
+import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,12 +19,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 
 public class SimpleBrowserTreeRoot implements BrowserTreeNode {
-    private List<ConnectionBundle> connectionBundles;
+    private List<ConnectionBundle> rootChildren;
     private Project project;
 
-    public SimpleBrowserTreeRoot(Project project, List<ConnectionBundle> connectionBundles) {
+    public SimpleBrowserTreeRoot(Project project, ConnectionBundle connectionBundle) {
         this.project = project;
-        this.connectionBundles = connectionBundles;
+        this.rootChildren = new ArrayList<ConnectionBundle>();
+        this.rootChildren.add(connectionBundle);
     }
 
     public Project getProject() {
@@ -52,28 +54,28 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     }
 
     public List<? extends BrowserTreeNode> getTreeChildren() {
-        return connectionBundles;
+        return rootChildren;
     }
 
     @Override
     public void refreshTreeChildren(@Nullable DBObjectType objectType) {
-        for (ConnectionBundle connectionBundle : connectionBundles) {
+        for (ConnectionBundle connectionBundle : rootChildren) {
             connectionBundle.refreshTreeChildren(objectType);
         }
     }
 
     public void rebuildTreeChildren() {
-        for (ConnectionBundle connectionBundle : connectionBundles) {
+        for (ConnectionBundle connectionBundle : rootChildren) {
             connectionBundle.rebuildTreeChildren();
         }
     }
 
     public BrowserTreeNode getTreeChild(int index) {
-        return connectionBundles.get(index);
+        return rootChildren.get(index);
     }
 
     public int getTreeChildCount() {
-        return connectionBundles.size();
+        return rootChildren.size();
     }
 
     public boolean isLeafTreeElement() {
@@ -81,7 +83,7 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     }
 
     public int getIndexOfTreeChild(BrowserTreeNode child) {
-        return connectionBundles.indexOf(child);
+        return rootChildren.indexOf(child);
     }
 
     public Icon getIcon(int flags) {
@@ -170,6 +172,6 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
      *                       Disposable                      *
      *********************************************************/
     public void dispose() {
-        connectionBundles = null;
+        rootChildren = null;
     }
 }

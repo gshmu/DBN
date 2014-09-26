@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -40,7 +27,6 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
-import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
@@ -75,6 +61,19 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -380,12 +379,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 append(true, connectionHandler.getProject().getName(), false);
                 append(false, "/", false);
                 ConnectionBundle connectionBundle = connectionHandler.getConnectionBundle();
-                if (connectionBundle instanceof ModuleConnectionBundle) {
-                    ModuleConnectionBundle moduleConnectionManager = (ModuleConnectionBundle) connectionBundle;
-                    append(false, moduleConnectionManager.getModule().getName(), false);
-                    append(false, "/", false);
-                }
-
                 append(false, connectionHandler.getName(), false);
 
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();

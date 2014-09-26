@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+             <ul>
+                - Discontinued connection setup on module level<br>
+                - Support for manually controlled database connectivity<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.3305</b>
              <ul>
                 - Support connecting on demand only (i.e. disable auto-connect)<br>
@@ -197,7 +203,6 @@
         <component><implementation-class>com.dci.intellij.dbn.connection.ProjectConnectionBundle</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.browser.cache.ProjectBrowserCacheComponent</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.ExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.statement.StatementExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.script.ScriptExecutionManager</implementation-class></component>
@@ -224,8 +229,7 @@
         <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
     </project-components>
     <module-components>
-        <component><implementation-class>com.dci.intellij.dbn.connection.ModuleConnectionBundle</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>
+        <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
     </module-components>
 
     <actions>

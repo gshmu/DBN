@@ -35,13 +35,12 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
         }
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
-            if (connectionBundle.getConnectionHandlers().size() > 0) {
-                actionGroup.addSeparator();
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                    SelectConnectionAction connectionAction = new SelectConnectionAction(browserComponent, connectionHandler);
-                    actionGroup.add(connectionAction);
-                }
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        if (connectionBundle.getConnectionHandlers().size() > 0) {
+            actionGroup.addSeparator();
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+                SelectConnectionAction connectionAction = new SelectConnectionAction(browserComponent, connectionHandler);
+                actionGroup.add(connectionAction);
             }
         }
 

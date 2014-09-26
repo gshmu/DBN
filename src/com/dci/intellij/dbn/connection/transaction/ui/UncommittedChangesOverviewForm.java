@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -26,6 +15,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -59,15 +59,13 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
     private void updateListModel() {
         DefaultListModel model = new DefaultListModel();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                if (connectionHandler.hasUncommittedChanges()) {
-                    connectionHandlers.add(connectionHandler);
-                    model.addElement(connectionHandler);
-                }
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (connectionHandler.hasUncommittedChanges()) {
+                connectionHandlers.add(connectionHandler);
+                model.addElement(connectionHandler);
             }
         }
-
         connectionsList.setModel(model);
         if (model.size() > 0) {
             connectionsList.setSelectedIndex(0);

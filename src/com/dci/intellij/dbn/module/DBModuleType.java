@@ -44,7 +44,6 @@ public class DBModuleType<T extends DBModuleBuilder> extends ModuleType<T> {
         List<ModuleWizardStep> wizardSteps = new ArrayList<ModuleWizardStep>();
 
         //ProjectWizardStepFactory.getInstance().createNameAndLocationStep(wizardContext);
-        wizardSteps.add(new DBModuleConnectionsWizardStep(wizardContext, moduleBuilder, modulesProvider));
         return wizardSteps.toArray(new ModuleWizardStep[wizardSteps.size()]);
     }
 

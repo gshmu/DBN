@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -32,18 +20,26 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
-import com.intellij.ProjectTopics;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.ModuleAdapter;
-import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ConnectionManager extends AbstractProjectComponent {
     private final ConnectionSettingsListener connectionSettingsListener;
     private List<ConnectionBundle> connectionBundles = new ArrayList<ConnectionBundle>();
+    private ConnectionBundle connectionBundle;
     private Timer idleConnectionCleaner;
 
     private InteractiveOptionHandler closeProjectOptionHandler =
@@ -75,7 +71,6 @@ public class ConnectionManager extends AbstractProjectComponent {
     public void initComponent() {
         super.initComponent();
         Project project = getProject();
-        EventManager.subscribe(project, ProjectTopics.MODULES, moduleListener);
         EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
         EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         initConnectionBundles();
@@ -88,7 +83,6 @@ public class ConnectionManager extends AbstractProjectComponent {
         idleConnectionCleaner.cancel();
         idleConnectionCleaner.purge();
         EventManager.unsubscribe(
-                moduleListener,
                 connectionBundleSettingsListener,
                 connectionSettingsListener);
         super.disposeComponent();
@@ -97,25 +91,6 @@ public class ConnectionManager extends AbstractProjectComponent {
     /*********************************************************
     *                       Listeners                        *
     *********************************************************/
-    private ModuleListener moduleListener = new ModuleAdapter() {
-        public void moduleAdded(Project project, Module module) {
-            initConnectionBundles();
-        }
-
-        public void moduleRemoved(Project project, Module module) {
-            initConnectionBundles();
-        }
-
-        public void modulesRenamed(Project project, List<Module> modules) {
-            for (Module module : modules) {
-                ModuleConnectionBundle connectionBundle = ModuleConnectionBundle.getInstance(module);
-                if (connectionBundle.getConnectionHandlers().size() > 0) {
-                    initConnectionBundles();
-                    break;
-                }
-            }
-        }
-    };
 
     private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
         @Override
@@ -127,25 +102,15 @@ public class ConnectionManager extends AbstractProjectComponent {
     /*********************************************************
     *                        Custom                         *
     *********************************************************/
-    public List<ConnectionBundle> getConnectionBundles() {
-        return connectionBundles;
+    public ConnectionBundle getConnectionBundle() {
+        return connectionBundle;
     }
 
     private synchronized void initConnectionBundles() {
         Project project = getProject();
         connectionBundles.clear();
-        ProjectConnectionBundle projectConnectionBundle = ProjectConnectionBundle.getInstance(project);
-        if (projectConnectionBundle.getConnectionHandlers().size() > 0) {
-            connectionBundles.add(projectConnectionBundle);
-        }
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            ModuleConnectionBundle moduleConnectionBundle = ModuleConnectionBundle.getInstance(module);
-            if (moduleConnectionBundle.getConnectionHandlers().size() > 0) {
-                connectionBundles.add(moduleConnectionBundle);
-            }
-        }
-        Collections.sort(connectionBundles);
+        connectionBundle = ProjectConnectionBundle.getInstance(project);
+        connectionBundles.add(connectionBundle);
         EventManager.notify(project, ConnectionManagerListener.TOPIC).connectionsChanged();
     }
 
@@ -275,11 +240,10 @@ public class ConnectionManager extends AbstractProjectComponent {
      }
 
     public boolean hasUncommittedChanges() {
-        for (ConnectionBundle connectionBundle : getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                if (connectionHandler.hasUncommittedChanges()) {
-                    return true;
-                }
+        ConnectionBundle connectionBundle = getConnectionBundle();
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (connectionHandler.hasUncommittedChanges()) {
+                return true;
             }
         }
         return false;
@@ -287,32 +251,29 @@ public class ConnectionManager extends AbstractProjectComponent {
 
     public void commitAll() {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-        for (ConnectionBundle connectionBundle : getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                if (connectionHandler.hasUncommittedChanges()) {
-                    transactionManager.commit(connectionHandler, false, false);
-                }
+        ConnectionBundle connectionBundle = getConnectionBundle();
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (connectionHandler.hasUncommittedChanges()) {
+                transactionManager.commit(connectionHandler, false, false);
             }
         }
     }
 
     public void rollbackAll() {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-        for (ConnectionBundle connectionBundle : getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                if (connectionHandler.hasUncommittedChanges()) {
-                    transactionManager.rollback(connectionHandler, false, false);
-                }
+        ConnectionBundle connectionBundle = getConnectionBundle();
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (connectionHandler.hasUncommittedChanges()) {
+                transactionManager.rollback(connectionHandler, false, false);
             }
         }
     }
 
     private class CloseIdleConnectionTask extends TimerTask {
         public void run() {
-            for (ConnectionBundle connectionBundle : getConnectionBundles()) {
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-                    resolveIdleStatus(connectionHandler);
-                }
+            ConnectionBundle connectionBundle = getConnectionBundle();
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+                resolveIdleStatus(connectionHandler);
             }
         }
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {

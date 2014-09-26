@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.code.common.intention;
 
-import javax.swing.Icon;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -24,6 +20,9 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
 
 public class SelectConnectionIntentionAction extends GenericIntentionAction {
     @NotNull
@@ -51,21 +50,19 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        List<ConnectionBundle> connectionBundles = connectionManager.getConnectionBundles();
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
 
         boolean connectionsFound = false;
-        for (ConnectionBundle connectionBundle : connectionBundles) {
-            if (connectionBundle.getConnectionHandlers().size() > 0) {
-                actionGroup.addSeparator();
-                for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        if (connectionBundle.getConnectionHandlers().size() > 0) {
+            actionGroup.addSeparator();
+            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
 
-                    SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler, dbLanguageFile);
-                    actionGroup.add(connectionAction);
-                    connectionsFound = true;
-                }
+                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler, dbLanguageFile);
+                actionGroup.add(connectionAction);
+                connectionsFound = true;
             }
         }
 

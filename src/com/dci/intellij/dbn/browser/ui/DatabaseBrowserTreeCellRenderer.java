@@ -1,21 +1,10 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
-import javax.swing.tree.TreeCellRenderer;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Font;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
 import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -25,6 +14,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.SwingConstants;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Font;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -64,10 +63,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
             boolean isDirty = false;
             String displayName;
-            if (treeNode instanceof ModuleConnectionBundle) {
-                ModuleConnectionBundle connectionManager = (ModuleConnectionBundle) treeNode;
-                displayName = connectionManager.getModule().getName();
-            } else if (treeNode instanceof ProjectConnectionBundle) {
+            if (treeNode instanceof ProjectConnectionBundle) {
                 displayName = "PROJECT";
             } else {
                 displayName = treeNode.getPresentableText();

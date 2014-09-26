@@ -25,7 +25,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     private DatabaseBrowserTree browserTree;
 
     public SimpleBrowserForm(Project project) {
-        this(new SimpleBrowserTreeModel(project, ConnectionManager.getInstance(project).getConnectionBundles()));
+        this(new SimpleBrowserTreeModel(project, ConnectionManager.getInstance(project).getConnectionBundle()));
     }
 
     public SimpleBrowserForm(ConnectionHandler connectionHandler) {

@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.module;
 
-import javax.swing.JComponent;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.JDOMException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.connection.ModuleConnectionBundle;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -23,6 +13,14 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 //import com.intellij.ide.util.projectWizard.SourcePathsBuilder;
 
@@ -30,9 +28,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     private String contentEntryPath;
     private List<Pair<String,String>> sourcePaths;
 
-    private ModuleConnectionBundle tempConnectionManager;
     public DBModuleBuilder() {
-        tempConnectionManager = new ModuleConnectionBundle(null);
     }
 
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
@@ -91,10 +87,6 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
         return sourcePaths;
     }
 
-    public JComponent createConnectionManagerComponent() {
-        return tempConnectionManager.createComponent();        
-    }
-
     public ModuleType getModuleType() {
         return DBModuleType.MODULE_TYPE;
     }
@@ -102,10 +94,6 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     @NotNull
     public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         Module module = super.createModule(moduleModel);
-        ModuleConnectionBundle connectionManager = ModuleConnectionBundle.getInstance(module);
-        connectionManager.setModified(true);
-        connectionManager.addConnections(tempConnectionManager.getConnectionHandlers());
-
         return module;
     }
 

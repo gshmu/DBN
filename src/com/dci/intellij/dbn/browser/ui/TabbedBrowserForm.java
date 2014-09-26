@@ -58,19 +58,18 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         connectionTabs.dispose();
         connectionTabs = new TabbedPane(project);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        for (ConnectionBundle connectionBundle : connectionManager.getConnectionBundles()) {
-            for (ConnectionHandler connectionHandler: connectionBundle.getConnectionHandlers()) {
-                SimpleBrowserForm browserForm = new SimpleBrowserForm(connectionHandler);
-                JComponent component = browserForm.getComponent();
-                TabInfo tabInfo = new TabInfo(component);
-                tabInfo.setText(connectionHandler.getName());
-                tabInfo.setObject(browserForm);
-                //tabInfo.setIcon(connectionHandler.getIcon());
-                connectionTabs.addTab(tabInfo);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        for (ConnectionHandler connectionHandler: connectionBundle.getConnectionHandlers()) {
+            SimpleBrowserForm browserForm = new SimpleBrowserForm(connectionHandler);
+            JComponent component = browserForm.getComponent();
+            TabInfo tabInfo = new TabInfo(component);
+            tabInfo.setText(connectionHandler.getName());
+            tabInfo.setObject(browserForm);
+            //tabInfo.setIcon(connectionHandler.getIcon());
+            connectionTabs.addTab(tabInfo);
 
-                EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                tabInfo.setTabColor(environmentType.getColor());
-            }
+            EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+            tabInfo.setTabColor(environmentType.getColor());
         }
         if (connectionTabs.getTabCount() == 0) {
             mainPanel.removeAll();
