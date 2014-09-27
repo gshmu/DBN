@@ -1,11 +1,7 @@
 package com.dci.intellij.dbn.object.filter.type;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -14,19 +10,28 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFilterSettingsForm> {
     private List<ObjectTypeFilterSetting> objectTypeFilterSettings;
-    private ObjectTypeFilterSettings master;
     private BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
+    private boolean projectLevel;
 
-    public ObjectTypeFilterSettings(Project project, @Nullable ObjectTypeFilterSettings master) {
+    public ObjectTypeFilterSettings(Project project, boolean projectLevel) {
         super(project);
-        this.master = master;
+        this.projectLevel = projectLevel;
     }
 
     public ObjectTypeFilterSettings getMasterSettings() {
-        return master;
+        if (projectLevel) {
+            return null;
+        } else {
+            DatabaseBrowserSettings databaseBrowserSettings = DatabaseBrowserSettings.getInstance(getProject());
+            return databaseBrowserSettings.getFilterSettings().getObjectTypeFilterSettings();
+        }
     }
 
     public BooleanSetting getUseMasterSettings() {
@@ -74,11 +79,11 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     };
 
     private boolean isVisible(DBObjectType objectType) {
-        return master == null ?
+        return projectLevel ?
             isSelected(objectType) :
             useMasterSettings.value() ?
-                    master.isSelected(objectType) :
-                    master.isSelected(objectType) && isSelected(objectType);
+                    getMasterSettings().isSelected(objectType) :
+                    getMasterSettings().isSelected(objectType) && isSelected(objectType);
     }
 
     private boolean isSelected(DBObjectType objectType) {
@@ -162,7 +167,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     }
 
     public void writeConfiguration(Element element) {
-        if (master != null) {
+        if (!projectLevel) {
             useMasterSettings.writeConfigurationAttribute(element);
         }
 

@@ -1,27 +1,28 @@
 package com.dci.intellij.dbn.connection.config.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.ListUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JList;
 
 public class RemoveConnectionAction extends DumbAwareAction {
-    private ConnectionBundle connectionBundle;
+    private ConnectionBundleSettings connectionBundleSettings;
     private JList list;
 
-    public RemoveConnectionAction(JList list, ConnectionBundle connectionBundle) {
+    public RemoveConnectionAction(JList list, ConnectionBundleSettings connectionBundleSettings) {
         super("Remove connection", null, Icons.ACTION_REMOVE);
         this.list = list;
-        this.connectionBundle = connectionBundle;
+        this.connectionBundleSettings = connectionBundleSettings;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         if (confirmDelete(list.getSelectedValues())) {
-            connectionBundle.setModified(true);
+            connectionBundleSettings.setModified(true);
             ListUtil.removeSelectedItems(list);
 /*
             int index = list.getMinSelectionIndex();

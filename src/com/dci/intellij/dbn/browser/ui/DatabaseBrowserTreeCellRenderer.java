@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -63,7 +63,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
             boolean isDirty = false;
             String displayName;
-            if (treeNode instanceof ProjectConnectionBundle) {
+            if (treeNode instanceof ConnectionBundle) {
                 displayName = "PROJECT";
             } else {
                 displayName = treeNode.getPresentableText();

@@ -200,7 +200,6 @@
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.ProjectConnectionBundle</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.ExecutionManager</implementation-class></component>

@@ -1,19 +1,18 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.UUID;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Base64Converter;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public abstract class ConnectionDatabaseSettings extends Configuration<GenericDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -29,13 +28,11 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     protected String user;
     protected String password;
     protected int hashCode;
-    protected ConnectionBundle connectionBundle;
     private ConnectionSettings parent;
 
     private boolean isNew;
 
-    public ConnectionDatabaseSettings(ConnectionBundle connectionBundle, ConnectionSettings parent) {
-        this.connectionBundle = connectionBundle;
+    public ConnectionDatabaseSettings(ConnectionSettings parent) {
         this.parent = parent;
     }
 
@@ -53,10 +50,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     protected static String nvl(Object value) {
         return (String) (value == null ? "" : value);
-    }
-
-    public ConnectionBundle getConnectionBundle() {
-        return connectionBundle;
     }
 
     public ConnectivityStatus getConnectivityStatus() {

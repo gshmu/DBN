@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.language.editor.action;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.options.action.OpenSettingsDialogAction;
 import com.intellij.openapi.actionSystem.Anchor;
 import com.intellij.openapi.actionSystem.Constraints;
@@ -18,14 +17,14 @@ public class SelectConnectionActionGroup extends DefaultActionGroup {
         addSeparator();
         add(NO_CONNECTION);
 
-        ProjectConnectionBundle projectConnectionBundle = ProjectConnectionBundle.getInstance(project);
-        for (ConnectionHandler virtualConnectionHandler : projectConnectionBundle.getVirtualConnections()) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+
+        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
             SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler);
             add(connectionAction);
         }
 
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         if (connectionBundle.getConnectionHandlers().size() > 0) {
             addSeparator();
             for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {

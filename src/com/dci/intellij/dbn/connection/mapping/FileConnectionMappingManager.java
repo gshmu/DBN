@@ -1,18 +1,11 @@
 package com.dci.intellij.dbn.connection.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
@@ -43,6 +36,13 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.FileConnectionMappingManager",
@@ -142,8 +142,10 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 if (mapping != null) {
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                     connectionHandler = connectionManager.getConnectionHandler(mapping.getConnectionId());
-                    if (connectionHandler == null) connectionHandler =
-                            ProjectConnectionBundle.getInstance(project).getVirtualConnection(mapping.getConnectionId());
+                    if (connectionHandler == null) {
+                        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+                        connectionHandler = connectionBundle.getVirtualConnection(mapping.getConnectionId());
+                    }
 
                     if (connectionHandler != null)
                         virtualFile.putUserData(ACTIVE_CONNECTION_KEY, connectionHandler);

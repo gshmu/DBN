@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import org.jdom.Element;
-
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -13,12 +10,13 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
 
 public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
-    private ConnectionSettings connectionSettings;
+    private ConnectionSettings parent;
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = new Filter<DBSchema>() {
         @Override
@@ -29,13 +27,11 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     private transient Filter<DBSchema> cachedSchemaFilter;
 
-    public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
-        super(connectionSettings.getProject());
-        this.connectionSettings = connectionSettings;
-        Project project = connectionSettings.getProject();
-        DatabaseBrowserSettings databaseBrowserSettings = DatabaseBrowserSettings.getInstance(project);
-        ObjectTypeFilterSettings master = databaseBrowserSettings.getFilterSettings().getObjectTypeFilterSettings();
-        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, master);
+    public ConnectionFilterSettings(ConnectionSettings parent) {
+        super(parent.getProject());
+        this.parent = parent;
+        Project project = parent.getProject();
+        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, false);
         objectNameFilterSettings = new ObjectNameFilterSettings(project);
     }
 
@@ -47,8 +43,8 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         this.hideEmptySchemas = hideEmptySchemas;
     }
 
-    public ConnectionSettings getConnectionSettings() {
-        return connectionSettings;
+    public ConnectionSettings getParent() {
+        return parent;
     }
 
     public String getDisplayName() {
