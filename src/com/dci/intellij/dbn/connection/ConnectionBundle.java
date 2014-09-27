@@ -1,36 +1,29 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class ConnectionBundle
-        extends Configuration<ConnectionBundleSettingsForm>
-        implements Comparable, BrowserTreeNode, Disposable {
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 
-    protected Logger log = Logger.getInstance(this.getClass().getName());
+public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
     public static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
         public boolean accepts(ConnectionHandler connectionHandler) {
@@ -41,10 +34,56 @@ public abstract class ConnectionBundle
 
     private Project project;
     private FiltrableList<ConnectionHandler> connectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+    private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
 
-    protected ConnectionBundle(Project project) {
+    public ConnectionBundle(Project project) {
         this.project = project;
+        virtualConnections.add(new VirtualConnectionHandler(
+                "virtual-oracle-connection",
+                "Virtual - Oracle 10.1",
+                DatabaseType.ORACLE,
+                10.1,
+                project));
+
+        virtualConnections.add(new VirtualConnectionHandler(
+                "virtual-mysql-connection",
+                "Virtual - MySQL 5.0",
+                DatabaseType.MYSQL,
+                5.0,
+                project));
+
+        virtualConnections.add(new VirtualConnectionHandler(
+                "virtual-postgres-connection",
+                "Virtual - PostgreSQL 9.3.4",
+                DatabaseType.POSTGRES,
+                9.3,
+                project));
+
+        virtualConnections.add(new VirtualConnectionHandler(
+                "virtual-iso92-sql-connection",
+                "Virtual - ISO-92 SQL",
+                DatabaseType.UNKNOWN,
+                92,
+                project));
     }
+
+    public List<ConnectionHandler> getVirtualConnections() {
+        return virtualConnections;
+    }
+
+    public ConnectionHandler getVirtualConnection(String id) {
+        for (ConnectionHandler virtualConnection : virtualConnections) {
+            if (virtualConnection.getId().equals(id)) {
+                return virtualConnection;
+            }
+        }
+        return null;
+    }
+
+    public Icon getIcon(int flags) {
+        return Icons.PROJECT;
+    }
+
 
     public Project getProject() {
         return project;
@@ -52,10 +91,6 @@ public abstract class ConnectionBundle
 
     public boolean isDisposed() {
         return false;
-    }
-
-    public String getDisplayName() {
-        return "Connections";
     }
 
     public String getHelpTopic() {
@@ -70,8 +105,8 @@ public abstract class ConnectionBundle
         return null;
     }
 
-    public void addConnections(List<ConnectionHandler> connectionHandlers) {
-        this.connectionHandlers.addAll(connectionHandlers);
+    public void addConnection(ConnectionHandler connectionHandler) {
+        connectionHandlers.add(connectionHandler);
     }
 
     public void setConnectionHandlers(List<ConnectionHandler> connectionHandlers) {
@@ -93,6 +128,10 @@ public abstract class ConnectionBundle
         return connectionHandlers;
     }
 
+    public List<ConnectionHandler> getAllConnectionHandlers() {
+        return connectionHandlers.getFullList();
+    }
+
 
     public void dispose() {
         DisposerUtil.dispose(connectionHandlers);
@@ -100,8 +139,6 @@ public abstract class ConnectionBundle
     }
 
     public boolean isModified() {
-        if (super.isModified()) return true;
-
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             if (connectionHandler.getSettings().isModified()) return true;
         }
@@ -109,66 +146,10 @@ public abstract class ConnectionBundle
     }
 
 
-    public ConnectionBundleSettingsForm createConfigurationEditor() {
-        return new ConnectionBundleSettingsForm(this);
-    }
-
-    /*********************************************************
-     *                      Configurable                     *
-     *********************************************************/
-    public void readConfiguration(Element element) {
-        Element connectionsElement = element.getChild("connections");
-        if (connectionsElement != null) {
-            for (Object o : connectionsElement.getChildren()) {
-                Element connectionElement = (Element) o;
-                ConnectionSettings connectionConfig = new ConnectionSettings(this);
-                connectionConfig.readConfiguration(connectionElement);
-                ConnectionHandler connectionHandler = new ConnectionHandlerImpl(this, connectionConfig);
-                connectionHandlers.add(connectionHandler);
-
-                Element consolesElement = connectionElement.getChild("consoles");
-                if (consolesElement != null) {
-                    for (Object c : consolesElement.getChildren()) {
-                        Element consoleElement = (Element) c;
-                        String consoleName = consoleElement.getAttributeValue("name");
-                        connectionHandler.getConsoleBundle().createConsole(consoleName);
-                    }
-                }
-            }
-        }
-    }
-
-    public void writeConfiguration(Element element) {
-        Element connectionsElement;
-        if (element.getName().equals("connections")) {
-            connectionsElement = element;
-        } else {
-            connectionsElement = new Element("connections");
-            element.addContent(connectionsElement);
-        }
-
-        for (ConnectionHandler connectionHandler : connectionHandlers.getFullList()) {
-            Element connectionElement = new Element("connection");
-            ConnectionSettings connectionSettings = connectionHandler.getSettings();
-            connectionSettings.writeConfiguration(connectionElement);
-            connectionsElement.addContent(connectionElement);
-
-            Element consolesElement = new Element("consoles");
-            connectionElement.addContent(consolesElement);
-            for (String consoleName : connectionHandler.getConsoleBundle().getConsoleNames()) {
-                Element consoleElement = new Element("console");
-                consoleElement.setAttribute("name", consoleName);
-                consolesElement.addContent(consoleElement);
-            }
-        }
-    }
-
     /*********************************************************
     *                    NavigationItem                      *
     *********************************************************/
-    public void navigate(boolean requestFocus) {
-
-    }
+    public void navigate(boolean requestFocus) {}
 
     public boolean canNavigate() {
         return true;
@@ -286,17 +267,8 @@ public abstract class ConnectionBundle
         return "";
     }
 
-    /*********************************************************
-     *                PersistentStateComponent               *
-     *********************************************************/
-    @Nullable
-    public Element getState() {
-        Element element = new Element("state");
-        writeConfiguration(element);
-        return element;
-    }
 
-    public void loadState(Element element) {
-        readConfiguration(element);
+    public boolean isEmpty() {
+        return connectionHandlers.getFullList().isEmpty();
     }
 }

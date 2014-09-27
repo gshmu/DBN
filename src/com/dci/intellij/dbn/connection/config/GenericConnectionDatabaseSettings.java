@@ -1,21 +1,20 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.io.File;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+
+import java.io.File;
 
 public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSettings {
     protected String driverLibrary;
     protected String driver;
     protected String databaseUrl;
 
-    public GenericConnectionDatabaseSettings(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
-        super(connectionBundle, connectionSettings);
+    public GenericConnectionDatabaseSettings(ConnectionSettings connectionSettings) {
+        super(connectionSettings);
     }
 
     public GenericDatabaseSettingsForm createConfigurationEditor() {
@@ -53,7 +52,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     public GenericConnectionDatabaseSettings clone() {
         Element connectionElement = new Element(getConfigElementName());
         writeConfiguration(connectionElement);
-        GenericConnectionDatabaseSettings clone = new GenericConnectionDatabaseSettings(connectionBundle, getParent());
+        GenericConnectionDatabaseSettings clone = new GenericConnectionDatabaseSettings(getParent());
         clone.readConfiguration(connectionElement);
         clone.setConnectivityStatus(getConnectivityStatus());
         clone.generateNewId();

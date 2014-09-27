@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.options;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -15,7 +7,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.GlobalConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -23,15 +15,16 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsEditorForm;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class GlobalProjectSettings
         extends CompositeProjectConfiguration<GlobalProjectSettingsEditorForm>
@@ -46,7 +39,7 @@ public class GlobalProjectSettings
     private ProjectCodeStyleSettings codeStyleSettings;
     private ExecutionEngineSettings executionEngineSettings;
     private DDLFileSettings ddlFileSettings;
-    private GlobalConnectionSettings connectionSettings;
+    private ConnectionBundleSettings connectionSettings;
 
 
     public GlobalProjectSettings(Project project) {
@@ -60,7 +53,7 @@ public class GlobalProjectSettings
         codeCompletionSettings = new CodeCompletionSettings(project);
         executionEngineSettings = new ExecutionEngineSettings(project);
         ddlFileSettings = new DDLFileSettings(project);
-        connectionSettings = new GlobalConnectionSettings(project);
+        connectionSettings = new ConnectionBundleSettings(project);
     }
 
     public String getHelpTopic() {
@@ -99,7 +92,7 @@ public class GlobalProjectSettings
         return navigationSettings;
     }
 
-    public GlobalConnectionSettings getConnectionSettings() {
+    public ConnectionBundleSettings getConnectionSettings() {
         return connectionSettings;
     }
 

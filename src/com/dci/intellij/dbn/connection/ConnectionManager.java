@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -20,8 +21,15 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
+import com.dci.intellij.dbn.options.ProjectSettings;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +40,13 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ConnectionManager extends AbstractProjectComponent {
+@State(
+        name = "DBNavigator.Project.ConnectionManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private final ConnectionSettingsListener connectionSettingsListener;
     private Timer idleConnectionCleaner;
 
@@ -96,7 +110,7 @@ public class ConnectionManager extends AbstractProjectComponent {
     *                        Custom                         *
     *********************************************************/
     public ConnectionBundle getConnectionBundle() {
-        return ProjectConnectionBundle.getInstance(getProject());
+        return ConnectionBundleSettings.getInstance(getProject()).getConnectionBundle();
     }
 
     public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
@@ -219,8 +233,7 @@ public class ConnectionManager extends AbstractProjectComponent {
      }
 
     public boolean hasUncommittedChanges() {
-        ConnectionBundle connectionBundle = getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
                 return true;
             }
@@ -230,8 +243,7 @@ public class ConnectionManager extends AbstractProjectComponent {
 
     public void commitAll() {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-        ConnectionBundle connectionBundle = getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
                 transactionManager.commit(connectionHandler, false, false);
             }
@@ -240,8 +252,7 @@ public class ConnectionManager extends AbstractProjectComponent {
 
     public void rollbackAll() {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-        ConnectionBundle connectionBundle = getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {
                 transactionManager.rollback(connectionHandler, false, false);
             }
@@ -250,8 +261,7 @@ public class ConnectionManager extends AbstractProjectComponent {
 
     private class CloseIdleConnectionTask extends TimerTask {
         public void run() {
-            ConnectionBundle connectionBundle = getConnectionBundle();
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers()) {
                 resolveIdleStatus(connectionHandler);
             }
         }
@@ -302,6 +312,23 @@ public class ConnectionManager extends AbstractProjectComponent {
     @NonNls
     @NotNull
     public String getComponentName() {
-        return "DBNavigator.Project.DatabaseConnectionManager";
+        return "DBNavigator.Project.ConnectionManager";
+    }
+
+    /*********************************************************
+     *                PersistentStateComponent               *
+     *********************************************************/
+    @Nullable
+    public Element getState() {
+        return null;
+    }
+
+    public void loadState(Element element) {
+        if (getConnectionBundle().isEmpty()) {
+            Element connectionsElement = element.getChild("connections");
+            if (connectionsElement != null) {
+                ProjectSettings.getInstance(getProject()).getConnectionSettings().readConfiguration(connectionsElement);
+            }
+        }
     }
 }

@@ -1,5 +1,22 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
+import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,23 +34,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Driver;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
-import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
-import com.dci.intellij.dbn.driver.DatabaseDriverManager;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 
 public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
     private JButton testButton;
@@ -76,8 +76,8 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {
             protected void textChanged(DocumentEvent e) {
-                GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
-                connectionConfig.setModified(true);
+                GenericConnectionDatabaseSettings configuration = getConfiguration();
+                configuration.setModified(true);
 
                 Document document = e.getDocument();
 
@@ -86,11 +86,14 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 }
 
                 if (document == nameTextField.getDocument()) {
-                    ConnectionBundle connectionBundle = connectionConfig.getConnectionBundle();
-                    JList connectionList = connectionBundle.getSettingsEditor().getList();
-                    connectionList.revalidate();
-                    connectionList.repaint();
-                    notifyPresentationChanges();
+                    ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
+                    ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
+                    if (settingsEditor != null) {
+                        JList connectionList = settingsEditor.getList();
+                        connectionList.revalidate();
+                        connectionList.repaint();
+                        notifyPresentationChanges();
+                    }
                 }
             }
         };
@@ -124,13 +127,12 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
-                ConnectionDatabaseSettings databaseSettings = getConfiguration();
-                ConnectionBundle connectionBundle = databaseSettings.getConnectionBundle();
+                ConnectionDatabaseSettings configuration = getConfiguration();
 
                 if (source == testButton || source == infoButton) {
-                    temporaryConfig = new GenericConnectionDatabaseSettings(connectionBundle, getConfiguration().getParent());
+                    temporaryConfig = new GenericConnectionDatabaseSettings(getConfiguration().getParent());
                     applyChanges(temporaryConfig);
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(connectionBundle.getProject());
+                    ConnectionManager connectionManager = ConnectionManager.getInstance(configuration.getProject());
 
                     if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
                     if (source == infoButton) connectionManager.showConnectionInfo(temporaryConfig, null);
@@ -144,10 +146,15 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 }
 
                 if (source == activeCheckBox || source == nameTextField || source == testButton || source == infoButton) {
-                    JList connectionList = connectionBundle.getSettingsEditor().getList();
-                    connectionList.revalidate();
-                    connectionList.repaint();
-                    notifyPresentationChanges();
+                    ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
+                    ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
+
+                    if (settingsEditor != null) {
+                        JList connectionList = settingsEditor.getList();
+                        connectionList.revalidate();
+                        connectionList.repaint();
+                        notifyPresentationChanges();
+                    }
                 }
             }
         };

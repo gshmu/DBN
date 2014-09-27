@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -42,7 +42,8 @@ public class SelectConnectionForm extends DBNFormImpl implements DBNForm {
         currentSchema = connectionMappingManager.getCurrentSchema(virtualFile);
 
         DefaultListModel connectionListModel = new DefaultListModel();
-        List<ConnectionHandler> connectionHandlers = ProjectConnectionBundle.getInstance(project).getConnectionHandlers();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             connectionListModel.addElement(connectionHandler);
         }

@@ -1,18 +1,13 @@
 package com.dci.intellij.dbn.options.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.GlobalConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ui.GlobalConnectionSettingsForm;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -22,6 +17,11 @@ import com.dci.intellij.dbn.options.GlobalProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEditorForm<GlobalProjectSettings> {
     private JPanel mainPanel;
@@ -35,7 +35,7 @@ public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEdito
 
         mainPanel.add(configurationTabs, BorderLayout.CENTER);
 
-        GlobalConnectionSettings connectionSettings = globalSettings.getConnectionSettings();
+        ConnectionBundleSettings connectionSettings = globalSettings.getConnectionSettings();
         DatabaseBrowserSettings browserSettings = globalSettings.getBrowserSettings();
         NavigationSettings navigationSettings = globalSettings.getNavigationSettings();
         CodeCompletionSettings codeCompletionSettings = globalSettings.getCodeCompletionSettings();
@@ -72,10 +72,10 @@ public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEdito
     }
 
     public void focusConnectionSettings(ConnectionHandler connectionHandler) {
-        GlobalConnectionSettings connectionSettings = getConfiguration().getConnectionSettings();
-        GlobalConnectionSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
+        ConnectionBundleSettings connectionSettings = getConfiguration().getConnectionSettings();
+        ConnectionBundleSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
         if (settingsEditor != null) {
-            settingsEditor.focusConnectionSettings(connectionHandler);
+            settingsEditor.selectConnection(connectionHandler);
             focusSettingsEditor(connectionSettings);
         }
     }

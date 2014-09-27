@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -28,14 +27,13 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         Project project = ActionUtil.getProject(component);
-        ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(project);
-        for (ConnectionHandler virtualConnectionHandler : projectConnectionManager.getVirtualConnections()) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
             SelectConnectionAction connectionAction = new SelectConnectionAction(browserComponent, virtualConnectionHandler);
             actionGroup.add(connectionAction);
         }
 
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         if (connectionBundle.getConnectionHandlers().size() > 0) {
             actionGroup.addSeparator();
             for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {

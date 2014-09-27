@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -17,6 +8,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -34,7 +26,21 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 
-public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundle> implements ListSelectionListener {
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener {
     private static final String BLANK_PANEL_ID = "BLANK_PANEL";
 
     private JPanel mainPanel;
@@ -51,20 +57,21 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         return connectionsList;
     }
 
-    public ConnectionBundleSettingsForm(ConnectionBundle connectionBundle) {
-        super(connectionBundle);
+    public ConnectionBundleSettingsForm(ConnectionBundleSettings configuration) {
+        super(configuration);
+        ConnectionBundle connectionBundle = configuration.getConnectionBundle();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.Connections.Setup", true,
-                new AddConnectionAction(connectionsList, connectionBundle),
-                new RemoveConnectionAction(connectionsList, connectionBundle),
-                new DuplicateConnectionAction(connectionsList, connectionBundle),
+                new AddConnectionAction(connectionsList, configuration),
+                new RemoveConnectionAction(connectionsList, configuration),
+                new DuplicateConnectionAction(connectionsList, configuration),
                 ActionUtil.SEPARATOR,
-                new CopyConnectionsAction(connectionsList, connectionBundle),
-                new PasteConnectionAction(connectionsList, connectionBundle),
+                new CopyConnectionsAction(connectionsList, configuration),
+                new PasteConnectionAction(connectionsList, configuration),
                 ActionUtil.SEPARATOR,
-                new MoveConnectionUpAction(connectionsList, connectionBundle),
-                new MoveConnectionDownAction(connectionsList, connectionBundle),
-                new SortConnectionsAction(connectionsList, connectionBundle));
+                new MoveConnectionUpAction(connectionsList, configuration),
+                new MoveConnectionDownAction(connectionsList, configuration),
+                new SortConnectionsAction(connectionsList, configuration));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         connectionsList.setModel(new ConnectionListModel(connectionBundle));
@@ -86,7 +93,8 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public void applyChanges() throws ConfigurationException {
-        ConnectionBundle connectionBundle = getConfiguration();
+        ConnectionBundleSettings connectionBundleSettings = getConfiguration();
+        ConnectionBundle connectionBundle = connectionBundleSettings.getConnectionBundle();
 
         List<ConnectionHandler> oldConnections = new ArrayList<ConnectionHandler>(connectionBundle.getConnectionHandlers().getFullList());
         List<ConnectionHandler> newConnections = new ArrayList<ConnectionHandler>();

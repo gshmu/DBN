@@ -1,23 +1,28 @@
 package com.dci.intellij.dbn.connection.config;
 
+import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
-
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
+    private ConnectionBundleSettings parent;
+
     private ConnectionDatabaseSettings databaseSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
 
-    public ConnectionSettings(ConnectionBundle connectionBundle) {
-        super(connectionBundle.getProject());
-        databaseSettings = new GenericConnectionDatabaseSettings(connectionBundle, this);
+    public ConnectionSettings(ConnectionBundleSettings parent) {
+        super(parent.getProject());
+        this.parent = parent;
+        databaseSettings = new GenericConnectionDatabaseSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
         filterSettings = new ConnectionFilterSettings(this);
+    }
+
+    public ConnectionBundleSettings getParent() {
+        return parent;
     }
 
     public ConnectionDatabaseSettings getDatabaseSettings() {
@@ -52,7 +57,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         try {
             Element connectionElement = new Element("Connection");
             writeConfiguration(connectionElement);
-            ConnectionSettings clone = new ConnectionSettings(databaseSettings.getConnectionBundle());
+            ConnectionSettings clone = new ConnectionSettings(parent);
             clone.readConfiguration(connectionElement);
             clone.getDatabaseSettings().setConnectivityStatus(databaseSettings.getConnectivityStatus());
             clone.getDatabaseSettings().generateNewId();

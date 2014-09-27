@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ProjectConnectionBundle;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
@@ -67,8 +66,8 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
         }
 
         if (connectionsFound) actionGroup.addSeparator();
-        ProjectConnectionBundle projectConnectionManager = ProjectConnectionBundle.getInstance(project);
-        for (ConnectionHandler virtualConnectionHandler : projectConnectionManager.getVirtualConnections()) {
+
+        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
             SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler, dbLanguageFile);
             actionGroup.add(connectionAction);
         }

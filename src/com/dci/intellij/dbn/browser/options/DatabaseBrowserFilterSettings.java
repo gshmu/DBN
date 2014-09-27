@@ -12,7 +12,7 @@ public class DatabaseBrowserFilterSettings extends CompositeProjectConfiguration
 
     public DatabaseBrowserFilterSettings(Project project) {
         super(project);
-        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, null);
+        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, true);
     }
 
     @Override

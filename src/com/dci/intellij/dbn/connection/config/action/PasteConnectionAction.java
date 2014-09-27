@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -14,6 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.xmlbeans.impl.common.ReaderInputStream;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JList;
 import java.awt.Toolkit;
@@ -24,16 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PasteConnectionAction extends DumbAwareAction {
-    protected ConnectionBundle connectionBundle;
+    protected ConnectionBundleSettings connectionBundleSettings;
     protected JList list;
 
-    public PasteConnectionAction(JList list, ConnectionBundle connectionBundle) {
+    public PasteConnectionAction(JList list, ConnectionBundleSettings connectionBundleSettings) {
         super("Paste configuration from clipboard", null, Icons.CONNECTION_PASTE);
         this.list = list;
-        this.connectionBundle = connectionBundle;
+        this.connectionBundleSettings = connectionBundleSettings;
     }
 
-    public void actionPerformed(AnActionEvent anActionEvent) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         try {
             String clipboardData = ClipboardUtil.getStringContent();
             if (clipboardData != null) {
@@ -45,10 +46,10 @@ public class PasteConnectionAction extends DumbAwareAction {
                 List<Integer> selectedIndexes = new ArrayList<Integer>();
                 for (Element configElement : configElements) {
                     selectedIndex++;
-                    ConnectionSettings clone = new ConnectionSettings(connectionBundle);
+                    ConnectionSettings clone = new ConnectionSettings(connectionBundleSettings);
                     clone.readConfiguration(configElement);
                     clone.getDatabaseSettings().setNew(true);
-                    connectionBundle.setModified(true);
+                    connectionBundleSettings.setModified(true);
 
                     clone.getDatabaseSettings().setNew(true);
                     String name = clone.getDatabaseSettings().getName();
@@ -62,12 +63,12 @@ public class PasteConnectionAction extends DumbAwareAction {
 
                 list.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
 
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         try {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
