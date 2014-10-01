@@ -92,7 +92,6 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     public Icon getIcon(int flags) {
         return icons[iconIndex];
     }
-
     public String getPresentableText() {
         return "Loading...";
     }
