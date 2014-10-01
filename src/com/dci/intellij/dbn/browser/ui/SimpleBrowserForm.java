@@ -1,16 +1,10 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ToolTipManager;
-import javax.swing.border.EmptyBorder;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
-import com.dci.intellij.dbn.browser.options.ObjectDisplaySettingsListener;
+import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,6 +12,12 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.IncorrectOperationException;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ToolTipManager;
+import javax.swing.border.EmptyBorder;
 
 public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JPanel mainPanel;
@@ -41,7 +41,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserScrollPane.setBorder(new EmptyBorder(1,0,0,0));
         ToolTipManager.sharedInstance().registerComponent(browserTree);
 
-        EventManager.subscribe(project, ObjectDisplaySettingsListener.TOPIC, objectDisplaySettingsListener);
+        EventManager.subscribe(project, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
         Disposer.register(this, browserTree);
     }
     
@@ -77,13 +77,13 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
 
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(objectDisplaySettingsListener);
+        EventManager.unsubscribe(objectDetailSettingsListener);
     }
 
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private ObjectDisplaySettingsListener objectDisplaySettingsListener = new ObjectDisplaySettingsListener() {
+    private ObjectDetailSettingsListener objectDetailSettingsListener = new ObjectDetailSettingsListener() {
         @Override
         public void displayDetailsChanged() {
             browserTree.revalidate();
