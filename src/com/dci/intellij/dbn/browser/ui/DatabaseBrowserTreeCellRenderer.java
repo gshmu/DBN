@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JTree;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.Component;
+import java.awt.Font;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
@@ -14,20 +20,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
-import javax.swing.tree.TreeCellRenderer;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Font;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
-    //private static final LoaderCellRendererComponent LOADER_COMPONENT = new LoaderCellRendererComponent();
     private DatabaseBrowserSettings browserSettings;
 
     public DatabaseBrowserTreeCellRenderer(Project project) {
@@ -35,20 +30,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     }
 
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        if (value instanceof LoadInProgressTreeNode) {
-            return new LoaderCellRendererComponent(LoadInProgressTreeNode.LOOSE_INSTANCE);
-        } else {
-            return cellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-        }
-    }
-
-    private static class LoaderCellRendererComponent extends JPanel {
-        LoadInProgressTreeNode treeElement;
-        private LoaderCellRendererComponent(LoadInProgressTreeNode treeElement) {
-            setLayout(new BorderLayout());
-            add(new JLabel("Loading...", treeElement.getIcon(0), SwingConstants.LEFT), BorderLayout.WEST);
-            setBackground(UIUtil.getTreeTextBackground());
-        }
+        return cellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
     }
 
     private class DefaultTreeCellRenderer extends ColoredTreeCellRenderer {
@@ -58,6 +40,13 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
         }
 
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            if (value instanceof LoadInProgressTreeNode) {
+                LoadInProgressTreeNode loadInProgressTreeNode = (LoadInProgressTreeNode) value;
+                setIcon(loadInProgressTreeNode.getIcon(0));
+                append("Loading...", SimpleTextAttributes.GRAYED_ITALIC_ATTRIBUTES);
+                return;
+            }
+
             BrowserTreeNode treeNode = (BrowserTreeNode) value;
             setIcon(treeNode.getIcon(0));
 

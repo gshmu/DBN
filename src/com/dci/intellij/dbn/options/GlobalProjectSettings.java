@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.options;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -18,13 +25,6 @@ import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsEditorForm;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 public class GlobalProjectSettings
         extends CompositeProjectConfiguration<GlobalProjectSettingsEditorForm>
@@ -152,7 +152,7 @@ public class GlobalProjectSettings
                 connectionSettings,
                 browserSettings,
                 navigationSettings,
-                codeStyleSettings,
+                //codeStyleSettings,
                 dataGridSettings,
                 dataEditorSettings,
                 codeCompletionSettings,
