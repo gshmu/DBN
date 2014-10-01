@@ -1,16 +1,9 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -31,6 +24,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, ConnectionProvider {
 
@@ -45,6 +44,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
+        loadContent();
+    }
+
+    private void loadContent() {
+        DBEditableObjectVirtualFile databaseFile = getMainDatabaseFile();
+        DBContentType contentType = getContentType();
         DBSchemaObject object = getObject();
         if (object != null) {
             hashCode = (
@@ -135,12 +140,15 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public void setContent(String content) {
         if (originalContent == null) {
-            originalContent = this.content;
+            originalContent = getContent();
         }
         this.content = content;
     }
 
-    public String getContent() {
+    public synchronized String getContent() {
+        if (content == null) {
+            loadContent();
+        }
         return content;
     }
 
@@ -181,6 +189,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public void updateToDatabase() throws SQLException {
         DBSchemaObject object = getObject();
         if (object != null) {
+            String content = getContent();
             object.executeUpdateDDL(getContentType(), getLastSavedContent(), content);
             updateChangeTimestamp();
             getMainDatabaseFile().updateDDLFiles(getContentType());
@@ -196,11 +205,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @NotNull
     public byte[] contentsToByteArray() {
-        return content.getBytes(getCharset());
+        return getContent().getBytes(getCharset());
     }
 
     public long getLength() {
-        return content.length();
+        return getContent().length();
     }
 
     public int getDocumentHashCode() {
@@ -250,22 +259,9 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void release() {
         originalContent = null;
         lastSavedContent = null;
         content = null;
-    }
-
-    public int getGuardedBlockEndOffset() {
-        DBSchemaObject object = getObject();
-        if (object != null) {
-            String name = object.getName();
-            int index = StringUtil.indexOfIgnoreCase(content, name, 0);
-            if (index > -1) {
-                return index + name.length();
-            }
-        }
-        return 0;
     }
 }

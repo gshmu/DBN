@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -18,6 +11,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
@@ -33,6 +27,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -53,7 +54,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
 
-    private NavigationPsiCache psiCache = new NavigationPsiCache(this);
+    private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>() {
+        @Override
+        protected NavigationPsiCache load() {
+            return new NavigationPsiCache(ConnectionHandlerImpl.this);
+        }
+    };
 
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
         this.connectionBundle = connectionBundle;
@@ -116,7 +122,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public NavigationPsiCache getPsiCache() {
-        return psiCache;
+        return psiCache.get();
     }
 
     @Override

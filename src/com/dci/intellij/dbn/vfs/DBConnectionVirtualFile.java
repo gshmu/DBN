@@ -1,34 +1,35 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFile {
     private static final byte[] EMPTY_CONTENT = new byte[0];
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     private String path;
     private String url;
     private String name;
 
     public DBConnectionVirtualFile(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return connectionHandlerRef.get();
     }
 
     public boolean equals(Object obj) {
@@ -41,11 +42,11 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
 
     @Override
     public int hashCode() {
-        return connectionHandler.getQualifiedName().hashCode();
+        return getConnectionHandler().getQualifiedName().hashCode();
     }
 
     public Project getProject() {
-        return connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     @NonNls
     public String getName() {
         if (name == null) {
-            name = connectionHandler.getName();
+            name = getConnectionHandler().getName();
         }
         return name;
     }
@@ -83,7 +84,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     @NotNull
     public String getPath() {
         if (path == null) {
-            path = DatabaseFileSystem.createPath(connectionHandler);
+            path = DatabaseFileSystem.createPath(getConnectionHandler());
         }
         return path;
     }
@@ -91,7 +92,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     @NotNull
     public String getUrl() {
         if (url == null) {
-            url = DatabaseFileSystem.createUrl(connectionHandler);
+            url = DatabaseFileSystem.createUrl(getConnectionHandler());
         }
         return url;
     }
@@ -114,7 +115,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     }
 
     public Icon getIcon() {
-        return connectionHandler.getIcon();
+        return getConnectionHandler().getIcon();
     }
 
     public VirtualFile[] getChildren() {
@@ -158,8 +159,8 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
 
 
     @Override
-    public void dispose() {
-        connectionHandler = null;
+    public void release() {
+        connectionHandlerRef.release();
     }
 }
 

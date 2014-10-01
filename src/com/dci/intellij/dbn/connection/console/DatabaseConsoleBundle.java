@@ -1,17 +1,16 @@
 package com.dci.intellij.dbn.connection.console;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.openapi.Disposable;
 
 public class DatabaseConsoleBundle implements Disposable{
     private ConnectionHandler connectionHandler;
@@ -66,13 +65,18 @@ public class DatabaseConsoleBundle implements Disposable{
 
     public void removeConsole(String name) {
         DBConsoleVirtualFile console = getConsole(name);
-        consoles.remove(console);
-        DisposerUtil.dispose(console);
+        if (console != null) {
+            consoles.remove(console);
+            console.release();
+        }
     }
 
     @Override
     public void dispose() {
-        DisposerUtil.dispose(consoles);
+        for (DBConsoleVirtualFile console : consoles) {
+            console.release();
+        }
+        consoles.clear();
     }
 
     public void renameConsole(String oldName, String newName) {
