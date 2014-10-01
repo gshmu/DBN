@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
     private ConnectionBundleSettings parent;
@@ -39,7 +40,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     @Override
     protected Configuration[] createConfigurations() {
-        return new Configuration[] {databaseSettings, detailSettings, filterSettings};
+        return new Configuration[] {
+                databaseSettings,
+                detailSettings,
+                filterSettings};
     }
 
     @Override
@@ -47,11 +51,16 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         return new ConnectionSettingsForm(this);
     }
 
+    public String getConnectionId() {
+        return databaseSettings.getId();
+    }
+
     @NotNull
     @Override
     public String getId() {
         return databaseSettings.getId();
     }
+
 
     public ConnectionSettings clone() {
         try {
@@ -65,30 +74,5 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         } catch (Exception e) {
         }
         return null;
-    }
-
-
-    /*********************************************************
-     *                     Configuration                     *
-     *********************************************************/
-    public void readConfiguration(Element element) {
-        if (element.getChild(databaseSettings.getConfigElementName()) != null) {
-            readConfiguration(element, databaseSettings);
-        } else {
-            // TODO: decommission (support old configuration)
-            databaseSettings.readConfiguration(element);
-        }
-        readConfiguration(element, detailSettings);
-        readConfiguration(element, filterSettings);
-    }
-
-    public void writeConfiguration(Element element) {
-        writeConfiguration(element, databaseSettings);
-        writeConfiguration(element, detailSettings);
-        writeConfiguration(element, filterSettings);
-    }
-
-    public String getConnectionId() {
-        return databaseSettings.getId();
     }
 }

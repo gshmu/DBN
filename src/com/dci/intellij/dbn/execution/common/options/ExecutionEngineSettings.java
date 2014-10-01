@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.common.options;
 
-import com.dci.intellij.dbn.options.ProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -9,6 +8,7 @@ import com.dci.intellij.dbn.execution.common.options.ui.ExecutionEngineSettingsF
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
 
 public class ExecutionEngineSettings extends CompositeProjectConfiguration<ExecutionEngineSettingsForm> {
@@ -20,7 +20,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
     }
 
     public static ExecutionEngineSettings getInstance(Project project) {
-        return ProjectSettings.getInstance(project).getExecutionEngineSettings();
+        return ProjectSettingsManager.getInstance(project).getExecutionEngineSettings();
     }
 
     @NotNull

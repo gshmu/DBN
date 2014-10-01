@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> {
     private ConnectionBundle connectionBundle;
@@ -18,7 +19,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     }
 
     public static ConnectionBundleSettings getInstance(Project project) {
-        return ProjectSettings.getInstance(project).getConnectionSettings();
+        return ProjectSettingsManager.getInstance(project).getConnectionSettings();
     }
 
     @NotNull

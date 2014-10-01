@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.navigation;
 
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -11,21 +19,13 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class GoToDatabaseObjectModel implements ChooseByNameModel {
     private Project project;
@@ -40,7 +40,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = project;
         this.selectedConnection = selectedConnection;
-        objectsLookupSettings = ProjectSettings.getInstance(project).getNavigationSettings().getObjectsLookupSettings();
+        objectsLookupSettings = ProjectSettingsManager.getInstance(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
     public String getPromptText() {

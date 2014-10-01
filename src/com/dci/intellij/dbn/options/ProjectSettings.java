@@ -1,8 +1,19 @@
 package com.dci.intellij.dbn.options;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -10,109 +21,177 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StoragePathMacros;
-import com.intellij.openapi.components.StorageScheme;
+import com.dci.intellij.dbn.options.ui.ProjectSettingsEditorForm;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@State(
-        name = "DBNavigator.Project.Settings",
-        storages = {
-                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
-                @Storage(file = StoragePathMacros.PROJECT_FILE)}
-)
-public class ProjectSettings implements ProjectComponent, PersistentStateComponent<Element> {
-    private GlobalProjectSettings globalProjectSettings;
+public class ProjectSettings
+        extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
+        implements SearchableConfigurable.Parent {
 
-    private ProjectSettings(Project project) {
-        globalProjectSettings = new GlobalProjectSettings(project);
+    private GeneralProjectSettings generalSettings;
+    private DatabaseBrowserSettings browserSettings;
+    private NavigationSettings navigationSettings;
+    private DataGridSettings dataGridSettings;
+    private DataEditorSettings dataEditorSettings;
+    private CodeCompletionSettings codeCompletionSettings;
+    private ProjectCodeStyleSettings codeStyleSettings;
+    private ExecutionEngineSettings executionEngineSettings;
+    private DDLFileSettings ddlFileSettings;
+    private ConnectionBundleSettings connectionSettings;
+
+
+    public ProjectSettings(Project project) {
+        super(project);
+        generalSettings = new GeneralProjectSettings(project);
+        browserSettings = new DatabaseBrowserSettings(project);
+        navigationSettings = new NavigationSettings(project);
+        codeStyleSettings = new ProjectCodeStyleSettings(project);
+        dataGridSettings = new DataGridSettings(project);
+        dataEditorSettings = new DataEditorSettings(project);
+        codeCompletionSettings = new CodeCompletionSettings(project);
+        executionEngineSettings = new ExecutionEngineSettings(project);
+        ddlFileSettings = new DDLFileSettings(project);
+        connectionSettings = new ConnectionBundleSettings(project);
     }
 
-    public static ProjectSettings getInstance(Project project) {
-        return project.getComponent(ProjectSettings.class);
+    public String getHelpTopic() {
+        ProjectSettingsEditorForm settingsEditor = getSettingsEditor();
+        if (settingsEditor == null) {
+            return super.getHelpTopic();
+        } else {
+            Configuration selectedConfiguration = settingsEditor.getActiveSettings();
+            return selectedConfiguration.getHelpTopic();
+        }
     }
 
-    public GlobalProjectSettings getGlobalProjectSettings() {
-        return globalProjectSettings;
+    @Override
+    public JComponent createComponent() {
+        return null;//super.createComponent();
     }
 
+    public JComponent createCustomComponent() {
+        return super.createComponent();
+    }
+
+
+
+    /*********************************************************
+    *                         Custom                        *
+    *********************************************************/
     public GeneralProjectSettings getGeneralSettings() {
-        return globalProjectSettings.getGeneralSettings();
+        return generalSettings;
     }
 
     public DatabaseBrowserSettings getBrowserSettings() {
-        return globalProjectSettings.getBrowserSettings();
+        return browserSettings;
     }
 
     public NavigationSettings getNavigationSettings() {
-        return globalProjectSettings.getNavigationSettings();
+        return navigationSettings;
     }
 
     public ConnectionBundleSettings getConnectionSettings() {
-        return globalProjectSettings.getConnectionSettings();
+        return connectionSettings;
     }
 
     public DataGridSettings getDataGridSettings() {
-        return globalProjectSettings.getDataGridSettings();
+        return dataGridSettings;
     }
 
     public DataEditorSettings getDataEditorSettings() {
-        return globalProjectSettings.getDataEditorSettings();
+        return dataEditorSettings;
     }
 
     public CodeCompletionSettings getCodeCompletionSettings() {
-        return globalProjectSettings.getCodeCompletionSettings();
+        return codeCompletionSettings;
     }
 
     public ProjectCodeStyleSettings getCodeStyleSettings() {
-        return globalProjectSettings.getCodeStyleSettings();
+        return codeStyleSettings;
     }
 
     public ExecutionEngineSettings getExecutionEngineSettings() {
-        return globalProjectSettings.getExecutionEngineSettings();
+        return executionEngineSettings;
     }
 
     public DDLFileSettings getDdlFileSettings() {
-        return globalProjectSettings.getDdlFileSettings();
+        return ddlFileSettings;
+    }
+
+    @Nls
+    public String getDisplayName() {
+        return "Database Navigator";
+    }
+
+    @Nullable
+    public Icon getIcon() {
+        return Icons.DATABASE_NAVIGATOR;
+    }
+
+    public Configurable[] getConfigurables() {
+        return getConfigurations();
     }
 
     @Override
-    public void projectOpened() {}
+    protected void onApply() {
+        ProjectSettingsChangeListener listener = EventManager.notify(getProject(), ProjectSettingsChangeListener.TOPIC);
+        listener.projectSettingsChanged(getProject());
+    }
 
-    @Override
-    public void projectClosed() {}
+    /*********************************************************
+     *                    Configuration                      *
+     *********************************************************/
+    public ProjectSettingsEditorForm createConfigurationEditor() {
+        return new ProjectSettingsEditorForm(this);
+    }
 
-    @Override
-    public void initComponent() {}
+    protected Configuration[] createConfigurations() {
+        return new Configuration[] {
+                connectionSettings,
+                browserSettings,
+                navigationSettings,
+                //codeStyleSettings,
+                dataGridSettings,
+                dataEditorSettings,
+                codeCompletionSettings,
+                executionEngineSettings,
+                ddlFileSettings,
+                generalSettings};
+    }
 
-    @Override
-    public void disposeComponent() {}
+    /*********************************************************
+    *              SearchableConfigurable.Parent             *
+    *********************************************************/
+    public boolean hasOwnContent() {
+        return false;
+    }
+
+    public boolean isVisible() {
+        return true;
+    }
 
     @NotNull
-    @Override
+    public String getId() {
+        return "DBNavigator.Project.Settings";
+    }
+
+    public Runnable enableSearch(String option) {
+        return null;
+    }
+
+    /****************************************
+    *             ProjectComponent          *
+    *****************************************/
+    @NonNls
+    @NotNull
     public String getComponentName() {
         return "DBNavigator.Project.Settings";
     }
 
-    /****************************************
-     *       PersistentStateComponent       *
-     *****************************************/
-    @Nullable
-    @Override
-    public Element getState() {
-        Element element = new Element("state");
-        globalProjectSettings.writeConfiguration(element);
-        return element;
-    }
-
-    @Override
-    public void loadState(Element element) {
-        globalProjectSettings.readConfiguration(element);
-    }
+    public void projectOpened() {}
+    public void projectClosed() {}
+    public void initComponent() {}
+    public void disposeComponent() {}
 }

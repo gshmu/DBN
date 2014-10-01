@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.menu.action;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -7,7 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
-import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -21,11 +26,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class OpenSQLConsoleAction extends DumbAwareAction {
     private ConnectionHandler latestSelection; // todo move to data context
@@ -85,7 +85,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                             "No database connections found. Please setup a connection first",
                             "No connections available.", new String[]{"Setup Connection", "Cancel"}, 0);
                     if (selection == 0) {
-                        GlobalProjectSettingsDialog globalSettingsDialog = new GlobalProjectSettingsDialog(project);
+                        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
                         globalSettingsDialog.show();
                     }
                 }

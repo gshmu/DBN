@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -32,7 +32,7 @@ public class SetupCodeCompletionIntentionAction extends GenericIntentionAction {
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        GlobalProjectSettingsDialog globalSettingsDialog = new GlobalProjectSettingsDialog(project);
+        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
         CodeCompletionSettings settings = CodeCompletionSettings.getInstance(project);
         globalSettingsDialog.focusSettings(settings);
         globalSettingsDialog.show();
