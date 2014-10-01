@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -20,6 +15,11 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
 
 public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvider implements DumbAware {
     @NotNull
@@ -60,8 +60,6 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         if (icon != null) {
             updateTabIcon(databaseFile, textEditor, icon);
         }
-
-
         return textEditor;
     }
 

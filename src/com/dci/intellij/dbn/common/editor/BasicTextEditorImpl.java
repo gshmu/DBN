@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import javax.swing.JComponent;
-import java.beans.PropertyChangeListener;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.editor.Editor;
@@ -18,6 +12,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import java.beans.PropertyChangeListener;
 
 public abstract class BasicTextEditorImpl<T extends VirtualFile> implements BasicTextEditor<T>{
     protected TextEditor textEditor;
@@ -31,7 +31,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         this.name = name;
         this.virtualFile = virtualFile;
         textEditor = (TextEditor) TextEditorProvider.getInstance().createEditor(project, virtualFile);
-
     }
 
     public Project getProject() {

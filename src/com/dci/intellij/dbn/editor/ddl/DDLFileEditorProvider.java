@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.editor.ddl;
 
-import java.util.List;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -13,7 +9,12 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public abstract class DDLFileEditorProvider extends BasicTextEditorProvider implements DumbAware {
 
@@ -52,7 +53,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         DDLFileEditor sourceEditor = (DDLFileEditor) editor;
         Document document = sourceEditor.getEditor().getDocument();
         //DocumentUtil.removeGuardedBlock(document);
-        sourceEditor.dispose();
+        Disposer.dispose(sourceEditor);
     }
 
     @NotNull
