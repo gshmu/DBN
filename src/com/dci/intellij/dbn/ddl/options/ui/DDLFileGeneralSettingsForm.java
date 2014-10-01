@@ -19,7 +19,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
     public DDLFileGeneralSettingsForm(DDLFileGeneralSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
         registerComponent(mainPanel);
     }
 
@@ -27,7 +27,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DDLFileGeneralSettings settings = getConfiguration();
         settings.getStatementPostfix().applyChanges(statementPostfixTextField);
         settings.getLookupDDLFilesEnabled().applyChanges(lookupDDLFilesCheckBox);
@@ -36,7 +36,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         settings.getMakeScriptsRerunnable().applyChanges(prepareDropIfExistsCheckBox);
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DDLFileGeneralSettings settings = getConfiguration();
         settings.getStatementPostfix().resetChanges(statementPostfixTextField);
         settings.getLookupDDLFilesEnabled().resetChanges(lookupDDLFilesCheckBox);

@@ -19,7 +19,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
     public DataEditorRecordNavigationSettingsForm(DataEditorRecordNavigationSettings configuration) {
         super(configuration);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
     }
@@ -28,7 +28,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataEditorRecordNavigationSettings configuration = getConfiguration();
 
         RecordNavigationTarget navigationTarget =
@@ -39,7 +39,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         configuration.setNavigationTarget(navigationTarget);
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataEditorRecordNavigationSettings configuration = getConfiguration();
         RecordNavigationTarget navigationTarget = configuration.getNavigationTarget();
         if (navigationTarget == RecordNavigationTarget.VIEWER) viewerRadioButton.setSelected(true); else

@@ -34,7 +34,7 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
             }
         });
 
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
     }
@@ -43,13 +43,13 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         CompilerSettings settings = getConfiguration();
         settings.setCompileType((CompileType) compileTypeComboBox.getSelectedItem());
         settings.setAlwaysShowCompilerControls(showAlwaysRadioButton.isSelected());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         CompilerSettings settings = getConfiguration();
         compileTypeComboBox.setSelectedItem(settings.getCompileType());
         if (settings.alwaysShowCompilerControls())

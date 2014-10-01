@@ -32,8 +32,6 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
         onApply();
     }
 
-    protected void onApply() {}
-
     @Override
     public final void reset() {
         for (Configuration configuration : getConfigurations()) {

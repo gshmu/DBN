@@ -35,7 +35,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     public ConnectionSettingsForm(ConnectionSettings connectionSettings) {
         super(connectionSettings);
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        configTabbedPane = new TabbedPane(databaseSettings.getProject());
+        configTabbedPane = new TabbedPane(this);
         contentPanel.add(configTabbedPane, BorderLayout.CENTER);
 
 
@@ -58,7 +58,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         filterSettings.getSettingsEditor();
 
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
-        Icon icon = databaseSettings.isNew() ? Icons.CONNECTION_NEW :
+        Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
                    !databaseSettings.isActive() ? Icons.CONNECTION_DISABLED :
                    connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
                    connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;

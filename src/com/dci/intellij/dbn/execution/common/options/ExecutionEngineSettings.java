@@ -35,7 +35,11 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
 
     public String getHelpTopic() {
         return "executionEngine";
-        
+    }
+
+    @Override
+    protected Configuration<ExecutionEngineSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
     }
 
     /*********************************************************

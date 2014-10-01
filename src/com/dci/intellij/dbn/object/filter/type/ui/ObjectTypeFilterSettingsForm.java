@@ -69,7 +69,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
     }
 
     @Override
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
         boolean notifyFilterListeners = objectFilterSettings.isModified();
         visibleObjectsList.applyChanges();
@@ -95,5 +95,5 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
     }
 
     @Override
-    public void resetChanges() {}
+    public void resetFormChanges() {}
 }

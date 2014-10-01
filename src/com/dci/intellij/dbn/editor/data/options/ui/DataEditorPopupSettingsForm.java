@@ -21,7 +21,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
     public DataEditorPopupSettingsForm(DataEditorPopupSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
         enableDisableFields();
 
         registerComponent(mainPanel);
@@ -50,7 +50,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataEditorPopupSettings settings = getConfiguration();
         settings.setActive(activeCheckBox.isSelected());
         settings.setActiveIfEmpty(activeIfEmptyCheckBox.isSelected());
@@ -60,7 +60,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         }
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataEditorPopupSettings settings = getConfiguration();
         activeCheckBox.setSelected(settings.isActive());
         activeIfEmptyCheckBox.setSelected(settings.isActiveIfEmpty());

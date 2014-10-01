@@ -44,7 +44,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     public MethodExecutionResultForm(MethodExecutionResult executionResult) {
         this.executionResult = executionResult;
-        cursorOutputTabs = new TabbedPane(executionResult.getProject());
+        cursorOutputTabs = new TabbedPane(this);
         createActionsPanel();
         updateCursorArgumentsPanel();
 

@@ -1,5 +1,22 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.sql.Driver;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -15,25 +32,8 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.sql.Driver;
-import java.util.List;
 
 public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
     private JButton testButton;
@@ -59,7 +59,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         Project project = connectionConfig.getProject();
         temporaryConfig = connectionConfig.clone();
         updateBorderTitleForeground(connectionParametersPanel);
-        resetChanges();
+        resetFormChanges();
         updateLibraryTextField();
 
         registerComponent(mainPanel);
@@ -103,13 +103,13 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         GenericConnectionDatabaseSettings configuration = temporaryConfig;//getConfiguration();
         String name = nameTextField.getText();
         ConnectivityStatus connectivityStatus = configuration.getConnectivityStatus();
-        Icon icon = configuration.isNew() ? Icons.CONNECTION_NEW :
+        Icon icon = configuration.getParent().isNew() ? Icons.CONNECTION_NEW :
                !activeCheckBox.isSelected() ? Icons.CONNECTION_DISABLED :
                connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
                connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
         ConnectionPresentationChangeListener listener = EventManager.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
-        listener.presentationChanged(name, icon, null, getConfiguration().getId(), configuration.getDatabaseType());
+        listener.presentationChanged(name, icon, null, getConfiguration().getConnectionId(), configuration.getDatabaseType());
 
     }
 
@@ -119,7 +119,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
             populateDriverList(textField.getText());
             textField.setForeground(UIUtil.getTextFieldForeground());
         } else {
-            textField.setForeground(Color.RED);
+            textField.setForeground(JBColor.RED);
         }
     }
 
@@ -219,7 +219,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         connectionConfig.updateHashCode();
     }
 
-    public void applyChanges() {
+    public void applyFormChanges() {
         GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
         boolean settingsChanged =
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
@@ -229,12 +229,12 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         applyChanges(connectionConfig);
 
         if (settingsChanged) {
-            EventManager.notify(connectionConfig.getProject(), ConnectionSettingsListener.TOPIC).settingsChanged(connectionConfig.getId());
+            EventManager.notify(connectionConfig.getProject(), ConnectionSettingsListener.TOPIC).settingsChanged(connectionConfig.getConnectionId());
         }
     }
 
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
         activeCheckBox.setSelected(connectionConfig.isActive());
         nameTextField.setText(connectionConfig.getDisplayName());

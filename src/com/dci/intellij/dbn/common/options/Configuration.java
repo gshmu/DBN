@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.options;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
+    public static ThreadLocal<Boolean> IS_RESETTING = new ThreadLocal<Boolean>();
     private T configurationEditorForm;
     private boolean isModified = false;
 
@@ -51,7 +53,16 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public void setModified(boolean modified) {
-        isModified = modified;
+        if (modified && !isResetting()) {
+            isModified = true;
+        } else{
+            isModified = modified;
+        }
+    }
+
+    private Boolean isResetting() {
+        Boolean isResetting = IS_RESETTING.get();
+        return isResetting != null && isResetting;
     }
 
     public boolean isModified() {
@@ -59,16 +70,42 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public void apply() throws ConfigurationException {
-        if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) configurationEditorForm.applyChanges();
+        if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
+            configurationEditorForm.applyFormChanges();
+        }
         isModified = false;
+
+        Configuration<T> settings = getOriginalSettings();
+        if (settings != null && settings != this) {
+            if (settings != this) {
+                Element settingsElement = new Element("settings");
+                writeConfiguration(settingsElement);
+                settings.readConfiguration(settingsElement);
+            }
+        }
+        onApply();
+    }
+
+    protected void onApply() {}
+
+    protected Configuration<T> getOriginalSettings() {
+        return null;
     }
 
     public void reset() {
-        isModified = false;
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) configurationEditorForm.resetChanges();
+                if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
+                    try {
+                        IS_RESETTING.set(true);
+                        configurationEditorForm.resetFormChanges();
+                    } finally {
+                        isModified = false;
+                        IS_RESETTING.set(false);
+                    }
+                }
+
             }
         }.start();
     }

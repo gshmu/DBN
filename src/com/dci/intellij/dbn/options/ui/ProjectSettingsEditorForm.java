@@ -30,7 +30,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
     public ProjectSettingsEditorForm(ProjectSettings globalSettings) {
         super(globalSettings);
 
-        configurationTabs = new TabbedPane(globalSettings.getProject());
+        configurationTabs = new TabbedPane(this);
         //configurationTabs.setAdjustBorders(false);
 
         mainPanel.add(configurationTabs, BorderLayout.CENTER);

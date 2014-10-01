@@ -41,6 +41,11 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return "browserSettings";
     }
 
+    @Override
+    protected Configuration<DatabaseBrowserSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /*********************************************************
      *                        Custom                         *
      *********************************************************/

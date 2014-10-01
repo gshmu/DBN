@@ -27,7 +27,7 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         debugInfoLabel.setText("NOTE: Active debug mode considerably slows down your system.");
         developerInfoLabel.setIcon(Icons.COMMON_WARNING);
         developerInfoLabel.setText("NOTE: Developer mode enables actions that may compromise your system stability and database integrity.");
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
 
@@ -49,12 +49,12 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         return mainPanel;
     }
 
-    public void applyChanges() {
+    public void applyFormChanges() {
         DatabaseNavigator.getInstance().setDebugModeEnabled(enableDebugCheckBox.isSelected());
         DatabaseNavigator.getInstance().setDeveloperModeEnabled(enableDeveloperCheckBox.isSelected());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         enableDebugCheckBox.setSelected(DatabaseNavigator.getInstance().isDebugModeEnabled());
         debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
         enableDeveloperCheckBox.setSelected(DatabaseNavigator.getInstance().isDeveloperModeEnabled());

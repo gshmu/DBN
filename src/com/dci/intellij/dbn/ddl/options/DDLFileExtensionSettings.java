@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.ddl.options;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -32,12 +31,6 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
         fileTypes.add(new DDLFileType(DDLFileTypeId.TYPE, "DDL File - Type", "tpe", PSQLFileType.INSTANCE, DBContentType.CODE_SPEC_AND_BODY));
         fileTypes.add(new DDLFileType(DDLFileTypeId.TYPE_SPEC, "DDL File - Type Spec", "tps", PSQLFileType.INSTANCE, DBContentType.CODE_SPEC));
         fileTypes.add(new DDLFileType(DDLFileTypeId.TYPE_BODY, "DDL File - Type Body", "tpb", PSQLFileType.INSTANCE, DBContentType.CODE_BODY));
-    }
-
-    @NotNull
-    @Override
-    public String getId() {
-        return super.getId();
     }
 
     public String getDisplayName() {

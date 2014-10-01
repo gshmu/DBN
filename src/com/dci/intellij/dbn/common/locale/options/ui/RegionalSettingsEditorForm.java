@@ -57,7 +57,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         errorLabel.setVisible(false);
         updateBorderTitleForeground(mainPanel);
 
-        resetChanges();
+        resetFormChanges();
         updatePreview();
 
         registerComponent(mainPanel);
@@ -171,7 +171,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         RegionalSettings regionalSettings = getConfiguration();
 
         Locale locale = getSelectedLocale();
@@ -189,7 +189,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         regionalSettings.getCustomNumberFormat().applyChanges(customNumberFormatTextField);
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         RegionalSettings regionalSettings = getConfiguration();
         setSelectedLocale(regionalSettings.getLocale());
 

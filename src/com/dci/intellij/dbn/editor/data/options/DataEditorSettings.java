@@ -38,6 +38,11 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
         return "dataEditor";
     }
 
+    @Override
+    protected Configuration<DataEditorSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /*********************************************************
      *                        Custom                         *
      *********************************************************/

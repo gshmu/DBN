@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.config;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -41,6 +42,18 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         return "connections";
     }
 
+    public boolean isModified() {
+        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+            if (connectionHandler.getSettings().isModified()) return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected Configuration<ConnectionBundleSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /*********************************************************
     *                   UnnamedConfigurable                 *
     *********************************************************/
@@ -54,11 +67,21 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     public void readConfiguration(Element element) {
         for (Object o : element.getChildren()) {
             Element connectionElement = (Element) o;
-            ConnectionSettings connectionConfig = new ConnectionSettings(this);
-            connectionConfig.readConfiguration(connectionElement);
+            String connectionId = connectionElement.getAttributeValue("id");
+            ConnectionHandler connectionHandler = null;
+            if (connectionId != null) {
+                connectionHandler = connectionBundle.getConnection(connectionId);
+            }
 
-            ConnectionHandler connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionConfig);
-            connectionBundle.addConnection(connectionHandler);
+            if (connectionHandler == null) {
+                ConnectionSettings connectionSettings = new ConnectionSettings(this);
+                connectionSettings.readConfiguration(connectionElement);
+                connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionSettings);
+                connectionBundle.addConnection(connectionHandler);
+            } else {
+                ConnectionSettings connectionSettings = connectionHandler.getSettings();
+                connectionSettings.readConfiguration(connectionElement);
+            }
 
             Element consolesElement = connectionElement.getChild("consoles");
             if (consolesElement != null) {

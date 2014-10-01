@@ -13,4 +13,6 @@ public abstract class CompositeProjectConfiguration<T extends CompositeConfigura
     public Project getProject() {
         return project;
     }
+
+
 }

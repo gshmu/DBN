@@ -1,31 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.action.AddConnectionAction;
-import com.dci.intellij.dbn.connection.config.action.CopyConnectionsAction;
-import com.dci.intellij.dbn.connection.config.action.DuplicateConnectionAction;
-import com.dci.intellij.dbn.connection.config.action.MoveConnectionDownAction;
-import com.dci.intellij.dbn.connection.config.action.MoveConnectionUpAction;
-import com.dci.intellij.dbn.connection.config.action.PasteConnectionAction;
-import com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction;
-import com.dci.intellij.dbn.connection.config.action.SortConnectionsAction;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.GuiUtils;
-
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -39,6 +13,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.action.AddConnectionAction;
+import com.dci.intellij.dbn.connection.config.action.CopyConnectionsAction;
+import com.dci.intellij.dbn.connection.config.action.DuplicateConnectionAction;
+import com.dci.intellij.dbn.connection.config.action.MoveConnectionDownAction;
+import com.dci.intellij.dbn.connection.config.action.MoveConnectionUpAction;
+import com.dci.intellij.dbn.connection.config.action.PasteConnectionAction;
+import com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction;
+import com.dci.intellij.dbn.connection.config.action.SortConnectionsAction;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.GuiUtils;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener {
     private static final String BLANK_PANEL_ID = "BLANK_PANEL";
@@ -92,7 +91,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         ConnectionBundle connectionBundle = connectionBundleSettings.getConnectionBundle();
 
@@ -103,10 +102,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         if (oldConnections.size() == listModel.getSize()) {
             for (int i=0; i<oldConnections.size(); i++) {
-                ConnectionDatabaseSettings oldConfig = oldConnections.get(i).getSettings().getDatabaseSettings();
-                ConnectionDatabaseSettings newConfig = ((ConnectionSettings) listModel.get(i)).getDatabaseSettings();
-                if (!oldConfig.getId().equals(newConfig.getId()) ||
-                        (newConfig.getSettingsEditor() != null && newConfig.getSettingsEditor().isConnectionActive() != oldConfig.isActive())) {
+                ConnectionSettings oldConfig = oldConnections.get(i).getSettings();
+                ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
+                if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
+                        (newConfig.getSettingsEditor() != null && newConfig.getDatabaseSettings().getSettingsEditor().isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
                     listChanged = true;
                     break;
                 }
@@ -119,10 +118,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionSettings connectionSettings = (ConnectionSettings) listModel.getElementAt(i);
             connectionSettings.apply();
 
-            ConnectionHandler connectionHandler = connectionBundle.getConnection(connectionSettings.getDatabaseSettings().getId());
+            ConnectionHandler connectionHandler = connectionBundle.getConnection(connectionSettings.getConnectionId());
             if (connectionHandler == null) {
                 connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionSettings);
-                connectionSettings.getDatabaseSettings().setNew(false);
+                connectionSettings.setNew(false);
             } else {
                 oldConnections.remove(connectionHandler);
                 ((ConnectionHandlerImpl)connectionHandler).setConnectionConfig(connectionSettings);
@@ -141,7 +140,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         for (int i=0; i< listModel.getSize(); i++) {
             ConnectionSettings connectionSettings = (ConnectionSettings) listModel.getElementAt(i);
@@ -185,7 +184,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionSettingsForm currentForm = cachedForms.get(currentPanelId);
             String selectedTabName = currentForm == null ? null : currentForm.getSelectedTabName();
 
-            currentPanelId = connectionSettings.getDatabaseSettings().getId();
+            currentPanelId = connectionSettings.getConnectionId();
             if (!cachedForms.keySet().contains(currentPanelId)) {
                 JComponent setupPanel = connectionSettings.createComponent();
                 this.connectionSetupPanel.add(setupPanel, currentPanelId);

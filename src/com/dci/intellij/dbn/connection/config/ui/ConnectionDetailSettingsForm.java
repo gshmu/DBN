@@ -74,7 +74,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         DefaultComboBoxModel environmentTypesModel = createEnvironmentTypesModel(getEnvironmentTypes());
         environmentTypesComboBox.setModel(environmentTypesModel);
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
 
@@ -155,7 +155,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     @Override
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         ConnectionDetailSettings configuration = getConfiguration();
 
         Map<String, String> newProperties = propertiesEditorForm.getProperties();
@@ -201,7 +201,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     @Override
-    public void resetChanges() {
+    public void resetFormChanges() {
         ConnectionDetailSettings configuration = getConfiguration();
         encodingComboBox.setSelectedItem(configuration.getCharset());
         propertiesEditorForm.setProperties(configuration.getProperties());

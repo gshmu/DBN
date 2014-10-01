@@ -277,7 +277,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         updateGeneratedName();
         DatasetBasicFilter filter = getConfiguration();
         filter.setJoinType(joinAndRadioButton.isSelected() ?
@@ -286,13 +286,13 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         filter.setCustomNamed(isCustomNamed);
         filter.getConditions().clear();
         for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
-            conditionForm.applyChanges();
+            conditionForm.applyFormChanges();
             filter.addCondition(conditionForm.getConfiguration());
         }
         filter.setName(nameTextField.getText());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
 
     }
 

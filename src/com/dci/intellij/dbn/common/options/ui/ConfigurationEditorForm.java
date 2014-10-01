@@ -37,8 +37,8 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
         return configuration;
     }
 
-    public abstract void applyChanges() throws ConfigurationException;
-    public abstract void resetChanges();
+    public abstract void applyFormChanges() throws ConfigurationException;
+    public abstract void resetFormChanges();
 
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {

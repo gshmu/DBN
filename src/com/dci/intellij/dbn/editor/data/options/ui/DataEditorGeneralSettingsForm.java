@@ -21,7 +21,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
     public DataEditorGeneralSettingsForm(DataEditorGeneralSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
     }
@@ -30,7 +30,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", 1, 10000, null);
         ConfigurationEditorUtil.validateIntegerInputValue(fetchTimeoutTextField, "Fetch timeout", 0, 300, "\nUse value 0 for no timeout");
 
@@ -43,7 +43,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         settings.getLargeValuePreviewActive().applyChanges(largeValuePreviewActiveCheckBox);
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataEditorGeneralSettings settings = getConfiguration();
         settings.getFetchBlockSize().resetChanges(fetchBlockSizeTextField);
         settings.getFetchTimeout().resetChanges(fetchTimeoutTextField);

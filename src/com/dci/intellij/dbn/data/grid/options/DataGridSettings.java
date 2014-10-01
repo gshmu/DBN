@@ -36,6 +36,11 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
         return "dataGrid";
     }
 
+    @Override
+    protected Configuration<DataGridSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /*********************************************************
      *                        Custom                         *
      *********************************************************/

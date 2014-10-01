@@ -51,7 +51,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
             mappings.put(option, comboBox);
         }
-        resetChanges();
+        resetFormChanges();
         
         settingsPanel.add(new Spacer(),
                 new GridConstraints(options.size(), 1, 1, 1,
@@ -68,7 +68,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
             JComboBox comboBox = mappings.get(option);
             option.setPreset((CodeStylePreset) comboBox.getSelectedItem());
@@ -76,7 +76,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         getConfiguration().setEnabled(enableCheckBox.isSelected());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
             JComboBox comboBox = mappings.get(option);
             comboBox.setSelectedItem(option.getPreset());

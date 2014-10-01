@@ -121,7 +121,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
     }
 
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         EnvironmentSettings settings = getConfiguration();
         EnvironmentTypesTableModel model = environmentTypesTable.getModel();
         model.validate();
@@ -150,7 +150,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         EnvironmentSettings settings = getConfiguration();
         environmentTypesTable.getModel().setEnvironmentTypes(settings.getEnvironmentTypes());
 

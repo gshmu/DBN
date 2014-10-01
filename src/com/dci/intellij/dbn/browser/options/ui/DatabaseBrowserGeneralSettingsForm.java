@@ -26,7 +26,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
     public DatabaseBrowserGeneralSettingsForm(DatabaseBrowserGeneralSettings configuration) {
         super(configuration);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
     }
@@ -35,7 +35,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
         boolean repaintTree = configuration.isModified();
         
@@ -57,7 +57,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
         BrowserDisplayMode displayMode = configuration.getDisplayMode();
         if (displayMode == BrowserDisplayMode.SIMPLE) simpleRadioButton.setSelected(true); else

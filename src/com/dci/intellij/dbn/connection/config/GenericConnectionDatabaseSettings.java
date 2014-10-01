@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.io.File;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-
-import java.io.File;
 
 public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSettings {
     protected String driverLibrary;
@@ -55,7 +55,6 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
         GenericConnectionDatabaseSettings clone = new GenericConnectionDatabaseSettings(getParent());
         clone.readConfiguration(connectionElement);
         clone.setConnectivityStatus(getConnectivityStatus());
-        clone.generateNewId();
         return clone;
     }
 

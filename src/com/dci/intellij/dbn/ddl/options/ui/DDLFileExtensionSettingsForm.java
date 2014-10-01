@@ -43,7 +43,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
     public DDLFileExtensionSettingsForm(DDLFileExtensionSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
         viewIconLabel.setText(null);
         triggerIconLabel.setText(null);
         procedureIconLabel.setText(null);
@@ -92,7 +92,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         }
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         validateInputs();
         AtomicBoolean changed = new AtomicBoolean(false);
         applySetting(viewTextField, DDLFileTypeId.VIEW, changed);
@@ -119,7 +119,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         }
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         resetSetting(viewTextField, DDLFileTypeId.VIEW);
         resetSetting(triggerTextField, DDLFileTypeId.TRIGGER);
         resetSetting(procedureTextField, DDLFileTypeId.PROCEDURE);

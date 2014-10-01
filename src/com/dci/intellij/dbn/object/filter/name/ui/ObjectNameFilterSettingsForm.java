@@ -125,7 +125,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         try {
             ObjectNameFilterSettings filterSettings = getConfiguration();
             boolean notifyFilterListeners = filterSettings.isModified();
@@ -157,5 +157,5 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         return null;
     }
 
-    public void resetChanges() {}
+    public void resetFormChanges() {}
 }
