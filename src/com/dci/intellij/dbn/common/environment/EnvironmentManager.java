@@ -7,11 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBEditorTabColorProvider;
-import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -79,11 +77,6 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
 
     public void dispose() {
         EventManager.unsubscribe(environmentChangeListener);
-    }
-
-    public EnvironmentType getEnvironmentType(String id) {
-        EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(getProject()).getEnvironmentSettings();
-        return environmentSettings.getEnvironmentType(id);
     }
 
     /*********************************************

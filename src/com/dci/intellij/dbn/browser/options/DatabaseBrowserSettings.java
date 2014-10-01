@@ -24,7 +24,7 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
     }
 
     public static DatabaseBrowserSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getBrowserSettings();
+        return ProjectSettingsManager.getSettings(project).getBrowserSettings();
     }
 
     @NotNull

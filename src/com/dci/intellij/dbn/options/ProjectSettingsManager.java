@@ -39,6 +39,14 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         return project.getComponent(ProjectSettingsManager.class);
     }
 
+    public static ProjectSettings getSettings(Project project) {
+        if (project.isDefault()) {
+            return TemplateProjectSettingsManager.getInstance().getProjectSettings();
+        } else {
+            return getInstance(project).getProjectSettings();
+        }
+    }
+
     public ProjectSettings getProjectSettings() {
         return projectSettings;
     }

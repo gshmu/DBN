@@ -17,7 +17,7 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
     }
 
     public static NavigationSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getNavigationSettings();
+        return ProjectSettingsManager.getSettings(project).getNavigationSettings();
     }
 
     @NotNull

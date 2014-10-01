@@ -19,7 +19,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
     }
 
     public static DataGridSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getDataGridSettings();
+        return ProjectSettingsManager.getSettings(project).getDataGridSettings();
     }
 
     @NotNull
