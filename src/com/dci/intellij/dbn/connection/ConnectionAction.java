@@ -16,7 +16,7 @@ public abstract class ConnectionAction {
             }
         }
 
-        if (connectionProvider != null && !connectionProvider.isDisposed()) {
+        if (connectionProvider != null) {
             ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
             if (connectionHandler != null && !connectionHandler.isDisposed()) {
                 boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);

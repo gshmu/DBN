@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -28,6 +19,15 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 public class DatasetFilterVirtualFile extends VirtualFile implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -75,10 +75,6 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
 
     public ConnectionHandler getConnectionHandler() {
         return datasetRef.lookupConnectionHandler();
-    }
-
-    @Override
-    public void dispose() {
     }
 
     @NotNull
@@ -189,5 +185,10 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
     @Override
     public String getExtension() {
         return "sql";
+    }
+
+    @Override
+    public void release() {
+
     }
 }

@@ -1,22 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -25,11 +14,16 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.Language;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private String id;
@@ -39,7 +33,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private Project project;
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
-    private NavigationPsiCache psiCache = new NavigationPsiCache(this);
+    private NavigationPsiCache psiCache;
     private ConnectionHandlerRef ref;
 
     public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, double databaseVersion, Project project){
@@ -64,6 +58,9 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     public NavigationPsiCache getPsiCache() {
+        if (psiCache == null) {
+            psiCache = new NavigationPsiCache(this);
+        }
         return psiCache;
     }
 

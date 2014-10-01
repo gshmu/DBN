@@ -1,16 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -22,18 +13,24 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile implements DBVirtualFile, Disposable {
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile implements DBVirtualFile {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> objectRef;
 
-    private Project project;
     private String path;
     private String url;
 
     public DBObjectVirtualFile(T object) {
         this.objectRef = object.getRef();
-        this.project = object.getProject();
     }
 
     public DBObjectRef<T> getObjectRef() {
@@ -63,7 +60,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
     }
 
     public Project getProject() {
-        return project;
+        T object = DBObjectRef.get(objectRef);
+        return object == null ? null : object.getProject();
     }
 
     /*********************************************************
@@ -176,21 +174,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return null;
     }
 
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        disposed = true;
-        this.project = null;
+    public void release() {
     }
 }
 

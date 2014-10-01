@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -31,6 +22,15 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -146,12 +146,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             for (VirtualFile virtualFile : fileViewProviderCache.keySet()) {
                 if (virtualFile instanceof DBContentVirtualFile) {
                     DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
-                    if (contentVirtualFile.isDisposed() || contentVirtualFile.getProject() == project) {
+                    if (contentVirtualFile.getProject() == null || contentVirtualFile.getProject() == project) {
                         fileViewProviderCache.remove(virtualFile);
                     }
                 } else if (virtualFile instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile objectVirtualFile = (DBObjectVirtualFile) virtualFile;
-                    if (objectVirtualFile.isDisposed() || objectVirtualFile.getProject() == project) {
+                    if (objectVirtualFile.getProject() == null || objectVirtualFile.getProject() == project) {
                         fileViewProviderCache.remove(virtualFile);
                     }
                 }

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class DisposerUtil {
 
