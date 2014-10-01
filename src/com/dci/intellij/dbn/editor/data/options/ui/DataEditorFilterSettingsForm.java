@@ -32,7 +32,7 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
             }
         });
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
         defaultFilterTypeComboBox.setEnabled(promptFilterDialogCheckBox.isSelected());
         registerComponent(mainPanel);
     }
@@ -51,14 +51,14 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataEditorFilterSettings settings = getConfiguration();
         settings.setPromptFilterDialog(promptFilterDialogCheckBox.isSelected());
         settings.setDefaultFilterType((DatasetFilterType) defaultFilterTypeComboBox.getSelectedItem());
     }
 
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataEditorFilterSettings settings = getConfiguration();
         promptFilterDialogCheckBox.setSelected(settings.isPromptFilterDialog());
         defaultFilterTypeComboBox.setSelectedItem(settings.getDefaultFilterType());

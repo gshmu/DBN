@@ -32,7 +32,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
 
     public CodeCompletionSortingSettingsForm(CodeCompletionSortingSettings settings) {
         super(settings);
-        resetChanges();
+        resetFormChanges();
         sortingItemsList.setCellRenderer(LIST_CELL_RENDERER);
         sortingItemsList.setFont(UIUtil.getLabelFont());
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
@@ -62,7 +62,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         List<CodeCompletionSortingItem> sortingItems = getConfiguration().getSortingItems();
         sortingItems.clear();
         ListModel model = sortingItemsList.getModel();
@@ -72,7 +72,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
         getConfiguration().setEnabled(enableCheckBox.isSelected());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DefaultListModel model = new DefaultListModel();
         for (CodeCompletionSortingItem sortingItem : getConfiguration().getSortingItems()) {
             model.addElement(sortingItem);

@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.navigation.options.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.border.TitledBorder;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
@@ -7,12 +13,6 @@ import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.border.TitledBorder;
 
 public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLookupSettings> {
     private JPanel mainPanel;
@@ -50,14 +50,14 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
     }
 
     @Override
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         lookupObjectsList.applyChanges();
         getConfiguration().getForceDatabaseLoad().applyChanges(loadRadioButton);
         getConfiguration().getPromptConnectionSelection().applyChanges(promptRadioButton);
     }
 
     @Override
-    public void resetChanges() {
+    public void resetFormChanges() {
         getConfiguration().getForceDatabaseLoad().applyChanges(loadRadioButton);
         getConfiguration().getPromptConnectionSelection().applyChanges(promptRadioButton);
     }

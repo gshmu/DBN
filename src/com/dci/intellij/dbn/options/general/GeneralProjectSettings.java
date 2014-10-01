@@ -34,6 +34,11 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
         return "General";
     }
 
+    @Override
+    protected Configuration<GeneralProjectSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /*********************************************************
     *                        Custom                         *
     *********************************************************/

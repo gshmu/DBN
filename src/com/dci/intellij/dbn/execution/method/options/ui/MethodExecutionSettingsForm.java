@@ -17,7 +17,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         super(settings);
         updateBorderTitleForeground(mainPanel);
 
-        resetChanges();
+        resetFormChanges();
         registerComponent(mainPanel);
     }
 
@@ -25,7 +25,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         MethodExecutionSettings settings = getConfiguration();
         int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", 0, 300, "\nUse value 0 for no timeout");
         int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", 0, 3000, "\nUse value 0 for no timeout");
@@ -33,7 +33,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         settings.setDebugExecutionTimeout(debugExecutionTimeout);
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         MethodExecutionSettings settings = getConfiguration();
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));
         debugExecutionTimeoutTextField.setText(Integer.toString(settings.getDebugExecutionTimeout()));

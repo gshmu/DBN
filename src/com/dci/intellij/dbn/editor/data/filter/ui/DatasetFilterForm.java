@@ -86,11 +86,11 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         getFilterList().getFilterGroup().apply();
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         getFilterList().getFilterGroup().reset();
     }
 

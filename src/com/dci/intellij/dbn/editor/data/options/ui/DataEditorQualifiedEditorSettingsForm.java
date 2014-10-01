@@ -22,13 +22,13 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
         checkBoxList = new CheckBoxList(settings.getContentTypes());
         listScrollPane.setViewportView(checkBoxList);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
     }
 
     @Override
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataEditorQualifiedEditorSettings settings = getConfiguration();
         checkBoxList.applyChanges();
         settings.setTextLengthThreshold(ConfigurationEditorUtil.
@@ -38,7 +38,7 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
     }
 
     @Override
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataEditorQualifiedEditorSettings settings = getConfiguration();
         textLengthThresholdTextField.setText(Integer.toString(settings.getTextLengthThreshold()));
     }

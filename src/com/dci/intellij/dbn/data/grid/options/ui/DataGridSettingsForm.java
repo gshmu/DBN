@@ -15,7 +15,7 @@ public class DataGridSettingsForm extends CompositeConfigurationEditorForm<DataG
         super(settings);
         trackingColumnSettingsPanel.add(settings.getTrackingColumnSettings().createComponent(), BorderLayout.CENTER);
         sortingSettingsPanel.add(settings.getSortingSettings().createComponent(), BorderLayout.CENTER);
-        resetChanges();
+        resetFormChanges();
     }
 
 

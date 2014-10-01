@@ -31,7 +31,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         JComponent listComponent = editableStringListForm.getComponent();
         columnNameListPanel.add(listComponent, BorderLayout.CENTER);
 
-        resetChanges();
+        resetFormChanges();
         editableCheckBox.setEnabled(visibleCheckBox.isSelected());
         registerComponent(mainPanel);
     }
@@ -52,7 +52,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         };
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataGridTrackingColumnSettings settings = getConfiguration();
         boolean trackingColumnsVisible = visibleCheckBox.isSelected();
         boolean visibilityChanged = settings.isShowColumns() != trackingColumnsVisible;
@@ -66,7 +66,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         }
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataGridTrackingColumnSettings settings = getConfiguration();
         visibleCheckBox.setSelected(settings.isShowColumns());
         editableCheckBox.setSelected(settings.isAllowEditing());

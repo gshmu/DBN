@@ -52,7 +52,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
     public ExecutionConsoleForm(Project project) {
         this.project = project;
-        resultTabs = new TabbedPane(project);
+        resultTabs = new TabbedPane(this);
         mainPanel.add(resultTabs, BorderLayout.CENTER);
         resultTabs.setFocusable(false);
         //resultTabs.setAdjustBorders(false);

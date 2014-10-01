@@ -43,6 +43,12 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
     public String getHelpTopic() {
         return "ddlFileSettings";
     }
+
+    @Override
+    protected Configuration<DDFileSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /********************************************************
     *                     Configuration                     *
     *********************************************************/

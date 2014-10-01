@@ -1,21 +1,5 @@
 package com.dci.intellij.dbn.connection.config.action;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ClipboardUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.xmlbeans.impl.common.ReaderInputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.JList;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -23,6 +7,23 @@ import java.awt.datatransfer.DataFlavor;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xmlbeans.impl.common.ReaderInputStream;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.ClipboardUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAwareAction;
 
 public class PasteConnectionAction extends DumbAwareAction {
     protected ConnectionBundleSettings connectionBundleSettings;
@@ -48,17 +49,18 @@ public class PasteConnectionAction extends DumbAwareAction {
                     selectedIndex++;
                     ConnectionSettings clone = new ConnectionSettings(connectionBundleSettings);
                     clone.readConfiguration(configElement);
-                    clone.getDatabaseSettings().setNew(true);
-                    connectionBundleSettings.setModified(true);
+                    clone.setNew(true);
+                    clone.generateNewId();
 
-                    clone.getDatabaseSettings().setNew(true);
-                    String name = clone.getDatabaseSettings().getName();
+                    ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+                    String name = databaseSettings.getName();
                     while (model.getConnectionConfig(name) != null) {
                         name = NamingUtil.getNextNumberedName(name, true);
                     }
-                    clone.getDatabaseSettings().setName(name);
+                    databaseSettings.setName(name);
                     model.add(selectedIndex, clone);
                     selectedIndexes.add(selectedIndex);
+                    connectionBundleSettings.setModified(true);
                 }
 
                 list.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));

@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.config.action;
 
+import javax.swing.JList;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -7,9 +10,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JList;
 
 public class DuplicateConnectionAction extends DumbAwareAction {
     protected ConnectionBundleSettings connectionBundleSettings;
@@ -26,7 +26,7 @@ public class DuplicateConnectionAction extends DumbAwareAction {
         ConnectionSettings connectionSettings = (ConnectionSettings) list.getSelectedValue();
         ConnectionListModel model = (ConnectionListModel) list.getModel();
         ConnectionSettings clone = connectionSettings.clone();
-        clone.getDatabaseSettings().setNew(true);
+        clone.setNew(true);
         String name = clone.getDatabaseSettings().getName();
         while (model.getConnectionConfig(name) != null) {
             name = NamingUtil.getNextNumberedName(name, true);

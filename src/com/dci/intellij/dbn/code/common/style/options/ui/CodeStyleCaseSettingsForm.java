@@ -30,7 +30,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         parameterCaseComboBox.setModel(createDefaultModel());
         datatypeCaseComboBox.setModel(createDefaultModel());
         objectCaseComboBox.setModel(createCustomModel());
-        resetChanges();
+        resetFormChanges();
 
         registerComponent(mainPanel);
 
@@ -59,7 +59,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         CodeStyleCaseSettings settings = getConfiguration();
         settings.getKeywordCaseOption().setStyleCase((CodeStyleCase) keywordCaseComboBox.getSelectedItem());
         settings.getFunctionCaseOption().setStyleCase((CodeStyleCase) functionCaseComboBox.getSelectedItem());
@@ -69,7 +69,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         settings.setEnabled(enableCheckBox.isSelected());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         CodeStyleCaseSettings settings = getConfiguration();
         keywordCaseComboBox.setSelectedItem(settings.getKeywordCaseOption().getStyleCase());
         functionCaseComboBox.setSelectedItem(settings.getFunctionCaseOption().getStyleCase());

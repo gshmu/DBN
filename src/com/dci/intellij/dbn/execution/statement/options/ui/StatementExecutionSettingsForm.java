@@ -19,7 +19,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         super(settings);
         updateBorderTitleForeground(mainPanel);
 
-        resetChanges();
+        resetFormChanges();
         registerComponent(mainPanel);
     }
 
@@ -27,14 +27,14 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         StatementExecutionSettings settings = getConfiguration();
         settings.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", 1, 10000, null));
         settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", 0, 300, "\nUse value 0 for no timeout"));
         settings.setFocusResult(focusResultCheckBox.isSelected());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         StatementExecutionSettings settings = getConfiguration();
         fetchBlockSizeTextField.setText(Integer.toString(settings.getResultSetFetchBlockSize()));
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));

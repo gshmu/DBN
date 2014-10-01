@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.UUID;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -9,6 +9,9 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
     private ConnectionBundleSettings parent;
+
+    private String connectionId;
+    private boolean isNew;
 
     private ConnectionDatabaseSettings databaseSettings;
     private ConnectionDetailSettings detailSettings;
@@ -46,21 +49,42 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
                 filterSettings};
     }
 
+    public void generateNewId() {
+        connectionId =  UUID.randomUUID().toString();
+    }
+
+    public void setConnectionId(String connectionId) {
+        this.connectionId = connectionId;
+    }
+
     @Override
     protected ConnectionSettingsForm createConfigurationEditor() {
         return new ConnectionSettingsForm(this);
     }
 
     public String getConnectionId() {
-        return databaseSettings.getId();
+        return connectionId;
     }
 
-    @NotNull
     @Override
-    public String getId() {
-        return databaseSettings.getId();
+    public void readConfiguration(Element element) {
+        connectionId = element.getAttributeValue("id");
+        super.readConfiguration(element);
     }
 
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
+    }
+
+    @Override
+    public void writeConfiguration(Element element) {
+        element.setAttribute("id", connectionId);
+        super.writeConfiguration(element);
+    }
 
     public ConnectionSettings clone() {
         try {
@@ -69,10 +93,11 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
             ConnectionSettings clone = new ConnectionSettings(parent);
             clone.readConfiguration(connectionElement);
             clone.getDatabaseSettings().setConnectivityStatus(databaseSettings.getConnectivityStatus());
-            clone.getDatabaseSettings().generateNewId();
+            clone.generateNewId();
             return clone;
         } catch (Exception e) {
+            return null;
         }
-        return null;
+
     }
 }

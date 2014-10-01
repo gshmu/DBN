@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
@@ -17,11 +22,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
@@ -137,14 +137,6 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         DisposerUtil.dispose(connectionHandlers);
         project = null;
     }
-
-    public boolean isModified() {
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            if (connectionHandler.getSettings().isModified()) return true;
-        }
-        return false;
-    }
-
 
     /*********************************************************
     *                    NavigationItem                      *

@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
-
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import java.awt.Component;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 
 public class ConnectionConfigListCellRenderer extends DefaultListCellRenderer{
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -29,7 +29,7 @@ public class ConnectionConfigListCellRenderer extends DefaultListCellRenderer{
                 settingsEditor.isConnectionActive();
 
         Icon icon = Icons.CONNECTION_DISABLED;
-        boolean isNew = connectionSettings.getDatabaseSettings().isNew();
+        boolean isNew = connectionSettings.isNew();
 
         if (isNew) {
             icon = connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE_NEW : Icons.CONNECTION_NEW;

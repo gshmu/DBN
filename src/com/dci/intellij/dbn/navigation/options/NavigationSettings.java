@@ -34,6 +34,11 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
         return "navigationSettings";
     }
 
+    @Override
+    protected Configuration<NavigationSettingsForm> getOriginalSettings() {
+        return getInstance(getProject());
+    }
+
     /*********************************************************
      *                        Custom                         *
      *********************************************************/

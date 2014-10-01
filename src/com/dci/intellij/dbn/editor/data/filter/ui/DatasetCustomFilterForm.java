@@ -112,7 +112,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DatasetCustomFilter filter = getConfiguration();
         String condition = document.getText().substring(conditionStartOffset);
         if (condition.equals(COMMENT))
@@ -121,7 +121,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         filter.setName(nameTextField.getText());
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
 
     }
 

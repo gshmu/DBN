@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.config.action;
 
+import javax.swing.JList;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -8,8 +10,6 @@ import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
-
-import javax.swing.JList;
 
 public class AddConnectionAction extends DumbAwareAction {
     protected ConnectionBundleSettings connectionBundleSettings;
@@ -24,15 +24,15 @@ public class AddConnectionAction extends DumbAwareAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         connectionBundleSettings.setModified(true);
         ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings);
-        connectionSettings.getDatabaseSettings().setNew(true);
-        GenericConnectionDatabaseSettings connectionConfig = (GenericConnectionDatabaseSettings) connectionSettings.getDatabaseSettings();
-        connectionConfig.generateNewId();
+        connectionSettings.setNew(true);
+        connectionSettings.generateNewId();
 
         String name = "Connection";
         ConnectionListModel model = (ConnectionListModel) list.getModel();
         while (model.getConnectionConfig(name) != null) {
             name = NamingUtil.getNextNumberedName(name, true);
         }
+        GenericConnectionDatabaseSettings connectionConfig = (GenericConnectionDatabaseSettings) connectionSettings.getDatabaseSettings();
         connectionConfig.setName(name);
         int selectedIndex = list.getSelectedIndex() + 1;
         model.add(selectedIndex, connectionSettings);

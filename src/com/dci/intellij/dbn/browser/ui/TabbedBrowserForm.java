@@ -28,7 +28,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     public TabbedBrowserForm(Project project) {
         super(project);
-        connectionTabs = new TabbedPane(project);
+        connectionTabs = new TabbedPane(this);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs();
@@ -56,7 +56,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private void initTabs() {
         Project project = getProject();
         connectionTabs.dispose();
-        connectionTabs = new TabbedPane(project);
+        connectionTabs = new TabbedPane(this);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler: connectionBundle.getConnectionHandlers()) {

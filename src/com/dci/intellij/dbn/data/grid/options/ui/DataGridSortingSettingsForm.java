@@ -19,7 +19,7 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         super(settings);
         updateBorderTitleForeground(mainPanel);
 
-        resetChanges();
+        resetFormChanges();
         registerComponent(mainPanel);
     }
 
@@ -27,14 +27,14 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataGridSortingSettings settings = getConfiguration();
         settings.setNullsFirst(nullsFirstRadioButton.isSelected());
         int maxSortingColumns = ConfigurationEditorUtil.validateIntegerInputValue(maxSortingColumnsTextField, "Max sorting columns", 0, 100, "Use value 0 for unlimited number of sorting columns");
         settings.setMaxSortingColumns(maxSortingColumns);
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataGridSortingSettings settings = getConfiguration();
         nullsFirstRadioButton.setSelected(settings.isNullsFirst());
         nullsLastRadioButton.setSelected(!settings.isNullsFirst());

@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -9,10 +12,6 @@ import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Base64Converter;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 public abstract class ConnectionDatabaseSettings extends Configuration<GenericDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -20,7 +19,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
     protected boolean active = true;
     protected boolean osAuthentication = false;
-    protected String id;
     protected String name;
     protected String description;
     protected DatabaseType databaseType = DatabaseType.UNKNOWN;
@@ -30,22 +28,12 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     protected int hashCode;
     private ConnectionSettings parent;
 
-    private boolean isNew;
-
     public ConnectionDatabaseSettings(ConnectionSettings parent) {
         this.parent = parent;
     }
 
     public ConnectionSettings getParent() {
         return parent;
-    }
-
-    public boolean isNew() {
-        return isNew;
-    }
-
-    public void setNew(boolean isNew) {
-        this.isNew = isNew;
     }
 
     protected static String nvl(Object value) {
@@ -75,15 +63,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public void generateNewId() {
-        id =  UUID.randomUUID().toString();
-    }
-
-    @NotNull
-    public String getId() {
-        return id;
     }
 
     public String getName() {
@@ -162,37 +141,32 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         return hashCode;
     }
 
-   /*********************************************************
+    @NotNull
+    public String getConnectionId() {
+        return parent.getConnectionId();
+    }
+
+    /*********************************************************
     *                 PersistentConfiguration               *
     *********************************************************/
     public void readConfiguration(Element element) {
-        if (element.getName().equals(getConfigElementName())) {
-            id               = getString(element, "id", id);
-            name             = getString(element, "name", name);
-            description      = getString(element, "description", description);
-            databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
-            databaseVersion  = getDouble(element, "database-version", databaseVersion);
-            user             = getString(element, "user", user);
-            password         = decodePassword(getString(element, "password", password));
-            active           = getBoolean(element, "active", active);
-            osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
-        } else{
-            // TODO: decommission (support old configuration)
-            active = getBooleanAttribute(element, "active", active);
-            osAuthentication = getBooleanAttribute(element, "os-authentication", osAuthentication);
-            id = element.getAttributeValue("id");
-            name = element.getAttributeValue("name");
-            description = element.getAttributeValue("description");
-            databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
-            user = element.getAttributeValue("user");
-            password = decodePassword(element.getAttributeValue("password"));
+        String connectionId = getString(element, "id", null);
+        if (connectionId != null) {
+            getParent().setConnectionId(connectionId);
         }
 
+        name             = getString(element, "name", name);
+        description      = getString(element, "description", description);
+        databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
+        databaseVersion  = getDouble(element, "database-version", databaseVersion);
+        user             = getString(element, "user", user);
+        password         = decodePassword(getString(element, "password", password));
+        active           = getBoolean(element, "active", active);
+        osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
         updateHashCode();
     }
 
     public void writeConfiguration(Element element) {
-        setString(element, "id", id);
         setString(element, "name", nvl(name));
         setString(element, "description", nvl(description));
         setBoolean(element, "active", active);

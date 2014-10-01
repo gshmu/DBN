@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.code.common.style.options.ui;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -7,18 +12,13 @@ import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.intellij.ui.tabs.TabInfo;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 public class CodeStyleSettingsForm extends CompositeConfigurationEditorForm<ProjectCodeStyleSettings> {
     private JPanel mainPanel;
     private TabbedPane languageTabs;
 
     public CodeStyleSettingsForm(ProjectCodeStyleSettings settings) {
         super(settings);
-        languageTabs = new TabbedPane(settings.getProject());
+        languageTabs = new TabbedPane(this);
         //languageTabs.setAdjustBorders(false);
         mainPanel.add(languageTabs, BorderLayout.CENTER);
         updateBorderTitleForeground(mainPanel);

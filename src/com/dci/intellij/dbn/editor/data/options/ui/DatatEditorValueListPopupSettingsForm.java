@@ -18,7 +18,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     public DatatEditorValueListPopupSettingsForm(DataEditorValueListPopupSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
-        resetChanges();
+        resetFormChanges();
         registerComponent(mainPanel);
     }
 
@@ -26,14 +26,14 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
         return mainPanel;
     }
 
-    public void applyChanges() throws ConfigurationException {
+    public void applyFormChanges() throws ConfigurationException {
         DataEditorValueListPopupSettings settings = getConfiguration();
         settings.setActiveForPrimaryKeyColumns(activeForPrimaryKeysCheckBox.isSelected());
         settings.setElementCountThreshold(ConfigurationEditorUtil.validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", 0, 10000, null));
         settings.setDataLengthThreshold(ConfigurationEditorUtil.validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", 0, 1000, null));
     }
 
-    public void resetChanges() {
+    public void resetFormChanges() {
         DataEditorValueListPopupSettings settings = getConfiguration();
         activeForPrimaryKeysCheckBox.setSelected(settings.isActiveForPrimaryKeyColumns());
         elementCountThresholdTextBox.setText(Integer.toString(settings.getElementCountThreshold()));

@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
@@ -11,13 +18,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
 
 public class DatasetFilterDialog extends DBNDialog {
     private boolean isAutomaticPrompt;
@@ -105,7 +105,7 @@ public class DatasetFilterDialog extends DBNDialog {
         Project project = getProject();
         DBDataset dataset = getDataset();
         try {
-            mainForm.applyChanges();
+            mainForm.applyFormChanges();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
             DatasetFilter activeFilter = mainForm.getSelectedFilter();
             if (activeFilter == null) {
@@ -121,12 +121,12 @@ public class DatasetFilterDialog extends DBNDialog {
     }
 
     public void doCancelAction() {
-        mainForm.resetChanges();
+        mainForm.resetFormChanges();
         super.doCancelAction();
     }
 
     public void doNoFilterAction() {
-        mainForm.resetChanges();
+        mainForm.resetFormChanges();
         mainForm.dispose();
         DBDataset dataset = getDataset();
         Project project = getProject();
