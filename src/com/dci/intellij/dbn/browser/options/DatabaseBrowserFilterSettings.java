@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
 
 public class DatabaseBrowserFilterSettings extends CompositeProjectConfiguration<DatabaseBrowserFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
@@ -48,13 +47,5 @@ public class DatabaseBrowserFilterSettings extends CompositeProjectConfiguration
     @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {objectTypeFilterSettings};
-    }
-
-    public void readConfiguration(Element element) {
-        readConfiguration(element, objectTypeFilterSettings);
-    }
-
-    public void writeConfiguration(Element element) {
-        writeConfiguration(element, objectTypeFilterSettings);
     }
 }

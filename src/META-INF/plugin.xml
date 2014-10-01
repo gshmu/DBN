@@ -196,6 +196,7 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.console.SQLConsoleEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.event.EventManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionCache</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.options.TemplateProjectSettingsManager</implementation-class></component>
     </application-components>
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->
@@ -224,7 +225,7 @@
         <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettings</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
     </project-components>
     <module-components>
@@ -351,7 +352,7 @@
         </group>
     </actions>
     <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable instance="com.dci.intellij.dbn.options.GlobalProjectSettings" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true"/>
+        <projectConfigurable instance="com.dci.intellij.dbn.options.ProjectSettings" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true"/>
 
         <toolWindow id="DB Browser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
 

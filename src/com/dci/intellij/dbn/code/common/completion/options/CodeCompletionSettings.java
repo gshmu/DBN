@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.code.common.completion.options;
 
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFiltersSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
 import com.dci.intellij.dbn.code.common.completion.options.ui.CodeCompletionSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCompletionSettingsForm> {
     private CodeCompletionFiltersSettings filtersSettings;
@@ -24,7 +25,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     }
 
     public static CodeCompletionSettings getInstance(Project project) {
-        return ProjectSettings.getInstance(project).getCodeCompletionSettings();
+        return ProjectSettingsManager.getInstance(project).getCodeCompletionSettings();
     }
 
     @NotNull

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.options.ui.GlobalProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -13,7 +13,7 @@ public class OpenSettingsAction extends DumbAwareAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null && !project.isDisposed()) {
-            GlobalProjectSettingsDialog globalSettingsDialog = new GlobalProjectSettingsDialog(project);
+            ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
             globalSettingsDialog.show();
         }
     }

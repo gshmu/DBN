@@ -28,7 +28,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 
 @State(
-    name = "DBNavigator",
+    name = "DBNavigator.Application.Settings",
     storages = {@Storage(file = StoragePathMacros.APP_CONFIG + "/other.xml")}
 )
 public class DatabaseNavigator implements ApplicationComponent, PersistentStateComponent<Element> {
@@ -42,7 +42,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     @NotNull
     public String getComponentName() {
-        return "DBNavigator";
+        return "DBNavigator.Application.Settings";
     }
 
     private boolean debugModeEnabled;

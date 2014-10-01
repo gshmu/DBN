@@ -31,7 +31,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -329,7 +329,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         if (getConnectionBundle().isEmpty()) {
             Element connectionsElement = element.getChild("connections");
             if (connectionsElement != null) {
-                ProjectSettings.getInstance(getProject()).getConnectionSettings().readConfiguration(connectionsElement);
+                ProjectSettingsManager.getInstance(getProject()).getConnectionSettings().readConfiguration(connectionsElement);
             }
         }
     }

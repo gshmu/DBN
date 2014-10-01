@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.navigation.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.navigation.options.ui.NavigationSettingsForm;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class NavigationSettings extends CompositeProjectConfiguration<NavigationSettingsForm> {
     private ObjectsLookupSettings objectsLookupSettings;
@@ -16,7 +17,7 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
     }
 
     public static NavigationSettings getInstance(Project project) {
-        return ProjectSettings.getInstance(project).getNavigationSettings();
+        return ProjectSettingsManager.getInstance(project).getNavigationSettings();
     }
 
     @NotNull

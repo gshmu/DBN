@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.browser.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class DatabaseBrowserSettings extends CompositeProjectConfiguration<DatabaseBrowserSettingsForm> {
     private DatabaseBrowserGeneralSettings generalSettings;
@@ -24,7 +24,7 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
     }
 
     public static DatabaseBrowserSettings getInstance(Project project) {
-        return ProjectSettings.getInstance(project).getBrowserSettings();
+        return ProjectSettingsManager.getInstance(project).getBrowserSettings();
     }
 
     @NotNull
@@ -59,22 +59,13 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
 
     @Override
     protected Configuration[] createConfigurations() {
-        return new Configuration[] {generalSettings, filterSettings};
+        return new Configuration[] {
+                generalSettings,
+                filterSettings};
     }
 
     @Override
     public String getConfigElementName() {
         return "browser-settings";
     }
-
-    public void readConfiguration(Element element) {
-        readConfiguration(element, generalSettings);
-        readConfiguration(element, filterSettings);
-    }
-
-    public void writeConfiguration(Element element) {
-        writeConfiguration(element, generalSettings);
-        writeConfiguration(element, filterSettings);
-    }
-
 }

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.options.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -13,21 +18,16 @@ import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
-import com.dci.intellij.dbn.options.GlobalProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
-public class GlobalProjectSettingsEditorForm extends CompositeConfigurationEditorForm<GlobalProjectSettings> {
+public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<ProjectSettings> {
     private JPanel mainPanel;
     private TabbedPane configurationTabs;
 
-    public GlobalProjectSettingsEditorForm(GlobalProjectSettings globalSettings) {
+    public ProjectSettingsEditorForm(ProjectSettings globalSettings) {
         super(globalSettings);
 
         configurationTabs = new TabbedPane(globalSettings.getProject());

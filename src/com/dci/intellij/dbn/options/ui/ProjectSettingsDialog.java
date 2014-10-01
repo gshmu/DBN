@@ -1,29 +1,29 @@
 package com.dci.intellij.dbn.options.ui;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.options.GlobalProjectSettings;
-import com.dci.intellij.dbn.options.ProjectSettings;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.help.HelpManager;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.Alarm;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
 
-public class GlobalProjectSettingsDialog extends DBNDialog {
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.help.HelpManager;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.Alarm;
+
+public class ProjectSettingsDialog extends DBNDialog {
     private JButton bApply;
-    private GlobalProjectSettings globalSettings;
+    private ProjectSettings globalSettings;
 
-    public GlobalProjectSettingsDialog(Project project) {
+    public ProjectSettingsDialog(Project project) {
         super(project, "Settings", true);
         setModal(true);
         setResizable(true);
@@ -41,8 +41,8 @@ public class GlobalProjectSettingsDialog extends DBNDialog {
         return getGlobalProjectSettings().createCustomComponent();
     }
 
-    private GlobalProjectSettings getGlobalProjectSettings() {
-        return ProjectSettings.getInstance(getProject()).getGlobalProjectSettings();
+    private ProjectSettings getGlobalProjectSettings() {
+        return ProjectSettingsManager.getInstance(getProject()).getProjectSettings();
     }
 
     public void dispose() {
@@ -129,14 +129,14 @@ public class GlobalProjectSettingsDialog extends DBNDialog {
     }
 
     public void focusConnectionSettings(ConnectionHandler connectionHandler) {
-        GlobalProjectSettingsEditorForm globalSettingsEditor = globalSettings.getSettingsEditor();
+        ProjectSettingsEditorForm globalSettingsEditor = globalSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
             globalSettingsEditor.focusConnectionSettings(connectionHandler);
         }
     }
 
     public void focusSettings(Configuration configuration) {
-        GlobalProjectSettingsEditorForm globalSettingsEditor = globalSettings.getSettingsEditor();
+        ProjectSettingsEditorForm globalSettingsEditor = globalSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
             globalSettingsEditor.focusSettingsEditor(configuration);
         }

@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.options.general;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.general.ui.GeneralProjectSettingsForm;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class GeneralProjectSettings extends CompositeProjectConfiguration<GeneralProjectSettingsForm> {
     private RegionalSettings regionalSettings;
@@ -20,7 +21,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
     }
 
     public static GeneralProjectSettings getInstance(Project project) {
-        return ProjectSettings.getInstance(project).getGeneralSettings();
+        return ProjectSettingsManager.getInstance(project).getGeneralSettings();
     }
 
     @NotNull
