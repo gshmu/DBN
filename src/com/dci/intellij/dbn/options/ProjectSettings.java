@@ -1,18 +1,9 @@
 package com.dci.intellij.dbn.options;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -27,6 +18,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
@@ -142,12 +141,6 @@ public class ProjectSettings
 
     public Configurable[] getConfigurables() {
         return getConfigurations();
-    }
-
-    @Override
-    protected void onApply() {
-        ProjectSettingsChangeListener listener = EventManager.notify(getProject(), ProjectSettingsChangeListener.TOPIC);
-        listener.projectSettingsChanged(getProject());
     }
 
     /*********************************************************

@@ -1,13 +1,10 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
+import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -16,11 +13,14 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
-import com.dci.intellij.dbn.options.ProjectSettingsChangeListener;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -56,7 +56,7 @@ public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
         GUIUtil.updateSplitterProportion(mainPanel, (float) 0.7);
 
 
-        EventManager.subscribe(project, ProjectSettingsChangeListener.TOPIC, projectSettingsChangeListener);
+        EventManager.subscribe(project, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
         Disposer.register(this, objectPropertiesForm);
     }
 
@@ -106,8 +106,12 @@ public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
         objectPropertiesPanel.setVisible(false);
     }
 
-    private BrowserDisplayMode getConfigDisplayMode() {
-        return DatabaseBrowserSettings.getInstance(project).getGeneralSettings().getDisplayMode();
+    public BrowserDisplayMode getDisplayMode() {
+        return displayMode;
+    }
+
+    public void setDisplayMode(BrowserDisplayMode displayMode) {
+        this.displayMode = displayMode;
     }
 
     @Nullable
@@ -124,7 +128,7 @@ public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
     }
 
     public void dispose() {
-        EventManager.unsubscribe(projectSettingsChangeListener);
+        EventManager.unsubscribe(displayModeSettingsListener);
         super.dispose();
         objectPropertiesForm = null;
         browserForm = null;
@@ -134,13 +138,12 @@ public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private ProjectSettingsChangeListener projectSettingsChangeListener = new ProjectSettingsChangeListener() {
+    private DisplayModeSettingsListener displayModeSettingsListener = new DisplayModeSettingsListener() {
         @Override
-        public void projectSettingsChanged(Project project) {
-            BrowserDisplayMode configDisplayMode = getConfigDisplayMode();
-            if (displayMode != configDisplayMode) {
+        public void displayModeChanged(BrowserDisplayMode displayMode) {
+            if (getDisplayMode() != displayMode) {
                 Disposer.dispose(browserForm);
-                displayMode = configDisplayMode;
+                setDisplayMode(displayMode);
                 initBrowserForm();
 
                 browserPanel.revalidate();
