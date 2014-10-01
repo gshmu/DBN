@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jdom.Element;
 
-import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
+import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.project.Project;
 
 public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
@@ -57,7 +58,8 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     }
 
     public EnvironmentType getEnvironmentType() {
-        return EnvironmentManager.getInstance(parent.getProject()).getEnvironmentType(environmentTypeId);
+        EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(getProject()).getEnvironmentSettings();
+        return environmentSettings.getEnvironmentType(environmentTypeId);
     }
 
     public void setEnvironmentTypeId(String environmentTypeId) {

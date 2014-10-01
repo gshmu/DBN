@@ -21,7 +21,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
     }
 
     public static GeneralProjectSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getGeneralSettings();
+        return ProjectSettingsManager.getSettings(project).getGeneralSettings();
     }
 
     @NotNull

@@ -25,7 +25,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     }
 
     public static CodeCompletionSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getCodeCompletionSettings();
+        return ProjectSettingsManager.getSettings(project).getCodeCompletionSettings();
     }
 
     @NotNull

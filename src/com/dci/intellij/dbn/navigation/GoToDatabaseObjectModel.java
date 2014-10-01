@@ -40,7 +40,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = project;
         this.selectedConnection = selectedConnection;
-        objectsLookupSettings = ProjectSettingsManager.getInstance(project).getNavigationSettings().getObjectsLookupSettings();
+        objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
     public String getPromptText() {

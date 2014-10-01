@@ -21,7 +21,7 @@ import com.intellij.util.Alarm;
 
 public class ProjectSettingsDialog extends DBNDialog {
     private JButton bApply;
-    private ProjectSettings globalSettings;
+    private ProjectSettings projectSettings;
 
     public ProjectSettingsDialog(Project project) {
         super(project, "Settings", true);
@@ -29,7 +29,7 @@ public class ProjectSettingsDialog extends DBNDialog {
         setResizable(true);
         //setHorizontalStretch(1.5f);
 
-        globalSettings = getGlobalProjectSettings();
+        projectSettings = getProjectSettings();
         init();
     }
 
@@ -38,11 +38,11 @@ public class ProjectSettingsDialog extends DBNDialog {
     }
 
     protected JComponent createCenterPanel() {
-        return getGlobalProjectSettings().createCustomComponent();
+        return getProjectSettings().createCustomComponent();
     }
 
-    private ProjectSettings getGlobalProjectSettings() {
-        return ProjectSettingsManager.getInstance(getProject()).getProjectSettings();
+    private ProjectSettings getProjectSettings() {
+        return ProjectSettingsManager.getSettings(getProject());
     }
 
     public void dispose() {
@@ -70,15 +70,15 @@ public class ProjectSettingsDialog extends DBNDialog {
     }
 
     public void doCancelAction() {
-        globalSettings.reset();
-        globalSettings.disposeUIResources();
+        projectSettings.reset();
+        projectSettings.disposeUIResources();
         super.doCancelAction();
     }
 
     public void doOKAction() {
         try {
-            globalSettings.apply();
-            globalSettings.disposeUIResources();
+            projectSettings.apply();
+            projectSettings.disposeUIResources();
             super.doOKAction();
         } catch (ConfigurationException e) {
             MessageUtil.showErrorDialog(e.getMessage());
@@ -88,7 +88,7 @@ public class ProjectSettingsDialog extends DBNDialog {
 
     public void doApplyAction() {
         try {
-            globalSettings.apply();
+            projectSettings.apply();
             bApply.setEnabled(false);
             setCancelButtonText("Close");
         } catch (ConfigurationException e) {
@@ -97,7 +97,7 @@ public class ProjectSettingsDialog extends DBNDialog {
     }
 
     protected void doHelpAction() {
-        HelpManager.getInstance().invokeHelp(globalSettings.getHelpTopic());
+        HelpManager.getInstance().invokeHelp(projectSettings.getHelpTopic());
     }
 
     private class ApplyAction extends AbstractAction {
@@ -105,7 +105,7 @@ public class ProjectSettingsDialog extends DBNDialog {
         private Runnable reloader = new Runnable() {
             public void run() {
                 if (isShowing()) {
-                    boolean isModified = globalSettings.isModified();
+                    boolean isModified = projectSettings.isModified();
                     bApply.setEnabled(isModified);
                     //setCancelButtonText(isModified ? "Cancel" : "Close");
                     addReloadRequest();
@@ -129,14 +129,14 @@ public class ProjectSettingsDialog extends DBNDialog {
     }
 
     public void focusConnectionSettings(ConnectionHandler connectionHandler) {
-        ProjectSettingsEditorForm globalSettingsEditor = globalSettings.getSettingsEditor();
+        ProjectSettingsEditorForm globalSettingsEditor = projectSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
             globalSettingsEditor.focusConnectionSettings(connectionHandler);
         }
     }
 
     public void focusSettings(Configuration configuration) {
-        ProjectSettingsEditorForm globalSettingsEditor = globalSettings.getSettingsEditor();
+        ProjectSettingsEditorForm globalSettingsEditor = projectSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
             globalSettingsEditor.focusSettingsEditor(configuration);
         }

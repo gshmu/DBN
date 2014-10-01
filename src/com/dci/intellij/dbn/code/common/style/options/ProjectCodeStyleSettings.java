@@ -21,7 +21,7 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
     }
 
     public static ProjectCodeStyleSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getCodeStyleSettings();
+        return ProjectSettingsManager.getSettings(project).getCodeStyleSettings();
     }
 
     @NotNull

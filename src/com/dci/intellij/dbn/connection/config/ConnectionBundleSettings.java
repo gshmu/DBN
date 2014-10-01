@@ -19,7 +19,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     }
 
     public static ConnectionBundleSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getConnectionSettings();
+        return ProjectSettingsManager.getSettings(project).getConnectionSettings();
     }
 
     @NotNull

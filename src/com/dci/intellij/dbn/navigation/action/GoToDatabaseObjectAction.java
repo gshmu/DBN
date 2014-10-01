@@ -41,7 +41,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         Project project = event.getData(PlatformDataKeys.PROJECT);
 
         if (project != null) {
-            ObjectsLookupSettings objectsLookupSettings = ProjectSettingsManager.getInstance(project).getNavigationSettings().getObjectsLookupSettings();
+            ObjectsLookupSettings objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
             if (objectsLookupSettings.getPromptConnectionSelection().value()) {
                 ConnectionHandler singleConnectionHandler = null;
                 DefaultActionGroup actionGroup = new DefaultActionGroup();

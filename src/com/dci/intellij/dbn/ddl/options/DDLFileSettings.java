@@ -19,7 +19,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
     }
 
     public static DDLFileSettings getInstance(Project project) {
-        return ProjectSettingsManager.getInstance(project).getDdlFileSettings();
+        return ProjectSettingsManager.getSettings(project).getDdlFileSettings();
     }
 
     public DDLFileExtensionSettings getExtensionSettings() {

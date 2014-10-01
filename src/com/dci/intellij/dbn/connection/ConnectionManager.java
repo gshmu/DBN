@@ -329,7 +329,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         if (getConnectionBundle().isEmpty()) {
             Element connectionsElement = element.getChild("connections");
             if (connectionsElement != null) {
-                ProjectSettingsManager.getInstance(getProject()).getConnectionSettings().readConfiguration(connectionsElement);
+                ProjectSettingsManager.getSettings(getProject()).getConnectionSettings().readConfiguration(connectionsElement);
             }
         }
     }
