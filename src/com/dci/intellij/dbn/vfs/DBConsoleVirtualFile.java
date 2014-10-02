@@ -221,7 +221,5 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     @Override
     public void dispose() {
-        connectionHandlerRef.release();
-        currentSchemaRef.release();
     }
 }
