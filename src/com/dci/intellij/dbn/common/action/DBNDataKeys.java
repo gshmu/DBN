@@ -9,4 +9,5 @@ public interface DBNDataKeys {
     DataKey<DatasetEditor> DATASET_EDITOR = DataKey.create("DBNavigator.DatasetEditor");
     DataKey<StatementExecutionResult> STATEMENT_EXECUTION_RESULT = DataKey.create("DBNavigator.StatementExecutionResult");
     Key<String> ACTION_PLACE_KEY = Key.create("DBNavigator.ActionPlace");
+    Key<Boolean> PROJECT_SETTINGS_LOADED_KEY = Key.create("DBNavigator.ProjectSettingsLoaded");
 }
