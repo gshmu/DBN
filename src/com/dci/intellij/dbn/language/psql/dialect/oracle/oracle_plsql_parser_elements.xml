@@ -23,7 +23,7 @@
         </sequence>
         <element optional="true" ref-id="end" />
     </element-def>
-    <element-def attributes="STATEMENT" description="Root statement" formatting-indent="ABSOLUTE_NONE" id="root_statement">
+    <element-def attributes="STATEMENT, COMPILABLE_BLOCK" description="Root statement" formatting-indent="ABSOLUTE_NONE" id="root_statement">
         <one-of id="000000008">
             <element ref-id="function_spec_or_declaration" />
             <element ref-id="procedure_spec_or_declaration" />

@@ -8,12 +8,12 @@ public class ConnectionHandlerRef{
 
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
         reference = new WeakReference<ConnectionHandler>(connectionHandler);
-        connectionId = connectionHandler.getId();
+        connectionId = connectionHandler == null ? null : connectionHandler.getId();
     }
 
     public ConnectionHandler get() {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();
-        if (connectionHandler == null) {
+        if (connectionHandler == null && connectionId != null) {
             connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             reference = new WeakReference<ConnectionHandler>(connectionHandler);
         }

@@ -1,16 +1,17 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class StatementGutterAction extends AnAction {
     final StatementExecutionProcessor executionProcessor;
@@ -34,7 +35,8 @@ public class StatementGutterAction extends AnAction {
         if (executionResult == null) {
             return Icons.STMT_EXECUTION_RUN;
         } else {
-            if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_SUCCESS){
+            StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
+            if (executionStatus == StatementExecutionStatus.SUCCESS){
                 if (executionProcessor instanceof StatementExecutionCursorProcessor) {
                     return executionResult.getExecutionInput().isObsolete() ?
                             Icons.STMT_EXEC_RESULTSET_RERUN :
@@ -42,8 +44,10 @@ public class StatementGutterAction extends AnAction {
                 } else {
                     return Icons.EXEC_MESSAGES_INFO;
                 }
-            } else if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR){
+            } else if (executionStatus == StatementExecutionStatus.ERROR){
                 return Icons.STMT_EXECUTION_ERROR_RERUN;
+            } else if (executionStatus == StatementExecutionStatus.WARNING){
+                return Icons.STMT_EXECUTION_WARNING;
             }
         }
 
@@ -58,12 +62,14 @@ public class StatementGutterAction extends AnAction {
                 return "<html>Execute <b>" + executionProcessor.getStatementName() + "</b></html>";
             } else {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-                if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_SUCCESS) {
+                StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
+                if (executionStatus == StatementExecutionStatus.SUCCESS) {
                     return "<html>Show execution result <br> <b>" + executionResult.getResultName() + "</b></html>";
-                } else if (executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR) {
+                } else if (executionStatus == StatementExecutionStatus.ERROR) {
                     return "<html>Error executing statement <br> <font color='red'>" + executionResult.getExecutionMessage().getCauseMessage() + "</font></html>";
+                } else if (executionStatus == StatementExecutionStatus.WARNING) {
+                    return "<html>Statement executed with warnings</html>";
                 }
-
             }
         }
         return null;

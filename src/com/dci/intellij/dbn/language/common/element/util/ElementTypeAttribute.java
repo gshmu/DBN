@@ -12,6 +12,7 @@ public enum ElementTypeAttribute {
     QUERY("QUERY", "Query statement", true),
     DATA_DEFINITION("DATA_DEFINITION", "Data definition statement", true),
     DATA_MANIPULATION("DATA_MANIPULATION", "Data manipulation statement", true),
+    COMPILABLE_BLOCK("COMPILABLE_BLOCK", "Compilable block", false),
     TRANSACTION_CONTROL("TRANSACTION_CONTROL", "Transaction control statement", true),
     OBJECT_SPECIFICATION("OBJECT_SPECIFICATION", "Object specification"),
     DECLARATION("DECLARATION", "Declaration"),

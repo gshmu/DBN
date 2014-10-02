@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 
@@ -58,7 +59,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         if (super.canExecute()) {
             StatementExecutionBasicResult executionResult = getExecutionResult();
             return executionResult == null ||
-                    executionResult.getExecutionStatus() == StatementExecutionResult.STATUS_ERROR ||
+                    executionResult.getExecutionStatus() == StatementExecutionStatus.ERROR ||
                     executionResult.getExecutionInput().isObsolete() || isDirty();
         }
         return false;

@@ -16,10 +16,12 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
@@ -184,39 +186,51 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
         StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(executionInput, getResultName(), statement.getUpdateCount());
-        String message = executablePsiElement.getPresentableText() + " executed successfully";
-        int updateCount = executionResult.getUpdateCount();
         boolean isDdlStatement = executionInput.isDDLStatement();
-        if (!isDdlStatement && updateCount > -1) {
-            message = message + ": " + updateCount + (updateCount != 1 ? " rows" : " row") + " affected";
-        }
-        executionResult.updateExecutionMessage(MessageType.INFO, message);
-        executionResult.setExecutionStatus(StatementExecutionResult.STATUS_SUCCESS);
+        boolean hasCompilerErrors = false;
         if (isDdlStatement) {
             StatementExecutionProcessor executionProcessor = executionInput.getExecutionProcessor();
             if (executionProcessor != null && !executionProcessor.isDisposed()) {
                 ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
                 if (executablePsiElement != null) {
                     IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) executablePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                    if (subjectPsiElement != null) {
+                    BasePsiElement compilablePsiElement = executablePsiElement.lookupFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
+                    if (subjectPsiElement != null && compilablePsiElement != null) {
                         DBObject object = subjectPsiElement.resolveUnderlyingObject();
                         if (object != null && object instanceof DBSchemaObject) {
-
                             VirtualFile virtualFile = executablePsiElement.getFile().getVirtualFile();
-                            CompilerResult compilerResult = new CompilerResult((DBSchemaObject) object, new CompilerAction(CompilerAction.Type.DDL, virtualFile));
+                            CompilerAction sourceAction = new CompilerAction(CompilerAction.Type.DDL, virtualFile, compilablePsiElement.getTextOffset());
+                            CompilerResult compilerResult = new CompilerResult((DBSchemaObject) object, sourceAction);
                             executionResult.setCompilerResult(compilerResult);
+                            hasCompilerErrors = compilerResult.hasErrors();
                         }
                     }
                 }
             }
         }
+
+        if (hasCompilerErrors) {
+            String message = executablePsiElement.getPresentableText() + " executed with warnings";
+            executionResult.updateExecutionMessage(MessageType.WARNING, message);
+            executionResult.setExecutionStatus(StatementExecutionStatus.WARNING);
+
+        } else {
+            String message = executablePsiElement.getPresentableText() + " executed successfully";
+            int updateCount = executionResult.getUpdateCount();
+            if (!isDdlStatement && updateCount > -1) {
+                message = message + ": " + updateCount + (updateCount != 1 ? " rows" : " row") + " affected";
+            }
+            executionResult.updateExecutionMessage(MessageType.INFO, message);
+            executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
+        }
+
         return executionResult;
     }
 
     public StatementExecutionResult createErrorExecutionResult(StatementExecutionInput executionInput, String cause) {
         StatementExecutionResult executionResult = new StatementExecutionBasicResult(executionInput, getResultName(), 0);
         executionResult.updateExecutionMessage(MessageType.ERROR, "Could not execute " + getStatementName() + ".", cause);
-        executionResult.setExecutionStatus(StatementExecutionResult.STATUS_ERROR);
+        executionResult.setExecutionStatus(StatementExecutionStatus.ERROR);
         return executionResult;
     }
 
