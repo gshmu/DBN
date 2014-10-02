@@ -148,12 +148,15 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public void updateDDLFiles(final DBContentType sourceContentType) {
-        new ConditionalLaterInvocator() {
-            public void execute() {
-                ObjectToDDLContentSynchronizer synchronizer = new ObjectToDDLContentSynchronizer(sourceContentType, DBEditableObjectVirtualFile.this);
-                ApplicationManager.getApplication().runWriteAction(synchronizer);
-            }
-        }.start();
+        DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(getProject());
+        if (ddlFileSettings.getGeneralSettings().isSynchronizeDDLFilesEnabled()) {
+            new ConditionalLaterInvocator() {
+                public void execute() {
+                    ObjectToDDLContentSynchronizer synchronizer = new ObjectToDDLContentSynchronizer(sourceContentType, DBEditableObjectVirtualFile.this);
+                    ApplicationManager.getApplication().runWriteAction(synchronizer);
+                }
+            }.start();
+        }
     }
 
     public DBContentVirtualFile getContentFile(DBContentType contentType) {
