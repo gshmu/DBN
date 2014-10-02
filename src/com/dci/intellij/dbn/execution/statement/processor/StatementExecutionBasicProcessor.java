@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
@@ -17,14 +19,19 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import gnu.trove.THashSet;
 
@@ -176,14 +183,33 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
-        StatementExecutionResult executionResult = new StatementExecutionBasicResult(executionInput, getResultName(), statement.getUpdateCount());
+        StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(executionInput, getResultName(), statement.getUpdateCount());
         String message = executablePsiElement.getPresentableText() + " executed successfully";
         int updateCount = executionResult.getUpdateCount();
-        if (updateCount > -1) {
+        boolean isDdlStatement = executionInput.isDDLStatement();
+        if (!isDdlStatement && updateCount > -1) {
             message = message + ": " + updateCount + (updateCount != 1 ? " rows" : " row") + " affected";
         }
         executionResult.updateExecutionMessage(MessageType.INFO, message);
         executionResult.setExecutionStatus(StatementExecutionResult.STATUS_SUCCESS);
+        if (isDdlStatement) {
+            StatementExecutionProcessor executionProcessor = executionInput.getExecutionProcessor();
+            if (executionProcessor != null && !executionProcessor.isDisposed()) {
+                ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
+                if (executablePsiElement != null) {
+                    IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) executablePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    if (subjectPsiElement != null) {
+                        DBObject object = subjectPsiElement.resolveUnderlyingObject();
+                        if (object != null && object instanceof DBSchemaObject) {
+
+                            VirtualFile virtualFile = executablePsiElement.getFile().getVirtualFile();
+                            CompilerResult compilerResult = new CompilerResult((DBSchemaObject) object, new CompilerAction(CompilerAction.Type.DDL, virtualFile));
+                            executionResult.setCompilerResult(compilerResult);
+                        }
+                    }
+                }
+            }
+        }
         return executionResult;
     }
 

@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.CompileSourceAction;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -19,7 +20,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     public CompileObjectAction() {
@@ -35,7 +35,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
             compilerManager.compileObject(
                     virtualFile.getObject(),
                     virtualFile.getContentType(),
-                    compilerSettings.getCompileType(), CompileSourceAction.COMPILE);
+                    compilerSettings.getCompileType(), new CompilerAction(CompilerAction.Type.COMPILE, virtualFile));
         }
     }
 

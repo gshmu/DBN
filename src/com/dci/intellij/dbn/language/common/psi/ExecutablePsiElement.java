@@ -96,7 +96,15 @@ public class ExecutablePsiElement extends NamedPsiElement{
      *********************************************************/
     public String getPresentableText() {
         ElementType elementType = getSpecificElementType();
-        String subjectList = createSubjectList();
+        String subjectList = null;
+        if (is(ElementTypeAttribute.DATA_DEFINITION)) {
+            IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+            if (subjectPsiElement != null) {
+                subjectList = subjectPsiElement.getUnquotedText().toString();
+            }
+        } else {
+            subjectList = createSubjectList();
+        }
         if (subjectList != null) {
             return elementType.getDescription() + " (" + subjectList + ")";
         } else {

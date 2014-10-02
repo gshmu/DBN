@@ -10,7 +10,7 @@
         </iteration>
     </element-def>
 
-    <element-def attributes="EXECUTABLE, STATEMENT" description="DDL statement" formatting-indent="ABSOLUTE_NONE" id="ddl_statement">
+    <element-def attributes="EXECUTABLE, STATEMENT, DATA_DEFINITION" description="DDL statement" formatting-indent="ABSOLUTE_NONE" id="ddl_statement">
         <sequence attributes="DDL_STATEMENT" id="000000002">
             <sequence id="000000003">
                 <token id="000000004" type-id="KW_CREATE" />

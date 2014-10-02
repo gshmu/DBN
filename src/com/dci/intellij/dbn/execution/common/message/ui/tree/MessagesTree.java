@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -97,14 +98,18 @@ public class MessagesTree extends DBNTree implements Disposable {
             if (project != null) {
                 FileEditorManager editorManager = FileEditorManager.getInstance(project);
 
-                DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
-                if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
-                    editorManager.openFile(databaseFile, false);
-                    DBContentVirtualFile contentFile = compilerMessage.getContentFile();
-                    if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
-                        BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) contentFile);
-                        if (textEditor != null) {
-                            navigateInEditor(compilerMessage, textEditor, databaseFile);
+                CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
+                CompilerAction.Type sourceActionType = sourceAction.getType();
+                if (sourceActionType == CompilerAction.Type.SAVE || sourceActionType == CompilerAction.Type.COMPILE) {
+                    DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
+                    if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
+                        editorManager.openFile(databaseFile, false);
+                        DBContentVirtualFile contentFile = compilerMessage.getContentFile();
+                        if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
+                            BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) contentFile);
+                            if (textEditor != null) {
+                                navigateInEditor(compilerMessage, textEditor, databaseFile);
+                            }
                         }
                     }
                 }

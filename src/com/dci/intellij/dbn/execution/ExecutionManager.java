@@ -109,11 +109,17 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void showExecutionConsole(final StatementExecutionResult executionResult) {
         new SimpleLaterInvocator() {
             public void execute() {
-                getExecutionConsoleForm().show(executionResult);
-                showExecutionConsole();
-                StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-                if (!statementExecutionSettings.isFocusResult()) {
-                    executionResult.navigateToEditor(true);
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.show(executionResult);
+                CompilerResult compilerResult = executionResult.getCompilerResult();
+                if (compilerResult != null) {
+                    showExecutionConsole(compilerResult);
+                } else {
+                    showExecutionConsole();
+                    StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
+                    if (!statementExecutionSettings.isFocusResult()) {
+                        executionResult.navigateToEditor(true);
+                    }
                 }
             }
         }.start();

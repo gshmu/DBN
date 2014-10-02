@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
+import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
@@ -21,6 +22,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private int executionStatus;
     private int updateCount;
     private StatementViewerPopup statementViewerPopup;
+    private CompilerResult compilerResult;
 
     public StatementExecutionBasicResult(
             StatementExecutionInput executionInput,
@@ -121,6 +123,14 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return null;
     }
 
+    @Override
+    public CompilerResult getCompilerResult() {
+        return compilerResult;
+    }
+
+    public void setCompilerResult(CompilerResult compilerResult) {
+        this.compilerResult = compilerResult;
+    }
 
     /********************************************************
      *                    Disposable                        *
