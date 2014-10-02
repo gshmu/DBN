@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -36,6 +38,7 @@ import com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction;
 import com.dci.intellij.dbn.connection.config.action.SortConnectionsAction;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 
@@ -93,12 +96,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public void applyFormChanges() throws ConfigurationException {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
-        ConnectionBundle connectionBundle = connectionBundleSettings.getConnectionBundle();
+        final ConnectionBundle connectionBundle = connectionBundleSettings.getConnectionBundle();
 
         List<ConnectionHandler> oldConnections = new ArrayList<ConnectionHandler>(connectionBundle.getConnectionHandlers().getFullList());
         List<ConnectionHandler> newConnections = new ArrayList<ConnectionHandler>();
 
-        boolean listChanged = false;
+        final AtomicBoolean listChanged = new AtomicBoolean(false);
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         if (oldConnections.size() == listModel.getSize()) {
             for (int i=0; i<oldConnections.size(); i++) {
@@ -106,12 +109,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                 ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
                 if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
                         (newConfig.getSettingsEditor() != null && newConfig.getDatabaseSettings().getSettingsEditor().isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
-                    listChanged = true;
+                    listChanged.set(true);
                     break;
                 }
             }
         } else {
-            listChanged = true;
+            listChanged.set(true);
         }
 
         for (int i=0; i< listModel.getSize(); i++) {
@@ -135,9 +138,16 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         // dispose old list
         DisposerUtil.dispose(oldConnections);
 
-        if (listChanged) {
-            EventManager.notify(connectionBundle.getProject(), ConnectionBundleSettingsListener.TOPIC).settingsChanged();
-        }
+         new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (listChanged.get()) {
+                    Project project = connectionBundle.getProject();
+                    ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
+                    listener.settingsChanged();
+                }
+            }
+        };
     }
 
     public void resetFormChanges() {

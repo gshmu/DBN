@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -155,31 +156,15 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
      ********************************************************/
     private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
         @Override
-        public void environmentConfigChanged(String environmentTypeId) {
+        public void configurationChanged() {
             Project project = getProject();
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : connectionTabs.getTabs()) {
                 SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                 ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-                if (connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
-                    EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-                    if (visibilitySettings.getConnectionTabs().value()) {
-                        tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
-                    } else {
-                        tabInfo.setTabColor(null);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void environmentVisibilitySettingsChanged() {
-            Project project = getProject();
-            for (TabInfo tabInfo : connectionTabs.getTabs()) {
-                SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-                EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+                DBNColor environmentColor = connectionHandler.getEnvironmentType().getColor();
                 if (visibilitySettings.getConnectionTabs().value()) {
-                    EnvironmentType environmentType = browserForm.getConnectionHandler().getEnvironmentType();
-                    tabInfo.setTabColor(environmentType.getColor());
+                    tabInfo.setTabColor(environmentColor);
                 } else {
                     tabInfo.setTabColor(null);
                 }

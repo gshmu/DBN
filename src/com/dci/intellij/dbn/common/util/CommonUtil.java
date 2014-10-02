@@ -30,10 +30,16 @@ public class CommonUtil {
 
     public static boolean isCalledThrough(Class clazz) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        for (StackTraceElement stackTraceElement : stackTraceElements) {
-            if (clazz.getName().equals(stackTraceElement.getClassName())) {
-                return true;
+        try {
+            for (int i=3; i<stackTraceElements.length; i++) {
+                StackTraceElement stackTraceElement = stackTraceElements[i];
+                Class stackTraceClass = Class.forName(stackTraceElement.getClassName());
+                if (clazz.isAssignableFrom(stackTraceClass)) {
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            return false;
         }
         return false;
     }

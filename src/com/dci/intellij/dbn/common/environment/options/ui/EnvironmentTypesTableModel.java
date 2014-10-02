@@ -7,7 +7,7 @@ import java.awt.Color;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
-import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
@@ -42,7 +42,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     TableModelListener defaultModelListener = new TableModelListener() {
         @Override
         public void tableChanged(TableModelEvent e) {
-            EnvironmentPresentationChangeListener listener = EventManager.notify(project, EnvironmentPresentationChangeListener.TOPIC);
+            EnvironmentConfigLocalListener listener = EventManager.notify(project, EnvironmentConfigLocalListener.TOPIC);
             listener.settingsChanged(environmentTypes);
         }
     };    

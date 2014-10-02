@@ -11,12 +11,12 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
 
@@ -125,29 +125,26 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         EnvironmentSettings settings = getConfiguration();
         EnvironmentTypesTableModel model = environmentTypesTable.getModel();
         model.validate();
-        EnvironmentTypeBundle environmentTypeBundle = model.getEnvironmentTypes();
-        boolean settingsChanged = settings.setEnvironmentTypes(environmentTypeBundle);
+        final EnvironmentTypeBundle environmentTypeBundle = model.getEnvironmentTypes();
+        final boolean settingsChanged = settings.setEnvironmentTypes(environmentTypeBundle);
 
         EnvironmentVisibilitySettings visibilitySettings = settings.getVisibilitySettings();
-        boolean visibilityChanged =
+        final boolean visibilityChanged =
             visibilitySettings.getConnectionTabs().applyChanges(connectionTabsCheckBox) ||
             visibilitySettings.getObjectEditorTabs().applyChanges(objectEditorTabsCheckBox) ||
             visibilitySettings.getScriptEditorTabs().applyChanges(scriptEditorTabsCheckBox)||
             visibilitySettings.getDialogHeaders().applyChanges(dialogHeadersCheckBox)||
             visibilitySettings.getExecutionResultTabs().applyChanges(executionResultTabsCheckBox);
 
-        if (visibilityChanged) {
-            EnvironmentChangeListener listener = EventManager.notify(getConfiguration().getProject(), EnvironmentChangeListener.TOPIC);
-            listener.environmentVisibilitySettingsChanged();
-        }
-
-        if (settingsChanged) {
-            EnvironmentChangeListener listener = EventManager.notify(getConfiguration().getProject(), EnvironmentChangeListener.TOPIC);
-            for (EnvironmentType environmentType : environmentTypeBundle.getEnvironmentTypes()) {
-                listener.environmentConfigChanged(environmentType.getId());
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (settingsChanged || visibilityChanged) {
+                    EnvironmentChangeListener listener = EventManager.notify(getConfiguration().getProject(), EnvironmentChangeListener.TOPIC);
+                    listener.configurationChanged();
+                }
             }
-        }
-        
+        };
     }
 
     public void resetFormChanges() {

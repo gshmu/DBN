@@ -8,7 +8,7 @@ import java.awt.Color;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
-import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -66,7 +66,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         headerForm = new DBNHeaderForm(connectionSettings.getDatabaseSettings().getName(), icon, detailSettings.getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         EventManager.subscribe(databaseSettings.getProject(), ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
-        EventManager.subscribe(databaseSettings.getProject(), EnvironmentPresentationChangeListener.TOPIC, environmentPresentationChangeListener);
+        EventManager.subscribe(databaseSettings.getProject(), EnvironmentConfigLocalListener.TOPIC, environmentConfigListener);
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();
@@ -104,7 +104,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     };
 
-    private EnvironmentPresentationChangeListener environmentPresentationChangeListener = new EnvironmentPresentationChangeListener() {
+    private EnvironmentConfigLocalListener environmentConfigListener = new EnvironmentConfigLocalListener() {
         @Override
         public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
 
@@ -115,6 +115,6 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(connectionPresentationChangeListener, environmentPresentationChangeListener);
+        EventManager.unsubscribe(connectionPresentationChangeListener, environmentConfigListener);
     }
 }

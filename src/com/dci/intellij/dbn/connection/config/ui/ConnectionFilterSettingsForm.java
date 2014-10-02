@@ -1,7 +1,13 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -9,11 +15,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 
 public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorForm<ConnectionFilterSettings>{
     private JPanel mainPanel;
@@ -36,17 +37,22 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        super.applyFormChanges();
         ConnectionFilterSettings configuration = getConfiguration();
-        boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
+        final boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
         configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
-        if (notifyFilterListeners) {
-            ObjectFilterChangeListener listener = EventManager.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                listener.nameFiltersChanged(connectionHandler, DBObjectType.SCHEMA);
+
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (notifyFilterListeners) {
+                    ObjectFilterChangeListener listener = EventManager.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    if (connectionHandler != null) {
+                        listener.nameFiltersChanged(connectionHandler, DBObjectType.SCHEMA);
+                    }
+                }
             }
-        }
+        };
     }
 
     private ConnectionHandler getConnectionHandler() {

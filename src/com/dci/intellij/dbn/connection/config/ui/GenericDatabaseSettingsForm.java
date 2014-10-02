@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -220,17 +221,24 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     }
 
     public void applyFormChanges() {
-        GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
-        boolean settingsChanged =
+        final GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
+        final boolean settingsChanged =
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
                         !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
                         !CommonUtil.safeEqual(connectionConfig.getUser(), userTextField.getText());
 
         applyChanges(connectionConfig);
 
-        if (settingsChanged) {
-            EventManager.notify(connectionConfig.getProject(), ConnectionSettingsListener.TOPIC).settingsChanged(connectionConfig.getConnectionId());
-        }
+         new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (settingsChanged) {
+                    Project project = connectionConfig.getProject();
+                    ConnectionSettingsListener listener = EventManager.notify(project, ConnectionSettingsListener.TOPIC);
+                    listener.settingsChanged(connectionConfig.getConnectionId());
+                }
+            }
+        };
     }
 
 
