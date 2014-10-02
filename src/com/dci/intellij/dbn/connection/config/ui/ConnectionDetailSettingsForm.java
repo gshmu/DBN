@@ -4,10 +4,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,8 +15,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -30,6 +26,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -38,7 +35,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.ColorIcon;
-import com.intellij.util.ui.UIUtil;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
@@ -53,8 +49,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox ddlFileBindingCheckBox;
     private JTextField alternativeStatementDelimiterTextField;
     private JCheckBox autoConnectCheckBox;
-    private JLabel autoConnectHintLabel;
-    private JTextArea autoConnectTextArea;
+    private JPanel autoConnectHintPanel;
 
     private PropertiesEditorForm propertiesEditorForm;
 
@@ -87,16 +82,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
         });
 
-        autoConnectHintLabel.setText("");
-        autoConnectHintLabel.setIcon(Icons.COMMON_INFO);
-        autoConnectTextArea.setBackground(UIUtil.getPanelBackground());
-        autoConnectTextArea.setText("NOTE: If \"Connect automatically\" is not selected, the system will not restore the entire workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).");
-        autoConnectTextArea.setFont(UIUtil.getLabelFont());
-        autoConnectTextArea.setForeground(Colors.HINT_COLOR);
+        String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the entire workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
+        DBNHintForm autoConnectHintForm = new DBNHintForm(autoConnectHintText);
+        autoConnectHintPanel.add(autoConnectHintForm.getComponent());
 
         boolean visibleHint = !autoConnectCheckBox.isSelected();
-        autoConnectHintLabel.setVisible(visibleHint);
-        autoConnectTextArea.setVisible(visibleHint);
+        autoConnectHintPanel.setVisible(visibleHint);
 
 
         EventManager.subscribe(configuration.getProject(), EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
@@ -116,8 +107,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
                 Object source = e.getSource();
                 if (source == autoConnectCheckBox){
                     boolean visibleHint = !autoConnectCheckBox.isSelected();
-                    autoConnectHintLabel.setVisible(visibleHint);
-                    autoConnectTextArea.setVisible(visibleHint);
+                    autoConnectHintPanel.setVisible(visibleHint);
                 }
                 getConfiguration().setModified(true);
             }

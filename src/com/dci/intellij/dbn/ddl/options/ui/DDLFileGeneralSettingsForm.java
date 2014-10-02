@@ -2,25 +2,56 @@ package com.dci.intellij.dbn.ddl.options.ui;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.intellij.openapi.options.ConfigurationException;
 
 public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileGeneralSettings> {
     private JPanel mainPanel;
-    private JTextField statementPostfixTextField;
     private JCheckBox lookupDDLFilesCheckBox;
     private JCheckBox createDDLFileCheckBox;
+    private JCheckBox synchronizeDDLFilesCheckBox;
     private JCheckBox useQualifiedObjectNamesCheckBox;
-    private JCheckBox prepareDropIfExistsCheckBox;
+    private JCheckBox makeScriptsRerunnableCheckBox;
+    private JPanel hintPanel;
 
     public DDLFileGeneralSettingsForm(DDLFileGeneralSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
+
+        String hintText = "NOTE: When \"Synchronize\" option is enabled, the DDL file content gets overwritten with the source from the underlying database object whenever this gets saved to database.";
+        DBNHintForm hintForm = new DBNHintForm(hintText);
+        hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
+
         resetFormChanges();
+
+        boolean synchronizeSelected = synchronizeDDLFilesCheckBox.isSelected();
+        useQualifiedObjectNamesCheckBox.setEnabled(synchronizeSelected);
+        makeScriptsRerunnableCheckBox.setEnabled(synchronizeSelected);
+        hintPanel.setVisible(synchronizeSelected);
+
         registerComponent(mainPanel);
+    }
+
+    @Override
+    protected ActionListener createActionListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getConfiguration().setModified(true);
+                if (e.getSource() == synchronizeDDLFilesCheckBox) {
+                    boolean synchronizeSelected = synchronizeDDLFilesCheckBox.isSelected();
+                    useQualifiedObjectNamesCheckBox.setEnabled(synchronizeSelected);
+                    makeScriptsRerunnableCheckBox.setEnabled(synchronizeSelected);
+                    hintPanel.setVisible(synchronizeSelected);
+
+                }
+            }
+        };
     }
 
     public JPanel getComponent() {
@@ -29,19 +60,19 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     public void applyFormChanges() throws ConfigurationException {
         DDLFileGeneralSettings settings = getConfiguration();
-        settings.getStatementPostfix().applyChanges(statementPostfixTextField);
         settings.getLookupDDLFilesEnabled().applyChanges(lookupDDLFilesCheckBox);
         settings.getCreateDDLFilesEnabled().applyChanges(createDDLFileCheckBox);
+        settings.getSynchronizeDDLFilesEnabled().applyChanges(synchronizeDDLFilesCheckBox);
         settings.getUseQualifiedObjectNames().applyChanges(useQualifiedObjectNamesCheckBox);
-        settings.getMakeScriptsRerunnable().applyChanges(prepareDropIfExistsCheckBox);
+        settings.getMakeScriptsRerunnable().applyChanges(makeScriptsRerunnableCheckBox);
     }
 
     public void resetFormChanges() {
         DDLFileGeneralSettings settings = getConfiguration();
-        settings.getStatementPostfix().resetChanges(statementPostfixTextField);
         settings.getLookupDDLFilesEnabled().resetChanges(lookupDDLFilesCheckBox);
         settings.getCreateDDLFilesEnabled().resetChanges(createDDLFileCheckBox);
+        settings.getSynchronizeDDLFilesEnabled().resetChanges(synchronizeDDLFilesCheckBox);
         settings.getUseQualifiedObjectNames().resetChanges(useQualifiedObjectNamesCheckBox);
-        settings.getMakeScriptsRerunnable().resetChanges(prepareDropIfExistsCheckBox);
+        settings.getMakeScriptsRerunnable().resetChanges(makeScriptsRerunnableCheckBox);
     }
 }
