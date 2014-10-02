@@ -196,7 +196,7 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.console.SQLConsoleEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.event.EventManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionCache</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.options.TemplateProjectSettingsManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.options.DefaultProjectSettingsManager</implementation-class></component>
     </application-components>
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->

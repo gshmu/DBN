@@ -13,18 +13,18 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.project.ProjectManager;
 
 @State(
-        name = "DBNavigator.Application.TemplateProjectSettings",
+        name = "DBNavigator.DefaultProject.Settings",
         storages = {@Storage(file = StoragePathMacros.APP_CONFIG + "/dbnavigator.xml")}
 )
-public class TemplateProjectSettingsManager implements ApplicationComponent, PersistentStateComponent<Element> {
+public class DefaultProjectSettingsManager implements ApplicationComponent, PersistentStateComponent<Element> {
     private ProjectSettings projectSettings;
 
-    private TemplateProjectSettingsManager() {
+    private DefaultProjectSettingsManager() {
         projectSettings = new ProjectSettings(ProjectManager.getInstance().getDefaultProject());
     }
 
-    public static TemplateProjectSettingsManager getInstance() {
-        return ApplicationManager.getApplication().getComponent(TemplateProjectSettingsManager.class);
+    public static DefaultProjectSettingsManager getInstance() {
+        return ApplicationManager.getApplication().getComponent(DefaultProjectSettingsManager.class);
     }
 
     public ProjectSettings getProjectSettings() {

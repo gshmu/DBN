@@ -98,20 +98,24 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
             }
         }
 
-        // Notify only when all changes are set
         if (!CommonUtil.isCalledThrough(Configuration.class)) {
-            List<SettingsChangeNotifier> changeNotifiers = SETTINGS_CHANGE_NOTIFIERS.get();
-            if (changeNotifiers != null) {
-                try {
-                    for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
-                        changeNotifier.notifyChanges();
-                    }
-                } finally {
-                    SETTINGS_CHANGE_NOTIFIERS.set(null);
-                }
-            }
+        // Notify only when all changes are set
+            notifyChanges();
         }
         onApply();
+    }
+
+    protected void notifyChanges() {
+        List<SettingsChangeNotifier> changeNotifiers = SETTINGS_CHANGE_NOTIFIERS.get();
+        if (changeNotifiers != null) {
+            try {
+                for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
+                    changeNotifier.notifyChanges();
+                }
+            } finally {
+                SETTINGS_CHANGE_NOTIFIERS.set(null);
+            }
+        }
     }
 
     @Deprecated
