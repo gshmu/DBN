@@ -18,8 +18,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private String resultName;
     private StatementExecutionMessage executionMessage;
     private StatementExecutionInput executionInput;
+    private StatementExecutionStatus executionStatus;
     private int executionDuration;
-    private int executionStatus;
     private int updateCount;
     private StatementViewerPopup statementViewerPopup;
     private CompilerResult compilerResult;
@@ -74,11 +74,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         this.executionDuration = executionDuration;
     }
 
-    public int getExecutionStatus() {
+    public StatementExecutionStatus getExecutionStatus() {
         return executionStatus;
     }
 
-    public void setExecutionStatus(int executionStatus) {
+    public void setExecutionStatus(StatementExecutionStatus executionStatus) {
         this.executionStatus = executionStatus;
     }
 

@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -27,8 +28,10 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -104,30 +107,69 @@ public class MessagesTree extends DBNTree implements Disposable {
                     DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
                     if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
                         editorManager.openFile(databaseFile, false);
-                        DBContentVirtualFile contentFile = compilerMessage.getContentFile();
-                        if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
-                            BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) contentFile);
-                            if (textEditor != null) {
-                                navigateInEditor(compilerMessage, textEditor, databaseFile);
-                            }
-                        }
+                        navigateInObjectEditor(compilerMessage);
+                    }
+                } else if (sourceActionType == CompilerAction.Type.DDL) {
+                    VirtualFile virtualFile = sourceAction.getVirtualFile();
+                    if (virtualFile != null) {
+                        editorManager.openFile(virtualFile, false);
+                        navigateInScriptEditor(compilerMessage, virtualFile, sourceAction.getOffset());
                     }
                 }
             }
         }
     }
 
-    private void navigateInEditor(CompilerMessage compilerMessage, BasicTextEditor textEditor, DBEditableObjectVirtualFile databaseFile) {
-        Editor editor = textEditor.getEditor();
-        Document document = editor.getDocument();
-        SourceCodeEditor codeEditor = (SourceCodeEditor) textEditor;
-        int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
+    private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, int startOffset) {
+        FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
+        FileEditor[] editors = editorManager.getAllEditors(virtualFile);
+        for (FileEditor fileEditor : editors) {
+            if (fileEditor instanceof TextEditor) {
+                TextEditor textEditor = (TextEditor) fileEditor;
+                Editor editor = textEditor.getEditor();
 
+                int lineShifting = 1;
+                CharSequence documentText = editor.getDocument().getCharsSequence();
+                String objectName = compilerMessage.getObject().getName();
+                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, startOffset);
+                if (objectStartOffset > -1) {
+                    lineShifting = editor.getDocument().getLineNumber(objectStartOffset);
+                }
+
+                navigateInEditor(editor, compilerMessage, lineShifting);
+            }
+        }
+    }
+
+    private void navigateInObjectEditor(CompilerMessage compilerMessage) {
+        DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
+        DBContentVirtualFile contentFile = compilerMessage.getContentFile();
+        if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
+            BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) contentFile);
+            if (textEditor != null) {
+                Editor editor = textEditor.getEditor();
+                Document document = editor.getDocument();
+                SourceCodeEditor codeEditor = (SourceCodeEditor) textEditor;
+                int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
+
+                navigateInEditor(editor, compilerMessage, lineShifting);
+
+                EditorUtil.selectEditor(databaseFile, textEditor);
+                VirtualFile virtualFile = DocumentUtil.getVirtualFile(textEditor.getEditor());
+                OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
+                codeEditor.navigateTo(openFileDescriptor);
+            }
+        }
+    }
+
+    private void navigateInEditor(Editor editor, CompilerMessage compilerMessage, int lineShifting) {
+        Document document = editor.getDocument();
         if (document.getLineCount() <= compilerMessage.getLine()) {
             compilerMessage.setLine(0);
             compilerMessage.setPosition(0);
             compilerMessage.setSubjectIdentifier(null);
         }
+
         int lineStartOffset = document.getLineStartOffset(compilerMessage.getLine() + lineShifting);
         int newCaretOffset = lineStartOffset + compilerMessage.getPosition();
         if (document.getTextLength() > newCaretOffset) {
@@ -144,11 +186,6 @@ public class MessagesTree extends DBNTree implements Disposable {
             }
             editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
         }
-
-        EditorUtil.selectEditor(databaseFile, textEditor);
-        VirtualFile virtualFile = DocumentUtil.getVirtualFile(textEditor.getEditor());
-        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-        codeEditor.navigateTo(openFileDescriptor);
     }
 
     /*********************************************************

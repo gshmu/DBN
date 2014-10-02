@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 
 public class CompilerResult implements Disposable {
     private DBObjectRef<DBSchemaObject> objectRef;
@@ -89,5 +90,19 @@ public class CompilerResult implements Disposable {
     public void dispose() {
         compilerMessages.clear();
         objectRef = null;
+    }
+
+    public Project getProject() {
+        DBSchemaObject object = DBObjectRef.get(objectRef);
+        return object == null ? null : object.getProject();
+    }
+
+    public boolean hasErrors() {
+        for (CompilerMessage compilerMessage : compilerMessages) {
+            if (compilerMessage.getType() == MessageType.ERROR) {
+                return true;
+            }
+        }
+        return false;
     }
 }

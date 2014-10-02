@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JTree;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
@@ -62,7 +63,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
 
             MessageType messageType = message.getType();
             Icon icon =
-                    messageType == MessageType.ERROR ? (isOrphan ? Icons.EXEC_MESSAGES_WARNING : Icons.EXEC_MESSAGES_ERROR) :
+                    messageType == MessageType.ERROR ? (isOrphan ? Icons.EXEC_MESSAGES_ERROR_INACTIVE : Icons.EXEC_MESSAGES_ERROR) :
                     messageType == MessageType.WARNING ? Icons.EXEC_MESSAGES_WARNING :
                     messageType == MessageType.INFO ? Icons.EXEC_MESSAGES_INFO : null;
 

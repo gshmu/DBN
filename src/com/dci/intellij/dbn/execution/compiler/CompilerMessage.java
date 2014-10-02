@@ -131,4 +131,8 @@ public class CompilerMessage extends ConsoleMessage {
         databaseFile = null;
         contentFile = null;
     }
+
+    public Project getProject() {
+        return compilerResult.getProject();
+    }
 }

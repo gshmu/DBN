@@ -9,17 +9,14 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 
 public interface StatementExecutionResult extends ExecutionResult {
-    int STATUS_SUCCESS = 0;
-    int STATUS_ERROR = 1;
-
     boolean isOrphan();
     StatementExecutionProcessor getExecutionProcessor();
     StatementExecutionMessage getExecutionMessage();
     StatementExecutionInput getExecutionInput();
 
-    int getExecutionStatus();
+    StatementExecutionStatus getExecutionStatus();
 
-    void setExecutionStatus(int executionStatus);
+    void setExecutionStatus(StatementExecutionStatus executionStatus);
     void updateExecutionMessage(MessageType messageType, String message, String causeMessage);
     void updateExecutionMessage(MessageType messageType, String message);
     void clearExecutionMessage();
