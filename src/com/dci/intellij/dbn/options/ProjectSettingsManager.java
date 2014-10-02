@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -96,10 +97,15 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     public void projectOpened() {
         Boolean settingsLoaded = projectSettings.getProject().getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
-            ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
-            Element element = new Element("state");
-            defaultProjectSettings.writeConfiguration(element);
-            projectSettings.readConfiguration(element);
+            int exitCode = MessageUtil.showQuestionDialog(
+                    "Do you want to import the default project settings?",
+                    "Default Project Settings", new String[]{"Yes", "No"}, 0);
+            if (exitCode == 0) {
+                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
+                Element element = new Element("state");
+                defaultProjectSettings.writeConfiguration(element);
+                projectSettings.readConfiguration(element);
+            }
         }
     }
 

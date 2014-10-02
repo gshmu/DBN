@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -7,12 +13,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
 
 public class IdleConnectionDialog extends DialogWithTimeout {
     private IdleConnectionDialogForm idleConnectionDialogForm;
@@ -50,7 +50,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     }
 
     protected String getDimensionServiceKey() {
-        return "DBNavigator.IdleConnectionDialog";
+        return null;//"DBNavigator.IdleConnectionDialog";
     }
 
     @NotNull
