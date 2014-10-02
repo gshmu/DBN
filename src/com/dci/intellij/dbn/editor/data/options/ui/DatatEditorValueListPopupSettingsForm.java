@@ -5,9 +5,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import static com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil.validateIntegerInputValue;
 
 public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorForm<DataEditorValueListPopupSettings> {
     private JTextField elementCountThresholdTextBox;
@@ -29,8 +29,8 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         DataEditorValueListPopupSettings settings = getConfiguration();
         settings.setActiveForPrimaryKeyColumns(activeForPrimaryKeysCheckBox.isSelected());
-        settings.setElementCountThreshold(ConfigurationEditorUtil.validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", 0, 10000, null));
-        settings.setDataLengthThreshold(ConfigurationEditorUtil.validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", 0, 1000, null));
+        settings.setElementCountThreshold(validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", 0, 10000, null));
+        settings.setDataLengthThreshold(validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", 0, 1000, null));
     }
 
     public void resetFormChanges() {

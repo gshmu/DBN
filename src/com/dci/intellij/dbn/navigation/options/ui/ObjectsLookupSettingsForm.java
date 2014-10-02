@@ -52,14 +52,16 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
     @Override
     public void applyFormChanges() throws ConfigurationException {
         lookupObjectsList.applyChanges();
-        getConfiguration().getForceDatabaseLoad().applyChanges(loadRadioButton);
-        getConfiguration().getPromptConnectionSelection().applyChanges(promptRadioButton);
+        ObjectsLookupSettings configuration = getConfiguration();
+        configuration.getForceDatabaseLoad().applyChanges(loadRadioButton);
+        configuration.getPromptConnectionSelection().applyChanges(promptRadioButton);
     }
 
     @Override
     public void resetFormChanges() {
-        getConfiguration().getForceDatabaseLoad().applyChanges(loadRadioButton);
-        getConfiguration().getPromptConnectionSelection().applyChanges(promptRadioButton);
+        ObjectsLookupSettings configuration = getConfiguration();
+        configuration.getForceDatabaseLoad().applyChanges(loadRadioButton);
+        configuration.getPromptConnectionSelection().applyChanges(promptRadioButton);
     }
 
     public JComponent getComponent() {

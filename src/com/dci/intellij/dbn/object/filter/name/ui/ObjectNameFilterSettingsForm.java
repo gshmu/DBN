@@ -12,6 +12,7 @@ import org.jdom.Element;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -31,6 +32,7 @@ import com.dci.intellij.dbn.object.filter.name.action.SwitchConditionJoinTypeAct
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<ObjectNameFilterSettings> {
     private JPanel mainPanel;
@@ -126,23 +128,26 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
     }
 
     public void applyFormChanges() throws ConfigurationException {
-        try {
-            ObjectNameFilterSettings filterSettings = getConfiguration();
-            boolean notifyFilterListeners = filterSettings.isModified();
-            Element element = new Element("Temp");
-            ObjectNameFilterSettings tempSettings = (ObjectNameFilterSettings) filtersTree.getModel();
-            tempSettings.writeConfiguration(element);
-            filterSettings.readConfiguration(element);
-            if (notifyFilterListeners) {
-                ObjectFilterChangeListener listener = EventManager.notify(filterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                if (connectionHandler != null) {
-                    listener.nameFiltersChanged(connectionHandler, null);
+        final ObjectNameFilterSettings filterSettings = getConfiguration();
+        final boolean notifyFilterListeners = filterSettings.isModified();
+        Element element = new Element("Temp");
+        ObjectNameFilterSettings tempSettings = (ObjectNameFilterSettings) filtersTree.getModel();
+        tempSettings.writeConfiguration(element);
+        filterSettings.readConfiguration(element);
+
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (notifyFilterListeners) {
+                    Project project = filterSettings.getProject();
+                    ObjectFilterChangeListener listener = EventManager.notify(project, ObjectFilterChangeListener.TOPIC);
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    if (connectionHandler != null) {
+                        listener.nameFiltersChanged(connectionHandler, null);
+                    }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        };
     }
 
     private ConnectionHandler getConnectionHandler() {

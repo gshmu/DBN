@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -70,16 +71,21 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
-        boolean notifyFilterListeners = objectFilterSettings.isModified();
+        final ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
+        final boolean notifyFilterListeners = objectFilterSettings.isModified();
         visibleObjectsList.applyChanges();
-        if (notifyFilterListeners) {
-            ObjectFilterChangeListener listener = EventManager.notify(objectFilterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            listener.typeFiltersChanged(connectionHandler);
-        }
-
         objectFilterSettings.getUseMasterSettings().applyChanges(useMasterSettingsCheckBox);
+
+         new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (notifyFilterListeners) {
+                    ObjectFilterChangeListener listener = EventManager.notify(objectFilterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    listener.typeFiltersChanged(connectionHandler);
+                }
+            }
+        };
     }
 
     private ConnectionHandler getConnectionHandler() {

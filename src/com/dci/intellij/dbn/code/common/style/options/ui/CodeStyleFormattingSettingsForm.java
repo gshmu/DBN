@@ -76,6 +76,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         getConfiguration().setEnabled(enableCheckBox.isSelected());
     }
 
+
     public void resetFormChanges() {
         for (CodeStyleFormattingOption option : mappings.keySet()) {
             JComboBox comboBox = mappings.get(option);

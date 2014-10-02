@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -70,27 +70,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
     private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
         @Override
-        public void environmentConfigChanged(String environmentTypeId) {
-            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-            for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
-                if (executionResult != null) {
-                    ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-                    if (connectionHandler != null) {
-                        if (connectionHandler.getSettings().getDetailSettings().getEnvironmentTypeId().equals(environmentTypeId)) {
-                            if (visibilitySettings.getExecutionResultTabs().value()){
-                                tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
-                            } else {
-                                tabInfo.setTabColor(null);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void environmentVisibilitySettingsChanged() {
+        public void configurationChanged() {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : resultTabs.getTabs()) {
                 ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();

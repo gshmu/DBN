@@ -1,20 +1,21 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
-import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserGeneralSettings;
-import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
-import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserGeneralSettings;
+import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
+import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
     private JPanel mainPanel;
@@ -40,26 +41,33 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
         ConfigurationEditorUtil.validateIntegerInputValue(navigationHistorySizeTextField, "Navigation history size", 0, 1000, "");
 
-        boolean repaintTree = configuration.isModified();
+        final boolean repaintTree = configuration.isModified();
         
-        BrowserDisplayMode displayMode =
+        final BrowserDisplayMode displayMode =
                 simpleRadioButton.isSelected() ? BrowserDisplayMode.SIMPLE :
                 tabbedRadioButton.isSelected() ? BrowserDisplayMode.TABBED :
                 BrowserDisplayMode.SIMPLE;
-        boolean displayModeChanged = configuration.getDisplayMode() != displayMode;
+        final boolean displayModeChanged = configuration.getDisplayMode() != displayMode;
         configuration.setDisplayMode(displayMode);
 
 
         configuration.getNavigationHistorySize().applyChanges(navigationHistorySizeTextField);
         configuration.getShowObjectDetails().applyChanges(showObjectDetailsCheckBox);
 
-        Project project = configuration.getProject();
+        final Project project = configuration.getProject();
 
-        if (displayModeChanged) {
-            EventManager.notify(project, DisplayModeSettingsListener.TOPIC).displayModeChanged(displayMode);
-        } else if (repaintTree) {
-            EventManager.notify(project, ObjectDetailSettingsListener.TOPIC).displayDetailsChanged();
-        }
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (displayModeChanged) {
+                    DisplayModeSettingsListener listener = EventManager.notify(project, DisplayModeSettingsListener.TOPIC);
+                    listener.displayModeChanged(displayMode);
+                } else if (repaintTree) {
+                    ObjectDetailSettingsListener listener = EventManager.notify(project, ObjectDetailSettingsListener.TOPIC);
+                    listener.displayDetailsChanged();
+                }
+            }
+        };
     }
 
     public void resetFormChanges() {

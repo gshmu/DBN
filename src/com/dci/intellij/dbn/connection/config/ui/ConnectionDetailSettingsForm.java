@@ -19,12 +19,13 @@ import java.util.Map;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.environment.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
-import com.dci.intellij.dbn.common.environment.options.EnvironmentPresentationChangeListener;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
@@ -98,7 +99,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         autoConnectTextArea.setVisible(visibleHint);
 
 
-        EventManager.subscribe(configuration.getProject(), EnvironmentPresentationChangeListener.TOPIC, presentationChangeListener);
+        EventManager.subscribe(configuration.getProject(), EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
     }
 
     public void notifyPresentationChanges() {
@@ -156,22 +157,22 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ConnectionDetailSettings configuration = getConfiguration();
+        final ConnectionDetailSettings configuration = getConfiguration();
 
         Map<String, String> newProperties = propertiesEditorForm.getProperties();
         Charset newCharset = (Charset) encodingComboBox.getSelectedItem();
         boolean newAutoCommit = autoCommitCheckBox.isSelected();
         boolean newDdlFileBinding = ddlFileBindingCheckBox.isSelected();
         EnvironmentType newEnvironmentType = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
-        String newEnvironmentTypeId = newEnvironmentType.getId();
+        final String newEnvironmentTypeId = newEnvironmentType.getId();
 
-        boolean settingsChanged =
+        final boolean settingsChanged =
                 !configuration.getProperties().equals(newProperties) ||
                 !configuration.getCharset().equals(newCharset) ||
                 configuration.isEnableAutoCommit() != newAutoCommit ||
                 configuration.isEnableDdlFileBinding() != newDdlFileBinding;
 
-        boolean environmentChanged =
+        final boolean environmentChanged =
                 !configuration.getEnvironmentType().getId().equals(newEnvironmentTypeId);
 
 
@@ -187,17 +188,21 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
         configuration.setMaxConnectionPoolSize(maxPoolSize);
 
-        Project project = getConfiguration().getProject();
-        if (environmentChanged) {
-            EnvironmentChangeListener listener = EventManager.notify(project, EnvironmentChangeListener.TOPIC);
-            listener.environmentConfigChanged(newEnvironmentTypeId);
-        }
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                Project project = configuration.getProject();
+                if (environmentChanged) {
+                    EnvironmentChangeListener listener = EventManager.notify(project, EnvironmentChangeListener.TOPIC);
+                    listener.configurationChanged();
+                }
 
-        if (settingsChanged) {
-            ConnectionStatusListener listener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
-            listener.statusChanged(getConfiguration().getConnectionId());
-        }
-
+                if (settingsChanged) {
+                    ConnectionStatusListener listener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
+                    listener.statusChanged(configuration.getConnectionId());
+                }
+            }
+        };
     }
 
     @Override
@@ -221,7 +226,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         return model;
     }
 
-    private EnvironmentPresentationChangeListener presentationChangeListener = new EnvironmentPresentationChangeListener() {
+    private EnvironmentConfigLocalListener presentationChangeListener = new EnvironmentConfigLocalListener() {
         @Override
         public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
             EnvironmentType selectedItem = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
