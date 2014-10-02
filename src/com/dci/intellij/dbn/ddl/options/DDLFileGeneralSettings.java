@@ -5,6 +5,7 @@ import org.jdom.Element;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.ddl.options.ui.DDLFileGeneralSettingsForm;
+import com.intellij.openapi.project.Project;
 
 public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettingsForm> {
     private BooleanSetting lookupDDLFilesEnabled = new BooleanSetting("lookup-ddl-files", true);
@@ -12,6 +13,12 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
     private BooleanSetting synchronizeDDLFilesEnabled = new BooleanSetting("synchronize-ddl-files", true);
     private BooleanSetting useQualifiedObjectNames = new BooleanSetting("use-qualified-names", false);
     private BooleanSetting makeScriptsRerunnable = new BooleanSetting("make-scripts-rerunnable", true);
+
+    private DDLFileSettings parent;
+
+    public DDLFileGeneralSettings(DDLFileSettings parent) {
+        this.parent = parent;
+    }
 
     public String getDisplayName() {
         return "DDL file general settings";
@@ -82,5 +89,9 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
         synchronizeDDLFilesEnabled.writeConfiguration(element);
         useQualifiedObjectNames.writeConfiguration(element);
         makeScriptsRerunnable.writeConfiguration(element);
+    }
+
+    public Project getProject() {
+        return parent.getProject();
     }
 }

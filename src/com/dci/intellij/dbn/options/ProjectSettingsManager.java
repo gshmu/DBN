@@ -95,10 +95,11 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     @Override
     public void projectOpened() {
-        Boolean settingsLoaded = projectSettings.getProject().getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
+        Project project = projectSettings.getProject();
+        Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
             int exitCode = MessageUtil.showQuestionDialog(
-                    "Do you want to import the default project settings?",
+                    "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
                     "Default Project Settings", new String[]{"Yes", "No"}, 0);
             if (exitCode == 0) {
                 ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
