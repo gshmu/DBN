@@ -14,8 +14,8 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
 
     public DDLFileSettings(Project project) {
         super(project);
-        extensionSettings = new DDLFileExtensionSettings(project);
-        generalSettings = new DDLFileGeneralSettings();
+        extensionSettings = new DDLFileExtensionSettings(this);
+        generalSettings = new DDLFileGeneralSettings(this);
     }
 
     public static DDLFileSettings getInstance(Project project) {

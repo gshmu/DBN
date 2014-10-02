@@ -18,9 +18,9 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
 
     private List<DDLFileType> fileTypes = new ArrayList<DDLFileType>();
 
-    private Project project;
-    public DDLFileExtensionSettings(Project project) {
-        this.project = project;
+    private DDLFileSettings parent;
+    public DDLFileExtensionSettings(DDLFileSettings parent) {
+        this.parent = parent;
         fileTypes.add(new DDLFileType(DDLFileTypeId.VIEW, "DDL File - View", "vw", SQLFileType.INSTANCE, DBContentType.CODE));
         fileTypes.add(new DDLFileType(DDLFileTypeId.TRIGGER, "DDL File - Trigger", "trg", PSQLFileType.INSTANCE, DBContentType.CODE));
         fileTypes.add(new DDLFileType(DDLFileTypeId.PROCEDURE, "DDL File - Procedure", "prc", PSQLFileType.INSTANCE, DBContentType.CODE));
@@ -60,7 +60,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
     }
 
     public Project getProject() {
-        return project;
+        return parent.getProject();
     }
 
     /*********************************************************

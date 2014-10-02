@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
+import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
 import com.dci.intellij.dbn.ddl.ui.DDLMappedNotificationPanel;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
@@ -25,12 +28,12 @@ import com.intellij.ui.EditorNotifications;
 public class DDLMappedNotificationProvider extends EditorNotifications.Provider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
     private Project project;
-
     public DDLMappedNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
         EventManager.subscribe(project, DDLMappingListener.TOPIC, ddlMappingListener);
         EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerAdapter);
+        EventManager.subscribe(project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
     }
 
     DDLMappingListener ddlMappingListener = new DDLMappingListener() {
@@ -81,6 +84,14 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         }
     };
 
+    private final DDLFileSettingsChangeListener ddlFileSettingsChangeListener = new DDLFileSettingsChangeListener() {
+        @Override
+        public void settingsChanged() {
+            EditorNotifications notifications = EditorNotifications.getInstance(project);
+            notifications.updateAllNotifications();
+        }
+    };
+
     @Override
     public Key<DDLMappedNotificationPanel> getKey() {
         return KEY;
@@ -88,27 +99,31 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
 
     @Nullable
     @Override
-    public DDLMappedNotificationPanel createNotificationPanel(VirtualFile virtualFile, FileEditor fileEditor) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            if (fileEditor instanceof DDLFileEditor) {
-                DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
-                DBSchemaObject editableObject = editableObjectFile.getObject();
-                DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
-                VirtualFile ddlVirtualFile = ddlFileEditor.getVirtualFile();
-                return createPanel(ddlVirtualFile, editableObject);
-            }
-            return null;
-        } else {
-            if (virtualFile.getFileType() instanceof DBLanguageFileType) {
-                DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                DBSchemaObject editableObject = attachmentManager.getEditableObject(virtualFile);
-                if (editableObject != null) {
-                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                    if (databaseFileSystem.isFileOpened(editableObject))
-                        return createPanel(virtualFile, editableObject);
+    public DDLMappedNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
+        DDLFileGeneralSettings generalSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
+        if (generalSettings.isSynchronizeDDLFilesEnabled()) {
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                if (fileEditor instanceof DDLFileEditor) {
+                    DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
+                    DBSchemaObject editableObject = editableObjectFile.getObject();
+                    DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
+                    VirtualFile ddlVirtualFile = ddlFileEditor.getVirtualFile();
+                    return createPanel(ddlVirtualFile, editableObject);
+                }
+                return null;
+            } else {
+                if (virtualFile.getFileType() instanceof DBLanguageFileType) {
+                    DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
+                    DBSchemaObject editableObject = attachmentManager.getEditableObject(virtualFile);
+                    if (editableObject != null) {
+                        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                        if (databaseFileSystem.isFileOpened(editableObject))
+                            return createPanel(virtualFile, editableObject);
+                    }
                 }
             }
         }
+
         return null;
     }
 
