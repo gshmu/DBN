@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -24,12 +30,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, DocumentListener, ConnectionProvider {
 
@@ -39,26 +39,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     private Timestamp changeTimestamp;
     private String sourceLoadError;
     public int documentHashCode;
-    private int hashCode;
     private SourceCodeOffsets offsets;
 
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
-        loadContent();
-    }
-
-    private void loadContent() {
-        DBEditableObjectVirtualFile databaseFile = getMainDatabaseFile();
-        DBContentType contentType = getContentType();
         DBSchemaObject object = getObject();
         if (object != null) {
-            hashCode = (
-                    object.getConnectionHandler().getId() + "#" +
-                    object.getObjectType() + "#" +
-                    object.getQualifiedName() + "#" +
-                    object.getOverload() + "#" +
-                    contentType).hashCode();
-
             updateChangeTimestamp();
             setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
             try {
@@ -73,7 +59,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                 //MessageUtil.showErrorDialog("Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
             }
         } else {
-            hashCode = super.hashCode();
             sourceLoadError = "Could not find object in database";
         }
     }
@@ -140,15 +125,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public void setContent(String content) {
         if (originalContent == null) {
-            originalContent = getContent();
+            originalContent = this.content;
         }
         this.content = content;
     }
 
-    public synchronized String getContent() {
-        if (content == null) {
-            loadContent();
-        }
+    public String getContent() {
         return content;
     }
 
@@ -189,7 +171,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public void updateToDatabase() throws SQLException {
         DBSchemaObject object = getObject();
         if (object != null) {
-            String content = getContent();
             object.executeUpdateDDL(getContentType(), getLastSavedContent(), content);
             updateChangeTimestamp();
             getMainDatabaseFile().updateDDLFiles(getContentType());
@@ -205,11 +186,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @NotNull
     public byte[] contentsToByteArray() {
-        return getContent().getBytes(getCharset());
+        return content.getBytes(getCharset());
     }
 
     public long getLength() {
-        return getContent().length();
+        return content.length();
     }
 
     public int getDocumentHashCode() {
@@ -245,23 +226,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         setModified(true);
     }
 
-    public boolean equals(Object obj) {
-        if (obj instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) obj;
-            return virtualFile.hashCode() == hashCode;
-        }
-        return false;
-    }
-
     @Override
-    public int hashCode() {
-        return hashCode;
-    }
-
-    @Override
-    public void release() {
+    public void dispose() {
         originalContent = null;
         lastSavedContent = null;
-        content = null;
+        content = "";
+        super.dispose();
     }
 }

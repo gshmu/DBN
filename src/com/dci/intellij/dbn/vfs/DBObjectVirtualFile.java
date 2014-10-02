@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -13,14 +21,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile implements DBVirtualFile {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
@@ -37,7 +37,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return objectRef;
     }
 
-    @Nullable
     public T getObject() {
         return objectRef.get();
     }
@@ -174,7 +173,20 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return null;
     }
 
-    public void release() {
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        disposed = true;
     }
 }
 

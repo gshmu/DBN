@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -22,15 +32,6 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -41,11 +42,21 @@ import java.util.concurrent.ConcurrentMap;
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Map<DBObjectRef, DBEditableObjectVirtualFile> openFiles = new HashMap<DBObjectRef, DBEditableObjectVirtualFile>();
 
+    private String sessionId;
+
     private DatabaseFileManager(Project project) {
         super(project);
+        sessionId = UUID.randomUUID().toString();
     }
     public static DatabaseFileManager getInstance(Project project) {
         return project.getComponent(DatabaseFileManager.class);
+    }
+
+    /**
+     * Use session boundaries for avoiding the reuse of disposed cached virtual files
+     */
+    public String getSessionId() {
+        return sessionId;
     }
 
     public boolean isFileOpened(DBSchemaObject object) {
