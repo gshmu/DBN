@@ -38,7 +38,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         return project.getComponent(DatabaseCompilerManager.class);
     }
 
-    public void createCompilerResult(DBSchemaObject object, CompileSourceAction sourceAction) {
+    public void createCompilerResult(DBSchemaObject object, CompilerAction sourceAction) {
         CompilerResult compilerResult = new CompilerResult(object, sourceAction);
         ExecutionManager.getInstance(object.getProject()).showExecutionConsole(compilerResult);
     }
@@ -48,7 +48,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         ExecutionManager.getInstance(object.getProject()).showExecutionConsole(compilerResult);
     }
 
-    public void compileObject(DBSchemaObject object, CompileType compileType, CompileSourceAction sourceAction) {
+    public void compileObject(DBSchemaObject object, CompileType compileType, CompilerAction sourceAction) {
         Project project = object.getProject();
         boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(object.getConnectionHandler());
         if (allowed) {
@@ -71,7 +71,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    public void compileObject(final DBSchemaObject object, final DBContentType contentType, final CompileType compileType, final CompileSourceAction sourceAction) {
+    public void compileObject(final DBSchemaObject object, final DBContentType contentType, final CompileType compileType, final CompilerAction sourceAction) {
         new ConnectionAction(object) {
             @Override
             protected void execute() {
@@ -97,12 +97,12 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }.start();
     }
 
-    private void doCompileObject(DBSchemaObject object, DBContentType contentType, CompileType compileType, CompileSourceAction sourceAction) {
+    private void doCompileObject(DBSchemaObject object, DBContentType contentType, CompileType compileType, CompilerAction sourceAction) {
         object.getStatus().set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        boolean verbose = sourceAction != CompileSourceAction.BULK_COMPILE;
+        boolean verbose = sourceAction.getType() != CompilerAction.Type.BULK_COMPILE;
         try {
             connection = connectionHandler.getPoolConnection();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
@@ -204,13 +204,13 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 if (object.getContentType().isBundle()) {
                     for (DBContentType contentType : object.getContentType().getSubContentTypes()) {
                         if (!object.getStatus().is(contentType, DBObjectStatus.VALID)) {
-                            doCompileObject(object, contentType, compileType, CompileSourceAction.BULK_COMPILE);
+                            doCompileObject(object, contentType, compileType, CompilerAction.BULK_COMPILE_ACTION);
                             progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
                         }
                     }
                 } else {
                     if (!object.getStatus().is(DBObjectStatus.VALID)) {
-                        doCompileObject(object, object.getContentType(), compileType, CompileSourceAction.BULK_COMPILE);
+                        doCompileObject(object, object.getContentType(), compileType, CompilerAction.BULK_COMPILE_ACTION);
                         progressIndicator.setText2("Compiling " + object.getQualifiedNameWithType());
                     }
                 }
@@ -221,7 +221,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     private void buildCompilationErrors(List<? extends DBSchemaObject> objects, List<CompilerResult> compilerErrors) {
         for (DBSchemaObject object : objects) {
             if (!object.getStatus().is(DBObjectStatus.VALID)) {
-                CompilerResult compilerResult = new CompilerResult(object, CompileSourceAction.COMPILE);
+                CompilerResult compilerResult = new CompilerResult(object, CompilerAction.BULK_COMPILE_ACTION);
                 if (compilerResult.isError()) {
                     compilerErrors.add(compilerResult);
                 }

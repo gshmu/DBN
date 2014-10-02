@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.debugger.execution;
 
 import java.util.List;
-
-import com.dci.intellij.dbn.execution.compiler.CompileSourceAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +13,7 @@ import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.execution.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -207,7 +206,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                                 for (DBSchemaObject schemaObject : selectedDependencies) {
                                     if (!progressIndicator.isCanceled()) {
                                         progressIndicator.setText("Compiling " + schemaObject.getQualifiedNameWithType());
-                                        compilerManager.compileObject(schemaObject, CompileType.DEBUG, CompileSourceAction.BULK_COMPILE);
+                                        compilerManager.compileObject(schemaObject, CompileType.DEBUG, CompilerAction.BULK_COMPILE_ACTION);
                                     }
                                 }
                                 executionInput.getConnectionHandler().getObjectBundle().refreshObjectsStatus(null);

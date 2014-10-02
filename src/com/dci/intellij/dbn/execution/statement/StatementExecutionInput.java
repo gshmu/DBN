@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -82,6 +83,14 @@ public class StatementExecutionInput implements Disposable {
 
     public DBSchema getSchema() {
         return DBObjectRef.get(schemaRef);
+    }
+
+    public boolean isDDLStatement() {
+        if (executionProcessor != null) {
+            ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
+            return executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DATA_DEFINITION);
+        }
+        return false;
     }
 
     public void dispose() {

@@ -1,26 +1,28 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CompilerResult implements Disposable {
     private DBObjectRef<DBSchemaObject> objectRef;
     private List<CompilerMessage> compilerMessages = new ArrayList<CompilerMessage>();
     private boolean isError = false;
+    private CompilerAction sourceAction;
 
-    public CompilerResult(DBSchemaObject object, CompileSourceAction sourceAction) {
+    public CompilerResult(DBSchemaObject object, CompilerAction sourceAction) {
         objectRef = DBObjectRef.from(object);
+        this.sourceAction = sourceAction;
         Connection connection = null;
         ResultSet resultSet = null;
         List<CompilerMessage> echoMessages = new ArrayList<CompilerMessage>();
@@ -55,10 +57,14 @@ public class CompilerResult implements Disposable {
                 compilerMessages.addAll(echoMessages);
                 isError = true;
             } else {
-                CompilerMessage compilerMessage = new CompilerMessage(this, "The " + object.getQualifiedNameWithType() + " was " + (sourceAction == CompileSourceAction.SAVE ? "updated" : "compiled") +  " successfully.");
+                CompilerMessage compilerMessage = new CompilerMessage(this, "The " + object.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
                 compilerMessages.add(compilerMessage);
             }
         }
+    }
+
+    public CompilerAction getSourceAction() {
+        return sourceAction;
     }
 
     public CompilerResult(DBSchemaObject object, String errorMessage) {

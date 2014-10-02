@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.editor.code;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-import com.dci.intellij.dbn.execution.compiler.CompileSourceAction;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +23,7 @@ import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener;
@@ -235,7 +234,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                     }
 
                     if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
-                        DatabaseCompilerManager.getInstance(editor.getProject()).createCompilerResult(object, CompileSourceAction.SAVE);
+                        DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(editor.getProject());
+                        compilerManager.createCompilerResult(object, new CompilerAction(CompilerAction.Type.SAVE, virtualFile));
                     }
                     object.reload();
                 } catch (SQLException e) {
