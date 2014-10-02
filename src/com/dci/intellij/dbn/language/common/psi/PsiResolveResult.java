@@ -28,7 +28,7 @@ public class PsiResolveResult {
     private int overallResolveTrials = 0;
 
     PsiResolveResult(IdentifierPsiElement element) {
-        this.activeConnection = new ConnectionHandlerRef(element.getActiveConnection());
+        this.activeConnection = ConnectionHandlerRef.from(element.getActiveConnection());
         this.element = new WeakReference<IdentifierPsiElement>(element);
         this.isNew = true;
     }
@@ -41,7 +41,7 @@ public class PsiResolveResult {
         this.referencedElement = null;
         this.parent = null;
         this.text = psiElement.getUnquotedText();
-        this.activeConnection = new ConnectionHandlerRef(connectionHandler);
+        this.activeConnection = ConnectionHandlerRef.from(connectionHandler);
         this.currentSchema = DBObjectRef.from(psiElement.getCurrentSchema());
         this.executableTextLength = psiElement.getEnclosingScopePsiElement().getTextLength();
     }
@@ -154,7 +154,7 @@ public class PsiResolveResult {
     }
 
     public ConnectionHandler getActiveConnection() {
-        return activeConnection.get();
+        return ConnectionHandlerRef.get(activeConnection);
     }
 
     public void setParent(@Nullable BasePsiElement parent) {

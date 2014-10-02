@@ -171,7 +171,6 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     @Override
     public void dispose() {
         disposed = true;
-        connectionHandlerRef.release();
     }
 }
 

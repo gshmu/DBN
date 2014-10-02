@@ -20,8 +20,11 @@ public class ConnectionHandlerRef{
         return connectionHandler;
     }
 
-    public void release() {
-        reference = null;
+    public static ConnectionHandlerRef from(ConnectionHandler connectionHandler) {
+        return connectionHandler == null ? null : connectionHandler.getRef();
     }
 
+    public static ConnectionHandler get(ConnectionHandlerRef connectionHandlerRef) {
+        return connectionHandlerRef == null ? null :connectionHandlerRef.get();
+    }
 }
