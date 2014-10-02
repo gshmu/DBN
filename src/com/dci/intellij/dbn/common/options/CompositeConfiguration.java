@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.options;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.options.ConfigurationException;
 
 public abstract class CompositeConfiguration<T extends CompositeConfigurationEditorForm> extends Configuration<T> {
@@ -29,6 +30,9 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
             configuration.apply();
         }
         super.apply();
+        if (!CommonUtil.isCalledThrough(Configuration.class)) {
+            notifyChanges();
+        }
         onApply();
     }
 
