@@ -43,8 +43,11 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     }
 
     public boolean isModified() {
+        if (super.isModified()) {
+            return true;
+        }
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            if (connectionHandler.getSettings().isModified()) return true;
+            if (connectionHandler.getSettings().isModified() || connectionHandler.getSettings().isNew()) return true;
         }
         return false;
     }
