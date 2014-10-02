@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -7,14 +15,6 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFile {
     private static final byte[] EMPTY_CONTENT = new byte[0];
@@ -158,8 +158,19 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     }
 
 
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
     @Override
-    public void release() {
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        disposed = true;
         connectionHandlerRef.release();
     }
 }

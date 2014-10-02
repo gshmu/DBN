@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
@@ -17,13 +24,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
     protected DBEditableObjectVirtualFile mainDatabaseFile;
@@ -33,6 +33,32 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
     private String name;
     private String path;
     private String url;
+
+    private int hashCode;
+
+    public DBContentVirtualFile(DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
+        this.mainDatabaseFile = mainDatabaseFile;
+        this.contentType = contentType;
+
+        DBSchemaObject object = mainDatabaseFile.getObject();
+        Project project = object.getProject();
+        DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+
+        hashCode = (databaseFileManager.getSessionId() + "#"+
+                    object.getConnectionHandler().getId() + "#" +
+                        object.getObjectType() + "#" +
+                        object.getQualifiedName() + "#" +
+                        object.getOverload() + "#" +
+                        contentType).hashCode();
+
+
+        this.name = object.getName();
+        this.path = DatabaseFileSystem.createPath(object, getContentType());
+        this.url = DatabaseFileSystem.createUrl(object);
+
+        DDLFileType ddlFileType = object.getDDLFileType(contentType);
+        this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
+    }
 
     public ConnectionHandler getActiveConnection() {
         DBSchemaObject object = getObject();
@@ -47,19 +73,6 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
     public DBSchema getCurrentSchema() {
         DBSchemaObject object = getObject();
         return object == null ? null : object.getSchema();
-    }
-
-    public DBContentVirtualFile(DBEditableObjectVirtualFile parentFile, DBContentType contentType) {
-        this.mainDatabaseFile = parentFile;
-        this.contentType = contentType;
-
-        DBSchemaObject object = parentFile.getObject();
-        this.name = object.getName();
-        this.path = DatabaseFileSystem.createPath(object, getContentType());
-        this.url = DatabaseFileSystem.createUrl(object);
-
-        DDLFileType ddlFileType = object.getDDLFileType(contentType);
-        this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 
     public DBEditableObjectVirtualFile getMainDatabaseFile() {
@@ -80,7 +93,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     @Nullable
     public DBSchemaObject getObject() {
-        return mainDatabaseFile.getObject();
+        return mainDatabaseFile == null ? null : mainDatabaseFile.getObject();
     }
 
     @Override
@@ -185,8 +198,31 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         return 1;
     }
 
-    @Override
-    public void release() {
+    public boolean equals(Object obj) {
+        if (obj instanceof DBContentVirtualFile) {
+            DBContentVirtualFile virtualFile = (DBContentVirtualFile) obj;
+            return virtualFile.hashCode() == hashCode;
+        }
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        return hashCode;
+    }
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        disposed = true;
+        mainDatabaseFile = null;
     }
 }

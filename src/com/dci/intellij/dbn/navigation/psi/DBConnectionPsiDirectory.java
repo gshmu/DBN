@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.navigation.psi;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -28,13 +36,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     private DBConnectionVirtualFile virtualFile;
@@ -63,7 +64,8 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @Override
     public void dispose() {
-        virtualFile.release();
+        DisposerUtil.dispose(virtualFile);
+        virtualFile = null;
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {

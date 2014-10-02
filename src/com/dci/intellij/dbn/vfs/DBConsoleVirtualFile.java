@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,20 +28,11 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
 
 public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
-    private ConnectionHandlerRef connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
     protected String name;
     protected String path;
@@ -40,7 +40,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
 
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
-        this.connectionHandler = connectionHandler.getRef();
+        this.connectionHandlerRef = connectionHandler.getRef();
         this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
@@ -73,7 +73,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler.get();
+        return connectionHandlerRef.get();
     }
 
     public Project getProject() {
@@ -209,9 +209,19 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         return getName().compareTo(o.getName());
     }
 
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
     @Override
-    public void release() {
-        connectionHandler.release();
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        connectionHandlerRef.release();
         currentSchemaRef.release();
     }
 }
