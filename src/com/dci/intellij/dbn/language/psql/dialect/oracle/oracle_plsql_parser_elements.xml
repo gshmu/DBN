@@ -12,7 +12,7 @@
 
     <element-def attributes="EXECUTABLE, STATEMENT, DATA_DEFINITION" description="DDL statement" formatting-indent="ABSOLUTE_NONE" id="ddl_statement">
         <sequence attributes="DDL_STATEMENT" id="000000002">
-            <sequence id="000000003">
+            <sequence id="000000003" attributes="ACTION">
                 <token id="000000004" type-id="KW_CREATE" />
                 <sequence id="000000005" optional="true">
                     <token id="000000006" type-id="KW_OR" />
