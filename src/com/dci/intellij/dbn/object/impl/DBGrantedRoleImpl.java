@@ -6,7 +6,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBGrantedRole;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBRoleGrantee;
@@ -21,7 +20,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
     private boolean isDefaultRole;
 
     public DBGrantedRoleImpl(DBRoleGrantee grantee, ResultSet resultSet) throws SQLException {
-        super(grantee, DBContentType.NONE, resultSet);
+        super(grantee, resultSet);
     }
 
     @Override

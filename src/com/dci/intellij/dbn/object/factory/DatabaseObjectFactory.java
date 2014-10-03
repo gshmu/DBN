@@ -13,11 +13,14 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.factory.ui.FunctionFactoryInputForm;
 import com.dci.intellij.dbn.object.factory.ui.ProcedureFactoryInputForm;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputDialog;
@@ -103,9 +106,26 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         if (response == 0) {
             new BackgroundTask(object.getProject(), "Dropping " + object.getQualifiedNameWithType(), false) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    Connection connection = null;
                     try {
                         initProgressIndicator(progressIndicator, true);
-                        ddlInterface.dropObject(object.getTypeName(), object.getQualifiedName(), connectionHandler.getStandaloneConnection());
+                        DBContentType contentType = object.getContentType();
+                        connection = connectionHandler.getPoolConnection();
+
+                        String objectName = object.getQualifiedName();
+                        String objectTypeName = object.getTypeName();
+                        if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                            DBObjectStatusHolder status = object.getStatus();
+                            if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
+                                ddlInterface.dropObject(objectTypeName, objectName, connection);
+                            }
+                            if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                                ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
+                            }
+
+                        } else {
+                            ddlInterface.dropObject(objectTypeName, objectName, connection);
+                        }
 
                         /*Messages.showInfoMessage(
                         NamingUtil.capitalize(object.getTypeName()) + " " + object.getQualifiedName() + " was dropped successfully.",
@@ -117,6 +137,8 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                     } catch (SQLException e) {
                         String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
                         MessageUtil.showErrorDialog(message, e);
+                    } finally {
+                        connectionHandler.freePoolConnection(connection);
                     }
 
                 }

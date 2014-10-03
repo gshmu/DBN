@@ -70,7 +70,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
 
-    private DBContentType contentType = DBContentType.NONE;
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
@@ -97,15 +96,13 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     protected Logger getLogger() {return Logger.getInstance(getClass().getName());}
 
-    public DBObjectImpl(DBObject parentObject, DBContentType contentType, ResultSet resultSet) throws SQLException {
+    public DBObjectImpl(DBObject parentObject, ResultSet resultSet) throws SQLException {
         this.parentObject = DBObjectRef.from(parentObject);
-        this.contentType = contentType;
         init(resultSet);
     }
 
-    public DBObjectImpl(DBObjectBundle objectBundle, DBContentType contentType, ResultSet resultSet) throws SQLException {
+    public DBObjectImpl(DBObjectBundle objectBundle, ResultSet resultSet) throws SQLException {
         this.objectBundle = objectBundle;
-        this.contentType = contentType;
         init(resultSet);
     }
 
@@ -140,12 +137,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return null;
     }
 
-    public void setContentType(DBContentType contentType) {
-        this.contentType = contentType;
-    }
-
     public DBContentType getContentType() {
-        return contentType;
+        return DBContentType.NONE;
     }
 
     @Override

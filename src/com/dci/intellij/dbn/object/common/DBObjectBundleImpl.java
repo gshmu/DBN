@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -34,6 +47,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.object.DBCharset;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
@@ -61,19 +75,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -133,7 +134,48 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 "Role privilege relations",
                 ROLE_PRIVILEGE_RELATION_LOADER,
                 roles, privileges);
+
+        EventManager.subscribe(connectionHandler.getProject(), DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
+
+    private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
+        @Override
+        public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
+            if (schema.getConnectionHandler() == connectionHandler) {
+                DBObjectList childObjectList = schema.getChildObjectList(objectType);
+                if (childObjectList != null && childObjectList.isLoaded()) {
+                    childObjectList.reload();
+                }
+
+                Set<DBObjectType> childObjectTypes = objectType.getChildren();
+                for (DBObjectType childObjectType : childObjectTypes) {
+                    DBObjectListContainer childObjects = schema.getChildObjects();
+                    if (childObjects != null) {
+                        childObjectList = childObjects.getHiddenObjectList(childObjectType);
+                        if (childObjectList != null && childObjectList.isLoaded()) {
+                            childObjectList.reload();
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void dataDefinitionChanged(DBSchemaObject schemaObject) {
+            if (schemaObject.getConnectionHandler() == connectionHandler) {
+                DBObjectListContainer childObjects = schemaObject.getChildObjects();
+                List<DBObjectList<DBObject>> objectLists = null;
+                if (childObjects != null) {
+                    objectLists = childObjects.getAllObjectLists();
+                    for (DBObjectList objectList : objectLists) {
+                        if (objectList.isLoaded()) {
+                            objectList.reload();
+                        }
+                    }
+                }
+            }
+        }
+    };
 
     public boolean isValid() {
         return connectionConfigHash == connectionHandler.getSettings().getDatabaseSettings().hashCode();
@@ -591,6 +633,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
+            EventManager.unsubscribe(dataDefinitionChangeListener);
             DisposerUtil.dispose(objectLists);
             DisposerUtil.dispose(objectRelationLists);
             CollectionUtil.clearCollection(visibleTreeChildren);

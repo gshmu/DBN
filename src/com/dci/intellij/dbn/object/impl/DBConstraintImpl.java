@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -49,7 +48,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     private DBObjectList<DBColumn> columns;
 
     public DBConstraintImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
-        super(dataset, DBContentType.NONE, resultSet);
+        super(dataset, resultSet);
     }
 
     @Override

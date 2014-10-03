@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBCluster;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -15,7 +14,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 
 public class DBClusterImpl extends DBSchemaObjectImpl implements DBCluster {
     public DBClusterImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
-        super(parent, DBContentType.NONE, resultSet);
+        super(parent, resultSet);
     }
 
     @Override

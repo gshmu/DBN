@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionListener;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -176,10 +176,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     if (executionInput.isDataDefinitionStatement()) {
                         DBSchemaObject affectedObject = executionInput.getAffectedObject();
                         if (affectedObject != null) {
-                            StatementExecutionListener listener = EventManager.notify(project, StatementExecutionListener.TOPIC);
-                            listener.dataModelChanged(affectedObject);
+                            DataDefinitionChangeListener listener = EventManager.notify(project, DataDefinitionChangeListener.TOPIC);
+                            listener.dataDefinitionChanged(affectedObject);
                         } else {
-
+                            DBSchema affectedSchema = executionInput.getAffectedSchema();
+                            IdentifierPsiElement subjectPsiElement = executionInput.getSubjectPsiElement();
+                            if (affectedSchema != null && subjectPsiElement != null) {
+                                DataDefinitionChangeListener listener = EventManager.notify(project, DataDefinitionChangeListener.TOPIC);
+                                listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
+                            }
                         }
                     }
                 }

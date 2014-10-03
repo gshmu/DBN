@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
@@ -18,26 +23,26 @@ import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
     DBFunctionImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
         // type functions are not editable independently
-        super(parent, DBContentType.NONE, resultSet);
+        super(parent, resultSet);
         assert this.getClass() != DBFunctionImpl.class;
     }
 
     public DBFunctionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.CODE, resultSet);
+        super(schema, resultSet);
     }
 
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         super.initObject(resultSet);
         name = resultSet.getString("FUNCTION_NAME");
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return DBContentType.CODE;
     }
 
     public DBArgument getReturnArgument() {

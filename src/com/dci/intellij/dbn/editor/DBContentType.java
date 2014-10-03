@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor;
 
 import com.dci.intellij.dbn.common.util.EnumerationUtil;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public enum DBContentType {
     NONE("No Content"),
@@ -64,5 +65,19 @@ public enum DBContentType {
     
     public boolean isOneOf(DBContentType ... contentTypes){
         return EnumerationUtil.isOneOf(this, contentTypes);
+    }
+
+    public static DBContentType get(DBObjectType objectType) {
+        switch (objectType) {
+            case FUNCTION:
+            case PROCEDURE:
+            case TRIGGER: return CODE;
+            case PACKAGE:
+            case TYPE: return CODE_SPEC_AND_BODY;
+            case VIEW:
+            case MATERIALIZED_VIEW: return CODE_AND_DATA;
+            case TABLE: return DATA;
+            default: return NONE;
+        }
     }
 }

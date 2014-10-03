@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDimension;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -16,7 +15,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 public class DBDimensionImpl extends DBSchemaObjectImpl implements DBDimension {
 
     public DBDimensionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.NONE, resultSet);
+        super(schema, resultSet);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private DBObjectList<DBNestedTable> nestedTables;
 
     public DBTableImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.DATA, resultSet);
+        super(schema, resultSet);
     }
 
     @Override
@@ -61,6 +61,11 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
         DBObjectRelationListContainer childObjectRelations = initChildObjectRelations();
         childObjectRelations.createSubcontentObjectRelationList(DBObjectRelationType.INDEX_COLUMN, this, "Index column relations", INDEX_COLUMN_RELATION_LOADER, schema);
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return DBContentType.DATA;
     }
 
     public DBObjectType getObjectType() {

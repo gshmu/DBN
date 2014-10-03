@@ -34,4 +34,8 @@
         <statement>drop {0} {1}</statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="drop-object-body">
+        <statement>drop {0} body {1}</statement>
+    </statement-execution-processor>
+
 </data-dictionary>

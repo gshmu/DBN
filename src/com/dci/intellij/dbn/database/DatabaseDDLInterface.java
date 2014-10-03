@@ -38,6 +38,8 @@ public interface DatabaseDDLInterface extends DatabaseInterface{
     *********************************************************/
     void dropObject(String objectType, String objectName, Connection connection) throws SQLException;
 
+    void dropObjectBody(String objectType, String objectName, Connection connection) throws SQLException;
+
    /*********************************************************
     *                   RENAME statements                     *
     *********************************************************/

@@ -6,7 +6,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBNestedTableColumn;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
@@ -15,7 +14,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTableColumn {
 
     public DBNestedTableColumnImpl(DBNestedTable parent, ResultSet resultSet) throws SQLException {
-        super(parent, DBContentType.NONE, resultSet);
+        super(parent, resultSet);
         // todo !!!
     }
 

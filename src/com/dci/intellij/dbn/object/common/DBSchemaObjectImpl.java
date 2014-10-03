@@ -38,12 +38,12 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     private DBObjectList<DBObject> referencingObjects;
     private DBObjectStatusHolder objectStatus;
 
-    public DBSchemaObjectImpl(DBSchema schema, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(schema, contentType, resultSet);
+    public DBSchemaObjectImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+        super(schema, resultSet);
     }
 
-    public DBSchemaObjectImpl(DBSchemaObject parent, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(parent, contentType, resultSet);
+    public DBSchemaObjectImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+        super(parent, resultSet);
     }
 
     protected void initProperties() {

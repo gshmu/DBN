@@ -23,12 +23,12 @@ public abstract class DBProgramImpl<P extends DBProcedure, F extends DBFunction>
     protected DBObjectList<F> functions;
 
 
-    public DBProgramImpl(DBSchemaObject parent, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(parent, contentType, resultSet);
+    public DBProgramImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+        super(parent, resultSet);
     }
 
-    public DBProgramImpl(DBSchema schema, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(schema, contentType, resultSet);
+    public DBProgramImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+        super(schema, resultSet);
     }
 
     @Override
