@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDatabaseLink;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -18,7 +17,7 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
     private String userName;
     private String host;
     public DBDatabaseLinkImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.NONE, resultSet);
+        super(schema, resultSet);
     }
 
     @Override

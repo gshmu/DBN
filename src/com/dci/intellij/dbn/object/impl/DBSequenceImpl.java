@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSequence;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -17,7 +16,7 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 
 public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
     public DBSequenceImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.NONE, resultSet);
+        super(schema, resultSet);
     }
 
     @Override

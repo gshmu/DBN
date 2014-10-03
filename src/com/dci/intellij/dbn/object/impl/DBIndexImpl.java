@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBTable;
@@ -27,7 +26,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private boolean isUnique;
 
     public DBIndexImpl(DBTable table, ResultSet resultSet) throws SQLException {
-        super(table, DBContentType.NONE, resultSet);
+        super(table, resultSet);
     }
 
     @Override

@@ -64,6 +64,10 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
        executeUpdate(connection, "drop-object", objectType, objectName);
    }
 
+   public void dropObjectBody(String objectType, String objectName, Connection connection) throws SQLException {
+       executeUpdate(connection, "drop-object-body", objectType, objectName);
+   }
+
     protected String updateNameQualification(String code, boolean qualified, String objectType, String schemaName, String objectName, CodeStyleCaseSettings caseSettings) {
         CodeStyleCaseOption kco = caseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = caseSettings.getObjectCaseOption();

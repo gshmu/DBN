@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -35,7 +34,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     private boolean output;
 
     public DBArgumentImpl(DBMethod method, ResultSet resultSet) throws SQLException {
-        super(method, DBContentType.NONE, resultSet);
+        super(method, resultSet);
     }
 
     @Override

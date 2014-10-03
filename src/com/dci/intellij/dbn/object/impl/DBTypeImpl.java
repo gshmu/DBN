@@ -50,12 +50,12 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
     DBTypeImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
         // type functions are not editable independently
-        super(parent, DBContentType.NONE, resultSet);
+        super(parent, resultSet);
         assert this.getClass() != DBTypeImpl.class;
     }
 
     public DBTypeImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.CODE_SPEC_AND_BODY, resultSet);
+        super(schema, resultSet);
     }
 
     @Override
@@ -79,6 +79,11 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
             functions = container.createSubcontentObjectList(DBObjectType.TYPE_FUNCTION, this, FUNCTIONS_LOADER, schema, false);
             subTypes = container.createSubcontentObjectList(DBObjectType.TYPE, this, SUB_TYPES_LOADER, schema, true);
         }
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return DBContentType.CODE_SPEC_AND_BODY;
     }
 
     public DBObjectType getObjectType() {

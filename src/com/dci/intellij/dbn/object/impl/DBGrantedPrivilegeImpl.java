@@ -6,7 +6,6 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBPrivilegeGrantee;
@@ -20,7 +19,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
     private boolean isAdminOption;
 
     public DBGrantedPrivilegeImpl(DBPrivilegeGrantee grantee, ResultSet resultSet) throws SQLException {
-        super(grantee, DBContentType.NONE, resultSet);
+        super(grantee, resultSet);
     }
 
     @Override

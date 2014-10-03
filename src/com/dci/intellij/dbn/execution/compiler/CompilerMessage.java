@@ -46,16 +46,12 @@ public class CompilerMessage extends ConsoleMessage {
         position = Math.max(position-1, 0);
         this.compilerResult = compilerResult;
 
-        DBSchemaObject object = compilerResult.getObject();
-        if (object != null) {
-            if (object.getContentType() == DBContentType.CODE_SPEC_AND_BODY) {
-                String objectType = resultSet.getString("OBJECT_TYPE");
-                contentType = objectType.contains("BODY") ?  DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
-            } else {
-                contentType = object.getContentType();
-            }
+        DBContentType objectContentType = DBContentType.get(compilerResult.getObjectType());
+        if (objectContentType == DBContentType.CODE_SPEC_AND_BODY) {
+            String objectType = resultSet.getString("OBJECT_TYPE");
+            contentType = objectType.contains("BODY") ?  DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
         } else {
-            contentType = DBContentType.CODE;
+            contentType = objectContentType;
         }
 
         isEcho = !text.startsWith("PLS");

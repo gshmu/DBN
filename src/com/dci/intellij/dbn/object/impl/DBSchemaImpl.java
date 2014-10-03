@@ -91,7 +91,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     boolean isEmptySchema;
 
     public DBSchemaImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        super(connectionHandler.getObjectBundle(), DBContentType.NONE, resultSet);
+        super(connectionHandler.getObjectBundle(), resultSet);
     }
 
     @Override

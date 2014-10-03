@@ -36,7 +36,7 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     protected DBObjectList<DBPackageType> types;
     public DBPackageImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.CODE_SPEC_AND_BODY, resultSet);
+        super(schema, resultSet);
     }
 
     @Override
@@ -52,6 +52,11 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         functions = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_FUNCTION, this, FUNCTIONS_LOADER, schema, false);
         procedures = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_PROCEDURE, this, PROCEDURES_LOADER, schema, false);
         types = childObjects.createSubcontentObjectList(DBObjectType.PACKAGE_TYPE, this, TYPES_LOADER, schema, true);
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return DBContentType.CODE_SPEC_AND_BODY;
     }
 
     public List getTypes() {

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBNestedTableColumn;
 import com.dci.intellij.dbn.object.DBTable;
@@ -22,7 +21,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
     private DBObjectRef<DBType> typeRef;
 
     public DBNestedTableImpl(DBTable parent, ResultSet resultSet) throws SQLException {
-        super(parent, DBContentType.NONE, resultSet);
+        super(parent, resultSet);
 
     }
 

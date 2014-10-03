@@ -32,11 +32,14 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
 
             StatementExecutionResult executionResult = new StatementExecutionCursorResult(executionInput, resultName, updateCount);
             executionResult.updateExecutionMessage(MessageType.INFO, getStatementName() + " executed successfully.");
+            executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
             return executionResult;
         } else {
             StatementExecutionBasicResult executionResult = getExecutionResult();
             if (executionResult == null) {
-                return new StatementExecutionCursorResult(executionInput, resultName, resultSet, updateCount);
+                executionResult = new StatementExecutionCursorResult(executionInput, resultName, resultSet, updateCount);
+                executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
+                return executionResult;
             } else {
                 // if executionResult exists, just update it with the new resultSet data
                 if (executionResult instanceof StatementExecutionCursorResult){
@@ -49,6 +52,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
                 }
             }
         }
+
     }
 
     public void setIndex(int index) {

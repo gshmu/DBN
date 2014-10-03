@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -41,7 +41,7 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private TriggeringEvent[] triggeringEvents;
 
     public DBTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
-        super(dataset, DBContentType.CODE, resultSet);
+        super(dataset, resultSet);
     }
 
     @Override
@@ -85,6 +85,11 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
         properties.set(DBObjectProperty.DISABLEABLE);
         properties.set(DBObjectProperty.COMPILABLE);
         properties.set(DBObjectProperty.SCHEMA_OBJECT);
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return DBContentType.CODE;
     }
 
     public boolean isForEachRow() {

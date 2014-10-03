@@ -31,14 +31,13 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
     private boolean isSystemView;
     private DBType type;
     public DBViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.CODE_AND_DATA, resultSet);
+        super(schema, resultSet);
     }
 
     @Override
     protected void initObject(ResultSet resultSet) throws SQLException {
         name = resultSet.getString("VIEW_NAME");
         isSystemView = resultSet.getString("IS_SYSTEM_VIEW").equals("Y");
-        if (isSystemView) setContentType(DBContentType.DATA);
         String typeOwner = resultSet.getString("VIEW_TYPE_OWNER");
         String typeName = resultSet.getString("VIEW_TYPE");
         if (typeOwner != null && typeName != null) {
@@ -46,6 +45,11 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             type = typeSchema.getType(typeName);
         }
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return isSystemView ? DBContentType.DATA : DBContentType.CODE_AND_DATA;
     }
 
     public DBObjectType getObjectType() {

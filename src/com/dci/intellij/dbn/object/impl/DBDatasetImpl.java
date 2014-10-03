@@ -32,8 +32,8 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     protected DBObjectList<DBConstraint> constraints;
     protected DBObjectList<DBTrigger> triggers;
 
-    public DBDatasetImpl(DBSchema parent, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(parent, contentType, resultSet);
+    public DBDatasetImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
+        super(parent, resultSet);
     }
 
     protected void initLists() {

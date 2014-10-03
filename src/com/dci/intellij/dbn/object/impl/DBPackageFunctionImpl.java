@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageFunction;
@@ -7,14 +10,16 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFunction {
 
 
     public DBPackageFunctionImpl(DBPackage packagee, ResultSet resultSet) throws SQLException {
         super(packagee, resultSet);
+    }
+
+    @Override
+    public DBContentType getContentType() {
+        return DBContentType.NONE;
     }
 
     @Override

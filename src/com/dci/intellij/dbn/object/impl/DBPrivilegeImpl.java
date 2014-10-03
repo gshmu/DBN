@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBUser;
@@ -19,7 +18,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 
 public class DBPrivilegeImpl extends DBObjectImpl implements DBPrivilege {
     public DBPrivilegeImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        super(connectionHandler.getObjectBundle(), DBContentType.NONE, resultSet);
+        super(connectionHandler.getObjectBundle(), resultSet);
     }
 
     @Override

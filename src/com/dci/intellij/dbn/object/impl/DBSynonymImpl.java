@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -30,7 +29,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
     private DBObjectRef<DBObject> underlyingObject;
 
     public DBSynonymImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, DBContentType.NONE, resultSet);
+        super(schema, resultSet);
     }
 
     @Override

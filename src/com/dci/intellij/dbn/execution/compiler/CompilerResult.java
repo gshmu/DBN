@@ -97,13 +97,16 @@ public class CompilerResult implements Disposable {
         return DBObjectRef.get(objectRef);
     }
 
+    DBObjectType getObjectType() {
+        return objectRef.getObjectType();
+    }
+
     public DBObjectRef<DBSchemaObject> getObjectRef() {
         return objectRef;
     }
 
     public void dispose() {
         compilerMessages.clear();
-        objectRef = null;
     }
 
     public Project getProject() {

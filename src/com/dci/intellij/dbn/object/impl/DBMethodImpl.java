@@ -36,12 +36,12 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected boolean isDeterministic;
     private DBLanguage language;
 
-    public DBMethodImpl(DBSchemaObject parent, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(parent, contentType, resultSet);
+    public DBMethodImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+        super(parent, resultSet);
     }
 
-    public DBMethodImpl(DBSchema schema, DBContentType contentType, ResultSet resultSet) throws SQLException {
-        super(schema, contentType, resultSet);
+    public DBMethodImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+        super(schema, resultSet);
     }
 
     @Override
