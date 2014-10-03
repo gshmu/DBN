@@ -27,6 +27,7 @@ public enum ElementTypeAttribute {
     DDL_STATEMENT("DDL_STATEMENT", "DDL statement"),
     EXECUTABLE_CODE("EXECUTABLE_CODE", "Executable code"),
     BREAKPOINT_POSITION("BREAKPOINT_POSITION", "Default breakpoint position"),
+    ACTION("ACTION", "Action"),
     GENERIC("GENERIC", "Generic element"),
     SPECIFIC("SPECIFIC", "Specific element"),
     ;
