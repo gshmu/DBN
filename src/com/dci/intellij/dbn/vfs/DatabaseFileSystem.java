@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +74,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isActive()) {
                 String objectPath = url.substring(index + 1);
-                if (objectPath.startsWith("console#")) {
+                if (objectPath.startsWith("null")) {
+                    return null;
+                } else if (objectPath.startsWith("console#")) {
                     String consoleName = objectPath.substring(8);
                     return connectionHandler.getConsoleBundle().getConsole(consoleName);
                 } else {
@@ -174,6 +177,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     public static String createUrl(DBObject object) {
+        if (object == null) {
+            return PROTOCOL + "://" + UUID.randomUUID() + "/null";
+        }
+
         StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
         DBObjectType objectType = object.getObjectType();
         buffer.insert(0, "#");

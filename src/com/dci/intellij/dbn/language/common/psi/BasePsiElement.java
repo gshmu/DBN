@@ -173,6 +173,11 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public DBSchema getCurrentSchema() {
+        PsiElement parent = getParent();
+        if (parent instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) parent;
+            return basePsiElement.getCurrentSchema();
+        }
         DBLanguagePsiFile file = getFile();
         return file == null ? null : file.getCurrentSchema();
     }
