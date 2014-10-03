@@ -9,11 +9,9 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
-import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -109,18 +107,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void showExecutionConsole(final StatementExecutionResult executionResult) {
         new SimpleLaterInvocator() {
             public void execute() {
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.show(executionResult);
-                CompilerResult compilerResult = executionResult.getCompilerResult();
-                if (compilerResult != null) {
-                    showExecutionConsole(compilerResult);
-                } else {
-                    showExecutionConsole();
-                    StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
-                    if (!statementExecutionSettings.isFocusResult()) {
-                        executionResult.navigateToEditor(true);
-                    }
-                }
+                getExecutionConsoleForm().show(executionResult);
+                showExecutionConsole();
             }
         }.start();
     }

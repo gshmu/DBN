@@ -60,30 +60,32 @@ public class MessagesTree extends DBNTree implements Disposable {
         setModel(new MessagesTreeModel());
     }
 
-    public void addExecutionMessage(StatementExecutionMessage executionMessage, boolean focus) {
+    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean focus) {
         TreePath treePath = getModel().addExecutionMessage(executionMessage);
         if (focus) {
             getSelectionModel().setSelectionPath(treePath);
             scrollPathToVisible(treePath);
             requestFocus();
         }
+        return treePath;
     }
 
-    public void addCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
+    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
         if (focus) {
             getSelectionModel().setSelectionPath(treePath);
             scrollPathToVisible(treePath);
             grabFocus();
         }
+        return treePath;
     }
 
-    public void selectCompilerMessage(CompilerMessage compilerMessage) {
+    public TreePath selectCompilerMessage(CompilerMessage compilerMessage) {
         TreePath treePath = getModel().getTreePath(compilerMessage);
         getSelectionModel().setSelectionPath(treePath);
         scrollPathToVisible(treePath);
         grabFocus();
-
+        return treePath;
     }
 
     private void navigateToCode(Object object) {
@@ -178,9 +180,10 @@ public class MessagesTree extends DBNTree implements Disposable {
             String identifier = compilerMessage.getSubjectIdentifier();
             if (identifier != null) {
                 int lineEndOffset = document.getLineEndOffset(compilerMessage.getLine() + lineShifting);
-                String lineText = document.getText().substring(lineStartOffset, lineEndOffset).toUpperCase();
-                int selectionOffset = lineText.indexOf(identifier, compilerMessage.getPosition()) + lineStartOffset;
-                if (selectionOffset > -1) {
+                CharSequence lineText = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
+                int selectionOffsetInLine = StringUtil.indexOfIgnoreCase(lineText, identifier, compilerMessage.getPosition());
+                if (selectionOffsetInLine > -1) {
+                    int selectionOffset = selectionOffsetInLine + lineStartOffset;
                     editor.getSelectionModel().setSelection(selectionOffset, selectionOffset + identifier.length());
                 }
             }

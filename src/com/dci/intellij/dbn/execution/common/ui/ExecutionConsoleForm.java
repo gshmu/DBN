@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.common.ui;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -25,12 +26,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.common.message.ui.ExecutionMessagesPanel;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -148,17 +151,32 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     public void show(StatementExecutionResult executionResult) {
+        ExecutionMessagesPanel messagesPane = getMessagesPanel();
+        TreePath messageTreePath = null;
         if (executionResult instanceof StatementExecutionCursorResult) {
             StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
             if (executionMessage == null) {
                 showResultTab(executionResult);
             } else {
                 prepareMessagesTab();
-                getMessagesPanel().addExecutionMessage(executionMessage, true);
+                messageTreePath = messagesPane.addExecutionMessage(executionMessage, true);
             }
         } else {
             prepareMessagesTab();
-            getMessagesPanel().addExecutionMessage(executionResult.getExecutionMessage(), true);
+            messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), true);
+        }
+
+        CompilerResult compilerResult = executionResult.getCompilerResult();
+        if (compilerResult != null) {
+            show(compilerResult);
+        } else {
+            StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(project).getStatementExecutionSettings();
+            if (!statementExecutionSettings.isFocusResult()) {
+                executionResult.navigateToEditor(true);
+            }
+        }
+        if (messageTreePath != null) {
+            messagesPane.expand(messageTreePath);
         }
     }
 
@@ -192,7 +210,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
             }
         }
         if (firstCompilerResult != null) {
-            getMessagesPanel().select(firstCompilerResult.getCompilerMessages().get(0));    
+            getMessagesPanel().select(firstCompilerResult.getCompilerMessages().get(0));
         }
     }
     
