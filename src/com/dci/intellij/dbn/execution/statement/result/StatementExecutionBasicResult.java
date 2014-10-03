@@ -11,6 +11,8 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
@@ -23,6 +25,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private int updateCount;
     private StatementViewerPopup statementViewerPopup;
     private CompilerResult compilerResult;
+    private DBObjectRef<DBSchemaObject> affectedObjectRef;
 
     public StatementExecutionBasicResult(
             StatementExecutionInput executionInput,

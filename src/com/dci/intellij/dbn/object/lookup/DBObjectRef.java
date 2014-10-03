@@ -139,6 +139,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         }
     }
 
+    public String getQualifiedNameWithType() {
+        return objectType.getName() + " " + getPath();
+    }
+
     public String getTypePath() {
         DBObjectRef parent = this.parent;
         if (parent == null) {

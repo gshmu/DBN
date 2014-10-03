@@ -8,23 +8,30 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 
 public class CompilerMessagesObjectNode extends BundleTreeNode {
-    private DBEditableObjectVirtualFile databaseFile;
+    private DBObjectRef<DBSchemaObject> objectRef;
 
-    public CompilerMessagesObjectNode(CompilerMessagesNode parent, DBEditableObjectVirtualFile databaseFile) {
+    public CompilerMessagesObjectNode(CompilerMessagesNode parent, DBObjectRef<DBSchemaObject> objectRef) {
         super(parent);
-        this.databaseFile = databaseFile;
+        this.objectRef = objectRef;
     }
 
+    @Nullable
     public DBEditableObjectVirtualFile getVirtualFile() {
-        return databaseFile;
+        DBSchemaObject object = getObject();
+        return object == null ? null : object.getVirtualFile();
     }
 
     @Nullable
     public DBSchemaObject getObject() {
-        return databaseFile.getObject();
+        return DBObjectRef.get(objectRef);
+    }
+
+    public DBObjectRef<DBSchemaObject> getObjectRef() {
+        return objectRef;
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage) {
@@ -55,6 +62,5 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
     @Override
     public void dispose() {
         super.dispose();
-        databaseFile = null;
     }
 }

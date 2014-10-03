@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.compiler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -45,12 +46,18 @@ public class CompilerMessage extends ConsoleMessage {
         position = Math.max(position-1, 0);
         this.compilerResult = compilerResult;
 
-        if (compilerResult.getObject().getContentType() == DBContentType.CODE_SPEC_AND_BODY) {
-            String objectType = resultSet.getString("OBJECT_TYPE");
-            contentType = objectType.contains("BODY") ?  DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
+        DBSchemaObject object = compilerResult.getObject();
+        if (object != null) {
+            if (object.getContentType() == DBContentType.CODE_SPEC_AND_BODY) {
+                String objectType = resultSet.getString("OBJECT_TYPE");
+                contentType = objectType.contains("BODY") ?  DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
+            } else {
+                contentType = object.getContentType();
+            }
         } else {
-            contentType = compilerResult.getObject().getContentType();
+            contentType = DBContentType.CODE;
         }
+
         isEcho = !text.startsWith("PLS");
 
         subjectIdentifier = extractIdentifier(text, '\'');
@@ -75,17 +82,22 @@ public class CompilerMessage extends ConsoleMessage {
         return null;
     }
 
+    @Nullable
     public DBEditableObjectVirtualFile getDatabaseFile() {
-        if (databaseFile == null) {
-            databaseFile = compilerResult.getObject().getVirtualFile();
+        DBSchemaObject object = compilerResult.getObject();
+        if (databaseFile == null && object != null) {
+            databaseFile = object.getVirtualFile();
         }
         return databaseFile;
     }
 
+    @Nullable
     public DBContentVirtualFile getContentFile() {
         if (contentFile == null) {
             DBEditableObjectVirtualFile databaseFile = getDatabaseFile();
-            contentFile = databaseFile.getContentFile(contentType);
+            if (databaseFile != null) {
+                contentFile = databaseFile.getContentFile(contentType);
+            }
         }
         return contentFile;
     }
@@ -134,5 +146,9 @@ public class CompilerMessage extends ConsoleMessage {
 
     public Project getProject() {
         return compilerResult.getProject();
+    }
+
+    public String getObjectName() {
+        return compilerResult.getObjectRef().getName();
     }
 }
