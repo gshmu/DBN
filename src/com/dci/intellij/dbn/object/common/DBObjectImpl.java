@@ -243,7 +243,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public String getQualifiedNameWithType() {
-        return getTypeName() + " " + getQualifiedName();
+        return objectRef.getQualifiedNameWithType();
     }
 
     public DBUser getOwner() {

@@ -7,9 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -38,10 +40,20 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             CompilerMessagesObjectNode compilerMessagesObjectNode = (CompilerMessagesObjectNode) value;
             DBSchemaObject object = compilerMessagesObjectNode.getObject();
 
-            if (object != null) {
+            ConnectionHandler connectionHandler;
+            if (object == null) {
+                DBObjectRef<DBSchemaObject> objectRef = compilerMessagesObjectNode.getObjectRef();
+                setIcon(objectRef.getObjectType().getIcon());
+                append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                connectionHandler = objectRef.lookupConnectionHandler();
+            } else {
                 setIcon(object.getOriginalIcon());
                 append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                append(" - " + object.getConnectionHandler().getPresentableText(), SimpleTextAttributes.GRAY_ATTRIBUTES);
+                connectionHandler = object.getConnectionHandler();
+            }
+
+            if (connectionHandler != null) {
+                append(" - " + connectionHandler.getPresentableText(), SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
         }
         else if (value instanceof CompilerMessageNode) {

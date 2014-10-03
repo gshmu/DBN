@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -10,10 +14,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     List<QualifiedIdentifierVariant> parseVariants;
@@ -137,7 +137,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             }
             if (index > 0) {
                 LeafPsiElement previousPsiElement = getLeafAtIndex(index-1);
-                if (previousPsiElement instanceof IdentifierPsiElement) {
+                if (previousPsiElement != null) {
                     IdentifierPsiElement parentPsiElement = (IdentifierPsiElement) previousPsiElement;
                     DBObject parentObject = parentPsiElement.resolveUnderlyingObject();
                     if (parentObject != null) {
@@ -153,21 +153,33 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
 
     public DBObject lookupParentObjectFor(LeafElementType leafElementType) {
        for (QualifiedIdentifierVariant parseVariant : getParseVariants()) {
-            int index = parseVariant.getIndexOf(leafElementType);
-            if (index == 0) {
-                return null;
-            }
-            if (index > 0) {
-                LeafPsiElement previousPsiElement = getLeafAtIndex(index-1);
-                if (previousPsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement parentPsiElement = (IdentifierPsiElement) previousPsiElement;
-                    DBObject parentObject = parentPsiElement.resolveUnderlyingObject();
-                    if (parentObject != null) {
-                        return parentObject;
+            if (parseVariant.getLeafs().length == getElementsCount()) {
+                int index = parseVariant.getIndexOf(leafElementType);
+                if (index > 0) {
+                    LeafPsiElement previousPsiElement = getLeafAtIndex(index-1);
+                    if (previousPsiElement != null) {
+                        IdentifierPsiElement parentPsiElement = (IdentifierPsiElement) previousPsiElement;
+                        DBObject parentObject = parentPsiElement.resolveUnderlyingObject();
+                        if (parentObject != null) {
+                            return parentObject;
+                        }
                     }
                 }
             }
         }
         return null;
+    }
+
+    public int getElementsCount() {
+        int count = 0;
+        for (PsiElement child : getChildren()) {
+            if (child instanceof LeafPsiElement) {
+                LeafPsiElement leafPsiElement = (LeafPsiElement) child;
+                if (leafPsiElement.getElementType() != getElementType().getSeparatorToken() ) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }

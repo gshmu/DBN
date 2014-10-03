@@ -132,7 +132,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
                 int lineShifting = 1;
                 CharSequence documentText = editor.getDocument().getCharsSequence();
-                String objectName = compilerMessage.getObject().getName();
+                String objectName = compilerMessage.getObjectName();
                 int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, startOffset);
                 if (objectStartOffset > -1) {
                     lineShifting = editor.getDocument().getLineNumber(objectStartOffset);

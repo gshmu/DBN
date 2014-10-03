@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
@@ -21,18 +23,26 @@ public class CompilerResult implements Disposable {
     private boolean isError = false;
     private CompilerAction sourceAction;
 
+    public CompilerResult(ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName, CompilerAction sourceAction) {
+        objectRef = new DBObjectRef<DBSchemaObject>(schema.getRef(), objectType, objectName);
+        init(connectionHandler, schema, objectName, sourceAction);
+    }
+
     public CompilerResult(DBSchemaObject object, CompilerAction sourceAction) {
         objectRef = DBObjectRef.from(object);
+        init(object.getConnectionHandler(), object.getSchema(), object.getName(), sourceAction);
+    }
+
+    private void init(ConnectionHandler connectionHandler, DBSchema schema, String objectName, CompilerAction sourceAction) {
         this.sourceAction = sourceAction;
         Connection connection = null;
         ResultSet resultSet = null;
         List<CompilerMessage> echoMessages = new ArrayList<CompilerMessage>();
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
         try {
             connection = connectionHandler.getPoolConnection();
             resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().loadCompileObjectErrors(
-                    object.getSchema().getName(),
-                    object.getName(),
+                    schema.getName(),
+                    objectName,
                     connection);
 
             while (resultSet != null && resultSet.next()) {
@@ -58,7 +68,7 @@ public class CompilerResult implements Disposable {
                 compilerMessages.addAll(echoMessages);
                 isError = true;
             } else {
-                CompilerMessage compilerMessage = new CompilerMessage(this, "The " + object.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
+                CompilerMessage compilerMessage = new CompilerMessage(this, "The " + objectRef.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
                 compilerMessages.add(compilerMessage);
             }
         }
@@ -87,6 +97,10 @@ public class CompilerResult implements Disposable {
         return DBObjectRef.get(objectRef);
     }
 
+    public DBObjectRef<DBSchemaObject> getObjectRef() {
+        return objectRef;
+    }
+
     public void dispose() {
         compilerMessages.clear();
         objectRef = null;
@@ -94,7 +108,13 @@ public class CompilerResult implements Disposable {
 
     public Project getProject() {
         DBSchemaObject object = DBObjectRef.get(objectRef);
-        return object == null ? null : object.getProject();
+        if (object == null) {
+            ConnectionHandler connectionHandler = objectRef.lookupConnectionHandler();
+            if (connectionHandler != null) return connectionHandler.getProject();
+        } else {
+            return object.getProject();
+        }
+        return null;
     }
 
     public boolean hasErrors() {
