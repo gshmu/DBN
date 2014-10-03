@@ -227,10 +227,15 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public DBContentType getMainContentType() {
-        DBContentType contentType = getObject().getContentType();
-        return
-            contentType == DBContentType.CODE ? DBContentType.CODE :
-            contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;
+        DBSchemaObject object = getObject();
+        if (object == null) {
+            return DBContentType.CODE;
+        } else {
+            DBContentType contentType = object.getContentType();
+            return
+                contentType == DBContentType.CODE ? DBContentType.CODE :
+                contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;
+        }
     }
 
     public DBContentVirtualFile getMainContentFile() {

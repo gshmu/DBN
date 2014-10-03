@@ -93,7 +93,8 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
     @NotNull
     public String getUrl() {
         if (url == null) {
-            url = DatabaseFileSystem.createUrl(getObject());
+            T object = getObject();
+            url = DatabaseFileSystem.createUrl(object);
         }
         return url;
     }

@@ -151,6 +151,19 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return false;
     }
 
+    public LeafPsiElement lookupParentElementFor(LeafPsiElement element) {
+        int index = getIndexOf(element);
+        if (index > 0) {
+            return getLeafAtIndex(index - 1);
+        }
+        return null;
+    }
+
+    public DBObject lookupParentObjectFor(LeafPsiElement leafPsiElement) {
+        LeafPsiElement parent = lookupParentElementFor(leafPsiElement);
+        return parent == null ? null : parent.resolveUnderlyingObject();
+    }
+
     public DBObject lookupParentObjectFor(LeafElementType leafElementType) {
        for (QualifiedIdentifierVariant parseVariant : getParseVariants()) {
             if (parseVariant.getLeafs().length == getElementsCount()) {
