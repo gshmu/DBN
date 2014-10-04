@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -189,9 +190,13 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectSourceCode(
-                   getSchema().getName(), getName(), "PACKAGE", connection);
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadObjectSourceCode(
+                        getSchema().getName(), getName(), "PACKAGE", connection);
+            }
+            return null;
         }
     }
 
@@ -201,8 +206,12 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "PACKAGE BODY",connection);
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "PACKAGE BODY",connection);
+            }
+            return null;
         }
     }
 

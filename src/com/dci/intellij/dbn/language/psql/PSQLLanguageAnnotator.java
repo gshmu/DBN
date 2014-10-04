@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.psql;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -29,7 +31,6 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -142,7 +143,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                     DBSchemaObject object = (DBSchemaObject) file.getUnderlyingObject();
                     VirtualFile virtualFile = file.getVirtualFile();
 
-                    if (object == null || virtualFile.isInLocalFileSystem()) {
+                    if (object == null || (virtualFile != null && virtualFile.isInLocalFileSystem())) {
                         ElementTypeAttribute targetAttribute =
                                 elementType.is(ElementTypeAttribute.OBJECT_DECLARATION) ? ElementTypeAttribute.OBJECT_SPECIFICATION :
                                 elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? ElementTypeAttribute.OBJECT_DECLARATION : null;

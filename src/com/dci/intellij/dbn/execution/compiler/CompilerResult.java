@@ -48,12 +48,14 @@ public class CompilerResult implements Disposable {
             while (resultSet != null && resultSet.next()) {
                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
                 isError = true;
-                if (errorMessage.isEcho()) {
-                    echoMessages.add(errorMessage);
-                } else {
-                    compilerMessages.add(errorMessage);
+                boolean ignore = sourceAction.getType() == CompilerAction.Type.DDL && sourceAction.getContentType() != errorMessage.getContentType();
+                if (!ignore) {
+                    if (errorMessage.isEcho()) {
+                        echoMessages.add(errorMessage);
+                    } else {
+                        compilerMessages.add(errorMessage);
+                    }
                 }
-
             }
 
         } catch (SQLException e) {

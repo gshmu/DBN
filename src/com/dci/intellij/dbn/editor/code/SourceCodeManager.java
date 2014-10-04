@@ -235,7 +235,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                     if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
                         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(editor.getProject());
-                        compilerManager.createCompilerResult(object, new CompilerAction(CompilerAction.Type.SAVE, virtualFile));
+                        CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.SAVE, virtualFile);
+                        compilerAction.setContentType(virtualFile.getContentType());
+                        compilerManager.createCompilerResult(object, compilerAction);
                     }
                     object.reload();
                 } catch (SQLException e) {

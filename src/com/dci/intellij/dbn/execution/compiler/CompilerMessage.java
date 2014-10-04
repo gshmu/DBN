@@ -98,6 +98,10 @@ public class CompilerMessage extends ConsoleMessage {
         return contentFile;
     }
 
+    public DBContentType getContentType() {
+        return contentType;
+    }
+
     public CompilerResult getCompilerResult() {
         return compilerResult;
     }

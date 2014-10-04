@@ -274,7 +274,7 @@ public class Icons {
     public static final Icon DBO_DATABASE_LINKS         = load("/img/object/DatabaseLinks.png");
     public static final Icon DBO_DIMENSION              = load("/img/object/Dimension.png");
     public static final Icon DBO_DIMENSIONS             = load("/img/object/Dimensions.png");
-    public static final Icon DBO_FUNCTION               = load("/img/object/Function.png");
+    public static final Icon DBO_FUNCTION               = load("DBO_FUNCTION", "/img/object/Function.png");
     public static final Icon DBO_FUNCTION_DEBUG         = load("/img/object/FunctionDebug.png");
     public static final Icon DBO_FUNCTION_ERR           = load("/img/object/FunctionErr.png");
     public static final Icon DBO_FUNCTIONS              = load("/img/object/Functions.png");
@@ -293,7 +293,7 @@ public class Icons {
     public static final Icon DBO_PACKAGES               = load("/img/object/Packages.png");
     public static final Icon DBO_PACKAGE_SPEC           = load("DBO_PACKAGE_SPEC", "/img/object/PackageSpec.png");
     public static final Icon DBO_PACKAGE_BODY           = load("DBO_PACKAGE_BODY", "/img/object/PackageBody.png");
-    public static final Icon DBO_PROCEDURE              = load("/img/object/Procedure.png");
+    public static final Icon DBO_PROCEDURE              = load("DBO_PROCEDURE", "/img/object/Procedure.png");
     public static final Icon DBO_PROCEDURE_ERR          = load("/img/object/ProcedureErr.png");
     public static final Icon DBO_PROCEDURE_DEBUG        = load("/img/object/ProcedureDebug.png");
     public static final Icon DBO_PROCEDURES             = load("/img/object/Procedures.png");
@@ -311,7 +311,7 @@ public class Icons {
     public static final Icon DBO_TMP_TABLE              = load("/img/object/TableTmp.png");
     public static final Icon DBO_TABLE                  = load("/img/object/Table.png");
     public static final Icon DBO_TABLES                 = load("/img/object/Tables.png");
-    public static final Icon DBO_TRIGGER                = load("/img/object/Trigger.png");
+    public static final Icon DBO_TRIGGER                = load("DBO_TRIGGER","/img/object/Trigger.png");
     public static final Icon DBO_TRIGGER_ERR            = load("/img/object/TriggerErr.png");
     public static final Icon DBO_TRIGGER_DEBUG          = load("/img/object/TriggerDebug.png");
     public static final Icon DBO_TRIGGER_ERR_DISABLED   = load("/img/object/TriggerErrDisabled.png");
