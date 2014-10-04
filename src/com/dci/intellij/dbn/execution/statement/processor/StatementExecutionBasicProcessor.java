@@ -209,7 +209,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             BasePsiElement compilablePsiElement = executionInput.getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
                 VirtualFile virtualFile = executablePsiElement.getFile().getVirtualFile();
-                CompilerAction compilerSourceAction = new CompilerAction(CompilerAction.Type.DDL, virtualFile, compilablePsiElement.getTextOffset());
+                CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, virtualFile);
+                compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
+                compilerAction.setContentType(executionInput.getCompilableContentType());
                 CompilerResult compilerResult = null;
 
                 DBSchemaObject underlyingObject = executionInput.getAffectedObject();
@@ -220,10 +222,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     if (connectionHandler != null && schema != null && subjectPsiElement != null) {
                         DBObjectType objectType = subjectPsiElement.getObjectType();
                         String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                        compilerResult = new CompilerResult(connectionHandler, schema, objectType, objectName, compilerSourceAction);
+                        compilerResult = new CompilerResult(connectionHandler, schema, objectType, objectName, compilerAction);
                     }
                 } else {
-                    compilerResult = new CompilerResult(underlyingObject, compilerSourceAction);
+                    compilerResult = new CompilerResult(underlyingObject, compilerAction);
                 }
 
                 if (compilerResult != null) {

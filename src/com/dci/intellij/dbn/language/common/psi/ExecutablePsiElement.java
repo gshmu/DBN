@@ -3,11 +3,14 @@ package com.dci.intellij.dbn.language.common.psi;
 import javax.swing.Icon;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -97,7 +100,8 @@ public class ExecutablePsiElement extends NamedPsiElement{
     public String getPresentableText() {
         ElementType elementType = getSpecificElementType();
         String subject = null;
-        String action = null;
+        String action = "";
+        String subjectType = "";
         if (is(ElementTypeAttribute.DATA_DEFINITION)) {
             IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (subjectPsiElement != null) {
@@ -105,13 +109,29 @@ public class ExecutablePsiElement extends NamedPsiElement{
             }
             BasePsiElement actionPsiElement = lookupFirstPsiElement(ElementTypeAttribute.ACTION);
             if (actionPsiElement != null) {
-                action = actionPsiElement.getText();
+                action = actionPsiElement.getText() + " ";
+                if (subjectPsiElement != null) {
+                    BasePsiElement compilableBlockPsiElement = lookupFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
+                    if (compilableBlockPsiElement != null) {
+                        DBObjectType objectType = subjectPsiElement.getObjectType();
+                        subjectType = objectType.getName().toUpperCase() + " ";
+                        if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
+                            subjectType += "BODY ";
+                        }
+                    }
+                }
             }
         } else {
             subject = createSubjectList();
         }
         if (subject != null) {
-            return elementType.getDescription() + " (" + (action == null ? "" : action + " ") + subject + ")";
+            CodeStyleCaseSettings caseSettings = getLanguage().getCodeStyleSettings(getProject()).getCaseSettings();
+            CodeStyleCaseOption keywordCaseOption = caseSettings.getKeywordCaseOption();
+            CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
+            action = keywordCaseOption.changeCase(action);
+            subjectType = keywordCaseOption.changeCase(subjectType);
+            subject = objectCaseOption.changeCase(subject);
+            return elementType.getDescription() + " (" + action + subjectType + subject + ")";
         } else {
             return elementType.getDescription();
         }

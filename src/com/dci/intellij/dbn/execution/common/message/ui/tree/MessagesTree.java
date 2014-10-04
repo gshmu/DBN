@@ -115,7 +115,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                     VirtualFile virtualFile = sourceAction.getVirtualFile();
                     if (virtualFile != null) {
                         editorManager.openFile(virtualFile, false);
-                        navigateInScriptEditor(compilerMessage, virtualFile, sourceAction.getOffset());
+                        navigateInScriptEditor(compilerMessage, virtualFile, sourceAction.getStartOffset());
                     }
                 }
             }

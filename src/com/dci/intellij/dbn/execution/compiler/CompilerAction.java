@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.compiler;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class CompilerAction {
@@ -9,7 +10,8 @@ public class CompilerAction {
 
     private Type type;
     private VirtualFile virtualFile;
-    private int offset;
+    private int startOffset;
+    private DBContentType contentType;
 
     public CompilerAction(Type type) {
         this.type = type;
@@ -20,10 +22,16 @@ public class CompilerAction {
         this.virtualFile = virtualFile;
     }
 
-    public CompilerAction(Type type, VirtualFile virtualFile, int offset) {
-        this.type = type;
-        this.virtualFile = virtualFile;
-        this.offset = offset;
+    public DBContentType getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(DBContentType contentType) {
+        this.contentType = contentType;
+    }
+
+    public void setStartOffset(int startOffset) {
+        this.startOffset = startOffset;
     }
 
     public Type getType() {
@@ -35,8 +43,8 @@ public class CompilerAction {
         return virtualFile;
     }
 
-    public int getOffset() {
-        return offset;
+    public int getStartOffset() {
+        return startOffset;
     }
 
     public static enum Type {

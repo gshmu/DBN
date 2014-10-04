@@ -4,7 +4,7 @@
         <iteration id="000000000">
             <one-of id="000000001">
                 <element ref-id="ddl_statement" />
-                <element ref-id="root_statement" />
+                <element ref-id="program_statement" />
                 <element ref-id="declare_block" />
             </one-of>
         </iteration>
@@ -12,24 +12,24 @@
 
     <element-def attributes="EXECUTABLE, STATEMENT, DATA_DEFINITION" description="DDL statement" formatting-indent="ABSOLUTE_NONE" id="ddl_statement">
         <sequence attributes="DDL_STATEMENT" id="000000002">
-            <sequence id="000000003" attributes="ACTION">
+            <sequence attributes="ACTION" id="000000003">
                 <token id="000000004" type-id="KW_CREATE" />
                 <sequence id="000000005" optional="true">
                     <token id="000000006" type-id="KW_OR" />
                     <token id="000000007" type-id="KW_REPLACE" />
                 </sequence>
             </sequence>
-            <element ref-id="root_statement" />
+            <element ref-id="program_statement" />
         </sequence>
         <element optional="true" ref-id="end" />
     </element-def>
-    <element-def attributes="STATEMENT, COMPILABLE_BLOCK" description="Root statement" formatting-indent="ABSOLUTE_NONE" id="root_statement">
+    <element-def attributes="STATEMENT, SCOPE_DEMARCATION, COMPILABLE_BLOCK, FOLDABLE_BLOCK, STRUCTURE, GENERIC" description="Program statement" formatting-indent="ABSOLUTE_NONE" id="program_statement">
         <one-of id="000000008">
-            <element ref-id="function_spec_or_declaration" />
-            <element ref-id="procedure_spec_or_declaration" />
+            <element ref-id="function_definition" />
+            <element ref-id="procedure_definition" />
+            <element ref-id="trigger_definition" />
             <element ref-id="package_body" />
             <element ref-id="package_spec" />
-            <element ref-id="trigger_declaration" />
         </one-of>
     </element-def>
 
@@ -74,22 +74,22 @@
         <element ref-id="return_data_type_definition" />
         <token id="000000022" type-id="CHR_SEMICOLON" />
     </element-def>
-    <element-def attributes="OBJECT_SPECIFICATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="FUNCTION spec or declaration" id="function_spec_or_declaration">
+    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="FUNCTION declaration" id="function_declaration">
         <token id="000000023" type-id="KW_FUNCTION" />
         <object-def attributes="SUBJECT" id="000000024" type="FUNCTION" />
         <element optional="true" ref-id="parameter_declarations" />
         <element ref-id="return_data_type_definition" />
-        <one-of id="000000025">
-            <token id="000000026" type-id="CHR_SEMICOLON" />
-            <element ref-id="function_declaration_body" />
-        </one-of>
+        <element ref-id="function_declaration_body" />
     </element-def>
-    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="FUNCTION declaration" id="function_declaration">
-        <token id="000000027" type-id="KW_FUNCTION" />
-        <object-def attributes="SUBJECT" id="000000028" type="FUNCTION" />
+    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="FUNCTION definition" id="function_definition" icon="DBO_FUNCTION">
+        <token id="000000025" type-id="KW_FUNCTION" />
+        <object-def attributes="SUBJECT" id="000000026" type="FUNCTION" />
         <element optional="true" ref-id="parameter_declarations" />
         <element ref-id="return_data_type_definition" />
-        <element ref-id="function_declaration_body" />
+        <one-of id="000000027">
+            <token id="000000028" type-id="CHR_SEMICOLON" />
+            <element ref-id="function_declaration_body" />
+        </one-of>
     </element-def>
     <element-def description="RETURN data type definition" formatting-spacing-before="LINE_BREAK" id="return_data_type_definition">
         <token id="000000029" type-id="KW_RETURN" />
@@ -138,23 +138,21 @@
         <token id="000000046" type-id="CHR_SEMICOLON" />
     </element-def>
 
-    <element-def attributes="OBJECT_SPECIFICATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="PROCEDURE spec or declaration" id="procedure_spec_or_declaration">
+    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="PROCEDURE declaration" id="procedure_declaration">
         <token id="000000047" type-id="KW_PROCEDURE" />
         <object-def attributes="SUBJECT" id="000000048" type="PROCEDURE" />
         <element optional="true" ref-id="parameter_declarations" />
-        <one-of id="000000049">
-            <token id="000000050" type-id="CHR_SEMICOLON" />
+        <element ref-id="procedure_declaration_body" />
+    </element-def>
+    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="PROCEDURE definition" id="procedure_definition" icon="DBO_PROCEDURE">
+        <token id="000000049" type-id="KW_PROCEDURE" />
+        <object-def attributes="SUBJECT" id="000000050" type="PROCEDURE" />
+        <element optional="true" ref-id="parameter_declarations" />
+        <one-of id="000000051">
+            <token id="000000052" type-id="CHR_SEMICOLON" />
             <element ref-id="procedure_declaration_body" />
         </one-of>
     </element-def>
-
-    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="PROCEDURE declaration" id="procedure_declaration">
-        <token id="000000051" type-id="KW_PROCEDURE" />
-        <object-def attributes="SUBJECT" id="000000052" type="PROCEDURE" />
-        <element optional="true" ref-id="parameter_declarations" />
-        <element ref-id="procedure_declaration_body" />
-    </element-def>
-
     <element-def description="PROCEDURE declaration body" id="procedure_declaration_body">
         <element optional="true" ref-id="invoker_rights_clause" />
         <one-of id="000000053">
@@ -243,7 +241,7 @@
     </element-def>
 
     <!-- ========= PACKAGE SPEC ========= -->
-    <element-def attributes="OBJECT_SPECIFICATION, STRUCTURE, SCOPE_ISOLATION" description="PACKAGE spec" icon="DBO_PACKAGE_SPEC" id="package_spec">
+    <element-def attributes="OBJECT_SPECIFICATION, SPECIFIC" description="PACKAGE spec" icon="DBO_PACKAGE_SPEC" id="package_spec">
         <token id="000000095" type-id="KW_PACKAGE" />
         <qualified-identifier id="000000096" separator="CHR_DOT">
             <variant>
@@ -279,7 +277,7 @@
     </element-def>
 
     <!-- ========= PACKAGE BODY ========= -->
-    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, SCOPE_ISOLATION, STATEMENT" description="PACKAGE body" icon="DBO_PACKAGE_BODY" id="package_body">
+    <element-def attributes="OBJECT_DECLARATION, SPECIFIC" description="PACKAGE body" icon="DBO_PACKAGE_BODY" id="package_body">
         <token id="000000111" type-id="KW_PACKAGE" />
         <token exit="true" id="000000112" type-id="KW_BODY" />
         <qualified-identifier id="000000113" separator="CHR_DOT">
@@ -322,7 +320,7 @@
     </element-def>
 
     <!-- ========= TRIGGER ========= -->
-    <element-def attributes="OBJECT_SPECIFICATION, STRUCTURE, FOLDABLE_BLOCK, SCOPE_DEMARCATION, STATEMENT" description="TRIGGER declaration" id="trigger_declaration">
+    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="TRIGGER definition" id="trigger_definition"  icon="DBO_TRIGGER">
         <token id="000000131" type-id="KW_TRIGGER" />
         <qualified-identifier id="000000132" separator="CHR_DOT">
             <variant>
@@ -606,7 +604,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, FOLDABLE_BLOCK, STATEMENT" description="TYPE definition" id="type_definition">
+    <element-def attributes="OBJECT_DEFINITION, STRUCTURE, FOLDABLE_BLOCK, STATEMENT" description="TYPE definition" id="type_definition">
         <token id="000000299" type-id="KW_TYPE" />
         <object-def attributes="SUBJECT" id="000000300" type="PACKAGE_TYPE" />
         <token id="000000301" type-id="KW_IS" />
@@ -663,7 +661,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="OBJECT_DECLARATION, STRUCTURE, STATEMENT" description="SUBTYPE definition" id="subtype_definition">
+    <element-def attributes="OBJECT_DEFINITION, STRUCTURE, STATEMENT" description="SUBTYPE definition" id="subtype_definition">
         <token id="000000335" type-id="KW_SUBTYPE" />
         <object-def attributes="SUBJECT" id="000000336" original-name="subtype_name" type="PACKAGE_TYPE" />
         <token id="000000337" type-id="KW_IS" />

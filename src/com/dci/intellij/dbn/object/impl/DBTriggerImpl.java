@@ -135,16 +135,19 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     public DBOperationExecutor getOperationExecutor() {
         return new DBOperationExecutor() {
             public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
-                Connection connection = getConnectionHandler().getStandaloneConnection(getSchema());
-                DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-                if (operationType == DBOperationType.ENABLE) {
-                    metadataInterface.enableTrigger(getSchema().getName(), getName(), connection);
-                    getStatus().set(DBObjectStatus.ENABLED, true);
-                } else if (operationType == DBOperationType.DISABLE) {
-                    metadataInterface.disableTrigger(getSchema().getName(), getName(), connection);
-                    getStatus().set(DBObjectStatus.ENABLED, false);
-                } else {
-                    throw new DBOperationNotSupportedException(operationType, getObjectType());
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                if (connectionHandler != null) {
+                    Connection connection = connectionHandler.getStandaloneConnection(getSchema());
+                    DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                    if (operationType == DBOperationType.ENABLE) {
+                        metadataInterface.enableTrigger(getSchema().getName(), getName(), connection);
+                        getStatus().set(DBObjectStatus.ENABLED, true);
+                    } else if (operationType == DBOperationType.DISABLE) {
+                        metadataInterface.disableTrigger(getSchema().getName(), getName(), connection);
+                        getStatus().set(DBObjectStatus.ENABLED, false);
+                    } else {
+                        throw new DBOperationNotSupportedException(operationType, getObjectType());
+                    }
                 }
             }
         };
@@ -215,8 +218,12 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
+            }
+            return null;
         }
     }
 
@@ -225,12 +232,14 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        Connection connection = connectionHandler.getPoolConnection(getSchema());
-        try {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            ddlInterface.updateTrigger(getDataset().getSchema().getName(), getDataset().getName(), getName(), oldCode, newCode, connection);
-        } finally {
-            connectionHandler.freePoolConnection(connection);
+        if (connectionHandler != null) {
+            Connection connection = connectionHandler.getPoolConnection(getSchema());
+            try {
+                DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+                ddlInterface.updateTrigger(getDataset().getSchema().getName(), getDataset().getName(), getName(), oldCode, newCode, connection);
+            } finally {
+                connectionHandler.freePoolConnection(connection);
+            }
         }
     }
     /*********************************************************
@@ -243,7 +252,7 @@ public class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     }
 
     public String getCodeParseRootId(DBContentType contentType) {
-        return "trigger_declaration";
+        return "trigger_definition";
     }
 
     public DDLFileType getDDLFileType(DBContentType contentType) {

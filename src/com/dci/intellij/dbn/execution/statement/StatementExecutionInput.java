@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -152,6 +153,17 @@ public class StatementExecutionInput implements Disposable {
         }
         return null;
     }
+
+    public DBContentType getCompilableContentType() {
+        BasePsiElement compilableBlockPsiElement = getCompilableBlockPsiElement();
+        if (compilableBlockPsiElement != null) {
+            //if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_DEFINITION)) return DBContentType.CODE;
+            if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_SPECIFICATION)) return DBContentType.CODE_SPEC;
+            if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_DECLARATION)) return DBContentType.CODE_BODY;
+        }
+        return DBContentType.CODE;
+    }
+
 
     public void dispose() {
         if (!isDisposed) {
