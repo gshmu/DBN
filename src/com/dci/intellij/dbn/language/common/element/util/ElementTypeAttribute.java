@@ -24,7 +24,6 @@ public enum ElementTypeAttribute {
     SCOPE_ISOLATION("SCOPE_ISOLATION", "Scope isolation"),
     SCOPE_DEMARCATION("SCOPE_DEMARCATION", "Scope demarcation"),
     FOLDABLE_BLOCK("FOLDABLE_BLOCK", "Foldable block"),
-    DDL_STATEMENT("DDL_STATEMENT", "DDL statement"),
     EXECUTABLE_CODE("EXECUTABLE_CODE", "Executable code"),
     BREAKPOINT_POSITION("BREAKPOINT_POSITION", "Default breakpoint position"),
     ACTION("ACTION", "Action"),
