@@ -6,7 +6,6 @@ import java.sql.Statement;
 
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
@@ -30,25 +29,24 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         if (resultSet == null) {
             statement.close();
 
-            StatementExecutionResult executionResult = new StatementExecutionCursorResult(executionInput, resultName, updateCount);
+            StatementExecutionResult executionResult = new StatementExecutionCursorResult(this, resultName, updateCount);
             executionResult.updateExecutionMessage(MessageType.INFO, getStatementName() + " executed successfully.");
             executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
             return executionResult;
         } else {
-            StatementExecutionBasicResult executionResult = getExecutionResult();
+            StatementExecutionResult executionResult = getExecutionResult();
             if (executionResult == null) {
-                executionResult = new StatementExecutionCursorResult(executionInput, resultName, resultSet, updateCount);
+                executionResult = new StatementExecutionCursorResult(this, resultName, resultSet, updateCount);
                 executionResult.setExecutionStatus(StatementExecutionStatus.SUCCESS);
                 return executionResult;
             } else {
                 // if executionResult exists, just update it with the new resultSet data
                 if (executionResult instanceof StatementExecutionCursorResult){
                     StatementExecutionCursorResult executionCursorResult = (StatementExecutionCursorResult) executionResult;
-                    executionCursorResult.setExecutionInput(executionInput);
                     executionCursorResult.loadResultSet(resultSet);
                     return executionResult;
                 } else {
-                    return new StatementExecutionCursorResult(executionInput, resultName, resultSet, updateCount);
+                    return new StatementExecutionCursorResult(this, resultName, resultSet, updateCount);
                 }
             }
         }
@@ -61,7 +59,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
 
     public boolean canExecute() {
         if (super.canExecute()) {
-            StatementExecutionBasicResult executionResult = getExecutionResult();
+            StatementExecutionResult executionResult = getExecutionResult();
             return executionResult == null ||
                     executionResult.getExecutionStatus() == StatementExecutionStatus.ERROR ||
                     executionResult.getExecutionInput().isObsolete();
@@ -70,7 +68,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
     }
 
     public void navigateToResult() {
-        StatementExecutionBasicResult executionResult = getExecutionResult();
+        StatementExecutionResult executionResult = getExecutionResult();
         if (executionResult instanceof StatementExecutionCursorResult) {
             StatementExecutionCursorResult executionCursorResult = (StatementExecutionCursorResult) executionResult;
             executionCursorResult.navigateToResult();

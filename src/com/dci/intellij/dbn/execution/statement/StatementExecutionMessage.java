@@ -23,7 +23,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
     }
 
     public VirtualFile getVirtualFile() {
-        return executionResult.getExecutionProcessor().getFile().getVirtualFile();
+        return executionResult.getExecutionProcessor().getBoundPsiFile().getVirtualFile();
     }
 
     public boolean isOrphan() {

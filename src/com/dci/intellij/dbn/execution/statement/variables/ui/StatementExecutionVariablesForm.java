@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.sql.SQLFile;
@@ -38,7 +39,7 @@ import com.intellij.ui.GuiUtils;
 
 public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNForm {
     private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<StatementExecutionVariableValueForm>();
-    private StatementExecutionVariablesBundle variablesBundle;
+    private StatementExecutionProcessor executionProcessor;
     private JPanel mainPanel;
     private JPanel variablesPanel;
     private JPanel previewPanel;
@@ -47,14 +48,14 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionVariablesForm(StatementExecutionVariablesBundle variablesBundle, String statementText) {
-        this.variablesBundle = variablesBundle;
+    public StatementExecutionVariablesForm(StatementExecutionProcessor executionProcessor, String statementText) {
+        this.executionProcessor = executionProcessor;
         this.statementText = statementText;
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
-        for (StatementExecutionVariable variable: variablesBundle.getVariables()) {
+        for (StatementExecutionVariable variable: executionProcessor.getExecutionVariables().getVariables()) {
             StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(variable);
             variableValueForms.add(variableValueForm);
             variablesPanel.add(variableValueForm.getComponent());
@@ -92,7 +93,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
             variableValueForm.dispose();
         }
         variableValueForms.clear();
-        variablesBundle = null;
+        executionProcessor = null;
         EditorFactory.getInstance().releaseEditor(viewer);
     }
 
@@ -110,13 +111,14 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
     }
 
     private void updatePreview() {
-        ConnectionHandler connectionHandler = variablesBundle.getActiveConnection();
+        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
         Project project = connectionHandler.getProject();
 
-        String previewText = variablesBundle.prepareStatementText(connectionHandler, this.statementText, true);
+        StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
+        String previewText = executionVariables.prepareStatementText(connectionHandler, this.statementText, true);
 
         for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
-            String errorText = variablesBundle.getError(variableValueForm.getVariable());
+            String errorText = executionVariables.getError(variableValueForm.getVariable());
             if (errorText == null)
                 variableValueForm.hideErrorLabel(); else
                 variableValueForm.showErrorLabel(errorText);
@@ -132,7 +134,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
                     previewText);
 
             selectStatementFile.setActiveConnection(connectionHandler);
-            selectStatementFile.setCurrentSchema(variablesBundle.getCurrentSchema());
+            selectStatementFile.setCurrentSchema(executionProcessor.getCurrentSchema());
             previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);

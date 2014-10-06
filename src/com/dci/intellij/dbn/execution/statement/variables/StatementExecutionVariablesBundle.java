@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -11,31 +21,17 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.Nullable;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class StatementExecutionVariablesBundle {
+public class StatementExecutionVariablesBundle implements Disposable{
     private Map<StatementExecutionVariable, String> errorMap;
     private Set<StatementExecutionVariable> variables = new THashSet<StatementExecutionVariable>();
-    private ConnectionHandler activeConnection;
-    private DBSchema currentSchema;
 
-    public StatementExecutionVariablesBundle(ConnectionHandler activeConnection, DBSchema currentSchema, Set<ExecVariablePsiElement> variablePsiElements) {
-        this.activeConnection = activeConnection;
-        this.currentSchema = currentSchema;
+    public StatementExecutionVariablesBundle(Set<ExecVariablePsiElement> variablePsiElements) {
         initialize(variablePsiElements);
     }
 
@@ -58,14 +54,6 @@ public class StatementExecutionVariablesBundle {
             newVariables.add(variable);
         }
         variables = newVariables;
-    }
-
-    public ConnectionHandler getActiveConnection() {
-        return activeConnection;
-    }
-
-    public DBSchema getCurrentSchema() {
-        return currentSchema;
     }
 
     public boolean isIncomplete() {
@@ -179,5 +167,17 @@ public class StatementExecutionVariablesBundle {
 
     public String getError(StatementExecutionVariable variable) {
         return errorMap == null ? null : errorMap.get(variable);
+    }
+
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        disposed = true;
     }
 }

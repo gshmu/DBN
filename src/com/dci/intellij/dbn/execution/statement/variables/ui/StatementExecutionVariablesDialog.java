@@ -10,19 +10,19 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
-import com.intellij.openapi.project.Project;
 
 public class StatementExecutionVariablesDialog extends DBNDialog {
     private StatementExecutionVariablesForm variablesForm;
-    private StatementExecutionVariablesBundle variablesBundle;
+    private StatementExecutionProcessor executionProcessor;
 
-    public StatementExecutionVariablesDialog(Project project, StatementExecutionVariablesBundle variablesBundle, String statementText) {
-        super(project, "Execution Variables", true);
-        this.variablesBundle = variablesBundle;
+    public StatementExecutionVariablesDialog(StatementExecutionProcessor executionProcessor, String statementText) {
+        super(executionProcessor.getProject(), "Execution Variables", true);
+        this.executionProcessor = executionProcessor;
         setModal(true);
         setResizable(true);
-        variablesForm = new StatementExecutionVariablesForm(variablesBundle, statementText);
+        variablesForm = new StatementExecutionVariablesForm(executionProcessor, statementText);
         init();
     }
 
@@ -52,12 +52,13 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
 
         public void actionPerformed(ActionEvent e) {
             variablesForm.saveValues();
-            if (variablesBundle.isIncomplete()) {
+            StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
+            if (executionVariables.isIncomplete()) {
                 MessageUtil.showErrorDialog(
                         "You didn't specify values for all the variables. \n" +
                                 "Please enter values for all the listed variables and try again.",
                         "Statement execution");
-            } else if (variablesBundle.hasErrors()) {
+            } else if (executionVariables.hasErrors()) {
                 MessageUtil.showErrorDialog(
                         "You provided invalid/unsupported variable values. \n" +
                         "Please correct your input and try again.",

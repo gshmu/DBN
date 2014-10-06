@@ -14,9 +14,9 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -28,13 +28,13 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     private ResultSetDataModel dataModel;
 
     public StatementExecutionCursorResult(
-            StatementExecutionInput executionInput,
+            StatementExecutionProcessor executionProcessor,
             String resultName,
             ResultSet resultSet,
             int updateCount) throws SQLException {
-        super(executionInput, resultName, updateCount);
+        super(executionProcessor, resultName, updateCount);
         int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
-        dataModel = new ResultSetDataModel(resultSet, executionInput.getConnectionHandler(), fetchBlockSize);
+        dataModel = new ResultSetDataModel(resultSet, executionProcessor.getConnectionHandler(), fetchBlockSize);
         resultPanel = new StatementExecutionResultForm(this);
         resultPanel.updateVisibleComponents();
         resultPanel.getResultTable().setName(getResultName());
@@ -48,8 +48,10 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public StatementExecutionCursorResult(
-            StatementExecutionInput executionInput, String resultName, int updateCount) throws SQLException {
-        super(executionInput, resultName, updateCount);
+            StatementExecutionProcessor executionProcessor,
+            String resultName,
+            int updateCount) throws SQLException {
+        super(executionProcessor, resultName, updateCount);
     }
 
     public StatementExecutionCursorProcessor getExecutionProcessor() {
@@ -67,7 +69,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                     Connection connection = getConnectionHandler().getStandaloneConnection(getExecutionProcessor().getCurrentSchema());
                     Statement statement = connection.createStatement();
                     statement.setQueryTimeout(getQueryExecutionSettings().getExecutionTimeout());
-                    statement.execute(getExecutionInput().getExecuteStatement());
+                    statement.execute(getExecutionInput().getExecutableStatementText());
                     ResultSet resultSet = statement.getResultSet();
                     loadResultSet(resultSet);
                 } catch (final SQLException e) {
