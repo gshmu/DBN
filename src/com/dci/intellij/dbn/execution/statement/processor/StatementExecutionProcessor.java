@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -24,7 +26,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     Project getProject();
 
-    DBLanguagePsiFile getBoundPsiFile();
+    DBLanguagePsiFile getPsiFile();
 
     String getResultName();
 
@@ -40,13 +42,14 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     StatementExecutionVariablesBundle getExecutionVariables();
 
-    void bind(ExecutablePsiElement executablePsiElement, boolean isExactMatch);
+    void bind(ExecutablePsiElement executablePsiElement);
 
     void unbind();
 
     boolean isBound();
 
-    ExecutablePsiElement getBoundExecutablePsiElement();
+    @Nullable
+    ExecutablePsiElement getCachedExecutable();
 
     StatementExecutionInput getExecutionInput();
 

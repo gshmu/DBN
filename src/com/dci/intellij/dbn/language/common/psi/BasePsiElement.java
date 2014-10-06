@@ -55,6 +55,11 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     private boolean isScopeIsolation;
     private boolean isScopeDemarcation;
     private FormattingAttributes formattingAttributes;
+    public enum MatchType {
+        STRONG,
+        CACHED,
+        SOFT,
+    }
 
     public BasePsiElement(ASTNode astNode, ElementType elementType) {
         super(astNode);
@@ -585,7 +590,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return getElementType().getLanguageDialect();
     }
 
-    public abstract boolean matches(BasePsiElement basePsiElement, boolean lenient);
+    public abstract boolean matches(BasePsiElement basePsiElement, MatchType matchType);
 
     public synchronized DBObject resolveUnderlyingObject() {
         if (isVirtualObject() && (underlyingObject == null || !underlyingObject.isValid()) ) {

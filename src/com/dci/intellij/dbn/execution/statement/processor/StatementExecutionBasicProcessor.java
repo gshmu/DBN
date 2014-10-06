@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -38,8 +39,8 @@ import gnu.trove.THashSet;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
-    protected DBLanguagePsiFile boundPsiFile;
-    protected ExecutablePsiElement boundExecutablePsiElement;
+    protected DBLanguagePsiFile psiFile;
+    protected ExecutablePsiElement cachedExecutable;
 
     protected String resultName;
     protected int index;
@@ -48,14 +49,14 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     private StatementExecutionResult executionResult;
 
     public StatementExecutionBasicProcessor(ExecutablePsiElement psiElement, int index) {
-        this.boundExecutablePsiElement = psiElement;
-        this.boundPsiFile = psiElement.getFile();
+        this.cachedExecutable = psiElement;
+        this.psiFile = psiElement.getFile();
         this.index = index;
         executionInput = new StatementExecutionInput(psiElement.getText(), psiElement.prepareStatementText(), this);
     }
 
-    public StatementExecutionBasicProcessor(DBLanguagePsiFile boundPsiFile, String sqlStatement, int index) {
-        this.boundPsiFile = boundPsiFile;
+    public StatementExecutionBasicProcessor(DBLanguagePsiFile psiFile, String sqlStatement, int index) {
+        this.psiFile = psiFile;
         this.index = index;
         sqlStatement = sqlStatement.trim();
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
@@ -68,49 +69,49 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
         } else {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-            return boundExecutablePsiElement != null &&
-                    boundExecutablePsiElement.matches(executablePsiElement, true) &&
-                    !boundExecutablePsiElement.matches(executablePsiElement, false);
+            return this.cachedExecutable != null && !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
         }
     }
 
     @Override
-    public void bind(ExecutablePsiElement executablePsiElement, boolean isExactMatch) {
-        boundExecutablePsiElement = executablePsiElement;
+    public void bind(ExecutablePsiElement executablePsiElement) {
+        this.cachedExecutable = executablePsiElement;
+        executablePsiElement.setExecutionProcessor(this);
     }
 
     @Override
     public void unbind() {
-        boundExecutablePsiElement = null;
+        cachedExecutable = null;
     }
 
     @Override
     public boolean isBound() {
-        return boundExecutablePsiElement != null;
+        return cachedExecutable != null;
     }
 
-    public DBLanguagePsiFile getBoundPsiFile() {
-        return boundPsiFile;
+    public DBLanguagePsiFile getPsiFile() {
+        return psiFile;
     }
 
     @Override
-    public ExecutablePsiElement getBoundExecutablePsiElement() {
-        return boundExecutablePsiElement;
+    @Nullable
+    public ExecutablePsiElement getCachedExecutable() {
+        return cachedExecutable;
     }
 
-    public static boolean contains(PsiElement parent, BasePsiElement childElement, boolean lenient) {
+    public static boolean contains(PsiElement parent, BasePsiElement childElement, BasePsiElement.MatchType matchType) {
         PsiElement child = parent.getFirstChild();
         while (child != null) {
             if (child == childElement) {
                 return true;
             }
             if (child instanceof ChameleonPsiElement) {
-                if (contains(child, childElement, lenient)) {
+                if (contains(child, childElement, matchType)) {
                     return true;
                 }
             } else if(child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                if (basePsiElement.matches(childElement, lenient)) {
+                if (basePsiElement.matches(childElement, matchType)) {
                     return true;
                 }
             }
@@ -169,9 +170,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         DBSchema currentSchema = getCurrentSchema();
 
         boolean continueExecution = true;
-        if (boundExecutablePsiElement != null) {
-            executionInput.setOriginalStatementText(boundExecutablePsiElement.getText());
-            executionInput.setExecutableStatementText(boundExecutablePsiElement.prepareStatementText());
+        if (cachedExecutable != null) {
+            executionInput.setOriginalStatementText(cachedExecutable.getText());
+            executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
         }
 
 
@@ -199,10 +200,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     executionResult = createExecutionResult(statement, executionInput);
                     ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
                     if (executablePsiElement != null) {
-                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(boundPsiFile.getVirtualFile());
+                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(psiFile.getVirtualFile());
                         if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
                     } else{
-                        if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(boundPsiFile.getVirtualFile());
+                        if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(psiFile.getVirtualFile());
                     }
 
 
@@ -241,7 +242,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (isDdlStatement) {
             BasePsiElement compilablePsiElement = executionInput.getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
-                CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, boundPsiFile.getVirtualFile());
+                CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, psiFile.getVirtualFile());
                 compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
                 compilerAction.setContentType(executionInput.getCompilableContentType());
                 CompilerResult compilerResult = null;
@@ -299,15 +300,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return boundPsiFile.getActiveConnection();
+        return psiFile.getActiveConnection();
     }
 
     public DBSchema getCurrentSchema() {
-        return boundPsiFile == null ? null : boundPsiFile.getCurrentSchema();
+        return psiFile == null ? null : psiFile.getCurrentSchema();
     }
 
     public Project getProject() {
-        return boundPsiFile == null ? null : boundPsiFile.getProject();
+        return psiFile == null ? null : psiFile.getProject();
     }
 
     public synchronized String getResultName() {
@@ -341,8 +342,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public void navigateToEditor(boolean requestFocus) {
-        if (boundExecutablePsiElement != null) {
-            boundExecutablePsiElement.navigate(requestFocus);
+        if (cachedExecutable != null) {
+            cachedExecutable.navigate(requestFocus);
         }
     }
 
@@ -355,8 +356,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     public void dispose() {
         if (!isDisposed()) {
             disposed = true;
-            boundExecutablePsiElement = null;
-            boundPsiFile = null;
+            cachedExecutable = null;
+            psiFile = null;
 
         }
     }

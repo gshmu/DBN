@@ -70,13 +70,13 @@ public class TokenPsiElement extends LeafPsiElement {
     }
 
     @Override
-    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+    public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
         if (basePsiElement instanceof TokenPsiElement) {
             TokenPsiElement remote = (TokenPsiElement) basePsiElement;
             TokenType localTokenType = getElementType().getTokenType();
             TokenType remoteTokenType = remote.getElementType().getTokenType();
             if (localTokenType == remoteTokenType) {
-                if (lenient) {
+                if (matchType == MatchType.SOFT) {
                     return true;
                 } else {
                     if (localTokenType.isNumeric() || localTokenType.isLiteral()) {
