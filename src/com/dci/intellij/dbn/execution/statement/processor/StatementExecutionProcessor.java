@@ -14,8 +14,6 @@ import com.intellij.openapi.project.Project;
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
     void bind(ExecutablePsiElement executablePsiElement);
 
-    boolean matches(ExecutablePsiElement executablePsiElement, boolean lenient);
-
     ExecutablePsiElement getExecutablePsiElement();
 
     // is orphan when isDirty and

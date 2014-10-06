@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.execution.statement.action.StatementGutterAction;
-import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +11,8 @@ import javax.swing.Icon;
 
 public class StatementGutterRenderer extends GutterIconRenderer {
     private StatementGutterAction action;
-    public StatementGutterRenderer(StatementExecutionProcessor executionProcessor) {
-        this.action = new StatementGutterAction(executionProcessor);
+    public StatementGutterRenderer(ExecutablePsiElement executablePsiElement) {
+        this.action = new StatementGutterAction(executablePsiElement);
     }
 
     @NotNull
