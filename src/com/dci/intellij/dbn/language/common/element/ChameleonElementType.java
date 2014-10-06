@@ -217,6 +217,16 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return false;
     }
 
+    @Override
+    public boolean isLiteral() {
+        return false;
+    }
+
+    @Override
+    public boolean isNumeric() {
+        return false;
+    }
+
     public TokenTypeCategory getCategory() {
         return null;
     }
@@ -233,5 +243,6 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     public boolean matches(TokenType tokenType) {
         return this.equals(tokenType);
     }
+
 
 }

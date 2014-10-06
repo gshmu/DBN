@@ -64,7 +64,7 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
             StatementExecutionBasicResult executionResult = getExecutionResult();
             return executionResult == null ||
                     executionResult.getExecutionStatus() == StatementExecutionStatus.ERROR ||
-                    executionResult.getExecutionInput().isObsolete() || isDirty();
+                    executionResult.getExecutionInput().isObsolete();
         }
         return false;
     }

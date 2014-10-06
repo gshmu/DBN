@@ -585,9 +585,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return getElementType().getLanguageDialect();
     }
 
-    public abstract boolean equals(BasePsiElement basePsiElement);
-
-    public abstract boolean matches(BasePsiElement basePsiElement);
+    public abstract boolean matches(BasePsiElement basePsiElement, boolean lenient);
 
     public synchronized DBObject resolveUnderlyingObject() {
         if (isVirtualObject() && (underlyingObject == null || !underlyingObject.isValid()) ) {

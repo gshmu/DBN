@@ -42,9 +42,9 @@
         <token id="IDENTIFIER" type="identifier"/>
         <token id="QUOTED_IDENTIFIER" type="identifier"/>
 
-        <token id="INTEGER"/>
-        <token id="NUMBER"/>
-        <token id="STRING"/>
+        <token id="INTEGER" type="numeric"/>
+        <token id="NUMBER" type="numeric"/>
+        <token id="STRING" type="literal"/>
         <token id="OPERATOR"/>
         <token id="VARIABLE"/>
     </tokens>

@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -20,19 +29,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
-    private final Map<ExecutablePsiElement, StatementExecutionProcessor> executionProcessors = new HashMap<ExecutablePsiElement, StatementExecutionProcessor>();
+    private final Set<StatementExecutionProcessor> executionProcessors = new HashSet<StatementExecutionProcessor>();
     private static int sequence;
     public int getNextSequence() {
         sequence++;
@@ -206,13 +206,9 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, boolean lenient) {
-        for (ExecutablePsiElement execPsiElement: executionProcessors.keySet()) {
-            if (lenient && execPsiElement.matches(executablePsiElement)) {
-                return executionProcessors.get(execPsiElement);
-
-            } else if (execPsiElement.equals(executablePsiElement)) {
-                return executionProcessors.get(execPsiElement);
-
+        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+            if (executionProcessor.getExecutablePsiElement().matches(executablePsiElement, lenient)) {
+                return executionProcessor;
             }
         }
         return null;
@@ -224,7 +220,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                     executablePsiElement.isQuery() ?
                             new StatementExecutionCursorProcessor(executablePsiElement, getNextSequence()) :
                             new StatementExecutionBasicProcessor(executablePsiElement, getNextSequence());
-            executionProcessors.put(executablePsiElement, executionProcessor);
+            executionProcessors.add(executionProcessor);
             return executionProcessor;
         }
     }
@@ -232,12 +228,11 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     private void cleanup() {
         synchronized(executionProcessors) {
-            Iterator<ExecutablePsiElement> executablePsiElementIterator = executionProcessors.keySet().iterator();
-            while (executablePsiElementIterator.hasNext()) {
-                ExecutablePsiElement executablePsiElement = executablePsiElementIterator.next();
-                StatementExecutionProcessor executionProcessor = executionProcessors.get(executablePsiElement);
+            Iterator<StatementExecutionProcessor> executionProcessorIterator = executionProcessors.iterator();
+            while (executionProcessorIterator.hasNext()) {
+                StatementExecutionProcessor executionProcessor = executionProcessorIterator.next();
                 if (executionProcessor.isDisposed()) {
-                    executablePsiElementIterator.remove();
+                    executionProcessorIterator.remove();
                 }
             }
             if (executionProcessors.size() == 0) {

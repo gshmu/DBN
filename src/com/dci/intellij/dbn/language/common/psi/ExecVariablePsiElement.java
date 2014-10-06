@@ -70,25 +70,11 @@ public class ExecVariablePsiElement extends LeafPsiElement {
     }
 
     @Override
-    public boolean equals(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            if (basePsiElement instanceof ExecVariablePsiElement) {
-                ExecVariablePsiElement execVariablePsiElement = (ExecVariablePsiElement) basePsiElement;
-                return StringUtil.equalsIgnoreCase(execVariablePsiElement.getChars(), getChars());
-            }
-            return false;
+    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+        if (basePsiElement instanceof ExecVariablePsiElement) {
+            ExecVariablePsiElement execVariablePsiElement = (ExecVariablePsiElement) basePsiElement;
+            return lenient || StringUtil.equalsIgnoreCase(execVariablePsiElement.getChars(), getChars());
         }
-
-    }
-
-    @Override
-    public boolean matches(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            return basePsiElement instanceof ExecVariablePsiElement;
-        }
+        return false;
     }
 }

@@ -69,12 +69,17 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public boolean isObsolete() {
-        return  executionProcessor == null || executionProcessor.isOrphan() ||
+        if (executionProcessor == null || executionProcessor.isOrphan() ||
                 executionProcessor.getConnectionHandler() != connectionHandler || // connection changed since execution
-                executionProcessor.getCurrentSchema() != getCurrentSchema() || // current schema changed since execution
-                (executionProcessor.getExecutablePsiElement() != null &&
-                        executionProcessor.getExecutablePsiElement().matches(getExecutablePsiElement()) &&
-                        !executionProcessor.getExecutablePsiElement().equals(getExecutablePsiElement()));
+                executionProcessor.getCurrentSchema() != getCurrentSchema()) { // current schema changed since execution)
+            return true;
+
+        } else {
+            ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
+            return executablePsiElement != null &&
+                    executablePsiElement.matches(getExecutablePsiElement(), true) &&
+                    !executablePsiElement.matches(getExecutablePsiElement(), false);
+        }
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {

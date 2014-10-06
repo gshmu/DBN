@@ -127,22 +127,37 @@ public class SimpleTokenType extends IElementType implements TokenType {
         return category == TokenTypeCategory.DATATYPE;
     }
 
+    @Override
+    public boolean isLiteral() {
+        return category == TokenTypeCategory.LITERAL;
+    }
+
+    @Override
+    public boolean isNumeric() {
+        return category == TokenTypeCategory.NUMERIC;
+    }
+
+    @Override
     public boolean isCharacter() {
         return category == TokenTypeCategory.CHARACTER;
     }
 
+    @Override
     public boolean isOperator() {
         return category == TokenTypeCategory.OPERATOR;
     }
 
+    @Override
     public boolean isChameleon() {
         return category == TokenTypeCategory.CHAMELEON;
     }
 
+    @Override
     public boolean isReservedWord() {
         return isKeyword() || isFunction() || isParameter() || isDataType();
     }
 
+    @Override
     public boolean isParserLandmark() {
         return !isIdentifier();
         //return isKeyword() || isFunction() || isParameter() || isCharacter() || isOperator();

@@ -19,9 +19,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     // is orphan when isDirty and
     boolean isOrphan();
 
-    // is dirty when the cached executablePsiElement is not valid any more as a result of file change
-    boolean isDirty();
-
     boolean canExecute();
 
     ConnectionHandler getConnectionHandler();

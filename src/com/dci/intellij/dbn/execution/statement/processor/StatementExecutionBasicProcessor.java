@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -18,6 +23,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
@@ -30,13 +36,9 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import gnu.trove.THashSet;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Set;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -69,12 +71,39 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public boolean isOrphan(){
-        if (executablePsiElement == null || !executablePsiElement.isValid()) return true;
-        PsiFile psiFile = PsiUtil.getPsiFile(getProject(), file.getVirtualFile());
-        if (!psiFile.equals(file)) return true;
+        if (executablePsiElement == null) {
+            return true;
+        } else {
+            PsiFile psiFile = PsiUtil.getPsiFile(getProject(), file.getVirtualFile());
+            if (!psiFile.equals(file)) {
+                return true;
+            } else {
+                NamedPsiElement rootPsiElement = executablePsiElement.lookupEnclosingRootPsiElement();
+                return rootPsiElement == null || !contains(file, rootPsiElement, true);
+            }
+        }
+    }
 
-        NamedPsiElement rootPsiElement = executablePsiElement.lookupEnclosingRootPsiElement();
-        return rootPsiElement == null || !PsiUtil.contains(file, rootPsiElement, true);
+
+    public static boolean contains(PsiElement parent, BasePsiElement childElement, boolean lenient) {
+        PsiElement child = parent.getFirstChild();
+        while (child != null) {
+            if (child == childElement) {
+                return true;
+            }
+            if (child instanceof ChameleonPsiElement) {
+                if (contains(child, childElement, lenient)) {
+                    return true;
+                }
+            } else if(child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
+                if (basePsiElement.matches(childElement, lenient)) {
+                    return true;
+                }
+            }
+            child = child.getNextSibling();
+        }
+        return false;
     }
 
     @Override

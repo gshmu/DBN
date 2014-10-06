@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import javax.swing.Icon;
 import java.util.Set;
-
-import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,6 +14,7 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
@@ -528,36 +527,14 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     }
 
     @Override
-    public boolean equals(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            if (basePsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                //if (identifierPsiElement.getElementType().isSameAs(getElementType())) {
-                    CharSequence localText = getChars();
-                    CharSequence remoteText = identifierPsiElement.getChars();
-                    return StringUtil.equalsIgnoreCase(localText, remoteText);
-                //}
-            }
-
-            return false;
+    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+        if (basePsiElement instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+            return lenient || /*identifierPsiElement.getElementType().isSameAs(getElementType()) &&*/
+                    StringUtil.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
         }
-    }
 
-    @Override
-    public boolean matches(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            if (basePsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                return /*identifierPsiElement.getElementType().isSameAs(getElementType()) &&*/
-                        StringUtil.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
-            }
-
-            return false;
-        }
+        return false;
     }
 
     public boolean isResolved() {
