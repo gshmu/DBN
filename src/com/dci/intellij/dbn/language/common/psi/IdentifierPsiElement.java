@@ -527,11 +527,10 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     }
 
     @Override
-    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+    public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
         if (basePsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-            return lenient || /*identifierPsiElement.getElementType().isSameAs(getElementType()) &&*/
-                    StringUtil.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
+            return matchType == MatchType.SOFT || StringUtil.equalsIgnoreCase(identifierPsiElement.getChars(), getChars());
         }
 
         return false;

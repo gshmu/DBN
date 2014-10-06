@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasi
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
@@ -37,7 +38,6 @@ import com.intellij.psi.impl.PsiDocumentTransactionListener;
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
     private final Set<StatementExecutionProcessor> executionProcessors = new HashSet<StatementExecutionProcessor>();
-    private boolean isBuildingLinks = false;
 
     private static int sequence;
     public int getNextSequence() {
@@ -61,38 +61,60 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
             if (!executionProcessors.isEmpty()) {
-                try {
-                    isBuildingLinks = true;
-                    for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                        if (file.equals(executionProcessor.getBoundPsiFile())) {
-                            executionProcessor.unbind();
-                        }
+                for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                    if (file.equals(executionProcessor.getPsiFile())) {
+                        executionProcessor.unbind();
                     }
+                }
 
-                    bindExecutionProcessors(file, false);
-                    bindExecutionProcessors(file, true);
-                } finally {
-                    isBuildingLinks = false;
+                bindExecutionProcessors(file, MatchType.STRONG);
+                bindExecutionProcessors(file, MatchType.CACHED);
+                bindExecutionProcessors(file, MatchType.SOFT);
+
+                Iterator<StatementExecutionProcessor> cleanupIterator = executionProcessors.iterator();
+                while (cleanupIterator.hasNext()) {
+                    if (cleanupIterator.next().getCachedExecutable() == null) {
+                        cleanupIterator.remove();
+                    }
                 }
             }
         }
 
     };
 
-    private void bindExecutionProcessors(PsiFile file, boolean lenient) {
+    private void bindExecutionProcessors(PsiFile file, MatchType matchType) {
         PsiElement child = file.getFirstChild();
         while (child != null) {
             if (child instanceof RootPsiElement) {
                 RootPsiElement root = (RootPsiElement) child;
                 for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                    StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, lenient);
-                    if (executionProcessor != null) {
-                        executionProcessor.bind(executable, !lenient);
+                    if (matchType == MatchType.CACHED) {
+                        StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
+                        if (executionProcessor != null) {
+                            executionProcessor.bind(executable);
+                        }
+                    } else {
+                        StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, matchType);
+                        if (executionProcessor != null) {
+                            executionProcessor.bind(executable);
+                        }
                     }
                 }
             }
             child = child.getNextSibling();
         }
+    }
+
+    private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, MatchType matchType) {
+        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+            if (!executionProcessor.isBound()) {
+                ExecutablePsiElement execPsiElement = executionProcessor.getExecutionInput().getExecutablePsiElement();
+                if (execPsiElement != null && execPsiElement.matches(executablePsiElement, matchType)) {
+                    return executionProcessor;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -102,7 +124,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     public void fireExecution(final StatementExecutionProcessor executionProcessor) {
-        boolean continueExecution = selectConnection(executionProcessor.getBoundPsiFile());
+        boolean continueExecution = selectConnection(executionProcessor.getPsiFile());
         new ConnectionAction(executionProcessor, continueExecution) {
             @Override
             protected void execute() {
@@ -121,7 +143,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
         if (executionProcessors.size() > 0) {
-            DBLanguagePsiFile file =  executionProcessors.get(0).getBoundPsiFile();
+            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
             boolean continueExecution = selectConnection(file);
             if (continueExecution) {
                 for (StatementExecutionProcessor executionProcessor : executionProcessors) {
@@ -200,7 +222,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                             OPTIONS_MULTIPLE_STATEMENT_EXEC, 0);
                     if (exitCode == 0 || exitCode == 1) {
                         int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
-                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file, offset);
+                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(file, offset);
                         fireExecution(executionProcessors);
                     }
                 }
@@ -218,13 +240,13 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
         ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
         if (executablePsiElement != null) {
-            return getExecutionProcessor(executablePsiElement, false);
+            return getExecutionProcessor(executablePsiElement, true);
         }
 
         return null;
     }
 
-    public List<StatementExecutionProcessor> getExecutionProcessors(DBLanguagePsiFile file, int offset) {
+    public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(DBLanguagePsiFile file, int offset) {
         List<StatementExecutionProcessor> executionProcessors = new ArrayList<StatementExecutionProcessor>();
 
         PsiElement child = file.getFirstChild();
@@ -249,7 +271,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         synchronized(executionProcessors) {
             DBLanguagePsiFile file = executablePsiElement.getFile();
             for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                if (file.equals(executionProcessor.getBoundPsiFile()) && executablePsiElement == executionProcessor.getBoundExecutablePsiElement()) {
+                if (file.equals(executionProcessor.getPsiFile()) && executablePsiElement == executionProcessor.getCachedExecutable()) {
                     return executionProcessor;
                 }
             }
@@ -270,18 +292,6 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, boolean lenient) {
-        for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-            if (!isBuildingLinks || !executionProcessor.isBound()) {
-                ExecutablePsiElement execPsiElement = executionProcessor.getExecutionInput().getExecutablePsiElement();
-                if (execPsiElement != null && execPsiElement.matches(executablePsiElement, lenient)) {
-                    return executionProcessor;
-                }
-            }
-        }
-        return null;
-    }
-
     public StatementExecutionProcessor createExecutionProcessor(ExecutablePsiElement executablePsiElement) {
         synchronized(executionProcessors) {
             StatementExecutionBasicProcessor executionProcessor =
@@ -289,6 +299,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                             new StatementExecutionCursorProcessor(executablePsiElement, getNextSequence()) :
                             new StatementExecutionBasicProcessor(executablePsiElement, getNextSequence());
             executionProcessors.add(executionProcessor);
+            executablePsiElement.setExecutionProcessor(executionProcessor);
             return executionProcessor;
         }
     }

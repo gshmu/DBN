@@ -23,19 +23,19 @@ public class StatementGutterAction extends AnAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
-
         StatementExecutionManager executionManager = getExecutionManager();
         if (executionManager != null) {
+            StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
+
             if (executionProcessor == null) {
                 executionProcessor = getExecutionProcessor(true);
                 executionManager.fireExecution(executionProcessor);
             } else {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-                if (executionResult != null && !executionResult.isDisposed()) {
-                    executionProcessor.navigateToResult();
-                } else {
+                if (executionResult == null || executionProcessor.isDirty()) {
                     executionManager.fireExecution(executionProcessor);
+                } else {
+                    executionProcessor.navigateToResult();
                 }
             }
         }

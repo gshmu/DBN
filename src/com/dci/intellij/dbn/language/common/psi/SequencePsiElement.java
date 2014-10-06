@@ -336,7 +336,7 @@ public class SequencePsiElement extends BasePsiElement {
     }
 
     @Override
-    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+    public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
         PsiElement localChild = getFirstChild();
         PsiElement remoteChild = basePsiElement.getFirstChild();
 
@@ -344,7 +344,7 @@ public class SequencePsiElement extends BasePsiElement {
             if (localChild instanceof BasePsiElement && remoteChild instanceof BasePsiElement) {
                 BasePsiElement localPsiElement = (BasePsiElement) localChild;
                 BasePsiElement remotePsiElement = (BasePsiElement) remoteChild;
-                if (!localPsiElement.matches(remotePsiElement, lenient)) {
+                if (!localPsiElement.matches(remotePsiElement, matchType)) {
                     return false;
                 }
                 localChild = PsiUtil.getNextSibling(localChild);

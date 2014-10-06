@@ -42,8 +42,8 @@ public class UnknownPsiElement extends BasePsiElement {
     }
 
     @Override
-    public boolean matches(BasePsiElement remote, boolean lenient) {
-        if (lenient) {
+    public boolean matches(BasePsiElement remote, MatchType matchType) {
+        if (matchType == MatchType.SOFT) {
             return remote instanceof UnknownPsiElement;
         } else {
             return getTextLength() == remote.getTextLength() && StringUtil.equals(getText(), remote.getText());

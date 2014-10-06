@@ -70,10 +70,10 @@ public class ExecVariablePsiElement extends LeafPsiElement {
     }
 
     @Override
-    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+    public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
         if (basePsiElement instanceof ExecVariablePsiElement) {
             ExecVariablePsiElement execVariablePsiElement = (ExecVariablePsiElement) basePsiElement;
-            return lenient || StringUtil.equalsIgnoreCase(execVariablePsiElement.getChars(), getChars());
+            return matchType == MatchType.SOFT || StringUtil.equalsIgnoreCase(execVariablePsiElement.getChars(), getChars());
         }
         return false;
     }
