@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -235,36 +236,42 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return executionInput.getExecutionVariables();
     }
 
-    protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
-        StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
+    protected StatementExecutionResult createExecutionResult(Statement statement, final StatementExecutionInput executionInput) throws SQLException {
+        final StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
         boolean isDdlStatement = executionInput.isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
         if (isDdlStatement) {
-            BasePsiElement compilablePsiElement = executionInput.getCompilableBlockPsiElement();
+            final BasePsiElement compilablePsiElement = executionInput.getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
-                CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, psiFile.getVirtualFile());
-                compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
-                compilerAction.setContentType(executionInput.getCompilableContentType());
-                CompilerResult compilerResult = null;
+                hasCompilerErrors = new ReadActionRunner<Boolean>() {
+                    @Override
+                    protected Boolean run() {
+                        CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, psiFile.getVirtualFile());
+                        compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
+                        compilerAction.setContentType(executionInput.getCompilableContentType());
+                        CompilerResult compilerResult = null;
 
-                DBSchemaObject underlyingObject = executionInput.getAffectedObject();
-                if (underlyingObject == null) {
-                    ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-                    DBSchema schema = executionInput.getAffectedSchema();
-                    IdentifierPsiElement subjectPsiElement = executionInput.getSubjectPsiElement();
-                    if (connectionHandler != null && schema != null && subjectPsiElement != null) {
-                        DBObjectType objectType = subjectPsiElement.getObjectType();
-                        String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                        compilerResult = new CompilerResult(connectionHandler, schema, objectType, objectName, compilerAction);
+                        DBSchemaObject underlyingObject = executionInput.getAffectedObject();
+                        if (underlyingObject == null) {
+                            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                            DBSchema schema = executionInput.getAffectedSchema();
+                            IdentifierPsiElement subjectPsiElement = executionInput.getSubjectPsiElement();
+                            if (connectionHandler != null && schema != null && subjectPsiElement != null) {
+                                DBObjectType objectType = subjectPsiElement.getObjectType();
+                                String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
+                                compilerResult = new CompilerResult(connectionHandler, schema, objectType, objectName, compilerAction);
+                            }
+                        } else {
+                            compilerResult = new CompilerResult(underlyingObject, compilerAction);
+                        }
+
+                        if (compilerResult != null) {
+                            executionResult.setCompilerResult(compilerResult);
+                            return compilerResult.hasErrors();
+                        }
+                        return false;
                     }
-                } else {
-                    compilerResult = new CompilerResult(underlyingObject, compilerAction);
-                }
-
-                if (compilerResult != null) {
-                    executionResult.setCompilerResult(compilerResult);
-                    hasCompilerErrors = compilerResult.hasErrors();
-                }
+                }.start();
             }
         }
 
