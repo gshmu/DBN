@@ -37,8 +37,11 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -65,6 +68,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         resultTabs.setTabsPosition(JBTabsPosition.bottom);
         resultTabs.setBorder(null);
         EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public int getTabCount() {
@@ -84,6 +88,28 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                         tabInfo.setTabColor(environmentType.getColor());
                     } else {
                         tabInfo.setTabColor(null);
+                    }
+                }
+            }
+        }
+    };
+
+    private PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
+
+        @Override
+        public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {
+
+        }
+
+        @Override
+        public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
+            for (TabInfo tabInfo : resultTabs.getTabs()) {
+                Object object = tabInfo.getObject();
+                if (object instanceof StatementExecutionResult) {
+                    StatementExecutionResult executionResult = (StatementExecutionResult) object;
+                    if (executionResult.getExecutionProcessor().getPsiFile().equals(file)) {
+                        Icon icon = executionResult.getExecutionProcessor().isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                        tabInfo.setIcon(icon);
                     }
                 }
             }

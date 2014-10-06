@@ -89,8 +89,9 @@ public class Icons {
     public static final Icon STMT_EXECUTION_RESUME        = load("/img/action/ResumeExecution.png");
     public static final Icon STMT_EXECUTION_REFRESH       = load("/img/action/Refresh.png");
     public static final Icon STMT_EXECUTION_ERROR         = load("/img/common/Error.png");
-    public static final Icon STMT_EXECUTION_WARNING       = load("/img/common/Warning.png");
     public static final Icon STMT_EXECUTION_ERROR_RERUN   = load("/img/action/ExecuteStatementError.png");
+    public static final Icon STMT_EXECUTION_WARNING       = load("/img/common/Warning.png");
+    public static final Icon STMT_EXECUTION_WARNING_RERUN   = load("/img/action/ExecuteStatementWarning.png");
 
     public static final Icon STMT_EXEC_RESULTSET        = load("/img/ExecutionResultSet.png");
     public static final Icon STMT_EXEC_RESULTSET_RERUN  = load("/img/ExecutionResultSetRerun.png");
