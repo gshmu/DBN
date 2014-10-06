@@ -278,36 +278,4 @@ public class PsiUtil {
         }
         return language;
     }
-
-    public static boolean contains(PsiElement parent, BasePsiElement childElement, boolean lenient) {
-        PsiElement child = parent.getFirstChild();
-        while (child != null) {
-            if (child == childElement) {
-                return true;
-            }
-            if (child instanceof ChameleonPsiElement && contains(child, childElement, lenient)) {
-                return true;
-            }
-            child = child.getNextSibling();
-        }
-        if (lenient) {
-            child = parent.getFirstChild();
-            while (child != null) {
-                if (child instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) child;
-                    if (basePsiElement.matches(childElement)) {
-                        return true;
-                    }
-                }
-                if (child instanceof ChameleonPsiElement) {
-                    if (contains(child, childElement, true)) {
-                        return true;
-                    }
-                }
-                child = child.getNextSibling();
-            }
-        }
-
-        return false;
-    }
 }

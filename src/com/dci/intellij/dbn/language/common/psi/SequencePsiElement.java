@@ -335,53 +335,25 @@ public class SequencePsiElement extends BasePsiElement {
          return psiElement == getFirstChild();
     }
 
-    public boolean equals(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            PsiElement localChild = getFirstChild();
-            PsiElement remoteChild = basePsiElement.getFirstChild();
+    @Override
+    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+        PsiElement localChild = getFirstChild();
+        PsiElement remoteChild = basePsiElement.getFirstChild();
 
-            while(localChild != null && remoteChild != null) {
-                if (localChild instanceof BasePsiElement && remoteChild instanceof BasePsiElement) {
-                    BasePsiElement localPsiElement = (BasePsiElement) localChild;
-                    BasePsiElement remotePsiElement = (BasePsiElement) remoteChild;
-                    if (localPsiElement != remotePsiElement && !localPsiElement.equals(remotePsiElement)) {
-                        return false;
-                    }
-                    localChild = PsiUtil.getNextSibling(localChild);
-                    remoteChild = PsiUtil.getNextSibling(remoteChild);
-                } else {
+        while(localChild != null && remoteChild != null) {
+            if (localChild instanceof BasePsiElement && remoteChild instanceof BasePsiElement) {
+                BasePsiElement localPsiElement = (BasePsiElement) localChild;
+                BasePsiElement remotePsiElement = (BasePsiElement) remoteChild;
+                if (!localPsiElement.matches(remotePsiElement, lenient)) {
                     return false;
                 }
+                localChild = PsiUtil.getNextSibling(localChild);
+                remoteChild = PsiUtil.getNextSibling(remoteChild);
+            } else {
+                return false;
             }
-            return localChild == null && remoteChild == null;
         }
-    }
-
-    public boolean matches(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else if (basePsiElement != null && basePsiElement.isValid()){
-            PsiElement localChild = getFirstChild();
-            PsiElement remoteChild = basePsiElement.getFirstChild();
-
-            while(localChild != null && remoteChild != null) {
-                if (localChild instanceof BasePsiElement && remoteChild instanceof BasePsiElement) {
-                    BasePsiElement localPsiElement = (BasePsiElement) localChild;
-                    BasePsiElement remotePsiElement = (BasePsiElement) remoteChild;
-                    if (localPsiElement != remotePsiElement && !localPsiElement.matches(remotePsiElement)) {
-                        return false;
-                    }
-                    localChild = PsiUtil.getNextSibling(localChild);
-                    remoteChild = PsiUtil.getNextSibling(remoteChild);
-                } else {
-                    return false;
-                }
-            }
-            return localChild == null && remoteChild == null;
-        }
-        return false;
+        return localChild == null && remoteChild == null;
     }
 
 

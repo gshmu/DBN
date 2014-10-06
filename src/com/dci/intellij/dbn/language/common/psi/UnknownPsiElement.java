@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import java.util.Set;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
@@ -41,22 +42,12 @@ public class UnknownPsiElement extends BasePsiElement {
     }
 
     @Override
-    public boolean equals(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
+    public boolean matches(BasePsiElement remote, boolean lenient) {
+        if (lenient) {
+            return remote instanceof UnknownPsiElement;
         } else {
-            return basePsiElement instanceof UnknownPsiElement && basePsiElement.getText().equalsIgnoreCase(getText());
+            return getTextLength() == remote.getTextLength() && StringUtil.equals(getText(), remote.getText());
         }
-    }
-
-    @Override
-    public boolean matches(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            return basePsiElement instanceof UnknownPsiElement;
-        }
-
     }
 
     public String toString() {

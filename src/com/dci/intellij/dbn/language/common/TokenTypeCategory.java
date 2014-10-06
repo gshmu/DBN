@@ -12,7 +12,9 @@ public enum TokenTypeCategory {
     IDENTIFIER("identifier"),
     CHAMELEON("chameleon"),
     WHITESPACE("whitespace"),
-    COMMENT("comment")
+    COMMENT("comment"),
+    NUMERIC("numeric"),
+    LITERAL("literal")
     ;
 
     private String name;

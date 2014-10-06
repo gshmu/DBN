@@ -70,38 +70,23 @@ public class TokenPsiElement extends LeafPsiElement {
     }
 
     @Override
-    public boolean equals(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            if (basePsiElement instanceof TokenPsiElement) {
-                TokenPsiElement remote = (TokenPsiElement) basePsiElement;
-                TokenType localTokenType = getElementType().getTokenType();
-                TokenType remoteTokenType = remote.getElementType().getTokenType();
-                if (localTokenType == remoteTokenType) {
-                    return
-                        localTokenType.isReservedWord() ||
-                        localTokenType.isCharacter() ||
-                        localTokenType.isOperator() ||
-                        StringUtil.equalsIgnoreCase(getChars(), remote.getChars());
+    public boolean matches(BasePsiElement basePsiElement, boolean lenient) {
+        if (basePsiElement instanceof TokenPsiElement) {
+            TokenPsiElement remote = (TokenPsiElement) basePsiElement;
+            TokenType localTokenType = getElementType().getTokenType();
+            TokenType remoteTokenType = remote.getElementType().getTokenType();
+            if (localTokenType == remoteTokenType) {
+                if (lenient) {
+                    return true;
+                } else {
+                    if (localTokenType.isNumeric() || localTokenType.isLiteral()) {
+                        return StringUtil.equals(getChars(), remote.getChars());
+                    } else {
+                        return true;
+                    }
                 }
             }
-            return false;
         }
-    }
-
-    @Override
-    public boolean matches(BasePsiElement basePsiElement) {
-        if (this == basePsiElement) {
-            return true;
-        } else {
-            if (basePsiElement instanceof TokenPsiElement) {
-                TokenPsiElement remote = (TokenPsiElement) basePsiElement;
-                TokenType localTokenType = getElementType().getTokenType();
-                TokenType remoteTokenType = remote.getElementType().getTokenType();
-                return localTokenType == remoteTokenType;
-            }
-            return false;
-        }
+        return false;
     }
 }

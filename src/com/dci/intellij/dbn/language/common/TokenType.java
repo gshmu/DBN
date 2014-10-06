@@ -30,6 +30,10 @@ public interface TokenType {
 
     boolean isDataType();
 
+    boolean isLiteral();
+
+    boolean isNumeric();
+
     boolean isCharacter();
 
     boolean isOperator();
