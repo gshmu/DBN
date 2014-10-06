@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -92,10 +92,6 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
 
     public Icon getResultIcon() {
         return getMethod().getOriginalIcon();
-    }
-
-    public boolean isOrphan() {
-        return false;
     }
 
     public MethodExecutionInput getExecutionInput() {

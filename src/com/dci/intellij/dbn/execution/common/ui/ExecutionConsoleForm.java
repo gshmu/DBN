@@ -111,7 +111,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                     if (executionResult != null) {
                         if (executionResult instanceof StatementExecutionResult) {
                             StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                            Icon icon = statementExecutionResult.isOrphan() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                            Icon icon = statementExecutionResult.getExecutionProcessor().isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
                             newSelection.setIcon(icon);
                             statementExecutionResult.navigateToEditor(false);
                         }

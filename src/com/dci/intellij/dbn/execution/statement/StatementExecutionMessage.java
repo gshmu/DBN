@@ -28,7 +28,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
 
     public boolean isOrphan() {
         if (!isOrphan) {
-            isOrphan = executionResult.getExecutionInput().isObsolete();
+            isOrphan = executionResult.getExecutionProcessor().isDirty();
         }
         return isOrphan;
     }

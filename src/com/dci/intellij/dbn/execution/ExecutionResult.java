@@ -15,8 +15,6 @@ public interface ExecutionResult extends Disposable {
 
     Icon getResultIcon();
 
-    boolean isOrphan();
-
     void setExecutionDuration(int executionDuration);
     
     int getExecutionDuration();

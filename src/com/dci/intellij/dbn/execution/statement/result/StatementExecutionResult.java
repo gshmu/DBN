@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 
 public interface StatementExecutionResult extends ExecutionResult {
-    boolean isOrphan();
     StatementExecutionProcessor getExecutionProcessor();
     StatementExecutionMessage getExecutionMessage();
     StatementExecutionInput getExecutionInput();
