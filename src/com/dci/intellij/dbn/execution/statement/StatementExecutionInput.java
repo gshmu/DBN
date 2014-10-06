@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -64,14 +65,21 @@ public class StatementExecutionInput implements Disposable {
     @Nullable
     public ExecutablePsiElement getExecutablePsiElement() {
         if (executablePsiElement == null) {
-            PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-            PsiFile previewFile = psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), originalStatementText);
+            executablePsiElement = new ReadActionRunner<ExecutablePsiElement>() {
 
-            PsiElement firstChild = previewFile.getFirstChild();
-            if (firstChild instanceof ExecutableBundlePsiElement) {
-                ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                executablePsiElement = rootPsiElement.getExecutablePsiElements().get(0);
-            }
+                @Override
+                protected ExecutablePsiElement run() {
+                    PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
+                    PsiFile previewFile = psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), originalStatementText);
+
+                    PsiElement firstChild = previewFile.getFirstChild();
+                    if (firstChild instanceof ExecutableBundlePsiElement) {
+                        ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
+                        return rootPsiElement.getExecutablePsiElements().get(0);
+                    }
+                    return null;
+                }
+            }.start();
         }
         return executablePsiElement;
     }
@@ -90,20 +98,6 @@ public class StatementExecutionInput implements Disposable {
     public PsiFile getPreviewFile() {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
         return psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), executableStatementText);
-    }
-
-    public boolean isObsolete() {
-        if (executionProcessor == null || executionProcessor.isOrphan() ||
-                executionProcessor.getConnectionHandler() != getConnectionHandler() || // connection changed since execution
-                executionProcessor.getCurrentSchema() != getCurrentSchema()) { // current schema changed since execution)
-            return true;
-
-        } else {
-            ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
-            return executablePsiElement != null &&
-                    executablePsiElement.matches(getExecutablePsiElement(), true) &&
-                    !executablePsiElement.matches(getExecutablePsiElement(), false);
-        }
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {

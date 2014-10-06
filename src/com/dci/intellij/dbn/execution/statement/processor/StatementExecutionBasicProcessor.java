@@ -61,30 +61,22 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
     }
 
-    public boolean isOrphan(){
-/*
-        if (executablePsiElement == null) {
+    public boolean isDirty(){
+        if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
+                getCurrentSchema() != executionInput.getCurrentSchema()) { // current schema changed since execution)
             return true;
+
         } else {
-            PsiFile psiFile = PsiUtil.getPsiFile(getProject(), file.getVirtualFile());
-            if (!psiFile.equals(file)) {
-                return true;
-            } else {
-                NamedPsiElement rootPsiElement = executablePsiElement.lookupEnclosingRootPsiElement();
-                return rootPsiElement == null || !contains(file, rootPsiElement, true);
-            }
+            ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+            return boundExecutablePsiElement != null &&
+                    boundExecutablePsiElement.matches(executablePsiElement, true) &&
+                    !boundExecutablePsiElement.matches(executablePsiElement, false);
         }
-*/
-        return false;
     }
 
     @Override
     public void bind(ExecutablePsiElement executablePsiElement, boolean isExactMatch) {
         boundExecutablePsiElement = executablePsiElement;
-        if (!isExactMatch) {
-            executionInput.setOriginalStatementText(executablePsiElement.getText());
-            executionInput.setExecutableStatementText(executablePsiElement.prepareStatementText());
-        }
     }
 
     @Override
@@ -177,6 +169,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         DBSchema currentSchema = getCurrentSchema();
 
         boolean continueExecution = true;
+        if (boundExecutablePsiElement != null) {
+            executionInput.setOriginalStatementText(boundExecutablePsiElement.getText());
+            executionInput.setExecutableStatementText(boundExecutablePsiElement.prepareStatementText());
+        }
+
 
         String executableStatementText = executionInput.getExecutableStatementText();
         StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();

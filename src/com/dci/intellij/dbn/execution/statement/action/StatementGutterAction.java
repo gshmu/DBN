@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -10,10 +14,6 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class StatementGutterAction extends AnAction {
     final ExecutablePsiElement executablePsiElement;
@@ -52,7 +52,7 @@ public class StatementGutterAction extends AnAction {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
                 if (executionStatus == StatementExecutionStatus.SUCCESS){
                     if (executionProcessor instanceof StatementExecutionCursorProcessor) {
-                        return executionResult.getExecutionInput().isObsolete() ?
+                        return executionProcessor.isDirty() ?
                                 Icons.STMT_EXEC_RESULTSET_RERUN :
                                 Icons.STMT_EXEC_RESULTSET;
                     } else {

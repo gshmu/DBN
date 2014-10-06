@@ -41,7 +41,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     }
 
     public Icon getResultIcon() {
-        return isOrphan() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+        return executionProcessor == null || executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {
@@ -54,10 +54,6 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     public StatementExecutionInput getExecutionInput() {
         return executionProcessor == null ? null : executionProcessor.getExecutionInput();
-    }
-
-    public boolean isOrphan() {
-        return getExecutionProcessor().isOrphan();
     }
 
     public void navigateToEditor(boolean requestFocus) {

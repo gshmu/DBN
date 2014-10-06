@@ -14,7 +14,7 @@ import com.intellij.openapi.project.Project;
 
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
 
-    boolean isOrphan();
+    boolean isDirty();
 
     boolean canExecute();
 
