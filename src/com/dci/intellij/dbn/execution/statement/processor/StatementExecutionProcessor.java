@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement.processor;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -12,11 +13,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
-    void bind(ExecutablePsiElement executablePsiElement);
 
-    ExecutablePsiElement getExecutablePsiElement();
-
-    // is orphan when isDirty and
     boolean isOrphan();
 
     boolean canExecute();
@@ -27,13 +24,11 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     Project getProject();
 
-    DBLanguagePsiFile getFile();
+    DBLanguagePsiFile getBoundPsiFile();
 
     String getResultName();
 
     String getStatementName();
-
-    StatementExecutionResult getExecutionResult();
 
     void navigateToResult();
 
@@ -44,4 +39,16 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     void execute(ProgressIndicator progressIndicator);
 
     StatementExecutionVariablesBundle getExecutionVariables();
+
+    void bind(ExecutablePsiElement executablePsiElement, boolean isExactMatch);
+
+    void unbind();
+
+    boolean isBound();
+
+    ExecutablePsiElement getBoundExecutablePsiElement();
+
+    StatementExecutionInput getExecutionInput();
+
+    StatementExecutionResult getExecutionResult();
 }

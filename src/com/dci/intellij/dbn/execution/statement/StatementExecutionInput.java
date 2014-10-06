@@ -2,9 +2,12 @@ package com.dci.intellij.dbn.execution.statement;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
@@ -24,58 +27,79 @@ import com.intellij.psi.PsiFileFactory;
 
 public class StatementExecutionInput implements Disposable {
     private StatementExecutionProcessor executionProcessor;
-    private ConnectionHandler connectionHandler;
+    private StatementExecutionVariablesBundle executionVariables;
+    private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
 
-    private ExecutablePsiElement originalPsiElement;
-    private String originalStatement;
-    private String executeStatement;
+    private String originalStatementText;
+    private String executableStatementText;
+    private ExecutablePsiElement executablePsiElement;
     private boolean isDisposed;
 
-    public StatementExecutionInput(String originalStatement, String executeStatement, StatementExecutionProcessor executionProcessor) {
+    public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         this.executionProcessor = executionProcessor;
-        this.connectionHandler = executionProcessor.getConnectionHandler();
+        this.connectionHandlerRef = executionProcessor.getConnectionHandler().getRef();
         this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
-        this.originalStatement = originalStatement;
-        this.executeStatement = executeStatement;
+        this.originalStatementText = originalStatementText;
+        this.executableStatementText = executableStatementText;
     }
 
-
-    public void setExecuteStatement(String executeStatement) {
-        this.executeStatement = executeStatement;
+    public String getOriginalStatementText() {
+        return originalStatementText;
     }
 
-    public String getExecuteStatement() {
-        return executeStatement;
+    public void setOriginalStatementText(String originalStatementText) {
+        this.originalStatementText = originalStatementText;
+        executablePsiElement = null;
     }
 
+    public void setExecutableStatementText(String executableStatementText) {
+        this.executableStatementText = executableStatementText;
+    }
+
+    public String getExecutableStatementText() {
+        return executableStatementText;
+    }
+
+    @Nullable
     public ExecutablePsiElement getExecutablePsiElement() {
-        if (originalPsiElement == null) {
+        if (executablePsiElement == null) {
             PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-            PsiFile previewFile = psiFileFactory.createFileFromText("preview", connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE), originalStatement);
+            PsiFile previewFile = psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), originalStatementText);
 
             PsiElement firstChild = previewFile.getFirstChild();
             if (firstChild instanceof ExecutableBundlePsiElement) {
                 ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                originalPsiElement = rootPsiElement.getExecutablePsiElements().get(0);
+                executablePsiElement = rootPsiElement.getExecutablePsiElements().get(0);
             }
         }
-        return originalPsiElement;
+        return executablePsiElement;
+    }
+
+    public StatementExecutionVariablesBundle getExecutionVariables() {
+        return executionVariables;
+    }
+
+    public void setExecutionVariables(StatementExecutionVariablesBundle executionVariables) {
+        if (this.executionVariables != null) {
+            DisposerUtil.dispose(this.executionVariables);
+        }
+        this.executionVariables = executionVariables;
     }
 
     public PsiFile getPreviewFile() {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-        return psiFileFactory.createFileFromText("preview", connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE), executeStatement);
+        return psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), executableStatementText);
     }
 
     public boolean isObsolete() {
         if (executionProcessor == null || executionProcessor.isOrphan() ||
-                executionProcessor.getConnectionHandler() != connectionHandler || // connection changed since execution
+                executionProcessor.getConnectionHandler() != getConnectionHandler() || // connection changed since execution
                 executionProcessor.getCurrentSchema() != getCurrentSchema()) { // current schema changed since execution)
             return true;
 
         } else {
-            ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
+            ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
             return executablePsiElement != null &&
                     executablePsiElement.matches(getExecutablePsiElement(), true) &&
                     !executablePsiElement.matches(getExecutablePsiElement(), false);
@@ -87,11 +111,11 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public Project getProject() {
-        return connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return connectionHandlerRef.get();
     }
 
     public DBSchema getCurrentSchema() {
@@ -99,11 +123,8 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public boolean isDataDefinitionStatement() {
-        if (executionProcessor != null) {
-            ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
-            return executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DATA_DEFINITION);
-        }
-        return false;
+        ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
+        return executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DATA_DEFINITION);
     }
 
     @Nullable
@@ -141,7 +162,7 @@ public class StatementExecutionInput implements Disposable {
     @Nullable
     public IdentifierPsiElement getSubjectPsiElement() {
         if (executionProcessor != null && !executionProcessor.isDisposed()) {
-            ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
+            ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
             if (executablePsiElement != null) {
                 return (IdentifierPsiElement) executablePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
             }
@@ -151,7 +172,7 @@ public class StatementExecutionInput implements Disposable {
 
     public BasePsiElement getCompilableBlockPsiElement() {
         if (executionProcessor != null && !executionProcessor.isDisposed()) {
-            ExecutablePsiElement executablePsiElement = executionProcessor.getExecutablePsiElement();
+            ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
             if (executablePsiElement != null) {
                 return executablePsiElement.lookupFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
             }
@@ -174,12 +195,16 @@ public class StatementExecutionInput implements Disposable {
         if (!isDisposed) {
             isDisposed = true;
             executionProcessor = null;
-            connectionHandler = null;
-            originalPsiElement = null;
+            executablePsiElement = null;
         }
     }
 
     public boolean isDisposed() {
         return isDisposed;
+    }
+
+    public String getStatementDescription() {
+        ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
+        return executablePsiElement == null ? "SQL Statement" : executablePsiElement.getPresentableText();
     }
 }

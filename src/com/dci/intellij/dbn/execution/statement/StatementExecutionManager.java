@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -25,14 +26,19 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.PsiDocumentTransactionListener;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
     private final Set<StatementExecutionProcessor> executionProcessors = new HashSet<StatementExecutionProcessor>();
+    private boolean isBuildingLinks = false;
+
     private static int sequence;
     public int getNextSequence() {
         sequence++;
@@ -41,14 +47,62 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     private StatementExecutionManager(Project project) {
         super(project);
+        EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public static StatementExecutionManager getInstance(Project project) {
         return project.getComponent(StatementExecutionManager.class);
     }
 
+    private PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
+        @Override
+        public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {}
+
+        @Override
+        public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
+            if (!executionProcessors.isEmpty()) {
+                try {
+                    isBuildingLinks = true;
+                    for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                        if (file.equals(executionProcessor.getBoundPsiFile())) {
+                            executionProcessor.unbind();
+                        }
+                    }
+
+                    bindExecutionProcessors(file, false);
+                    bindExecutionProcessors(file, true);
+                } finally {
+                    isBuildingLinks = false;
+                }
+            }
+        }
+
+    };
+
+    private void bindExecutionProcessors(PsiFile file, boolean lenient) {
+        PsiElement child = file.getFirstChild();
+        while (child != null) {
+            if (child instanceof RootPsiElement) {
+                RootPsiElement root = (RootPsiElement) child;
+                for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                    StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, lenient);
+                    if (executionProcessor != null) {
+                        executionProcessor.bind(executable, !lenient);
+                    }
+                }
+            }
+            child = child.getNextSibling();
+        }
+    }
+
+    @Override
+    public void disposeComponent() {
+        EventManager.unsubscribe(psiDocumentTransactionListener);
+        super.disposeComponent();
+    }
+
     public void fireExecution(final StatementExecutionProcessor executionProcessor) {
-        boolean continueExecution = selectConnection(executionProcessor.getFile());
+        boolean continueExecution = selectConnection(executionProcessor.getBoundPsiFile());
         new ConnectionAction(executionProcessor, continueExecution) {
             @Override
             protected void execute() {
@@ -67,7 +121,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
         if (executionProcessors.size() > 0) {
-            DBLanguagePsiFile file =  executionProcessors.get(0).getFile();
+            DBLanguagePsiFile file =  executionProcessors.get(0).getBoundPsiFile();
             boolean continueExecution = selectConnection(file);
             if (continueExecution) {
                 for (StatementExecutionProcessor executionProcessor : executionProcessors) {
@@ -171,7 +225,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     public List<StatementExecutionProcessor> getExecutionProcessors(DBLanguagePsiFile file, int offset) {
-        List<StatementExecutionProcessor> statements = new ArrayList<StatementExecutionProcessor>();
+        List<StatementExecutionProcessor> executionProcessors = new ArrayList<StatementExecutionProcessor>();
 
         PsiElement child = file.getFirstChild();
         while (child != null) {
@@ -181,18 +235,28 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
                     if (executable.getTextOffset() > offset) {
                         StatementExecutionProcessor executionProcessor = getExecutionProcessor(executable, true);
-                        statements.add(executionProcessor);
+                        executionProcessors.add(executionProcessor);
                     }
                 }
             }
             child = child.getNextSibling();
         }
-        return statements;
+        return executionProcessors;
     }
 
     @Nullable
     public StatementExecutionProcessor getExecutionProcessor(ExecutablePsiElement executablePsiElement, boolean create) {
         synchronized(executionProcessors) {
+            DBLanguagePsiFile file = executablePsiElement.getFile();
+            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                if (file.equals(executionProcessor.getBoundPsiFile()) && executablePsiElement == executionProcessor.getBoundExecutablePsiElement()) {
+                    return executionProcessor;
+                }
+            }
+
+            return create ? createExecutionProcessor(executablePsiElement) : null;
+
+/*
             cleanup();
             StatementExecutionProcessor executionProcessor = findExecutionProcessor(executablePsiElement, false);
             if (executionProcessor == null) {
@@ -202,13 +266,17 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 executionProcessor = createExecutionProcessor(executablePsiElement);
             }
             return executionProcessor;
+*/
         }
     }
 
     private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, boolean lenient) {
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-            if (executionProcessor.getExecutablePsiElement().matches(executablePsiElement, lenient)) {
-                return executionProcessor;
+            if (!isBuildingLinks || !executionProcessor.isBound()) {
+                ExecutablePsiElement execPsiElement = executionProcessor.getExecutionInput().getExecutablePsiElement();
+                if (execPsiElement != null && execPsiElement.matches(executablePsiElement, lenient)) {
+                    return executionProcessor;
+                }
             }
         }
         return null;
