@@ -61,7 +61,7 @@ public class StatementGutterAction extends AnAction {
                 } else if (executionStatus == StatementExecutionStatus.ERROR){
                     return Icons.STMT_EXECUTION_ERROR_RERUN;
                 } else if (executionStatus == StatementExecutionStatus.WARNING){
-                    return Icons.STMT_EXECUTION_WARNING;
+                    return Icons.STMT_EXECUTION_WARNING_RERUN;
                 }
             }
         }
