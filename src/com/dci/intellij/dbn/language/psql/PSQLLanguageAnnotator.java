@@ -1,14 +1,11 @@
 package com.dci.intellij.dbn.language.psql;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
-import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -31,6 +28,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -194,11 +192,8 @@ public class PSQLLanguageAnnotator implements Annotator {
     private void annotateExecutable(PsiElement psiElement, AnnotationHolder holder) {
         ExecutablePsiElement executable = (ExecutablePsiElement) psiElement;
         if (!executable.isNestedExecutable()) {
-            StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
-            if (executionProcessor != null) {
-                Annotation annotation = holder.createInfoAnnotation(psiElement, null);
-                annotation.setGutterIconRenderer(new StatementGutterRenderer(executionProcessor));
-            }
+            Annotation annotation = holder.createInfoAnnotation(psiElement, null);
+            annotation.setGutterIconRenderer(new StatementGutterRenderer(executable));
         }
     }
 }

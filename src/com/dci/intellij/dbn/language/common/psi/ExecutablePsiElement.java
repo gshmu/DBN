@@ -1,43 +1,21 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class ExecutablePsiElement extends NamedPsiElement{
-    private StatementExecutionBasicProcessor executionProcessor;
-
     public ExecutablePsiElement(ASTNode astNode, NamedElementType elementType) {
         super(astNode, elementType);
-    }
-
-    public synchronized StatementExecutionBasicProcessor getExecutionProcessor() {
-        VirtualFileSystem fileSystem = getContainingFile().getVirtualFile().getFileSystem();
-        if (fileSystem instanceof LocalFileSystem || fileSystem instanceof DatabaseFileSystem) {
-            if (executionProcessor == null || executionProcessor.isDisposed() || !executionProcessor.matches(this, false)) {
-                StatementExecutionManager  statementExecutionManager = StatementExecutionManager.getInstance(getProject());
-                executionProcessor = statementExecutionManager.locateExecutionProcessor(this);
-                if (executionProcessor == null) {
-                    executionProcessor = statementExecutionManager.createExecutionProcessor(this);
-                }
-            }
-        }
-
-        return executionProcessor;
     }
 
     public String prepareStatementText(){

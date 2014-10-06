@@ -1,12 +1,9 @@
 package com.dci.intellij.dbn.language.sql;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
-import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -17,6 +14,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
@@ -124,11 +122,8 @@ public class SQLLanguageAnnotator implements Annotator {
 
     private void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
         if (!executablePsiElement.isNestedExecutable()) {
-            StatementExecutionProcessor executionProcessor = executablePsiElement.getExecutionProcessor();
-            if (executionProcessor != null) {
-                Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
-                annotation.setGutterIconRenderer(new StatementGutterRenderer(executionProcessor));
-            }
+            Annotation annotation = holder.createInfoAnnotation(executablePsiElement, null);
+            annotation.setGutterIconRenderer(new StatementGutterRenderer(executablePsiElement));
         }
     }
 

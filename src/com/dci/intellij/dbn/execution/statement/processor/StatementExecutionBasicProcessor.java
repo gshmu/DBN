@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -38,6 +33,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import gnu.trove.THashSet;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Set;
+
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
     protected StatementExecutionVariablesBundle executionVariables;
@@ -66,24 +66,6 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public void bind(ExecutablePsiElement executablePsiElement) {
         this.executablePsiElement = executablePsiElement;
-    }
-
-    public boolean matches(ExecutablePsiElement executablePsiElement, boolean lenient) {
-        if (this.executablePsiElement != null && executablePsiElement.getFile().equals(file)) {
-            StatementExecutionBasicResult executionResult = getExecutionResult();
-            if (executionResult == null) {
-                return lenient ?
-                        this.executablePsiElement.matches(executablePsiElement) :
-                        this.executablePsiElement.equals(executablePsiElement);
-            } else {
-                StatementExecutionInput executionInput = executionResult.getExecutionInput();
-                return lenient || executionInput == null ?
-                        this.executablePsiElement.matches(executablePsiElement) :
-                        executionInput.getExecutablePsiElement().matches(executablePsiElement);
-            }
-        }
-
-        return false;
     }
 
     public boolean isOrphan(){
