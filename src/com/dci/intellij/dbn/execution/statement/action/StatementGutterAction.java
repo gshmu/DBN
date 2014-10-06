@@ -32,7 +32,7 @@ public class StatementGutterAction extends AnAction {
                 executionManager.fireExecution(executionProcessor);
             } else {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
-                if (executionResult == null || executionProcessor.isDirty()) {
+                if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
                     executionManager.fireExecution(executionProcessor);
                 } else {
                     executionProcessor.navigateToResult();
