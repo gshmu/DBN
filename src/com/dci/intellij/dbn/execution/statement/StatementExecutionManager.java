@@ -99,7 +99,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
                     if (matchType == MatchType.CACHED) {
                         StatementExecutionProcessor executionProcessor = executable.getExecutionProcessor();
-                        if (executionProcessor != null) {
+                        if (executionProcessor != null && !executionProcessor.isBound()) {
                             executionProcessor.bind(executable);
                         }
                     } else {
