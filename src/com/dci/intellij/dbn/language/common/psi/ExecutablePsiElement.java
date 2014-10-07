@@ -56,7 +56,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
     public boolean isNestedExecutable() {
         PsiElement parent = getParent();
         while (parent != null && !(parent instanceof RootPsiElement)) {
-            if (parent instanceof ExecutablePsiElement) {
+            if (parent instanceof ExecutablePsiElement && parent.getTextOffset() != getTextOffset()) {
                 return true;
             }
             parent = parent.getParent();
@@ -123,7 +123,6 @@ public class ExecutablePsiElement extends NamedPsiElement{
         } else {
             return elementType.getDescription();
         }
-
     }
 
     @Nullable

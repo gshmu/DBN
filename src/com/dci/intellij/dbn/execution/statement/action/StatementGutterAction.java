@@ -56,7 +56,7 @@ public class StatementGutterAction extends AnAction {
                                 Icons.STMT_EXEC_RESULTSET_RERUN :
                                 Icons.STMT_EXEC_RESULTSET;
                     } else {
-                        return Icons.EXEC_MESSAGES_INFO;
+                        return Icons.STMT_EXECUTION_INFO_RERUN;
                     }
                 } else if (executionStatus == StatementExecutionStatus.ERROR){
                     return Icons.STMT_EXECUTION_ERROR_RERUN;
@@ -94,21 +94,19 @@ public class StatementGutterAction extends AnAction {
     public String getTooltipText() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
         if (executionProcessor!= null && !executionProcessor.isDisposed()) {
-            if (executionProcessor.canExecute()) {
-                return "<html>Execute <b>" + executionProcessor.getStatementName() + "</b></html>";
-            } else {
-                StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+            StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+            if (executionResult != null) {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
                 if (executionStatus == StatementExecutionStatus.SUCCESS) {
-                    return "<html>Show execution result <br> <b>" + executionResult.getResultName() + "</b></html>";
+                    return "Statement executed successfully";
                 } else if (executionStatus == StatementExecutionStatus.ERROR) {
-                    return "<html>Error executing statement <br> <font color='red'>" + executionResult.getExecutionMessage().getCauseMessage() + "</font></html>";
+                    return "Statement executed with errors";
                 } else if (executionStatus == StatementExecutionStatus.WARNING) {
-                    return "<html>Statement executed with warnings</html>";
+                    return "Statement executed with warnings";
                 }
             }
         }
-        return null;
+        return "Execute statement";
     }
 
 }

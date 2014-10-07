@@ -5589,7 +5589,7 @@
         <element ref-id="subquery" />
         <element optional="true" ref-id="for_update_clause" />
     </element-def>
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
+    <element-def attributes="DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
         <one-of id="000003101">
             <sequence id="000003102">
                 <element optional="true" ref-id="subquery_factoring_clause" />
