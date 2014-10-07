@@ -16,7 +16,8 @@ public class Icons {
 
     public static final Icon COMMON_INFO = load("/img/common/Info.png");
     public static final Icon COMMON_INFO_DISABLED = load("/img/common/InfoDisabled.png");
-    public static final Icon COMMON_WARNING = load("/img/common/WarningTriangle.png");
+    public static final Icon COMMON_WARNING = load("/img/common/Warning.png");
+    public static final Icon COMMON_ERROR = load("/img/common/Error.png");
     public static final Icon COMMON_RIGHT = load("/img/common/SplitRight.png");
     public static final Icon COMMON_UP = load("/img/common/SplitUp.png");
     public static final Icon COMMON_ARROW_DOWN = load("/img/ComboBoxArrow.png");
@@ -49,6 +50,7 @@ public class Icons {
     public static final Icon ACTION_REVERT_CHANGES = load("/img/action/RevertChanges.png");
     public static final Icon ACTION_SELECT_ALL = load("/img/action/SelectAll.png");
     public static final Icon ACTION_OPTIONS = load("/img/action/Options.png");
+    public static final Icon ACTION_NAVIGATE = load("/img/action/Navigate.png");
 
 
     public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.png");

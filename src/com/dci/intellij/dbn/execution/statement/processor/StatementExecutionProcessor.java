@@ -18,8 +18,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     boolean isDirty();
 
-    boolean canExecute();
-
     ConnectionHandler getConnectionHandler();
 
     DBSchema getCurrentSchema();
@@ -53,5 +51,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     StatementExecutionInput getExecutionInput();
 
+    @Nullable
     StatementExecutionResult getExecutionResult();
 }

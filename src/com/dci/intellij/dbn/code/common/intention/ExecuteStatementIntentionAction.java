@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -34,7 +35,14 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-            return  executable != null;
+            if (executable != null) {
+                StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, true);
+                if (executionProcessor != null) {
+                    StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
+                    return executionResult != null;
+                }
+            }
         }
         return false;
     }
