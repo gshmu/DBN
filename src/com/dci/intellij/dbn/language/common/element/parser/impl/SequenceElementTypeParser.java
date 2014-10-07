@@ -128,6 +128,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 
         TokenType tokenType = builder.getTokenType();
+        siblingPosition++;
         while (tokenType != null) {
             int newIndex = getLandmarkIndex(tokenType, siblingPosition, node);
 

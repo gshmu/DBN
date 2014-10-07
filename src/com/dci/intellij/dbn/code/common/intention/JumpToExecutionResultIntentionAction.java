@@ -32,7 +32,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
-            ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, false);
+            ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (executable != null) {
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                 StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, false);
@@ -44,10 +44,14 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, false);
-        StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-        StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, false);
-        executionProcessor.navigateToResult();
+        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+        if (executable != null) {
+            StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, false);
+            if (executionProcessor != null) {
+                executionProcessor.navigateToResult();
+            }
+        }
     }
 
     public boolean startInWriteAction() {

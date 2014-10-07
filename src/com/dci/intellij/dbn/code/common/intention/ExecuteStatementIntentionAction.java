@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.code.common.intention;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -11,9 +14,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class ExecuteStatementIntentionAction extends GenericIntentionAction {
     @NotNull
@@ -40,11 +40,13 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction {
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, false);
-        StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-        StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, true);
-        executionManager.fireExecution(executionProcessor);
-        DocumentUtil.refreshEditorAnnotations(executable.getFile());
+        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+        if (executable != null) {
+            StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, true);
+            executionManager.fireExecution(executionProcessor);
+            DocumentUtil.refreshEditorAnnotations(executable.getFile());
+        }
     }
 
     public boolean startInWriteAction() {

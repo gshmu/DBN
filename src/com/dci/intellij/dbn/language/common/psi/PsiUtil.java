@@ -101,6 +101,7 @@ public class PsiUtil {
         return null;
     }
 
+    @Nullable
     public static ExecutablePsiElement lookupExecutableAtCaret(Editor editor, boolean lenient) {
         // GTK: PsiElement psiElement = PsiFile.findElementA(offset)
 

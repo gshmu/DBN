@@ -92,6 +92,7 @@ public class Icons {
     public static final Icon STMT_EXECUTION_ERROR_RERUN   = load("/img/action/ExecuteStatementError.png");
     public static final Icon STMT_EXECUTION_WARNING       = load("/img/common/Warning.png");
     public static final Icon STMT_EXECUTION_WARNING_RERUN   = load("/img/action/ExecuteStatementWarning.png");
+    public static final Icon STMT_EXECUTION_INFO_RERUN   = load("/img/action/ExecuteStatementInfo.png");
 
     public static final Icon STMT_EXEC_RESULTSET        = load("/img/ExecutionResultSet.png");
     public static final Icon STMT_EXEC_RESULTSET_RERUN  = load("/img/ExecutionResultSetRerun.png");
