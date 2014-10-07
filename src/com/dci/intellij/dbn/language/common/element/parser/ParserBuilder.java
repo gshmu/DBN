@@ -91,6 +91,10 @@ public class ParserBuilder {
         return null;
     }
 
+    public IElementType rawLookup(int steps) {
+        return builder.rawLookup(steps);
+    }
+
 
     public void error(String messageText) {
         builder.error(messageText);

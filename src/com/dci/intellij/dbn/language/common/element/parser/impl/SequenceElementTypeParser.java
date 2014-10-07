@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
@@ -127,7 +128,6 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 
         TokenType tokenType = builder.getTokenType();
-        siblingPosition++;
         while (tokenType != null) {
             int newIndex = getLandmarkIndex(tokenType, siblingPosition, node);
 
@@ -148,6 +148,10 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
 
     protected int getLandmarkIndex(TokenType tokenType, int index, ParsePathNode node) {
         if (tokenType.isParserLandmark()) {
+            PathNode statementPathNode = node.getPathNode(ElementTypeAttribute.STATEMENT);
+            if (statementPathNode != null && statementPathNode.getElementType().getLookupCache().couldStartWithToken(tokenType)) {
+                return -1;
+            }
             ElementTypeRef[] children = getElementType().getChildren();
             for (int i=index; i< children.length; i++) {
                 // check children landmarks
