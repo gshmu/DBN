@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -43,6 +44,7 @@ public class RootNode extends BundleTreeNode {
         return compilerMessagesNode.addCompilerMessage(compilerMessage);
     }
 
+    @Nullable
     public CompilerMessagesNode getCompilerMessagesNode() {
         for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof CompilerMessagesNode) {
@@ -52,9 +54,32 @@ public class RootNode extends BundleTreeNode {
         return null;
     }
 
+    @Nullable
+    public StatementExecutionMessagesNode getStatementExecutionMessagesNode() {
+        for (TreeNode treeNode : getChildren()) {
+            if (treeNode instanceof StatementExecutionMessagesNode) {
+                return (StatementExecutionMessagesNode) treeNode;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
     public TreePath getTreePath(CompilerMessage compilerMessage) {
         CompilerMessagesNode compilerMessagesNode = getCompilerMessagesNode();
-        return compilerMessagesNode.getTreePath(compilerMessage);
+        if (compilerMessagesNode != null) {
+            return compilerMessagesNode.getTreePath(compilerMessage);
+        }
+        return null;
+    }
+
+    @Nullable
+    public TreePath getTreePath(StatementExecutionMessage executionMessage) {
+        StatementExecutionMessagesNode executionMessagesNode = getStatementExecutionMessagesNode();
+        if (executionMessagesNode != null) {
+            return executionMessagesNode.getTreePath(executionMessage);
+        }
+        return null;
     }
 
 

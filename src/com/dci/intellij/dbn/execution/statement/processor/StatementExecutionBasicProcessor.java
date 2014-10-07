@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -37,6 +31,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Set;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -70,7 +70,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
         } else {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-            return this.cachedExecutable != null && !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
+            return this.cachedExecutable == null || !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
         }
     }
 
@@ -345,7 +345,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public void navigateToResult() {
-
+        StatementExecutionResult executionResult = getExecutionResult();
+        if (executionResult != null) {
+            ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+            executionManager.focusExecutionConsole(executionResult);
+        }
     }
 
     public void navigateToEditor(boolean requestFocus) {

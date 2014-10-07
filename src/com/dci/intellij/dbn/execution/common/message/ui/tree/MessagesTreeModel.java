@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -31,8 +32,14 @@ public class MessagesTreeModel implements TreeModel, Disposable {
         return rootNode.addCompilerMessage(compilerMessage);
     }
 
+    @Nullable
     public TreePath getTreePath(CompilerMessage compilerMessage) {
         return rootNode.getTreePath(compilerMessage);
+    }
+
+    @Nullable
+    public TreePath getTreePath(StatementExecutionMessage statementExecutionMessage) {
+        return rootNode.getTreePath(statementExecutionMessage);
     }
 
 

@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -46,6 +33,19 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
 
 public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -172,6 +172,15 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
     public JComponent getComponent() {
         return resultTabs;
+    }
+
+    public void select(StatementExecutionResult executionResult) {
+        StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
+        if (executionMessage != null) {
+            prepareMessagesTab();
+            ExecutionMessagesPanel messagesPane = getMessagesPanel();
+            messagesPane.select(executionMessage);
+        }
     }
 
     public void show(StatementExecutionResult executionResult) {

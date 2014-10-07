@@ -1,13 +1,8 @@
 package com.dci.intellij.dbn.execution;
 
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
@@ -26,6 +21,12 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.ExecutionManager",
@@ -104,6 +105,15 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }.start();
     }
 
+    public void focusExecutionConsole(final StatementExecutionResult executionResult) {
+        new ConditionalLaterInvocator() {
+            public void execute() {
+                getExecutionConsoleForm().select(executionResult);
+                showExecutionConsole();
+            }
+        }.start();
+
+    }
     public void showExecutionConsole(final StatementExecutionResult executionResult) {
         new SimpleLaterInvocator() {
             public void execute() {
