@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.psql;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -28,7 +30,6 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 
 public class PSQLLanguageAnnotator implements Annotator {
 
@@ -41,24 +42,23 @@ public class PSQLLanguageAnnotator implements Annotator {
             }
 
         }
-
-        if (psiElement instanceof TokenPsiElement) annotateToken((TokenPsiElement) psiElement, holder);  else
-        if (psiElement instanceof IdentifierPsiElement) {
+        if (psiElement instanceof TokenPsiElement) {
+            annotateToken((TokenPsiElement) psiElement, holder);
+        }
+        else if (psiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
             ConnectionHandler connectionHandler = identifierPsiElement.getActiveConnection();
             if (connectionHandler != null) {
                 annotateIdentifier(psiElement, holder);
             }
         }
-
-        if (psiElement instanceof NamedPsiElement) {
+        else if (psiElement instanceof NamedPsiElement) {
             NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
             if (namedPsiElement.hasErrors()) {
                 holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
             }
         }
-
-        if (psiElement instanceof ChameleonPsiElement) {
+        else if (psiElement instanceof ChameleonPsiElement) {
             Annotation annotation = holder.createInfoAnnotation(psiElement, null);
             annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
         }
