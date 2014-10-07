@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.tree.TreeNode;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Collections;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.intellij.openapi.util.Disposer;
+
+import javax.swing.tree.TreeNode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 public abstract class BundleTreeNode implements MessagesTreeNode{
     protected MessagesTreeNode parent;

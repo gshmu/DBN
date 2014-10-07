@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -36,6 +28,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
@@ -80,12 +80,22 @@ public class MessagesTree extends DBNTree implements Disposable {
         return treePath;
     }
 
-    public TreePath selectCompilerMessage(CompilerMessage compilerMessage) {
+    public void focus(CompilerMessage compilerMessage) {
         TreePath treePath = getModel().getTreePath(compilerMessage);
-        getSelectionModel().setSelectionPath(treePath);
-        scrollPathToVisible(treePath);
-        grabFocus();
-        return treePath;
+        if (treePath != null) {
+            getSelectionModel().setSelectionPath(treePath);
+            scrollPathToVisible(treePath);
+            grabFocus();
+        }
+    }
+
+    public void focus(StatementExecutionMessage statementExecutionMessage) {
+        TreePath treePath = getModel().getTreePath(statementExecutionMessage);
+        if (treePath != null) {
+            getSelectionModel().setSelectionPath(treePath);
+            scrollPathToVisible(treePath);
+            grabFocus();
+        }
     }
 
     private void navigateToCode(Object object) {
@@ -166,28 +176,24 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     private void navigateInEditor(Editor editor, CompilerMessage compilerMessage, int lineShifting) {
         Document document = editor.getDocument();
-        if (document.getLineCount() <= compilerMessage.getLine()) {
-            compilerMessage.setLine(0);
-            compilerMessage.setPosition(0);
-            compilerMessage.setSubjectIdentifier(null);
-        }
+        if (document.getLineCount() > compilerMessage.getLine() + lineShifting) {
+            int lineStartOffset = document.getLineStartOffset(compilerMessage.getLine() + lineShifting);
+            int newCaretOffset = lineStartOffset + compilerMessage.getPosition();
+            if (document.getTextLength() > newCaretOffset) {
+                editor.getCaretModel().moveToOffset(newCaretOffset);
 
-        int lineStartOffset = document.getLineStartOffset(compilerMessage.getLine() + lineShifting);
-        int newCaretOffset = lineStartOffset + compilerMessage.getPosition();
-        if (document.getTextLength() > newCaretOffset) {
-            editor.getCaretModel().moveToOffset(newCaretOffset);
-
-            String identifier = compilerMessage.getSubjectIdentifier();
-            if (identifier != null) {
-                int lineEndOffset = document.getLineEndOffset(compilerMessage.getLine() + lineShifting);
-                CharSequence lineText = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
-                int selectionOffsetInLine = StringUtil.indexOfIgnoreCase(lineText, identifier, compilerMessage.getPosition());
-                if (selectionOffsetInLine > -1) {
-                    int selectionOffset = selectionOffsetInLine + lineStartOffset;
-                    editor.getSelectionModel().setSelection(selectionOffset, selectionOffset + identifier.length());
+                String identifier = compilerMessage.getSubjectIdentifier();
+                if (identifier != null) {
+                    int lineEndOffset = document.getLineEndOffset(compilerMessage.getLine() + lineShifting);
+                    CharSequence lineText = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
+                    int selectionOffsetInLine = StringUtil.indexOfIgnoreCase(lineText, identifier, compilerMessage.getPosition());
+                    if (selectionOffsetInLine > -1) {
+                        int selectionOffset = selectionOffsetInLine + lineStartOffset;
+                        editor.getSelectionModel().setSelection(selectionOffset, selectionOffset + identifier.length());
+                    }
                 }
+                editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
             }
-            editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
         }
     }
 

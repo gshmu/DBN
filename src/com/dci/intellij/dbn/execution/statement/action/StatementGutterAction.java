@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -14,6 +10,10 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class StatementGutterAction extends AnAction {
     final ExecutablePsiElement executablePsiElement;
@@ -98,11 +98,11 @@ public class StatementGutterAction extends AnAction {
             if (executionResult != null) {
                 StatementExecutionStatus executionStatus = executionResult.getExecutionStatus();
                 if (executionStatus == StatementExecutionStatus.SUCCESS) {
-                    return "Statement executed successfully";
+                    return "Statement executed successfully. Execute again?";
                 } else if (executionStatus == StatementExecutionStatus.ERROR) {
-                    return "Statement executed with errors";
+                    return "Statement executed with errors. Execute again?";
                 } else if (executionStatus == StatementExecutionStatus.WARNING) {
-                    return "Statement executed with warnings";
+                    return "Statement executed with warnings. Execute again?";
                 }
             }
         }
