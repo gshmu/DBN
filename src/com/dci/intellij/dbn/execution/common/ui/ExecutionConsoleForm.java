@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -33,19 +46,6 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
 
 public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -174,63 +174,67 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         return resultTabs;
     }
 
-    public void select(StatementExecutionResult executionResult) {
+    public void selectResult(StatementExecutionResult executionResult) {
         StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
         if (executionMessage != null) {
             prepareMessagesTab();
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
-            messagesPane.select(executionMessage);
+            messagesPane.selectMessage(executionMessage, true);
         }
     }
 
-    public void show(StatementExecutionResult executionResult) {
+    public void addResult(StatementExecutionResult executionResult) {
         ExecutionMessagesPanel messagesPane = getMessagesPanel();
         TreePath messageTreePath = null;
+        boolean focus = focusOnExecution();
         if (executionResult instanceof StatementExecutionCursorResult) {
             StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
             if (executionMessage == null) {
                 showResultTab(executionResult);
             } else {
                 prepareMessagesTab();
-                messageTreePath = messagesPane.addExecutionMessage(executionMessage, true);
+                messageTreePath = messagesPane.addExecutionMessage(executionMessage, focus);
             }
         } else {
             prepareMessagesTab();
-            messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), true);
+            messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), focus);
         }
 
         CompilerResult compilerResult = executionResult.getCompilerResult();
         if (compilerResult != null) {
-            show(compilerResult);
-        } else {
-            StatementExecutionSettings statementExecutionSettings = ExecutionEngineSettings.getInstance(project).getStatementExecutionSettings();
-            if (!statementExecutionSettings.isFocusResult()) {
-                executionResult.navigateToEditor(true);
-            }
+            addResult(compilerResult);
         }
         if (messageTreePath != null) {
             messagesPane.expand(messageTreePath);
         }
     }
 
-    public void show(CompilerResult compilerResult) {
+    private boolean focusOnExecution() {
+        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
+        StatementExecutionSettings statementExecutionSettings = executionEngineSettings.getStatementExecutionSettings();
+        return statementExecutionSettings.isFocusResult();
+    }
+
+    public void addResult(CompilerResult compilerResult) {
         prepareMessagesTab();
         if (compilerResult.getCompilerMessages().size() > 0) {
             boolean isFirst = true;
+            ExecutionMessagesPanel messagesPanel = getMessagesPanel();
             for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
-                getMessagesPanel().addCompilerMessage(compilerMessage, isFirst);
+                messagesPanel.addCompilerMessage(compilerMessage, isFirst);
                 isFirst = false;
             }
         }
     }
 
-    public void show(MethodExecutionResult executionResult) {
+    public void addResult(MethodExecutionResult executionResult) {
         showResultTab(executionResult);
     }
 
-    public void show(List<CompilerResult> compilerResults) {
+    public void addResults(List<CompilerResult> compilerResults) {
         prepareMessagesTab();
         CompilerResult firstCompilerResult = null;
+        ExecutionMessagesPanel messagesPanel = getMessagesPanel();
         for (CompilerResult compilerResult : compilerResults) {
             if (compilerResult.getCompilerMessages().size() > 0) {
                 if (firstCompilerResult == null) {
@@ -238,12 +242,12 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                 }
 
                 for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
-                    getMessagesPanel().addCompilerMessage(compilerMessage, false);
+                    messagesPanel.addCompilerMessage(compilerMessage, false);
                 }
             }
         }
         if (firstCompilerResult != null) {
-            getMessagesPanel().select(firstCompilerResult.getCompilerMessages().get(0));
+            messagesPanel.selectMessage(firstCompilerResult.getCompilerMessages().get(0), true);
         }
     }
     

@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.tree.TreePath;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.CloseMessagesWindowAction;
@@ -14,12 +20,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.tree.TreePath;
 
 public class ExecutionMessagesPanel extends DBNFormImpl{
     private JPanel mainPanel;
@@ -63,12 +63,12 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         return mainPanel;
     }
 
-    public void select(@NotNull CompilerMessage compilerMessage) {
-        messagesTree.focus(compilerMessage);
+    public void selectMessage(@NotNull CompilerMessage compilerMessage, boolean focus) {
+        messagesTree.selectCompilerMessage(compilerMessage, focus);
     }
 
-    public void select(@NotNull StatementExecutionMessage statementExecutionMessage) {
-        messagesTree.focus(statementExecutionMessage);
+    public void selectMessage(@NotNull StatementExecutionMessage statementExecutionMessage, boolean focus) {
+        messagesTree.selectExecutionMessage(statementExecutionMessage, focus);
     }
 
     public void expand(TreePath treePath) {

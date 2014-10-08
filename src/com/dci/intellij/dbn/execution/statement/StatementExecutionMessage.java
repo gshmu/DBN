@@ -45,7 +45,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
         executionResult = null;
     }
 
-    public void navigateToEditor() {
-        executionResult.getExecutionProcessor().navigateToEditor(false);
+    public void navigateToEditor(boolean requestFocus) {
+        executionResult.getExecutionProcessor().navigateToEditor(requestFocus);
     }
 }

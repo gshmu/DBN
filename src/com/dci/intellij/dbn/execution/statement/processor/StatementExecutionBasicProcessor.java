@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -31,12 +37,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Set;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -231,7 +231,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         }
 
         executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTimeMillis));
-        ExecutionManager.getInstance(project).showExecutionConsole(executionResult);
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        executionManager.addExecutionResult(executionResult);
     }
 
     public StatementExecutionVariablesBundle getExecutionVariables() {
@@ -350,7 +351,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         StatementExecutionResult executionResult = getExecutionResult();
         if (executionResult != null) {
             ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-            executionManager.focusExecutionConsole(executionResult);
+            executionManager.selectExecutionResult(executionResult);
         }
     }
 

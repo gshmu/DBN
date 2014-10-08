@@ -154,7 +154,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                             new SimpleLaterInvocator() {
                                 public void execute() {
                                     ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                                    executionManager.showExecutionConsole(executionInput.getExecutionResult());
+                                    executionManager.addExecutionResult(executionInput.getExecutionResult());
                                     executionInput.setExecuting(false);
                                 }
                             }.start();
@@ -191,7 +191,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     new SimpleLaterInvocator() {
                         public void execute() {
                             ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
-                            executionManager.showExecutionConsole(executionInput.getExecutionResult());
+                            executionManager.addExecutionResult(executionInput.getExecutionResult());
                         }
                     }.start();
                 }
