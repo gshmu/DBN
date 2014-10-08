@@ -336,7 +336,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                     StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                     StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
                     if (executionInput != null && !executionInput.isDisposed()) {
-                        DBLanguagePsiFile file = executionInput.getExecutablePsiElement().getFile();
+                        DBLanguagePsiFile file = executionInput.getExecutionProcessor().getPsiFile();
                         DocumentUtil.refreshEditorAnnotations(file);
                     }
                 }

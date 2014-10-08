@@ -174,6 +174,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (cachedExecutable != null) {
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
+            executionInput.setConnectionHandler(activeConnection);
+            executionInput.setCurrentSchema(currentSchema);
         }
 
 
