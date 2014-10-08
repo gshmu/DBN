@@ -271,7 +271,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         if (virtualFile instanceof DBSourceCodeVirtualFile) {
             BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
             if (textEditor != null) {
-                EditorUtil.selectEditor(databaseFile, textEditor);
+                EditorUtil.selectEditor(databaseFile, textEditor, true);
                 basePsiElement.navigate(true);
             }
         }

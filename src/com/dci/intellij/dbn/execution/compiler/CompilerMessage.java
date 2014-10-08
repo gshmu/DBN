@@ -55,6 +55,9 @@ public class CompilerMessage extends ConsoleMessage {
         }
 
         isEcho = !text.startsWith("PLS");
+        if (isEcho) {
+            setType(MessageType.WARNING);
+        }
 
         subjectIdentifier = extractIdentifier(text, '\'');
         if (subjectIdentifier == null) subjectIdentifier = extractIdentifier(text, '"');

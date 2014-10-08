@@ -51,8 +51,8 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         return messagesTree.addExecutionMessage(executionMessage, focus);
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
-        return messagesTree.addCompilerMessage(compilerMessage, focus);
+    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
+        return messagesTree.addCompilerMessage(compilerMessage, select);
     }
 
     public void reset() {
@@ -63,8 +63,8 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         return mainPanel;
     }
 
-    public void selectMessage(@NotNull CompilerMessage compilerMessage, boolean focus) {
-        messagesTree.selectCompilerMessage(compilerMessage, focus);
+    public void selectMessage(@NotNull CompilerMessage compilerMessage) {
+        messagesTree.selectCompilerMessage(compilerMessage);
     }
 
     public void selectMessage(@NotNull StatementExecutionMessage statementExecutionMessage, boolean focus) {

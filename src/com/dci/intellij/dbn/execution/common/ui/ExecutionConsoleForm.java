@@ -223,13 +223,19 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
     public void addResult(CompilerResult compilerResult) {
         prepareMessagesTab();
+        CompilerMessage firstMessage = null;
+        ExecutionMessagesPanel messagesPanel = getMessagesPanel();
         if (compilerResult.getCompilerMessages().size() > 0) {
-            boolean isFirst = true;
-            ExecutionMessagesPanel messagesPanel = getMessagesPanel();
             for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
-                messagesPanel.addCompilerMessage(compilerMessage, isFirst);
-                isFirst = false;
+                if (firstMessage == null) {
+                    firstMessage = compilerMessage;
+                }
+                messagesPanel.addCompilerMessage(compilerMessage, false);
             }
+        }
+
+        if (firstMessage != null) {
+            messagesPanel.selectMessage(firstMessage);
         }
     }
 
@@ -239,21 +245,20 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
     public void addResults(List<CompilerResult> compilerResults) {
         prepareMessagesTab();
-        CompilerResult firstCompilerResult = null;
+        CompilerMessage firstMessage = null;
         ExecutionMessagesPanel messagesPanel = getMessagesPanel();
         for (CompilerResult compilerResult : compilerResults) {
             if (compilerResult.getCompilerMessages().size() > 0) {
-                if (firstCompilerResult == null) {
-                    firstCompilerResult = compilerResult;
-                }
-
                 for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
+                    if (firstMessage == null) {
+                        firstMessage = compilerMessage;
+                    }
                     messagesPanel.addCompilerMessage(compilerMessage, false);
                 }
             }
         }
-        if (firstCompilerResult != null) {
-            messagesPanel.selectMessage(firstCompilerResult.getCompilerMessages().get(0), true);
+        if (firstMessage != null) {
+            messagesPanel.selectMessage(firstMessage);
         }
     }
     

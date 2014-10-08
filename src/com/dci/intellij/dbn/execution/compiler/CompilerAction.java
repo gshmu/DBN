@@ -38,6 +38,22 @@ public class CompilerAction {
         return type;
     }
 
+    public boolean isDDL() {
+        return type == Type.DDL;
+    }
+
+    public boolean isSave() {
+        return type == Type.SAVE;
+    }
+
+    public boolean isCompile() {
+        return type == Type.COMPILE;
+    }
+
+    public boolean isBulkCompile() {
+        return type == Type.BULK_COMPILE;
+    }
+
     @Nullable
     public VirtualFile getVirtualFile() {
         return virtualFile;

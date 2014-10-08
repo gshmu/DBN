@@ -30,11 +30,11 @@ import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
 
 public class EditorUtil {
-    public static void selectEditor(DBEditableObjectVirtualFile databaseFile, FileEditor fileEditor) {
+    public static void selectEditor(DBEditableObjectVirtualFile databaseFile, FileEditor fileEditor, boolean requestFocus) {
         JBTabsImpl tabs = getEditorTabComponent(databaseFile);
         TabInfo tabInfo = getEditorTabInfo(tabs, fileEditor);
         if (tabInfo != null) {
-            tabs.getJBTabs().select(tabInfo, true);
+            tabs.getJBTabs().select(tabInfo, requestFocus);
         }
     }
 

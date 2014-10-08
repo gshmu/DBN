@@ -358,7 +358,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         for (FileEditor fileEditor : fileEditors) {
                             if (fileEditor instanceof SourceCodeMainEditor) {
                                 SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                                EditorUtil.selectEditor(databaseFile, fileEditor);
+                                EditorUtil.selectEditor(databaseFile, fileEditor, focusEditor);
                                 sourceCodeEditor.navigateTo(object);
                                 break;
                             }
