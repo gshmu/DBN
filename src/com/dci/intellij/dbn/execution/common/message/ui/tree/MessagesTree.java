@@ -29,6 +29,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -70,20 +71,20 @@ public class MessagesTree extends DBNTree implements Disposable {
         return treePath;
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
+    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
-        getSelectionModel().setSelectionPath(treePath);
-        scrollPathToVisible(treePath);
-        if (focus) requestFocus();
+        if (select) {
+            getSelectionModel().setSelectionPath(treePath);
+            scrollPathToVisible(treePath);
+        }
         return treePath;
     }
 
-    public void selectCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
+    public void selectCompilerMessage(CompilerMessage compilerMessage) {
         TreePath treePath = getModel().getTreePath(compilerMessage);
         if (treePath != null) {
             getSelectionModel().setSelectionPath(treePath);
             scrollPathToVisible(treePath);
-            if (focus) requestFocus();
         }
     }
 
@@ -122,16 +123,15 @@ public class MessagesTree extends DBNTree implements Disposable {
                 FileEditorManager editorManager = FileEditorManager.getInstance(project);
 
                 CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
-                CompilerAction.Type sourceActionType = sourceAction.getType();
-                if (sourceActionType == CompilerAction.Type.SAVE || sourceActionType == CompilerAction.Type.COMPILE) {
+                if (sourceAction.isSave() || sourceAction.isCompile() || sourceAction.isBulkCompile()) {
                     DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
                     if (databaseFile != null) {
                         if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
                             editorManager.openFile(databaseFile, requestFocus);
-                            navigateInObjectEditor(compilerMessage);
+                            navigateInObjectEditor(compilerMessage, requestFocus);
                         }
                     }
-                } else if (sourceActionType == CompilerAction.Type.DDL) {
+                } else if (sourceAction.isDDL()) {
                     VirtualFile virtualFile = sourceAction.getVirtualFile();
                     if (virtualFile != null) {
                         editorManager.openFile(virtualFile, requestFocus);
@@ -163,7 +163,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         }
     }
 
-    private void navigateInObjectEditor(CompilerMessage compilerMessage) {
+    private void navigateInObjectEditor(CompilerMessage compilerMessage, boolean requestFocus) {
         DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
         DBContentVirtualFile contentFile = compilerMessage.getContentFile();
         if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
@@ -176,7 +176,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
                 navigateInEditor(editor, compilerMessage, lineShifting);
 
-                EditorUtil.selectEditor(databaseFile, textEditor);
+                EditorUtil.selectEditor(databaseFile, textEditor, requestFocus);
                 VirtualFile virtualFile = DocumentUtil.getVirtualFile(textEditor.getEditor());
                 OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
                 codeEditor.navigateTo(openFileDescriptor);
@@ -193,13 +193,15 @@ public class MessagesTree extends DBNTree implements Disposable {
                 editor.getCaretModel().moveToOffset(newCaretOffset);
 
                 String identifier = compilerMessage.getSubjectIdentifier();
+                SelectionModel selectionModel = editor.getSelectionModel();
+                selectionModel.removeSelection();
                 if (identifier != null) {
                     int lineEndOffset = document.getLineEndOffset(compilerMessage.getLine() + lineShifting);
                     CharSequence lineText = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
                     int selectionOffsetInLine = StringUtil.indexOfIgnoreCase(lineText, identifier, compilerMessage.getPosition());
                     if (selectionOffsetInLine > -1) {
                         int selectionOffset = selectionOffsetInLine + lineStartOffset;
-                        editor.getSelectionModel().setSelection(selectionOffset, selectionOffset + identifier.length());
+                        selectionModel.setSelection(selectionOffset, selectionOffset + identifier.length());
                     }
                 }
                 editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);

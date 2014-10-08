@@ -64,8 +64,10 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             MessageType messageType = message.getType();
             Icon icon =
                     messageType == MessageType.ERROR ? Icons.EXEC_MESSAGES_ERROR :
-                    messageType == MessageType.WARNING ? Icons.EXEC_MESSAGES_WARNING :
+                    messageType == MessageType.WARNING ? Icons.EXEC_MESSAGES_WARNING_INACTIVE :
                     messageType == MessageType.INFO ? Icons.EXEC_MESSAGES_INFO : null;
+
+            append(" (line " + message.getLine() + " / position " + message.getPosition() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
             setIcon(icon);
         }
         else if (value instanceof StatementExecutionMessageNode) {

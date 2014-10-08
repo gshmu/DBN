@@ -13,6 +13,10 @@ public class Message {
         return type;
     }
 
+    public void setType(MessageType type) {
+        this.type = type;
+    }
+
     public String getText() {
         return text;
     }

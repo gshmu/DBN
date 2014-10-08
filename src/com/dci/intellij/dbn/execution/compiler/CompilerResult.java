@@ -37,7 +37,6 @@ public class CompilerResult implements Disposable {
         this.sourceAction = sourceAction;
         Connection connection = null;
         ResultSet resultSet = null;
-        List<CompilerMessage> echoMessages = new ArrayList<CompilerMessage>();
         try {
             connection = connectionHandler.getPoolConnection();
             resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().loadCompileObjectErrors(
@@ -48,13 +47,8 @@ public class CompilerResult implements Disposable {
             while (resultSet != null && resultSet.next()) {
                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
                 isError = true;
-                boolean ignore = sourceAction.getType() == CompilerAction.Type.DDL && sourceAction.getContentType() != errorMessage.getContentType();
-                if (!ignore) {
-                    if (errorMessage.isEcho()) {
-                        echoMessages.add(errorMessage);
-                    } else {
-                        compilerMessages.add(errorMessage);
-                    }
+                if (!sourceAction.isDDL() || sourceAction.getContentType() == errorMessage.getContentType()) {
+                    compilerMessages.add(errorMessage);
                 }
             }
 
@@ -66,13 +60,8 @@ public class CompilerResult implements Disposable {
         }
 
         if (compilerMessages.size() == 0) {
-            if (echoMessages.size() > 0) {
-                compilerMessages.addAll(echoMessages);
-                isError = true;
-            } else {
-                CompilerMessage compilerMessage = new CompilerMessage(this, "The " + objectRef.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
-                compilerMessages.add(compilerMessage);
-            }
+            CompilerMessage compilerMessage = new CompilerMessage(this, "The " + objectRef.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
+            compilerMessages.add(compilerMessage);
         }
     }
 

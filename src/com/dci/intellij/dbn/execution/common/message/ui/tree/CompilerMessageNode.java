@@ -65,4 +65,9 @@ public class CompilerMessageNode implements MessagesTreeNode {
     public Enumeration children() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "[" + compilerMessage.getType() + "] " + compilerMessage.getText();
+    }
 }
