@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
@@ -24,12 +25,15 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -210,14 +214,14 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     }
 
 
-                    if (executionInput.isDataDefinitionStatement()) {
-                        DBSchemaObject affectedObject = executionInput.getAffectedObject();
+                    if (isDataDefinitionStatement()) {
+                        DBSchemaObject affectedObject = getAffectedObject();
                         if (affectedObject != null) {
                             DataDefinitionChangeListener listener = EventManager.notify(project, DataDefinitionChangeListener.TOPIC);
                             listener.dataDefinitionChanged(affectedObject);
                         } else {
-                            DBSchema affectedSchema = executionInput.getAffectedSchema();
-                            IdentifierPsiElement subjectPsiElement = executionInput.getSubjectPsiElement();
+                            DBSchema affectedSchema = getAffectedSchema();
+                            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
                             if (affectedSchema != null && subjectPsiElement != null) {
                                 DataDefinitionChangeListener listener = EventManager.notify(project, DataDefinitionChangeListener.TOPIC);
                                 listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
@@ -241,24 +245,24 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     protected StatementExecutionResult createExecutionResult(Statement statement, final StatementExecutionInput executionInput) throws SQLException {
         final StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
-        boolean isDdlStatement = executionInput.isDataDefinitionStatement();
+        boolean isDdlStatement = isDataDefinitionStatement();
         boolean hasCompilerErrors = false;
         if (isDdlStatement) {
-            final BasePsiElement compilablePsiElement = executionInput.getCompilableBlockPsiElement();
+            final BasePsiElement compilablePsiElement = getCompilableBlockPsiElement();
             if (compilablePsiElement != null) {
                 hasCompilerErrors = new ReadActionRunner<Boolean>() {
                     @Override
                     protected Boolean run() {
                         CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, psiFile.getVirtualFile());
                         compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
-                        compilerAction.setContentType(executionInput.getCompilableContentType());
+                        compilerAction.setContentType(getCompilableContentType());
                         CompilerResult compilerResult = null;
 
-                        DBSchemaObject underlyingObject = executionInput.getAffectedObject();
+                        DBSchemaObject underlyingObject = getAffectedObject();
                         if (underlyingObject == null) {
                             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-                            DBSchema schema = executionInput.getAffectedSchema();
-                            IdentifierPsiElement subjectPsiElement = executionInput.getSubjectPsiElement();
+                            DBSchema schema = getAffectedSchema();
+                            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
                             if (connectionHandler != null && schema != null && subjectPsiElement != null) {
                                 DBObjectType objectType = subjectPsiElement.getObjectType();
                                 String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
@@ -359,6 +363,64 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (cachedExecutable != null) {
             cachedExecutable.navigate(requestFocus);
         }
+    }
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    public boolean isDataDefinitionStatement() {
+        return cachedExecutable != null && cachedExecutable.is(ElementTypeAttribute.DATA_DEFINITION);
+    }
+
+    @Nullable
+    public DBSchemaObject getAffectedObject() {
+        if (isDataDefinitionStatement()) {
+            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+            if (subjectPsiElement != null) {
+                DBObject object = subjectPsiElement.resolveUnderlyingObject();
+                if (object != null && object instanceof DBSchemaObject) {
+                    return (DBSchemaObject) object;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public DBSchema getAffectedSchema() {
+        if (isDataDefinitionStatement()) {
+            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+            if (subjectPsiElement != null) {
+                PsiElement parent = subjectPsiElement.getParent();
+                if (parent instanceof QualifiedIdentifierPsiElement) {
+                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) parent;
+                    DBObject parentObject = qualifiedIdentifierPsiElement.lookupParentObjectFor(subjectPsiElement.getElementType());
+                    if (parentObject instanceof DBSchema) {
+                        return (DBSchema) parentObject;
+                    }
+                }
+            }
+        }
+        return getCurrentSchema();
+    }
+
+    @Nullable
+    public IdentifierPsiElement getSubjectPsiElement() {
+        return cachedExecutable == null ? null : (IdentifierPsiElement) cachedExecutable.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+    }
+
+    public BasePsiElement getCompilableBlockPsiElement() {
+        return cachedExecutable == null ? null : cachedExecutable.lookupFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
+    }
+
+    public DBContentType getCompilableContentType() {
+        BasePsiElement compilableBlockPsiElement = getCompilableBlockPsiElement();
+        if (compilableBlockPsiElement != null) {
+            //if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_DEFINITION)) return DBContentType.CODE;
+            if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_SPECIFICATION)) return DBContentType.CODE_SPEC;
+            if (compilableBlockPsiElement.is(ElementTypeAttribute.OBJECT_DECLARATION)) return DBContentType.CODE_BODY;
+        }
+        return DBContentType.CODE;
     }
 
     /********************************************************
