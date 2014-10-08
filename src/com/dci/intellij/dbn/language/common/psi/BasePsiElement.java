@@ -35,11 +35,14 @@ import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -275,7 +278,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
             if (descriptor != null) {
                 VirtualFile virtualFile = getFile().getVirtualFile();
-                FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+                Project project = getProject();
+                FileEditorManager editorManager = FileEditorManager.getInstance(project);
                 if (virtualFile != null) {
                     if (virtualFile instanceof DBSourceCodeVirtualFile) {
                         DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
@@ -285,7 +289,9 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         }
                         BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
                         if (textEditor != null) {
-                            descriptor.navigateIn(textEditor.getEditor());
+                            Editor editor = textEditor.getEditor();
+                            descriptor.navigateIn(editor);
+                            if (requestFocus) focusEditor(editor);
                         }
                         return;
                     }
@@ -294,7 +300,9 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
                         BasicTextEditor textEditor = EditorUtil.getTextEditor(consoleVirtualFile);
                         if (textEditor != null) {
-                            descriptor.navigateIn(textEditor.getEditor());
+                            Editor editor = textEditor.getEditor();
+                            descriptor.navigateIn(editor);
+                            if (requestFocus) focusEditor(editor);
                         }
                         return;
                     }
@@ -304,7 +312,9 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         if (fileEditor instanceof DDLFileEditor) {
                             DDLFileEditor textEditor = (DDLFileEditor) fileEditor;
                             if (textEditor.getVirtualFile().equals(virtualFile)) {
-                                descriptor.navigateIn(textEditor.getEditor());
+                                Editor editor = textEditor.getEditor();
+                                descriptor.navigateIn(editor);
+                                if (requestFocus) focusEditor(editor);
                                 return;
                             }
 
@@ -315,6 +325,11 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                 }
             }
         }
+    }
+
+    private void focusEditor(Editor editor) {
+        Project project = editor.getProject();
+        IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
     }
 
     /*********************************************************

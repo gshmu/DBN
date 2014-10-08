@@ -1,12 +1,19 @@
 package com.dci.intellij.dbn.execution;
 
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
+import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -21,12 +28,6 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.ExecutionManager",
@@ -87,49 +88,64 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return toolWindow;
     }
 
-    public void showExecutionConsole(final CompilerResult compilerResult) {
-        new SimpleLaterInvocator() {
-            public void execute() {
-                getExecutionConsoleForm().show(compilerResult);
-                showExecutionConsole();
-            }
-        }.start();
-    }
-
-    public void showExecutionConsole(final List<CompilerResult> compilerResults) {
-        new SimpleLaterInvocator() {
-            public void execute() {
-                getExecutionConsoleForm().show(compilerResults);
-                showExecutionConsole();
-            }
-        }.start();
-    }
-
-    public void focusExecutionConsole(final StatementExecutionResult executionResult) {
+    public void addExecutionResult(final CompilerResult compilerResult) {
         new ConditionalLaterInvocator() {
             public void execute() {
-                getExecutionConsoleForm().select(executionResult);
-                showExecutionConsole();
-            }
-        }.start();
-
-    }
-    public void showExecutionConsole(final StatementExecutionResult executionResult) {
-        new SimpleLaterInvocator() {
-            public void execute() {
-                getExecutionConsoleForm().show(executionResult);
+                getExecutionConsoleForm().addResult(compilerResult);
                 showExecutionConsole();
             }
         }.start();
     }
 
-    public void showExecutionConsole(final MethodExecutionResult executionResult) {
-        new SimpleLaterInvocator() {
+    public void addExecutionResults(final List<CompilerResult> compilerResults) {
+        new ConditionalLaterInvocator() {
             public void execute() {
-                getExecutionConsoleForm().show(executionResult);
+                getExecutionConsoleForm().addResults(compilerResults);
                 showExecutionConsole();
             }
         }.start();
+    }
+
+    public void addExecutionResult(final StatementExecutionResult executionResult) {
+        new ConditionalLaterInvocator() {
+            public void execute() {
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.addResult(executionResult);
+                showExecutionConsole();
+                if (!focusOnExecution()) {
+                    executionResult.navigateToEditor(true);
+                }
+            }
+        }.start();
+    }
+
+    private boolean focusOnExecution() {
+        Project project = getProject();
+        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
+        StatementExecutionSettings statementExecutionSettings = executionEngineSettings.getStatementExecutionSettings();
+        return statementExecutionSettings.isFocusResult();
+    }
+
+
+    public void addExecutionResult(final MethodExecutionResult executionResult) {
+        new ConditionalLaterInvocator() {
+            public void execute() {
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.addResult(executionResult);
+                showExecutionConsole();
+            }
+        }.start();
+    }
+
+    public void selectExecutionResult(final StatementExecutionResult executionResult) {
+        new ConditionalLaterInvocator() {
+            public void execute() {
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.selectResult(executionResult);
+                showExecutionConsole();
+            }
+        }.start();
+
     }
 
     public void removeMessagesTab() {
@@ -144,7 +160,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void selectResultTab(ExecutionResult executionResult) {
         showExecutionConsole();
-        getExecutionConsoleForm().selectResultTab(executionResult);
+        ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+        executionConsoleForm.selectResultTab(executionResult);
     }
 
     public ExecutionConsoleForm getExecutionConsoleForm() {

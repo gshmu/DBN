@@ -6,10 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -33,7 +30,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
 
     @Override
     public Icon getIcon(int flags) {
-        if (cachedExecutionProcessor != null) {
+/*        if (cachedExecutionProcessor != null) {
             StatementExecutionProcessor executionProcessor = cachedExecutionProcessor.get();
             if (executionProcessor != null) {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
@@ -52,8 +49,8 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
                     }
                 }
             }
-        }
-        return Icons.ACTION_NAVIGATE;
+        }*/
+        return Icons.STMT_EXECUTION_NAVIGATE;
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {

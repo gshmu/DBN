@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3335</version>
+    <version>3.0.3371</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -33,6 +33,8 @@
                 - Discontinued connection setup on module level<br>
                 - Compile error outputs on DDL script execution (Oracle)<br>
                 - Support for manually controlled database connectivity<br>
+                - Improved statement execution result linkage<br>
+                - Improved focus logic on statement execution<br>
                 - Various bug fixes and optimizations<br>
             </ul>
             <li><b>3.0.3305</b>

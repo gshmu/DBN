@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -11,8 +22,6 @@ import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -29,14 +38,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
     public MessagesTree(Project project) {
@@ -45,6 +46,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         setCellRenderer(new MessagesTreeCellRenderer());
         addTreeSelectionListener(treeSelectionListener);
         addMouseListener(mouseListener);
+        addKeyListener(keyListener);
         setRootVisible(false);
         setShowsRootHandles(true);
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
@@ -62,48 +64,54 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean focus) {
         TreePath treePath = getModel().addExecutionMessage(executionMessage);
-        if (focus) {
-            getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
-            requestFocus();
-        }
+        getSelectionModel().setSelectionPath(treePath);
+        scrollPathToVisible(treePath);
+        if (focus) requestFocus();
         return treePath;
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
-        if (focus) {
-            getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
-            grabFocus();
-        }
+        getSelectionModel().setSelectionPath(treePath);
+        scrollPathToVisible(treePath);
+        if (focus) requestFocus();
         return treePath;
     }
 
-    public void focus(CompilerMessage compilerMessage) {
+    public void selectCompilerMessage(CompilerMessage compilerMessage, boolean focus) {
         TreePath treePath = getModel().getTreePath(compilerMessage);
         if (treePath != null) {
             getSelectionModel().setSelectionPath(treePath);
             scrollPathToVisible(treePath);
-            grabFocus();
+            if (focus) requestFocus();
         }
     }
 
-    public void focus(StatementExecutionMessage statementExecutionMessage) {
+    public void selectExecutionMessage(StatementExecutionMessage statementExecutionMessage, boolean focus) {
         TreePath treePath = getModel().getTreePath(statementExecutionMessage);
         if (treePath != null) {
             getSelectionModel().setSelectionPath(treePath);
             scrollPathToVisible(treePath);
-            grabFocus();
+            if (focus) requestFocus();
         }
     }
 
-    private void navigateToCode(Object object) {
+/*
+    private void focusTree() {
+        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
+        StatementExecutionSettings statementExecutionSettings = executionEngineSettings.getStatementExecutionSettings();
+        if (statementExecutionSettings.isFocusResult()) {
+            grabFocus();
+        }
+    }
+*/
+
+    private void navigateToCode(Object object, boolean requestFocus) {
         if (object instanceof StatementExecutionMessageNode) {
             StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) object;
             StatementExecutionMessage executionMessage = execMessageNode.getExecutionMessage();
             if (!executionMessage.isOrphan()) {
-                executionMessage.navigateToEditor();
+                executionMessage.navigateToEditor(requestFocus);
             }
         }
         else if (object instanceof CompilerMessageNode) {
@@ -117,9 +125,11 @@ public class MessagesTree extends DBNTree implements Disposable {
                 CompilerAction.Type sourceActionType = sourceAction.getType();
                 if (sourceActionType == CompilerAction.Type.SAVE || sourceActionType == CompilerAction.Type.COMPILE) {
                     DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
-                    if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
-                        editorManager.openFile(databaseFile, false);
-                        navigateInObjectEditor(compilerMessage);
+                    if (databaseFile != null) {
+                        if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
+                            editorManager.openFile(databaseFile, false);
+                            navigateInObjectEditor(compilerMessage);
+                        }
                     }
                 } else if (sourceActionType == CompilerAction.Type.DDL) {
                     VirtualFile virtualFile = sourceAction.getVirtualFile();
@@ -205,8 +215,8 @@ public class MessagesTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent event) {
             if (event.isAddedPath()) {
                 Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object);
-                grabFocus();
+                navigateToCode(object, false);
+                //grabFocus();
             }
         }
     };
@@ -220,19 +230,24 @@ public class MessagesTree extends DBNTree implements Disposable {
             if (event.getButton() == MouseEvent.BUTTON1) {
                 TreePath selectionPath = getSelectionPath();
                 if (selectionPath != null) {
-                    if (event.getClickCount() > 1 ) {
-                        Object value = selectionPath.getLastPathComponent();
-                        if (value instanceof StatementExecutionMessageNode) {
-                            StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) value;
-                            StatementExecutionResult executionResult = execMessageNode.getExecutionMessage().getExecutionResult();
-                            StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
-                            statementViewer.show(event.getComponent(), event.getPoint());
-                            event.consume();
-                        }
-                    } else {
-                        Object value = selectionPath.getLastPathComponent();
-                        navigateToCode(value);
-                    }
+                    Object value = selectionPath.getLastPathComponent();
+                    navigateToCode(value, event.getClickCount() > 1);
+                }
+            }
+        }
+    };
+
+    /*********************************************************
+     *                        KeyListener                    *
+     *********************************************************/
+    private KeyListener keyListener = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER ) {
+                TreePath selectionPath = getSelectionPath();
+                if (selectionPath != null) {
+                    Object value = selectionPath.getLastPathComponent();
+                    navigateToCode(value, true);
                 }
             }
         }

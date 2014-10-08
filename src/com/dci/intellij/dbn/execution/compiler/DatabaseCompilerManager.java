@@ -39,13 +39,15 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     public void createCompilerResult(DBSchemaObject object, CompilerAction sourceAction) {
+        Project project = object.getProject();
         CompilerResult compilerResult = new CompilerResult(object, sourceAction);
-        ExecutionManager.getInstance(object.getProject()).showExecutionConsole(compilerResult);
+        ExecutionManager.getInstance(project).addExecutionResult(compilerResult);
     }
 
     public void createErrorCompilerResult(DBSchemaObject object, Exception e) {
+        Project project = object.getProject();
         CompilerResult compilerResult = new CompilerResult(object, "Could not perform compile operation. \nCause: " + e.getMessage());
-        ExecutionManager.getInstance(object.getProject()).showExecutionConsole(compilerResult);
+        ExecutionManager.getInstance(project).addExecutionResult(compilerResult);
     }
 
     public void compileObject(DBSchemaObject object, CompileType compileType, CompilerAction sourceAction) {
@@ -179,7 +181,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                     buildCompilationErrors(schema.getProcedures(), compilerErrors);
                                     buildCompilationErrors(schema.getTriggers(), compilerErrors);
                                     if (compilerErrors.size() > 0) {
-                                        ExecutionManager.getInstance(project).showExecutionConsole(compilerErrors);
+                                        ExecutionManager.getInstance(project).addExecutionResults(compilerErrors);
                                     }
                                 }
                             }
