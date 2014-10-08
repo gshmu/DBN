@@ -37,7 +37,7 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (executable != null) {
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, true);
+                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(editor, executable, true);
                 if (executionProcessor != null) {
                     StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
                     return executionResult != null;
@@ -51,7 +51,7 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction {
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         if (executable != null) {
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, true);
+            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(editor, executable, true);
             executionManager.fireExecution(executionProcessor);
             DocumentUtil.refreshEditorAnnotations(executable.getFile());
         }

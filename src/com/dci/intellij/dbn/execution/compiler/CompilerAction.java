@@ -1,15 +1,18 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class CompilerAction {
     public static final CompilerAction BULK_COMPILE_ACTION = new CompilerAction(Type.BULK_COMPILE);
 
     private Type type;
-    private VirtualFile virtualFile;
+    private WeakReference<VirtualFile> virtualFile;
+    private WeakReference<Editor> editor;
     private int startOffset;
     private DBContentType contentType;
 
@@ -17,9 +20,10 @@ public class CompilerAction {
         this.type = type;
     }
 
-    public CompilerAction(Type type, VirtualFile virtualFile) {
+    public CompilerAction(Type type, VirtualFile virtualFile, Editor editor) {
         this.type = type;
-        this.virtualFile = virtualFile;
+        this.virtualFile = new WeakReference<VirtualFile>(virtualFile);
+        this.editor = new WeakReference<Editor>(editor);
     }
 
     public DBContentType getContentType() {
@@ -56,7 +60,12 @@ public class CompilerAction {
 
     @Nullable
     public VirtualFile getVirtualFile() {
-        return virtualFile;
+        return virtualFile == null ? null : virtualFile.get();
+    }
+
+    @Nullable
+    public Editor getEditor() {
+        return editor == null ? null : editor.get();
     }
 
     public int getStartOffset() {

@@ -1,6 +1,11 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -9,11 +14,10 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class StatementGutterAction extends AnAction {
     final ExecutablePsiElement executablePsiElement;
@@ -84,7 +88,14 @@ public class StatementGutterAction extends AnAction {
     private StatementExecutionProcessor getExecutionProcessor(boolean create) {
         StatementExecutionManager executionManager = getExecutionManager();
         if (executionManager != null) {
-            return executionManager.getExecutionProcessor(executablePsiElement, create);
+            Document document = DocumentUtil.getDocument(executablePsiElement.getFile());
+            EditorFactory editorFactory = EditorFactory.getInstance();
+            if (editorFactory != null) {
+                Editor[] editors = editorFactory.getEditors(document);
+                if (editors.length > 0) {
+                    return executionManager.getExecutionProcessor(editors[0], executablePsiElement, create);
+                }
+            }
         }
         return null;
     }

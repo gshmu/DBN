@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
@@ -45,6 +46,8 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     void unbind();
 
     boolean isBound();
+
+    Editor getEditor();
 
     @Nullable
     ExecutablePsiElement getCachedExecutable();

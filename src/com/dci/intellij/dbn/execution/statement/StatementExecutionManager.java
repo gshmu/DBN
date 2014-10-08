@@ -234,7 +234,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                             OPTIONS_MULTIPLE_STATEMENT_EXEC, 0);
                     if (exitCode == 0 || exitCode == 1) {
                         int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
-                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(file, offset);
+                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(editor, offset);
                         fireExecution(executionProcessors);
                     }
                 }
@@ -247,18 +247,19 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
         String selection = editor.getSelectionModel().getSelectedText();
         if (selection != null) {
-            return new StatementExecutionCursorProcessor(file, selection, getNextSequence());
+            return new StatementExecutionCursorProcessor(editor, file, selection, getNextSequence());
         }
 
         ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
         if (executablePsiElement != null) {
-            return getExecutionProcessor(executablePsiElement, true);
+            return getExecutionProcessor(editor, executablePsiElement, true);
         }
 
         return null;
     }
 
-    public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(DBLanguagePsiFile file, int offset) {
+    public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(Editor editor, int offset) {
+        DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
         List<StatementExecutionProcessor> executionProcessors = new ArrayList<StatementExecutionProcessor>();
 
         PsiElement child = file.getFirstChild();
@@ -268,7 +269,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
                 for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
                     if (executable.getTextOffset() > offset) {
-                        StatementExecutionProcessor executionProcessor = getExecutionProcessor(executable, true);
+                        StatementExecutionProcessor executionProcessor = getExecutionProcessor(editor, executable, true);
                         executionProcessors.add(executionProcessor);
                     }
                 }
@@ -279,7 +280,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     @Nullable
-    public StatementExecutionProcessor getExecutionProcessor(ExecutablePsiElement executablePsiElement, boolean create) {
+    public StatementExecutionProcessor getExecutionProcessor(Editor editor, ExecutablePsiElement executablePsiElement, boolean create) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
 
         List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(psiFile);
@@ -289,14 +290,14 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             }
         }
 
-        return create ? createExecutionProcessor(executionProcessors, executablePsiElement) : null;
+        return create ? createExecutionProcessor(editor, executionProcessors, executablePsiElement) : null;
     }
 
-    private StatementExecutionProcessor createExecutionProcessor(List<StatementExecutionProcessor> executionProcessors, ExecutablePsiElement executablePsiElement) {
+    private StatementExecutionProcessor createExecutionProcessor(Editor editor, List<StatementExecutionProcessor> executionProcessors, ExecutablePsiElement executablePsiElement) {
         StatementExecutionBasicProcessor executionProcessor =
                 executablePsiElement.isQuery() ?
-                        new StatementExecutionCursorProcessor(executablePsiElement, getNextSequence()) :
-                        new StatementExecutionBasicProcessor(executablePsiElement, getNextSequence());
+                        new StatementExecutionCursorProcessor(editor, executablePsiElement, getNextSequence()) :
+                        new StatementExecutionBasicProcessor(editor, executablePsiElement, getNextSequence());
         executionProcessors.add(executionProcessor);
         executablePsiElement.setExecutionProcessor(executionProcessor);
         return executionProcessor;

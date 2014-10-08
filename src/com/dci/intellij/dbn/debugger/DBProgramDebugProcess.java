@@ -461,8 +461,11 @@ public class DBProgramDebugProcess extends XDebugProcess {
                     }
                 }
                 LogicalPosition position = new LogicalPosition(line, 0);
-                EditorUtil.selectEditor(databaseFile, sourceCodeEditor, true);
-                if (sourceCodeEditor != null) sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
+                Project project = connectionHandler.getProject();
+                if (sourceCodeEditor != null) {
+                    EditorUtil.selectEditor(project, databaseFile, sourceCodeEditor, true);
+                    sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
+                }
             }
         }.start();
     }

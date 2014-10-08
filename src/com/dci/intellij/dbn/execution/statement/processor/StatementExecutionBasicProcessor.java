@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -36,15 +37,18 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
-    protected DBLanguagePsiFile psiFile;
+    protected WeakReference<Editor> editor;
+    protected WeakReference<DBLanguagePsiFile> psiFile;
     protected ExecutablePsiElement cachedExecutable;
 
     protected String resultName;
@@ -53,15 +57,18 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     private StatementExecutionInput executionInput;
     private StatementExecutionResult executionResult;
 
-    public StatementExecutionBasicProcessor(ExecutablePsiElement psiElement, int index) {
+    public StatementExecutionBasicProcessor(Editor editor, ExecutablePsiElement psiElement, int index) {
+        this.editor = new WeakReference<Editor>(editor);
+        this.psiFile = new WeakReference<DBLanguagePsiFile>(psiElement.getFile());
+
         this.cachedExecutable = psiElement;
-        this.psiFile = psiElement.getFile();
         this.index = index;
         executionInput = new StatementExecutionInput(psiElement.getText(), psiElement.prepareStatementText(), this);
     }
 
-    public StatementExecutionBasicProcessor(DBLanguagePsiFile psiFile, String sqlStatement, int index) {
-        this.psiFile = psiFile;
+    public StatementExecutionBasicProcessor(Editor editor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
+        this.editor = new WeakReference<Editor>(editor);
+        this.psiFile = new WeakReference<DBLanguagePsiFile>(psiFile);
         this.index = index;
         sqlStatement = sqlStatement.trim();
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
@@ -95,7 +102,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public DBLanguagePsiFile getPsiFile() {
-        return psiFile;
+        return psiFile.get();
+    }
+    @Override
+    public Editor getEditor() {
+        return editor.get();
     }
 
     @Override
@@ -206,11 +217,12 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     statement.execute(executableStatementText);
                     executionResult = createExecutionResult(statement, executionInput);
                     ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+                    VirtualFile virtualFile = getPsiFile().getVirtualFile();
                     if (executablePsiElement != null) {
-                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(psiFile.getVirtualFile());
+                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
                         if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
                     } else{
-                        if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(psiFile.getVirtualFile());
+                        if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(virtualFile);
                     }
 
 
@@ -253,7 +265,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 hasCompilerErrors = new ReadActionRunner<Boolean>() {
                     @Override
                     protected Boolean run() {
-                        CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, psiFile.getVirtualFile());
+                        CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, getPsiFile().getVirtualFile(), getEditor());
                         compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
                         compilerAction.setContentType(getCompilableContentType());
                         CompilerResult compilerResult = null;
@@ -313,15 +325,19 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return psiFile.getActiveConnection();
+        DBLanguagePsiFile psiFile = getPsiFile();
+        return psiFile == null ? null : psiFile.getActiveConnection();
     }
 
     public DBSchema getCurrentSchema() {
+        DBLanguagePsiFile psiFile = getPsiFile();
         return psiFile == null ? null : psiFile.getCurrentSchema();
     }
 
     public Project getProject() {
+        DBLanguagePsiFile psiFile = getPsiFile();
         return psiFile == null ? null : psiFile.getProject();
     }
 
@@ -360,8 +376,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public void navigateToEditor(boolean requestFocus) {
-        if (cachedExecutable != null) {
-            cachedExecutable.navigate(requestFocus);
+        Editor editor = getEditor();
+        if (cachedExecutable != null && editor != null) {
+            cachedExecutable.navigateInEditor(editor, requestFocus);
         }
     }
 

@@ -40,6 +40,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -58,6 +59,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     private boolean isScopeIsolation;
     private boolean isScopeDemarcation;
     private FormattingAttributes formattingAttributes;
+
     public enum MatchType {
         STRONG,
         CACHED,
@@ -327,7 +329,18 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         }
     }
 
-    private void focusEditor(Editor editor) {
+    public void navigateInEditor(@NotNull Editor editor, boolean requestFocus) {
+        OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
+        if (descriptor != null) {
+            FileEditor fileEditor = TextEditorProvider.getInstance().getTextEditor(editor);
+            EditorUtil.selectEditor(getProject(), getFile().getVirtualFile(), fileEditor, requestFocus);
+            descriptor.navigateIn(editor);
+            if (requestFocus) focusEditor(editor);
+        }
+    }
+
+
+    private void focusEditor(@NotNull Editor editor) {
         Project project = editor.getProject();
         IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
     }
