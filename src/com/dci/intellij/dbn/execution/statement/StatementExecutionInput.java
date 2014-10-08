@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -9,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
@@ -25,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import org.jetbrains.annotations.Nullable;
 
 public class StatementExecutionInput implements Disposable {
     private StatementExecutionProcessor executionProcessor;
@@ -39,7 +39,7 @@ public class StatementExecutionInput implements Disposable {
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         this.executionProcessor = executionProcessor;
-        this.connectionHandlerRef = executionProcessor.getConnectionHandler().getRef();
+        this.connectionHandlerRef = ConnectionHandlerRef.from(executionProcessor.getConnectionHandler());
         this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
@@ -65,21 +65,24 @@ public class StatementExecutionInput implements Disposable {
     @Nullable
     public ExecutablePsiElement getExecutablePsiElement() {
         if (executablePsiElement == null) {
-            executablePsiElement = new ReadActionRunner<ExecutablePsiElement>() {
+            final ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                executablePsiElement = new ReadActionRunner<ExecutablePsiElement>() {
 
-                @Override
-                protected ExecutablePsiElement run() {
-                    PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-                    PsiFile previewFile = psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), originalStatementText);
+                    @Override
+                    protected ExecutablePsiElement run() {
+                        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
+                        PsiFile previewFile = psiFileFactory.createFileFromText("preview", connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE), originalStatementText);
 
-                    PsiElement firstChild = previewFile.getFirstChild();
-                    if (firstChild instanceof ExecutableBundlePsiElement) {
-                        ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                        return rootPsiElement.getExecutablePsiElements().get(0);
+                        PsiElement firstChild = previewFile.getFirstChild();
+                        if (firstChild instanceof ExecutableBundlePsiElement) {
+                            ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
+                            return rootPsiElement.getExecutablePsiElements().get(0);
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            }.start();
+                }.start();
+            }
         }
         return executablePsiElement;
     }
@@ -97,7 +100,11 @@ public class StatementExecutionInput implements Disposable {
 
     public PsiFile getPreviewFile() {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-        return psiFileFactory.createFileFromText("preview", getConnectionHandler().getLanguageDialect(SQLLanguage.INSTANCE), executableStatementText);
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DBLanguageDialect languageDialect = connectionHandler == null ?
+                SQLLanguage.INSTANCE.getMainLanguageDialect() :
+                connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+        return psiFileFactory.createFileFromText("preview", languageDialect, executableStatementText);
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {
@@ -105,15 +112,25 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public Project getProject() {
-        return getConnectionHandler().getProject();
+        return executionProcessor == null ? null : executionProcessor.getProject();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return ConnectionHandlerRef.get(connectionHandlerRef);
     }
 
+    public void setConnectionHandler(ConnectionHandler connectionHandler) {
+        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+    }
+
+    @Nullable
     public DBSchema getCurrentSchema() {
         return DBObjectRef.get(currentSchemaRef);
+    }
+
+    public void setCurrentSchema(DBSchema currentSchema) {
+        this.currentSchemaRef = DBObjectRef.from(currentSchema);
     }
 
     public boolean isDataDefinitionStatement() {
