@@ -161,7 +161,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         }
 
         @Override
-        public void dataDefinitionChanged(DBSchemaObject schemaObject) {
+        public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
             if (schemaObject.getConnectionHandler() == connectionHandler) {
                 DBObjectListContainer childObjects = schemaObject.getChildObjects();
                 List<DBObjectList<DBObject>> objectLists = null;

@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,15 +20,23 @@ import com.dci.intellij.dbn.editor.code.SourceCodeContent;
 import com.dci.intellij.dbn.editor.code.SourceCodeLoadListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
+import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
@@ -61,7 +72,74 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         } else {
             sourceLoadError = "Could not find object in database";
         }
+        EventManager.subscribe(databaseFile.getProject(), DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
+
+    private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
+        @Override
+        public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
+/*
+            if (schema.getConnectionHandler() == connectionHandler) {
+                DBObjectList childObjectList = schema.getChildObjectList(objectType);
+                if (childObjectList != null && childObjectList.isLoaded()) {
+                    childObjectList.reload();
+                }
+
+                Set<DBObjectType> childObjectTypes = objectType.getChildren();
+                for (DBObjectType childObjectType : childObjectTypes) {
+                    DBObjectListContainer childObjects = schema.getChildObjects();
+                    if (childObjects != null) {
+                        childObjectList = childObjects.getHiddenObjectList(childObjectType);
+                        if (childObjectList != null && childObjectList.isLoaded()) {
+                            childObjectList.reload();
+                        }
+                    }
+                }
+            }
+*/
+        }
+
+        @Override
+        public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
+            if (schemaObject.equals(getObject())) {
+                boolean reload = true;
+                if (isModified()) {
+                    int exitCode = MessageUtil.showQuestionDialog(
+                            "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor. " +
+                                    "\nDo you want to discard the changes and reload the updated database version?",
+                            "Unsaved changes", new String[]{"Reload", "Keep changes"}, 0);
+                    if (exitCode == 1) {
+                        reload = false;
+                    }
+                }
+
+                if (reload) {
+                    new BackgroundTask(getProject(), "Reloading object source code", !isModified()) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                            boolean reloaded = reloadFromDatabase();
+                            if (reloaded) {
+                                new WriteActionRunner() {
+                                    public void run() {
+                                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                                        FileEditor[] allEditors = fileEditorManager.getAllEditors(DBSourceCodeVirtualFile.this);
+                                        for (FileEditor fileEditor : allEditors) {
+                                            if (fileEditor instanceof TextEditor) {
+                                                TextEditor textEditor = (TextEditor) fileEditor;
+                                                Editor editor = textEditor.getEditor();
+                                                editor.getDocument().setText(content);
+                                            }
+                                        }
+                                    }
+                                }.start();
+                                setModified(false);
+                            }
+                        }
+                    }.start();
+                }
+            }
+        }
+    };
 
     public SourceCodeOffsets getOffsets() {
         return offsets;
@@ -141,6 +219,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
             DBSchemaObject object = getObject();
             if (object != null) {
+                ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
                 SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
                 SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
                 content = sourceCodeContent.getSourceCode();
@@ -228,6 +307,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     @Override
     public void dispose() {
+        EventManager.unsubscribe(dataDefinitionChangeListener);
         originalContent = null;
         lastSavedContent = null;
         content = "";
