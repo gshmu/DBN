@@ -112,6 +112,12 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                         tabInfo.setIcon(icon);
                     }
                 }
+
+                if (executionMessagesPanel != null) {
+                    JComponent messagePanelComponent = executionMessagesPanel.getComponent();
+                    messagePanelComponent.revalidate();
+                    messagePanelComponent.repaint();
+                }
             }
         }
     };

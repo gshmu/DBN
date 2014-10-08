@@ -65,7 +65,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public boolean isDirty(){
         if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
-                getCurrentSchema() != executionInput.getCurrentSchema()) { // current schema changed since execution)
+            getCurrentSchema() != executionInput.getCurrentSchema()) { // current schema changed since execution)
             return true;
 
         } else {
