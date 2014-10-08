@@ -318,8 +318,8 @@
         </group>
         <group id="DBNavigator.ActionGroup.StatementExecutionResult">
             <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View statement" icon="/img/action/Preview.png"/>
             <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View record" icon="/img/RecordViewer.png"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View statement" icon="/img/file/SQLBlock.png"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.OpenVariablesDialog" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultVariablesDialogAction" text="Execution Result - Open variables dialog"/>
             <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun statement"/>

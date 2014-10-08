@@ -127,14 +127,14 @@ public class MessagesTree extends DBNTree implements Disposable {
                     DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
                     if (databaseFile != null) {
                         if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
-                            editorManager.openFile(databaseFile, false);
+                            editorManager.openFile(databaseFile, requestFocus);
                             navigateInObjectEditor(compilerMessage);
                         }
                     }
                 } else if (sourceActionType == CompilerAction.Type.DDL) {
                     VirtualFile virtualFile = sourceAction.getVirtualFile();
                     if (virtualFile != null) {
-                        editorManager.openFile(virtualFile, false);
+                        editorManager.openFile(virtualFile, requestFocus);
                         navigateInScriptEditor(compilerMessage, virtualFile, sourceAction.getStartOffset());
                     }
                 }

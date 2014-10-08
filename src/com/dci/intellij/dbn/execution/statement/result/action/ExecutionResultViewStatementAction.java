@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
+import java.awt.Component;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-import java.awt.Component;
-
 public class ExecutionResultViewStatementAction extends AbstractExecutionResultAction {
     public ExecutionResultViewStatementAction() {
-        super("View SQL statement", Icons.FILE_BLOCK_SQL);
+        super("View SQL statement", Icons.EXEC_RESULT_VIEW_STATEMENT);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
             StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
