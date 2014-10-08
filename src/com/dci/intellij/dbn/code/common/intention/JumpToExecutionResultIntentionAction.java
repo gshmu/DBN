@@ -58,7 +58,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (executable != null) {
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, false);
+                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(editor, executable, false);
                 if (executionProcessor != null && executionProcessor.getExecutionResult() != null) {
                     cachedExecutionProcessor = new WeakReference<StatementExecutionProcessor>(executionProcessor);
                     return true;
@@ -73,7 +73,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         if (executable != null) {
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(executable, false);
+            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(editor, executable, false);
             if (executionProcessor != null) {
                 executionProcessor.navigateToResult();
             }

@@ -29,7 +29,7 @@ public class CompileObjectAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(object.getProject());
         CompileType compileType = getCompilerSettings(object.getProject()).getCompileType();
-        CompilerAction sourceAction = new CompilerAction(CompilerAction.Type.COMPILE, null);
+        CompilerAction sourceAction = new CompilerAction(CompilerAction.Type.COMPILE);
         compilerManager.compileObject(object, contentType, compileType, sourceAction);
     }
 

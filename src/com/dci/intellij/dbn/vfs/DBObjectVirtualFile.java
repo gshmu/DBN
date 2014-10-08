@@ -58,6 +58,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return objectRef.hashCode();
     }
 
+    @Nullable
     public Project getProject() {
         T object = DBObjectRef.get(objectRef);
         return object == null ? null : object.getProject();

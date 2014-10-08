@@ -100,23 +100,23 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         }
 
         @Override
-        public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
+        public void dataDefinitionChanged(@NotNull final DBSchemaObject schemaObject) {
             if (schemaObject.equals(getObject())) {
-                boolean reload = true;
-                if (isModified()) {
-                    int exitCode = MessageUtil.showQuestionDialog(
-                            "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor. " +
-                                    "\nDo you want to discard the changes and reload the updated database version?",
-                            "Unsaved changes", new String[]{"Reload", "Keep changes"}, 0);
-                    if (exitCode == 1) {
-                        reload = false;
-                    }
-                }
+                new BackgroundTask(getProject(), "Reloading object source code", !isModified()) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        boolean reload = true;
+                        if (isModified()) {
+                            int exitCode = MessageUtil.showQuestionDialog(
+                                    "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor. " +
+                                            "\nDo you want to discard the changes and reload the updated database version?",
+                                    "Unsaved changes", new String[]{"Reload", "Keep changes"}, 0);
+                            if (exitCode == 1) {
+                                reload = false;
+                            }
+                        }
 
-                if (reload) {
-                    new BackgroundTask(getProject(), "Reloading object source code", !isModified()) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        if (reload) {
                             boolean reloaded = reloadFromDatabase();
                             if (reloaded) {
                                 new WriteActionRunner() {
@@ -135,8 +135,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                                 setModified(false);
                             }
                         }
-                    }.start();
-                }
+                    }
+                }.start();
             }
         }
     };
