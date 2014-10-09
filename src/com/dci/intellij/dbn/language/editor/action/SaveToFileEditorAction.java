@@ -1,18 +1,15 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
-import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
-import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -25,9 +22,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 public class SaveToFileEditorAction extends DumbAwareAction {
     public SaveToFileEditorAction() {

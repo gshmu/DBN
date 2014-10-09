@@ -22,17 +22,20 @@ public class ReloadObjectsAction extends AnAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         final Project project = ActionUtil.getProject(e);
-        new ConnectionAction(objectList, project != null){
-            @Override
-            protected void execute() {
-                new BackgroundTask(project, "Reloading " + objectList.getObjectType().getListName(), false) {
-                    @Override
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        initProgressIndicator(progressIndicator, false);
-                        objectList.reload();
-                    }
-                }.start();
-            }
-        }.start();
+        if (project != null) {
+            new ConnectionAction(objectList){
+                @Override
+                public void execute() {
+                    new BackgroundTask(project, "Reloading " + objectList.getObjectType().getListName(), false) {
+                        @Override
+                        public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            initProgressIndicator(progressIndicator, false);
+                            objectList.reload();
+                        }
+                    }.start();
+                }
+            }.start();
+
+        }
     }
 }

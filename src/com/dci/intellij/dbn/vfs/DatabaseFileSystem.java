@@ -304,7 +304,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public void openEditor(final DBObject object, final boolean scrollBrowser, final boolean focusEditor) {
         new ConnectionAction(object) {
             @Override
-            protected void execute() {
+            public void execute() {
                 new BackgroundTask(object.getProject(), "Opening editor", false, true) {
                     @Override
                     public void execute(@NotNull ProgressIndicator progressIndicator) {

@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -168,7 +170,7 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
             formatCustomRadioButton.isSelected() ? DataExportFormat.CUSTOM : null;
     }
 
-    public boolean validateEntries() {
+    public void validateEntries(final RunnableTask callback) {
         boolean validValueSeparator = valueSeparatorTextField.getText().trim().length() > 0;
         boolean validFileName = fileNameTextField.getText().trim().length() > 0;
         boolean validFileLocation = fileLocationTextField.getText().trim().length() > 0;
@@ -189,20 +191,29 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
 
         if (buffer.length() > 0) {
             buffer.insert(0, "Please provide values for: ");
-            MessageUtil.showErrorDialog(buffer.toString(), "Required input");
-            return false;
+            MessageUtil.showErrorDialog("Required input", buffer.toString());
+            return;
         }
 
         if (destinationFileRadioButton.isSelected()) {
             File file = getExportInstructions().getFile();
             if (file.exists()) {
-                int response = MessageUtil.showQuestionDialog(
-                        "File " + file.getPath() + " already exists. Overwrite?", "File exists", MessageUtil.OPTIONS_YES_NO, 0);
-                return response == 0;
+                MessageUtil.showQuestionDialog("File exists",
+                        "File " + file.getPath() + " already exists. Overwrite?",
+                        MessageUtil.OPTIONS_YES_NO, 0,
+                        new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                if (getOption() == 0) {
+                                    callback.start();
+                                }
+                            }
+                        });
+                return;
             }
         }
 
-        return true;
+        callback.start();
     }
 
     ActionListener actionListener = new ActionListener() {

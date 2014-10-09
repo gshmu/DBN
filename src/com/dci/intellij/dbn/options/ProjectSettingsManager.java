@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -98,15 +99,22 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         Project project = projectSettings.getProject();
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
-            int exitCode = MessageUtil.showQuestionDialog(
+            MessageUtil.showQuestionDialog(
+                    "Default Project Settings",
                     "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
-                    "Default Project Settings", new String[]{"Yes", "No"}, 0);
-            if (exitCode == 0) {
-                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
-                Element element = new Element("state");
-                defaultProjectSettings.writeConfiguration(element);
-                projectSettings.readConfiguration(element);
-            }
+                    new String[]{"Yes", "No"}, 0,
+                    new SimpleTask() {
+                        @Override
+                        public void execute() {
+                            if (getOption() == 0) {
+                                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
+                                Element element = new Element("state");
+                                defaultProjectSettings.writeConfiguration(element);
+                                projectSettings.readConfiguration(element);
+                            }
+
+                        }
+                    });
         }
     }
 

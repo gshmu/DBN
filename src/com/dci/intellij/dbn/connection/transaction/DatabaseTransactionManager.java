@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
-import com.dci.intellij.dbn.common.thread.ModalTask;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
@@ -61,18 +61,18 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         Project project = connectionHandler.getProject();
         String connectionName = connectionHandler.getName();
         if (ApplicationManager.getApplication().isDisposeInProgress()) {
-            execute(connectionHandler, actions);
+            executeActions(connectionHandler, actions);
         } else {
-            new ModalTask(project, "Performing " + actions[0].getName() + " on connection " + connectionName, background) {
+            new BackgroundTask(project, "Performing " + actions[0].getName() + " on connection " + connectionName, background) {
                 @Override
-                public void run(@NotNull ProgressIndicator indicator) {
-                    execute(connectionHandler, actions);
+                public void execute(@NotNull ProgressIndicator indicator) {
+                    executeActions(connectionHandler, actions);
                 }
             }.start();
         }
     }
 
-    public void execute(ConnectionHandler connectionHandler, TransactionAction... actions) {
+    public void executeActions(ConnectionHandler connectionHandler, TransactionAction... actions) {
         Project project = connectionHandler.getProject();
         String connectionName = connectionHandler.getName();
         TransactionListener transactionListener = EventManager.notify(getProject(), TransactionListener.TOPIC);

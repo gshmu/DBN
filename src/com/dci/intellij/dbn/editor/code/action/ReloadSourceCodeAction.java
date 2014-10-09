@@ -23,9 +23,9 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
     public void actionPerformed(@NotNull final AnActionEvent e) {
         final Project project = ActionUtil.getProject(e);
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
-        new ConnectionAction(sourcecodeFile, project != null){
+        new ConnectionAction(sourcecodeFile){
             @Override
-            protected void execute() {
+            public void execute() {
                 new BackgroundTask(project, "Loading database source code", false, true) {
 
                     @Override

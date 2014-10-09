@@ -420,9 +420,13 @@ public class DBProgramDebugProcess extends XDebugProcess {
         return schemaObject.getVirtualFile();
     }
 
-    private DBSchemaObject getMainDatabaseObject() {
-        DBMethod method = executionInput.getMethod();
+    public DBSchemaObject getMainDatabaseObject() {
+        DBMethod method = getMethod();
         return method.isProgramMethod() ? method.getProgram() : method;
+    }
+
+    public DBMethod getMethod() {
+        return executionInput.getMethod();
     }
 
     private void rollOutDebugger() {

@@ -59,7 +59,7 @@ public abstract class GenerateStatementAction extends AnAction {
     private void pasteToClipboard(StatementGeneratorResult result) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(result.getStatement()), null);
-        MessageUtil.showInfoDialog("SQL statement exported to clipboard.", "Statement extracted");
+        MessageUtil.showInfoDialog("Statement extracted", "SQL statement exported to clipboard.");
     }
 
     private void pasteToEditor(final Editor editor, final StatementGeneratorResult generatorResult) {

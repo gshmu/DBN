@@ -92,7 +92,7 @@ public class ProjectSettingsDialog extends DBNDialog {
             bApply.setEnabled(false);
             setCancelButtonText("Close");
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(e.getMessage(), e.getTitle());
+            MessageUtil.showErrorDialog(e.getTitle(), e.getMessage());
         }
     }
 

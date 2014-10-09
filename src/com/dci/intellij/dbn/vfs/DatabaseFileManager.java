@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -115,12 +116,16 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     DBSchemaObject object = databaseFile.getObject();
 
                     if (object != null) {
-                        int selection = MessageUtil.showWarningDialog(
+                        MessageUtil.showWarningDialog(
                                 "You have unsaved changes to the " + object.getQualifiedNameWithType() + ".\n",
-                                Constants.DBN_TITLE_PREFIX + "Unsaved changes", options, 0);
-                        if (selection == 0) {
-                            databaseFile.saveChanges();
-                        }
+                                Constants.DBN_TITLE_PREFIX + "Unsaved changes", options, 0, new SimpleTask() {
+                                    @Override
+                                    public void execute() {
+                                        if (getOption() == 0) {
+                                            databaseFile.saveChanges();
+                                        }
+                                    }
+                                });
                     }
                 }
             }

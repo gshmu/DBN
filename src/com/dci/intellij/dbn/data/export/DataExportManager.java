@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
@@ -48,33 +49,35 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             processor.export(exportModel, instructions, connectionHandler);
             DataExportInstructions.Destination destination = instructions.getDestination();
             if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                MessageUtil.showInfoDialog("Content exported to clipboard.", "Export info");
+                MessageUtil.showInfoDialog("Export info", "Content exported to clipboard.");
 
             } else if (destination == DataExportInstructions.Destination.FILE) {
-                File file = instructions.getFile();
+                final File file = instructions.getFile();
                 if (Desktop.isDesktopSupported()) {
                     //FileSystemView view = FileSystemView.getFileSystemView();
                     //Icon icon = view.getSystemIcon(file);
 
-                    int selection = MessageUtil.showInfoDialog(
-                            "Content exported to file " + file.getPath(),
-                            "Export info",
-                            new String[]{"OK", "Open File"}, 0);
-
-                    if (selection == 1) {
-                        try {
-                            Desktop.getDesktop().open(file);
-                        } catch (IOException e) {
-                            MessageUtil.showErrorDialog(
-                                    "Could not open file " + file.getPath() + ".\nThe file type is most probably not associated with any program." ,
-                                    "Open file");
-                        }
-                    }
-
-                } else {
                     MessageUtil.showInfoDialog(
+                            "Export info",
                             "Content exported to file " + file.getPath(),
-                            "Export info");
+                            new String[]{"OK", "Open File"}, 0,
+                            new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    if (getOption() == 1) {
+                                        try {
+                                            Desktop.getDesktop().open(file);
+                                        } catch (IOException e) {
+                                            MessageUtil.showErrorDialog("Open file",
+                                                    "Could not open file " + file.getPath() + ".\n" +
+                                                    "The file type is most probably not associated with any program."
+                                            );
+                                        }
+                                    }
+                                }
+                            });
+                } else {
+                    MessageUtil.showInfoDialog("Export info", "Content exported to file " + file.getPath());
                 }
             }
 

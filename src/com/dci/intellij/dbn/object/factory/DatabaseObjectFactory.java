@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -56,7 +57,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             objectType == DBObjectType.PROCEDURE ? new ProcedureFactoryInputForm(schema, objectType, 0) : null;
 
         if (inputForm == null) {
-            MessageUtil.showErrorDialog("Creation of " + objectType.getListName() + " is not supported yet.", "Operation not supported");
+            MessageUtil.showErrorDialog("Operation not supported", "Creation of " + objectType.getListName() + " is not supported yet.");
         } else {
             ObjectFactoryInputDialog dialog = new ObjectFactoryInputDialog(inputForm);
             dialog.show();
@@ -99,51 +100,57 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     public void dropObject(final DBSchemaObject object) {
         final ConnectionHandler connectionHandler = object.getConnectionHandler();
         final DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-        int response = MessageUtil.showQuestionDialog(
-                "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
-                "Drop object",
-                MessageUtil.OPTIONS_YES_NO, 0);
-        if (response == 0) {
-            new BackgroundTask(object.getProject(), "Dropping " + object.getQualifiedNameWithType(), false) {
-                public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    Connection connection = null;
-                    try {
-                        initProgressIndicator(progressIndicator, true);
-                        DBContentType contentType = object.getContentType();
-                        connection = connectionHandler.getPoolConnection();
 
-                        String objectName = object.getQualifiedName();
-                        String objectTypeName = object.getTypeName();
-                        if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                            DBObjectStatusHolder status = object.getStatus();
-                            if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
-                                ddlInterface.dropObject(objectTypeName, objectName, connection);
-                            }
-                            if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
-                                ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
-                            }
+        SimpleTask dropObjectTask = new SimpleTask() {
+            @Override
+            public void execute() {
+                if (getOption() == 0) {
+                    new BackgroundTask(object.getProject(), "Dropping " + object.getQualifiedNameWithType(), false) {
+                        public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                            Connection connection = null;
+                            try {
+                                initProgressIndicator(progressIndicator, true);
+                                DBContentType contentType = object.getContentType();
+                                connection = connectionHandler.getPoolConnection();
 
-                        } else {
-                            ddlInterface.dropObject(objectTypeName, objectName, connection);
-                        }
+                                String objectName = object.getQualifiedName();
+                                String objectTypeName = object.getTypeName();
+                                if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                                    DBObjectStatusHolder status = object.getStatus();
+                                    if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
+                                        ddlInterface.dropObject(objectTypeName, objectName, connection);
+                                    }
+                                    if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                                        ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
+                                    }
+
+                                } else {
+                                    ddlInterface.dropObject(objectTypeName, objectName, connection);
+                                }
 
                         /*Messages.showInfoMessage(
                         NamingUtil.capitalize(object.getTypeName()) + " " + object.getQualifiedName() + " was dropped successfully.",
                         "Database Navigator - Object dropped");*/
 
-                        DBObjectList objectList = (DBObjectList) object.getTreeParent();
-                        objectList.reload();
-                        notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
-                    } catch (SQLException e) {
-                        String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
-                        MessageUtil.showErrorDialog(message, e);
-                    } finally {
-                        connectionHandler.freePoolConnection(connection);
-                    }
+                                DBObjectList objectList = (DBObjectList) object.getTreeParent();
+                                objectList.reload();
+                                notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
+                            } catch (SQLException e) {
+                                String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
+                                MessageUtil.showErrorDialog(message, e);
+                            } finally {
+                                connectionHandler.freePoolConnection(connection);
+                            }
 
+                        }
+                    }.start();
                 }
-            }.start();
-        }
+            }
+        };
+
+        MessageUtil.showQuestionDialog(
+                "Drop object", "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
+                MessageUtil.OPTIONS_YES_NO, 0, dropObjectTask);
     }
 
 

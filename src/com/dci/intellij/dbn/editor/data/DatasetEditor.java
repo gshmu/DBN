@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -251,62 +252,65 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public void loadData(final DatasetLoadInstructions instructions) {
-        new ConnectionAction(this, !isLoading) {
-            @Override
-            protected void execute() {
-                setLoading(true);
-                new SimpleBackgroundTask() {
-                    public void execute() {
-                        try {
-                            if (!isDisposed()) {
-                                editorForm.showLoadingHint();
-                                editorForm.getEditorTable().cancelEditing();
-                                DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
-                                try {
-                                    DatasetEditorModel tableModel = getTableModel();
-                                    if (tableModel != null) {
-                                        tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
-                                        DatasetEditorTable editorTable = getEditorTable();
-                                        if (editorTable != null) {
-                                            editorTable.clearSelection();
+        if (!isLoading) {
+            new ConnectionAction(this) {
+                @Override
+                public void execute() {
+                    setLoading(true);
+                    new SimpleBackgroundTask() {
+                        public void execute() {
+                            try {
+                                if (!isDisposed()) {
+                                    editorForm.showLoadingHint();
+                                    editorForm.getEditorTable().cancelEditing();
+                                    DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
+                                    try {
+                                        DatasetEditorModel tableModel = getTableModel();
+                                        if (tableModel != null) {
+                                            tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
+                                            DatasetEditorTable editorTable = getEditorTable();
+                                            if (editorTable != null) {
+                                                editorTable.clearSelection();
+                                            }
+                                        }
+                                    } finally {
+                                        if (!isDisposed()) {
+                                            editorForm.afterRebuild(oldEditorTable);
                                         }
                                     }
-                                } finally {
-                                    if (!isDisposed()) {
-                                        editorForm.afterRebuild(oldEditorTable);
-                                    }
                                 }
+                                dataLoadError = null;
+                            } catch (final SQLException e) {
+                                if (e != DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION) {
+                                    dataLoadError = e.getMessage();
+                                    handleLoadError(e, instructions);
+                                }
+                            } finally {
+                                if (editorForm != null) {
+                                    editorForm.hideLoadingHint();
+                                }
+                                setLoading(false);
+                                EventManager.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
                             }
-                            dataLoadError = null;
-                        } catch (final SQLException e) {
-                            if (e != DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION) {
-                                dataLoadError = e.getMessage();
-                                handleLoadError(e, instructions);
-                            }
-                        } finally {
-                            if (editorForm != null) {
-                                editorForm.hideLoadingHint();
-                            }
-                            setLoading(false);
-                            EventManager.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
                         }
-                    }
 
-                }.start();
-            }
-        }.start();
+                    }.start();
+                }
+            }.start();
+        }
+
     }
 
     private void handleLoadError(final SQLException e, final DatasetLoadInstructions instr) {
         new SimpleLaterInvocator() {
             public void execute() {
-                DBDataset dataset = getDataset();
+                final DBDataset dataset = getDataset();
                 if (!isDisposed() && dataset != null) {
                     focusEditor();
                     DatabaseMessageParserInterface messageParserInterface = getConnectionHandler().getInterfaceProvider().getMessageParserInterface();
-                    DatasetFilterManager filterManager = DatasetFilterManager.getInstance(getProject());
+                    final DatasetFilterManager filterManager = DatasetFilterManager.getInstance(getProject());
 
-                    DatasetFilter filter = filterManager.getActiveFilter(dataset);
+                    final DatasetFilter filter = filterManager.getActiveFilter(dataset);
                     String datasetName = dataset.getQualifiedNameWithType();
                     if (getConnectionHandler().isValid()) {
                         if (filter == null || filter == DatasetFilterManager.EMPTY_FILTER || filter.getError() != null) {
@@ -328,29 +332,33 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                             "Database error message: " + e.getMessage());
                             String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                            int option = MessageUtil.showErrorDialog(message, "Error", options, 0);
+                            MessageUtil.showErrorDialog(message, "Error", options, 0, new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    int option = getOption();
+                                    DatasetLoadInstructions instructions = instr.clone();
+                                    instructions.setDeliberateAction(true);
 
-                            DatasetLoadInstructions instructions = instr.clone();
-                            instructions.setDeliberateAction(true);
-
-                            if (option == 0) {
-                                filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
-                                instructions.setUseCurrentFilter(true);
-                                loadData(instructions);
-                            } else if (option == 1) {
-                                filterManager.setActiveFilter(dataset, null);
-                                instructions.setUseCurrentFilter(true);
-                                loadData(instructions);
-                            } else if (option == 2) {
-                                filter.setError(e.getMessage());
-                                instructions.setUseCurrentFilter(false);
-                                loadData(instructions);
-                            }
+                                    if (option == 0) {
+                                        filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
+                                        instructions.setUseCurrentFilter(true);
+                                        loadData(instructions);
+                                    } else if (option == 1) {
+                                        filterManager.setActiveFilter(dataset, null);
+                                        instructions.setUseCurrentFilter(true);
+                                        loadData(instructions);
+                                    } else if (option == 2) {
+                                        filter.setError(e.getMessage());
+                                        instructions.setUseCurrentFilter(false);
+                                        loadData(instructions);
+                                    }
+                                }
+                            });
                         }
                     } else {
                         String message =
                                 "Error loading data for " + datasetName + ". Could not connect to database.\n" +
-                                        "Database error message: " + e.getMessage();
+                                "Database error message: " + e.getMessage();
                         MessageUtil.showErrorDialog(message);
                     }
                 }

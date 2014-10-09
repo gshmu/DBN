@@ -22,31 +22,33 @@ public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
     public void actionPerformed(@NotNull final AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         final Project project = ActionUtil.getProject(e);
-        new ConnectionAction(sourceCodeFile, project != null) {
-            @Override
-            protected void execute() {
-                new BackgroundTask(project, "Reverting local changes", false) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        final Editor editor = getEditor(e);
-                        final DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
+        if (project != null) {
+            new ConnectionAction(sourceCodeFile) {
+                @Override
+                public void execute() {
+                    new BackgroundTask(project, "Reverting local changes", false) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                            final Editor editor = getEditor(e);
+                            final DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
 
-                        if (editor != null && sourceCodeFile != null) {
-                            boolean reloaded = sourceCodeFile.reloadFromDatabase();
+                            if (editor != null && sourceCodeFile != null) {
+                                boolean reloaded = sourceCodeFile.reloadFromDatabase();
 
-                            if (reloaded) {
-                                new WriteActionRunner() {
-                                    public void run() {
-                                        editor.getDocument().setText(sourceCodeFile.getContent());
-                                        sourceCodeFile.setModified(false);
-                                    }
-                                }.start();
+                                if (reloaded) {
+                                    new WriteActionRunner() {
+                                        public void run() {
+                                            editor.getDocument().setText(sourceCodeFile.getContent());
+                                            sourceCodeFile.setModified(false);
+                                        }
+                                    }.start();
+                                }
                             }
                         }
-                    }
-                }.start();
-            }
-        }.start();
+                    }.start();
+                }
+            }.start();
+        }
     }
 
     public void update(@NotNull AnActionEvent e) {

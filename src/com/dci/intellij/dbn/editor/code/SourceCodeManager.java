@@ -84,7 +84,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             }
             new ConnectionAction(object) {
                 @Override
-                protected void execute() {
+                public void execute() {
                     object.getStatus().set(DBObjectStatus.SAVING, true);
                     Project project = virtualFile.getProject();
                     final DBContentType contentType = virtualFile.getContentType();
@@ -101,7 +101,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                         String message =
                                                 "The " + object.getQualifiedNameWithType() +
                                                         " has been changed by another user. \nYou will be prompted to merge the changes";
-                                        MessageUtil.showErrorDialog(message, "Version conflict");
+                                        MessageUtil.showErrorDialog("Version conflict", message);
 
                                         String databaseContent = loadSourceCodeFromDatabase(object, contentType);
                                         showSourceDiffDialog(databaseContent, virtualFile, editor);
@@ -113,7 +113,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                 } else {
                                     String message = "You are not allowed to change the name or the type of the object";
                                     object.getStatus().set(DBObjectStatus.SAVING, false);
-                                    MessageUtil.showErrorDialog(message, "Illegal action");
+                                    MessageUtil.showErrorDialog("Illegal action", message);
                                 }
                             } catch (SQLException ex) {
                                 if (!DatabaseCompatibilityInterface.getInstance(object).supportsFeature(DatabaseFeature.OBJECT_REPLACING)) {

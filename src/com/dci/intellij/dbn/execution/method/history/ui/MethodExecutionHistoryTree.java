@@ -121,7 +121,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
             final MethodExecutionInput executionInput = getSelectedExecutionInput();
             new ConnectionAction(executionInput) {
                 @Override
-                protected void execute() {
+                public void execute() {
                     new BackgroundTask(getProject(), "Loading Method details", false, false) {
                         @Override
                         public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {

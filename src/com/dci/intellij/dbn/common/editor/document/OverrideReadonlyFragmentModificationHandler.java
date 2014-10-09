@@ -26,7 +26,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
         Document document = e.getGuardedBlock().getDocument();
         String message = document.getUserData(GUARDED_BLOCK_REASON);
         if (message != null) {
-            MessageUtil.showErrorDialog(message, "Action denied");
+            MessageUtil.showErrorDialog("Action denied", message);
         } else {
             VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
             if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile) {

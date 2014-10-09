@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -67,10 +68,11 @@ public class DBProgramRunner extends GenericProgramRunner {
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
         new ConnectionAction(runProfile.getMethod()) {
             @Override
-            protected void execute() {
+            public void execute() {
                 final ConnectionHandler connectionHandler = runProfile.getMethod().getConnectionHandler();
                 DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
-                boolean allowed = databaseDebuggerManager.checkForbiddenOperation(connectionHandler, "Another debug session is active on this connection. You can only run one debug session at the time.");
+                boolean allowed = databaseDebuggerManager.checkForbiddenOperation(connectionHandler,
+                        "Another debug session is active on this connection. You can only run one debug session at the time.");
                 if (allowed) {
                     new BackgroundTask(runProfile.getProject(), "Checking debug privileges", false, true) {
                         public void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -101,29 +103,30 @@ public class DBProgramRunner extends GenericProgramRunner {
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
         final List<String> missingPrivileges = debuggerManager.getMissingDebugPrivileges(connectionHandler);
         if (missingPrivileges.size() > 0) {
-            new SimpleLaterInvocator() {
-                public void execute() {
-                    StringBuilder buffer = new StringBuilder();
-                    buffer.append("The current user (").append(connectionHandler.getUserName()).append(") does not have sufficient privileges to perform debug operations on this database.\n");
-                    buffer.append("Please contact your administrator to grant the required privileges. ");
-                    buffer.append("Missing privileges:\n");
-                    for (String missingPrivilege : missingPrivileges) {
-                        buffer.append(" - ").append(missingPrivilege).append("\n");
-                    }
-
-                    int response = MessageUtil.showWarningDialog(
-                            buffer.toString(),
-                            "Insufficient privileges",
-                            new String[]{"Continue anyway", "Cancel"}, 0);
-                    if (response == 0) {
-                        performInitialize(
-                                executionInput,
-                                executor,
-                                environment,
-                                callback);
-                    }
+                StringBuilder buffer = new StringBuilder();
+                buffer.append("The current user (").append(connectionHandler.getUserName()).append(") does not have sufficient privileges to perform debug operations on this database.\n");
+                buffer.append("Please contact your administrator to grant the required privileges. ");
+                buffer.append("Missing privileges:\n");
+                for (String missingPrivilege : missingPrivileges) {
+                    buffer.append(" - ").append(missingPrivilege).append("\n");
                 }
-            }.start();
+
+                MessageUtil.showWarningDialog(
+                        buffer.toString(),
+                        "Insufficient privileges",
+                        new String[]{"Continue anyway", "Cancel"}, 0,
+                        new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                if (getOption() == 0) {
+                                    performInitialize(
+                                            executionInput,
+                                            executor,
+                                            environment,
+                                            callback);
+                                }
+                            }
+                        });
         } else {
             performInitialize(
                     executionInput,
