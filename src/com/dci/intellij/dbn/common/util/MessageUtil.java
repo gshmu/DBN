@@ -1,14 +1,12 @@
 package com.dci.intellij.dbn.common.util;
 
 import javax.swing.Icon;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.ui.Messages;
 
 public class MessageUtil {
@@ -73,15 +71,7 @@ public class MessageUtil {
     }
 
     private static int showDialog(final String message, final String title, final String[] options, final int defaultOptionIndex, final Icon icon) {
-        final AtomicInteger exitCode = new AtomicInteger(0);
-        new SimpleLaterInvocator() {
-            @Override
-            public void execute() {
-                int selectedOption = Messages.showDialog(message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon);
-                exitCode.set(selectedOption);
-            }
-        }.start();
-        return exitCode.get();
+        return Messages.showDialog(message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon);
     }
 
 
