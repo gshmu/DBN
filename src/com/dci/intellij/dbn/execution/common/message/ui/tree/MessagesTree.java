@@ -19,9 +19,13 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -113,6 +117,13 @@ public class MessagesTree extends DBNTree implements Disposable {
             StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) object;
             StatementExecutionMessage executionMessage = execMessageNode.getExecutionMessage();
             if (!executionMessage.isOrphan()) {
+                StatementExecutionResult executionResult = executionMessage.getExecutionResult();
+                FileEditorManager editorManager = FileEditorManager.getInstance(executionResult.getProject());
+                DBLanguagePsiFile psiFile = executionResult.getExecutionProcessor().getPsiFile();
+                if (psiFile != null && psiFile.getVirtualFile() != null) {
+                    editorManager.openFile(psiFile.getVirtualFile(), requestFocus);
+                }
+
                 executionMessage.navigateToEditor(requestFocus);
             }
         }
@@ -125,25 +136,54 @@ public class MessagesTree extends DBNTree implements Disposable {
                 if (sourceAction.isSave() || sourceAction.isCompile() || sourceAction.isBulkCompile()) {
                     DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
                     if (databaseFile != null) {
-                        FileEditorManager editorManager = FileEditorManager.getInstance(project);
-                        if (compilerMessage.isError() || editorManager.isFileOpen(databaseFile)) {
-                            navigateInObjectEditor(compilerMessage, requestFocus);
-                        }
+                        navigateInObjectEditor(compilerMessage, requestFocus);
                     }
                 } else if (sourceAction.isDDL()) {
                     VirtualFile virtualFile = sourceAction.getVirtualFile();
+                    if (virtualFile instanceof DBConsoleVirtualFile) {
+                        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                        navigateInConsoleEditor(compilerMessage, consoleVirtualFile, requestFocus);
+                    }
                     if (virtualFile != null) {
-                        navigateInScriptEditor(compilerMessage, virtualFile, sourceAction.getStartOffset(), requestFocus);
+                        navigateInScriptEditor(compilerMessage, virtualFile, requestFocus);
                     }
                 }
             }
         }
     }
 
-    private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, int startOffset, boolean requestFocus) {
+    private void navigateInConsoleEditor(CompilerMessage compilerMessage, DBConsoleVirtualFile virtualFile, boolean requestFocus) {
         FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
+        editorManager.openFile(virtualFile, requestFocus);
         Editor editor = compilerMessage.getCompilerResult().getSourceAction().getEditor();
         if (editor == null) {
+            FileEditor[] editors = editorManager.getAllEditors(virtualFile);
+            for (FileEditor fileEditor : editors) {
+                if (fileEditor instanceof SQLConsoleEditor) {
+                    SQLConsoleEditor consoleEditor = (SQLConsoleEditor) fileEditor;
+                    editor = consoleEditor.getEditor();
+                }
+            }
+        }
+        if (editor != null) {
+            int lineShifting = 1;
+            CharSequence documentText = editor.getDocument().getCharsSequence();
+            String objectName = compilerMessage.getObjectName();
+            CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
+            int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, sourceAction.getStartOffset());
+            if (objectStartOffset > -1) {
+                lineShifting = editor.getDocument().getLineNumber(objectStartOffset);
+            }
+
+            navigateInEditor(editor, compilerMessage, lineShifting);
+
+        }
+    }
+
+    private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, boolean requestFocus) {
+        Editor editor = compilerMessage.getCompilerResult().getSourceAction().getEditor();
+        if (editor == null) {
+            FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
             editorManager.openFile(virtualFile, requestFocus);
             FileEditor[] editors = editorManager.getAllEditors(virtualFile);
             for (FileEditor fileEditor : editors) {
@@ -160,7 +200,8 @@ public class MessagesTree extends DBNTree implements Disposable {
             int lineShifting = 1;
             CharSequence documentText = editor.getDocument().getCharsSequence();
             String objectName = compilerMessage.getObjectName();
-            int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, startOffset);
+            CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
+            int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, sourceAction.getStartOffset());
             if (objectStartOffset > -1) {
                 lineShifting = editor.getDocument().getLineNumber(objectStartOffset);
             }

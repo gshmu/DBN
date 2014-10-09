@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
-public class CompilerMessage extends ConsoleMessage {
+public class CompilerMessage extends ConsoleMessage implements Comparable<CompilerMessage> {
     private CompilerResult compilerResult;
     private int line;
     private int position;
@@ -153,5 +153,13 @@ public class CompilerMessage extends ConsoleMessage {
 
     public String getObjectName() {
         return compilerResult.getObjectRef().getName();
+    }
+
+    @Override
+    public int compareTo(CompilerMessage that) {
+        if (this.getType() == that.getType()) {
+            return this.getLine() - that.getLine();
+        }
+        return that.getType().compareTo(this.getType());
     }
 }

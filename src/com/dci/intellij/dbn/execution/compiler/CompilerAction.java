@@ -65,7 +65,11 @@ public class CompilerAction {
 
     @Nullable
     public Editor getEditor() {
-        return editor == null ? null : editor.get();
+        Editor editor = this.editor == null ? null : this.editor.get();
+        if (editor != null && editor.isDisposed()) {
+            this.editor = null;
+        }
+        return editor;
     }
 
     public int getStartOffset() {
