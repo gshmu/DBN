@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.JTree;
-import javax.swing.tree.TreeCellRenderer;
-import java.awt.Component;
-import java.awt.Font;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
@@ -20,6 +14,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JTree;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.Component;
+import java.awt.Font;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -43,7 +43,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
             if (value instanceof LoadInProgressTreeNode) {
                 LoadInProgressTreeNode loadInProgressTreeNode = (LoadInProgressTreeNode) value;
                 setIcon(loadInProgressTreeNode.getIcon(0));
-                append("Loading...", SimpleTextAttributes.GRAYED_ITALIC_ATTRIBUTES);
+                append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
                 return;
             }
 
