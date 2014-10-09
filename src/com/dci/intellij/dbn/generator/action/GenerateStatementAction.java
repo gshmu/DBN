@@ -11,6 +11,8 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -21,24 +23,28 @@ import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
-public abstract class GenerateStatementAction extends AnAction {
+public abstract class GenerateStatementAction extends AnAction implements ConnectionProvider {
     public GenerateStatementAction(String text) {
         super(text);
     }
 
-    public final void actionPerformed(AnActionEvent event) {
-        final Project project = ActionUtil.getProject(event);
-
+    public final void actionPerformed(AnActionEvent e) {
+        final Project project = ActionUtil.getProject(e);
         if (project != null) {
-            new BackgroundTask(project, "Extracting select statement", false, true) {
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    initProgressIndicator(progressIndicator, true);
-                    StatementGeneratorResult result = generateStatement(project);
-                    if (result.getMessages().hasErrors()) {
-                        MessageUtil.showErrorDialog(result.getMessages(), "Error generating statement");
-                    } else {
-                        pasteStatement(result, project);
-                    }
+            new ConnectionAction(this) {
+                @Override
+                public void execute() {
+                    new BackgroundTask(project, "Extracting select statement", false, true) {
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                            initProgressIndicator(progressIndicator, true);
+                            StatementGeneratorResult result = generateStatement(project);
+                            if (result.getMessages().hasErrors()) {
+                                MessageUtil.showErrorDialog(result.getMessages(), "Error generating statement");
+                            } else {
+                                pasteStatement(result, project);
+                            }
+                        }
+                    }.start();
                 }
             }.start();
         }

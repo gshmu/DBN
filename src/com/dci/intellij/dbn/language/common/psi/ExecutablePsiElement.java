@@ -112,7 +112,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
         } else {
             subject = createSubjectList();
         }
-        if (subject != null) {
+        if (subject != null && isValid()) {
             CodeStyleCaseSettings caseSettings = getLanguage().getCodeStyleSettings(getProject()).getCaseSettings();
             CodeStyleCaseOption keywordCaseOption = caseSettings.getKeywordCaseOption();
             CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -31,9 +33,7 @@ public abstract class ConnectionAction extends RunnableTask {
     }
 
     public final void run() {
-        if (connectionHandler == null && connectionProvider != null) {
-            connectionHandler = connectionProvider.getConnectionHandler();
-        }
+        final ConnectionHandler connectionHandler = getConnectionHandler();
 
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
 
@@ -56,6 +56,14 @@ public abstract class ConnectionAction extends RunnableTask {
                         });
             }
         }
+    }
+
+    @Nullable
+    public ConnectionHandler getConnectionHandler() {
+        if (connectionHandler == null && connectionProvider != null) {
+            connectionHandler = connectionProvider.getConnectionHandler();
+        }
+        return connectionHandler;
     }
 
     public abstract void execute();

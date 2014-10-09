@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.generator.action;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGenerationManager;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.object.DBTable;
@@ -17,5 +18,10 @@ public class GenerateInsertStatementAction extends GenerateStatementAction {
     protected StatementGeneratorResult generateStatement(Project project) {
         StatementGenerationManager statementGenerationManager = StatementGenerationManager.getInstance(project);
         return statementGenerationManager.generateInsert(table);
+    }
+
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return table.getConnectionHandler();
     }
 }
