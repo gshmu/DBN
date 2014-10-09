@@ -14,6 +14,6 @@ public class ObjectPropertiesAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent event) {
-        MessageUtil.showInfoDialog("This feature is not implemented yet.", "Not implemented!");
+        MessageUtil.showInfoDialog("Not implemented!", "This feature is not implemented yet.");
     }
 }

@@ -1,17 +1,31 @@
 package com.dci.intellij.dbn.debugger.frame;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.dci.intellij.dbn.debugger.DBProgramDebugUtil;
 import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEvaluator;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebuggerBundle;
@@ -22,13 +36,6 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class DBProgramDebugStackFrame extends XStackFrame {
     private DBProgramDebugProcess debugProcess;
@@ -83,11 +90,42 @@ public class DBProgramDebugStackFrame extends XStackFrame {
     }
 
     public void customizePresentation(@NotNull ColoredTextContainer component) {
+
         DBSchemaObject object = DBProgramDebugUtil.getObject(sourcePosition);
+        String frameName = "";
+        Icon frameIcon = Icons.DBO_METHOD;
         if (object != null) {
-            component.append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            component.setIcon(object.getOriginalIcon());
+            frameName = object.getName();
+            frameIcon = object.getIcon();
+            DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
+            PsiManager psiManager = PsiManager.getInstance(sourceCodeFile.getProject());
+            PSQLFile psiFile = (PSQLFile) psiManager.findFile(sourceCodeFile);
+            if (psiFile != null) {
+                Document document = DocumentUtil.getDocument(sourceCodeFile);
+                int offset = document.getLineEndOffset(sourcePosition.getLine());
+                PsiElement elementAtOffset = psiFile.findElementAt(offset);
+                while (elementAtOffset instanceof PsiWhiteSpace || elementAtOffset instanceof PsiComment) {
+                    elementAtOffset = elementAtOffset.getNextSibling();
+                }
+
+                if (elementAtOffset instanceof BasePsiElement) {
+                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+                    BasePsiElement objectDeclarationPsiElement = basePsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+                    if (objectDeclarationPsiElement != null) {
+                        IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) objectDeclarationPsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                        if (subjectPsiElement != null) {
+                            frameName = frameName + "." + subjectPsiElement.getChars();
+                            frameIcon = subjectPsiElement.getObjectType().getIcon();
+                        }
+                    }
+                }
+
+            }
+
+
+            component.append(frameName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAYED_ITALIC_ATTRIBUTES);
+            component.setIcon(frameIcon);
         } else {
             component.append(XDebuggerBundle.message("invalid.frame"), SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
@@ -98,25 +136,28 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         valuesMap = new THashMap<String, DBProgramDebugValue>();
 
         DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
-        PSQLFile psiFile = (PSQLFile) PsiManager.getInstance(sourceCodeFile.getProject()).findFile(sourceCodeFile);
-        Document document = DocumentUtil.getDocument(sourceCodeFile);
-        int offset = document.getLineStartOffset(sourcePosition.getLine());
-        Set<BasePsiElement> variables = psiFile.lookupVariableDefinition(offset);
+        PsiManager psiManager = PsiManager.getInstance(sourceCodeFile.getProject());
+        PSQLFile psiFile = (PSQLFile) psiManager.findFile(sourceCodeFile);
+        if (psiFile != null) {
+            Document document = DocumentUtil.getDocument(sourceCodeFile);
+            int offset = document.getLineStartOffset(sourcePosition.getLine());
+            Set<BasePsiElement> variables = psiFile.lookupVariableDefinition(offset);
 
-        List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
-        for (final BasePsiElement basePsiElement : variables) {
-            String variableName = basePsiElement.getText();
-            DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, variableName, basePsiElement.getIcon(true), index);
-            values.add(value);
-            valuesMap.put(variableName.toLowerCase(), value);
-        }
-        Collections.sort(values);
+            List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
+            for (final BasePsiElement basePsiElement : variables) {
+                String variableName = basePsiElement.getText();
+                DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, variableName, basePsiElement.getIcon(true), index);
+                values.add(value);
+                valuesMap.put(variableName.toLowerCase(), value);
+            }
+            Collections.sort(values);
 
-        XValueChildrenList children = new XValueChildrenList();
-        for (DBProgramDebugValue value : values) {
-            children.add(value.getVariableName(), value);
+            XValueChildrenList children = new XValueChildrenList();
+            for (DBProgramDebugValue value : values) {
+                children.add(value.getVariableName(), value);
+            }
+            node.addChildren(children, true);
         }
-        node.addChildren(children, true);
     }
 }
 

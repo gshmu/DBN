@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.ui.CreateRenameConsoleDialog;
@@ -73,15 +74,23 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         super.disposeComponent();
     }
 
-    public void deleteConsole(DBConsoleVirtualFile consoleFile) {
-        int exitCode = MessageUtil.showQuestionDialog("You will loose the information contained in this console.\nAre you sure you want to delete the console?", "Delete Console", MessageUtil.OPTIONS_YES_NO, 0);
-        if (exitCode == 0) {
-            FileEditorManager.getInstance(getProject()).closeFile(consoleFile);
-            ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-            String fileName = consoleFile.getName();
-            connectionHandler.getConsoleBundle().removeConsole(fileName);
-            eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
-        }
-
+    public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
+        SimpleTask deleteTask = new SimpleTask() {
+            @Override
+            public void execute() {
+                if (getOption() == 0) {
+                    FileEditorManager.getInstance(getProject()).closeFile(consoleFile);
+                    ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
+                    String fileName = consoleFile.getName();
+                    connectionHandler.getConsoleBundle().removeConsole(fileName);
+                    eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
+                }
+            }
+        };
+        MessageUtil.showQuestionDialog(
+                "Delete Console",
+                "You will loose the information contained in this console.\n" +
+                        "Are you sure you want to delete the console?",
+                MessageUtil.OPTIONS_YES_NO, 0, deleteTask);
     }
 }

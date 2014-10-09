@@ -22,7 +22,7 @@ public class ReloadObjectsAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         new ConnectionAction(objectList) {
             @Override
-            protected void execute() {
+            public void execute() {
                 new BackgroundTask(objectList.getProject(), "Reloading " + objectList.getContentDescription() + ".", false) {
                     @Override
                     public void execute(@NotNull final ProgressIndicator progressIndicator) throws InterruptedException {

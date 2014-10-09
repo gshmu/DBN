@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -83,7 +84,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
             showPluginConflictDialog = false;
             new SimpleLaterInvocator() {
                 public void execute() {
-                    List<String> disabledList = PluginManager.getDisabledPlugins();
+                    final List<String> disabledList = PluginManager.getDisabledPlugins();
                     String message =
                         "Database Navigator plugin (DBN) is not compatible with the IntelliJ IDEA built-in SQL functionality. " +
                         "They both provide similar features but present quite different use-cases.\n" +
@@ -97,16 +98,22 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                             "Disable IDEA SQL plugin (restart)",
                             "Disable DBN plugin (restart)",
                             "Ignore and continue (not recommended)"};
-                    int exitCode = MessageUtil.showWarningDialog(message, title, options, 0);
-                    if (exitCode == 0 || exitCode == 1) {
-                        try {
-                            disabledList.add(exitCode == 1 ? DBN_PLUGIN_ID : SQL_PLUGIN_ID);
-                            PluginManager.saveDisabledPlugins(disabledList, false);
-                            ApplicationManager.getApplication().restart();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    MessageUtil.showWarningDialog(message, title, options, 0, new SimpleTask() {
+                        @Override
+                        public void execute() {
+                            int option = getOption();
+                            if (option == 0 || option == 1) {
+                                try {
+                                    disabledList.add(option == 1 ? DBN_PLUGIN_ID : SQL_PLUGIN_ID);
+                                    PluginManager.saveDisabledPlugins(disabledList, false);
+                                    ApplicationManager.getApplication().restart();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
                         }
-                    }
+                    });
                 }
             }.start();
         }

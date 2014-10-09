@@ -14,7 +14,7 @@ public class DBProgramDebugExecutionStack extends XExecutionStack {
     private DBProgramDebugProcess debugProcess;
 
     protected DBProgramDebugExecutionStack(DBProgramDebugProcess debugProcess) {
-        super("method name", null);
+        super(debugProcess.getMainDatabaseObject().getQualifiedName(), debugProcess.getMainDatabaseObject().getIcon());
         this.debugProcess = debugProcess;
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();
         int frameNumber = backtraceInfo == null ? 1 : backtraceInfo.getFrames().size() + 1;
@@ -36,10 +36,8 @@ public class DBProgramDebugExecutionStack extends XExecutionStack {
         if (backtraceInfo != null) {
             int frameNumber = backtraceInfo.getFrames().size() + 1;
             for (DebuggerRuntimeInfo runtimeInfo : backtraceInfo.getFrames()) {
-                if (!runtimeInfo.equals(debugProcess.getRuntimeInfo())) {
-                    DBProgramDebugStackFrame frame = new DBProgramDebugStackFrame(debugProcess, runtimeInfo, frameNumber);
-                    frames.add(frame);
-                }
+                DBProgramDebugStackFrame frame = new DBProgramDebugStackFrame(debugProcess, runtimeInfo, frameNumber);
+                frames.add(frame);
                 frameNumber--;
             }
             container.addStackFrames(frames, true) ;

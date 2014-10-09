@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
-public abstract class SynchronizedTask implements RunnableTask {
+public abstract class SynchronizedTask extends RunnableTask {
     private final Object syncObject;
 
     public SynchronizedTask(Object syncObject) {
@@ -10,7 +10,6 @@ public abstract class SynchronizedTask implements RunnableTask {
     public void start() {
         run();
     }
-
 
     @Override
     public final void run() {
@@ -22,6 +21,5 @@ public abstract class SynchronizedTask implements RunnableTask {
             }
         }
     }
-
-    public abstract void execute();
+    protected abstract void execute();
 }

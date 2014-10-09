@@ -13,7 +13,7 @@ public class ImportDataAction extends AbstractDataEditorAction {
     }
 
     public void actionPerformed(AnActionEvent e) {
-        MessageUtil.showInfoDialog("Data import is not implemented yet.", "Not implemented");
+        MessageUtil.showInfoDialog("Not implemented", "Data import is not implemented yet.");
     }
 
     public void update(AnActionEvent e) {

@@ -55,14 +55,14 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             if (executionVariables.isIncomplete()) {
                 MessageUtil.showErrorDialog(
-                        "You didn't specify values for all the variables. \n" +
-                                "Please enter values for all the listed variables and try again.",
-                        "Statement execution");
+                        "Statement execution", "You didn't specify values for all the variables. \n" +
+                                "Please enter values for all the listed variables and try again."
+                );
             } else if (executionVariables.hasErrors()) {
                 MessageUtil.showErrorDialog(
-                        "You provided invalid/unsupported variable values. \n" +
-                        "Please correct your input and try again.",
-                        "Statement execution");
+                        "Statement execution", "You provided invalid/unsupported variable values. \n" +
+                        "Please correct your input and try again."
+                );
             } else {
                 doOKAction();
             }

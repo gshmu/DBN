@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
@@ -63,15 +65,18 @@ public class ExportDataDialog extends DBNDialog {
     }
 
     protected void doOKAction() {
-        if (exportDataForm.validateEntries()) {
-            DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-            DataExportInstructions exportInstructions = exportDataForm.getExportInstructions();
-            exportManager.setExportInstructions(exportInstructions);
-            boolean success = exportManager.exportSortableTableContent(
-                    table,
-                    exportInstructions,
-                    connectionHandler);
-            if (success) super.doOKAction();
-        }
+        exportDataForm.validateEntries(new SimpleTask() {
+            @Override
+            public void execute() {
+                DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
+                DataExportInstructions exportInstructions = exportDataForm.getExportInstructions();
+                exportManager.setExportInstructions(exportInstructions);
+                boolean success = exportManager.exportSortableTableContent(
+                        table,
+                        exportInstructions,
+                        connectionHandler);
+                if (success) ExportDataDialog.super.doOKAction();
+            }
+        });
     }
 }

@@ -1,31 +1,62 @@
 package com.dci.intellij.dbn.connection;
 
-public abstract class ConnectionAction {
+import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
+
+public abstract class ConnectionAction extends RunnableTask {
+    public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
+
+    private ConnectionHandler connectionHandler;
     private ConnectionProvider connectionProvider;
-    private boolean[] assertions;
+    private boolean executeInBackground;
 
-    public ConnectionAction(ConnectionProvider connectionProvider, boolean ... assertions) {
+    public ConnectionAction(ConnectionHandler connectionHandler) {
+        this.connectionHandler = connectionHandler;
+    }
+
+    public ConnectionAction(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
-        this.assertions = assertions;
     }
 
-    public void start() {
-        if (assertions != null) {
-            for (boolean assertion : assertions) {
-                if (!assertion) return;
-            }
-        }
-
-        if (connectionProvider != null) {
-            ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
-            if (connectionHandler != null && !connectionHandler.isDisposed()) {
-                boolean canConnect = ConnectionUtil.assertCanConnect(connectionHandler);
-                if (canConnect) {
-                    execute();
-                }
-            }
+    public final void start() {
+        Application application = ApplicationManager.getApplication();
+        if (application.isDispatchThread()) {
+            run();
+        } else {
+            application.invokeLater(this/*, ModalityState.NON_MODAL*/);
         }
     }
 
-    protected abstract void execute();
+    public final void run() {
+        if (connectionHandler == null && connectionProvider != null) {
+            connectionHandler = connectionProvider.getConnectionHandler();
+        }
+
+        if (connectionHandler != null && !connectionHandler.isDisposed()) {
+
+            if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
+                execute();
+            } else {
+                MessageUtil.showInfoDialog(
+                        "Not Connected to Database",
+                        "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
+                                "If you want to continue with this operation, you need to connect.",
+                        OPTIONS_CONNECT_CANCEL, 0,
+                        new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                if (getOption() == 0) {
+                                    connectionHandler.setAllowConnection(true);
+                                    ConnectionAction.this.execute();
+                                }
+                            }
+                        });
+            }
+        }
+    }
+
+    public abstract void execute();
 }

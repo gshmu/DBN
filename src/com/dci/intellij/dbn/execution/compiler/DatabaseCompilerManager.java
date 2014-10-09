@@ -76,7 +76,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     public void compileObject(final DBSchemaObject object, final DBContentType contentType, final CompileType compileType, final CompilerAction sourceAction) {
         new ConnectionAction(object) {
             @Override
-            protected void execute() {
+            public void execute() {
                 Project project = object.getProject();
                 DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                 boolean allowed = debuggerManager.checkForbiddenOperation(object.getConnectionHandler());
@@ -159,7 +159,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     public void compileInvalidObjects(final DBSchema schema, final CompileType compileType) {
         new ConnectionAction(schema) {
             @Override
-            protected void execute() {
+            public void execute() {
                 final Project project = schema.getProject();
                 final ConnectionHandler connectionHandler = schema.getConnectionHandler();
                 boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(connectionHandler);

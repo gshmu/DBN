@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -58,7 +59,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public boolean preOpen() {
-        DBSchemaObject object = getObject();
+        final DBSchemaObject object = getObject();
         if (object != null) {
             Project project = object.getProject();
             DBContentType contentType = object.getContentType();
@@ -83,19 +84,24 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                 if (ddlFileBinding && ddlFileSettings.isLookupDDLFilesEnabled()) {
                     List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
                     if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
-                        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+                        final DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
                         List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(object);
                         if (virtualFiles.size() > 0) {
                             int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                             return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                         } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
-                            int exitCode = MessageUtil.showQuestionDialog(
+                            MessageUtil.showQuestionDialog(
+                                    "No DDL file found",
                                     "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
-                                            "(You can disable this check in \"DDL File\" options)",
-                                    "No DDL file found", MessageUtil.OPTIONS_YES_NO, 0);
-                            if (exitCode == DialogWrapper.OK_EXIT_CODE) {
-                                fileAttachmentManager.createDDLFile(object);
-                            }
+                                    "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
+                                    new SimpleTask() {
+                                        @Override
+                                        public void execute() {
+                                            if (getOption() == DialogWrapper.OK_EXIT_CODE) {
+                                                fileAttachmentManager.createDDLFile(object);
+                                            }
+                                        }
+                                    });
                         }
                     }
                 }

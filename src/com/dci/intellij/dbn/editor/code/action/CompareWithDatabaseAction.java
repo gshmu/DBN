@@ -25,7 +25,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         new ConnectionAction(sourcecodeFile) {
             @Override
-            protected void execute() {
+            public void execute() {
                 final Project project = ActionUtil.getProject(e);
                 if (project != null) {
                     new BackgroundTask(project, "Loading database source code", false, true) {
@@ -58,7 +58,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         }.start();
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Editor editor = getEditor(e);
         e.getPresentation().setText("Compare with database");
         e.getPresentation().setEnabled(editor != null);

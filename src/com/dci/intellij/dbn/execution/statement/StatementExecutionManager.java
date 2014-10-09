@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -136,10 +139,9 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     public void fireExecution(final StatementExecutionProcessor executionProcessor) {
-        boolean continueExecution = selectConnection(executionProcessor.getPsiFile());
-        new ConnectionAction(executionProcessor, continueExecution) {
+        ConnectionAction executionAction = new ConnectionAction(executionProcessor) {
             @Override
-            protected void execute() {
+            public void execute() {
                 boolean continueExecution = executionProcessor.promptVariablesDialog();
                 if (continueExecution) {
                     new BackgroundTask(getProject(), "Executing statement", false, true) {
@@ -150,41 +152,47 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                     }.start();
                 }
             }
-        }.start();
+        };
+        selectConnection(executionProcessor.getPsiFile(), executionAction);
     }
 
     public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
         if (executionProcessors.size() > 0) {
             DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
-            boolean continueExecution = selectConnection(file);
-            if (continueExecution) {
-                for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                    continueExecution = executionProcessor.promptVariablesDialog();
-                    if (!continueExecution) break;
-                }
-                if (continueExecution) {
-                    new BackgroundTask(getProject(), "Executing statement", false, true) {
-                        public void execute(@NotNull ProgressIndicator progressIndicator) {
-                            boolean showIndeterminateProgress = executionProcessors.size() < 5;
-                            initProgressIndicator(progressIndicator, showIndeterminateProgress);
+            ConnectionAction executionAction = new ConnectionAction(file) {
+                @Override
+                public void execute() {
+                    boolean continueExecution = true;
+                    for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                        continueExecution = executionProcessor.promptVariablesDialog();
+                        if (!continueExecution) break;
+                    }
+                    if (continueExecution) {
+                        new BackgroundTask(getProject(), "Executing statement", false, true) {
+                            public void execute(@NotNull ProgressIndicator progressIndicator) {
+                                boolean showIndeterminateProgress = executionProcessors.size() < 5;
+                                initProgressIndicator(progressIndicator, showIndeterminateProgress);
 
-                            for (int i = 0; i < executionProcessors.size(); i++) {
-                                if (!progressIndicator.isCanceled()) {
-                                    if (!progressIndicator.isIndeterminate()) {
-                                        progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
+                                for (int i = 0; i < executionProcessors.size(); i++) {
+                                    if (!progressIndicator.isCanceled()) {
+                                        if (!progressIndicator.isIndeterminate()) {
+                                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
+                                        }
+
+                                        executionProcessors.get(i).execute(progressIndicator);
                                     }
-
-                                    executionProcessors.get(i).execute(progressIndicator);
                                 }
                             }
-                        }
-                    }.start();
+                        }.start();
+                    }
+
                 }
-            }
+            };
+            selectConnection(file, executionAction );
         }
     }
 
-    private boolean selectConnection(DBLanguagePsiFile file) {
+    private void selectConnection(final DBLanguagePsiFile file, final RunnableTask callback) {
         ConnectionHandler activeConnection = file.getActiveConnection();
         DBSchema currentSchema = file.getCurrentSchema();
         if (activeConnection == null || currentSchema == null || activeConnection.isVirtual()) {
@@ -205,17 +213,21 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
             String[] options = {okOption, "Cancel"};
 
-            int response = MessageUtil.showWarningDialog(message, "No valid Connection / Schema", options, 0);
-
-            if (response == 0) {
-                SelectConnectionDialog selectConnectionDialog = new SelectConnectionDialog(file);
-                selectConnectionDialog.show();
-                return selectConnectionDialog.getExitCode() == SelectConnectionDialog.OK_EXIT_CODE;
-            } else {
-                return false;
-            }
+            MessageUtil.showWarningDialog(message, "No valid Connection / Schema", options, 0,
+                    new SimpleLaterInvocator() {
+                        @Override
+                        public void execute() {
+                            if (getOption() == 0) {
+                                SelectConnectionDialog selectConnectionDialog = new SelectConnectionDialog(file);
+                                selectConnectionDialog.show();
+                                if (selectConnectionDialog.getExitCode() == SelectConnectionDialog.OK_EXIT_CODE) {
+                                    callback.start();
+                                }
+                            }
+                        }
+                    });
         } else {
-            return true;
+            callback.start();
         }
     }
 
@@ -223,20 +235,24 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         final DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
         new ConnectionAction(file) {
             @Override
-            protected void execute() {
+            public void execute() {
                 StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
                 if (executionProcessor != null) {
                     fireExecution(executionProcessor);
                 } else {
-                    int exitCode = MessageUtil.showQuestionDialog(
-                            "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                            "Multiple Statement Execution",
-                            OPTIONS_MULTIPLE_STATEMENT_EXEC, 0);
-                    if (exitCode == 0 || exitCode == 1) {
-                        int offset = exitCode == 0 ? 0 : editor.getCaretModel().getOffset();
-                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(editor, offset);
-                        fireExecution(executionProcessors);
-                    }
+                    MessageUtil.showQuestionDialog(
+                            "Multiple Statement Execution", "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
+                            OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    int option = getOption();
+                                    if (option == 0 || option == 1) {
+                                        int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
+                                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(editor, offset);
+                                        fireExecution(executionProcessors);
+                                    }
+                                }
+                            });
                 }
             }
         }.start();

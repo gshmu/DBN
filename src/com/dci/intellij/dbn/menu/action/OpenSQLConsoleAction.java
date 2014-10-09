@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -37,7 +38,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
-        Project project = ActionUtil.getProject(e);
+        final Project project = ActionUtil.getProject(e);
         if (project != null) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
             ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
@@ -81,13 +82,18 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                 if (singleConnectionHandler != null) {
                     openSQLConsole(singleConnectionHandler);
                 } else {
-                    int selection = MessageUtil.showInfoDialog(
-                            "No database connections found. Please setup a connection first",
-                            "No connections available.", new String[]{"Setup Connection", "Cancel"}, 0);
-                    if (selection == 0) {
-                        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-                        globalSettingsDialog.show();
-                    }
+                    MessageUtil.showInfoDialog(
+                            "No connections available.", "No database connections found. Please setup a connection first",
+                            new String[]{"Setup Connection", "Cancel"}, 0,
+                            new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    if (getOption() == 0) {
+                                        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
+                                        globalSettingsDialog.show();
+                                    }
+                                }
+                            });
                 }
 
             }

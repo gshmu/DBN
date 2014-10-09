@@ -78,7 +78,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         final AtomicBoolean result = new AtomicBoolean(false);
         new ConnectionAction(executionInput) {
             @Override
-            protected void execute() {
+            public void execute() {
                 ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
                 if (connectionHandler.isValid(true)) {
                     DBMethod method = executionInput.getMethod();

@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -103,22 +103,23 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         @Override
         public void dataDefinitionChanged(@NotNull final DBSchemaObject schemaObject) {
             if (schemaObject.equals(getObject())) {
-                new SimpleLaterInvocator() {
-                    @Override
-                    public void execute() {
-                        if (isModified()) {
-                            int exitCode = MessageUtil.showQuestionDialog(
-                                    "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor. " +
-                                            "\nDo you want to discard the changes and reload the updated database version?",
-                                    "Unsaved changes", new String[]{"Reload", "Keep changes"}, 0);
-                            if (exitCode == 0) {
-                                reloadAndUpdateEditors(false);
-                            }
-                        } else {
-                            reloadAndUpdateEditors(true);
-                        }
-                    }
-                }.start();
+                if (isModified()) {
+                    MessageUtil.showQuestionDialog(
+                            "Unsaved changes",
+                            "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
+                            "Do you want to discard the changes and reload the updated database version?",
+                            new String[]{"Reload", "Keep changes"}, 0,
+                            new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    if (getOption() == 0) {
+                                        reloadAndUpdateEditors(false);
+                                    }
+                                }
+                            });
+                } else {
+                    reloadAndUpdateEditors(true);
+                }
             }
         }
     };

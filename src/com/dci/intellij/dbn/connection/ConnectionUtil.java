@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -197,21 +196,4 @@ public class ConnectionUtil {
             LOGGER.warn("Error setting autocommit to connection", e);
         }
     }
-
-
-    public static boolean assertCanConnect(ConnectionHandler connectionHandler) {
-        if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.canConnect()) {
-            int selection = MessageUtil.showInfoDialog(
-                    "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
-                            "If you want to continue with this operation, you need to connect.",
-                    "Not Connected to Database", OPTIONS_CONNECT_CANCEL, 0);
-            if (selection == 0) {
-                connectionHandler.setAllowConnection(true);
-            }
-            return selection == 0;
-        }
-        return true;
-    }
-
-
 }
