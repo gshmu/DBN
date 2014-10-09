@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -45,7 +46,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 
-public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, ConnectionProvider {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, ConnectionProvider, Disposable {
     private Language language;
     private DBLanguageFileType fileType;
     private ParserDefinition parserDefinition;

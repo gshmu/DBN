@@ -225,8 +225,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                 }
 
                 DBContentVirtualFile mainContentFile = getMainContentFile();
-                Document document = DocumentUtil.getDocument(mainContentFile);
-                return (T) document;
+                if (mainContentFile != null) {
+                    Document document = DocumentUtil.getDocument(mainContentFile);
+                    return (T) document;
+                }
             }
         }
         return super.getUserData(key);
