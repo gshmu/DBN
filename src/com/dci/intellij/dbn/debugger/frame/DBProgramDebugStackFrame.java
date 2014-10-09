@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.debugger.frame;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -36,6 +28,14 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DBProgramDebugStackFrame extends XStackFrame {
     private DBProgramDebugProcess debugProcess;
@@ -124,7 +124,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
 
             component.append(frameName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAYED_ITALIC_ATTRIBUTES);
+            component.append(" (line " + (sourcePosition.getLine() + 1) + ") ", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             component.setIcon(frameIcon);
         } else {
             component.append(XDebuggerBundle.message("invalid.frame"), SimpleTextAttributes.ERROR_ATTRIBUTES);
