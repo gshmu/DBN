@@ -425,7 +425,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         try {
             connection = getConnectionHandler().getPoolConnection();
             statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
-            statement.registerOutParameter(1, Types.VARCHAR);
+            statement.registerOutParameter(1, Types.CLOB);
             statement.setString(2, getTypeName().toUpperCase());
             statement.setString(3, getName());
             statement.setString(4, getParentObject().getName());
