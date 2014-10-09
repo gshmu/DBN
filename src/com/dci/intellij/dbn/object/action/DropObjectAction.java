@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.object.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
@@ -14,7 +16,7 @@ public class DropObjectAction extends AnAction {
         this.object = object;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatabaseObjectFactory.getInstance(object.getProject()).dropObject(object);
     }
 }

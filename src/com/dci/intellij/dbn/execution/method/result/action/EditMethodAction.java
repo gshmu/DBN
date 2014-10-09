@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
@@ -12,7 +14,7 @@ public class EditMethodAction extends MethodExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         MethodExecutionResult executionResult = getExecutionResult();
         if (executionResult != null) {
             DatabaseFileSystem.getInstance().openEditor(executionResult.getMethod(), true, true);

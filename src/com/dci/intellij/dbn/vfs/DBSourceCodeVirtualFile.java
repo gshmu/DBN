@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -17,6 +18,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeContent;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeLoadListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeOffsets;
@@ -34,7 +36,6 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -102,44 +103,52 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         @Override
         public void dataDefinitionChanged(@NotNull final DBSchemaObject schemaObject) {
             if (schemaObject.equals(getObject())) {
-                new BackgroundTask(getProject(), "Reloading object source code", !isModified()) {
+                new SimpleLaterInvocator() {
                     @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        boolean reload = true;
+                    public void execute() {
                         if (isModified()) {
                             int exitCode = MessageUtil.showQuestionDialog(
                                     "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor. " +
                                             "\nDo you want to discard the changes and reload the updated database version?",
                                     "Unsaved changes", new String[]{"Reload", "Keep changes"}, 0);
-                            if (exitCode == 1) {
-                                reload = false;
+                            if (exitCode == 0) {
+                                reloadAndUpdateEditors(false);
                             }
-                        }
-
-                        if (reload) {
-                            boolean reloaded = reloadFromDatabase();
-                            if (reloaded) {
-                                new WriteActionRunner() {
-                                    public void run() {
-                                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                                        FileEditor[] allEditors = fileEditorManager.getAllEditors(DBSourceCodeVirtualFile.this);
-                                        for (FileEditor fileEditor : allEditors) {
-                                            if (fileEditor instanceof TextEditor) {
-                                                TextEditor textEditor = (TextEditor) fileEditor;
-                                                Editor editor = textEditor.getEditor();
-                                                editor.getDocument().setText(content);
-                                            }
-                                        }
-                                    }
-                                }.start();
-                                setModified(false);
-                            }
+                        } else {
+                            reloadAndUpdateEditors(true);
                         }
                     }
                 }.start();
             }
         }
     };
+
+    private void reloadAndUpdateEditors(boolean startInBackground) {
+        new BackgroundTask(getProject(), "Reloading object source code", startInBackground) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                boolean reloaded = reloadFromDatabase();
+                if (reloaded) {
+                    new WriteActionRunner() {
+                        public void run() {
+                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                            FileEditor[] allEditors = fileEditorManager.getAllEditors(getMainDatabaseFile());
+                            for (FileEditor fileEditor : allEditors) {
+                                if (fileEditor instanceof SourceCodeEditor) {
+                                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                                    if (sourceCodeEditor.getVirtualFile().equals(DBSourceCodeVirtualFile.this)) {
+                                        Editor editor = sourceCodeEditor.getEditor();
+                                        editor.getDocument().setText(content);
+                                        setModified(false);
+                                    }
+                                }
+                            }
+                        }
+                    }.start();
+                }
+            }
+        }.start();
+    }
 
     public SourceCodeOffsets getOffsets() {
         return offsets;

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -15,7 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
 public class ExecuteStatementAction extends AnAction {
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project != null && editor != null) {
@@ -25,7 +27,7 @@ public class ExecuteStatementAction extends AnAction {
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(isEnabled(e));
         presentation.setIcon(Icons.STMT_EXECUTION_RUN);
