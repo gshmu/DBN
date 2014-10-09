@@ -139,56 +139,65 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     public void fireExecution(final StatementExecutionProcessor executionProcessor) {
-        ConnectionAction executionAction = new ConnectionAction(executionProcessor) {
+        new ConnectionAction(executionProcessor) {
             @Override
             public void execute() {
-                boolean continueExecution = executionProcessor.promptVariablesDialog();
-                if (continueExecution) {
-                    new BackgroundTask(getProject(), "Executing statement", false, true) {
-                        public void execute(@NotNull ProgressIndicator progressIndicator) {
-                            initProgressIndicator(progressIndicator, true);
-                            executionProcessor.execute(progressIndicator);
+                SimpleTask executionTask = new SimpleTask() {
+                    @Override
+                    public void execute() {
+                        boolean continueExecution = executionProcessor.promptVariablesDialog();
+                        if (continueExecution) {
+                            new BackgroundTask(getProject(), "Executing statement", false, true) {
+                                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                                    initProgressIndicator(progressIndicator, true);
+                                    executionProcessor.execute(progressIndicator);
+                                }
+                            }.start();
                         }
-                    }.start();
-                }
+                    }
+                };
+                selectConnection(executionProcessor.getPsiFile(), executionTask);
             }
-        };
-        selectConnection(executionProcessor.getPsiFile(), executionAction);
+        }.start();
     }
 
     public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
         if (executionProcessors.size() > 0) {
-            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
-            ConnectionAction executionAction = new ConnectionAction(file) {
+            final DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
+            new ConnectionAction(file) {
                 @Override
                 public void execute() {
-                    boolean continueExecution = true;
-                    for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                        continueExecution = executionProcessor.promptVariablesDialog();
-                        if (!continueExecution) break;
-                    }
-                    if (continueExecution) {
-                        new BackgroundTask(getProject(), "Executing statement", false, true) {
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                boolean showIndeterminateProgress = executionProcessors.size() < 5;
-                                initProgressIndicator(progressIndicator, showIndeterminateProgress);
-
-                                for (int i = 0; i < executionProcessors.size(); i++) {
-                                    if (!progressIndicator.isCanceled()) {
-                                        if (!progressIndicator.isIndeterminate()) {
-                                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
-                                        }
-
-                                        executionProcessors.get(i).execute(progressIndicator);
-                                    }
-                                }
+                    SimpleTask executionTask = new SimpleTask() {
+                        @Override
+                        public void execute() {
+                            boolean continueExecution = true;
+                            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                                continueExecution = executionProcessor.promptVariablesDialog();
+                                if (!continueExecution) break;
                             }
-                        }.start();
-                    }
+                            if (continueExecution) {
+                                new BackgroundTask(getProject(), "Executing statement", false, true) {
+                                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                                        boolean showIndeterminateProgress = executionProcessors.size() < 5;
+                                        initProgressIndicator(progressIndicator, showIndeterminateProgress);
 
-                }
-            };
-            selectConnection(file, executionAction );
+                                        for (int i = 0; i < executionProcessors.size(); i++) {
+                                            if (!progressIndicator.isCanceled()) {
+                                                if (!progressIndicator.isIndeterminate()) {
+                                                    progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
+                                                }
+
+                                                executionProcessors.get(i).execute(progressIndicator);
+                                            }
+                                        }
+                                    }
+                                }.start();
+                            }
+
+                        }
+                    };
+                    selectConnection(file, executionTask );                }
+            }.start();
         }
     }
 

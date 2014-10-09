@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +63,8 @@ public class CompilerResult implements Disposable {
         if (compilerMessages.size() == 0) {
             CompilerMessage compilerMessage = new CompilerMessage(this, "The " + objectRef.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
             compilerMessages.add(compilerMessage);
+        } else {
+            Collections.sort(compilerMessages);
         }
     }
 

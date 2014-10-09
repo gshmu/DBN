@@ -37,6 +37,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -106,7 +108,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
     @Override
     public Editor getEditor() {
-        return editor.get();
+        Editor editor = this.editor == null ? null : this.editor.get();
+        if (editor != null && editor.isDisposed()) {
+            this.editor = null;
+        }
+        return editor;
     }
 
     @Override
@@ -377,8 +383,12 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public void navigateToEditor(boolean requestFocus) {
         Editor editor = getEditor();
-        if (cachedExecutable != null && editor != null) {
-            cachedExecutable.navigateInEditor(editor, requestFocus);
+        if (cachedExecutable != null) {
+            if (editor != null) {
+                cachedExecutable.navigateInEditor(editor, requestFocus);
+            } else {
+                cachedExecutable.navigate(requestFocus);
+            }
         }
     }
 
@@ -394,9 +404,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (isDataDefinitionStatement()) {
             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
             if (subjectPsiElement != null) {
-                DBObject object = subjectPsiElement.resolveUnderlyingObject();
-                if (object != null && object instanceof DBSchemaObject) {
-                    return (DBSchemaObject) object;
+                DBSchema currentSchema = getCurrentSchema();
+                if (currentSchema != null) {
+                    DBObjectListContainer childObjects = currentSchema.getChildObjects();
+                    if (childObjects != null) {
+                        DBObjectList objectList = childObjects.getObjectList(subjectPsiElement.getObjectType());
+                        if (objectList != null) {
+                            return (DBSchemaObject) objectList.getObject(subjectPsiElement.getText());
+                        }
+                    }
                 }
             }
         }
