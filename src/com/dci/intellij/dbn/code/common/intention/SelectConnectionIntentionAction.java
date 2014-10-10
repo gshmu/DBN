@@ -1,24 +1,14 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import javax.swing.Icon;
+
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -48,87 +38,13 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-
-        DefaultActionGroup actionGroup = new DefaultActionGroup();
-        DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
-
-        boolean connectionsFound = false;
-        if (connectionBundle.getConnectionHandlers().size() > 0) {
-            actionGroup.addSeparator();
-            for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-
-                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler, dbLanguageFile);
-                actionGroup.add(connectionAction);
-                connectionsFound = true;
-            }
-        }
-
-        if (connectionsFound) actionGroup.addSeparator();
-
-        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
-            SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler, dbLanguageFile);
-            actionGroup.add(connectionAction);
-        }
-
-        actionGroup.addSeparator();
-        actionGroup.add(new SetupConnectionAction());
-
-        ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                "Select connection",
-                actionGroup,
-                DataManager.getInstance().getDataContext(editor.getComponent()),
-                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true);
-
-        popupBuilder.showCenteredInCurrentWindow(project);
-
-
-        /*
-        // old dialog approach
-        DBLanguageFile file = (DBLanguageFile) psiFile;
-        SelectConnectionDialog selectCurrentSchemaDialog = new SelectConnectionDialog(file);
-        selectCurrentSchemaDialog.show();
-        */
-    }
-
-
-
-
-    private class SelectConnectionAction extends AnAction {
-        private ConnectionHandler connectionHandler;
-        private DBLanguagePsiFile file;
-
-        private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon());
-            this.file = file;
-            this.connectionHandler = connectionHandler;
-        }
-
-        @Override
-        public void actionPerformed(AnActionEvent e) {
-            DBSchema currentSchema = connectionHandler.getUserSchema();
-            file.setActiveConnection(connectionHandler);
-            file.setCurrentSchema(currentSchema);
-
+        if (psiFile instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            connectionMappingManager.promptConnectionSelector(dbLanguageFile, true, true, null);
         }
     }
 
-    private class SetupConnectionAction extends AnAction {
-        private SetupConnectionAction() {
-            super("Setup new connection", null, Icons.CONNECTION_NEW);
-        }
-
-        @Override
-        public void actionPerformed(AnActionEvent e) {
-            Project project = ActionUtil.getProject(e);
-            if (project != null) {
-                ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-                globalSettingsDialog.show();
-            }
-        }
-    }
 
     public boolean startInWriteAction() {
         return false;

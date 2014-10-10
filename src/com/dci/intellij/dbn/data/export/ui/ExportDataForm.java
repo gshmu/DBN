@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -170,7 +169,7 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
             formatCustomRadioButton.isSelected() ? DataExportFormat.CUSTOM : null;
     }
 
-    public void validateEntries(final RunnableTask callback) {
+    public void validateEntries(final SimpleTask callback) {
         boolean validValueSeparator = valueSeparatorTextField.getText().trim().length() > 0;
         boolean validFileName = fileNameTextField.getText().trim().length() > 0;
         boolean validFileLocation = fileLocationTextField.getText().trim().length() > 0;

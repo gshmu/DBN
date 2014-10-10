@@ -81,7 +81,7 @@
         <element ref-id="return_data_type_definition" />
         <element ref-id="function_declaration_body" />
     </element-def>
-    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="FUNCTION definition" id="function_definition" icon="DBO_FUNCTION">
+    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="FUNCTION definition" icon="DBO_FUNCTION" id="function_definition">
         <token id="000000025" type-id="KW_FUNCTION" />
         <object-def attributes="SUBJECT" id="000000026" type="FUNCTION" />
         <element optional="true" ref-id="parameter_declarations" />
@@ -144,7 +144,7 @@
         <element optional="true" ref-id="parameter_declarations" />
         <element ref-id="procedure_declaration_body" />
     </element-def>
-    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="PROCEDURE definition" id="procedure_definition" icon="DBO_PROCEDURE">
+    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="PROCEDURE definition" icon="DBO_PROCEDURE" id="procedure_definition">
         <token id="000000049" type-id="KW_PROCEDURE" />
         <object-def attributes="SUBJECT" id="000000050" type="PROCEDURE" />
         <element optional="true" ref-id="parameter_declarations" />
@@ -320,7 +320,7 @@
     </element-def>
 
     <!-- ========= TRIGGER ========= -->
-    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="TRIGGER definition" id="trigger_definition"  icon="DBO_TRIGGER">
+    <element-def attributes="OBJECT_DEFINITION, SPECIFIC" description="TRIGGER definition" icon="DBO_TRIGGER" id="trigger_definition">
         <token id="000000131" type-id="KW_TRIGGER" />
         <qualified-identifier id="000000132" separator="CHR_DOT">
             <variant>
@@ -4373,155 +4373,159 @@
                 </sequence>
             </sequence>
             <sequence id="000002309">
-                <one-of id="000002310">
-                    <token id="000002311" type-id="DT_CHAR" />
-                    <token id="000002312" type-id="DT_VARCHAR2" />
-                    <token id="000002313" type-id="DT_STRING" />
+                <token id="000002310" type-id="KW_REF" />
+                <token id="000002311" type-id="KW_CURSOR" />
+            </sequence>
+            <sequence id="000002312">
+                <one-of id="000002313">
+                    <token id="000002314" type-id="DT_CHAR" />
+                    <token id="000002315" type-id="DT_VARCHAR2" />
+                    <token id="000002316" type-id="DT_STRING" />
                 </one-of>
-                <wrapper id="000002314" optional="true" template="PARENTHESES">
-                    <sequence id="000002315">
-                        <token id="000002316" original-name="size" type-id="INTEGER" />
-                        <one-of id="000002317" optional="true">
-                            <token id="000002318" type-id="DT_BYTE" />
-                            <token id="000002319" type-id="DT_CHAR" />
+                <wrapper id="000002317" optional="true" template="PARENTHESES">
+                    <sequence id="000002318">
+                        <token id="000002319" original-name="size" type-id="INTEGER" />
+                        <one-of id="000002320" optional="true">
+                            <token id="000002321" type-id="DT_BYTE" />
+                            <token id="000002322" type-id="DT_CHAR" />
                         </one-of>
                     </sequence>
                 </wrapper>
             </sequence>
-            <sequence id="000002320">
-                <one-of id="000002321">
-                    <token id="000002322" type-id="DT_CHARACTER" />
-                    <token id="000002323" type-id="DT_CHARACTER_VARYING" />
-                    <token id="000002324" type-id="DT_LONG_VARCHAR" />
-                    <token id="000002325" type-id="DT_NATIONAL_CHAR" />
-                    <token id="000002326" type-id="DT_NATIONAL_CHAR_VARYING" />
-                    <token id="000002327" type-id="DT_NATIONAL_CHARACTER" />
-                    <token id="000002328" type-id="DT_NATIONAL_CHARACTER_VARYING" />
-                    <token id="000002329" type-id="KW_NATURAL" />
-                    <token id="000002330" type-id="DT_NCHAR" />
-                    <token id="000002331" type-id="DT_NCHAR_VARYING" />
-                    <token id="000002332" type-id="DT_NVARCHAR2" />
-                    <token id="000002333" type-id="DT_RAW" />
-                    <token id="000002334" type-id="DT_VARCHAR" />
+            <sequence id="000002323">
+                <one-of id="000002324">
+                    <token id="000002325" type-id="DT_CHARACTER" />
+                    <token id="000002326" type-id="DT_CHARACTER_VARYING" />
+                    <token id="000002327" type-id="DT_LONG_VARCHAR" />
+                    <token id="000002328" type-id="DT_NATIONAL_CHAR" />
+                    <token id="000002329" type-id="DT_NATIONAL_CHAR_VARYING" />
+                    <token id="000002330" type-id="DT_NATIONAL_CHARACTER" />
+                    <token id="000002331" type-id="DT_NATIONAL_CHARACTER_VARYING" />
+                    <token id="000002332" type-id="KW_NATURAL" />
+                    <token id="000002333" type-id="DT_NCHAR" />
+                    <token id="000002334" type-id="DT_NCHAR_VARYING" />
+                    <token id="000002335" type-id="DT_NVARCHAR2" />
+                    <token id="000002336" type-id="DT_RAW" />
+                    <token id="000002337" type-id="DT_VARCHAR" />
                 </one-of>
-                <wrapper id="000002335" optional="true" template="PARENTHESES">
-                    <token id="000002336" original-name="size" type-id="INTEGER" />
+                <wrapper id="000002338" optional="true" template="PARENTHESES">
+                    <token id="000002339" original-name="size" type-id="INTEGER" />
                 </wrapper>
             </sequence>
-            <sequence id="000002337">
-                <one-of id="000002338">
-                    <token id="000002339" type-id="DT_UROWID" />
+            <sequence id="000002340">
+                <one-of id="000002341">
+                    <token id="000002342" type-id="DT_UROWID" />
                 </one-of>
-                <wrapper id="000002340" optional="true" template="PARENTHESES">
-                    <token id="000002341" original-name="size" type-id="INTEGER" />
+                <wrapper id="000002343" optional="true" template="PARENTHESES">
+                    <token id="000002344" original-name="size" type-id="INTEGER" />
                 </wrapper>
             </sequence>
-            <sequence id="000002342">
-                <token id="000002343" type-id="DT_TIMESTAMP" />
-                <wrapper id="000002344" optional="true" template="PARENTHESES">
-                    <token id="000002345" original-name="fractional_seconds_precision" type-id="INTEGER" />
+            <sequence id="000002345">
+                <token id="000002346" type-id="DT_TIMESTAMP" />
+                <wrapper id="000002347" optional="true" template="PARENTHESES">
+                    <token id="000002348" original-name="fractional_seconds_precision" type-id="INTEGER" />
                 </wrapper>
-                <one-of id="000002346" optional="true">
-                    <token id="000002347" type-id="DT_WITH_TIME_ZONE" />
-                    <token id="000002348" type-id="DT_WITH_LOCAL_TIME_ZONE" />
+                <one-of id="000002349" optional="true">
+                    <token id="000002350" type-id="DT_WITH_TIME_ZONE" />
+                    <token id="000002351" type-id="DT_WITH_LOCAL_TIME_ZONE" />
                 </one-of>
             </sequence>
-            <sequence id="000002349">
-                <token id="000002350" type-id="DT_INTERVAL_YEAR" />
-                <wrapper id="000002351" template="PARENTHESES">
-                    <token id="000002352" original-name="year_precision" type-id="INTEGER" />
+            <sequence id="000002352">
+                <token id="000002353" type-id="DT_INTERVAL_YEAR" />
+                <wrapper id="000002354" template="PARENTHESES">
+                    <token id="000002355" original-name="year_precision" type-id="INTEGER" />
                 </wrapper>
-                <token id="000002353" type-id="DT_TO_MONTH" />
+                <token id="000002356" type-id="DT_TO_MONTH" />
             </sequence>
-            <sequence id="000002354">
-                <token id="000002355" type-id="DT_INTERVAL_DAY" />
-                <wrapper id="000002356" template="PARENTHESES">
-                    <token id="000002357" original-name="day_precision" type-id="INTEGER" />
-                </wrapper>
-                <token id="000002358" type-id="DT_TO_SECOND" />
+            <sequence id="000002357">
+                <token id="000002358" type-id="DT_INTERVAL_DAY" />
                 <wrapper id="000002359" template="PARENTHESES">
-                    <token id="000002360" original-name="fractional_seconds_precision" type-id="INTEGER" />
+                    <token id="000002360" original-name="day_precision" type-id="INTEGER" />
+                </wrapper>
+                <token id="000002361" type-id="DT_TO_SECOND" />
+                <wrapper id="000002362" template="PARENTHESES">
+                    <token id="000002363" original-name="fractional_seconds_precision" type-id="INTEGER" />
                 </wrapper>
             </sequence>
-            <sequence id="000002361">
-                <one-of id="000002362">
-                    <token id="000002363" type-id="DT_DECIMAL" />
-                    <token id="000002364" type-id="DT_NUMBER" />
-                    <token id="000002365" type-id="DT_NUMERIC" />
+            <sequence id="000002364">
+                <one-of id="000002365">
+                    <token id="000002366" type-id="DT_DECIMAL" />
+                    <token id="000002367" type-id="DT_NUMBER" />
+                    <token id="000002368" type-id="DT_NUMERIC" />
                 </one-of>
-                <wrapper id="000002366" optional="true" template="PARENTHESES">
-                    <sequence id="000002367">
-                        <token id="000002368" original-name="precision" type-id="INTEGER" />
-                        <sequence id="000002369" optional="true">
-                            <token id="000002370" type-id="CHR_COMMA" />
-                            <token id="000002371" original-name="size" type-id="INTEGER" />
+                <wrapper id="000002369" optional="true" template="PARENTHESES">
+                    <sequence id="000002370">
+                        <token id="000002371" original-name="precision" type-id="INTEGER" />
+                        <sequence id="000002372" optional="true">
+                            <token id="000002373" type-id="CHR_COMMA" />
+                            <token id="000002374" original-name="size" type-id="INTEGER" />
                         </sequence>
                     </sequence>
                 </wrapper>
             </sequence>
 
-            <token id="000002372" type-id="DT_BFILE" />
-            <token id="000002373" type-id="DT_BINARY_DOUBLE" />
-            <token id="000002374" type-id="DT_BINARY_INTEGER" />
-            <token id="000002375" type-id="DT_BINARY_FLOAT" />
-            <token id="000002376" type-id="DT_BLOB" />
-            <token id="000002377" type-id="DT_BOOLEAN" />
-            <token id="000002378" type-id="DT_CLOB" />
-            <token id="000002379" type-id="DT_DATE" />
-            <token id="000002380" type-id="DT_DOUBLE_PRECISION" />
-            <token id="000002381" type-id="DT_FLOAT" />
-            <token id="000002382" type-id="DT_INT" />
-            <token id="000002383" type-id="DT_LONG" />
-            <token id="000002384" type-id="DT_LONG_RAW" />
-            <token id="000002385" type-id="DT_ROWID" />
-            <token id="000002386" type-id="DT_REAL" />
-            <token id="000002387" type-id="DT_NCLOB" />
-            <token id="000002388" type-id="DT_INTEGER" />
-            <token id="000002389" type-id="DT_SMALLINT" />
-            <token id="000002390" type-id="DT_PLS_INTEGER" />
+            <token id="000002375" type-id="DT_BFILE" />
+            <token id="000002376" type-id="DT_BINARY_DOUBLE" />
+            <token id="000002377" type-id="DT_BINARY_INTEGER" />
+            <token id="000002378" type-id="DT_BINARY_FLOAT" />
+            <token id="000002379" type-id="DT_BLOB" />
+            <token id="000002380" type-id="DT_BOOLEAN" />
+            <token id="000002381" type-id="DT_CLOB" />
+            <token id="000002382" type-id="DT_DATE" />
+            <token id="000002383" type-id="DT_DOUBLE_PRECISION" />
+            <token id="000002384" type-id="DT_FLOAT" />
+            <token id="000002385" type-id="DT_INT" />
+            <token id="000002386" type-id="DT_LONG" />
+            <token id="000002387" type-id="DT_LONG_RAW" />
+            <token id="000002388" type-id="DT_ROWID" />
+            <token id="000002389" type-id="DT_REAL" />
+            <token id="000002390" type-id="DT_NCLOB" />
+            <token id="000002391" type-id="DT_INTEGER" />
+            <token id="000002392" type-id="DT_SMALLINT" />
+            <token id="000002393" type-id="DT_PLS_INTEGER" />
         </one-of>
     </element-def>
 
     <!-- ========= OPERATORS ========= -->
     <element-def description="EQUALITY operator" id="equality_operator">
-        <one-of id="000002391">
-            <sequence id="000002392">
-                <token id="000002393" optional="true" type-id="CHR_EXCLAMATION" />
-                <token exit="true" id="000002394" type-id="CHR_EQUAL" />
-            </sequence>
+        <one-of id="000002394">
             <sequence id="000002395">
-                <token id="000002396" type-id="CHR_LESS" />
-                <token exit="true" id="000002397" type-id="CHR_GREATER" />
+                <token id="000002396" optional="true" type-id="CHR_EXCLAMATION" />
+                <token exit="true" id="000002397" type-id="CHR_EQUAL" />
+            </sequence>
+            <sequence id="000002398">
+                <token id="000002399" type-id="CHR_LESS" />
+                <token exit="true" id="000002400" type-id="CHR_GREATER" />
             </sequence>
         </one-of>
     </element-def>
     <element-def description="GREATER/LESS operator" id="greater_less_operator">
-        <one-of id="000002398">
-            <sequence id="000002399">
-                <token id="000002400" type-id="CHR_GREATER" />
-                <token id="000002401" optional="true" type-id="CHR_EQUAL" />
-            </sequence>
+        <one-of id="000002401">
             <sequence id="000002402">
-                <token id="000002403" type-id="CHR_LESS" />
+                <token id="000002403" type-id="CHR_GREATER" />
                 <token id="000002404" optional="true" type-id="CHR_EQUAL" />
+            </sequence>
+            <sequence id="000002405">
+                <token id="000002406" type-id="CHR_LESS" />
+                <token id="000002407" optional="true" type-id="CHR_EQUAL" />
             </sequence>
         </one-of>
     </element-def>
     <!-- CUSTOM -->
     <element-def description="Unknown identifier" id="custom_undefined">
-        <token id="000002405" type-id="IDENTIFIER" />
+        <token id="000002408" type-id="IDENTIFIER" />
     </element-def>
     <element-def description="Number" id="number">
-        <one-of id="000002406" optional="true">
-            <token id="000002407" type-id="CHR_MINUS" />
-            <token id="000002408" type-id="CHR_PLUS" />
+        <one-of id="000002409" optional="true">
+            <token id="000002410" type-id="CHR_MINUS" />
+            <token id="000002411" type-id="CHR_PLUS" />
         </one-of>
-        <one-of id="000002409">
-            <token id="000002410" type-id="NUMBER" />
-            <token id="000002411" type-id="INTEGER" />
+        <one-of id="000002412">
+            <token id="000002413" type-id="NUMBER" />
+            <token id="000002414" type-id="INTEGER" />
         </one-of>
     </element-def>
     <element-def description="Statement end" formatting-spacing-before="NO_SPACE" id="end" truncate-on-execution="true">
-        <token id="000002412" type-id="CHR_SLASH" />
+        <token id="000002415" type-id="CHR_SLASH" />
     </element-def>
 </element-defs>

@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,6 +17,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class StatementExecutionInput implements Disposable {
     private StatementExecutionProcessor executionProcessor;
@@ -72,7 +73,8 @@ public class StatementExecutionInput implements Disposable {
                         PsiElement firstChild = previewFile.getFirstChild();
                         if (firstChild instanceof ExecutableBundlePsiElement) {
                             ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                            return rootPsiElement.getExecutablePsiElements().get(0);
+                            List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
+                            return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
                         }
                         return null;
                     }

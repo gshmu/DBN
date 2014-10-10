@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -14,6 +12,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
 
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
 
@@ -34,8 +33,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     void navigateToResult();
 
     void navigateToEditor(boolean requestFocus);
-
-    boolean promptVariablesDialog();
 
     void execute(ProgressIndicator progressIndicator);
 

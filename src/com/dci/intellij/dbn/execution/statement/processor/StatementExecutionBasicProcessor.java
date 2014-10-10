@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -24,12 +17,10 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionBasicRe
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
-import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
@@ -42,10 +33,14 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -157,31 +152,6 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             executionResult = null;
         }
         return executionResult;
-    }
-
-    public boolean promptVariablesDialog() {
-        Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
-        ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-        if (executablePsiElement != null) {
-            executablePsiElement.collectExecVariablePsiElements(bucket);
-        }
-
-        StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
-        if (bucket.isEmpty()) {
-            executionVariables = null;
-            executionInput.setExecutionVariables(null);
-        } else {
-            if (executionVariables == null)
-                executionVariables = new StatementExecutionVariablesBundle(bucket); else
-                executionVariables.initialize(bucket);
-        }
-
-        if (executionVariables != null) {
-            StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(this, executionInput.getExecutableStatementText());
-            dialog.show();
-            return dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE;
-        }
-        return true;
     }
 
     public void execute(ProgressIndicator progressIndicator) {

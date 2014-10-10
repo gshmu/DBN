@@ -1,13 +1,23 @@
 package com.dci.intellij.dbn.common.thread;
 
-public abstract class SimpleTask extends RunnableTask{
-    public final void start() {
+public abstract class SimpleTask implements RunnableTask{
+    private int option;
+
+    public int getOption() {
+        return option;
+    }
+
+    public void setOption(int option) {
+        this.option = option;
+    }
+
+    public void start() {
         run();
     }
 
-    public final void run() {
+    public void run() {
         execute();
     }
 
-    public abstract void execute();
+    protected abstract void execute();
 }
