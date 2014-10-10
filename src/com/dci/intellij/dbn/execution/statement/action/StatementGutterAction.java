@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -18,6 +14,10 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class StatementGutterAction extends AnAction {
     final ExecutablePsiElement executablePsiElement;
@@ -33,11 +33,11 @@ public class StatementGutterAction extends AnAction {
 
             if (executionProcessor == null) {
                 executionProcessor = getExecutionProcessor(true);
-                executionManager.fireExecution(executionProcessor);
+                executionManager.executeStatement(executionProcessor);
             } else {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
                 if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
-                    executionManager.fireExecution(executionProcessor);
+                    executionManager.executeStatement(executionProcessor);
                 } else {
                     executionProcessor.navigateToResult();
                 }

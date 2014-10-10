@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -15,13 +13,14 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public class ExecuteStatementAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project != null && editor != null) {
-            StatementExecutionManager.getInstance(project).executeSelectedStatement(editor);
+            StatementExecutionManager.getInstance(project).executeStatementAtCursor(editor);
             PsiFile file = DocumentUtil.getFile(editor);
             DocumentUtil.refreshEditorAnnotations(file);
         }

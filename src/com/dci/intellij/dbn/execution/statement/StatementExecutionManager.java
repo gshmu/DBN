@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -20,12 +11,15 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ui.SelectConnectionDialog;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
+import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
+import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
@@ -34,10 +28,22 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
@@ -94,6 +100,12 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         return executionProcessors;
     }
 
+    @Override
+    public void disposeComponent() {
+        EventManager.unsubscribe(psiDocumentTransactionListener);
+        super.disposeComponent();
+    }
+
     private void bindExecutionProcessors(PsiFile file, MatchType matchType) {
         PsiElement child = file.getFirstChild();
         while (child != null) {
@@ -132,136 +144,169 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         return null;
     }
 
-    @Override
-    public void disposeComponent() {
-        EventManager.unsubscribe(psiDocumentTransactionListener);
-        super.disposeComponent();
-    }
-
-    public void fireExecution(final StatementExecutionProcessor executionProcessor) {
-        new ConnectionAction(executionProcessor) {
+    /*********************************************************
+     *                       Execution                       *
+     *********************************************************/
+    public void executeStatement(final StatementExecutionProcessor executionProcessor) {
+        SimpleTask executionTask = new SimpleTask() {
             @Override
             public void execute() {
-                SimpleTask executionTask = new SimpleTask() {
-                    @Override
-                    public void execute() {
-                        boolean continueExecution = executionProcessor.promptVariablesDialog();
-                        if (continueExecution) {
-                            new BackgroundTask(getProject(), "Executing statement", false, true) {
-                                public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                    initProgressIndicator(progressIndicator, true);
-                                    executionProcessor.execute(progressIndicator);
+                promptVariablesDialog(executionProcessor,
+                        new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
+                            public void execute(@NotNull ProgressIndicator progressIndicator) {
+                                initProgressIndicator(progressIndicator, true);
+                                executionProcessor.execute(progressIndicator);
+                            }
+                        });
+            }
+        };
+
+        selectConnectionAndSchema(executionProcessor.getPsiFile(), executionTask);
+    }
+
+    public void executeStatements(final List<StatementExecutionProcessor> executionProcessors) {
+        if (executionProcessors.size() > 0) {
+            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
+
+            SimpleTask executionTask = new SimpleTask() {
+                @Override
+                public void execute() {
+                    new BackgroundTask(getProject(), "Executing statements", false, true) {
+                        public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            boolean showIndeterminateProgress = executionProcessors.size() < 5;
+                            initProgressIndicator(progressIndicator, showIndeterminateProgress);
+
+                            for (int i = 0; i < executionProcessors.size(); i++) {
+                                if (!progressIndicator.isCanceled()) {
+                                    if (!progressIndicator.isIndeterminate()) {
+                                        progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
+                                    }
+
+                                    final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
+                                    promptVariablesDialog(executionProcessor, new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
+                                        @Override
+                                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                                            executionProcessor.execute(progressIndicator);
+                                        }
+                                    });
+
                                 }
-                            }.start();
+                            }
                         }
+                    }.start();
+                }
+            };
+
+            selectConnectionAndSchema(file, executionTask);
+        }
+    }
+
+    public void executeStatementAtCursor(final Editor editor) {
+            StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
+            if (executionProcessor != null) {
+                executeStatement(executionProcessor);
+            } else {
+                MessageUtil.showQuestionDialog(
+                        "Multiple Statement Execution", "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
+                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                int option = getOption();
+                                if (option == 0 || option == 1) {
+                                    int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
+                                    List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(editor, offset);
+                                    executeStatements(executionProcessors);
+                                }
+                            }
+                        });
+            }
+    }
+
+    public void promptVariablesDialog(@NotNull final StatementExecutionProcessor executionProcessor, @NotNull final RunnableTask callback) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
+                ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+                if (executablePsiElement != null) {
+                    executablePsiElement.collectExecVariablePsiElements(bucket);
+                }
+
+                StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
+                if (bucket.isEmpty()) {
+                    executionVariables = null;
+                    executionInput.setExecutionVariables(null);
+                } else {
+                    if (executionVariables == null)
+                        executionVariables = new StatementExecutionVariablesBundle(bucket); else
+                        executionVariables.initialize(bucket);
+                }
+
+                if (executionVariables != null) {
+                    StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executionInput.getExecutableStatementText());
+                    dialog.show();
+                    if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                        callback.start();
                     }
-                };
-                selectConnection(executionProcessor.getPsiFile(), executionTask);
+                } else {
+                    callback.start();
+                }
             }
         }.start();
     }
 
-    public void fireExecution(final List<StatementExecutionProcessor> executionProcessors) {
-        if (executionProcessors.size() > 0) {
-            final DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
-            new ConnectionAction(file) {
-                @Override
-                public void execute() {
-                    SimpleTask executionTask = new SimpleTask() {
-                        @Override
-                        public void execute() {
-                            boolean continueExecution = true;
-                            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                                continueExecution = executionProcessor.promptVariablesDialog();
-                                if (!continueExecution) break;
-                            }
-                            if (continueExecution) {
-                                new BackgroundTask(getProject(), "Executing statement", false, true) {
-                                    public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                        boolean showIndeterminateProgress = executionProcessors.size() < 5;
-                                        initProgressIndicator(progressIndicator, showIndeterminateProgress);
-
-                                        for (int i = 0; i < executionProcessors.size(); i++) {
-                                            if (!progressIndicator.isCanceled()) {
-                                                if (!progressIndicator.isIndeterminate()) {
-                                                    progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
-                                                }
-
-                                                executionProcessors.get(i).execute(progressIndicator);
-                                            }
-                                        }
-                                    }
-                                }.start();
-                            }
-
-                        }
-                    };
-                    selectConnection(file, executionTask );                }
-            }.start();
-        }
-    }
-
-    private void selectConnection(final DBLanguagePsiFile file, final RunnableTask callback) {
-        ConnectionHandler activeConnection = file.getActiveConnection();
-        DBSchema currentSchema = file.getCurrentSchema();
-        if (activeConnection == null || currentSchema == null || activeConnection.isVirtual()) {
-            String message =
-                    activeConnection == null ?
-                            "The file is not linked to any connection.\n" +
-                            "To continue with the statement execution please select a target connection." :
-                    activeConnection.isVirtual() ?
-                            "The connection you selected for this file is a virtual connection, used only to decide the SQL dialect.\n" +
-                            "You can not execute statements against this connection. Please select a proper connection to continue." :
-                    currentSchema == null ?
-                            "You did not select any schema to run the statement against.\n" +
-                            "To continue with the statement execution please select a schema." : null;
-
-            String okOption =
-                    activeConnection == null || activeConnection.isVirtual() ? "Select Connection" :
-                    currentSchema == null ? "Select Schema" : null;
-
-            String[] options = {okOption, "Cancel"};
-
-            MessageUtil.showWarningDialog(message, "No valid Connection / Schema", options, 0,
-                    new SimpleLaterInvocator() {
-                        @Override
-                        public void execute() {
-                            if (getOption() == 0) {
-                                SelectConnectionDialog selectConnectionDialog = new SelectConnectionDialog(file);
-                                selectConnectionDialog.show();
-                                if (selectConnectionDialog.getExitCode() == SelectConnectionDialog.OK_EXIT_CODE) {
-                                    callback.start();
-                                }
-                            }
-                        }
-                    });
-        } else {
-            callback.start();
-        }
-    }
-
-    public void executeSelectedStatement(final Editor editor) {
-        final DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-        new ConnectionAction(file) {
+    private void selectConnectionAndSchema(@NotNull final DBLanguagePsiFile file, @NotNull final SimpleTask callback) {
+        new SimpleLaterInvocator() {
             @Override
-            public void execute() {
-                StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
-                if (executionProcessor != null) {
-                    fireExecution(executionProcessor);
-                } else {
-                    MessageUtil.showQuestionDialog(
-                            "Multiple Statement Execution", "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                            OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
+            protected void execute() {
+                ConnectionHandler activeConnection = file.getActiveConnection();
+                DBSchema currentSchema = file.getCurrentSchema();
+                final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+                if (activeConnection == null || activeConnection.isVirtual()) {
+                    String message =
+                            activeConnection == null ?
+                                    "The file is not linked to any connection.\nTo continue with the statement execution please select a target connection." :
+                                    "The connection you selected for this file is a virtual connection, used only to decide the SQL dialect.\n" +
+                                            "You can not execute statements against this connection. Please select a proper connection to continue.";
+
+
+                    MessageUtil.showWarningDialog(message, "No valid Connection", new String[]{"Select Connection", "Cancel"}, 0,
+                            new SimpleTask() {
                                 @Override
                                 public void execute() {
-                                    int option = getOption();
-                                    if (option == 0 || option == 1) {
-                                        int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
-                                        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(editor, offset);
-                                        fireExecution(executionProcessors);
+                                    if (getOption() == 0) {
+                                        connectionMappingManager.promptConnectionSelector(file, true, true,
+                                                new SimpleTask() {
+                                                    @Override
+                                                    public void execute() {
+                                                        connectionMappingManager.promptSchemaSelector(file, callback);
+                                                    }
+                                                });
                                     }
                                 }
                             });
+
+                } else if (currentSchema == null) {
+                    String message =
+                            "You did not select any schema to run the statement against.\n" +
+                                    "To continue with the statement execution please select a schema.";
+                    MessageUtil.showWarningDialog(message, "No valid Schema", new String[]{"Select Schema", "Cancel"}, 0,
+                            new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    if (getOption() == 0) {
+                                        connectionMappingManager.promptConnectionSelector(file, true, true, callback);
+                                    }
+                                }
+                            });
+                } else {
+                    new ConnectionAction(file) {
+                        @Override
+                        public void execute() {
+                            callback.start();
+                        }
+                    }.start();
                 }
             }
         }.start();

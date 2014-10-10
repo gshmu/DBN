@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -43,6 +32,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
@@ -122,9 +122,8 @@ public class MessagesTree extends DBNTree implements Disposable {
                 DBLanguagePsiFile psiFile = executionResult.getExecutionProcessor().getPsiFile();
                 if (psiFile != null && psiFile.getVirtualFile() != null) {
                     editorManager.openFile(psiFile.getVirtualFile(), requestFocus);
+                    executionMessage.navigateToEditor(requestFocus);
                 }
-
-                executionMessage.navigateToEditor(requestFocus);
             }
         }
         else if (object instanceof CompilerMessageNode) {
@@ -143,8 +142,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                     if (virtualFile instanceof DBConsoleVirtualFile) {
                         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
                         navigateInConsoleEditor(compilerMessage, consoleVirtualFile, requestFocus);
-                    }
-                    if (virtualFile != null) {
+                    } else if (virtualFile != null) {
                         navigateInScriptEditor(compilerMessage, virtualFile, requestFocus);
                     }
                 }

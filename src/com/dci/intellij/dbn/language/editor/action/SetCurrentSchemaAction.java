@@ -28,7 +28,7 @@ public class SetCurrentSchemaAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project != null && editor != null) {
-            FileConnectionMappingManager.getInstance(project).setCurrentSchemaForSelectedEditor(editor, schema);
+            FileConnectionMappingManager.getInstance(project).setCurrentSchemaForEditor(editor, schema);
         }
     }
 

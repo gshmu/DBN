@@ -1,21 +1,33 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -28,6 +40,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
@@ -35,6 +49,7 @@ import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -254,22 +269,24 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (editor!= null) {
             Document document = editor.getDocument();
             VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-            if (VirtualFileUtil.isLocalFileSystem(virtualFile) ) {
+            if (virtualFile != null && VirtualFileUtil.isLocalFileSystem(virtualFile) ) {
                 boolean changed = setActiveConnection(virtualFile, connectionHandler);
                 if (changed) {
                     DocumentUtil.touchDocument(editor);
 
                     FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-                    DBLanguageFileEditorToolbarForm toolbarForm = fileEditor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);
-                    if (toolbarForm != null) {
-                        toolbarForm.getAutoCommitLabel().setConnectionHandler(connectionHandler);
+                    if (fileEditor != null) {
+                        DBLanguageFileEditorToolbarForm toolbarForm = fileEditor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);
+                        if (toolbarForm != null) {
+                            toolbarForm.getAutoCommitLabel().setConnectionHandler(connectionHandler);
+                        }
                     }
                 }
             }
         }
     }
 
-    public void setCurrentSchemaForSelectedEditor(Editor editor, DBSchema schema) {
+    public void setCurrentSchemaForEditor(Editor editor, DBSchema schema) {
         if (editor!= null) {
             Document document = editor.getDocument();
             VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
@@ -278,6 +295,136 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                 if (changed) {
                     DocumentUtil.touchDocument(editor);
                 }
+            }
+        }
+    }
+
+    /***************************************************
+     *             Select connection popup             *
+     ***************************************************/
+    public void promptConnectionSelector(DBLanguagePsiFile psiFile, boolean showVirtualConnections, boolean showCreateOption, SimpleTask callback) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+        FiltrableList<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers();
+
+        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        if (connectionHandlers.size() > 0) {
+            for (ConnectionHandler connectionHandler : connectionHandlers) {
+                SelectConnectionAction connectionAction = new SelectConnectionAction(connectionHandler, psiFile, callback);
+                actionGroup.add(connectionAction);
+            }
+        }
+
+        if (showVirtualConnections) {
+            actionGroup.addSeparator();
+            for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {
+                SelectConnectionAction connectionAction = new SelectConnectionAction(virtualConnectionHandler, psiFile, callback);
+                actionGroup.add(connectionAction);
+            }
+        }
+
+        if (showCreateOption) {
+            actionGroup.addSeparator();
+            actionGroup.add(new SetupConnectionAction());
+        }
+
+        ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                "Select connection",
+                actionGroup,
+                SimpleDataContext.getProjectContext(null),
+                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                true);
+
+        popupBuilder.showCenteredInCurrentWindow(project);
+    }
+
+
+    private class SelectConnectionAction extends AnAction {
+        private ConnectionHandler connectionHandler;
+        private DBLanguagePsiFile file;
+        private SimpleTask callback;
+
+        private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, SimpleTask callback) {
+            super(connectionHandler.getName(), null, connectionHandler.getIcon());
+            this.file = file;
+            this.connectionHandler = connectionHandler;
+            this.callback = callback;
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            DBSchema currentSchema = connectionHandler.getUserSchema();
+            file.setActiveConnection(connectionHandler);
+            file.setCurrentSchema(currentSchema);
+            if (callback != null) {
+                callback.start();
+            }
+        }
+    }
+
+    private class SetupConnectionAction extends AnAction {
+        private SetupConnectionAction() {
+            super("Setup new connection", null, Icons.CONNECTION_NEW);
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            Project project = ActionUtil.getProject(e);
+            if (project != null) {
+                ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
+                globalSettingsDialog.show();
+            }
+        }
+    }
+
+    /***************************************************
+     *             Select schema popup                 *
+     ***************************************************/
+    public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final SimpleTask callback) throws IncorrectOperationException {
+        new ConnectionAction(psiFile) {
+            @Override
+            public void execute() {
+                DefaultActionGroup actionGroup = new DefaultActionGroup();
+
+                ConnectionHandler connectionHandler = psiFile.getActiveConnection();
+                if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                    List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
+                    for (DBSchema schema  :schemas) {
+                        SelectSchemaAction schemaAction = new SelectSchemaAction(psiFile, schema, callback);
+                        actionGroup.add(schemaAction);
+                    }
+                }
+
+                ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                        "Select schema",
+                        actionGroup,
+                        SimpleDataContext.getProjectContext(null),
+                        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                        true);
+
+                popupBuilder.showCenteredInCurrentWindow(project);
+            }
+        }.start();
+    }
+
+
+    private class SelectSchemaAction extends AnAction {
+        private DBLanguagePsiFile file;
+        private DBSchema schema;
+        private SimpleTask callback;
+
+        private SelectSchemaAction(DBLanguagePsiFile file, DBSchema schema, SimpleTask callback) {
+            super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
+            this.file = file;
+            this.schema = schema;
+            this.callback = callback;
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            file.setCurrentSchema(schema);
+            if (callback != null) {
+                callback.start();
             }
         }
     }

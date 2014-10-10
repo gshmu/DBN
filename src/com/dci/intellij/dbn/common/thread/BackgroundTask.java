@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.application.Application;
@@ -14,8 +11,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class BackgroundTask extends Task.Backgroundable {
+public abstract class BackgroundTask extends Task.Backgroundable implements RunnableTask {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static PerformInBackgroundOption START_IN_BACKGROUND = new PerformInBackgroundOption() {
@@ -28,7 +27,13 @@ public abstract class BackgroundTask extends Task.Backgroundable {
         public void processSentToBackground() {}
     };
 
-    public void run(@NotNull ProgressIndicator progressIndicator) {
+    @Override
+    public final void run() {
+        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        run(progressIndicator);
+    }
+
+    public final void run(@NotNull ProgressIndicator progressIndicator) {
         int priority = Thread.currentThread().getPriority();
         try {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);

@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.intellij.openapi.ui.Messages;
 
 public class MessageUtil {
@@ -47,11 +47,11 @@ public class MessageUtil {
         showDialog(message, title, OPTIONS_OK, 0, Icons.DIALOG_ERROR, null);
     }
 
-    public static void showErrorDialog(final String message, final String title, String[] options, int defaultOptionIndex, RunnableTask callback) {
+    public static void showErrorDialog(final String message, final String title, String[] options, int defaultOptionIndex, SimpleTask callback) {
         showDialog(message, title, options, defaultOptionIndex, Icons.DIALOG_ERROR, callback);
     }
 
-    public static void showQuestionDialog(final String title, final String message, String[] options, int defaultOptionIndex, RunnableTask callback) {
+    public static void showQuestionDialog(final String title, final String message, String[] options, int defaultOptionIndex, SimpleTask callback) {
         showDialog(message, title, options, defaultOptionIndex, Icons.DIALOG_QUESTION, callback);
     }
 
@@ -60,7 +60,7 @@ public class MessageUtil {
         showWarningDialog(message, title, OPTIONS_OK, 0, null);
     }
 
-    public static void showWarningDialog(final String message, final String title, String[] options, int defaultOptionIndex, RunnableTask callback) {
+    public static void showWarningDialog(final String message, final String title, String[] options, int defaultOptionIndex, SimpleTask callback) {
         showDialog(message, title, options, defaultOptionIndex, Icons.DIALOG_WARNING, callback);
     }
 
@@ -68,7 +68,7 @@ public class MessageUtil {
         showInfoDialog(title, message, OPTIONS_OK, 0, null);
     }
 
-    public static void showInfoDialog(final String title, final String message, String[] options, int defaultOptionIndex, RunnableTask callback) {
+    public static void showInfoDialog(final String title, final String message, String[] options, int defaultOptionIndex, SimpleTask callback) {
         showDialog(message, title, options, defaultOptionIndex, Icons.DIALOG_INFORMATION, callback);
     }
 
@@ -78,7 +78,7 @@ public class MessageUtil {
             final String[] options,
             final int defaultOptionIndex,
             final Icon icon,
-            final RunnableTask callback) {
+            final SimpleTask callback) {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
