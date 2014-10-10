@@ -27,6 +27,14 @@ public abstract class BackgroundTask extends Task.Backgroundable implements Runn
         public void processSentToBackground() {}
     };
 
+    public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground, boolean canBeCancelled) {
+        super(project, Constants.DBN_TITLE_PREFIX + "" + title, canBeCancelled, startInBackground ? START_IN_BACKGROUND : DO_NOT_START_IN_BACKGROUND);
+    }
+
+    public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground) {
+        this(project, title, startInBackground, false);
+    }
+
     @Override
     public final void run() {
         ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
@@ -52,15 +60,7 @@ public abstract class BackgroundTask extends Task.Backgroundable implements Runn
 
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
-    public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground, boolean canBeCancelled) {
-        super(project, Constants.DBN_TITLE_PREFIX + "" + title, canBeCancelled, startInBackground ? START_IN_BACKGROUND : DO_NOT_START_IN_BACKGROUND);
-    }
-
-    public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground) {
-        this(project, title, startInBackground, false);
-    }
-
-    public void start() {
+    public final void start() {
         final ProgressManager progressManager = ProgressManager.getInstance();
         final BackgroundTask task = BackgroundTask.this;
         Application application = ApplicationManager.getApplication();
