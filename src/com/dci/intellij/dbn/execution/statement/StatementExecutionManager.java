@@ -261,7 +261,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             @Override
             protected void execute() {
                 ConnectionHandler activeConnection = file.getActiveConnection();
-                DBSchema currentSchema = file.getCurrentSchema();
+                final DBSchema currentSchema = file.getCurrentSchema();
                 final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
                 if (activeConnection == null || activeConnection.isVirtual()) {
                     String message =
@@ -280,7 +280,13 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                                                 new SimpleTask() {
                                                     @Override
                                                     public void execute() {
-                                                        connectionMappingManager.promptSchemaSelector(file, callback);
+                                                        if (currentSchema == null) {
+                                                            connectionMappingManager.promptSchemaSelector(file, callback);
+                                                        }
+                                                        else {
+                                                            callback.start();
+                                                        }
+
                                                     }
                                                 });
                                     }
