@@ -47,8 +47,8 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         Disposer.register(this, messagesTree);
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean focus) {
-        return messagesTree.addExecutionMessage(executionMessage, focus);
+    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
+        return messagesTree.addExecutionMessage(executionMessage, select, focus);
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {

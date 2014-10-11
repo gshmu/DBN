@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -23,7 +33,6 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -34,16 +43,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
@@ -261,7 +260,6 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             @Override
             protected void execute() {
                 ConnectionHandler activeConnection = file.getActiveConnection();
-                final DBSchema currentSchema = file.getCurrentSchema();
                 final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
                 if (activeConnection == null || activeConnection.isVirtual()) {
                     String message =
@@ -280,7 +278,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                                                 new SimpleTask() {
                                                     @Override
                                                     public void execute() {
-                                                        if (currentSchema == null) {
+                                                        if (file.getCurrentSchema() == null) {
                                                             connectionMappingManager.promptSchemaSelector(file, callback);
                                                         }
                                                         else {
@@ -293,7 +291,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                                 }
                             });
 
-                } else if (currentSchema == null) {
+                } else if (file.getCurrentSchema() == null) {
                     String message =
                             "You did not select any schema to run the statement against.\n" +
                                     "To continue with the statement execution please select a schema.";
@@ -302,7 +300,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                                 @Override
                                 public void execute() {
                                     if (getOption() == 0) {
-                                        connectionMappingManager.promptConnectionSelector(file, true, true, callback);
+                                        connectionMappingManager.promptSchemaSelector(file, callback);
                                     }
                                 }
                             });

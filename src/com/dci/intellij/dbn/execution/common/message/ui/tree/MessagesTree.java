@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -33,17 +44,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
     public MessagesTree(Project project) {
@@ -68,19 +68,21 @@ public class MessagesTree extends DBNTree implements Disposable {
         setModel(new MessagesTreeModel());
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean focus) {
+    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
         TreePath treePath = getModel().addExecutionMessage(executionMessage);
-        getSelectionModel().setSelectionPath(treePath);
         scrollPathToVisible(treePath);
+        if (select) {
+            getSelectionModel().setSelectionPath(treePath);
+        }
         if (focus) requestFocus();
         return treePath;
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
+        scrollPathToVisible(treePath);
         if (select) {
             getSelectionModel().setSelectionPath(treePath);
-            scrollPathToVisible(treePath);
         }
         return treePath;
     }
@@ -272,7 +274,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent event) {
             if (event.isAddedPath()) {
                 Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object, false);
+                navigateToCode(object, true);
                 //grabFocus();
             }
         }
