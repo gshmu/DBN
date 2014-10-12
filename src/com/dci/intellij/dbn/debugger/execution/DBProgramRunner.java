@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.debugger.execution;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -13,7 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.execution.ui.CompileDebugDependenciesDialog;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -36,6 +32,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class DBProgramRunner extends GenericProgramRunner {
     public static final String RUNNER_ID = "DBNavigatorProgramRunner";
@@ -209,7 +209,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                                 for (DBSchemaObject schemaObject : selectedDependencies) {
                                     if (!progressIndicator.isCanceled()) {
                                         progressIndicator.setText("Compiling " + schemaObject.getQualifiedNameWithType());
-                                        compilerManager.compileObject(schemaObject, CompileType.DEBUG, CompilerAction.BULK_COMPILE_ACTION);
+                                        compilerManager.compileObject(schemaObject, CompileTypeOption.DEBUG, CompilerAction.BULK_COMPILE_ACTION);
                                     }
                                 }
                                 executionInput.getConnectionHandler().getObjectBundle().refreshObjectsStatus(null);
