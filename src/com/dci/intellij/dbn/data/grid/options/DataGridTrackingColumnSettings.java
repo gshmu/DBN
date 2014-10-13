@@ -82,6 +82,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
     }
 
     public void readConfiguration(Element element) {
+        this.columnNames.clear();
         StringTokenizer columnNames = new StringTokenizer(SettingsUtil.getString(element, "columnNames", ""), ",");
         while (columnNames.hasMoreTokens()) {
             String columnName = columnNames.nextToken().trim().toUpperCase();

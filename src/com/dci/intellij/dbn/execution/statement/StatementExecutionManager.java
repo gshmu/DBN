@@ -150,6 +150,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         SimpleTask executionTask = new SimpleTask() {
             @Override
             public void execute() {
+                executionProcessor.initExecutionInput();
                 promptVariablesDialog(executionProcessor,
                         new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
                             public void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -182,6 +183,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                                     }
 
                                     final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
+                                    executionProcessor.initExecutionInput();
                                     promptVariablesDialog(executionProcessor, new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
                                         @Override
                                         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
