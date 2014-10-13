@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 public class DataEditorSettingsForm extends CompositeConfigurationEditorForm<DataEditorSettings> {
     private JPanel mainPanel;
     private JPanel textEditorAutopopupPanel;
-    private JPanel generalPanel;
+    private JPanel generalSettingsPanel;
     private JPanel filtersPanel;
     private JPanel valuesListPopupPanel;
     private JPanel lobContentTypesPanel;
@@ -19,7 +19,7 @@ public class DataEditorSettingsForm extends CompositeConfigurationEditorForm<Dat
         super(settings);
         textEditorAutopopupPanel.add(settings.getPopupSettings().createComponent(), BorderLayout.CENTER);
         valuesListPopupPanel.add(settings.getValueListPopupSettings().createComponent(), BorderLayout.CENTER);
-        generalPanel.add(settings.getGeneralSettings().createComponent(), BorderLayout.CENTER);
+        generalSettingsPanel.add(settings.getGeneralSettings().createComponent(), BorderLayout.CENTER);
         filtersPanel.add(settings.getFilterSettings().createComponent(), BorderLayout.CENTER);
         lobContentTypesPanel.add(settings.getQualifiedEditorSettings().createComponent(), BorderLayout.CENTER);
         recordNavigationPanel.add(settings.getRecordNavigationSettings().createComponent(), BorderLayout.CENTER);

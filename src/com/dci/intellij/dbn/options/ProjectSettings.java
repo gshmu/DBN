@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.options;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -9,6 +17,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
@@ -18,14 +27,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
@@ -36,6 +37,7 @@ public class ProjectSettings
     private NavigationSettings navigationSettings;
     private DataGridSettings dataGridSettings;
     private DataEditorSettings dataEditorSettings;
+    private CodeEditorSettings codeEditorSettings;
     private CodeCompletionSettings codeCompletionSettings;
     private ProjectCodeStyleSettings codeStyleSettings;
     private ExecutionEngineSettings executionEngineSettings;
@@ -49,6 +51,7 @@ public class ProjectSettings
         browserSettings = new DatabaseBrowserSettings(project);
         navigationSettings = new NavigationSettings(project);
         codeStyleSettings = new ProjectCodeStyleSettings(project);
+        codeEditorSettings = new CodeEditorSettings(project);
         dataGridSettings = new DataGridSettings(project);
         dataEditorSettings = new DataEditorSettings(project);
         codeCompletionSettings = new CodeCompletionSettings(project);
@@ -113,6 +116,10 @@ public class ProjectSettings
         return dataEditorSettings;
     }
 
+    public CodeEditorSettings getCodeEditorSettings() {
+        return codeEditorSettings;
+    }
+
     public CodeCompletionSettings getCodeCompletionSettings() {
         return codeCompletionSettings;
     }
@@ -158,6 +165,7 @@ public class ProjectSettings
                 //codeStyleSettings,
                 dataGridSettings,
                 dataEditorSettings,
+                codeEditorSettings,
                 codeCompletionSettings,
                 executionEngineSettings,
                 ddlFileSettings,

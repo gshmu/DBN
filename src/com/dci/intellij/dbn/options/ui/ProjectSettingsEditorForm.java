@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
@@ -38,6 +39,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         ConnectionBundleSettings connectionSettings = globalSettings.getConnectionSettings();
         DatabaseBrowserSettings browserSettings = globalSettings.getBrowserSettings();
         NavigationSettings navigationSettings = globalSettings.getNavigationSettings();
+        CodeEditorSettings codeEditorSettings = globalSettings.getCodeEditorSettings();
         CodeCompletionSettings codeCompletionSettings = globalSettings.getCodeCompletionSettings();
         DataGridSettings dataGridSettings = globalSettings.getDataGridSettings();
         DataEditorSettings dataEditorSettings = globalSettings.getDataEditorSettings();
@@ -48,6 +50,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         addSettingsPanel(connectionSettings);
         addSettingsPanel(browserSettings);
         addSettingsPanel(navigationSettings);
+        addSettingsPanel(codeEditorSettings);
         addSettingsPanel(codeCompletionSettings);
         addSettingsPanel(dataGridSettings);
         addSettingsPanel(dataEditorSettings);

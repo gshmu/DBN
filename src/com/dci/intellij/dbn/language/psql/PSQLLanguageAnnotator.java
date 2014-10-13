@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorGeneralSettings;
 import com.dci.intellij.dbn.execution.statement.StatementGutterRenderer;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -24,6 +25,8 @@ import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.options.ProjectSettings;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -141,45 +144,48 @@ public class PSQLLanguageAnnotator implements Annotator {
                     DBSchemaObject object = (DBSchemaObject) file.getUnderlyingObject();
                     VirtualFile virtualFile = file.getVirtualFile();
 
-                    if (object == null || (virtualFile != null && virtualFile.isInLocalFileSystem())) {
-                        ElementTypeAttribute targetAttribute =
-                                elementType.is(ElementTypeAttribute.OBJECT_DECLARATION) ? ElementTypeAttribute.OBJECT_SPECIFICATION :
-                                elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? ElementTypeAttribute.OBJECT_DECLARATION : null;
+                    ProjectSettings projectSettings = ProjectSettingsManager.getSettings(basePsiElement.getProject());
+                    CodeEditorGeneralSettings codeEditorGeneralSettings = projectSettings.getCodeEditorSettings().getGeneralSettings();
 
-                        if (targetAttribute != null) {
-                            BasePsiElement rootPsiElement = identifierPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.ROOT);
+                    if (codeEditorGeneralSettings.isShowSpecDeclarationNavigationGutter()) {
+                        if (object == null || (virtualFile != null && virtualFile.isInLocalFileSystem())) {
+                            ElementTypeAttribute targetAttribute =
+                                    elementType.is(ElementTypeAttribute.OBJECT_DECLARATION) ? ElementTypeAttribute.OBJECT_SPECIFICATION :
+                                            elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? ElementTypeAttribute.OBJECT_DECLARATION : null;
 
-                            BasePsiElement targetElement = rootPsiElement == null ? null :
-                                    rootPsiElement.lookupPsiElementBySubject(targetAttribute,
+                            if (targetAttribute != null) {
+                                BasePsiElement rootPsiElement = identifierPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.ROOT);
+
+                                BasePsiElement targetElement = rootPsiElement == null ? null :
+                                        rootPsiElement.lookupPsiElementBySubject(targetAttribute,
                                                 identifierPsiElement.getChars(),
                                                 identifierPsiElement.getObjectType());
 
+                                if (targetElement != null) {
+                                    NavigationAction navigationAction = targetContentType == DBContentType.CODE_BODY ?
+                                            new NavigateToDefinitionAction(null, targetElement, objectType) :
+                                            new NavigateToSpecificationAction(null, targetElement, objectType);
+                                    Annotation annotation = holder.createInfoAnnotation(basePsiElement, null);
+                                    NavigationGutterRenderer gutterIconRenderer = new NavigationGutterRenderer(navigationAction, GutterIconRenderer.Alignment.RIGHT);
+                                    annotation.setGutterIconRenderer(gutterIconRenderer);
+                                }
+                            }
+                        } else if (object.getContentType() == DBContentType.CODE_SPEC_AND_BODY) {
+                            SourceCodeManager codeEditorManager = SourceCodeManager.getInstance(object.getProject());
+
+
+                            BasePsiElement targetElement = codeEditorManager.getObjectNavigationElement(object, targetContentType, identifierPsiElement.getObjectType(), identifierPsiElement.getChars());
                             if (targetElement != null) {
                                 NavigationAction navigationAction = targetContentType == DBContentType.CODE_BODY ?
-                                        new NavigateToDefinitionAction(null, targetElement, objectType) :
-                                        new NavigateToSpecificationAction(null, targetElement, objectType);
+                                        new NavigateToDefinitionAction(object, targetElement, objectType) :
+                                        new NavigateToSpecificationAction(object, targetElement, objectType);
                                 Annotation annotation = holder.createInfoAnnotation(basePsiElement, null);
-                                NavigationGutterRenderer gutterIconRenderer = new NavigationGutterRenderer(navigationAction, GutterIconRenderer.Alignment.RIGHT);
-                                annotation.setGutterIconRenderer(gutterIconRenderer);
+                                annotation.setGutterIconRenderer(new NavigationGutterRenderer(navigationAction, GutterIconRenderer.Alignment.RIGHT));
                             }
-                            NavigateToObjectAction navigateToObjectAction = new NavigateToObjectAction(identifierPsiElement.resolveUnderlyingObject(), objectType);
-                            Annotation annotation = holder.createInfoAnnotation(basePsiElement, null);
-                            annotation.setGutterIconRenderer(new NavigationGutterRenderer(navigateToObjectAction, GutterIconRenderer.Alignment.LEFT));
-
-
                         }
-                    } else if (object.getContentType() == DBContentType.CODE_SPEC_AND_BODY) {
-                        SourceCodeManager codeEditorManager = SourceCodeManager.getInstance(object.getProject());
+                    }
 
-
-                        BasePsiElement targetElement = codeEditorManager.getObjectNavigationElement(object, targetContentType, identifierPsiElement.getObjectType(), identifierPsiElement.getChars());
-                        if (targetElement != null) {
-                            NavigationAction navigationAction = targetContentType == DBContentType.CODE_BODY ?
-                                    new NavigateToDefinitionAction(object, targetElement, objectType) :
-                                    new NavigateToSpecificationAction(object, targetElement, objectType);
-                            Annotation annotation = holder.createInfoAnnotation(basePsiElement, null);
-                            annotation.setGutterIconRenderer(new NavigationGutterRenderer(navigationAction, GutterIconRenderer.Alignment.RIGHT));
-                        }
+                    if (codeEditorGeneralSettings.isShowObjectsNavigationGutter()) {
                         NavigateToObjectAction navigateToObjectAction = new NavigateToObjectAction(identifierPsiElement.resolveUnderlyingObject(), objectType);
                         Annotation annotation = holder.createInfoAnnotation(basePsiElement, null);
                         annotation.setGutterIconRenderer(new NavigationGutterRenderer(navigateToObjectAction, GutterIconRenderer.Alignment.LEFT));
