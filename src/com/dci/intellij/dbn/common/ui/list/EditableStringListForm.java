@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -62,7 +63,7 @@ public class EditableStringListForm extends DBNFormImpl{
             super("Add row", null, Icons.ACTION_ADD);
         }
 
-        public void actionPerformed(AnActionEvent anActionEvent) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             editableStringList.insertRow();
         }
     }
@@ -73,14 +74,14 @@ public class EditableStringListForm extends DBNFormImpl{
             super("Delete row", null, Icons.ACTION_REMOVE);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             editableStringList.removeRow();
         }
 
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             int selectedRow = editableStringList.getSelectedRow();
             Presentation presentation = e.getPresentation();
-            presentation.setEnabled(selectedRow > -1);
+            presentation.setEnabled(selectedRow == 1);
         }
     }
 }

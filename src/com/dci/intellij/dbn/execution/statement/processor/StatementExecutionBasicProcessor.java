@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -35,12 +41,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -154,6 +154,18 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return executionResult;
     }
 
+    @Override
+    public void initExecutionInput() {
+        // overwrite the input if it was leniently bound
+        if (cachedExecutable != null) {
+            executionInput.setOriginalStatementText(cachedExecutable.getText());
+            executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
+            executionInput.setConnectionHandler(getConnectionHandler());
+            executionInput.setCurrentSchema(getCurrentSchema());
+        }
+
+    }
+
     public void execute(ProgressIndicator progressIndicator) {
         progressIndicator.setText("Executing " + getStatementName());
         long startTimeMillis = System.currentTimeMillis();
@@ -162,13 +174,6 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         DBSchema currentSchema = getCurrentSchema();
 
         boolean continueExecution = true;
-        if (cachedExecutable != null) {
-            executionInput.setOriginalStatementText(cachedExecutable.getText());
-            executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
-            executionInput.setConnectionHandler(activeConnection);
-            executionInput.setCurrentSchema(currentSchema);
-        }
-
 
         String executableStatementText = executionInput.getExecutableStatementText();
         StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
