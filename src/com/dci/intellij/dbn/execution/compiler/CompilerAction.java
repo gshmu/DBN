@@ -3,16 +3,18 @@ package com.dci.intellij.dbn.execution.compiler;
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class CompilerAction {
     public static final CompilerAction BULK_COMPILE_ACTION = new CompilerAction(Type.BULK_COMPILE);
 
     private Type type;
-    private WeakReference<VirtualFile> virtualFile;
-    private WeakReference<Editor> editor;
+    private WeakReference<VirtualFile> virtualFileRef;
+    private WeakReference<FileEditor> fileEditorRef;
     private int startOffset;
     private DBContentType contentType;
 
@@ -20,10 +22,10 @@ public class CompilerAction {
         this.type = type;
     }
 
-    public CompilerAction(Type type, VirtualFile virtualFile, Editor editor) {
+    public CompilerAction(Type type, VirtualFile virtualFile, FileEditor fileEditor) {
         this.type = type;
-        this.virtualFile = new WeakReference<VirtualFile>(virtualFile);
-        this.editor = new WeakReference<Editor>(editor);
+        this.virtualFileRef = new WeakReference<VirtualFile>(virtualFile);
+        this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
     }
 
     public DBContentType getContentType() {
@@ -60,16 +62,19 @@ public class CompilerAction {
 
     @Nullable
     public VirtualFile getVirtualFile() {
-        return virtualFile == null ? null : virtualFile.get();
+        return virtualFileRef == null ? null : virtualFileRef.get();
     }
 
     @Nullable
-    public Editor getEditor() {
-        Editor editor = this.editor == null ? null : this.editor.get();
-        if (editor != null && editor.isDisposed()) {
-            this.editor = null;
+    public FileEditor getFileEditor() {
+        FileEditor fileEditor = this.fileEditorRef == null ? null : this.fileEditorRef.get();
+        if (fileEditor != null) {
+            Editor editor = EditorUtil.getEditor(fileEditor);
+            if (editor != null && editor.isDisposed()) {
+                this.fileEditorRef = null;
+            }
         }
-        return editor;
+        return fileEditor;
     }
 
     public int getStartOffset() {

@@ -31,7 +31,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -275,17 +274,18 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public void saveChanges() {
         FileDocumentManager.getInstance().saveAllDocuments();
         Project project = getProject();
-        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-            if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
-                FileEditor[] fileEditors = fileEditorManager.getEditors(this);
-                for (FileEditor fileEditor : fileEditors) {
-                    if (fileEditor instanceof SourceCodeEditor) {
-                        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                        Editor editor = sourceCodeEditor.getEditor();
-                        sourceCodeManager.updateSourceToDatabase(editor, (DBSourceCodeVirtualFile) contentVirtualFile);
-                        break;
+        if (project != null) {
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+                if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
+                    FileEditor[] fileEditors = fileEditorManager.getEditors(this);
+                    for (FileEditor fileEditor : fileEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            sourceCodeManager.updateSourceToDatabase(sourceCodeEditor, (DBSourceCodeVirtualFile) contentVirtualFile);
+                            break;
+                        }
                     }
                 }
             }

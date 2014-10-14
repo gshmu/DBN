@@ -40,7 +40,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -329,13 +328,15 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         }
     }
 
-    public void navigateInEditor(@NotNull Editor editor, boolean requestFocus) {
+    public void navigateInEditor(@NotNull FileEditor fileEditor, boolean requestFocus) {
         OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
         if (descriptor != null) {
-            FileEditor fileEditor = TextEditorProvider.getInstance().getTextEditor(editor);
             EditorUtil.selectEditor(getProject(), getFile().getVirtualFile(), fileEditor, requestFocus);
-            descriptor.navigateIn(editor);
-            if (requestFocus) focusEditor(editor);
+            Editor editor = EditorUtil.getEditor(fileEditor);
+            if (editor != null) {
+                descriptor.navigateIn(editor);
+                if (requestFocus) focusEditor(editor);
+            }
         }
     }
 

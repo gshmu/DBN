@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.action;
 
-import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -21,9 +21,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -152,12 +152,9 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         String predefinedText = null;
         FileEditor[] selectedEditors = FileEditorManager.getInstance(project).getSelectedEditors();
         for (FileEditor fileEditor : selectedEditors) {
-            if (fileEditor instanceof BasicTextEditor) {
-                BasicTextEditor textEditor = (BasicTextEditor) fileEditor;
-                predefinedText = textEditor.getEditor().getSelectionModel().getSelectedText();
-            } else if (fileEditor instanceof TextEditor) {
-                TextEditor textEditor = (TextEditor) fileEditor;
-                predefinedText = textEditor.getEditor().getSelectionModel().getSelectedText();
+            Editor editor = EditorUtil.getEditor(fileEditor);
+            if (editor != null) {
+                predefinedText = editor.getSelectionModel().getSelectedText();
             }
             if (isValidPredefinedText(predefinedText)) {
                 break;

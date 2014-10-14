@@ -11,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -38,7 +37,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.TextEditor;
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -120,7 +118,7 @@ public class MessagesTree extends DBNTree implements Disposable {
             StatementExecutionMessage executionMessage = execMessageNode.getExecutionMessage();
             if (!executionMessage.isOrphan()) {
                 StatementExecutionResult executionResult = executionMessage.getExecutionResult();
-                FileEditorManager editorManager = FileEditorManager.getInstance(executionResult.getProject());
+                FileEditorManager editorManager = FileEditorManager.getInstance(project);
                 DBLanguagePsiFile psiFile = executionResult.getExecutionProcessor().getPsiFile();
                 if (psiFile != null && psiFile.getVirtualFile() != null) {
                     editorManager.openFile(psiFile.getVirtualFile(), requestFocus);
@@ -132,109 +130,125 @@ public class MessagesTree extends DBNTree implements Disposable {
             CompilerMessageNode compilerMessageNode = (CompilerMessageNode) object;
             CompilerMessage compilerMessage = compilerMessageNode.getCompilerMessage();
 
-            if (project != null) {
-                CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
-                if (sourceAction.isSave() || sourceAction.isCompile() || sourceAction.isBulkCompile()) {
-                    DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
-                    if (databaseFile != null) {
-                        navigateInObjectEditor(compilerMessage, requestFocus);
-                    }
-                } else if (sourceAction.isDDL()) {
-                    VirtualFile virtualFile = sourceAction.getVirtualFile();
-                    if (virtualFile instanceof DBConsoleVirtualFile) {
-                        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-                        navigateInConsoleEditor(compilerMessage, consoleVirtualFile, requestFocus);
-                    } else if (virtualFile != null) {
-                        navigateInScriptEditor(compilerMessage, virtualFile, requestFocus);
-                    }
+            CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
+            if (sourceAction.isSave() || sourceAction.isCompile() || sourceAction.isBulkCompile()) {
+                DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
+                if (databaseFile != null) {
+                    navigateInObjectEditor(compilerMessage, requestFocus);
+                }
+            } else if (sourceAction.isDDL()) {
+                VirtualFile virtualFile = sourceAction.getVirtualFile();
+                if (virtualFile instanceof DBConsoleVirtualFile) {
+                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
+                    navigateInConsoleEditor(compilerMessage, consoleVirtualFile, requestFocus);
+                } else if (virtualFile != null) {
+                    navigateInScriptEditor(compilerMessage, virtualFile, requestFocus);
                 }
             }
         }
     }
 
     private void navigateInConsoleEditor(CompilerMessage compilerMessage, DBConsoleVirtualFile virtualFile, boolean requestFocus) {
-        FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
+        FileEditorManager editorManager = getFileEditorManager();
         editorManager.openFile(virtualFile, requestFocus);
-        Editor editor = compilerMessage.getCompilerResult().getSourceAction().getEditor();
-        if (editor == null) {
-            FileEditor[] editors = editorManager.getAllEditors(virtualFile);
-            for (FileEditor fileEditor : editors) {
+        FileEditor consoleFileEditor = compilerMessage.getCompilerResult().getSourceAction().getFileEditor();
+        if (consoleFileEditor == null) {
+            FileEditor[] fileEditors = editorManager.getAllEditors(virtualFile);
+            for (FileEditor fileEditor : fileEditors) {
                 if (fileEditor instanceof SQLConsoleEditor) {
-                    SQLConsoleEditor consoleEditor = (SQLConsoleEditor) fileEditor;
-                    editor = consoleEditor.getEditor();
+                    consoleFileEditor = fileEditor;
                 }
             }
         }
-        if (editor != null) {
-            int lineShifting = 1;
-            CharSequence documentText = editor.getDocument().getCharsSequence();
-            String objectName = compilerMessage.getObjectName();
-            CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
-            int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, sourceAction.getStartOffset());
-            if (objectStartOffset > -1) {
-                lineShifting = editor.getDocument().getLineNumber(objectStartOffset);
-            }
+        if (consoleFileEditor != null) {
+            Editor editor = EditorUtil.getEditor(consoleFileEditor);
+            if (editor != null) {
+                int lineShifting = 1;
+                Document document = editor.getDocument();
+                CharSequence documentText = document.getCharsSequence();
+                String objectName = compilerMessage.getObjectName();
+                CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
+                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, sourceAction.getStartOffset());
+                if (objectStartOffset > -1) {
+                    lineShifting = document.getLineNumber(objectStartOffset);
+                }
 
-            navigateInEditor(editor, compilerMessage, lineShifting);
+                navigateInEditor(editor, compilerMessage, lineShifting);
+            }
 
         }
     }
 
+    private FileEditorManager getFileEditorManager() {
+        return FileEditorManager.getInstance(project);
+    }
+
     private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, boolean requestFocus) {
-        Editor editor = compilerMessage.getCompilerResult().getSourceAction().getEditor();
-        if (editor == null) {
-            FileEditorManager editorManager = FileEditorManager.getInstance(compilerMessage.getProject());
+        FileEditor scriptFileEditor = compilerMessage.getCompilerResult().getSourceAction().getFileEditor();
+        if (scriptFileEditor == null) {
+            FileEditorManager editorManager = getFileEditorManager();
             editorManager.openFile(virtualFile, requestFocus);
             FileEditor[] editors = editorManager.getAllEditors(virtualFile);
             for (FileEditor fileEditor : editors) {
                 if (fileEditor instanceof TextEditor) {
-                    TextEditor textEditor = (TextEditor) fileEditor;
-                    editor = textEditor.getEditor();
+                    scriptFileEditor = fileEditor;
                 }
             }
         }
 
-        if (editor != null) {
-            FileEditor fileEditor = TextEditorProvider.getInstance().getTextEditor(editor);
-            EditorUtil.selectEditor(compilerMessage.getProject(), virtualFile, fileEditor, requestFocus);
-            int lineShifting = 1;
-            CharSequence documentText = editor.getDocument().getCharsSequence();
-            String objectName = compilerMessage.getObjectName();
-            CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
-            int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, sourceAction.getStartOffset());
-            if (objectStartOffset > -1) {
-                lineShifting = editor.getDocument().getLineNumber(objectStartOffset);
+        if (scriptFileEditor != null) {
+            Editor editor = EditorUtil.getEditor(scriptFileEditor);
+            if (editor != null) {
+                EditorUtil.selectEditor(project, virtualFile, scriptFileEditor, requestFocus);
+                int lineShifting = 1;
+                Document document = editor.getDocument();
+                CharSequence documentText = document.getCharsSequence();
+                String objectName = compilerMessage.getObjectName();
+                CompilerAction sourceAction = compilerMessage.getCompilerResult().getSourceAction();
+                int objectStartOffset = StringUtil.indexOfIgnoreCase(documentText, objectName, sourceAction.getStartOffset());
+                if (objectStartOffset > -1) {
+                    lineShifting = document.getLineNumber(objectStartOffset);
+                }
+
+                navigateInEditor(editor, compilerMessage, lineShifting);
             }
-
-            navigateInEditor(editor, compilerMessage, lineShifting);
-
         }
     }
 
     private void navigateInObjectEditor(CompilerMessage compilerMessage, boolean requestFocus) {
-        FileEditorManager editorManager = FileEditorManager.getInstance(project);
+        FileEditorManager editorManager = getFileEditorManager();
         DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
         if (databaseFile != null && !databaseFile.isDisposed()) {
             editorManager.openFile(databaseFile, requestFocus);
             DBContentVirtualFile contentFile = compilerMessage.getContentFile();
             if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
-                Editor editor = compilerMessage.getCompilerResult().getSourceAction().getEditor();
-                BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) contentFile);
-                if (editor == null && textEditor != null) {
-                    editor = textEditor.getEditor();
+                FileEditor objectFileEditor = compilerMessage.getCompilerResult().getSourceAction().getFileEditor();
+                if (objectFileEditor == null) {
+                    FileEditor[] fileEditors = getFileEditorManager().getAllEditors(databaseFile);
+                    for (FileEditor fileEditor : fileEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            if (sourceCodeEditor.getContentType() == compilerMessage.getContentType()) {
+                                objectFileEditor = sourceCodeEditor;
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                if (editor != null && textEditor != null) {
-                    Document document = editor.getDocument();
-                    SourceCodeEditor codeEditor = (SourceCodeEditor) textEditor;
-                    int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
+                if (objectFileEditor != null && objectFileEditor instanceof SourceCodeEditor) {
+                    SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
+                    Editor editor = EditorUtil.getEditor(codeEditor);
+                    if (editor != null) {
+                        Document document = editor.getDocument();
+                        int lineShifting = document.getLineNumber(codeEditor.getHeaderEndOffset());
+                        navigateInEditor(editor, compilerMessage, lineShifting);
+                        EditorUtil.selectEditor(project, databaseFile, objectFileEditor, requestFocus);
+                        VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+                        OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
+                        codeEditor.navigateTo(openFileDescriptor);
+                    }
 
-                    navigateInEditor(editor, compilerMessage, lineShifting);
-
-                    EditorUtil.selectEditor(databaseFile.getProject(), databaseFile, textEditor, requestFocus);
-                    VirtualFile virtualFile = DocumentUtil.getVirtualFile(textEditor.getEditor());
-                    OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, virtualFile);
-                    codeEditor.navigateTo(openFileDescriptor);
                 }
             }
         }

@@ -52,7 +52,7 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
 
     public void readConfiguration(Element element) {
         showObjectsNavigationGutter = SettingsUtil.getBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
-        showObjectsNavigationGutter = SettingsUtil.getBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
+        showSpecDeclarationNavigationGutter = SettingsUtil.getBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
     }
 
     public void writeConfiguration(Element element) {

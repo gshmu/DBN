@@ -5,6 +5,7 @@ import javax.swing.JComponent;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -23,11 +26,16 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
+import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
+import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
+import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
@@ -35,7 +43,7 @@ import com.intellij.util.ui.UIUtil;
 
 public class EditorUtil {
     public static void selectEditor(@NotNull Project project, @NotNull VirtualFile virtualFile, @Nullable FileEditor fileEditor, boolean requestFocus) {
-        JBTabsImpl tabs = getEditorTabComponent(project, virtualFile);
+        JBTabsImpl tabs = getEditorTabComponent(project, virtualFile, fileEditor);
         if (tabs != null) {
             if (fileEditor != null) {
                 TabInfo tabInfo = getEditorTabInfo(tabs, fileEditor.getComponent());
@@ -47,7 +55,7 @@ public class EditorUtil {
     }
 
     public static void setEditorIcon(@NotNull Project project, @NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, Icon icon) {
-        JBTabsImpl tabs = getEditorTabComponent(project, virtualFile);
+        JBTabsImpl tabs = getEditorTabComponent(project, virtualFile, fileEditor);
         if (tabs != null) {
             TabInfo tabInfo = getEditorTabInfo(tabs, fileEditor.getComponent());
             if (tabInfo != null) {
@@ -57,7 +65,7 @@ public class EditorUtil {
     }
 
     @Nullable
-    private static JBTabsImpl getEditorTabComponent(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    private static JBTabsImpl getEditorTabComponent(@NotNull Project project, @NotNull VirtualFile virtualFile, FileEditor fileEditor) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         FileEditor selectedEditor = fileEditorManager.getSelectedEditor(virtualFile);
         if (selectedEditor == null) {
@@ -72,6 +80,24 @@ public class EditorUtil {
         }
         if (selectedEditor != null) {
             return UIUtil.getParentOfType(JBTabsImpl.class, selectedEditor.getComponent());
+        }
+        return null;
+    }
+
+    private static EditorWithProviderComposite getEditorComposite(@NotNull Project project, @NotNull final FileEditor fileEditor) {
+        FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(project);
+        for (EditorsSplitters splitters : fileEditorManager.getAllSplitters()) {
+            EditorWithProviderComposite[] editorsComposites = splitters.getEditorsComposites();
+            for (int i = editorsComposites.length - 1; i >= 0; i--) {
+                EditorWithProviderComposite composite = editorsComposites[i];
+                FileEditor[] editors = composite.getEditors();
+                for (int j = editors.length - 1; j >= 0; j--) {
+                    FileEditor editor = editors[j];
+                    if (fileEditor.equals(editor)) {
+                        return composite;
+                    }
+                }
+            }
         }
         return null;
     }
@@ -105,6 +131,33 @@ public class EditorUtil {
     }
 
     @Nullable
+    public static Editor getEditor(FileEditor fileEditor) {
+        if (fileEditor instanceof TextEditor) {
+            TextEditor textEditor = (TextEditor) fileEditor;
+            return textEditor.getEditor();
+        }
+
+        if (fileEditor instanceof BasicTextEditor) {
+            BasicTextEditor textEditor = (BasicTextEditor) fileEditor;
+            return textEditor.getEditor();
+
+        }
+        return null;
+    }
+
+    public static FileEditor getFileEditor(Editor editor) {
+        Project project = editor.getProject();
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        FileEditor[] allEditors = fileEditorManager.getAllEditors();
+        for (FileEditor fileEditor : allEditors) {
+            if (editor == getEditor(fileEditor)) {
+                return fileEditor;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
     public static BasicTextEditor getTextEditor(DBConsoleVirtualFile consoleVirtualFile) {
         FileEditorManager editorManager = FileEditorManager.getInstance(consoleVirtualFile.getProject());
         FileEditor[] fileEditors = editorManager.getEditors(consoleVirtualFile);
@@ -118,6 +171,41 @@ public class EditorUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * get all open editors for a virtual file including the attached ddl files
+     */
+    public static List<FileEditor> getScriptFileEditors(Project project, VirtualFile virtualFile) {
+        assert virtualFile.isInLocalFileSystem();
+
+        List<FileEditor> scriptFileEditors = new ArrayList<FileEditor>();
+        FileEditorManager editorManager = FileEditorManager.getInstance(project);
+        FileEditor[] fileEditors = editorManager.getAllEditors(virtualFile);
+        for (FileEditor fileEditor : fileEditors) {
+            if (fileEditor instanceof TextEditor) {
+                TextEditor textEditor = (TextEditor) fileEditor;
+                scriptFileEditors.add(textEditor);
+            }
+        }
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+        DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
+        if (editableObject != null) {
+            DBEditableObjectVirtualFile objectVirtualFile = editableObject.getVirtualFile();
+            fileEditors = editorManager.getAllEditors(objectVirtualFile);
+            for (FileEditor fileEditor : fileEditors) {
+                if (fileEditor instanceof DDLFileEditor) {
+                    DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
+                    Editor editor = ddlFileEditor.getEditor();
+                    PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
+                    if (psiFile.getVirtualFile().equals(virtualFile)) {
+                        scriptFileEditors.add(ddlFileEditor);
+                    }
+                }
+            }
+        }
+
+        return scriptFileEditors;
     }
 
     public static Editor getSelectedEditor(Project project) {

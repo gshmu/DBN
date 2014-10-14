@@ -4,17 +4,16 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLoadListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,15 +39,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                                 if (activeConnection == connectionHandler) {
                                     FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                                     for (FileEditor fileEditor : fileEditors) {
-                                        Editor editor = null;
-                                        if (fileEditor instanceof TextEditor) {
-                                            TextEditor textEditor = (TextEditor) fileEditor;
-                                            editor = textEditor.getEditor();
-                                        }
-                                        else if (fileEditor instanceof BasicTextEditor) {
-                                            BasicTextEditor textEditor = (BasicTextEditor) fileEditor;
-                                            editor = textEditor.getEditor();
-                                        }
+                                        Editor editor = EditorUtil.getEditor(fileEditor);
 
                                         if (editor != null) {
                                             DocumentUtil.refreshEditorAnnotations(editor);

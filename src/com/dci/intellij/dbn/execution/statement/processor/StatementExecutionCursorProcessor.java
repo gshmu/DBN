@@ -11,16 +11,16 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionStatus;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 
 public class StatementExecutionCursorProcessor extends StatementExecutionBasicProcessor {
 
-    public StatementExecutionCursorProcessor(Editor editor, ExecutablePsiElement psiElement, int index) {
-        super(editor, psiElement, index);
+    public StatementExecutionCursorProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
+        super(fileEditor, psiElement, index);
     }
 
-    public StatementExecutionCursorProcessor(Editor editor, DBLanguagePsiFile file, String sqlStatement, int index) {
-        super(editor, file, sqlStatement,  index);
+    public StatementExecutionCursorProcessor(FileEditor fileEditor, DBLanguagePsiFile file, String sqlStatement, int index) {
+        super(fileEditor, file, sqlStatement,  index);
     }
 
     protected StatementExecutionResult createExecutionResult(Statement statement, StatementExecutionInput executionInput) throws SQLException {
