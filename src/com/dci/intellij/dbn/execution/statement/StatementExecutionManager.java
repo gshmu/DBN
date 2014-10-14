@@ -18,10 +18,12 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -35,9 +37,14 @@ import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
@@ -46,7 +53,7 @@ import gnu.trove.THashSet;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
-    private final Map<PsiFile, List<StatementExecutionProcessor>> fileExecutionProcessors = new THashMap<PsiFile, List<StatementExecutionProcessor>>();
+    private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new THashMap<FileEditor, List<StatementExecutionProcessor>>();
 
     private static int sequence;
     public int getNextSequence() {
@@ -57,6 +64,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     private StatementExecutionManager(Project project) {
         super(project);
         EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     public static StatementExecutionManager getInstance(Project project) {
@@ -69,32 +77,60 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(file);
-            if (!executionProcessors.isEmpty()) {
-                for (StatementExecutionProcessor executionProcessor : executionProcessors) {
-                    executionProcessor.unbind();
+            Project project = file.getProject();
+            VirtualFile virtualFile = file.getVirtualFile();
+            if (virtualFile.isInLocalFileSystem()) {
+                List<FileEditor> scriptFileEditors = EditorUtil.getScriptFileEditors(project, virtualFile);
+                for (FileEditor scriptFileEditor : scriptFileEditors) {
+                    refreshEditorExecutionProcessors(scriptFileEditor);
                 }
-
-                bindExecutionProcessors(file, MatchType.STRONG);
-                bindExecutionProcessors(file, MatchType.CACHED);
-                bindExecutionProcessors(file, MatchType.SOFT);
-
-                Iterator<StatementExecutionProcessor> cleanupIterator = executionProcessors.iterator();
-                while (cleanupIterator.hasNext()) {
-                    if (cleanupIterator.next().getCachedExecutable() == null) {
-                        cleanupIterator.remove();
+            } else {
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                FileEditor[] fileEditors = fileEditorManager.getAllEditors(virtualFile);
+                for (FileEditor fileEditor : fileEditors) {
+                    if (fileEditor instanceof DDLFileEditor) {
+                        DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
+                        refreshEditorExecutionProcessors(ddlFileEditor);
                     }
                 }
             }
         }
     };
 
+    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
+        @Override
+        public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+
+        }
+    };
+
+    private void refreshEditorExecutionProcessors(FileEditor textEditor) {
+        Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(textEditor);
+        if (!executionProcessors.isEmpty()) {
+            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                executionProcessor.unbind();
+            }
+
+            bindExecutionProcessors(textEditor, MatchType.STRONG);
+            bindExecutionProcessors(textEditor, MatchType.CACHED);
+            bindExecutionProcessors(textEditor, MatchType.SOFT);
+
+            Iterator<StatementExecutionProcessor> cleanupIterator = executionProcessors.iterator();
+            while (cleanupIterator.hasNext()) {
+                StatementExecutionProcessor next = cleanupIterator.next();
+                if (next.getCachedExecutable() == null) {
+                    cleanupIterator.remove();
+                }
+            }
+        }
+    }
+
     @NotNull
-    private List<StatementExecutionProcessor> getExecutionProcessors(PsiFile psiFile) {
-        List<StatementExecutionProcessor> executionProcessors = fileExecutionProcessors.get(psiFile);
+    private List<StatementExecutionProcessor> getExecutionProcessors(FileEditor textEditor) {
+        List<StatementExecutionProcessor> executionProcessors = fileExecutionProcessors.get(textEditor);
         if (executionProcessors == null) {
             executionProcessors = new ArrayList<StatementExecutionProcessor>();
-            fileExecutionProcessors.put(psiFile, executionProcessors);
+            fileExecutionProcessors.put(textEditor, executionProcessors);
         }
         return executionProcessors;
     }
@@ -105,8 +141,10 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         super.disposeComponent();
     }
 
-    private void bindExecutionProcessors(PsiFile file, MatchType matchType) {
-        PsiElement child = file.getFirstChild();
+    private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {
+        Editor editor = EditorUtil.getEditor(fileEditor);
+        PsiFile psiFile = DocumentUtil.getFile(editor);
+        PsiElement child = psiFile.getFirstChild();
         while (child != null) {
             if (child instanceof RootPsiElement) {
                 RootPsiElement root = (RootPsiElement) child;
@@ -117,7 +155,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                             executionProcessor.bind(executable);
                         }
                     } else {
-                        StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, matchType);
+                        StatementExecutionProcessor executionProcessor = findExecutionProcessor(executable, fileEditor, matchType);
                         if (executionProcessor != null) {
                             executionProcessor.bind(executable);
                         }
@@ -128,9 +166,9 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, MatchType matchType) {
+    private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, FileEditor fileEditor, MatchType matchType) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-        Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(psiFile);
+        Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(fileEditor);
 
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             if (!executionProcessor.isBound()) {
@@ -202,8 +240,10 @@ public class StatementExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    public void executeStatementAtCursor(final Editor editor) {
-            StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(editor);
+    public void executeStatementAtCursor(final FileEditor fileEditor) {
+        final Editor editor = EditorUtil.getEditor(fileEditor);
+        if (editor != null) {
+            StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(fileEditor);
             if (executionProcessor != null) {
                 executeStatement(executionProcessor);
             } else {
@@ -215,12 +255,14 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                                 int option = getOption();
                                 if (option == 0 || option == 1) {
                                     int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
-                                    List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(editor, offset);
+                                    List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
                                     executeStatements(executionProcessors);
                                 }
                             }
                         });
             }
+        }
+
     }
 
     public void promptVariablesDialog(@NotNull final StatementExecutionProcessor executionProcessor, @NotNull final RunnableTask callback) {
@@ -319,61 +361,64 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     }
 
     @Nullable
-    private StatementExecutionProcessor getExecutionProcessorAtCursor(Editor editor) {
-        DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
-        String selection = editor.getSelectionModel().getSelectedText();
-        if (selection != null) {
-            return new StatementExecutionCursorProcessor(editor, file, selection, getNextSequence());
-        }
+    private StatementExecutionProcessor getExecutionProcessorAtCursor(FileEditor fileEditor) {
+        Editor editor = EditorUtil.getEditor(fileEditor);
+        if (editor != null) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
+            String selection = editor.getSelectionModel().getSelectedText();
+            if (selection != null) {
+                return new StatementExecutionCursorProcessor(fileEditor, file, selection, getNextSequence());
+            }
 
-        ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
-        if (executablePsiElement != null) {
-            return getExecutionProcessor(editor, executablePsiElement, true);
+            ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
+            if (executablePsiElement != null) {
+                return getExecutionProcessor(fileEditor, executablePsiElement, true);
+            }
         }
-
         return null;
     }
 
-    public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(Editor editor, int offset) {
-        DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
+    public List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(FileEditor fileEditor, int offset) {
         List<StatementExecutionProcessor> executionProcessors = new ArrayList<StatementExecutionProcessor>();
+        Editor editor = EditorUtil.getEditor(fileEditor);
 
-        PsiElement child = file.getFirstChild();
-        while (child != null) {
-            if (child instanceof RootPsiElement) {
-                RootPsiElement root = (RootPsiElement) child;
+        if (editor != null) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
+            PsiElement child = file.getFirstChild();
+            while (child != null) {
+                if (child instanceof RootPsiElement) {
+                    RootPsiElement root = (RootPsiElement) child;
 
-                for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
-                    if (executable.getTextOffset() > offset) {
-                        StatementExecutionProcessor executionProcessor = getExecutionProcessor(editor, executable, true);
-                        executionProcessors.add(executionProcessor);
+                    for (ExecutablePsiElement executable: root.getExecutablePsiElements()) {
+                        if (executable.getTextOffset() > offset) {
+                            StatementExecutionProcessor executionProcessor = getExecutionProcessor(fileEditor, executable, true);
+                            executionProcessors.add(executionProcessor);
+                        }
                     }
                 }
+                child = child.getNextSibling();
             }
-            child = child.getNextSibling();
         }
         return executionProcessors;
     }
 
     @Nullable
-    public StatementExecutionProcessor getExecutionProcessor(Editor editor, ExecutablePsiElement executablePsiElement, boolean create) {
-        DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-
-        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(psiFile);
+    public StatementExecutionProcessor getExecutionProcessor(FileEditor fileEditor, ExecutablePsiElement executablePsiElement, boolean create) {
+        List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(fileEditor);
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             if (executablePsiElement == executionProcessor.getCachedExecutable()) {
                 return executionProcessor;
             }
         }
 
-        return create ? createExecutionProcessor(editor, executionProcessors, executablePsiElement) : null;
+        return create ? createExecutionProcessor(fileEditor, executionProcessors, executablePsiElement) : null;
     }
 
-    private StatementExecutionProcessor createExecutionProcessor(Editor editor, List<StatementExecutionProcessor> executionProcessors, ExecutablePsiElement executablePsiElement) {
+    private StatementExecutionProcessor createExecutionProcessor(FileEditor fileEditor, List<StatementExecutionProcessor> executionProcessors, ExecutablePsiElement executablePsiElement) {
         StatementExecutionBasicProcessor executionProcessor =
                 executablePsiElement.isQuery() ?
-                        new StatementExecutionCursorProcessor(editor, executablePsiElement, getNextSequence()) :
-                        new StatementExecutionBasicProcessor(editor, executablePsiElement, getNextSequence());
+                        new StatementExecutionCursorProcessor(fileEditor, executablePsiElement, getNextSequence()) :
+                        new StatementExecutionBasicProcessor(fileEditor, executablePsiElement, getNextSequence());
         executionProcessors.add(executionProcessor);
         executablePsiElement.setExecutionProcessor(executionProcessor);
         return executionProcessor;

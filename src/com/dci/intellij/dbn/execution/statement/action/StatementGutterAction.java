@@ -1,7 +1,12 @@
 package com.dci.intellij.dbn.execution.statement.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -12,12 +17,9 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class StatementGutterAction extends AnAction {
     final ExecutablePsiElement executablePsiElement;
@@ -89,12 +91,16 @@ public class StatementGutterAction extends AnAction {
         StatementExecutionManager executionManager = getExecutionManager();
         if (executionManager != null) {
             Document document = DocumentUtil.getDocument(executablePsiElement.getFile());
-            EditorFactory editorFactory = EditorFactory.getInstance();
-            if (editorFactory != null) {
-                Editor[] editors = editorFactory.getEditors(document);
-                if (editors.length > 0) {
-                    return executionManager.getExecutionProcessor(editors[0], executablePsiElement, create);
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(executablePsiElement.getProject());
+            FileEditor[] selectedEditors = fileEditorManager.getSelectedEditors();
+            for (FileEditor fileEditor : selectedEditors) {
+                Editor editor = EditorUtil.getEditor(fileEditor);
+                if (editor != null) {
+                    if (editor.getDocument() == document) {
+                        return executionManager.getExecutionProcessor(fileEditor, executablePsiElement, create);
+                    }
                 }
+
             }
         }
         return null;

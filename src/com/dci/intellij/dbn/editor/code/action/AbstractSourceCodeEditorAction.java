@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -17,6 +18,11 @@ public abstract class AbstractSourceCodeEditorAction extends DumbAwareAction {
     @Nullable
     protected Editor getEditor(AnActionEvent e) {
         return e.getData(PlatformDataKeys.EDITOR);
+    }
+
+    @Nullable
+    protected FileEditor getFileEditor(AnActionEvent e) {
+        return e.getData(PlatformDataKeys.FILE_EDITOR);
     }
 
     @Nullable

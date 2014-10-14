@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
@@ -29,15 +29,15 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        Editor editor = getEditor(e);
-        if (virtualFile != null && editor != null) {
+        FileEditor fileEditor = getFileEditor(e);
+        if (virtualFile != null && fileEditor != null) {
             Project project = virtualFile.getProject();
             DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
             CompilerSettings compilerSettings = getCompilerSettings(project);
             compilerManager.compileObject(
                     virtualFile.getObject(),
                     virtualFile.getContentType(),
-                    compilerSettings.getCompileType(), new CompilerAction(CompilerAction.Type.COMPILE, virtualFile, editor));
+                    compilerSettings.getCompileType(), new CompilerAction(CompilerAction.Type.COMPILE, virtualFile, fileEditor));
         }
     }
 

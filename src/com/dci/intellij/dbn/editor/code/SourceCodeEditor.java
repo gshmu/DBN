@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
@@ -55,6 +56,11 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
         }
     }
 
+    public DBContentType getContentType() {
+        return getVirtualFile().getContentType();
+    }
+
+
     /********************************************************
      *                ObjectFactoryListener                 *
      ********************************************************/
@@ -73,7 +79,6 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
             }
 
         }    };
-
 
     @Override
     public void dispose() {

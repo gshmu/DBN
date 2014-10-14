@@ -5,12 +5,14 @@ import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -56,9 +58,10 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-            if (executable != null) {
+            FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+            if (executable != null && fileEditor != null) {
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(editor, executable, false);
+                StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, false);
                 if (executionProcessor != null && executionProcessor.getExecutionResult() != null) {
                     cachedExecutionProcessor = new WeakReference<StatementExecutionProcessor>(executionProcessor);
                     return true;
@@ -71,9 +74,10 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-        if (executable != null) {
+        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        if (executable != null && fileEditor != null) {
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(editor, executable, false);
+            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, false);
             if (executionProcessor != null) {
                 executionProcessor.navigateToResult();
             }

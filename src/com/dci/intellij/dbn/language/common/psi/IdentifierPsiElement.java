@@ -477,7 +477,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     @Override
     public boolean isReferenceTo(PsiElement element) {
-        return element != this && element == resolve();
+        return element != this && ref != null && element == ref.getReferencedElement();
 
 /*
         if (element instanceof IdentifierPsiElement) {
