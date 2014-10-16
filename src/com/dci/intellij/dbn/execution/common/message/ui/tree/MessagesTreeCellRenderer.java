@@ -93,10 +93,12 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                         SimpleTextAttributes.ERROR_ATTRIBUTES);
             }
 
-            append(" - Connection: " + message.getExecutionResult().getConnectionHandler().getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", isOrphan ?
-                    SimpleTextAttributes.GRAY_ATTRIBUTES :
-                    SimpleTextAttributes.GRAY_ATTRIBUTES);
-
+            ConnectionHandler connectionHandler = message.getExecutionResult().getConnectionHandler();
+            if (connectionHandler != null) {
+                append(" - Connection: " + connectionHandler.getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", isOrphan ?
+                        SimpleTextAttributes.GRAY_ATTRIBUTES :
+                        SimpleTextAttributes.GRAY_ATTRIBUTES);
+            }
         }
     }
 
