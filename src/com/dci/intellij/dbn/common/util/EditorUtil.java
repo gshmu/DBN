@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.common.util;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -29,9 +19,6 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
-import com.intellij.openapi.fileEditor.impl.EditorWithProviderComposite;
-import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
-import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,6 +28,16 @@ import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditorUtil {
     public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, String editorProviderId, boolean requestFocus) {
@@ -102,21 +99,6 @@ public class EditorUtil {
         return fileEditor;
     }
 
-
-
-    @Deprecated
-    public static void selectEditorOld(@NotNull Project project, @NotNull VirtualFile virtualFile, @Nullable FileEditor fileEditor, boolean requestFocus) {
-        JBTabsImpl tabs = getEditorTabComponent(project, virtualFile, fileEditor);
-        if (tabs != null) {
-            if (fileEditor != null) {
-                TabInfo tabInfo = getEditorTabInfo(tabs, fileEditor.getComponent());
-                if (tabInfo != null) {
-                    tabs.getJBTabs().select(tabInfo, requestFocus);
-                }
-            }
-        }
-    }
-
     public static void setEditorIcon(@NotNull Project project, @NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, Icon icon) {
         JBTabsImpl tabs = getEditorTabComponent(project, virtualFile, fileEditor);
         if (tabs != null) {
@@ -143,24 +125,6 @@ public class EditorUtil {
         }
         if (selectedEditor != null) {
             return UIUtil.getParentOfType(JBTabsImpl.class, selectedEditor.getComponent());
-        }
-        return null;
-    }
-
-    private static EditorWithProviderComposite getEditorComposite(@NotNull Project project, @NotNull final FileEditor fileEditor) {
-        FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(project);
-        for (EditorsSplitters splitters : fileEditorManager.getAllSplitters()) {
-            EditorWithProviderComposite[] editorsComposites = splitters.getEditorsComposites();
-            for (int i = editorsComposites.length - 1; i >= 0; i--) {
-                EditorWithProviderComposite composite = editorsComposites[i];
-                FileEditor[] editors = composite.getEditors();
-                for (int j = editors.length - 1; j >= 0; j--) {
-                    FileEditor editor = editors[j];
-                    if (fileEditor.equals(editor)) {
-                        return composite;
-                    }
-                }
-            }
         }
         return null;
     }
