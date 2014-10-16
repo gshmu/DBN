@@ -2,12 +2,14 @@ package com.dci.intellij.dbn.execution.compiler.options;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
+import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.options.ui.CompilerSettingsForm;
 import org.jdom.Element;
 
 public class CompilerSettings extends Configuration<CompilerSettingsForm>{
-    private CompileType compileType = CompileType.KEEP;
+    private CompileTypeOption compileTypeOption = CompileTypeOption.KEEP;
+    private CompileDependenciesOption compileDependenciesOption = CompileDependenciesOption.ASK;
     private boolean alwaysShowCompilerControls = false;
 
     public String getDisplayName() {
@@ -22,12 +24,20 @@ public class CompilerSettings extends Configuration<CompilerSettingsForm>{
     *                       Settings                        *
     *********************************************************/
 
-    public CompileType getCompileType() {
-        return compileType;
+    public CompileTypeOption getCompileTypeOption() {
+        return compileTypeOption;
     }
 
-    public void setCompileType(CompileType compileType) {
-        this.compileType = compileType;
+    public void setCompileTypeOption(CompileTypeOption compileTypeOption) {
+        this.compileTypeOption = compileTypeOption;
+    }
+
+    public CompileDependenciesOption getCompileDependenciesOption() {
+        return compileDependenciesOption;
+    }
+
+    public void setCompileDependenciesOption(CompileDependenciesOption compileDependenciesOption) {
+        this.compileDependenciesOption = compileDependenciesOption;
     }
 
     public boolean alwaysShowCompilerControls() {
@@ -51,12 +61,14 @@ public class CompilerSettings extends Configuration<CompilerSettingsForm>{
     }
 
     public void readConfiguration(Element element) {
-        compileType = CompileType.get(SettingsUtil.getString(element, "compile-type", compileType.name()));
+        compileTypeOption = CompileTypeOption.get(SettingsUtil.getString(element, "compile-type", compileTypeOption.name()));
+        compileTypeOption = CompileTypeOption.get(SettingsUtil.getString(element, "compile-dependencies", compileDependenciesOption.name()));
         alwaysShowCompilerControls = SettingsUtil.getBoolean(element, "always-show-controls", alwaysShowCompilerControls);
     }
 
     public void writeConfiguration(Element element) {
-        SettingsUtil.setString(element, "compile-type", compileType.name());
+        SettingsUtil.setString(element, "compile-type", compileTypeOption.name());
+        SettingsUtil.setString(element, "compile-dependencies", compileDependenciesOption.name());
         SettingsUtil.setBoolean(element, "always-show-controls", alwaysShowCompilerControls);
     }
 }

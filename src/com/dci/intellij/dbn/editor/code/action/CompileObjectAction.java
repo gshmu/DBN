@@ -1,16 +1,12 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
-import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -20,8 +16,11 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     public CompileObjectAction() {
@@ -30,17 +29,15 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        FileEditor fileEditor = getFileEditor(e);
-        if (virtualFile != null && fileEditor != null) {
+        Editor editor = getEditor(e);
+        if (virtualFile != null && editor != null) {
             Project project = virtualFile.getProject();
             DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
             CompilerSettings compilerSettings = getCompilerSettings(project);
-            DBContentType contentType = virtualFile.getContentType();
-            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
-            compilerManager.compileInBackground(
+            compilerManager.compileObject(
                     virtualFile.getObject(),
-                    compilerSettings.getCompileType(),
-                    compilerAction);
+                    virtualFile.getContentType(),
+                    compilerSettings.getCompileTypeOption(), new CompilerAction(CompilerAction.Type.COMPILE, virtualFile, editor));
         }
     }
 
@@ -56,12 +53,12 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(schemaObject);
                 if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) &&  compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
                     CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
-                    CompileType compileType = compilerSettings.getCompileType();
+                    CompileTypeOption compileType = compilerSettings.getCompileTypeOption();
                     DBObjectStatusHolder status = schemaObject.getStatus();
                     DBContentType contentType = virtualFile.getContentType();
 
-                    boolean isDebug = compileType == CompileType.DEBUG;
-                    if (compileType == CompileType.KEEP) {
+                    boolean isDebug = compileType == CompileTypeOption.DEBUG;
+                    if (compileType == CompileTypeOption.KEEP) {
                         isDebug = status.is(contentType, DBObjectStatus.DEBUG);
                     }
 
@@ -78,14 +75,14 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
                                     contentType == DBContentType.CODE_BODY ? "Compile body" : "Compile";
 
                     if (isDebug) text = text + " (Debug)";
-                    if (compileType == CompileType.ASK) text = text + "...";
+                    if (compileType == CompileTypeOption.ASK) text = text + "...";
 
                     presentation.setVisible(true);
                     presentation.setText(text);
 
                     Icon icon = isDebug ?
-                            CompileType.DEBUG.getIcon() :
-                            CompileType.NORMAL.getIcon();
+                            CompileTypeOption.DEBUG.getIcon() :
+                            CompileTypeOption.NORMAL.getIcon();
                     presentation.setIcon(icon);
                 } else {
                     presentation.setVisible(false);
