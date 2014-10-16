@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.execution.statement;
 
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,9 +20,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class StatementExecutionInput implements Disposable {
     private StatementExecutionProcessor executionProcessor;
@@ -30,6 +30,7 @@ public class StatementExecutionInput implements Disposable {
     private String originalStatementText;
     private String executableStatementText;
     private ExecutablePsiElement executablePsiElement;
+    private boolean isBulkExecution = false;
     private boolean isDisposed;
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
@@ -128,6 +129,14 @@ public class StatementExecutionInput implements Disposable {
 
     public void setCurrentSchema(DBSchema currentSchema) {
         this.currentSchemaRef = DBObjectRef.from(currentSchema);
+    }
+
+    public boolean isBulkExecution() {
+        return isBulkExecution;
+    }
+
+    public void setBulkExecution(boolean isBulkExecution) {
+        this.isBulkExecution = isBulkExecution;
     }
 
     public void dispose() {

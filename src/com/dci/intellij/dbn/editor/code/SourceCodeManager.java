@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener;
@@ -243,8 +244,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                         if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
                             DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
-                            CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.SAVE, virtualFile, fileEditor);
-                            compilerAction.setContentType(virtualFile.getContentType());
+                            DBContentType contentType = virtualFile.getContentType();
+                            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
                             compilerManager.createCompilerResult(object, compilerAction);
                         }
                         object.reload();
@@ -281,8 +282,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
             if (textEditor != null) {
                 Project project = getProject();
-                EditorUtil.selectEditor(project, databaseFile, textEditor, true);
-                basePsiElement.navigate(true);
+                String editorProviderId = textEditor.getEditorProviderId();
+                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, databaseFile, editorProviderId, true);
+                basePsiElement.navigateInEditor(fileEditor, true);
             }
         }
     }

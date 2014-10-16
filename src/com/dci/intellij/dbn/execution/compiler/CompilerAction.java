@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.compiler;
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.intellij.openapi.editor.Editor;
@@ -10,54 +11,64 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class CompilerAction {
-    public static final CompilerAction BULK_COMPILE_ACTION = new CompilerAction(Type.BULK_COMPILE);
-
-    private Type type;
+    private CompilerActionSource source;
+    private DBContentType contentType;
     private WeakReference<VirtualFile> virtualFileRef;
     private WeakReference<FileEditor> fileEditorRef;
+    private String editorProviderId;
     private int startOffset;
-    private DBContentType contentType;
 
-    public CompilerAction(Type type) {
-        this.type = type;
+    public CompilerAction(CompilerActionSource source, DBContentType contentType) {
+        this.source = source;
+        this.contentType = contentType;
     }
 
-    public CompilerAction(Type type, VirtualFile virtualFile, FileEditor fileEditor) {
-        this.type = type;
+    public CompilerAction(CompilerActionSource source, DBContentType contentType, VirtualFile virtualFile, FileEditor fileEditor) {
+        this.source = source;
+        this.contentType = contentType;
         this.virtualFileRef = new WeakReference<VirtualFile>(virtualFile);
         this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
+        initEditorProviderId(fileEditor);
+    }
+
+    private void initEditorProviderId(FileEditor fileEditor) {
+        if (fileEditor instanceof BasicTextEditor) {
+            BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+            editorProviderId = basicTextEditor.getEditorProviderId();
+        }
+    }
+
+    @Nullable
+    public String getEditorProviderId() {
+        return editorProviderId;
     }
 
     public DBContentType getContentType() {
         return contentType;
     }
 
-    public void setContentType(DBContentType contentType) {
-        this.contentType = contentType;
-    }
-
     public void setStartOffset(int startOffset) {
         this.startOffset = startOffset;
     }
 
-    public Type getType() {
-        return type;
+    public CompilerActionSource getSource() {
+        return source;
     }
 
     public boolean isDDL() {
-        return type == Type.DDL;
+        return source == CompilerActionSource.DDL;
     }
 
     public boolean isSave() {
-        return type == Type.SAVE;
+        return source == CompilerActionSource.SAVE;
     }
 
     public boolean isCompile() {
-        return type == Type.COMPILE;
+        return source == CompilerActionSource.COMPILE;
     }
 
     public boolean isBulkCompile() {
-        return type == Type.BULK_COMPILE;
+        return source == CompilerActionSource.BULK_COMPILE;
     }
 
     @Nullable
@@ -79,12 +90,5 @@ public class CompilerAction {
 
     public int getStartOffset() {
         return startOffset;
-    }
-
-    public static enum Type {
-        SAVE,
-        COMPILE,
-        BULK_COMPILE,
-        DDL
     }
 }

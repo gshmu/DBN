@@ -331,7 +331,6 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public void navigateInEditor(@NotNull FileEditor fileEditor, boolean requestFocus) {
         OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
         if (descriptor != null) {
-            EditorUtil.selectEditor(getProject(), getFile().getVirtualFile(), fileEditor, requestFocus);
             Editor editor = EditorUtil.getEditor(fileEditor);
             if (editor != null) {
                 descriptor.navigateIn(editor);

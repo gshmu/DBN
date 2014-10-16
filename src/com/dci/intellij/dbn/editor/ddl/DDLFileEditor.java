@@ -5,8 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class DDLFileEditor extends BasicTextEditorImpl {
-    public DDLFileEditor(Project project, VirtualFile virtualFile) {
-        super(project, virtualFile, virtualFile.getName());
+    public DDLFileEditor(Project project, VirtualFile virtualFile, String editorProviderId) {
+        super(project, virtualFile, virtualFile.getName(), editorProviderId);
     }
 
 }

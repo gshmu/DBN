@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -22,22 +23,30 @@ public class CompilerResult implements Disposable {
     private DBObjectRef<DBSchemaObject> objectRef;
     private List<CompilerMessage> compilerMessages = new ArrayList<CompilerMessage>();
     private boolean isError = false;
-    private CompilerAction sourceAction;
+    private CompilerAction compilerAction;
 
-    public CompilerResult(ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName, CompilerAction sourceAction) {
+    public CompilerResult(CompilerAction compilerAction, ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName) {
         objectRef = new DBObjectRef<DBSchemaObject>(schema.getRef(), objectType, objectName);
-        init(connectionHandler, schema, objectName, sourceAction);
+        init(connectionHandler, schema, objectName, compilerAction);
     }
 
-    public CompilerResult(DBSchemaObject object, CompilerAction sourceAction) {
+    public CompilerResult(CompilerAction compilerAction, DBSchemaObject object) {
         objectRef = DBObjectRef.from(object);
-        init(object.getConnectionHandler(), object.getSchema(), object.getName(), sourceAction);
+        init(object.getConnectionHandler(), object.getSchema(), object.getName(), compilerAction);
     }
 
-    private void init(ConnectionHandler connectionHandler, DBSchema schema, String objectName, CompilerAction sourceAction) {
-        this.sourceAction = sourceAction;
+    public CompilerResult(CompilerAction compilerAction, DBSchemaObject object, DBContentType contentType, String errorMessage) {
+        this.compilerAction = compilerAction;
+        objectRef = DBObjectRef.from(object);
+        CompilerMessage compilerMessage = new CompilerMessage(this, contentType, errorMessage, MessageType.ERROR);
+        compilerMessages.add(compilerMessage);
+    }
+
+    private void init(ConnectionHandler connectionHandler, DBSchema schema, String objectName, CompilerAction compilerAction) {
+        this.compilerAction = compilerAction;
         Connection connection = null;
         ResultSet resultSet = null;
+        DBContentType contentType = compilerAction.getContentType();
         try {
             connection = connectionHandler.getPoolConnection();
             resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().loadCompileObjectErrors(
@@ -48,7 +57,7 @@ public class CompilerResult implements Disposable {
             while (resultSet != null && resultSet.next()) {
                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
                 isError = true;
-                if (!sourceAction.isDDL() || sourceAction.getContentType() == errorMessage.getContentType()) {
+                if (!compilerAction.isDDL() || contentType == errorMessage.getContentType()) {
                     compilerMessages.add(errorMessage);
                 }
             }
@@ -61,21 +70,16 @@ public class CompilerResult implements Disposable {
         }
 
         if (compilerMessages.size() == 0) {
-            CompilerMessage compilerMessage = new CompilerMessage(this, "The " + objectRef.getQualifiedNameWithType() + " was " + (sourceAction.getType() == CompilerAction.Type.SAVE ? "updated" : "compiled") +  " successfully.");
+            String message = "The " + objectRef.getQualifiedNameWithType() + " was " + (compilerAction.isSave() ? "updated" : "compiled") + " successfully.";
+            CompilerMessage compilerMessage = new CompilerMessage(this, contentType, message);
             compilerMessages.add(compilerMessage);
         } else {
             Collections.sort(compilerMessages);
         }
     }
 
-    public CompilerAction getSourceAction() {
-        return sourceAction;
-    }
-
-    public CompilerResult(DBSchemaObject object, String errorMessage) {
-        objectRef = DBObjectRef.from(object);
-        CompilerMessage compilerMessage = new CompilerMessage(this, errorMessage, MessageType.ERROR);
-        compilerMessages.add(compilerMessage);
+    public CompilerAction getCompilerAction() {
+        return compilerAction;
     }
 
     public boolean isError() {

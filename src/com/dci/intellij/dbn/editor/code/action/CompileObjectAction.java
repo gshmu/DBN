@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -34,10 +35,12 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
             Project project = virtualFile.getProject();
             DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
             CompilerSettings compilerSettings = getCompilerSettings(project);
-            compilerManager.compileObject(
+            DBContentType contentType = virtualFile.getContentType();
+            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
+            compilerManager.compileInBackground(
                     virtualFile.getObject(),
-                    virtualFile.getContentType(),
-                    compilerSettings.getCompileType(), new CompilerAction(CompilerAction.Type.COMPILE, virtualFile, fileEditor));
+                    compilerSettings.getCompileType(),
+                    compilerAction);
         }
     }
 

@@ -21,11 +21,11 @@ import com.intellij.psi.PsiFile;
 public class ExecuteStatementAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
-        FileEditor fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
-        if (project != null && fileEditor != null) {
-            StatementExecutionManager.getInstance(project).executeStatementAtCursor(fileEditor);
-            Editor editor = EditorUtil.getEditor(fileEditor);
-            if (editor != null) {
+        Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        if (project != null && editor != null) {
+            FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+            if (fileEditor != null) {
+                StatementExecutionManager.getInstance(project).executeStatementAtCursor(fileEditor);
                 PsiFile file = DocumentUtil.getFile(editor);
                 DocumentUtil.refreshEditorAnnotations(file);
             }

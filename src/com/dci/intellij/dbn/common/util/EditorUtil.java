@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -35,6 +36,7 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.tabs.TabInfo;
@@ -42,7 +44,54 @@ import com.intellij.ui.tabs.impl.JBTabsImpl;
 import com.intellij.util.ui.UIUtil;
 
 public class EditorUtil {
-    public static void selectEditor(@NotNull Project project, @NotNull VirtualFile virtualFile, @Nullable FileEditor fileEditor, boolean requestFocus) {
+    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, String editorProviderId, boolean requestFocus) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        if (fileEditor != null) {
+            if (fileEditor instanceof DDLFileEditor) {
+                DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+                DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
+                if (editableObject != null) {
+                    virtualFile = editableObject.getVirtualFile();
+                }
+            }
+            fileEditorManager.openFile(virtualFile, requestFocus);
+
+            if (fileEditor instanceof BasicTextEditor) {
+                BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+                fileEditorManager.setSelectedEditor(virtualFile, basicTextEditor.getEditorProviderId());
+            }
+        } else {
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                FileEditor[] fileEditors = fileEditorManager.openFile(virtualFile, requestFocus);
+                if (StringUtil.isNotEmpty(editorProviderId)) {
+                    fileEditorManager.setSelectedEditor(virtualFile, editorProviderId);
+                    for (FileEditor openFileEditor : fileEditors) {
+                        if (openFileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) openFileEditor;
+                            if (sourceCodeEditor.getEditorProviderId().equals(editorProviderId)) {
+                                fileEditor = sourceCodeEditor;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (requestFocus && fileEditor != null) {
+            Editor editor = getEditor(fileEditor);
+            if (editor != null) {
+                IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
+            }
+        }
+
+        return fileEditor;
+    }
+
+
+
+    @Deprecated
+    public static void selectEditorOld(@NotNull Project project, @NotNull VirtualFile virtualFile, @Nullable FileEditor fileEditor, boolean requestFocus) {
         JBTabsImpl tabs = getEditorTabComponent(project, virtualFile, fileEditor);
         if (tabs != null) {
             if (fileEditor != null) {

@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
 
@@ -27,12 +28,15 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     DBLanguagePsiFile getPsiFile();
 
+    VirtualFile getVirtualFile();
+
     String getResultName();
 
     String getStatementName();
 
     void navigateToResult();
 
+    @Deprecated
     void navigateToEditor(boolean requestFocus);
 
     void execute(ProgressIndicator progressIndicator);
@@ -48,6 +52,9 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     FileEditor getFileEditor();
 
     @Nullable
+    String getEditorProviderId();
+
+    @Nullable
     ExecutablePsiElement getCachedExecutable();
 
     StatementExecutionInput getExecutionInput();
@@ -55,5 +62,5 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     @Nullable
     StatementExecutionResult getExecutionResult();
 
-    public void initExecutionInput();
+    public void initExecutionInput(boolean bulkExecution);
 }
