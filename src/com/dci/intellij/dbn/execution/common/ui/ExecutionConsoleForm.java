@@ -81,13 +81,15 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : resultTabs.getTabs()) {
                 ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
-                ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-                if (connectionHandler != null) {
-                    EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                    if (visibilitySettings.getExecutionResultTabs().value()){
-                        tabInfo.setTabColor(environmentType.getColor());
-                    } else {
-                        tabInfo.setTabColor(null);
+                if (executionResult != null) {
+                    ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
+                    if (connectionHandler != null) {
+                        EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+                        if (visibilitySettings.getExecutionResultTabs().value()){
+                            tabInfo.setTabColor(environmentType.getColor());
+                        } else {
+                            tabInfo.setTabColor(null);
+                        }
                     }
                 }
             }
