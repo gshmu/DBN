@@ -112,7 +112,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 executionConsoleForm.addResult(executionResult);
                 showExecutionConsole();
-                if (!focusOnExecution()) {
+                if (!executionResult.getExecutionInput().isBulkExecution() && !focusOnExecution()) {
                     executionResult.navigateToEditor(true);
                 }
             }

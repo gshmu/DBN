@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -16,6 +17,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -49,6 +51,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     protected WeakReference<FileEditor> fileEditorRef;
     protected WeakReference<DBLanguagePsiFile> psiFileRef;
     protected ExecutablePsiElement cachedExecutable;
+    private String editorProviderId;
 
     protected String resultName;
     protected int index;
@@ -63,6 +66,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         this.cachedExecutable = psiElement;
         this.index = index;
         executionInput = new StatementExecutionInput(psiElement.getText(), psiElement.prepareStatementText(), this);
+        initEditorProviderId(fileEditor);
     }
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
@@ -71,6 +75,15 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         this.index = index;
         sqlStatement = sqlStatement.trim();
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
+
+        initEditorProviderId(fileEditor);
+    }
+
+    private void initEditorProviderId(FileEditor fileEditor) {
+        if (fileEditor instanceof BasicTextEditor) {
+            BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+            editorProviderId = basicTextEditor.getEditorProviderId();
+        }
     }
 
     public boolean isDirty(){
@@ -105,6 +118,12 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     @Override
+    public VirtualFile getVirtualFile() {
+        DBLanguagePsiFile psiFile = getPsiFile();
+        return psiFile == null ? null : psiFile.getVirtualFile();
+    }
+
+    @Override
     public FileEditor getFileEditor() {
         FileEditor fileEditor = this.fileEditorRef == null ? null : this.fileEditorRef.get();
         if (fileEditor != null) {
@@ -114,6 +133,12 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             }
         }
         return fileEditor;
+    }
+
+    @Override
+    @Nullable
+    public String getEditorProviderId() {
+        return editorProviderId;
     }
 
     @Override
@@ -161,13 +186,14 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     @Override
-    public void initExecutionInput() {
+    public void initExecutionInput(boolean bulkExecution) {
         // overwrite the input if it was leniently bound
         if (cachedExecutable != null) {
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
             executionInput.setConnectionHandler(getConnectionHandler());
             executionInput.setCurrentSchema(getCurrentSchema());
+            executionInput.setBulkExecution(bulkExecution);
         }
 
     }
@@ -252,9 +278,9 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 hasCompilerErrors = new ReadActionRunner<Boolean>() {
                     @Override
                     protected Boolean run() {
-                        CompilerAction compilerAction = new CompilerAction(CompilerAction.Type.DDL, getPsiFile().getVirtualFile(), getFileEditor());
+                        DBContentType contentType = getCompilableContentType();
+                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getPsiFile().getVirtualFile(), getFileEditor());
                         compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
-                        compilerAction.setContentType(getCompilableContentType());
                         CompilerResult compilerResult = null;
 
                         DBSchemaObject underlyingObject = getAffectedObject();
@@ -265,10 +291,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                             if (connectionHandler != null && schema != null && subjectPsiElement != null) {
                                 DBObjectType objectType = subjectPsiElement.getObjectType();
                                 String objectName = subjectPsiElement.getUnquotedText().toString().toUpperCase();
-                                compilerResult = new CompilerResult(connectionHandler, schema, objectType, objectName, compilerAction);
+                                compilerResult = new CompilerResult(compilerAction, connectionHandler, schema, objectType, objectName);
                             }
                         } else {
-                            compilerResult = new CompilerResult(underlyingObject, compilerAction);
+                            compilerResult = new CompilerResult(compilerAction, underlyingObject);
                         }
 
                         if (compilerResult != null) {

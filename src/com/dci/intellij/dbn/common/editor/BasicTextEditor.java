@@ -19,4 +19,6 @@ public interface BasicTextEditor<T extends VirtualFile> extends FileEditor {
     boolean canNavigateTo(@NotNull final Navigatable navigatable);
 
     void navigateTo(@NotNull final Navigatable navigatable);
+
+    String getEditorProviderId();
 }

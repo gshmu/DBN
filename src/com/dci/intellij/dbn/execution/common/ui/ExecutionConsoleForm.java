@@ -194,7 +194,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         TreePath messageTreePath = null;
         CompilerResult compilerResult = executionResult.getCompilerResult();
         boolean hasCompilerResult = compilerResult != null;
-        boolean selectMessage = !hasCompilerResult;
+        boolean selectMessage = !executionResult.getExecutionProcessor().getExecutionInput().isBulkExecution() && !hasCompilerResult;
         boolean focusMessage = selectMessage && focusOnExecution();
         if (executionResult instanceof StatementExecutionCursorResult) {
             StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();

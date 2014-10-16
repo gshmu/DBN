@@ -44,6 +44,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
         executionResult = null;
     }
 
+    @Deprecated
     public void navigateToEditor(boolean requestFocus) {
         executionResult.getExecutionProcessor().navigateToEditor(requestFocus);
     }

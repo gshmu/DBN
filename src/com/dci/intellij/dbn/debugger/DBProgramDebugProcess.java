@@ -467,7 +467,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
                 LogicalPosition position = new LogicalPosition(line, 0);
                 Project project = connectionHandler.getProject();
                 if (sourceCodeEditor != null) {
-                    EditorUtil.selectEditor(project, databaseFile, sourceCodeEditor, true);
+                    EditorUtil.selectEditor(project, sourceCodeEditor, databaseFile, sourceCodeEditor.getEditorProviderId(), true);
                     sourceCodeEditor.getEditor().getScrollingModel().scrollTo(position, ScrollType.CENTER);
                 }
             }

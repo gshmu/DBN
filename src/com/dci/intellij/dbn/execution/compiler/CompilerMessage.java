@@ -23,16 +23,18 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
     private boolean isEcho;
     private String subjectIdentifier;
 
-    public CompilerMessage(CompilerResult compilerResult, String text, MessageType type) {
+    public CompilerMessage(CompilerResult compilerResult, DBContentType contentType, String text, MessageType type) {
         super(type, text);
         this.compilerResult = compilerResult;
+        this.contentType = contentType;
 
         Disposer.register(this, compilerResult);
     }
 
-    public CompilerMessage(CompilerResult compilerResult, String text) {
+    public CompilerMessage(CompilerResult compilerResult, DBContentType contentType, String text) {
         super(MessageType.INFO, text);
         this.compilerResult = compilerResult;
+        this.contentType = contentType;
 
         Disposer.register(this, compilerResult);
     }

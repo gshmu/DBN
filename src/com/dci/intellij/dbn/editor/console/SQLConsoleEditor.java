@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.project.Project;
 
 public class SQLConsoleEditor extends BasicTextEditorImpl<DBConsoleVirtualFile>{
-    public SQLConsoleEditor(Project project, DBConsoleVirtualFile sqlConsoleFile, String name) {
-        super(project, sqlConsoleFile, name);
+    public SQLConsoleEditor(Project project, DBConsoleVirtualFile sqlConsoleFile, String name, String editorProviderId) {
+        super(project, sqlConsoleFile, name, editorProviderId);
     }
 
     @Override
