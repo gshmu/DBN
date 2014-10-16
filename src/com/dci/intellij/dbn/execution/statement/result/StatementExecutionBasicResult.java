@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,6 +13,9 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class StatementExecutionBasicResult implements StatementExecutionResult{
     private String resultName;
@@ -109,6 +110,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return executionProcessor == null ? null : executionProcessor.getProject();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return executionProcessor == null ? null : executionProcessor.getConnectionHandler();
     }
