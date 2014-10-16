@@ -4,16 +4,16 @@ import com.dci.intellij.dbn.common.Icons;
 
 import javax.swing.Icon;
 
-public enum CompileType {
+public enum CompileTypeOption {
     NORMAL("Normal", Icons.OBEJCT_COMPILE),
     DEBUG("Debug", Icons.OBEJCT_COMPILE_DEBUG),
     KEEP("Keep existing", null/*Icons.OBEJCT_COMPILE_KEEP*/),
-    ASK("Ask before compilation", null/*Icons.OBEJCT_COMPILE_ASK*/);
+    ASK("Ask", null/*Icons.OBEJCT_COMPILE_ASK*/);
 
     private String displayName;
     private Icon icon;
 
-    CompileType(String displayName, Icon icon) {
+    CompileTypeOption(String displayName, Icon icon) {
         this.displayName = displayName;
         this.icon = icon;
     }
@@ -26,8 +26,8 @@ public enum CompileType {
         return icon;
     }
 
-    public static CompileType get(String name) {
-        for (CompileType compileType : CompileType.values()) {
+    public static CompileTypeOption get(String name) {
+        for (CompileTypeOption compileType : CompileTypeOption.values()) {
             if (compileType.getDisplayName().equals(name) || compileType.name().equals(name)) {
                 return compileType;
             }

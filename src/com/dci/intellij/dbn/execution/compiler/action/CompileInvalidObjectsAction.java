@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.execution.compiler.action;
 
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CompileInvalidObjectsAction extends AnAction {
     private DBSchema schema;
@@ -16,18 +17,18 @@ public class CompileInvalidObjectsAction extends AnAction {
         this.schema = schema;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = schema.getProject();
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-        compilerManager.compileInvalidObjects(schema, getCompilerSettings(project).getCompileType());
+        compilerManager.compileInvalidObjects(schema, getCompilerSettings(project).getCompileTypeOption());
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        CompileType compileType = getCompilerSettings(schema.getProject()).getCompileType();
+    public void update(@NotNull AnActionEvent e) {
+        CompileTypeOption compileType = getCompilerSettings(schema.getProject()).getCompileTypeOption();
         String text = "Compile invalid objects";
-        if (compileType == CompileType.DEBUG) text = text + " (Debug)";
-        if (compileType == CompileType.ASK) text = text + "...";
+        if (compileType == CompileTypeOption.DEBUG) text = text + " (Debug)";
+        if (compileType == CompileTypeOption.ASK) text = text + "...";
 
         e.getPresentation().setText(text);
     }

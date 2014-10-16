@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.compiler.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 public class CompilerTypeSelectionDialog extends DBNDialog {
     private CompilerTypeSelectionForm editorForm;
-    private CompileType selection;
+    private CompileTypeOption selection;
 
     public CompilerTypeSelectionDialog(Project project, @Nullable DBSchemaObject object) {
         super(project, "Compile Type", true);
@@ -53,7 +53,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            selection = CompileType.KEEP;
+            selection = CompileTypeOption.KEEP;
             doOKAction();
         }
     }
@@ -65,7 +65,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            selection = CompileType.NORMAL;
+            selection = CompileTypeOption.NORMAL;
             doOKAction();
         }
     }
@@ -76,7 +76,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            selection = CompileType.DEBUG;
+            selection = CompileTypeOption.DEBUG;
             doOKAction();
         }
     }
@@ -86,7 +86,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
         return editorForm.getComponent();
     }
 
-    public CompileType getSelection() {
+    public CompileTypeOption getSelection() {
         return selection;
     }
 }

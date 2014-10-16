@@ -34,6 +34,8 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
                 DocumentUtil.createGuardedBlock(document, 0, guardedBlockEndOffset, null
                         /*"You are not allowed to change the name of the " + object.getTypeName()*/);
             }
+        } else {
+            offsets = new SourceCodeOffsets();
         }
         EventManager.subscribe(project, ObjectFactoryListener.TOPIC, objectFactoryListener);
     }
