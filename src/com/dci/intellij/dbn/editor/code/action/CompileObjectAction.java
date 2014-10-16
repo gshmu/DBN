@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -7,6 +10,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -16,11 +20,8 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     public CompileObjectAction() {
@@ -29,15 +30,14 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        Editor editor = getEditor(e);
-        if (virtualFile != null && editor != null) {
+        FileEditor fileEditor = getFileEditor(e);
+        if (virtualFile != null && fileEditor != null) {
             Project project = virtualFile.getProject();
             DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
             CompilerSettings compilerSettings = getCompilerSettings(project);
-            compilerManager.compileObject(
-                    virtualFile.getObject(),
-                    virtualFile.getContentType(),
-                    compilerSettings.getCompileTypeOption(), new CompilerAction(CompilerAction.Type.COMPILE, virtualFile, editor));
+            DBContentType contentType = virtualFile.getContentType();
+            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
+            compilerManager.compileInBackground(virtualFile.getObject(), compilerSettings.getCompileTypeOption(), compilerAction);
         }
     }
 
