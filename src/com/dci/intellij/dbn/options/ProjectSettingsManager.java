@@ -96,6 +96,14 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     @Override
     public void projectOpened() {
+        System.out.println();
+    }
+
+    @Override
+    public void projectClosed() {}
+
+    @Override
+    public void initComponent() {
         Project project = projectSettings.getProject();
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
@@ -117,12 +125,6 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     });
         }
     }
-
-    @Override
-    public void projectClosed() {}
-
-    @Override
-    public void initComponent() {}
 
     @Override
     public void disposeComponent() {}
