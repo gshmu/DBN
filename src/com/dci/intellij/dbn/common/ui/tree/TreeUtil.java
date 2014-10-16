@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.intellij.openapi.diagnostic.Logger;
-
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -12,6 +8,10 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class TreeUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -59,12 +59,14 @@ public class TreeUtil {
             @Override
             public void execute() {
                 try {
-                    for (TreeModelListener treeModelListener : treeModelListeners) {
-                        switch (eventType) {
-                            case NODES_ADDED:       treeModelListener.treeNodesInserted(event);    break;
-                            case NODES_REMOVED:     treeModelListener.treeNodesRemoved(event);     break;
-                            case NODES_CHANGED:     treeModelListener.treeNodesChanged(event);     break;
-                            case STRUCTURE_CHANGED: treeModelListener.treeStructureChanged(event); break;
+                    if (event.getTreePath().getLastPathComponent() != null) {
+                        for (TreeModelListener treeModelListener : treeModelListeners) {
+                            switch (eventType) {
+                                case NODES_ADDED:       treeModelListener.treeNodesInserted(event);    break;
+                                case NODES_REMOVED:     treeModelListener.treeNodesRemoved(event);     break;
+                                case NODES_CHANGED:     treeModelListener.treeNodesChanged(event);     break;
+                                case STRUCTURE_CHANGED: treeModelListener.treeStructureChanged(event); break;
+                            }
                         }
                     }
                 } catch (Exception e) {
