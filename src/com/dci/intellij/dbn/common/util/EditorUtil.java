@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -60,21 +59,36 @@ public class EditorUtil {
                 BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
                 fileEditorManager.setSelectedEditor(virtualFile, basicTextEditor.getEditorProviderId());
             }
-        } else {
+        } else if (StringUtil.isNotEmpty(editorProviderId)) {
+            DBEditableObjectVirtualFile objectVirtualFile = null;
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                FileEditor[] fileEditors = fileEditorManager.openFile(virtualFile, requestFocus);
-                if (StringUtil.isNotEmpty(editorProviderId)) {
-                    fileEditorManager.setSelectedEditor(virtualFile, editorProviderId);
-                    for (FileEditor openFileEditor : fileEditors) {
-                        if (openFileEditor instanceof SourceCodeEditor) {
-                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) openFileEditor;
-                            if (sourceCodeEditor.getEditorProviderId().equals(editorProviderId)) {
-                                fileEditor = sourceCodeEditor;
-                                break;
-                            }
+                objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
+            } else if (virtualFile.isInLocalFileSystem()) {
+                DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+                DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
+                if (editableObject != null) {
+                    objectVirtualFile = editableObject.getVirtualFile();
+                }
+            }
+
+            if (objectVirtualFile != null) {
+                FileEditor[] fileEditors = fileEditorManager.openFile(objectVirtualFile, requestFocus);
+                fileEditorManager.setSelectedEditor(objectVirtualFile, editorProviderId);
+                for (FileEditor openFileEditor : fileEditors) {
+                    if (openFileEditor instanceof BasicTextEditor) {
+                        BasicTextEditor basicTextEditor = (BasicTextEditor) openFileEditor;
+                        if (basicTextEditor.getEditorProviderId().equals(editorProviderId)) {
+                            fileEditor = basicTextEditor;
+                            break;
                         }
                     }
                 }
+
+            }
+        } else if (virtualFile.isInLocalFileSystem()) {
+            FileEditor[] fileEditors = fileEditorManager.openFile(virtualFile, requestFocus);
+            if (fileEditors.length > 0) {
+                fileEditor = fileEditors[0];
             }
         }
 

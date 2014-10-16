@@ -28,4 +28,6 @@ public interface StatementExecutionResult extends ExecutionResult {
     void setStatementViewerPopup(StatementViewerPopup statementViewerPopup);
 
     CompilerResult getCompilerResult();
+    boolean hasCompilerResult();
+    boolean isBulkExecution();
 }

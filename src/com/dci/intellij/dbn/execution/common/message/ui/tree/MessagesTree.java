@@ -270,7 +270,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent event) {
             if (event.isAddedPath()) {
                 Object object = event.getPath().getLastPathComponent();
-                navigateToCode(object, false);
+                navigateToCode(object, object instanceof CompilerMessageNode);
                 //grabFocus();
             }
         }

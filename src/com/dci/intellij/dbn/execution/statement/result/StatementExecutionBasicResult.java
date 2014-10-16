@@ -122,6 +122,17 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return compilerResult;
     }
 
+    @Override
+    public boolean hasCompilerResult() {
+        return compilerResult != null;
+    }
+
+    @Override
+    public boolean isBulkExecution() {
+        StatementExecutionInput executionInput = getExecutionInput();
+        return executionInput != null && executionInput.isBulkExecution();
+    }
+
     public void setCompilerResult(CompilerResult compilerResult) {
         this.compilerResult = compilerResult;
     }

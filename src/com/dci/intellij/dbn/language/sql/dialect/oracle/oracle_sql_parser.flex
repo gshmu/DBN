@@ -31,7 +31,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 
 PLSQL_BLOCK_START = "create"({ws}"or"{ws}"replace")? {ws} ("function"|"procedure"|"type"|"trigger"|"package") | "declare" | "begin"
 PLSQL_BLOCK_END = ";"{wso}"/"
-PLSQL_BLOCK = {PLSQL_BLOCK_START}{ws}([^/;] | ";"{wso}[^/] | ";"{wso}"/*" | [^;]{wso}"/")*{PLSQL_BLOCK_END}?
+PLSQL_BLOCK = {PLSQL_BLOCK_START}{ws}([^/;] | ";"{wso}([^/] | "/*") | [^;]{wso}"/")*{PLSQL_BLOCK_END}?
 
 WHITE_SPACE= {white_space_char}|{line_terminator}
 line_terminator = \r|\n|\r\n

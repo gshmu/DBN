@@ -91,8 +91,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void addExecutionResult(final CompilerResult compilerResult) {
         new ConditionalLaterInvocator() {
             public void execute() {
-                getExecutionConsoleForm().addResult(compilerResult);
                 showExecutionConsole();
+                getExecutionConsoleForm().addResult(compilerResult);
             }
         }.start();
     }
@@ -100,8 +100,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
         new ConditionalLaterInvocator() {
             public void execute() {
-                getExecutionConsoleForm().addResults(compilerResults);
                 showExecutionConsole();
+                getExecutionConsoleForm().addResults(compilerResults);
             }
         }.start();
     }
@@ -109,10 +109,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void addExecutionResult(final StatementExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
             public void execute() {
+                showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 executionConsoleForm.addResult(executionResult);
-                showExecutionConsole();
-                if (!executionResult.getExecutionInput().isBulkExecution() && !focusOnExecution()) {
+                if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
                     executionResult.navigateToEditor(true);
                 }
             }

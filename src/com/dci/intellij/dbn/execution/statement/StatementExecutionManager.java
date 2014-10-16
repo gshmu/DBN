@@ -281,9 +281,11 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                     executionVariables = null;
                     executionInput.setExecutionVariables(null);
                 } else {
-                    if (executionVariables == null)
-                        executionVariables = new StatementExecutionVariablesBundle(bucket); else
-                        executionVariables.initialize(bucket);
+                    if (executionVariables == null){
+                        executionVariables = new StatementExecutionVariablesBundle(bucket);
+                        executionInput.setExecutionVariables(executionVariables);
+                    }
+                    executionVariables.initialize(bucket);
                 }
 
                 if (executionVariables != null) {
