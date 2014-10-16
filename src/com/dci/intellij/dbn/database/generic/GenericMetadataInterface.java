@@ -31,4 +31,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return "str_to_date('" + dateString + "', '%Y-%m-%d %T')";
     }
 
+    @Override
+    public boolean isValid(Connection connection) {
+        return false;
+    }
 }
