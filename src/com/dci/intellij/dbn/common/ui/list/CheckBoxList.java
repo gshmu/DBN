@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.common.ui.list;
 
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -25,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.intellij.util.ui.UIUtil;
 
 public class CheckBoxList<T extends Selectable> extends JList {
     private boolean mutable;
@@ -207,7 +208,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
             label = new JLabel(presentable.getName(), presentable.getIcon(), SwingConstants.LEFT);
             //label.setForeground(error != null ? Color.RED : GUIUtil.getListForeground());
             errorLabel = new JLabel();
-            errorLabel.setForeground(Color.RED);
+            errorLabel.setForeground(JBColor.RED);
             add(checkBox, BorderLayout.WEST);
 
             textPanel = new JPanel(new BorderLayout());
