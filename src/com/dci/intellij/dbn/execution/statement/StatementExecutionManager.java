@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,7 +130,7 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     private List<StatementExecutionProcessor> getExecutionProcessors(FileEditor textEditor) {
         List<StatementExecutionProcessor> executionProcessors = fileExecutionProcessors.get(textEditor);
         if (executionProcessors == null) {
-            executionProcessors = new ArrayList<StatementExecutionProcessor>();
+            executionProcessors = new CopyOnWriteArrayList<StatementExecutionProcessor>();
             fileExecutionProcessors.put(textEditor, executionProcessors);
         }
         return executionProcessors;

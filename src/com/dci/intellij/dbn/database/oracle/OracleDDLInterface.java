@@ -58,7 +58,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
             }
         }
 
-        if (objectTypeId != DatabaseObjectTypeId.VIEW) {
+        if (objectTypeId != DatabaseObjectTypeId.VIEW && objectTypeId != DatabaseObjectTypeId.MATERIALIZED_VIEW) {
             int nameIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0);
             if (nameIndex > -1) {
                 int guardedBlockEndOffset = nameIndex + objectName.length();
