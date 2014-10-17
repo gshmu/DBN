@@ -422,21 +422,24 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         CallableStatement statement = null;
         Connection connection = null;
 
-        try {
-            connection = getConnectionHandler().getPoolConnection();
-            statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
-            statement.registerOutParameter(1, Types.CLOB);
-            statement.setString(2, getTypeName().toUpperCase());
-            statement.setString(3, getName());
-            statement.setString(4, getParentObject().getName());
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null) {
+            try {
+                connection = connectionHandler.getPoolConnection();
+                statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
+                statement.registerOutParameter(1, Types.CLOB);
+                statement.setString(2, getTypeName().toUpperCase());
+                statement.setString(3, getName());
+                statement.setString(4, getParentObject().getName());
 
-            statement.execute();
-            ddl = statement.getString(1);
-            ddl = ddl == null ? null : ddl.trim();
-            statement.close();
-        } finally{
-            ConnectionUtil.closeStatement(statement);
-            getConnectionHandler().freePoolConnection(connection);
+                statement.execute();
+                ddl = statement.getString(1);
+                ddl = ddl == null ? null : ddl.trim();
+                statement.close();
+            } finally{
+                ConnectionUtil.closeStatement(statement);
+                connectionHandler.freePoolConnection(connection);
+            }
         }
         return ddl;
     }

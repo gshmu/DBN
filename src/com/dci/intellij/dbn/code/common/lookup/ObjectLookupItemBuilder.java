@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
+import javax.swing.Icon;
+
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
@@ -15,12 +17,9 @@ import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.Icon;
-
 public class ObjectLookupItemBuilder extends LookupItemBuilder {
     private DBLanguage language;
     private DBObjectRef objectRef;
-    private String typeName;
 
     public ObjectLookupItemBuilder(DBObject object, DBLanguage language) {
         this.objectRef = object.getRef();
@@ -55,7 +54,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
 
     public String getTextHint() {
         DBObject object = getObject();
-        if (object != null && typeName == null) {
+        if (object != null) {
             DBObject parentObject = object.getParentObject();
 
             String typePrefix = "";
@@ -67,13 +66,13 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
                 }
             }
 
-            typeName = parentObject == null ?
+            return parentObject == null ?
                     typePrefix + object.getTypeName() :
                     typePrefix + object.getTypeName() + " (" +
                        parentObject.getTypeName() + " " +
                        parentObject.getName() + ")";
         }
-        return typeName;
+        return "";
     }
 
     public boolean isBold() {
