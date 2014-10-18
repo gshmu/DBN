@@ -24,8 +24,10 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     private final Set<LoadInProgressTreeNode> loadInProgressNodes = new THashSet<LoadInProgressTreeNode>();
 
     protected BrowserTreeModel(BrowserTreeNode root) {
-        this.root = root;
-        EventManager.subscribe(root.getProject(), BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
+        if (root != null) {
+            this.root = root;
+            EventManager.subscribe(root.getProject(), BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
+        }
     }
 
     public void addTreeModelListener(TreeModelListener listener) {
@@ -44,7 +46,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     }
 
     public Project getProject() {
-        return root.getProject();
+        return root == null ? null : root.getProject();
     }
 
     public abstract boolean contains(BrowserTreeNode node);
