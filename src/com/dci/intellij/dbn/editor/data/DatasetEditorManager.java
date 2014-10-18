@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.data;
 
-import java.awt.Component;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -18,6 +9,7 @@ import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.data.record.navigation.action.RecordNavigationActionGroup;
 import com.dci.intellij.dbn.data.record.ui.RecordViewerDialog;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -40,6 +32,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.Component;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 @State(
     name = "DBNavigator.Project.DataEditorManager",
@@ -78,7 +79,7 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
         DBDataset dataset = filterInput.getDataset();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
         filterManager.createBasicFilter(filterInput);
-        DatabaseFileSystem.getInstance().openEditor(dataset, true);
+        DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
     }
     
     public void openRecordViewer(DatasetFilterInput filterInput) {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -40,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EditorUtil {
-    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, String editorProviderId, boolean requestFocus) {
+    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, boolean requestFocus) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         if (fileEditor != null) {
             if (fileEditor instanceof DDLFileEditor) {
@@ -54,9 +55,12 @@ public class EditorUtil {
 
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
-                fileEditorManager.setSelectedEditor(virtualFile, basicTextEditor.getEditorProviderId());
+                editorProviderId = basicTextEditor.getEditorProviderId();
+                if (editorProviderId != null) {
+                    fileEditorManager.setSelectedEditor(virtualFile, editorProviderId.getId());
+                }
             }
-        } else if (StringUtil.isNotEmpty(editorProviderId)) {
+        } else if (editorProviderId != null) {
             DBEditableObjectVirtualFile objectVirtualFile = null;
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
@@ -70,7 +74,8 @@ public class EditorUtil {
 
             if (objectVirtualFile != null) {
                 FileEditor[] fileEditors = fileEditorManager.openFile(objectVirtualFile, requestFocus);
-                fileEditorManager.setSelectedEditor(objectVirtualFile, editorProviderId);
+                fileEditorManager.setSelectedEditor(objectVirtualFile, editorProviderId.getId());
+
                 for (FileEditor openFileEditor : fileEditors) {
                     if (openFileEditor instanceof BasicTextEditor) {
                         BasicTextEditor basicTextEditor = (BasicTextEditor) openFileEditor;

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
@@ -22,7 +23,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
     private DBObjectRef<DBSchemaObject> objectRef;
     private SourceCodeOffsets offsets;
 
-    public SourceCodeEditor(Project project, DBSourceCodeVirtualFile sourceCodeFile, String name, String editorProviderId) {
+    public SourceCodeEditor(Project project, DBSourceCodeVirtualFile sourceCodeFile, String name, EditorProviderId editorProviderId) {
         super(project, sourceCodeFile, name, editorProviderId);
 
         objectRef = DBObjectRef.from(sourceCodeFile.getObject());

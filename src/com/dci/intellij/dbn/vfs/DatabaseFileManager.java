@@ -1,17 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -33,6 +22,16 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -117,8 +116,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
                     if (object != null) {
                         MessageUtil.showWarningDialog(
-                                "You have unsaved changes to the " + object.getQualifiedNameWithType() + ".\n",
-                                Constants.DBN_TITLE_PREFIX + "Unsaved changes", options, 0, new SimpleTask() {
+                                "You are about to close the editor for " + object.getQualifiedNameWithType() + " and you have unsaved changes.\nPlease select whether to save or discard the changes.",
+                                "Unsaved changes", options, 0, new SimpleTask() {
                                     @Override
                                     public void execute() {
                                         if (getOption() == 0) {

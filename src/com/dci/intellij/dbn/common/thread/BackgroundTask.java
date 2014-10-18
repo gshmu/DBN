@@ -93,4 +93,9 @@ public abstract class BackgroundTask extends Task.Backgroundable implements Runn
         }.start();
     }
 
+    public static boolean isProcessCancelled() {
+        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        return progressIndicator != null && progressIndicator.isCanceled();
+    }
+
 }
