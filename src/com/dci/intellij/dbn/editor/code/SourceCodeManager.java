@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.editor.code;
 
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
@@ -23,6 +16,7 @@ import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -55,6 +49,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -282,7 +283,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             BasicTextEditor textEditor = EditorUtil.getTextEditor(databaseFile, (DBSourceCodeVirtualFile) virtualFile);
             if (textEditor != null) {
                 Project project = getProject();
-                String editorProviderId = textEditor.getEditorProviderId();
+                EditorProviderId editorProviderId = textEditor.getEditorProviderId();
                 FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, databaseFile, editorProviderId, true);
                 basePsiElement.navigateInEditor(fileEditor, true);
             }

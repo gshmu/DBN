@@ -1,21 +1,22 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import java.lang.ref.WeakReference;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 
 public class CompilerAction {
     private CompilerActionSource source;
     private DBContentType contentType;
     private WeakReference<VirtualFile> virtualFileRef;
     private WeakReference<FileEditor> fileEditorRef;
-    private String editorProviderId;
+    private EditorProviderId editorProviderId;
     private int startOffset;
 
     public CompilerAction(CompilerActionSource source, DBContentType contentType) {
@@ -39,7 +40,7 @@ public class CompilerAction {
     }
 
     @Nullable
-    public String getEditorProviderId() {
+    public EditorProviderId getEditorProviderId() {
         return editorProviderId;
     }
 
