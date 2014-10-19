@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.DBContentType;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
+import org.apache.commons.lang.StringUtils;
+
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,14 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.apache.commons.lang.StringUtils;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.editor.DBContentType;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 
 public enum DBObjectType implements DynamicContentType {
     
@@ -79,6 +79,7 @@ public enum DBObjectType implements DynamicContentType {
 
     CURSOR(DatabaseObjectTypeId.CURSOR, "cursor", "cursors", null, null, false),
     RECORD(DatabaseObjectTypeId.RECORD, "record", "records", null, null, false),
+    JAVA(DatabaseObjectTypeId.JAVA, "java", "java", null, null, false),
     PARAMETER(DatabaseObjectTypeId.PARAMETER, "parameter", "parameters", null, null, false),
     EXCEPTION(DatabaseObjectTypeId.EXCEPTION, "exception", "exceptions", null, null, false),
     SAVEPOINT(DatabaseObjectTypeId.SAVEPOINT, "savepoint", "savepoints", null, null, false),

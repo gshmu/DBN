@@ -63,6 +63,7 @@ public enum DatabaseObjectTypeId {
 
     CURSOR,
     RECORD,
+    JAVA,
     PARAMETER,
     LABEL,
     SAVEPOINT,
