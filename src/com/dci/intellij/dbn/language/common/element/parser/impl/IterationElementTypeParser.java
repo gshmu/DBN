@@ -90,7 +90,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                             return stepOut(node, context, depth, resultType, matchedTokens);
                         } else {
                             if (matchesMinIterations(iterations)) {
-                                boolean exit = advanceLexerToNextLandmark(parentNode, false, context);
+                                boolean exit = advanceLexerToNextLandmark(node, false, context);
                                 if (exit){
                                     return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
                                 }
@@ -144,7 +144,7 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
                     if (parseNode.getElementType() instanceof SequenceElementType) {
                         SequenceElementType sequenceElementType = (SequenceElementType) parseNode.getElementType();
                         int index = parseNode.getCursorPosition();
-                        if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
+                        if (!iteratedElementType.getLookupCache().containsToken(tokenType) && sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
                             if (advanced || !lenient) {
                                 builder.markerDone(marker, unknownElementType);
                             } else {

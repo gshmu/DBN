@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
@@ -107,26 +106,13 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                 SimpleTokenType dot = sharedTokenTypes.getDot();
                 SimpleTokenType leftParenthesis = sharedTokenTypes.getLeftParenthesis();
                 ParserBuilder builder = context.getBuilder();
-                ParsePathNode nodeParent = node.getParent();
-                if (nodeParent != null && nodeParent.getElementType() instanceof QualifiedIdentifierElementType) {
-                    if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
-                        return true;
-                    }
-                    if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
-                        return true;
-                    }
-                }
-/*
-                ElementType elementType = node.getElementType();
-                if (elementType instanceof QualifiedIdentifierElementType) {
-                    if (node.getCursorPosition() > 0) return true;
-                }
-*/
-/*
-                if (tokenType.isFunction() && builder.lookAhead(1) != getElementBundle().getTokenTypeBundle().getSharedTokenTypes().getLeftParenthesis()) {
+                if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
                     return true;
                 }
-*/
+                if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
+                    return true;
+                }
+
                 ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
                 if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
                     return false;
