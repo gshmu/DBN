@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
@@ -101,10 +103,18 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     protected boolean isSuppressibleReservedWord(TokenType tokenType, ParsePathNode node, ParserContext context) {
         if (tokenType != null) {
             if (tokenType.isSuppressibleReservedWord()) {
-                SimpleTokenType dot = getElementBundle().getTokenTypeBundle().getSharedTokenTypes().getDot();
+                SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
+                SimpleTokenType dot = sharedTokenTypes.getDot();
+                SimpleTokenType leftParenthesis = sharedTokenTypes.getLeftParenthesis();
                 ParserBuilder builder = context.getBuilder();
-                if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
-                    return true;
+                ParsePathNode nodeParent = node.getParent();
+                if (nodeParent != null && nodeParent.getElementType() instanceof QualifiedIdentifierElementType) {
+                    if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
+                        return true;
+                    }
+                    if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
+                        return true;
+                    }
                 }
 /*
                 ElementType elementType = node.getElementType();
