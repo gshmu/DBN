@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -14,6 +8,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
@@ -45,13 +40,19 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
     protected WeakReference<FileEditor> fileEditorRef;
     protected WeakReference<DBLanguagePsiFile> psiFileRef;
     protected ExecutablePsiElement cachedExecutable;
-    private String editorProviderId;
+    private EditorProviderId editorProviderId;
 
     protected String resultName;
     protected int index;
@@ -137,7 +138,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     @Override
     @Nullable
-    public String getEditorProviderId() {
+    public EditorProviderId getEditorProviderId() {
         return editorProviderId;
     }
 

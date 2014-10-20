@@ -1,13 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -17,12 +10,20 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorErrorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private Object originalUserValue;
@@ -266,7 +267,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                             if (editorTable != null) {
                                 if (!editorTable.isShowing()) {
                                     DBDataset dataset = getDataset();
-                                    DatabaseFileSystem.getInstance().openEditor(dataset, true);
+                                    DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
                                 }
                                 if (error != null) {
                                     DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
