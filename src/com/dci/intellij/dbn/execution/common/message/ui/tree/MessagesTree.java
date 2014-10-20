@@ -1,22 +1,12 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
@@ -41,6 +31,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
@@ -119,7 +120,7 @@ public class MessagesTree extends DBNTree implements Disposable {
             if (!executionMessage.isOrphan()) {
                 StatementExecutionResult executionResult = executionMessage.getExecutionResult();
                 StatementExecutionProcessor executionProcessor = executionResult.getExecutionProcessor();
-                String editorProviderId = executionProcessor.getEditorProviderId();
+                EditorProviderId editorProviderId = executionProcessor.getEditorProviderId();
                 VirtualFile virtualFile = executionProcessor.getVirtualFile();
                 FileEditor fileEditor = executionProcessor.getFileEditor();
                 fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, requestFocus);
@@ -191,7 +192,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     private void navigateInScriptEditor(CompilerMessage compilerMessage, VirtualFile virtualFile, boolean requestFocus) {
         CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
         FileEditor fileEditor = compilerAction.getFileEditor();
-        String editorProviderId = compilerAction.getEditorProviderId();
+        EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
         fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, requestFocus);
 
         if (fileEditor != null) {

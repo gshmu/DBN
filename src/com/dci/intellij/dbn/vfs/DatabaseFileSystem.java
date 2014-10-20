@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -298,10 +299,14 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
      *              FileEditorManagerListener                *
      *********************************************************/
     public void openEditor(final DBObject object, boolean focusEditor) {
-        openEditor(object, false, focusEditor);
+        openEditor(object, null, false, focusEditor);
     }
 
-    public void openEditor(final DBObject object, final boolean scrollBrowser, final boolean focusEditor) {
+    public void openEditor(final DBObject object, @Nullable EditorProviderId editorProviderId, boolean focusEditor) {
+        openEditor(object, editorProviderId, false, focusEditor);
+    }
+
+    public void openEditor(final DBObject object, @Nullable final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         new ConnectionAction(object) {
             @Override
             public void execute() {
@@ -312,12 +317,12 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                             DBObjectListContainer childObjects = object.getChildObjects();
                             if (childObjects != null) childObjects.load();
-                            openSchemaObject((DBSchemaObject) object, progressIndicator, scrollBrowser, focusEditor);
+                            openSchemaObject((DBSchemaObject) object, editorProviderId, scrollBrowser, focusEditor);
 
                         } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                             DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
                             if (childObjects != null) childObjects.load();
-                            openChildObject(object, progressIndicator, scrollBrowser, focusEditor);
+                            openChildObject(object, scrollBrowser, focusEditor, editorProviderId);
                         }
 
                     }
@@ -326,9 +331,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }.start();
     }
 
-    private void openSchemaObject(final DBSchemaObject object, ProgressIndicator progressIndicator, final boolean scrollBrowser, final boolean focusEditor) {
+    private void openSchemaObject(final DBSchemaObject object, final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(object);
-        if (!progressIndicator.isCanceled()) {
+        if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
                 @Override
                 public void execute() {
@@ -336,6 +341,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
                         fileEditorManager.openFile(databaseFile, focusEditor);
+                        EditorUtil.selectEditor(object.getProject(), null, databaseFile, editorProviderId, focusEditor);
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(true);
                     }
                 }
@@ -343,10 +349,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         }
     }
 
-    private void openChildObject(final DBObject object, ProgressIndicator progressIndicator, final boolean scrollBrowser, final boolean focusEditor) {
+    private void openChildObject(final DBObject object, final boolean scrollBrowser, final boolean focusEditor, final EditorProviderId editorProviderId) {
         final DBSchemaObject schemaObject = (DBSchemaObject) object.getParentObject();
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
-        if (!progressIndicator.isCanceled()) {
+        if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
 
                 @Override
@@ -358,7 +364,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                         for (FileEditor fileEditor : fileEditors) {
                             if (fileEditor instanceof SourceCodeMainEditor) {
                                 SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                                EditorUtil.selectEditor(schemaObject.getProject(), fileEditor, databaseFile, null, focusEditor);
+                                EditorUtil.selectEditor(schemaObject.getProject(), fileEditor, databaseFile, editorProviderId, focusEditor);
                                 sourceCodeEditor.navigateTo(object);
                                 break;
                             }

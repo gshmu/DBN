@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.editor.code;
 
 import javax.swing.Icon;
+
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,9 +42,9 @@ public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
     }
 
     @NotNull
-    @NonNls
-    public String getEditorTypeId() {
-        return "2";
+    @Override
+    public EditorProviderId getEditorProviderId() {
+        return EditorProviderId.CODE_BODY;
     }
 
     public String getName() {

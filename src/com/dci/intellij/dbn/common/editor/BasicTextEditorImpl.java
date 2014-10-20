@@ -1,11 +1,6 @@
 package com.dci.intellij.dbn.common.editor;
 
-import javax.swing.JComponent;
-import java.beans.PropertyChangeListener;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.editor.Editor;
@@ -18,6 +13,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import java.beans.PropertyChangeListener;
 
 public abstract class BasicTextEditorImpl<T extends VirtualFile> implements BasicTextEditor<T>{
     protected TextEditor textEditor;
@@ -25,9 +26,9 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     private String name;
     private BasicTextEditorState editorState;
     private Project project;
-    private String editorProviderId;
+    private EditorProviderId editorProviderId;
 
-    public BasicTextEditorImpl(Project project, T virtualFile, String name, String editorProviderId) {
+    public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
         this.project = project;
         this.name = name;
         this.virtualFile = virtualFile;
@@ -103,7 +104,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     }
 
     @Override
-    public String getEditorProviderId() {
+    public EditorProviderId getEditorProviderId() {
         return editorProviderId;
     }
 

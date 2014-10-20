@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -15,6 +14,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
 
@@ -52,7 +52,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     FileEditor getFileEditor();
 
     @Nullable
-    String getEditorProviderId();
+    EditorProviderId getEditorProviderId();
 
     @Nullable
     ExecutablePsiElement getCachedExecutable();

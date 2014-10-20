@@ -38,7 +38,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
             return
                 matchesType(identifierPsiElement) &&
                 matchesObjectType(identifierPsiElement) &&
-                matchesRole(identifierPsiElement) &&
+                matchesCategory(identifierPsiElement) &&
                 matchesAttribute(identifierPsiElement) &&
                 matchesName(identifierPsiElement);
         }
@@ -58,13 +58,13 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
 
     }
 
-    private boolean matchesRole(IdentifierPsiElement identifierPsiElement) {
+    private boolean matchesCategory(IdentifierPsiElement identifierPsiElement) {
         IdentifierElementType elementType = identifierPsiElement.getElementType();
-        IdentifierCategory role = elementType.getIdentifierCategory();
+        IdentifierCategory category = elementType.getIdentifierCategory();
         switch (identifierCategory) {
             case ALL: return true;
-            case DEFINITION: return role == IdentifierCategory.DEFINITION || identifierPsiElement.isReferenceable();
-            case REFERENCE: return role == IdentifierCategory.REFERENCE;
+            case DEFINITION: return category == IdentifierCategory.DEFINITION || identifierPsiElement.isReferenceable();
+            case REFERENCE: return category == IdentifierCategory.REFERENCE;
         }
         return false;
     }
