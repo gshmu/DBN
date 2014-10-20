@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.statement;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,12 +115,16 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             bindExecutionProcessors(textEditor, MatchType.CACHED);
             bindExecutionProcessors(textEditor, MatchType.SOFT);
 
-            Iterator<StatementExecutionProcessor> cleanupIterator = executionProcessors.iterator();
-            while (cleanupIterator.hasNext()) {
-                StatementExecutionProcessor next = cleanupIterator.next();
-                if (next.getCachedExecutable() == null) {
-                    cleanupIterator.remove();
+            List<StatementExecutionProcessor> removeList = null;
+            for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                if (executionProcessor.getCachedExecutable() == null) {
+                    if (removeList == null) removeList = new ArrayList<StatementExecutionProcessor>();
+                    removeList.add(executionProcessor);
                 }
+            }
+
+            if (removeList != null) {
+                executionProcessors.removeAll(removeList);
             }
         }
     }
