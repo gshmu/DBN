@@ -1,11 +1,23 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
+import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
@@ -31,17 +43,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private Project project;
@@ -219,7 +220,16 @@ public class MessagesTree extends DBNTree implements Disposable {
             if (contentFile != null && contentFile instanceof DBSourceCodeVirtualFile) {
                 CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
                 FileEditor objectFileEditor = compilerAction.getFileEditor();
-                objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, compilerAction.getEditorProviderId(), requestFocus);
+                EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
+                if (editorProviderId == null) {
+                    DBContentType contentType = compilerMessage.getContentType();
+                    switch (contentType) {
+                        case CODE: editorProviderId = EditorProviderId.CODE; break;
+                        case CODE_SPEC: editorProviderId = EditorProviderId.CODE_SPEC;  break;
+                        case CODE_BODY: editorProviderId = EditorProviderId.CODE_BODY; break;
+                    }
+                }
+                objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, requestFocus);
 
                 if (objectFileEditor != null && objectFileEditor instanceof SourceCodeEditor) {
                     SourceCodeEditor codeEditor = (SourceCodeEditor) objectFileEditor;
