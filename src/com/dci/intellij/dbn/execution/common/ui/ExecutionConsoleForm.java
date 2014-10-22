@@ -238,7 +238,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
             }
         }
 
-        if (firstMessage != null) {
+        if (firstMessage != null && firstMessage.isError()) {
             messagesPanel.selectMessage(firstMessage);
         }
     }
@@ -261,7 +261,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                 }
             }
         }
-        if (firstMessage != null) {
+        if (firstMessage != null && firstMessage.isError()) {
             messagesPanel.selectMessage(firstMessage);
         }
     }
