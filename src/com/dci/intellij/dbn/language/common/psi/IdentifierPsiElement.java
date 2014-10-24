@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import javax.swing.Icon;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,6 +18,7 @@ import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -27,12 +34,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.Set;
 
 public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElement {
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -171,6 +172,11 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return getElementType().isDefinition();
     }
 
+
+    public boolean isSubject() {
+        return getElementType().isSubject();
+    }
+
     public boolean isReference() {
         return getElementType().isReference();
     }
@@ -238,6 +244,18 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                         PsiElement underlyingPsiElement = identifierPsiElement.resolve();
                         if (underlyingPsiElement != null && underlyingPsiElement instanceof DBObject) {
                             underlyingObject = (DBObject) underlyingPsiElement;
+                        }
+                    }
+                }
+            }
+        } else if (isVariable()) {
+            if (isReference()) {
+                if (psiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
+                    if (identifierPsiElement.isDefinition()) {
+                        PsiElement result = identifierPsiElement.resolve();
+                        if (result instanceof DBObject) {
+                            return (DBObject) result;
                         }
                     }
                 }
@@ -410,11 +428,23 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 ref.setReferencedElement(referencedElement);
             }
         } else if (substitutionCandidate.isVariable()) {
-            PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(this, DBObjectType.ANY, ref.getText());
-            BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
-            if (referencedElement != null && referencedElement != this) {
-                ref.setParent(null);
-                ref.setReferencedElement(referencedElement);
+            if (substitutionCandidate.isReference()) {
+                PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(this, DBObjectType.ANY, ref.getText());
+                BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
+                if (referencedElement != null && referencedElement != this) {
+                    ref.setParent(null);
+                    ref.setReferencedElement(referencedElement);
+                }
+            } else if (substitutionCandidate.isSubject()) {
+                NamedPsiElement namedPsiElement = lookupEnclosingNamedPsiElement();
+                PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(this, DBObjectType.TYPE, null);
+                BasePsiElement typeRefPsiElement = lookupAdapter.findInElement(namedPsiElement);
+
+                if (typeRefPsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) typeRefPsiElement;
+                    ref.setParent(null);
+                    ref.setReferencedElement(identifierPsiElement.resolveUnderlyingObject());
+                }
             }
         }
     }
@@ -451,7 +481,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         if (isResolving()) {
             return ref.getReferencedElement();
         }
-        if (isDefinition() && (isAlias() || isVariable())) {
+        if (isDefinition() && (isAlias() || (isVariable() && !isSubject()))) {
             // alias definitions do not have references.
             // underlying object is determined on runtime
             return null;

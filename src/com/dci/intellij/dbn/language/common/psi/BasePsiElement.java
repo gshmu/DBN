@@ -248,7 +248,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public BasePsiElement getPrevElement() {
         PsiElement preElement = getPrevSibling();
-        while (preElement != null && preElement instanceof PsiWhiteSpace) {
+        while (preElement != null && preElement instanceof PsiWhiteSpace && preElement instanceof PsiComment) {
             preElement = preElement.getPrevSibling();
         }
         BasePsiElement previous = (BasePsiElement) preElement;
@@ -256,6 +256,34 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             previous = (BasePsiElement) previous.getLastChild();
         }
         return previous;
+    }
+
+    public LeafPsiElement getPrevLeaf() {
+        PsiElement previousElement = getPrevSibling();
+        while (previousElement != null && previousElement instanceof PsiWhiteSpace && previousElement instanceof PsiComment) {
+            previousElement = previousElement.getPrevSibling();
+        }
+
+        // is first in parent
+        if (previousElement == null) {
+            PsiElement parent = getParent();
+            if (parent instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) parent;
+                return basePsiElement.getPrevLeaf();
+            }
+        } else if (previousElement instanceof LeafPsiElement) {
+            return (LeafPsiElement) previousElement;
+        } else if (previousElement instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) previousElement;
+            PsiElement lastChild = basePsiElement.getLastChild();
+            while (lastChild != null) {
+                lastChild = lastChild.getLastChild();
+                if (lastChild instanceof LeafPsiElement) {
+                    return (LeafPsiElement) lastChild;
+                }
+            }
+        }
+        return null;
     }
 
     protected BasePsiElement getNextElement() {
