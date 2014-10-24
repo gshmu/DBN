@@ -56,7 +56,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
             contentType = objectContentType;
         }
 
-        isEcho = !text.startsWith("PLS");
+        isEcho = !text.startsWith("PLS") && !text.contains("ORA");
         if (isEcho) {
             setType(MessageType.WARNING);
         }

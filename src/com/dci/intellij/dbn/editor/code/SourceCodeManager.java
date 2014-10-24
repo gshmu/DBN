@@ -1,9 +1,17 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -49,13 +57,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -140,6 +141,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public SourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
+        ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
         String sourceCode = object.loadCodeFromDatabase(contentType);
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
         DatabaseDDLInterface ddlInterface = object.getConnectionHandler().getInterfaceProvider().getDDLInterface();

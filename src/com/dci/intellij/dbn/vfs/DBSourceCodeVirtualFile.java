@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -229,7 +228,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
             DBSchemaObject object = getObject();
             if (object != null) {
-                ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
                 SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
                 SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
                 content = sourceCodeContent.getSourceCode();
