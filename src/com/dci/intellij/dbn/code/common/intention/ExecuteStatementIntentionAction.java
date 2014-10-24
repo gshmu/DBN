@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.editor.Editor;
@@ -35,7 +35,7 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction {
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile instanceof DBLanguagePsiFile) {
+        if (psiFile.getVirtualFile().getFileType() instanceof DBLanguageFileType) {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             FileEditor fileEditor = EditorUtil.getFileEditor(editor);
             if (executable != null && fileEditor != null) {

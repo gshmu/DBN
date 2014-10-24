@@ -30,4 +30,6 @@ public interface IdentifierElementType extends LeafElementType {
     String getQualifiedObjectTypeName();
 
     boolean isObjectOfType(DBObjectType type);
+
+    boolean isSubject();
 }

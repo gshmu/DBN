@@ -131,6 +131,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
         Map<String, LeafElementType> nextPossibleLeafs = new THashMap<String, LeafElementType>();
+        IdentifierPsiElement parentIdentifierPsiElement = null;
         DBObject parentObject = null;
         PsiElement parent = element.getParent();
         if (parent instanceof QualifiedIdentifierPsiElement) {
@@ -140,14 +141,14 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             if (element.getElementType() == separator){
                 BasePsiElement parentPsiElement = element.getPrevElement();
                 if (parentPsiElement != null && parentPsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) parentPsiElement;
-                    parentObject = identifierPsiElement.resolveUnderlyingObject();
+                    parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
+                    parentObject = parentIdentifierPsiElement.resolveUnderlyingObject();
 
                     if (parentObject != null) {
                         for (QualifiedIdentifierVariant parseVariant : qualifiedIdentifier.getParseVariants()){
                             boolean match = parseVariant.matchesPsiElement(qualifiedIdentifier);
                             if (match) {
-                                int index = qualifiedIdentifier.getIndexOf(identifierPsiElement);
+                                int index = qualifiedIdentifier.getIndexOf(parentIdentifierPsiElement);
                                 LeafElementType leafElementType = parseVariant.getLeaf(index + 1);
                                 if (leafElementType != null) {
                                     nextPossibleLeafs.put(getLeafUniqueKey(leafElementType), leafElementType);
@@ -156,6 +157,12 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                         }
                     }
                 }
+            }
+        } else if (element.getElementType().getTokenType() == element.getLanguage().getSharedTokenTypes().getDot()) {
+            LeafPsiElement parentPsiElement = element.getPrevLeaf();
+            if (parentPsiElement instanceof IdentifierPsiElement) {
+                parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
+                parentObject = parentIdentifierPsiElement.resolveUnderlyingObject();
             }
         } else if (parent instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) parent;
@@ -202,7 +209,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                     if (identifierElementType.isObject()) {
                         PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType,  null);
                         Set<BasePsiElement> objectDefinitions = lookupAdapter.collectInParentScopeOf(element);
-                        if (objectDefinitions != null) {
+                        if (objectDefinitions != null && parentIdentifierPsiElement == null) {
                             for (BasePsiElement psiElement : objectDefinitions) {
                                 if (psiElement instanceof IdentifierPsiElement) {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
@@ -214,25 +221,26 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                                 }
                             }
                         }
-                        
-                        if (connectionHandler != null && !connectionHandler.isVirtual()) {
-                            if (parentObject == null) {
-                                BasePsiElement scope = element.getEnclosingScopePsiElement();
-                                collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
-                            } else {
-                                List<DBObject> childObjects = parentObject.getChildObjects(identifierElementType.getObjectType());
-                                consumer.consume(childObjects);
-                            }
-                        }
 
-                    } else if (identifierElementType.isAlias()) {
-                        PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType,  null);
-                        Set<BasePsiElement> aliasPsiElements = lookupAdapter.collectInParentScopeOf(element);
-                        consumer.consume(aliasPsiElements);
-                    } else if (identifierElementType.isVariable()) {
-                        PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(null, objectType, null);
-                        Set<BasePsiElement> variablePsiElements = lookupAdapter.collectInParentScopeOf(element);
-                        consumer.consume(variablePsiElements);
+                        if (parentIdentifierPsiElement == null) {
+                            BasePsiElement scope = element.getEnclosingScopePsiElement();
+                            collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
+                        }
+                    } else if (parentIdentifierPsiElement == null) {
+                        if (identifierElementType.isAlias()) {
+                            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType,  null);
+                            Set<BasePsiElement> aliasPsiElements = lookupAdapter.collectInParentScopeOf(element);
+                            consumer.consume(aliasPsiElements);
+                        } else if (identifierElementType.isVariable()) {
+                            PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(null, objectType, null);
+                            Set<BasePsiElement> variablePsiElements = lookupAdapter.collectInParentScopeOf(element);
+                            consumer.consume(variablePsiElements);
+                        }
+                    }
+
+                    if (parentObject != null && connectionHandler != null && !connectionHandler.isVirtual()) {
+                        List<DBObject> childObjects = parentObject.getChildObjects(identifierElementType.getObjectType());
+                        consumer.consume(childObjects);
                     }
                 } else if (identifierElementType.isDefinition()) {
                     if (identifierElementType.isAlias()) {

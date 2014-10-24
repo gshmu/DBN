@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -382,8 +383,20 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             }
             return list;
         } else {
-            DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
-            return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
+            if (objectType == DBObjectType.ANY) {
+                Collection<DBObjectList<DBObject>> objectLists = childObjects.getObjectLists();
+                if (objectLists != null) {
+                    List<DBObject> objects = new ArrayList<DBObject>();
+                    for (DBObjectList objectList : objectLists) {
+                        objects.addAll(objectList.getObjects());
+                    }
+                    return objects;
+                }
+                return null;
+            } else {
+                DBObjectList<DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
+            }
         }
     }
 
