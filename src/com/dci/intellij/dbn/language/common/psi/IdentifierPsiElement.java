@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAda
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.VariableReferenceLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -251,11 +252,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         } else if (isVariable()) {
             if (isReference()) {
                 if (psiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                    if (identifierPsiElement.isDefinition()) {
-                        PsiElement result = identifierPsiElement.resolve();
-                        if (result instanceof DBObject) {
-                            return (DBObject) result;
+                    IdentifierPsiElement variablePsiElement = (IdentifierPsiElement) psiElement;
+                    if (variablePsiElement.isDefinition()) {
+                        PsiElement result = variablePsiElement.resolve();
+                        if (result instanceof IdentifierPsiElement) {
+                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) result;
+                            return identifierPsiElement.resolveUnderlyingObject();
                         }
                     }
                 }
@@ -438,12 +440,16 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             } else if (substitutionCandidate.isSubject()) {
                 NamedPsiElement namedPsiElement = lookupEnclosingNamedPsiElement();
                 PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(this, DBObjectType.TYPE, null);
-                BasePsiElement typeRefPsiElement = lookupAdapter.findInElement(namedPsiElement);
+                BasePsiElement referencePsiElement = lookupAdapter.findInElement(namedPsiElement);
 
-                if (typeRefPsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) typeRefPsiElement;
+                if (referencePsiElement == null) {
+                    lookupAdapter = new VariableReferenceLookupAdapter(this, DBObjectType.CURSOR, null);
+                    referencePsiElement = lookupAdapter.findInElement(namedPsiElement);
+                }
+
+                if (referencePsiElement instanceof IdentifierPsiElement) {
                     ref.setParent(null);
-                    ref.setReferencedElement(identifierPsiElement.resolveUnderlyingObject());
+                    ref.setReferencedElement(referencePsiElement);
                 }
             }
         }

@@ -987,7 +987,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="OBJECT_DEFINITION, STRUCTURE, FOLDABLE_BLOCK, STATEMENT" description="TYPE declaration" id="type_declaration">
+    <element-def attributes="OBJECT_DEFINITION, STRUCTURE, FOLDABLE_BLOCK, STATEMENT" description="TYPE declaration" id="type_declaration" virtual-object="TYPE">
         <token id="000000509" type-id="KW_TYPE" />
         <object-def attributes="SUBJECT" id="000000510" type="TYPE" />
         <token id="000000511" type-id="KW_IS" />
@@ -1042,7 +1042,7 @@
     </element-def>
 
     <element-def attributes="OBJECT_DECLARATION, STRUCTURE, STATEMENT" description="Field declaration" id="field_declaration">
-        <object-def attributes="SUBJECT" id="000000541" type="TYPE_ATTRIBUTE" />
+        <object-def attributes="SUBJECT" id="000000541" type="TYPE_ATTRIBUTE" virtual-object="TYPE_ATTRIBUTE"/>
         <element ref-id="data_type_definition" />
         <sequence id="000000542" optional="true">
             <sequence id="000000543" optional="true">
