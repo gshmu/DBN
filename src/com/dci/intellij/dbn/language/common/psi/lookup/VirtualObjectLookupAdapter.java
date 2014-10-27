@@ -17,7 +17,7 @@ public class VirtualObjectLookupAdapter extends IdentifierLookupAdapter {
     @Override
     public boolean accepts(BasePsiElement element) {
         DBObjectType virtualObjectType = element.getElementType().getVirtualObjectType();
-        return !(parentObjectType != null && virtualObjectType != null && parentObjectType.matches(virtualObjectType));
+        return parentObjectType == null || virtualObjectType == null || !parentObjectType.matches(virtualObjectType);
     }
 
     @Override

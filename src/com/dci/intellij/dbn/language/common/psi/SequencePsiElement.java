@@ -87,7 +87,7 @@ public class SequencePsiElement extends BasePsiElement {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
 
-                if (lookupAdapter.accepts(basePsiElement)) {
+                if (lookupAdapter.accepts(basePsiElement) || bucket == null) {
                     boolean isScopeBoundary = basePsiElement.isScopeBoundary();
                     if (!isScopeBoundary || scopeCrossCount > 0) {
                         int childScopeCrossCount = isScopeBoundary ? scopeCrossCount-1 : scopeCrossCount;
