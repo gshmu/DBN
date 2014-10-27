@@ -56,14 +56,14 @@ public class PsiUtil {
         PsiElement psiElement = aliasElement.isReference() ? aliasElement.resolve() : aliasElement; 
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            BasePsiElement scope = basePsiElement.lookupEnclosingNamedPsiElement();
+            BasePsiElement scope = basePsiElement.findEnclosingNamedPsiElement();
 
             DBObjectType objectType = aliasElement.getObjectType();
             ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(aliasElement, objectType);
 
             BasePsiElement objectPsiElement = lookupInput.findInScope(scope);
             if (objectPsiElement == null) {
-                scope = scope.lookupEnclosingSequencePsiElement();
+                scope = scope.findEnclosingSequencePsiElement();
                 if (scope != null)
                     objectPsiElement = lookupInput.findInScope(scope);
             }
@@ -83,7 +83,7 @@ public class PsiUtil {
     }
 
     public static IdentifierPsiElement lookupObjectPriorTo(BasePsiElement element, DBObjectType objectType) {
-        SequencePsiElement scope = element.lookupEnclosingSequencePsiElement();
+        SequencePsiElement scope = element.findEnclosingSequencePsiElement();
 
         Iterator<PsiElement> children = PsiUtil.getChildrenIterator(scope);
         while (children.hasNext()) {

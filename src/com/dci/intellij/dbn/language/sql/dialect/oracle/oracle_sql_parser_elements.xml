@@ -5666,7 +5666,7 @@
             </iteration>
         </one-of>
     </element-def>
-    <element-def description="Select item" id="select_item" virtual-object="COLUMN" virtual-object-inside-lookup="true">
+    <element-def description="Select item" id="select_item" virtual-object="COLUMN">
         <one-of id="000003131">
             <sequence id="000003132">
                 <element ref-id="expression" />

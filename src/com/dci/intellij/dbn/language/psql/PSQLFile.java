@@ -29,7 +29,7 @@ public class PSQLFile extends DBLanguagePsiFile {
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
                 BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
                 if (specObject != null) {
-                    return specObject.lookupEnclosingPsiElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
+                    return specObject.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
                 }
             }
         }
@@ -43,7 +43,7 @@ public class PSQLFile extends DBLanguagePsiFile {
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
                 BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
                 if (specObject != null) {
-                    return specObject.lookupEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+                    return specObject.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
                 }
             }
         }
@@ -63,8 +63,8 @@ public class PSQLFile extends DBLanguagePsiFile {
             PsiElement parent = scope.getParent();
             if (parent instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) parent;
-                scope = basePsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.SCOPE_DEMARCATION);
-                if (scope == null) scope = basePsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.SCOPE_ISOLATION);
+                scope = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.SCOPE_DEMARCATION);
+                if (scope == null) scope = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.SCOPE_ISOLATION);
             } else {
                 scope = null;
             }

@@ -42,8 +42,6 @@ public interface ElementType {
 
     boolean isVirtualObject();
 
-    boolean isVirtualObjectInsideLookup();
-
     Set<Branch> getCheckedBranches();
 
     DBObjectType getVirtualObjectType();

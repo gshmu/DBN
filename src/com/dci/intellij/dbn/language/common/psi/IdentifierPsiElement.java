@@ -213,6 +213,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     public synchronized DBObject resolveUnderlyingObject() {
         DBObject underlyingObject = null;
         PsiElement psiElement = resolve();
+        DBObjectType objectType = getObjectType();
         if (isObject()) {
             if (psiElement instanceof DBObject) {
                 DBObject object = (DBObject) psiElement;
@@ -220,7 +221,13 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             } else if (psiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
                 PsiElement underlyingPsiElement = identifierPsiElement.resolve();
-                if (underlyingPsiElement instanceof DBObject) {
+                if (underlyingPsiElement == null) {
+                    BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
+                    if (virtualObjectPsiElement != null) {
+                        underlyingObject = virtualObjectPsiElement.resolveUnderlyingObject();
+                    }
+                }
+                else if (underlyingPsiElement instanceof DBObject) {
                     underlyingObject = (DBObject) underlyingPsiElement;
                 }
             }
@@ -231,7 +238,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             } else {
                 BasePsiElement resolveScope = getEnclosingScopePsiElement();
 
-                PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, getObjectType(), getUnquotedText());
+                PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, objectType, getUnquotedText());
                 aliasDefinition = lookupAdapter.findInScope(resolveScope);
             }
 
@@ -290,7 +297,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      *******************************************************/
 
     private Object[] buildAliasRefVariants() {
-        SequencePsiElement statement = (SequencePsiElement) lookupEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
+        SequencePsiElement statement = (SequencePsiElement) findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
         BasePsiElement sourceScope = getEnclosingScopePsiElement();
         PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, getObjectType(), null);
         Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInScope(statement, null);
@@ -309,7 +316,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         if (index > 0) {
             IdentifierPsiElement parentElement = qualifiedIdentifier.getLeafAtIndex(index - 1);
             if (parentElement.resolve() != null) {
-                parentObjectElement = parentElement.isObject() ? parentElement : PsiUtil.resolveAliasedEntityElement(parentElement);
+                parentObjectElement = parentElement.isObject() || parentElement.isVariable() ? parentElement : PsiUtil.resolveAliasedEntityElement(parentElement);
                 parentObject = parentObjectElement != null ? parentElement.resolveUnderlyingObject() : null;
             } else {
                 return;
@@ -324,26 +331,27 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 DBObjectType objectType = substitutionCandidate.getObjectType();
 
                 if (parentObject == null) {  // index == 0
-                    if (substitutionCandidate.isObject()) {
-                        resolveWithScopeParentLookup(objectType, substitutionCandidate);
-                    } else if (substitutionCandidate.isAlias()) {
-                        PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, objectType, ref.getText());
-                        BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
-                        if (referencedElement != this && isValidReference(referencedElement)) {
-                            setElementType(parseVariantElementType);
-                            ref.setReferencedElement(referencedElement);
-                            ref.setParent(null);
-                        }
+                    if (parentObjectElement == null) {
+                        if (substitutionCandidate.isObject()) {
+                            resolveWithScopeParentLookup(objectType, substitutionCandidate);
+                        } else if (substitutionCandidate.isAlias()) {
+                            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, objectType, ref.getText());
+                            BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
+                            if (referencedElement != this && isValidReference(referencedElement)) {
+                                setElementType(parseVariantElementType);
+                                ref.setReferencedElement(referencedElement);
+                                ref.setParent(null);
+                            }
 
-                    } else if (substitutionCandidate.isVariable()) {
-                        PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(this, DBObjectType.ANY, ref.getText());
-                        BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
-                        if (referencedElement != this && isValidReference(referencedElement)) {
-                            setElementType(parseVariantElementType);
-                            ref.setReferencedElement(referencedElement);
-                            ref.setParent(null);
+                        } else if (substitutionCandidate.isVariable()) {
+                            PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(this, DBObjectType.ANY, ref.getText());
+                            BasePsiElement referencedElement = lookupAdapter.findInParentScopeOf(this);
+                            if (referencedElement != this && isValidReference(referencedElement)) {
+                                setElementType(parseVariantElementType);
+                                ref.setReferencedElement(referencedElement);
+                                ref.setParent(null);
+                            }
                         }
-
                     }
                 } else { // index > 0
                     IdentifierElementType parentElementType = (IdentifierElementType) parseVariant.getLeaf(index - 1);
@@ -438,7 +446,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                     ref.setReferencedElement(referencedElement);
                 }
             } else if (substitutionCandidate.isSubject()) {
-                NamedPsiElement namedPsiElement = lookupEnclosingNamedPsiElement();
+                NamedPsiElement namedPsiElement = findEnclosingNamedPsiElement();
                 PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(this, DBObjectType.TYPE, null);
                 BasePsiElement referencePsiElement = lookupAdapter.findInElement(namedPsiElement);
 
@@ -467,7 +475,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             if (referencedElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
                 if (identifierPsiElement.isReference() && identifierPsiElement.isReferenceable()) {
-                    return identifierPsiElement.lookupEnclosingScopeDemarcationPsiElement() == lookupEnclosingScopeDemarcationPsiElement();
+                    return identifierPsiElement.findEnclosingScopeDemarcationPsiElement() == findEnclosingScopeDemarcationPsiElement();
                 }
             }
             return true;

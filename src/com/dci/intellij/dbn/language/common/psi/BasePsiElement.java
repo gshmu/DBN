@@ -415,7 +415,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
      *                       ItemPresentation                *
      *********************************************************/
 
-    public BasePsiElement lookupEnclosingPsiElement(ElementTypeAttribute attribute) {
+    public BasePsiElement findEnclosingPsiElement(ElementTypeAttribute attribute) {
         PsiElement element = this;
         while (element != null) {
             if (element instanceof BasePsiElement) {
@@ -429,7 +429,21 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
-    public BasePsiElement lookupEnclosingPsiElement(ElementTypeAttribute[] typeAttributes) {
+    public BasePsiElement findEnclosingVirtualObjectPsiElement(DBObjectType objectType) {
+        PsiElement element = this;
+        while (element != null) {
+            if (element instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) element;
+                if (basePsiElement.getElementType().getVirtualObjectType() == objectType) {
+                    return (BasePsiElement) element;
+                }
+            }
+            element = element.getParent();
+        }
+        return null;
+    }
+
+    public BasePsiElement findEnclosingPsiElement(ElementTypeAttribute[] typeAttributes) {
         PsiElement element = this;
         while (element != null) {
             if (element  instanceof BasePsiElement) {
@@ -446,7 +460,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
 
-    public NamedPsiElement lookupEnclosingNamedPsiElement() {
+    public NamedPsiElement findEnclosingNamedPsiElement() {
         PsiElement parent = getParent();
         while (parent != null) {
             if (parent instanceof NamedPsiElement) {
@@ -457,7 +471,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
-    public SequencePsiElement lookupEnclosingSequencePsiElement() {
+    public SequencePsiElement findEnclosingSequencePsiElement() {
         PsiElement parent = getParent();
         while (parent != null) {
             if (parent instanceof SequencePsiElement) {
@@ -472,13 +486,13 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public BasePsiElement getEnclosingScopePsiElement() {
         if (enclosingScopePsiElement == null) {
-            enclosingScopePsiElement = lookupEnclosingScopePsiElement();
+            enclosingScopePsiElement = findEnclosingScopePsiElement();
         }
 
         return enclosingScopePsiElement;
     }
 
-    public BasePsiElement lookupEnclosingScopeIsolationPsiElement() {
+    public BasePsiElement findEnclosingScopeIsolationPsiElement() {
         PsiElement element = this;
         BasePsiElement basePsiElement = null;
         while (element != null) {
@@ -494,7 +508,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return basePsiElement;
     }
 
-    public BasePsiElement lookupEnclosingScopeDemarcationPsiElement() {
+    public BasePsiElement findEnclosingScopeDemarcationPsiElement() {
         PsiElement element = this;
         BasePsiElement basePsiElement = null;
         while (element != null) {
@@ -513,7 +527,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     /**
      * @deprecated use scope demarcation and isolation
      */
-    public BasePsiElement lookupEnclosingScopePsiElement() {
+    public BasePsiElement findEnclosingScopePsiElement() {
         PsiElement element = this;
         BasePsiElement basePsiElement = null;
         while (element != null) {
@@ -531,7 +545,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
 
 
-    public BasePsiElement lookupEnclosingPsiElement(Class type) {
+    public BasePsiElement findEnclosingPsiElement(Class type) {
         PsiElement parent = getParent();
         while (parent != null) {
             if (type.isAssignableFrom(parent.getClass())) {
@@ -542,7 +556,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return null;
     }
 
-    public NamedPsiElement lookupEnclosingRootPsiElement() {
+    public NamedPsiElement findEnclosingRootPsiElement() {
         PsiElement parent = getParent();
         while (parent != null) {
             if (parent instanceof NamedPsiElement) {

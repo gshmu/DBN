@@ -338,6 +338,7 @@ public enum DBObjectType implements DynamicContentType {
     static {
         TABLE.setGenericType(DATASET);
         VIEW.setGenericType(DATASET);
+        CURSOR.setGenericType(DATASET);
         MATERIALIZED_VIEW.setGenericType(DATASET);
         PROCEDURE.setGenericType(METHOD);
         FUNCTION.setGenericType(METHOD);
@@ -361,6 +362,7 @@ public enum DBObjectType implements DynamicContentType {
         COLUMN.addParent(DATASET);
         COLUMN.addParent(TABLE);
         COLUMN.addParent(VIEW);
+        COLUMN.addParent(CURSOR);
         COLUMN.addParent(MATERIALIZED_VIEW);
         CONSTRAINT.addParent(SCHEMA);
         CONSTRAINT.addParent(DATASET);

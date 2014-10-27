@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
@@ -50,7 +51,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         relevantPsiElement = psiElement;
         this.objectType = objectType;
 
-        if (psiElement.getElementType().isVirtualObjectInsideLookup()) {
+        if (objectType == DBObjectType.COLUMN) {
             PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType);
             BasePsiElement relevantPsiElement = lookupAdapter.findInElement(psiElement);
 
@@ -59,6 +60,12 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 relevantPsiElement = lookupAdapter.findInElement(psiElement);
             }
 
+            if (relevantPsiElement != null) {
+                this.relevantPsiElement = relevantPsiElement;
+                this.name = relevantPsiElement.getText();
+            }
+        } else if (objectType == DBObjectType.TYPE || objectType == DBObjectType.TYPE_ATTRIBUTE) {
+            BasePsiElement relevantPsiElement = psiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (relevantPsiElement != null) {
                 this.relevantPsiElement = relevantPsiElement;
                 this.name = relevantPsiElement.getText();

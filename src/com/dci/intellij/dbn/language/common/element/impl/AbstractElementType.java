@@ -48,7 +48,6 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private ElementType parent;
 
     private DBObjectType virtualObjectType;
-    private boolean isVirtualObjectInsideLookup;
     private ElementTypeAttributesBundle attributes = ElementTypeAttributesBundle.EMPTY;
 
     protected WrappingDefinition wrapping;
@@ -118,7 +117,6 @@ public abstract class AbstractElementType extends IElementType implements Elemen
             attributes =  new ElementTypeAttributesBundle(attributesString);
         }
 
-        isVirtualObjectInsideLookup = Boolean.parseBoolean(def.getAttributeValue("virtual-object-inside-lookup"));
         String objectTypeName = def.getAttributeValue("virtual-object");
         if (objectTypeName != null) {
             virtualObjectType = ElementTypeBundle.resolveObjectType(objectTypeName);
@@ -262,10 +260,6 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     public DBObjectType getVirtualObjectType() {
         return virtualObjectType;
-    }
-
-    public boolean isVirtualObjectInsideLookup() {
-        return isVirtualObjectInsideLookup;
     }
 
     @Override

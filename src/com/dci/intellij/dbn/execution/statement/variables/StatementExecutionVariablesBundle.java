@@ -70,7 +70,7 @@ public class StatementExecutionVariablesBundle implements Disposable{
     }
 
     private DBDataType lookupDataType(ExecVariablePsiElement variablePsiElement) {
-        BasePsiElement parent = variablePsiElement.lookupEnclosingNamedPsiElement();
+        BasePsiElement parent = variablePsiElement.findEnclosingNamedPsiElement();
         Set<BasePsiElement> bucket = null;
         while (parent != null) {
             bucket = parent.collectObjectPsiElements(bucket, DBObjectType.COLUMN.getFamilyTypes(), IdentifierCategory.REFERENCE);
@@ -94,7 +94,7 @@ public class StatementExecutionVariablesBundle implements Disposable{
                 }
             }
 
-            parent = parent.lookupEnclosingNamedPsiElement();
+            parent = parent.findEnclosingNamedPsiElement();
             if (parent instanceof ExecutablePsiElement) break;
         }
         return null;
