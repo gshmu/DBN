@@ -262,7 +262,13 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                     IdentifierPsiElement variablePsiElement = (IdentifierPsiElement) psiElement;
                     if (variablePsiElement.isDefinition()) {
                         PsiElement result = variablePsiElement.resolve();
-                        if (result instanceof IdentifierPsiElement) {
+                        if (result == null) {
+                            BasePsiElement virtualObjectPsiElement = variablePsiElement.findEnclosingVirtualObjectPsiElement(objectType);
+                            if (virtualObjectPsiElement != null) {
+                                return virtualObjectPsiElement.resolveUnderlyingObject();
+                            }
+                        }
+                        else if (result instanceof IdentifierPsiElement) {
                             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) result;
                             return identifierPsiElement.resolveUnderlyingObject();
                         }
@@ -458,6 +464,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 if (referencePsiElement instanceof IdentifierPsiElement) {
                     ref.setParent(null);
                     ref.setReferencedElement(referencePsiElement);
+                    setElementType(substitutionCandidate);
                 }
             }
         }
@@ -529,27 +536,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     @Override
     public boolean isReferenceTo(PsiElement element) {
         return element != this && ref != null && element == ref.getReferencedElement();
-
-/*
-        if (element instanceof IdentifierPsiElement) {
-            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) element;
-            if (StringUtil.equalsIgnoreCase(getChars(), identifierPsiElement.getChars())) {
-                if (isReference() && identifierPsiElement.isDefinition() && getObjectType().matches(identifierPsiElement.getObjectType())) {
-                    return true;
-                }
-            }
-
-        } else if (element instanceof DBObject) {
-            DBObject object = (DBObject) element;
-            if (StringUtil.equalsIgnoreCase(getChars(), object.getName())) {
-                if (getObjectType().matches(object.getObjectType())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-*/
     }
 
     public CharSequence getUnquotedText() {
