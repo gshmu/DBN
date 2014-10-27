@@ -423,7 +423,7 @@
     </element-def>
     <element-def description="Select expression" id="select_expr">
         <iteration id="000000211" separator="CHR_COMMA">
-            <sequence id="000000212" virtual-object="COLUMN" virtual-object-inside-lookup="true">
+            <sequence id="000000212" virtual-object="COLUMN">
                 <element ref-id="expr" />
                 <sequence id="000000213" optional="true">
                     <token id="000000214" optional="true" type-id="KW_AS" />

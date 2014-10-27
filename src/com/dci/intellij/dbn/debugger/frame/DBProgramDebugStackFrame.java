@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.debugger.frame;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -28,14 +36,6 @@ import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class DBProgramDebugStackFrame extends XStackFrame {
     private DBProgramDebugProcess debugProcess;
@@ -110,7 +110,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
                 if (elementAtOffset instanceof BasePsiElement) {
                     BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-                    BasePsiElement objectDeclarationPsiElement = basePsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
+                    BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
                     if (objectDeclarationPsiElement != null) {
                         IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) objectDeclarationPsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
                         if (subjectPsiElement != null) {

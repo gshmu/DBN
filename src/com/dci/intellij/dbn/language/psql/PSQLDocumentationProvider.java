@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.psql;
 
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -8,9 +11,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class PSQLDocumentationProvider implements DocumentationProvider {
 
@@ -38,13 +38,13 @@ public class PSQLDocumentationProvider implements DocumentationProvider {
                 }
              } else if (identifierPsiElement.isObject()) {
                  if (identifierPsiElement.isDefinition()) {
-                     return identifierPsiElement.getObjectType().getName() + ":\n" + identifierPsiElement.lookupEnclosingNamedPsiElement().getText();
+                     return identifierPsiElement.getObjectType().getName() + ":\n" + identifierPsiElement.findEnclosingNamedPsiElement().getText();
                  }
              }
 
              else if (identifierPsiElement.isVariable()) {
                  String prefix = identifierPsiElement.getObjectType() == DBObjectType.ANY ? "variable" : identifierPsiElement.getObjectType().getName();
-                 return prefix + ":\n " + identifierPsiElement.lookupEnclosingNamedPsiElement().getText() ;
+                 return prefix + ":\n " + identifierPsiElement.findEnclosingNamedPsiElement().getText() ;
             }
         }
         return null;

@@ -14,7 +14,7 @@ public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
 
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
+        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
         boolean shouldWrap = namedPsiElement.approximateLength() > settings.RIGHT_MARGIN;
         return shouldWrap ? WRAP_ALWAYS : WRAP_NONE;
 
@@ -22,7 +22,7 @@ public class ClauseChopDownIfLongStatementPreset extends ClauseAbstractPreset {
 
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
+        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
         boolean shouldWrap = namedPsiElement.approximateLength() > settings.RIGHT_MARGIN;
         return getSpacing(psiElement, shouldWrap);
     }

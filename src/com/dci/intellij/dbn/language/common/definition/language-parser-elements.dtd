@@ -16,7 +16,6 @@
         icon CDATA #IMPLIED
         truncate-on-execution CDATA #IMPLIED
         virtual-object CDATA #IMPLIED
-        virtual-object-inside-lookup CDATA #IMPLIED>
 <!ELEMENT token (#PCDATA)>
 <!ATTLIST token
         id ID #REQUIRED
@@ -69,7 +68,6 @@
         exit (true | false) #IMPLIED
         wrapping-template (PARENTHESES) #IMPLIED
         virtual-object CDATA #IMPLIED
-        virtual-object-inside-lookup CDATA #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED

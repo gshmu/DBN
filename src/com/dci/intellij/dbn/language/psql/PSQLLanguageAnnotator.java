@@ -154,7 +154,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                                             elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) ? ElementTypeAttribute.OBJECT_DECLARATION : null;
 
                             if (targetAttribute != null) {
-                                BasePsiElement rootPsiElement = identifierPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.ROOT);
+                                BasePsiElement rootPsiElement = identifierPsiElement.findEnclosingPsiElement(ElementTypeAttribute.ROOT);
 
                                 BasePsiElement targetElement = rootPsiElement == null ? null :
                                         rootPsiElement.lookupPsiElementBySubject(targetAttribute,

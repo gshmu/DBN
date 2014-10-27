@@ -19,7 +19,7 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
         IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
         ElementType elementType = psiElement.getElementType();
 
-        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
+        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
         boolean shouldWrap = namedPsiElement.approximateLength() > settings.RIGHT_MARGIN;
         return getWrap(elementType, iterationElementType, shouldWrap);
     }
@@ -29,7 +29,7 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
         IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
         ElementType elementType = psiElement.getElementType();
 
-        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.lookupEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
+        NamedPsiElement namedPsiElement = (NamedPsiElement) parentPsiElement.findEnclosingPsiElement(ElementTypeAttribute.EXECUTABLE);
         boolean shouldWrap = namedPsiElement.approximateLength() > settings.RIGHT_MARGIN;
         return getSpacing(iterationElementType, elementType, shouldWrap);
     }
