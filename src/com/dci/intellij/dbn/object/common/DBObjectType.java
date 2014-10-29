@@ -69,6 +69,7 @@ public enum DBObjectType implements DynamicContentType {
     TABLESPACE(DatabaseObjectTypeId.TABLESPACE, "tablespace", "tablespaces", null, null, false),
     TRIGGER(DatabaseObjectTypeId.TRIGGER, "trigger", "triggers", Icons.DBO_TRIGGER, Icons.DBO_TRIGGER_DISABLED, Icons.DBO_TRIGGERS, false),
     TYPE(DatabaseObjectTypeId.TYPE, "type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
+    XMLTYPE(DatabaseObjectTypeId.XMLTYPE, "type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
     TYPE_ATTRIBUTE(DatabaseObjectTypeId.TYPE_ATTRIBUTE, "type attribute", "attributes", Icons.DBO_ATTRIBUTE, Icons.DBO_ATTRIBUTES, false),
     TYPE_FUNCTION(DatabaseObjectTypeId.TYPE_FUNCTION, "type function", "functions", Icons.DBO_FUNCTION, Icons.DBO_FUNCTIONS, false),
     TYPE_PROCEDURE(DatabaseObjectTypeId.TYPE_PROCEDURE, "type procedure", "procedures", Icons.DBO_PROCEDURE, Icons.DBO_PROCEDURES, false),
@@ -354,6 +355,7 @@ public enum DBObjectType implements DynamicContentType {
         PACKAGE_PROCEDURE.setGenericType(PROCEDURE);
         PACKAGE_FUNCTION.setGenericType(FUNCTION);
         PACKAGE_TYPE.setGenericType(TYPE);
+        XMLTYPE.setGenericType(TYPE);
 
         GRANTED_PRIVILEGE.setGenericType(PRIVILEGE);
         GRANTED_ROLE.setGenericType(ROLE);

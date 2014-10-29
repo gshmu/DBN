@@ -61,6 +61,7 @@ public enum DatabaseObjectTypeId {
     VARRAY_TYPE,
     VIEW,
 
+    XMLTYPE,
     CURSOR,
     RECORD,
     PROPERTY,
