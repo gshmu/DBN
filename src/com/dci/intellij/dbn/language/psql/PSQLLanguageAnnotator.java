@@ -83,16 +83,19 @@ public class PSQLLanguageAnnotator implements Annotator {
     }
 
      private void annotateIdentifier(final PsiElement psiElement, final AnnotationHolder holder) {
-/*        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-        if (identifierPsiElement.isReference())
-            identifierPsiElement.resolve();*/
-        /*if (identifierPsiElement.isObject() && identifierPsiElement.isReference()) {
+        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
+        if (identifierPsiElement.isReference()) {
+            identifierPsiElement.resolve();
+        }
+/*
+        if (identifierPsiElement.isObject() && identifierPsiElement.isReference()) {
             annotateObject(identifierPsiElement, holder);
         } else if (identifierPsiElement.isAlias()) {
             if (identifierPsiElement.isReference())
                 annotateAliasRef(identifierPsiElement, holder); else
                 annotateAliasDef(identifierPsiElement, holder);
-        }*/
+        }
+*/
     }
 
     private void annotateAliasRef(IdentifierPsiElement aliasReference, AnnotationHolder holder) {
