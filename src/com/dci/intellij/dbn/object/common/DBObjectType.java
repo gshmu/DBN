@@ -349,6 +349,7 @@ public enum DBObjectType implements DynamicContentType {
         PACKAGE.setGenericType(PROGRAM);
         PACKAGE_PROCEDURE.setGenericType(PROCEDURE);
         PACKAGE_FUNCTION.setGenericType(FUNCTION);
+        PACKAGE_TYPE.setGenericType(TYPE);
 
         GRANTED_PRIVILEGE.setGenericType(PRIVILEGE);
         GRANTED_ROLE.setGenericType(ROLE);

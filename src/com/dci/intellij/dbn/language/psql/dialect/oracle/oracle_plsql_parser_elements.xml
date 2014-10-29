@@ -223,7 +223,7 @@
         <one-of id="000000083">
             <token flavor="identifier" id="000000084" type-id="KW_VALUE" /> <!--custom-->
             <token flavor="identifier" id="000000085" type-id="KW_TYPE" /> <!--custom-->
-            <object-def attributes="SUBJECT" id="000000086" type="ARGUMENT" />
+            <object-def attributes="SUBJECT" id="000000086" type="ARGUMENT" underlying-object-resolver="LOCAL_DECLARATION_RESOLVER"/>
         </one-of>
         <one-of id="000000087" optional="true">
             <token id="000000088" type-id="KW_IN" />
@@ -1132,7 +1132,7 @@
     </element-def>
 
     <element-def attributes="STATEMENT" description="Declaration" id="any_declaration">  <!-- constant_declaration, -->
-        <variable-def attributes="SUBJECT" id="000000582" type="ANY" />
+        <variable-def attributes="SUBJECT" id="000000582" type="ANY" underlying-object-resolver="LOCAL_DECLARATION_RESOLVER"/>
         <one-of formatting-spacing-before="ONE_SPACE" id="000000583">
             <token id="000000584" original-name="exception_declaration" type-id="KW_EXCEPTION" />
             <sequence id="000000585" original-name="constant_declaration">

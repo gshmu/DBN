@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -27,6 +28,7 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
     private IdentifierType identifierType;
     private IdentifierCategory identifierCategory;
     private DBObjectType objectType;
+    private String underlyingObjectResolverId;
     private boolean referenceable; // is referenceable ()
     private boolean localReference; // is local reference
 
@@ -65,6 +67,8 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
 
         referenceable = Boolean.parseBoolean(def.getAttributeValue("referenceable"));
         localReference = Boolean.parseBoolean(def.getAttributeValue("local"));
+
+        underlyingObjectResolverId = def.getAttributeValue("underlying-object-resolver");
 
         if (isDefinition()) {
             setDefaultFormatting(FORMATTING);
@@ -171,5 +175,10 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
 
     public boolean isIdentifier() {
         return true;
+    }
+
+    @Override
+    public UnderlyingObjectResolver getUnderlyingObjectResolver() {
+        return underlyingObjectResolverId == null ? null : UnderlyingObjectResolver.get(underlyingObjectResolverId);
     }
 }
