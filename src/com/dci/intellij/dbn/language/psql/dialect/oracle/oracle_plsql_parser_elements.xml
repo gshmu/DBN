@@ -3244,7 +3244,7 @@
                         <variable-ref id="000001625" type="TYPE_ATTRIBUTE" />
                     </variant>
                     <variant>
-                        <variable-ref id="000001626" type="CURSOR" />
+                        <variable-ref id="000001626" type="ANY" />
                         <variable-ref id="000001627" type="COLUMN" />
                     </variant>
                     <variant>

@@ -166,7 +166,7 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
     public boolean isSameAs(LeafElementType elementType) {
         if (elementType instanceof IdentifierElementType) {
             IdentifierElementType identifierElementType = (IdentifierElementType) elementType;
-            return  identifierElementType.getObjectType() == objectType &&
+            return  identifierElementType.getObjectType().matches(objectType) &&
                     identifierElementType.getIdentifierType() == identifierType &&
                     identifierElementType.getIdentifierCategory() == identifierCategory;
         }

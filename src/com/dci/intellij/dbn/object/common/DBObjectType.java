@@ -319,6 +319,10 @@ public enum DBObjectType implements DynamicContentType {
     }
 
     public boolean matches(DBObjectType objectType) {
+        if (this == ANY || objectType == ANY) {
+            return true;
+        }
+
         DBObjectType thisObjectType = this;
         while (thisObjectType != null) {
             if (thisObjectType == objectType) return true;
@@ -331,7 +335,7 @@ public enum DBObjectType implements DynamicContentType {
             thatObjectType = thatObjectType.genericType;
         }
 
-        return objectType == DBObjectType.ANY;
+        return false;
 
     }
 
