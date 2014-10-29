@@ -64,7 +64,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 this.relevantPsiElement = relevantPsiElement;
                 this.name = relevantPsiElement.getText();
             }
-        } else if (objectType == DBObjectType.TYPE || objectType == DBObjectType.TYPE_ATTRIBUTE) {
+        } else if (objectType == DBObjectType.TYPE || objectType == DBObjectType.TYPE_ATTRIBUTE || objectType == DBObjectType.CURSOR) {
             BasePsiElement relevantPsiElement = psiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (relevantPsiElement != null) {
                 this.relevantPsiElement = relevantPsiElement;
@@ -122,6 +122,10 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 for (BasePsiElement child : children) {
                     DBObject object = child.resolveUnderlyingObject();
                     if (object != null && !objectList.getElements().contains(object)) {
+                        if (object instanceof DBVirtualObject) {
+                            DBVirtualObject virtualObject = (DBVirtualObject) object;
+                            virtualObject.setParentObject(this);
+                        }
                         objectList.addObject(object);
                     }
                 }
@@ -137,6 +141,15 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
         return file == null ? null : file.getActiveConnection();
+    }
+
+    @Override
+    public DBObject getParentObject() {
+        return DBObjectRef.get(parentObject);
+    }
+
+    public void setParentObject(DBVirtualObject virtualObject) {
+        parentObject = DBObjectRef.from(virtualObject);
     }
 
     @NotNull

@@ -78,10 +78,10 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     protected String name;
     protected DBObjectRef objectRef;
+    protected DBObjectRef parentObject;
     private DBObjectProperties properties;
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
-    private DBObjectRef parentObject;
     private DBObjectBundle objectBundle;
 
     private LookupItemBuilder sqlLookupItemBuilder;
