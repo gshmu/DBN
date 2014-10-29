@@ -409,6 +409,10 @@ public enum DBObjectType implements DynamicContentType {
         TYPE_FUNCTION.addParent(TYPE);
         TYPE_PROCEDURE.addParent(TYPE);
         TYPE_ATTRIBUTE.addParent(TYPE);
+        TYPE_FUNCTION.addParent(PACKAGE_TYPE);
+        TYPE_PROCEDURE.addParent(PACKAGE_TYPE);
+        TYPE_ATTRIBUTE.addParent(PACKAGE_TYPE);
+        TYPE_ATTRIBUTE.addParent(PACKAGE_TYPE);
         VIEW.addParent(SCHEMA);
 
         PACKAGE.addIcon(DBContentType.CODE_SPEC, Icons.DBO_PACKAGE_SPEC);

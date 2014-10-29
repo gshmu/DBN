@@ -195,6 +195,9 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     }
 
     public DBObjectType getObjectType() {
+        if (ref != null && ref.getObjectType() != null) {
+            return ref.getObjectType();
+        }
         return getElementType().getObjectType();
     }
 
@@ -411,23 +414,32 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     }
 
     private void resolveWithScopeParentLookup(DBObjectType objectType, IdentifierElementType substitutionCandidate) {
+        if (isPrecededByDot()) {
+            LeafPsiElement prevLeaf = getPrevLeaf();
+            if (prevLeaf != null) {
+                LeafPsiElement parentPsiElement = prevLeaf.getPrevLeaf();
+                if (parentPsiElement != null) {
+                    DBObject object = parentPsiElement.resolveUnderlyingObject();
+                    if (object != null) {
+                        PsiElement referencedElement = object.getChildObject(ref.getText().toString(), false);
+                        if (isValidReference(referencedElement)) {
+                            ref.setParent(parentPsiElement);
+                            ref.setReferencedElement(referencedElement);
+                            setElementType(substitutionCandidate);
+                            return;
+                        }
+                    }
+
+                }
+            }
+        }
+
         if (substitutionCandidate.isObject()) {
             ConnectionHandler activeConnection = ref.getActiveConnection();
             if (!substitutionCandidate.isLocalReference() && activeConnection != null && !activeConnection.isVirtual()) {
                 Set<DBObject> parentObjects = identifyPotentialParentObjects(objectType, null, this, this);
                 if (parentObjects != null && parentObjects.size() > 0) {
                     for (DBObject parentObject : parentObjects) {
-                        /*BasePsiElement probableParentObjectElement = null;
-                        if (parentObject instanceof IdentifierPsiElement) {
-                           IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) parentObject;
-                           probableParentObjectElement =
-                                   identifierPsiElement.isObject() ?
-                                           identifierPsiElement :
-                                           PsiUtil.resolveAliasedEntityElement(identifierPsiElement);
-
-                           parentObject = identifierPsiElement.resolveUnderlyingObject();
-                       } */
-
                         PsiElement referencedElement = parentObject.getChildObject(objectType, ref.getText().toString(), false);
                         if (isValidReference(referencedElement)) {
                             ref.setParent(null);
@@ -483,23 +495,17 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                     ref.setParent(null);
                     ref.setReferencedElement(referencedElement);
                 }
-            } /*else if (substitutionCandidate.isSubject()) {
-                NamedPsiElement namedPsiElement = findEnclosingNamedPsiElement();
-                PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(this, DBObjectType.TYPE, null);
-                BasePsiElement referencePsiElement = lookupAdapter.findInElement(namedPsiElement);
-
-                if (referencePsiElement == null) {
-                    lookupAdapter = new VariableReferenceLookupAdapter(this, DBObjectType.CURSOR, null);
-                    referencePsiElement = lookupAdapter.findInElement(namedPsiElement);
-                }
-
-                if (referencePsiElement instanceof IdentifierPsiElement) {
-                    ref.setParent(null);
-                    ref.setReferencedElement(referencePsiElement);
-                    setElementType(substitutionCandidate);
-                }
-            }*/
+            }
         }
+    }
+
+    private boolean isPrecededByDot() {
+        LeafPsiElement prevLeaf = getPrevLeaf();
+        if (prevLeaf instanceof TokenPsiElement) {
+            TokenPsiElement tokenPsiElement = (TokenPsiElement) prevLeaf;
+            return tokenPsiElement.getElementType().getTokenType() == tokenPsiElement.getLanguage().getSharedTokenTypes().getChrDot();
+        }
+        return false;
     }
 
     private boolean isValidReference(PsiElement referencedElement) {

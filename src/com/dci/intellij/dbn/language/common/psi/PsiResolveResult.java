@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiElement;
 
@@ -139,6 +140,28 @@ public class PsiResolveResult {
     private boolean enclosingExecutableChanged() {
         IdentifierPsiElement element = this.element.get();
         return element != null && executableTextLength != element.getEnclosingScopePsiElement().getTextLength();
+    }
+
+    public DBObjectType getObjectType() {
+        PsiElement referencedElement = getReferencedElement();
+        if (referencedElement instanceof DBObject) {
+            DBObject object = (DBObject) referencedElement;
+            return object.getObjectType();
+        }
+        if (referencedElement instanceof IdentifierPsiElement) {
+            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) referencedElement;
+            return identifierPsiElement.getObjectType();
+        }
+
+        if (referencedElement instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) referencedElement;
+            DBObject object = basePsiElement.resolveUnderlyingObject();
+            if (object != null) {
+                return object.getObjectType();
+            }
+        }
+
+        return null;
     }
 
     /*********************************************************
