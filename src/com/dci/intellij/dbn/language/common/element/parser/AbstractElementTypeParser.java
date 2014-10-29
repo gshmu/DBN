@@ -103,8 +103,8 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
         if (tokenType != null) {
             if (tokenType.isSuppressibleReservedWord()) {
                 SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
-                SimpleTokenType dot = sharedTokenTypes.getDot();
-                SimpleTokenType leftParenthesis = sharedTokenTypes.getLeftParenthesis();
+                SimpleTokenType dot = sharedTokenTypes.getChrDot();
+                SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
                 ParserBuilder builder = context.getBuilder();
                 if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
                     return true;

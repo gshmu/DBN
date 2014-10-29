@@ -38,13 +38,22 @@ public class PSQLDocumentationProvider implements DocumentationProvider {
                 }
              } else if (identifierPsiElement.isObject()) {
                  if (identifierPsiElement.isDefinition()) {
-                     return identifierPsiElement.getObjectType().getName() + ":\n" + identifierPsiElement.findEnclosingNamedPsiElement().getText();
+                     BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
+                     if (contextPsiElement == null) {
+                         contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+                     }
+                     return identifierPsiElement.getObjectType().getName() + ":\n" + contextPsiElement.getText();
                  }
              }
 
              else if (identifierPsiElement.isVariable()) {
+                 BasePsiElement contextPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(identifierPsiElement.getObjectType());
+                 if (contextPsiElement == null) {
+                     contextPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+                 }
+
                  String prefix = identifierPsiElement.getObjectType() == DBObjectType.ANY ? "variable" : identifierPsiElement.getObjectType().getName();
-                 return prefix + ":\n " + identifierPsiElement.findEnclosingNamedPsiElement().getText() ;
+                 return prefix + ":\n " + contextPsiElement.getText() ;
             }
         }
         return null;

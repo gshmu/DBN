@@ -13,10 +13,12 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
     private SimpleTokenType integer;
     private SimpleTokenType lineComment;
     private SimpleTokenType blockComment;
-    private SimpleTokenType leftParenthesis;
-    private SimpleTokenType rightParenthesis;
 
-    private SimpleTokenType dot;
+    private SimpleTokenType chrLeftParenthesis;
+    private SimpleTokenType chrRightParenthesis;
+
+    private SimpleTokenType chrDot;
+    private SimpleTokenType chrStar;
 
     private TokenSet whitespaceTokens;
     private TokenSet commentTokens;
@@ -35,9 +37,10 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
         blockComment = getTokenType("BLOCK_COMMENT");
 
 
-        leftParenthesis = getTokenType("CHR_LEFT_PARENTHESIS");
-        rightParenthesis = getTokenType("CHR_RIGHT_PARENTHESIS");
-        dot = getTokenType("CHR_DOT");
+        chrLeftParenthesis = getTokenType("CHR_LEFT_PARENTHESIS");
+        chrRightParenthesis = getTokenType("CHR_RIGHT_PARENTHESIS");
+        chrDot = getTokenType("CHR_DOT");
+        chrStar = getTokenType("CHR_STAR");
 
         whitespaceTokens = getTokenSet("WHITE_SPACES");
         commentTokens = getTokenSet("COMMENTS");
@@ -97,16 +100,20 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
         return tokenType == variable;
     }
 
-    public SimpleTokenType getLeftParenthesis() {
-        return leftParenthesis;
+    public SimpleTokenType getChrLeftParenthesis() {
+        return chrLeftParenthesis;
     }
 
-    public SimpleTokenType getRightParenthesis() {
-        return rightParenthesis;
+    public SimpleTokenType getChrRightParenthesis() {
+        return chrRightParenthesis;
     }
 
-    public SimpleTokenType getDot() {
-        return dot;
+    public SimpleTokenType getChrDot() {
+        return chrDot;
+    }
+
+    public SimpleTokenType getChrStar() {
+        return chrStar;
     }
 
     public TokenSet getStringTokens() {

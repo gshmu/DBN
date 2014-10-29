@@ -27,7 +27,7 @@ public abstract class StatementAbstractPreset extends CodeStylePresetImpl {
                 TokenPsiElement previousToken = (TokenPsiElement) previousPsiElement;
                 SharedTokenTypeBundle sharedTokenTypes = psiElement.getLanguage().getSharedTokenTypes();
                 TokenType tokenType = previousToken.getElementType().getTokenType();
-                return tokenType ==  sharedTokenTypes.getLeftParenthesis() ?
+                return tokenType ==  sharedTokenTypes.getChrLeftParenthesis() ?
                         SPACING_NO_SPACE :
                         SPACING_ONE_SPACE;
 

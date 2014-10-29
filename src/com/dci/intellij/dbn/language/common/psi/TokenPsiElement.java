@@ -23,7 +23,12 @@ public class TokenPsiElement extends LeafPsiElement {
         return (TokenElementType) super.getElementType();
     }
 
-    public BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
+    public BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
+        if (lookupAdapter.matches(this)) {
+            return this;
+        }
+        return null;
+    }
     public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
 
     public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {}
