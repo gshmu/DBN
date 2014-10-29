@@ -26,10 +26,9 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
         BasePsiElement underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
 
         if (underlyingObjectCandidate == null) {
-            lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.CURSOR, null);
+            lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.DATASET, null);
             underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
         }
-
 
         return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;
     }
