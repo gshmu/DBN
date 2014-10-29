@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
@@ -8,8 +11,6 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class IdentifierLookupAdapter extends PsiLookupAdapter {
     private IdentifierType identifierType;
@@ -19,11 +20,11 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     private ElementTypeAttribute attribute;
     private LeafPsiElement lookupIssuer;
 
-    protected IdentifierLookupAdapter(LeafPsiElement lookupIssuer, IdentifierType identifierType, IdentifierCategory identifierCategory, DBObjectType objectType, CharSequence identifierName) {
+    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, IdentifierType identifierType, IdentifierCategory identifierCategory, DBObjectType objectType, CharSequence identifierName) {
         this(lookupIssuer, identifierType, identifierCategory, objectType, identifierName, null);
     }
 
-    protected IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @NotNull DBObjectType objectType, CharSequence identifierName, ElementTypeAttribute attribute) {
+    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @NotNull DBObjectType objectType, CharSequence identifierName, ElementTypeAttribute attribute) {
         this.lookupIssuer = lookupIssuer;
         this.identifierType = identifierType;
         this.objectType = objectType;
@@ -59,6 +60,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
     private boolean matchesCategory(IdentifierPsiElement identifierPsiElement) {
+        if (identifierCategory == null) return true;
         IdentifierElementType elementType = identifierPsiElement.getElementType();
         IdentifierCategory category = elementType.getIdentifierCategory();
         switch (identifierCategory) {
