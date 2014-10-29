@@ -67,7 +67,6 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return -1;
     }
 
-
     public IdentifierPsiElement getLeafAtIndex(int index) {
         if (index >= 0) {
             int idx = 0;

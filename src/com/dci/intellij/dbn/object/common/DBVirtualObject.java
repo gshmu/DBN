@@ -16,7 +16,11 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.SimpleObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.VirtualObjectLookupAdapter;
@@ -39,6 +43,23 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
+    public static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
+        @Override
+        public boolean matches(BasePsiElement element) {
+            if (element instanceof TokenPsiElement) {
+                TokenPsiElement tokenPsiElement = (TokenPsiElement) element;
+                return tokenPsiElement.getElementType().getTokenType() == tokenPsiElement.getElementType().getLanguage().getSharedTokenTypes().getChrStar();
+            }
+            return false;
+        }
+
+        @Override
+        public boolean accepts(BasePsiElement element) {
+            return true;
+        }
+    };
+    public static final ObjectReferenceLookupAdapter DATASET_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.DATASET, null);
+
     private DBObjectType objectType;
     private BasePsiElement underlyingPsiElement;
     private BasePsiElement relevantPsiElement;
@@ -115,19 +136,55 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         if (objectList == null) {
             objectList = childObjects.createObjectList(objectType, this, VOID_CONTENT_LOADER, false, false);
         }
+
         if (objectList.size() == 0) {
-            VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(null, this.objectType, objectType);
+            VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(this.objectType, objectType);
             Set<BasePsiElement> children = underlyingPsiElement.collectPsiElements(lookupAdapter, null, 100);
             if (children != null) {
                 for (BasePsiElement child : children) {
+
+                    // handle STAR column
+                    if (objectType == DBObjectType.COLUMN) {
+                        LeafPsiElement starPsiElement = (LeafPsiElement) CHR_STAR_LOOKUP_ADAPTER.findInElement(child);
+                        if (starPsiElement != null) {
+                            if (starPsiElement.getParent() instanceof QualifiedIdentifierPsiElement) {
+                                QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) starPsiElement.getParent();
+                                int index = qualifiedIdentifierPsiElement.getIndexOf(starPsiElement);
+                                if (index > 0) {
+                                    IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
+                                    DBObject object = parentPsiElement.resolveUnderlyingObject();
+                                    if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
+                                        List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
+                                        for (DBObject column : columns) {
+                                            objectList.addObject(column);
+                                        }
+                                    }
+                                }
+                            } else {
+                                Set<BasePsiElement> basePsiElements = DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, null);
+                                for (BasePsiElement basePsiElement : basePsiElements) {
+                                    DBObject object = basePsiElement.resolveUnderlyingObject();
+                                    if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
+                                        List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
+                                        for (DBObject column : columns) {
+                                            objectList.addObject(column);
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
                     DBObject object = child.resolveUnderlyingObject();
-                    if (object != null && !objectList.getElements().contains(object)) {
+                    if (object != null && object.getObjectType().isChildOf(this.objectType) && !objectList.getElements().contains(object)) {
                         if (object instanceof DBVirtualObject) {
                             DBVirtualObject virtualObject = (DBVirtualObject) object;
                             virtualObject.setParentObject(this);
                         }
                         objectList.addObject(object);
                     }
+
                 }
             }
         }
