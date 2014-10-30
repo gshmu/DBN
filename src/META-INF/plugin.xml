@@ -27,8 +27,9 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.3441</b>
+            <li><b>3.0.NEXT</b>
              <ul>
+                - Support for database triggers<br>
                 - Language support for XML functions (Oracle)<br>
                 - Code completion support for locally defined objects<br>
                 - Various bug fixes<br>
