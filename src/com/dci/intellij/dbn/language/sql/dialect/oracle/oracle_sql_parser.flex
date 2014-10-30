@@ -495,7 +495,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "package" {return tt.getKeywordTokenType(341);}
 "parallel" {return tt.getKeywordTokenType(342);}
 "parameters" {return tt.getKeywordTokenType(343);}
-"parsing" {return tt.getKeywordTokenType(344);}
+"passing" {return tt.getKeywordTokenType(344);}
 "partition" {return tt.getKeywordTokenType(345);}
 "partitions" {return tt.getKeywordTokenType(346);}
 "path" {return tt.getKeywordTokenType(347);}
