@@ -311,7 +311,7 @@
         <token index="250" id="KW_PARALLEL_ENABLE" value="parallel_enable" type="keyword"/>
         <token index="251" id="KW_PARAMETERS" value="parameters" type="keyword"/>
         <token index="252" id="KW_PARENT" value="parent" type="keyword"/>
-        <token index="253" id="KW_PARSING" value="parsing" type="keyword"/>
+        <token index="253" id="KW_PASSING" value="passing" type="keyword"/>
         <token index="254" id="KW_PARTITION" value="partition" type="keyword"/>
         <token index="255" id="KW_PATH" value="path" type="keyword"/>
         <token index="256" id="KW_PCTFREE" value="pctfree" type="keyword" reserved="true"/>

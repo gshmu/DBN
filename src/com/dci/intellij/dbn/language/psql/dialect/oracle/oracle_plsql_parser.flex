@@ -400,7 +400,7 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 "parallel_enable" {return tt.getKeywordTokenType(250);}
 "parameters" {return tt.getKeywordTokenType(251);}
 "parent" {return tt.getKeywordTokenType(252);}
-"parsing" {return tt.getKeywordTokenType(253);}
+"passing" {return tt.getKeywordTokenType(253);}
 "partition" {return tt.getKeywordTokenType(254);}
 "path" {return tt.getKeywordTokenType(255);}
 "pctfree" {return tt.getKeywordTokenType(256);}

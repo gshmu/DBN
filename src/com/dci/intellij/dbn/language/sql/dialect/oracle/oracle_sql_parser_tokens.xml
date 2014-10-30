@@ -398,7 +398,7 @@
         <token index="341" id="KW_PACKAGE" value="package" type="keyword"/>
         <token index="342" id="KW_PARALLEL" value="parallel" type="keyword"/>
         <token index="343" id="KW_PARAMETERS" value="parameters" type="keyword"/>
-        <token index="344" id="KW_PARSING" value="parsing" type="keyword"/>
+        <token index="344" id="KW_PASSING" value="passing" type="keyword"/>
         <token index="345" id="KW_PARTITION" value="partition" type="keyword"/>
         <token index="346" id="KW_PARTITIONS" value="partitions" type="keyword"/>
         <token index="347" id="KW_PATH" value="path" type="keyword"/>
