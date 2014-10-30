@@ -86,7 +86,8 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
             lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.COLUMN, false));
             lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.INDEX, true));
             lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CONSTRAINT, true));
-            lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TRIGGER, true));
+            lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATASET_TRIGGER, true));
+            lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATABASE_TRIGGER, true));
             lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SYNONYM, false));
             lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.SEQUENCE, true));
             lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PROCEDURE, true));
@@ -120,7 +121,9 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
             if (objectType != null) {
                 boolean enabled = Boolean.parseBoolean(child.getAttributeValue("enabled"));
                 ObjectTypeEntry objectTypeEntry = getObjectTypeEntry(objectType);
-                objectTypeEntry.setSelected(enabled);
+                if (objectTypeEntry != null) {
+                    objectTypeEntry.setSelected(enabled);
+                }
             }
         }
         forceDatabaseLoad.readConfiguration(element);

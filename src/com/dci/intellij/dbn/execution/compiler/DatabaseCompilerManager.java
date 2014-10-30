@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -28,6 +20,14 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
@@ -174,7 +174,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                 doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, selectedCompileType);
                                 doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, selectedCompileType);
                                 doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, selectedCompileType);
-                                doCompileInvalidObjects(schema.getTriggers(), "triggers", progressIndicator, selectedCompileType);
+                                doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, selectedCompileType);
                                 connectionHandler.getObjectBundle().refreshObjectsStatus(null);
 
                                 if (!progressIndicator.isCanceled()) {
@@ -182,7 +182,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                     buildCompilationErrors(schema.getPackages(), compilerErrors);
                                     buildCompilationErrors(schema.getFunctions(), compilerErrors);
                                     buildCompilationErrors(schema.getProcedures(), compilerErrors);
-                                    buildCompilationErrors(schema.getTriggers(), compilerErrors);
+                                    buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
                                     if (compilerErrors.size() > 0) {
                                         ExecutionManager.getInstance(project).addExecutionResults(compilerErrors);
                                     }

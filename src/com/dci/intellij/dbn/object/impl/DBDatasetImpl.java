@@ -19,8 +19,8 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBTrigger;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
@@ -30,7 +30,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBDataset {
     protected DBObjectList<DBColumn> columns;
     protected DBObjectList<DBConstraint> constraints;
-    protected DBObjectList<DBTrigger> triggers;
+    protected DBObjectList<DBDatasetTrigger> triggers;
 
     public DBDatasetImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
         super(parent, resultSet);
@@ -42,7 +42,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         DBObjectListContainer childObjects = initChildObjects();
         columns = childObjects.createSubcontentObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, schema, true);
         constraints = childObjects.createSubcontentObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, schema, true);
-        triggers = childObjects.createSubcontentObjectList(DBObjectType.TRIGGER, this, TRIGGERS_LOADER, schema, true);
+        triggers = childObjects.createSubcontentObjectList(DBObjectType.DATASET_TRIGGER, this, TRIGGERS_LOADER, schema, true);
 
         initChildObjectRelations().createSubcontentObjectRelationList(
                 DBObjectRelationType.CONSTRAINT_COLUMN, this,
@@ -59,7 +59,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         return constraints.getObjects();
     }
 
-    public List<DBTrigger> getTriggers() {
+    public List<DBDatasetTrigger> getTriggers() {
         return triggers.getObjects();
     }
 
@@ -71,7 +71,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         return constraints.getObject(name);
     }
 
-    public DBTrigger getTrigger(String name) {
+    public DBDatasetTrigger getTrigger(String name) {
         return triggers.getObject(name);
     }
 
@@ -178,27 +178,27 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         }
     };
 
-    private static final DynamicSubcontentLoader TRIGGERS_LOADER = new DynamicSubcontentLoader<DBTrigger>(true) {
-        public boolean match(DBTrigger trigger, DynamicContent dynamicContent) {
+    private static final DynamicSubcontentLoader TRIGGERS_LOADER = new DynamicSubcontentLoader<DBDatasetTrigger>(true) {
+        public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
             DBDataset dataset = (DBDataset) dynamicContent.getParent();
             return trigger.getDataset().equals(dataset);
         }
 
-        public DynamicContentLoader<DBTrigger> getAlternativeLoader() {
+        public DynamicContentLoader<DBDatasetTrigger> getAlternativeLoader() {
             return TRIGGERS_ALTERNATIVE_LOADER;
         }
     };
 
-    private static final DynamicContentLoader<DBTrigger> TRIGGERS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTrigger>() {
-        public ResultSet createResultSet(DynamicContent<DBTrigger> dynamicContent, Connection connection) throws SQLException {
+    private static final DynamicContentLoader<DBDatasetTrigger> TRIGGERS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBDatasetTrigger>() {
+        public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBDataset dataset = (DBDataset) dynamicContent.getParent();
-            return metadataInterface.loadTriggers(dataset.getSchema().getName(), dataset.getName(), connection);
+            return metadataInterface.loadDatasetTriggers(dataset.getSchema().getName(), dataset.getName(), connection);
         }
 
-        public DBTrigger createElement(DynamicContent<DBTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+        public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParent();
-            return new DBTriggerImpl(dataset, resultSet);
+            return new DBDatasetTriggerImpl(dataset, resultSet);
         }
     };
 

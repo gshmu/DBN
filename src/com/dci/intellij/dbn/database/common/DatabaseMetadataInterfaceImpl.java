@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.database.common;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.diagnostic.Logger;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
     private Logger logger = Logger.getInstance(getClass().getName());
@@ -140,12 +140,12 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return executeQuery(connection, "all-nested-tables", ownerName);
     }
 
-    public ResultSet loadTriggers(String ownerName, String datasetName, Connection connection) throws SQLException {
-        return executeQuery(connection, "triggers", ownerName, datasetName);
+    public ResultSet loadDatasetTriggers(String ownerName, String datasetName, Connection connection) throws SQLException {
+        return executeQuery(connection, "dataset-triggers", ownerName, datasetName);
     }
 
-    public ResultSet loadAllTriggers(String ownerName, Connection connection) throws SQLException {
-        return executeQuery(connection, "all-triggers", ownerName);
+    public ResultSet loadAllDatasetTriggers(String ownerName, Connection connection) throws SQLException {
+        return executeQuery(connection, "all-dataset-triggers", ownerName);
     }
 
     public ResultSet loadFunctions(String ownerName, Connection connection) throws SQLException {

@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -31,7 +20,9 @@ import com.dci.intellij.dbn.object.DBCluster;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDatabaseLink;
+import com.dci.intellij.dbn.object.DBDatabaseTrigger;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.DBDimension;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBIndex;
@@ -48,7 +39,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSequence;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.DBTrigger;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.DBTypeFunction;
@@ -70,6 +60,17 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     DBObjectList<DBTable> tables;
@@ -81,6 +82,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     DBObjectList<DBFunction> functions;
     DBObjectList<DBPackage> packages;
     DBObjectList<DBType> types;
+    DBObjectList<DBDatabaseTrigger> databaseTriggers;
     DBObjectList<DBDimension> dimensions;
     DBObjectList<DBCluster> clusters;
     DBObjectList<DBDatabaseLink> databaseLinks;
@@ -117,13 +119,14 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         functions = ol.createObjectList(DBObjectType.FUNCTION, this, FUNCTIONS_LOADER, true, false);
         packages = ol.createObjectList(DBObjectType.PACKAGE, this, PACKAGES_LOADER, true, false);
         types = ol.createObjectList(DBObjectType.TYPE, this, TYPES_LOADER, true, false);
+        databaseTriggers = ol.createObjectList(DBObjectType.DATABASE_TRIGGER, this, DynamicContentLoader.VOID_CONTENT_LOADER, true, false);
         dimensions = ol.createObjectList(DBObjectType.DIMENSION, this, DIMENSIONS_LOADER, true, false);
         clusters = ol.createObjectList(DBObjectType.CLUSTER, this, CLUSTERS_LOADER, true, false);
         databaseLinks = ol.createObjectList(DBObjectType.DBLINK, this, DATABASE_LINKS_LOADER, true, false);
 
         DBObjectList constraints = ol.createObjectList(DBObjectType.CONSTRAINT, this, CONSTRAINTS_LOADER, true, false);
         DBObjectList indexes = ol.createObjectList(DBObjectType.INDEX, this, INDEXES_LOADER, true, false);
-        DBObjectList triggers = ol.createObjectList(DBObjectType.TRIGGER, this, TRIGGERS_LOADER, true, false);
+        DBObjectList triggers = ol.createObjectList(DBObjectType.DATASET_TRIGGER, this, DATASET_TRIGGERS_LOADER, true, false);
         DBObjectList nestedTables = ol.createObjectList(DBObjectType.NESTED_TABLE, this, ALL_NESTED_TABLES_LOADER, true, false);
         DBObjectList columns = ol.createObjectList(DBObjectType.COLUMN, this, COLUMNS_LOADER, false, true);
         ol.createObjectList(DBObjectType.PACKAGE_FUNCTION, this, ALL_PACKAGE_FUNCTIONS_LOADER, false, true);
@@ -263,8 +266,12 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return packages.getObjects();
     }
 
-    public List<DBTrigger> getTriggers() {
-        return initChildObjects().getObjectList(DBObjectType.TRIGGER).getObjects();
+    public List<DBDatasetTrigger> getDatasetTriggers() {
+        return initChildObjects().getObjectList(DBObjectType.DATASET_TRIGGER).getObjects();
+    }
+
+    public List<DBDatabaseTrigger> getDatabaseTriggers() {
+        return initChildObjects().getObjectList(DBObjectType.DATABASE_TRIGGER).getObjects();
     }
 
     public List<DBType> getTypes() {
@@ -544,6 +551,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 functions,
                 packages,
                 types,
+                databaseTriggers,
                 dimensions,
                 clusters,
                 databaseLinks);
@@ -866,14 +874,14 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         }
     };
 
-    private static final DynamicContentLoader TRIGGERS_LOADER = new  DynamicContentResultSetLoader<DBTrigger>() {
-        public ResultSet createResultSet(DynamicContent<DBTrigger> dynamicContent, Connection connection) throws SQLException {
+    private static final DynamicContentLoader DATASET_TRIGGERS_LOADER = new  DynamicContentResultSetLoader<DBDatasetTrigger>() {
+        public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
             DBSchema schema = (DBSchema) dynamicContent.getParent();
-            return metadataInterface.loadAllTriggers(schema.getName(), connection);
+            return metadataInterface.loadAllDatasetTriggers(schema.getName(), connection);
         }
 
-        public DBTrigger createElement(DynamicContent<DBTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+        public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String datasetName = resultSet.getString("DATASET_NAME");
             DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
             if (dataset == null) {
@@ -881,7 +889,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 dataset = schema.getDataset(datasetName);
                 loaderCache.setObject(datasetName, dataset);
             }
-            return new DBTriggerImpl(dataset, resultSet);
+            return new DBDatasetTriggerImpl(dataset, resultSet);
         }
     };
 

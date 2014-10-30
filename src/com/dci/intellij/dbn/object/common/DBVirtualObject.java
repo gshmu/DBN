@@ -1,14 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -41,6 +33,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     public static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
@@ -134,7 +132,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         }
 
         if (objectList == null) {
-            objectList = childObjects.createObjectList(objectType, this, VOID_CONTENT_LOADER, false, false);
+            objectList = childObjects.createObjectList(objectType, this, DynamicContentLoader.VOID_CONTENT_LOADER, false, false);
         }
 
         if (objectList.size() == 0) {
@@ -242,11 +240,6 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
         return relevantPsiElement.isValid() ? relevantPsiElement.getContainingFile() : null;
     }
-
-    private static final DynamicContentLoader VOID_CONTENT_LOADER = new DynamicContentLoader() {
-        public void loadContent(DynamicContent dynamicContent, boolean forceReload) throws DynamicContentLoadException {}
-        public void reloadContent(DynamicContent dynamicContent) throws DynamicContentLoadException {}
-    };
 
     /*********************************************************
      *                       PsiReference                    *

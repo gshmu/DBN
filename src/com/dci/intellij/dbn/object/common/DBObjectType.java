@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.DBContentType;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
+import org.apache.commons.lang.StringUtils;
+
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,14 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.apache.commons.lang.StringUtils;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.editor.DBContentType;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 
 public enum DBObjectType implements DynamicContentType {
     
@@ -68,6 +68,8 @@ public enum DBObjectType implements DynamicContentType {
     TABLE(DatabaseObjectTypeId.TABLE, "table", "tables", Icons.DBO_TABLE, Icons.DBO_TABLES, false),
     TABLESPACE(DatabaseObjectTypeId.TABLESPACE, "tablespace", "tablespaces", null, null, false),
     TRIGGER(DatabaseObjectTypeId.TRIGGER, "trigger", "triggers", Icons.DBO_TRIGGER, Icons.DBO_TRIGGER_DISABLED, Icons.DBO_TRIGGERS, false),
+    DATASET_TRIGGER(DatabaseObjectTypeId.DATASET_TRIGGER, "dataset trigger", "triggers", Icons.DBO_TRIGGER, Icons.DBO_TRIGGER_DISABLED, Icons.DBO_TRIGGERS, false),
+    DATABASE_TRIGGER(DatabaseObjectTypeId.DATABASE_TRIGGER, "database trigger", "triggers", Icons.DBO_DATABASE_TRIGGER, Icons.DBO_DATABASE_TRIGGER_DISABLED, Icons.DBO_DATABASE_TRIGGERS, false),
     TYPE(DatabaseObjectTypeId.TYPE, "type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
     XMLTYPE(DatabaseObjectTypeId.XMLTYPE, "type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
     TYPE_ATTRIBUTE(DatabaseObjectTypeId.TYPE_ATTRIBUTE, "type attribute", "attributes", Icons.DBO_ATTRIBUTE, Icons.DBO_ATTRIBUTES, false),
@@ -355,6 +357,8 @@ public enum DBObjectType implements DynamicContentType {
         PACKAGE_PROCEDURE.setGenericType(PROCEDURE);
         PACKAGE_FUNCTION.setGenericType(FUNCTION);
         PACKAGE_TYPE.setGenericType(TYPE);
+        DATASET_TRIGGER.setGenericType(TRIGGER);
+        DATABASE_TRIGGER.setGenericType(TRIGGER);
         XMLTYPE.setGenericType(TYPE);
 
         GRANTED_PRIVILEGE.setGenericType(PRIVILEGE);
@@ -405,6 +409,12 @@ public enum DBObjectType implements DynamicContentType {
         TRIGGER.addParent(TABLE);
         TRIGGER.addParent(VIEW);
         TRIGGER.addParent(MATERIALIZED_VIEW);
+        DATASET_TRIGGER.addParent(SCHEMA);
+        DATASET_TRIGGER.addParent(DATASET);
+        DATASET_TRIGGER.addParent(TABLE);
+        DATASET_TRIGGER.addParent(VIEW);
+        DATASET_TRIGGER.addParent(MATERIALIZED_VIEW);
+        DATABASE_TRIGGER.addParent(SCHEMA);
         TYPE.addParent(SCHEMA);
         TYPE_FUNCTION.addParent(TYPE);
         TYPE_PROCEDURE.addParent(TYPE);
