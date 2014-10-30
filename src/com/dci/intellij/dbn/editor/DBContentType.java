@@ -71,7 +71,9 @@ public enum DBContentType {
         switch (objectType) {
             case FUNCTION:
             case PROCEDURE:
-            case TRIGGER: return CODE;
+            case TRIGGER:
+            case DATASET_TRIGGER:
+            case DATABASE_TRIGGER: return CODE;
             case PACKAGE:
             case TYPE: return CODE_SPEC_AND_BODY;
             case VIEW:

@@ -426,7 +426,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="triggers" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="dataset-triggers" is-query="true" is-prepared-statement="true">
         <statement>
             select
                 EVENT_OBJECT_TABLE as DATASET_NAME,
@@ -445,7 +445,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-triggers" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-dataset-triggers" is-query="true" is-prepared-statement="true">
         <statement>
             select
                 EVENT_OBJECT_TABLE as DATASET_NAME,

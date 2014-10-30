@@ -15,7 +15,6 @@ public interface DBTrigger extends DBSchemaObject {
     TriggeringEvent TRIGGERING_EVENT_DROP     = new TriggeringEvent(4, "drop");
     TriggeringEvent TRIGGERING_EVENT_UNKNOWN  = new TriggeringEvent(5, "unknown");
 
-    DBDataset getDataset();
     boolean isForEachRow();
     TriggerType getTriggerType();
     TriggeringEvent[] getTriggeringEvents();

@@ -21,7 +21,8 @@ public interface DBSchema extends DBObject {
     List<DBProcedure> getProcedures();
     List<DBFunction> getFunctions();
     List<DBPackage> getPackages();
-    List<DBTrigger> getTriggers();
+    List<DBDatasetTrigger> getDatasetTriggers();
+    List<DBDatabaseTrigger> getDatabaseTriggers();
     List<DBType> getTypes();
     List<DBDimension> getDimensions();
     List<DBCluster> getClusters();

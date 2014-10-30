@@ -11,8 +11,8 @@ public interface DBDataset extends DBSchemaObject {
     List<DBConstraint> getConstraints();
     DBConstraint getConstraint(String name);
 
-    List<DBTrigger> getTriggers();
-    DBTrigger getTrigger(String name);
+    List<DBDatasetTrigger> getTriggers();
+    DBDatasetTrigger getTrigger(String name);
 
     boolean hasLobColumns();
 }

@@ -279,7 +279,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      *  <li> IS_VALID (Y/N)
      *  <li> IS_FOR_EACH_ROW (Y/N)
      */
-    ResultSet loadTriggers(String ownerName, String datasetName, Connection connection) throws SQLException;
+    ResultSet loadDatasetTriggers(String ownerName, String datasetName, Connection connection) throws SQLException;
 
     /**
      * Loads the triggers of the given owner<br>
@@ -294,7 +294,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      *
      * Sort by DATASET_NAME
      */
-    ResultSet loadAllTriggers(String ownerName, Connection connection) throws SQLException;
+    ResultSet loadAllDatasetTriggers(String ownerName, Connection connection) throws SQLException;
 
     /**
      * Loads the sequences of the given owner<br>
