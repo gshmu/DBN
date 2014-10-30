@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.intellij.lang.ASTNode;
@@ -120,6 +121,51 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
             }
         }
         return possibleLeafs;
+    }
+
+    @Override
+    public boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode) {
+        while (pathNode != null) {
+            int position = pathNode.getCursorPosition();
+            ElementType elementType = pathNode.getElementType();
+
+            if (elementType instanceof SequenceElementType) {
+                SequenceElementType sequenceElementType = (SequenceElementType) elementType;
+
+                int elementsCount = sequenceElementType.getChildCount();
+
+                if (position < elementsCount) {
+                    for (int i=position; i<elementsCount; i++) {
+                        ElementTypeRef next = sequenceElementType.getChild(i);
+                        Set<TokenType> firstPossibleTokens = next.getLookupCache().getFirstPossibleTokens();
+                        if (firstPossibleTokens.contains(tokenType)) {
+                            return true;
+                        }
+
+                        if (!next.isOptional() || i == elementsCount-1) {
+                            return false;
+                        }
+                    }
+                }
+            } else if (elementType instanceof IterationElementType) {
+                IterationElementType iterationElementType = (IterationElementType) elementType;
+                TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
+                if (separatorTokens == null) {
+                    ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                    Set<TokenType> firstPossibleTokens = lookupCache.getFirstPossibleTokens();
+                    if (firstPossibleTokens.contains(tokenType)) {
+                        return true;
+                    }
+                }
+            } else if (elementType instanceof QualifiedIdentifierElementType) {
+                QualifiedIdentifierElementType qualifiedIdentifierElementType = (QualifiedIdentifierElementType) elementType;
+                if (this == qualifiedIdentifierElementType.getSeparatorToken()) {
+                    break;
+                }
+            }
+            pathNode = pathNode.getParent();
+        }
+        return false;
     }
 
     public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode) {

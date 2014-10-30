@@ -5013,9 +5013,9 @@
             <sequence id="000002646">
                 <one-of id="000002647">
                     <token id="000002648" type-id="FN_DEREF" />
-                    <token id="000002649" type-id="KW_REF" />
+                    <token id="000002649" type-id="KW_REF" flavor="function"/>
                     <token id="000002650" type-id="FN_REFTOHEX" />
-                    <token id="000002651" type-id="KW_VALUE" />
+                    <token id="000002651" type-id="KW_VALUE" flavor="function"/>
                 </one-of>
                 <wrapper id="000002652" template="PARENTHESES">
                     <element ref-id="expression" />

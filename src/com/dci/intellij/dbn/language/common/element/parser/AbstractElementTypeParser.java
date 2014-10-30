@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
@@ -66,12 +67,13 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                 ParseBuilderErrorHandler.updateBuilderError(elementType.getLookupCache().getNextPossibleTokens(), context);
             }
             ParserBuilder builder = context.getBuilder();
+            T elementType = getElementType();
             if (resultType == ParseResultType.NO_MATCH) {
                 builder.markerRollbackTo(marker, node);
             } else {
-                if (getElementType() instanceof BlockElementType)
+                if (elementType instanceof BlockElementType)
                     builder.markerDrop(marker); else
-                    builder.markerDone(marker, getElementType(), node);
+                    builder.markerDone(marker, elementType, node);
             }
 
 
@@ -79,11 +81,16 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
             if (resultType == ParseResultType.NO_MATCH) {
                 return ParseResult.createNoMatchResult();
             } else {
-                Branch branch = elementType.getBranch();
+                Branch branch = this.elementType.getBranch();
                 if (node != null && branch != null) {
                     // if node is matched add branches marker
                     context.addBranchMarker(node.getParent(), branch);
                 }
+                if (elementType instanceof LeafElementType) {
+                    LeafElementType leafElementType = (LeafElementType) elementType;
+                    context.setLastResolvedLeaf(leafElementType);
+                }
+
                 return ParseResult.createFullMatchResult(matchedTokens);
             }
         } finally {
@@ -115,8 +122,14 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
 
                 ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
                 if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
-                    return false;
+                    LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
+                    if (lastResolvedLeaf == null || lastResolvedLeaf.isNextPossibleToken(tokenType, node)) {
+                        return false;
+                    }
+
+                    return true;
                 }
+
 
 
                 return true;//!isFollowedByToken(tokenType, node);
