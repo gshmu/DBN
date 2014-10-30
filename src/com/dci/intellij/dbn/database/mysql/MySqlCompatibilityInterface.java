@@ -22,7 +22,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
             objectTypeId == DatabaseObjectTypeId.COLUMN ||
             objectTypeId == DatabaseObjectTypeId.CONSTRAINT ||
             objectTypeId == DatabaseObjectTypeId.INDEX ||
-            objectTypeId == DatabaseObjectTypeId.TRIGGER ||
+            objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER ||
             objectTypeId == DatabaseObjectTypeId.FUNCTION ||
             objectTypeId == DatabaseObjectTypeId.PROCEDURE ||
             objectTypeId == DatabaseObjectTypeId.ARGUMENT ||

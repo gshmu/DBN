@@ -18,7 +18,12 @@ public class OracleMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     public ResultSet loadCharsets(Connection connection) throws SQLException {return null;}
 
-    public ResultSet loadTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
+    @Override
+    public ResultSet loadDatabaseTriggerSourceCode(String ownerName, String triggerName, Connection connection) throws SQLException {
+        return loadObjectSourceCode(ownerName, triggerName, "TRIGGER", connection);
+    }
+
+    public ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
         return loadObjectSourceCode(ownerName, triggerName, "TRIGGER", connection);
     }
 

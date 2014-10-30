@@ -268,6 +268,17 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadAllNestedTables(String ownerName, Connection connection) throws SQLException;
 
 
+    /**
+     * Loads the triggers of the given owner<br>
+     * Column names of the returned ResultSet
+     *  <li> TRIGGER_NAME (char)
+     *  <li> TRIGGER_TYPE (char)
+     *  <li> TRIGGERING_EVENT (INSERT/DELETE/UPDATE e.g. INSERT or UPDATE)
+     *  <li> IS_ENABLED (Y/N)
+     *  <li> IS_VALID (Y/N)
+     *  <li> IS_FOR_EACH_ROW (Y/N)
+     */
+    ResultSet loadDatabaseTriggers(String ownerName, Connection connection) throws SQLException;
 
     /**
      * Loads the triggers of the given dataset (can be a TABLE, VIEW or MATERIALIZED_VIEW)<br>
@@ -568,7 +579,9 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     ResultSet loadMaterializedViewSourceCode(String ownerName, String viewName, Connection connection) throws SQLException;
 
-    ResultSet loadTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException;
+    ResultSet loadDatabaseTriggerSourceCode(String ownerName, String triggerName, Connection connection) throws SQLException;
+
+    ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException;
 
     /**
      * Loads the source code (select statement) for the given view;
