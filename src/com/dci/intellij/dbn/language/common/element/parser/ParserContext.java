@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
@@ -13,6 +14,7 @@ public class ParserContext extends ElementLookupContext {
     private long timestamp = System.currentTimeMillis();
     private ParserBuilder builder;
     private Map<Branch, ParsePathNode> branchMarkers = new HashMap<Branch, ParsePathNode>();
+    private LeafElementType lastResolvedLeaf;
 
     public ParserContext(PsiBuilder builder, DBLanguageDialect languageDialect, double databaseVersion) {
         super(null, databaseVersion);
@@ -43,5 +45,13 @@ public class ParserContext extends ElementLookupContext {
             }
         }
         branches = branchMarkers.size() == 0 ? null : branchMarkers.keySet();
+    }
+
+    public LeafElementType getLastResolvedLeaf() {
+        return lastResolvedLeaf;
+    }
+
+    public void setLastResolvedLeaf(LeafElementType lastResolvedLeaf) {
+        this.lastResolvedLeaf = lastResolvedLeaf;
     }
 }
