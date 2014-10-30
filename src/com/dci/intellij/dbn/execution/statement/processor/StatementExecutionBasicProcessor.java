@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -40,12 +46,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -94,7 +94,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
         } else {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-            return this.cachedExecutable == null || !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
+            return
+                this.cachedExecutable == null ||
+                executablePsiElement == null ||
+                !this.cachedExecutable.matches(executablePsiElement, BasePsiElement.MatchType.STRONG);
         }
     }
 
