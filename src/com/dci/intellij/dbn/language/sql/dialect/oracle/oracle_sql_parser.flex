@@ -151,7 +151,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 
 
-"a"{ws}"set" {return tt.getKeywordTokenType(0);}
+"a set" {return tt.getKeywordTokenType(0);}
 "abort" {return tt.getKeywordTokenType(1);}
 "access" {return tt.getKeywordTokenType(2);}
 "activate" {return tt.getKeywordTokenType(3);}
@@ -703,13 +703,13 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "xml" {return tt.getKeywordTokenType(549);}
 "xmlnamespaces" {return tt.getKeywordTokenType(550);}
 "xmlschema" {return tt.getKeywordTokenType(551);}
-"xmltable" {return tt.getKeywordTokenType(552);}
-"xmltype" {return tt.getKeywordTokenType(553);}
-"year" {return tt.getKeywordTokenType(554);}
-"yes" {return tt.getKeywordTokenType(555);}
-"zone" {return tt.getKeywordTokenType(556);}
-"false" {return tt.getKeywordTokenType(557);}
-"true" {return tt.getKeywordTokenType(558);}
+"xmltype" {return tt.getKeywordTokenType(552);}
+"year" {return tt.getKeywordTokenType(553);}
+"yes" {return tt.getKeywordTokenType(554);}
+"zone" {return tt.getKeywordTokenType(555);}
+"false" {return tt.getKeywordTokenType(556);}
+"true" {return tt.getKeywordTokenType(557);}
+
 
 
 
@@ -944,7 +944,9 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 "xmlroot" {return tt.getFunctionTokenType(223);}
 "xmlsequence" {return tt.getFunctionTokenType(224);}
 "xmlserialize" {return tt.getFunctionTokenType(225);}
-"xmltransform" {return tt.getFunctionTokenType(226);}
+"xmltable" {return tt.getFunctionTokenType(226);}
+"xmltransform" {return tt.getFunctionTokenType(227);}
+
 
 
 

@@ -21,13 +21,22 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
 
     @Override
     public DBObject resolve(IdentifierPsiElement identifierPsiElement) {
-        NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
-        PsiLookupAdapter lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.TYPE, null);
-        BasePsiElement underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+        BasePsiElement underlyingObjectCandidate;
 
-        if (underlyingObjectCandidate == null) {
-            lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.DATASET, null);
+        DBObjectType objectType = identifierPsiElement.getObjectType();
+        if (objectType != DBObjectType.ANY) {
+            NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+            PsiLookupAdapter lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, objectType, null);
             underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+        } else {
+            NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+            PsiLookupAdapter lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.TYPE, null);
+            underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+
+            if (underlyingObjectCandidate == null) {
+                lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.DATASET, null);
+                underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+            }
         }
 
         return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;

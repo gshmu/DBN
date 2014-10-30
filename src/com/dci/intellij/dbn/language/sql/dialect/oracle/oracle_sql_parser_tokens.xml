@@ -606,13 +606,13 @@
         <token index="549" id="KW_XML" value="xml" type="keyword"/>
         <token index="550" id="KW_XMLNAMESPACES" value="xmlnamespaces" type="keyword"/>
         <token index="551" id="KW_XMLSCHEMA" value="xmlschema" type="keyword"/>
-        <token index="552" id="KW_XMLTABLE" value="xmltable" type="keyword"/>
-        <token index="553" id="KW_XMLTYPE" value="xmltype" type="keyword"/>
-        <token index="554" id="KW_YEAR" value="year" type="keyword"/>
-        <token index="555" id="KW_YES" value="yes" type="keyword"/>
-        <token index="556" id="KW_ZONE" value="zone" type="keyword"/>
-        <token index="557" id="KW_FALSE" value="false" type="keyword" reserved="true"/>
-        <token index="558" id="KW_TRUE" value="true" type="keyword" reserved="true"/>
+        <token index="552" id="KW_XMLTYPE" value="xmltype" type="keyword"/>
+        <token index="553" id="KW_YEAR" value="year" type="keyword"/>
+        <token index="554" id="KW_YES" value="yes" type="keyword"/>
+        <token index="555" id="KW_ZONE" value="zone" type="keyword"/>
+        <token index="556" id="KW_FALSE" value="false" type="keyword" reserved="true"/>
+        <token index="557" id="KW_TRUE" value="true" type="keyword" reserved="true"/>
+
 
 
 
@@ -848,7 +848,9 @@
         <token index="223" id="FN_XMLROOT" value="xmlroot" type="function"/>
         <token index="224" id="FN_XMLSEQUENCE" value="xmlsequence" type="function"/>
         <token index="225" id="FN_XMLSERIALIZE" value="xmlserialize" type="function"/>
-        <token index="226" id="FN_XMLTRANSFORM" value="xmltransform" type="function"/>
+        <token index="226" id="FN_XMLTABLE" value="xmltable" type="function"/>
+        <token index="227" id="FN_XMLTRANSFORM" value="xmltransform" type="function"/>
+
 
 
 
