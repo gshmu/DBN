@@ -1,15 +1,21 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.object.DBDatabaseTrigger;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
-import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-
 import javax.swing.Icon;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.object.DBDatabaseTrigger;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 
 public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTrigger {
     public DBDatabaseTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
@@ -46,5 +52,29 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
             }
 
         }
+    }
+
+    /*********************************************************
+     *                         Loaders                       *
+     *********************************************************/
+    private class SourceCodeLoader extends DBSourceCodeLoader {
+        protected SourceCodeLoader(DBObject object) {
+            super(object, false);
+        }
+
+        public ResultSet loadSourceCode(Connection connection) throws SQLException {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                return metadataInterface.loadDatabaseTriggerSourceCode(getSchema().getName(), getName(), connection);
+            }
+            return null;
+        }
+    }
+
+
+    public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
+        SourceCodeLoader sourceCodeLoader = new SourceCodeLoader(this);
+        return sourceCodeLoader.load();
     }
 }

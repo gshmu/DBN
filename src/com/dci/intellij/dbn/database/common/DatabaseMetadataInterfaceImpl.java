@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.database.common;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.diagnostic.Logger;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
     private Logger logger = Logger.getInstance(getClass().getName());
@@ -138,6 +138,11 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     public ResultSet loadAllNestedTables(String ownerName, Connection connection) throws SQLException {
         return executeQuery(connection, "all-nested-tables", ownerName);
+    }
+
+    @Override
+    public ResultSet loadDatabaseTriggers(String ownerName, Connection connection) throws SQLException {
+        return executeQuery(connection, "database-triggers", ownerName);
     }
 
     public ResultSet loadDatasetTriggers(String ownerName, String datasetName, Connection connection) throws SQLException {
@@ -292,8 +297,12 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return executeQuery(connection, "materialized-view-source-code", ownerName, viewName);
    }
 
-    public ResultSet loadTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
-        return executeQuery(connection, "trigger-source-code", tableOwner, tableName, ownerName, triggerName);
+    public ResultSet loadDatabaseTriggerSourceCode(String ownerName, String triggerName, Connection connection) throws SQLException {
+        return executeQuery(connection, "database-trigger-source-code", ownerName, triggerName);
+    }
+
+    public ResultSet loadDatasetTriggerSourceCode(String tableOwner, String tableName, String ownerName, String triggerName, Connection connection) throws SQLException {
+        return executeQuery(connection, "dataset-trigger-source-code", tableOwner, tableName, ownerName, triggerName);
     }
 
     public ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, Connection connection) throws SQLException {

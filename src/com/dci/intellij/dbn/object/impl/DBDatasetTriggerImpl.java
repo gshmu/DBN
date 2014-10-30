@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.object.impl;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -10,15 +15,9 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
     public DBDatasetTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
@@ -95,7 +94,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                return metadataInterface.loadTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
+                return metadataInterface.loadDatasetTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
             }
             return null;
         }

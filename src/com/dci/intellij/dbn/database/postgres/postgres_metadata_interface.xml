@@ -599,7 +599,7 @@
         </statement>
     </statement-execution-processor>    
 
-    <statement-execution-processor id="trigger-source-code" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="dataset-trigger-source-code" is-query="true" is-prepared-statement="true">
         <statement>
             select concat(
                 'trigger ',

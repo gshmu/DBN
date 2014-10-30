@@ -47,25 +47,27 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
     @Override
     public void computeSourceCodeOffsets(SourceCodeContent content, DatabaseObjectTypeId objectTypeId, String objectName) {
         String sourceCode = content.getSourceCode();
-        if (objectTypeId == DatabaseObjectTypeId.TRIGGER) {
-            if (sourceCode.length() > 0) {
-                int startIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0) + objectName.length();
-                int headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "declare", startIndex);
-                if (headerEndOffset == -1) headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "begin", startIndex);
-                if (headerEndOffset == -1) headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "call", startIndex);
-                if (headerEndOffset == -1) headerEndOffset = 0;
-                content.getOffsets().setHeaderEndOffset(headerEndOffset);
-            }
-        }
-
-        if (objectTypeId != DatabaseObjectTypeId.VIEW && objectTypeId != DatabaseObjectTypeId.MATERIALIZED_VIEW) {
-            int nameIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0);
-            if (nameIndex > -1) {
-                int guardedBlockEndOffset = nameIndex + objectName.length();
-                if (sourceCode.charAt(guardedBlockEndOffset) == '"'){
-                    guardedBlockEndOffset++;
+        if (StringUtil.isNotEmpty(sourceCode)) {
+            if (objectTypeId == DatabaseObjectTypeId.DATASET_TRIGGER || objectTypeId == DatabaseObjectTypeId.DATABASE_TRIGGER) {
+                if (sourceCode.length() > 0) {
+                    int startIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0) + objectName.length();
+                    int headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "declare", startIndex);
+                    if (headerEndOffset == -1) headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "begin", startIndex);
+                    if (headerEndOffset == -1) headerEndOffset = StringUtil.indexOfIgnoreCase(sourceCode, "call", startIndex);
+                    if (headerEndOffset == -1) headerEndOffset = 0;
+                    content.getOffsets().setHeaderEndOffset(headerEndOffset);
                 }
-                content.getOffsets().setGuardedBlockEndOffset(guardedBlockEndOffset);
+            }
+
+            if (objectTypeId != DatabaseObjectTypeId.VIEW && objectTypeId != DatabaseObjectTypeId.MATERIALIZED_VIEW) {
+                int nameIndex = StringUtil.indexOfIgnoreCase(sourceCode, objectName, 0);
+                if (nameIndex > -1) {
+                    int guardedBlockEndOffset = nameIndex + objectName.length();
+                    if (sourceCode.charAt(guardedBlockEndOffset) == '"'){
+                        guardedBlockEndOffset++;
+                    }
+                    content.getOffsets().setGuardedBlockEndOffset(guardedBlockEndOffset);
+                }
             }
         }
     }
