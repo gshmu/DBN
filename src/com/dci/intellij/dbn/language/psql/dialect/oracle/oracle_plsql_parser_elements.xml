@@ -5178,7 +5178,7 @@
                     </variant>
                     <variant>
                         <object-ref id="000002754" optional="true" type="SCHEMA" />
-                        <object-ref id="000002755" type="PACKAGE" />
+                        <object-ref id="000002755" optional="true" type="PACKAGE" />
                         <object-ref id="000002756" type="PACKAGE_TYPE" />
                     </variant>
                 </qualified-identifier>
