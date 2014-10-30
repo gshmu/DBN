@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -21,13 +28,6 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private boolean isForEachRow;
@@ -61,7 +61,12 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         if (triggeringEventString.contains("UPDATE")) triggeringEventList.add(TRIGGERING_EVENT_UPDATE);
         if (triggeringEventString.contains("DELETE")) triggeringEventList.add(TRIGGERING_EVENT_DELETE);
         if (triggeringEventString.contains("TRUNCATE")) triggeringEventList.add(TRIGGERING_EVENT_TRUNCATE);
+        if (triggeringEventString.contains("CREATE")) triggeringEventList.add(TRIGGERING_EVENT_CREATE);
+        if (triggeringEventString.contains("ALTER")) triggeringEventList.add(TRIGGERING_EVENT_ALTER);
         if (triggeringEventString.contains("DROP")) triggeringEventList.add(TRIGGERING_EVENT_DROP);
+        if (triggeringEventString.contains("RENAME")) triggeringEventList.add(TRIGGERING_EVENT_RENAME);
+        if (triggeringEventString.contains("LOGON")) triggeringEventList.add(TRIGGERING_EVENT_LOGON);
+        if (triggeringEventString.contains("DDL")) triggeringEventList.add(TRIGGERING_EVENT_DDL);
         if (triggeringEventList.size() == 0) triggeringEventList.add(TRIGGERING_EVENT_UNKNOWN);
 
         triggeringEvents = triggeringEventList.toArray(new TriggeringEvent[triggeringEventList.size()]);    }

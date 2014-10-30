@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -52,6 +53,29 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
             }
 
         }
+    }
+
+
+    public void buildToolTip(HtmlToolTipBuilder ttb) {
+        TriggerType triggerType = getTriggerType();
+        TriggeringEvent[] triggeringEvents = getTriggeringEvents();
+        ttb.append(true, getObjectType().getName(), true);
+        StringBuilder triggerDesc = new StringBuilder();
+        triggerDesc.append(" - ");
+        triggerDesc.append(triggerType.getName().toLowerCase());
+        triggerDesc.append(" ") ;
+
+        for (TriggeringEvent triggeringEvent : triggeringEvents) {
+            if (triggeringEvent != triggeringEvents[0]) triggerDesc.append(" or ");
+            triggerDesc.append(triggeringEvent.getName());
+        }
+
+        triggerDesc.append(" on database");
+
+        ttb.append(false, triggerDesc.toString(), false);
+
+        ttb.createEmptyRow();
+        super.buildToolTip(ttb);
     }
 
     /*********************************************************
