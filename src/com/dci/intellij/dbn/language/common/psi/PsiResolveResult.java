@@ -106,6 +106,10 @@ public class PsiResolveResult {
                     return true;
                 }
             }
+        } else {
+            if (element != null && element.isPrecededByDot()) {
+                return true;
+            }
         }
         return false;
     }
