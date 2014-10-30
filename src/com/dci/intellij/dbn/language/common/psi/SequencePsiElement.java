@@ -10,16 +10,12 @@ import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
 
 public class SequencePsiElement extends BasePsiElement {
@@ -262,18 +258,22 @@ public class SequencePsiElement extends BasePsiElement {
      *                    Miscellaneous                      *
      *********************************************************/
      public boolean hasErrors() {
-        PsiElement[] psiElements = getChildren();
-        for (PsiElement psiElement: psiElements) {
-            if (psiElement instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+         PsiElement child = getFirstChild();
+
+         while (child != null) {
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
                 if (basePsiElement.hasErrors()) {
                     return true;
                 }
             }
-        }
-         if (true) return false;
+             child = child.getNextSibling();
+         }
 
-        if (getElementType() instanceof SequenceElementType) {
+/*         if (true) return false;
+
+         PsiElement[] psiElements = getChildren();
+         if (getElementType() instanceof SequenceElementType) {
             int offset = 0;
             SequenceElementType sequenceElementType = (SequenceElementType) getElementType();
             ElementTypeRef[] children = sequenceElementType.getChildren();
@@ -307,7 +307,7 @@ public class SequencePsiElement extends BasePsiElement {
             } else {
                 return psiElement instanceof PsiErrorElement;
             }
-        }
+        }*/
         return false;
     }
 

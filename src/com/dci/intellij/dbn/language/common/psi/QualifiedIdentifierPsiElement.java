@@ -16,7 +16,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
-    List<QualifiedIdentifierVariant> parseVariants;
+    private ParseVariants parseVariants;
 
     public QualifiedIdentifierPsiElement(ASTNode astNode, ElementType elementType) {
         super(astNode, elementType);
@@ -27,12 +27,10 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
     }
 
     public synchronized List<QualifiedIdentifierVariant> getParseVariants() {
-        if (parseVariants == null){
+        if (parseVariants == null || parseVariants.getReferenceElementCount() != getElementsCount()){
             parseVariants = buildParseVariants();
         }
-        return parseVariants;
-
-        //TODO try to remove this if all elements are resolved
+        return parseVariants.getElements();
     }
 
     public int getIndexOf(LeafPsiElement leafPsiElement) {
@@ -85,7 +83,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         return null;
     }
 
-    public List<QualifiedIdentifierVariant> buildParseVariants() {
+    public ParseVariants buildParseVariants() {
         List<QualifiedIdentifierVariant> parseVariants = new ArrayList<QualifiedIdentifierVariant>();
         for (LeafElementType[] elementTypes : getElementType().getVariants()) {
 
@@ -125,7 +123,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
             }
         }
         Collections.sort(parseVariants);
-        return parseVariants;
+        return new ParseVariants(parseVariants, getElementsCount());
     }
 
     public boolean checkPaternitySequence(LeafElementType leafElementType, DBObjectType objectType, String objectName) {
@@ -184,14 +182,34 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
 
     public int getElementsCount() {
         int count = 0;
-        for (PsiElement child : getChildren()) {
+        PsiElement child = getFirstChild();
+        while (child != null) {
             if (child instanceof LeafPsiElement) {
                 LeafPsiElement leafPsiElement = (LeafPsiElement) child;
                 if (leafPsiElement.getElementType() != getElementType().getSeparatorToken() ) {
                     count++;
                 }
             }
+            child = child.getNextSibling();
         }
         return count;
+    }
+
+    public class ParseVariants {
+        private List<QualifiedIdentifierVariant> elements;
+        private int referenceElementCount;
+
+        public ParseVariants(List<QualifiedIdentifierVariant> elements, int referenceElementCount) {
+            this.elements = elements;
+            this.referenceElementCount = referenceElementCount;
+        }
+
+        public List<QualifiedIdentifierVariant> getElements() {
+            return elements;
+        }
+
+        public int getReferenceElementCount() {
+            return referenceElementCount;
+        }
     }
 }

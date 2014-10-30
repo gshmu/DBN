@@ -499,7 +499,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }
     }
 
-    private boolean isPrecededByDot() {
+    public boolean isPrecededByDot() {
         LeafPsiElement prevLeaf = getPrevLeaf();
         if (prevLeaf instanceof TokenPsiElement) {
             TokenPsiElement tokenPsiElement = (TokenPsiElement) prevLeaf;

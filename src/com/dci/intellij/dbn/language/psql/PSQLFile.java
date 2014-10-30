@@ -23,29 +23,33 @@ public class PSQLFile extends DBLanguagePsiFile {
     }
 
     public BasePsiElement lookupObjectSpecification(DBObjectType objectType, CharSequence objectName) {
-        for (PsiElement psiElement : getChildren()) {
-            if (psiElement instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
                 BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
                 if (specObject != null) {
                     return specObject.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_SPECIFICATION);
                 }
             }
+            child = child.getNextSibling();
         }
         return null;
     }
 
     public BasePsiElement lookupObjectDeclaration(DBObjectType objectType, CharSequence objectName) {
-        for (PsiElement psiElement : getChildren()) {
-            if (psiElement instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
                 PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType, objectName, ElementTypeAttribute.SUBJECT);
                 BasePsiElement specObject = lookupAdapter.findInScope(basePsiElement);
                 if (specObject != null) {
                     return specObject.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
                 }
             }
+            child = child.getNextSibling();
         }
         return null;
     }
