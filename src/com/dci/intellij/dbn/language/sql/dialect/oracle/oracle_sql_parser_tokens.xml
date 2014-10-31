@@ -398,9 +398,9 @@
         <token index="341" id="KW_PACKAGE" value="package" type="keyword"/>
         <token index="342" id="KW_PARALLEL" value="parallel" type="keyword"/>
         <token index="343" id="KW_PARAMETERS" value="parameters" type="keyword"/>
-        <token index="344" id="KW_PASSING" value="passing" type="keyword"/>
-        <token index="345" id="KW_PARTITION" value="partition" type="keyword"/>
-        <token index="346" id="KW_PARTITIONS" value="partitions" type="keyword"/>
+        <token index="344" id="KW_PARTITION" value="partition" type="keyword"/>
+        <token index="345" id="KW_PARTITIONS" value="partitions" type="keyword"/>
+        <token index="346" id="KW_PASSING" value="passing" type="keyword"/>
         <token index="347" id="KW_PATH" value="path" type="keyword"/>
         <token index="348" id="KW_PCTFREE" value="pctfree" type="keyword" reserved="true"/>
         <token index="349" id="KW_PCTINCREASE" value="pctincrease" type="keyword"/>
@@ -587,31 +587,31 @@
         <token index="530" id="KW_USING" value="using" type="keyword"/>
         <token index="531" id="KW_VALIDATE" value="validate" type="keyword" reserved="true"/>
         <token index="532" id="KW_VALIDATION" value="validation" type="keyword"/>
-        <token index="533" id="KW_VALUE" value="value" type="keyword"/>
-        <token index="534" id="KW_VALUES" value="values" type="keyword" reserved="true"/>
-        <token index="535" id="KW_VARRAY" value="varray" type="keyword"/>
-        <token index="536" id="KW_VERSION" value="version" type="keyword"/>
-        <token index="537" id="KW_VERSIONS" value="versions" type="keyword"/>
-        <token index="538" id="KW_VIEW" value="view" type="keyword" reserved="true"/>
-        <token index="539" id="KW_WAIT" value="wait" type="keyword"/>
-        <token index="540" id="KW_WELLFORMED" value="wellformed" type="keyword"/>
-        <token index="541" id="KW_WHEN" value="when" type="keyword"/>
-        <token index="542" id="KW_WHENEVER" value="whenever" type="keyword" reserved="true"/>
-        <token index="543" id="KW_WHERE" value="where" type="keyword" reserved="true"/>
-        <token index="544" id="KW_WITH" value="with" type="keyword" reserved="true"/>
-        <token index="545" id="KW_WITHIN" value="within" type="keyword"/>
-        <token index="546" id="KW_WITHOUT" value="without" type="keyword"/>
-        <token index="547" id="KW_WORK" value="work" type="keyword"/>
-        <token index="548" id="KW_WRITE" value="write" type="keyword"/>
-        <token index="549" id="KW_XML" value="xml" type="keyword"/>
-        <token index="550" id="KW_XMLNAMESPACES" value="xmlnamespaces" type="keyword"/>
-        <token index="551" id="KW_XMLSCHEMA" value="xmlschema" type="keyword"/>
-        <token index="552" id="KW_XMLTYPE" value="xmltype" type="keyword"/>
-        <token index="553" id="KW_YEAR" value="year" type="keyword"/>
-        <token index="554" id="KW_YES" value="yes" type="keyword"/>
-        <token index="555" id="KW_ZONE" value="zone" type="keyword"/>
-        <token index="556" id="KW_FALSE" value="false" type="keyword" reserved="true"/>
-        <token index="557" id="KW_TRUE" value="true" type="keyword" reserved="true"/>
+        <token index="533" id="KW_VALUES" value="values" type="keyword" reserved="true"/>
+        <token index="534" id="KW_VARRAY" value="varray" type="keyword"/>
+        <token index="535" id="KW_VERSION" value="version" type="keyword"/>
+        <token index="536" id="KW_VERSIONS" value="versions" type="keyword"/>
+        <token index="537" id="KW_VIEW" value="view" type="keyword" reserved="true"/>
+        <token index="538" id="KW_WAIT" value="wait" type="keyword"/>
+        <token index="539" id="KW_WELLFORMED" value="wellformed" type="keyword"/>
+        <token index="540" id="KW_WHEN" value="when" type="keyword"/>
+        <token index="541" id="KW_WHENEVER" value="whenever" type="keyword" reserved="true"/>
+        <token index="542" id="KW_WHERE" value="where" type="keyword" reserved="true"/>
+        <token index="543" id="KW_WITH" value="with" type="keyword" reserved="true"/>
+        <token index="544" id="KW_WITHIN" value="within" type="keyword"/>
+        <token index="545" id="KW_WITHOUT" value="without" type="keyword"/>
+        <token index="546" id="KW_WORK" value="work" type="keyword"/>
+        <token index="547" id="KW_WRITE" value="write" type="keyword"/>
+        <token index="548" id="KW_XML" value="xml" type="keyword"/>
+        <token index="549" id="KW_XMLNAMESPACES" value="xmlnamespaces" type="keyword"/>
+        <token index="550" id="KW_XMLSCHEMA" value="xmlschema" type="keyword"/>
+        <token index="551" id="KW_XMLTYPE" value="xmltype" type="keyword"/>
+        <token index="552" id="KW_YEAR" value="year" type="keyword"/>
+        <token index="553" id="KW_YES" value="yes" type="keyword"/>
+        <token index="554" id="KW_ZONE" value="zone" type="keyword"/>
+        <token index="555" id="KW_FALSE" value="false" type="keyword" reserved="true"/>
+        <token index="556" id="KW_TRUE" value="true" type="keyword" reserved="true"/>
+
 
 
 
@@ -825,31 +825,32 @@
         <token index="200" id="FN_UPDATEXML" value="updatexml" type="function"/>
         <token index="201" id="FN_UPPER" value="upper" type="function"/>
         <token index="202" id="FN_USERENV" value="userenv" type="function"/>
-        <token index="203" id="FN_VAR_POP" value="var_pop" type="function"/>
-        <token index="204" id="FN_VAR_SAMP" value="var_samp" type="function"/>
-        <token index="205" id="FN_VARIANCE" value="variance" type="function"/>
-        <token index="206" id="FN_VSIZE" value="vsize" type="function"/>
-        <token index="207" id="FN_WIDTH_BUCKET" value="width_bucket" type="function"/>
-        <token index="208" id="FN_XMLAGG" value="xmlagg" type="function"/>
-        <token index="209" id="FN_XMLATTRIBUTES" value="xmlattributes" type="function"/>
-        <token index="210" id="FN_XMLCAST" value="xmlcast" type="function"/>
-        <token index="211" id="FN_XMLCDATA" value="xmlcdata" type="function"/>
-        <token index="212" id="FN_XMLCOLATTVAL" value="xmlcolattval" type="function"/>
-        <token index="213" id="FN_XMLCOMMENT" value="xmlcomment" type="function"/>
-        <token index="214" id="FN_XMLCONCAT" value="xmlconcat" type="function"/>
-        <token index="215" id="FN_XMLDIFF" value="xmldiff" type="function"/>
-        <token index="216" id="FN_XMLELEMENT" value="xmlelement" type="function"/>
-        <token index="217" id="FN_XMLFOREST" value="xmlforest" type="function"/>
-        <token index="218" id="FN_XMLISVALID" value="xmlisvalid" type="function"/>
-        <token index="219" id="FN_XMLPARSE" value="xmlparse" type="function"/>
-        <token index="220" id="FN_XMLPATCH" value="xmlpatch" type="function"/>
-        <token index="221" id="FN_XMLPI" value="xmlpi" type="function"/>
-        <token index="222" id="FN_XMLQUERY" value="xmlquery" type="function"/>
-        <token index="223" id="FN_XMLROOT" value="xmlroot" type="function"/>
-        <token index="224" id="FN_XMLSEQUENCE" value="xmlsequence" type="function"/>
-        <token index="225" id="FN_XMLSERIALIZE" value="xmlserialize" type="function"/>
-        <token index="226" id="FN_XMLTABLE" value="xmltable" type="function"/>
-        <token index="227" id="FN_XMLTRANSFORM" value="xmltransform" type="function"/>
+        <token index="203" id="FN_VALUE" value="value" type="function"/>
+        <token index="204" id="FN_VAR_POP" value="var_pop" type="function"/>
+        <token index="205" id="FN_VAR_SAMP" value="var_samp" type="function"/>
+        <token index="206" id="FN_VARIANCE" value="variance" type="function"/>
+        <token index="207" id="FN_VSIZE" value="vsize" type="function"/>
+        <token index="208" id="FN_WIDTH_BUCKET" value="width_bucket" type="function"/>
+        <token index="209" id="FN_XMLAGG" value="xmlagg" type="function"/>
+        <token index="210" id="FN_XMLATTRIBUTES" value="xmlattributes" type="function"/>
+        <token index="211" id="FN_XMLCAST" value="xmlcast" type="function"/>
+        <token index="212" id="FN_XMLCDATA" value="xmlcdata" type="function"/>
+        <token index="213" id="FN_XMLCOLATTVAL" value="xmlcolattval" type="function"/>
+        <token index="214" id="FN_XMLCOMMENT" value="xmlcomment" type="function"/>
+        <token index="215" id="FN_XMLCONCAT" value="xmlconcat" type="function"/>
+        <token index="216" id="FN_XMLDIFF" value="xmldiff" type="function"/>
+        <token index="217" id="FN_XMLELEMENT" value="xmlelement" type="function"/>
+        <token index="218" id="FN_XMLFOREST" value="xmlforest" type="function"/>
+        <token index="219" id="FN_XMLISVALID" value="xmlisvalid" type="function"/>
+        <token index="220" id="FN_XMLPARSE" value="xmlparse" type="function"/>
+        <token index="221" id="FN_XMLPATCH" value="xmlpatch" type="function"/>
+        <token index="222" id="FN_XMLPI" value="xmlpi" type="function"/>
+        <token index="223" id="FN_XMLQUERY" value="xmlquery" type="function"/>
+        <token index="224" id="FN_XMLROOT" value="xmlroot" type="function"/>
+        <token index="225" id="FN_XMLSEQUENCE" value="xmlsequence" type="function"/>
+        <token index="226" id="FN_XMLSERIALIZE" value="xmlserialize" type="function"/>
+        <token index="227" id="FN_XMLTABLE" value="xmltable" type="function"/>
+        <token index="228" id="FN_XMLTRANSFORM" value="xmltransform" type="function"/>
 
 
 
