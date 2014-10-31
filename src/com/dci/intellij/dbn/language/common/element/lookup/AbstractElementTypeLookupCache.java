@@ -26,6 +26,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     protected Set<LeafElementType> firstRequiredLeafs = new THashSet<LeafElementType>();
     protected Set<TokenType> allPossibleTokens = new THashSet<TokenType>();
     protected Set<TokenType> firstPossibleTokens = new THashSet<TokenType>();
+    protected Set<TokenType> firstRequiredTokens = new THashSet<TokenType>();
     private Map<TokenType, Boolean> landmarkTokens;
     private Boolean startsWithIdentifier;
 
@@ -54,6 +55,11 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     }
 
     @Override
+    public boolean containsLeaf(LeafElementType elementType) {
+        return allPossibleLeafs != null && allPossibleLeafs.contains(elementType);
+    }
+
+    @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context) {
         return collectFirstPossibleLeafs(context.reset(), null);
     }
@@ -66,6 +72,11 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     protected <E> Set<E> initBucket(Set<E> bucket) {
         if (bucket == null) bucket = new HashSet<E>();
         return bucket;
+    }
+
+    @Override
+    public Set<TokenType> getFirstRequiredTokens() {
+        return firstRequiredTokens;
     }
 
     public Set<TokenType> getFirstPossibleTokens() {
@@ -109,6 +120,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         // register first required leafs
         if (initAsFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
+            firstRequiredTokens.addAll(lookupCache.getFirstRequiredTokens());
         }
 
         if (initAllElements) {

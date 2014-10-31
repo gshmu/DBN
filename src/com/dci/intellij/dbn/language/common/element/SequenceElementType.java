@@ -24,6 +24,8 @@ public interface SequenceElementType extends ElementType {
 
     boolean isPossibleTokenFromIndex(TokenType tokenType, int index);
 
+    int indexOf(LeafElementType elementType);
+
     int indexOf(ElementType elementType, int fromIndex);
 
     int indexOf(ElementType elementType);

@@ -3506,7 +3506,7 @@
             <token id="000002098" type-id="KW_AS" />
             <one-of id="000002099">
                 <token id="000002100" type-id="KW_LOCATOR" />
-                <token id="000002101" type-id="KW_VALUE" />
+                <token id="000002101" type-id="FN_VALUE" flavor="keyword"/>
             </one-of>
         </sequence>
     </element-def>
@@ -6697,7 +6697,7 @@
                 </one-of>
             </iteration>
             <sequence id="000003599">
-                <token id="000003600" type-id="KW_VALUE" />
+                <token id="000003600" type-id="FN_VALUE" flavor="keyword"/>
                 <wrapper id="000003601" template="PARENTHESES">
                     <alias-ref id="000003602" original-name="t_alias" type="DATASET" />
                 </wrapper>
@@ -7878,7 +7878,7 @@
                             <element original-name="value_expr" ref-id="expression" />
                             <sequence id="000004269">
                                 <token id="000004270" type-id="KW_NO" />
-                                <token id="000004271" type-id="KW_VALUE" />
+                                <token id="000004271" type-id="FN_VALUE" flavor="keyword"/>
                             </sequence>
                         </one-of>
                         <sequence id="000004272" optional="true">
@@ -7888,7 +7888,7 @@
                                 <token id="000004276" type-id="KW_YES" />
                                 <sequence id="000004277">
                                     <token id="000004278" type-id="KW_NO" />
-                                    <token id="000004279" optional="true" type-id="KW_VALUE" />
+                                    <token id="000004279" optional="true" type-id="FN_VALUE" flavor="keyword"/>
                                 </sequence>
                             </one-of>
                         </sequence>
@@ -8010,7 +8010,7 @@
         <token id="000004336" type-id="KW_PASSING" />
         <sequence id="000004337" optional="true">
             <token id="000004338" type-id="KW_BY" />
-            <token id="000004339" type-id="KW_VALUE" />
+            <token id="000004339" type-id="FN_VALUE" flavor="keyword"/>
         </sequence>
         <iteration id="000004340" separator="CHR_COMMA">
             <sequence id="000004341">
@@ -8625,7 +8625,7 @@
                     <token id="000004696" type-id="FN_DEREF" />
                     <token flavor="function" id="000004697" type-id="KW_REF" />
                     <token id="000004698" type-id="FN_REFTOHEX" />
-                    <token flavor="function" id="000004699" type-id="KW_VALUE" />
+                    <token id="000004699" type-id="FN_VALUE" />
                 </one-of>
                 <wrapper id="000004700" template="PARENTHESES">
                     <element ref-id="expression" />

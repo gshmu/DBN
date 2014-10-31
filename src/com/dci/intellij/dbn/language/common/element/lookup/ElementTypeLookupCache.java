@@ -16,6 +16,8 @@ public interface ElementTypeLookupCache<T extends ElementType> {
     T getElementType();
 
 
+    boolean containsLeaf(LeafElementType elementType);
+
     Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context);
     Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket);
 
@@ -24,15 +26,13 @@ public interface ElementTypeLookupCache<T extends ElementType> {
 
 
     Set<TokenType> getFirstPossibleTokens();
+    Set<TokenType> getFirstRequiredTokens();
 
     boolean couldStartWithLeaf(LeafElementType leafElementType);
-
     boolean shouldStartWithLeaf(LeafElementType leafElementType);
-
     boolean couldStartWithToken(TokenType tokenType);
 
     Set<LeafElementType> getFirstPossibleLeafs();
-
     Set<LeafElementType> getFirstRequiredLeafs();
 
     boolean containsLandmarkToken(TokenType tokenType, PathNode node);
