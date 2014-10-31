@@ -193,6 +193,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
                                 parentElementType = null;
                                 break;
                             }
+                            child = child.getNext();
                         }
                     }
                 } else if (parentElementType instanceof IterationElementType) {

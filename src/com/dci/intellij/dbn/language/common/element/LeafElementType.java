@@ -26,4 +26,6 @@ public interface LeafElementType extends ElementType {
     Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context);
 
     boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context);
+
+    boolean isNextRequiredToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context);
 }
