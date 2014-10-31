@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.editor.code.options;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
+import org.jdom.Element;
 
 public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSettingsForm> {
-    private boolean showObjectsNavigationGutter = true;
-    private boolean showSpecDeclarationNavigationGutter = false;
+    private boolean showObjectsNavigationGutter = false;
+    private boolean showSpecDeclarationNavigationGutter = true;
 
     public String getDisplayName() {
         return "Code editor general settings";
