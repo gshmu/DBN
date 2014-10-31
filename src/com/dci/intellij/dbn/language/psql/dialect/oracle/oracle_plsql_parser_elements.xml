@@ -243,7 +243,7 @@
 
     <element-def attributes="OBJECT_DECLARATION" description="Parameter declaration" id="parameter_declaration">
         <one-of id="000000094">
-            <token flavor="identifier" id="000000095" type-id="KW_VALUE" /> <!--custom-->
+            <token flavor="identifier" id="000000095" type-id="FN_VALUE" /> <!--custom-->
             <token flavor="identifier" id="000000096" type-id="KW_TYPE" /> <!--custom-->
             <object-def attributes="SUBJECT" id="000000097" type="ARGUMENT" underlying-object-resolver="LOCAL_DECLARATION_RESOLVER" />
         </one-of>
@@ -4273,7 +4273,7 @@
                             <element original-name="value_expr" ref-id="expression" />
                             <sequence id="000002223">
                                 <token id="000002224" type-id="KW_NO" />
-                                <token id="000002225" type-id="KW_VALUE" />
+                                <token id="000002225" type-id="FN_VALUE" flavor="keyword"/>
                             </sequence>
                         </one-of>
                         <sequence id="000002226" optional="true">
@@ -4283,7 +4283,7 @@
                                 <token id="000002230" type-id="KW_YES" />
                                 <sequence id="000002231">
                                     <token id="000002232" type-id="KW_NO" />
-                                    <token id="000002233" optional="true" type-id="KW_VALUE" />
+                                    <token id="000002233" optional="true" type-id="FN_VALUE" flavor="keyword"/>
                                 </sequence>
                             </one-of>
                         </sequence>
@@ -4405,7 +4405,7 @@
         <token id="000002290" type-id="KW_PASSING" />
         <sequence id="000002291" optional="true">
             <token id="000002292" type-id="KW_BY" />
-            <token id="000002293" type-id="KW_VALUE" />
+            <token id="000002293" type-id="FN_VALUE" flavor="keyword"/>
         </sequence>
         <iteration id="000002294" separator="CHR_COMMA">
             <sequence id="000002295">
@@ -5019,7 +5019,7 @@
                     <token id="000002650" type-id="FN_DEREF" />
                     <token flavor="function" id="000002651" type-id="KW_REF" />
                     <token id="000002652" type-id="FN_REFTOHEX" />
-                    <token flavor="function" id="000002653" type-id="KW_VALUE" />
+                    <token id="000002653" type-id="FN_VALUE" />
                 </one-of>
                 <wrapper id="000002654" template="PARENTHESES">
                     <element ref-id="expression" />
