@@ -46,8 +46,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 // is end of document
                 if (tokenType == null || tokenType.isChameleon()) {
                     ParseResultType resultType =
-                            child.isLast() || (child.isOptional() && child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
-                            !child.isFirst() && !child.isOptional() && !child.isOptionalFromHere() && !elementType.isExitIndex(index) ? ParseResultType.PARTIAL_MATCH : ParseResultType.NO_MATCH;
+                            child.isOptional() &&(child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
+                            !child.isFirst() && !elementType.isExitIndex(index) ? ParseResultType.PARTIAL_MATCH : ParseResultType.NO_MATCH;
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
 

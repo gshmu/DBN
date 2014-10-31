@@ -19,9 +19,11 @@ public class SouroundingVirtualObjectResolver extends UnderlyingObjectResolver{
     @Override
     public DBObject resolve(IdentifierPsiElement identifierPsiElement) {
         DBObjectType objectType = identifierPsiElement.getObjectType();
-        BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
-        if (virtualObjectPsiElement != null) {
-            return virtualObjectPsiElement.resolveUnderlyingObject();
+        if (objectType != DBObjectType.DATASET) {
+            BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
+            if (virtualObjectPsiElement != null) {
+                return virtualObjectPsiElement.resolveUnderlyingObject();
+            }
         }
 
         return null;
