@@ -65,6 +65,36 @@ public class ElementTypeRef {
         return optional;
     }
 
+    public boolean isOptionalToHere() {
+        ElementTypeRef previous = getPrevious();
+        while (previous != null) {
+            if (!previous.isOptional()) {
+                return false;
+            }
+            previous = previous.getPrevious();
+        }
+        return true;
+    }
+
+    public boolean isOptionalFromHere() {
+        ElementTypeRef next = getNext();
+        while (next != null) {
+            if (!next.isOptional()) {
+                return false;
+            }
+            next = next.getNext();
+        }
+        return true;
+    }
+
+    public boolean isLast() {
+        return next == null;
+    }
+
+    public boolean isFirst() {
+        return previous == null;
+    }
+
     public double getVersion() {
         return version;
     }

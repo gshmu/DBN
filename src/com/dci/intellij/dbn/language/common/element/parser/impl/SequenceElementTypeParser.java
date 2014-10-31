@@ -36,13 +36,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         int matchedTokens = 0;
 
         TokenType tokenType = builder.getTokenType();
-        boolean isDummyToken = isDummyToken(builder.getTokenText());
-        boolean isSuppressibleReservedWord =
-                !elementType.is(ElementTypeAttribute.STATEMENT) &&
-                isSuppressibleReservedWord(tokenType, node, context);
 
-
-        if (tokenType != null && !tokenType.isChameleon() && (isDummyToken || isSuppressibleReservedWord || elementType.getLookupCache().couldStartWithToken(tokenType))) {
+        if (tokenType != null && !tokenType.isChameleon() && shouldParseElement(elementType, node, context)) {
             ElementTypeRef[] children = elementType.getChildren();
             while (node.getCursorPosition() < children.length) {
                 int index = node.getCursorPosition();
@@ -59,7 +54,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 ParseResult result = ParseResult.createNoMatchResult();
                 // current token can still be part of the iterated element.
                 //if (elementTypes[i].containsToken(tokenType)) {
-                if (isDummyToken || child.getLookupCache().couldStartWithToken(tokenType) || isSuppressibleReservedWord(tokenType, node, context)) {
+                if (shouldParseElement(child.getElementType(), node, context)) {
 
                     //node = node.createVariant(builder.getCurrentOffset(), i);
                     result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
@@ -67,7 +62,6 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                     if (result.isMatch()) {
                         matchedTokens = matchedTokens + result.getMatchedTokens();
                         tokenType = builder.getTokenType();
-                        isDummyToken = isDummyToken(builder.getTokenText());
                         matches++;
                     }
                 }
@@ -90,8 +84,6 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                         // local landmarks found
 
                         tokenType = builder.getTokenType();
-                        isDummyToken = isDummyToken(builder.getTokenText());
-
                         node.setCursorPosition(index);
                         continue;
                     }

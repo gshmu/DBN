@@ -34,7 +34,6 @@ public class ParsePathNode extends BasicPathNode {
         this.currentOffset = currentOffset;
     }
 
-
     public int getCursorPosition() {
         return cursorPosition;
     }

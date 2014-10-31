@@ -20,6 +20,7 @@ import gnu.trove.THashMap;
 public class ParserBuilder {
     private PsiBuilder builder;
     private Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors = new THashMap<TokenPairTemplate, TokenPairRangeMonitor>();
+    private String cachedTokenText;
 
 
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
@@ -40,6 +41,7 @@ public class ParserBuilder {
             tokenPairRangeMonitor.compute(node, explicit);
         }
         builder.advanceLexer();
+        cachedTokenText = null;
     }
 
     @Nullable
@@ -55,7 +57,10 @@ public class ParserBuilder {
 
 
     public String getTokenText() {
-        return builder.getTokenText();
+        if (cachedTokenText == null) {
+            cachedTokenText = builder.getTokenText();
+        }
+        return cachedTokenText;
     }
 
     public TokenType getTokenType() {
@@ -134,6 +139,7 @@ public class ParserBuilder {
             for (TokenPairRangeMonitor tokenPairRangeMonitor : tokenPairRangeMonitors.values()) {
                 tokenPairRangeMonitor.rollback();
             }
+            cachedTokenText = null;
         }
     }
 

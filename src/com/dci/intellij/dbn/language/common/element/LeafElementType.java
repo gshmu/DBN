@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 
@@ -24,5 +25,5 @@ public interface LeafElementType extends ElementType {
 
     Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context);
 
-    boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode);
+    boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context);
 }
