@@ -16,12 +16,6 @@ public interface SequenceElementType extends ElementType {
 
     int getChildCount();
 
-    boolean isOptionalFromIndex(int index);
-
-    boolean isLast(int index);
-
-    boolean isFirst(int index);
-
     boolean isExitIndex(int index);
 
     boolean containsLandmarkTokenFromIndex(TokenType tokenType, int index);

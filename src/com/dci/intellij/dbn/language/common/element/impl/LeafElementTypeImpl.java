@@ -147,7 +147,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                             return true;
                         }
 
-                        if (position > 0 && !child.isOptional() && !child.isOptionalFromHere()) {
+                        if (!child.isOptional() && !child.isOptionalFromHere()) {
                             return false;
                         }
                     }
