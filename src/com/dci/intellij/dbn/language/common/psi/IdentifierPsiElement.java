@@ -206,6 +206,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     }
 
     /**
+     * TODO: !!method arguments resolve into the object type from their definition
+     */
+    public synchronized DBObject resolveUnderlyingObjectType() {
+        return null;
+    }
+    /**
      * Looks-up whatever underlying database object may be referenced from this identifier.
      * - if this references to a synonym, the DBObject behind the synonym is returned.
      * - if this is an alias reference or definition, it returns the underlying DBObject of the aliased identifier.
