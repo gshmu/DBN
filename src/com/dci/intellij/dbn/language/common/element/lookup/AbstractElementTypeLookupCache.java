@@ -183,14 +183,16 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
                 if (parentElementType instanceof SequenceElementType) {
                     SequenceElementType sequenceElementType = (SequenceElementType) parentElementType;
                     int elementsCount = sequenceElementType.getChildCount();
-                    int index = sequenceElementType.indexOf(elementType, 0);
+                    int index = sequenceElementType.indexOf(elementType, 0) + 1;
 
-                    ElementTypeRef child = sequenceElementType.getChild(index + 1);
-                    while (child != null) {
-                        nextPossibleTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
-                        if (!child.isOptional()) {
-                            parentElementType = null;
-                            break;
+                    if (index < elementsCount) {
+                        ElementTypeRef child = sequenceElementType.getChild(index);
+                        while (child != null) {
+                            nextPossibleTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
+                            if (!child.isOptional()) {
+                                parentElementType = null;
+                                break;
+                            }
                         }
                     }
                 } else if (parentElementType instanceof IterationElementType) {
