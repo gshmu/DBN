@@ -38,6 +38,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
@@ -128,6 +129,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
         CodeCompletionContext context = consumer.getContext();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
+        boolean isValidConnection = connectionHandler != null && !connectionHandler.isVirtual();
 
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
         Map<String, LeafElementType> nextPossibleLeafs = new THashMap<String, LeafElementType>();
@@ -238,7 +240,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                         }
                     }
 
-                    if (parentObject != null && connectionHandler != null && !connectionHandler.isVirtual()) {
+                    if (parentObject != null && (isValidConnection || parentObject instanceof DBVirtualObject)) {
                         List<DBObject> childObjects = parentObject.getChildObjects(identifierElementType.getObjectType());
                         consumer.consume(childObjects);
                     }

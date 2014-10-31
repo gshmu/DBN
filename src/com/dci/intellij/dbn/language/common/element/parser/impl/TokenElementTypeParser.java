@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.ParseException;
+import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
+import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
@@ -24,6 +26,19 @@ public class TokenElementTypeParser extends AbstractElementTypeParser<TokenEleme
 
         TokenType tokenType = builder.getTokenType();
         if (tokenType == getElementType().getTokenType() || isDummyToken(builder.getTokenText())) {
+            SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
+            SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
+
+/*            if (tokenType.isFunction()) {
+                if (builder.lookAhead(1) != leftParenthesis) {
+                    if (getElementType().isNextRequiredToken(leftParenthesis, parentNode, context)) {
+                        if (isSuppressibleReservedWord(tokenType, parentNode, context)) {
+                            return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
+                        }
+                    }
+                }
+            }*/
+
             PsiBuilder.Marker marker = builder.mark(null);
             builder.advanceLexer(parentNode);
             return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);

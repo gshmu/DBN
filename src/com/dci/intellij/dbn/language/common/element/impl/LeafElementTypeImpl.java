@@ -83,7 +83,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
     public Set<LeafElementType> getNextPossibleLeafs(PathNode pathNode, ElementLookupContext context) {
         Set<LeafElementType> possibleLeafs = new THashSet<LeafElementType>();
-        int position = 0;
+        int position = 1;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();
 
@@ -93,7 +93,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 int elementsCount = sequenceElementType.getChildCount();
 
                 if (position < elementsCount) {
-                    ElementTypeRef child = sequenceElementType.getChild(position + 1);
+                    ElementTypeRef child = sequenceElementType.getChild(position);
                     while (child != null) {
                         child.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
                         if (!child.isOptional()) {
@@ -119,7 +119,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 }
             }
             if (pathNode != null) {
-                position = pathNode.getIndexInParent();
+                position = pathNode.getIndexInParent() + 1;
                 pathNode = pathNode.getParent();
             }
         }
@@ -128,6 +128,15 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
     @Override
     public boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context) {
+        return isNextToken(tokenType, pathNode, context, false);
+    }
+
+    public boolean isNextRequiredToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context) {
+        return isNextToken(tokenType, pathNode, context, true);
+    }
+
+    public boolean isNextToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context, boolean required) {
+        int position = pathNode.getCursorPosition() + 1;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();
 
@@ -136,15 +145,21 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 int elementsCount = sequenceElementType.getChildCount();
 
+                //int position = sequenceElementType.indexOf(this) + 1;
+/*
                 int position = pathNode.getCursorPosition();
                 if (pathNode.getCurrentOffset() < context.getBuilder().getCurrentOffset()) {
                     position++;
                 }
+*/
                 if (position < elementsCount) {
                     ElementTypeRef child = sequenceElementType.getChild(position);
                     while (child != null) {
-                        Set<TokenType> firstPossibleTokens = child.getLookupCache().getFirstPossibleTokens();
-                        if (firstPossibleTokens.contains(tokenType)) {
+                        ElementTypeLookupCache lookupCache = child.getLookupCache();
+                        Set<TokenType> firstTokens = required ?
+                                lookupCache.getFirstRequiredTokens() :
+                                lookupCache.getFirstPossibleTokens();
+                        if (firstTokens.contains(tokenType)) {
                             return true;
                         }
 
@@ -159,8 +174,10 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 TokenElementType[] separatorTokens = iterationElementType.getSeparatorTokens();
                 if (separatorTokens == null) {
                     ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
-                    Set<TokenType> firstPossibleTokens = lookupCache.getFirstPossibleTokens();
-                    if (firstPossibleTokens.contains(tokenType)) {
+                    Set<TokenType> firstTokens = required ?
+                            lookupCache.getFirstRequiredTokens() :
+                            lookupCache.getFirstPossibleTokens();
+                    if (firstTokens.contains(tokenType)) {
                         return true;
                     }
                 }
@@ -175,12 +192,14 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     return true;
                 }
             }
+
+            position = pathNode.getIndexInParent() + 1;
             pathNode = pathNode.getParent();
         }
         return false;
     }
 
-    public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode) {
+    public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode, ParserContext context) {
         Set<LeafElementType> requiredLeafs = new THashSet<LeafElementType>();
         int position = 0;
         while (pathNode != null) {

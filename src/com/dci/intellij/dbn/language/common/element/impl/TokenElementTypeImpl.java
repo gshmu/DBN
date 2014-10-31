@@ -3,10 +3,6 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementTypeChain;
-import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilderProvider;
@@ -21,11 +17,14 @@ import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.TokenElementTypeChain;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.TokenElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.parser.impl.TokenElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
@@ -95,16 +94,16 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return super.getNextPossibleLeafs(pathNode, context);
     }
 
-    public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode) {
+    public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode, ParserContext context) {
         if (isIterationSeparator()) {
             if (getParent() instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) getParent();
                 return iterationElementType.getIteratedElementType().getLookupCache().getFirstRequiredLeafs();
             } else if (getParent() instanceof QualifiedIdentifierElementType){
-                return super.getNextRequiredLeafs(pathNode);
+                return super.getNextRequiredLeafs(pathNode, context);
             }
         }
-        return super.getNextRequiredLeafs(pathNode);
+        return super.getNextRequiredLeafs(pathNode, context);
     }
 
     public boolean isIterationSeparator() {
