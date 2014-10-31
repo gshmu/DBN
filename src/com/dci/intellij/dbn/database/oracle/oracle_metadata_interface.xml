@@ -657,7 +657,7 @@
             SYS.ALL_PROBE_OBJECTS o
             where
             t.OWNER = {0} and
-            t.BASE_OBJECT_TYPE 'DATABASE' and
+            t.BASE_OBJECT_TYPE = 'DATABASE' and
             o.OWNER (+) = t.OWNER and
             o.OBJECT_NAME (+) = t.TRIGGER_NAME and
             o.OBJECT_TYPE (+) = 'TRIGGER'
