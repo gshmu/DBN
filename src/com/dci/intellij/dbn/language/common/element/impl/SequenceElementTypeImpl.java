@@ -99,21 +99,6 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return new SequencePsiElement(astNode, this);
     }
 
-    public boolean isOptionalFromIndex(int index) {
-        for (int i=index; i< children.length; i++) {
-            if (!children[i].isOptional()) return false;
-        }
-        return true;
-    }
-
-    public boolean isLast(int index) {
-        return index == children.length - 1;
-    }
-
-    public boolean isFirst(int index) {
-        return index == 0;
-    }
-
     public boolean isExitIndex(int index) {
         return index <= exitIndex;
     }

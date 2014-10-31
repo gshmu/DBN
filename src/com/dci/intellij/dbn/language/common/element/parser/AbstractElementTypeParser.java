@@ -129,8 +129,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                     return false;
                 }
 
-
-
                 return true;//!isFollowedByToken(tokenType, node);
             }
         }

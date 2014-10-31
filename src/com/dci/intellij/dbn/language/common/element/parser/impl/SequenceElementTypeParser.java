@@ -46,8 +46,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 // is end of document
                 if (tokenType == null || tokenType.isChameleon()) {
                     ParseResultType resultType =
-                            child.isOptional() && (elementType.isLast(index) || elementType.isOptionalFromIndex(index)) ? ParseResultType.FULL_MATCH :
-                            !elementType.isFirst(index) && !elementType.isOptionalFromIndex(index) && !elementType.isExitIndex(index) ? ParseResultType.PARTIAL_MATCH : ParseResultType.NO_MATCH;
+                            child.isLast() || (child.isOptional() && child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
+                            !child.isFirst() && !child.isOptional() && !child.isOptionalFromHere() && !elementType.isExitIndex(index) ? ParseResultType.PARTIAL_MATCH : ParseResultType.NO_MATCH;
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
 
@@ -70,7 +70,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 if (result.isNoMatch() && !child.isOptional()) {
                     boolean isWeakMatch = matches < 2 && matchedTokens < 3 && index > 1 && ignoreFirstMatch();
                     
-                    if (elementType.isFirst(index) || elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
+                    if (child.isFirst()|| elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
                         //if (isFirst(i) || isExitIndex(i)) {
                         return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
                     }
@@ -90,7 +90,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                 }
 
                 // if is last element
-                if (elementType.isLast(index)) {
+                if (child.isLast()) {
                     //matches == 0 reaches this stage only if all sequence elements are optional
                     ParseResultType resultType = matches == 0 ? ParseResultType.NO_MATCH : ParseResultType.FULL_MATCH;
                     return stepOut(node, context, depth, resultType, matchedTokens);
