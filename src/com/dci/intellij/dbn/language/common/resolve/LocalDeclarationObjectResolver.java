@@ -21,24 +21,30 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
 
     @Override
     public DBObject resolve(IdentifierPsiElement identifierPsiElement) {
-        BasePsiElement underlyingObjectCandidate;
+        BasePsiElement underlyingObjectCandidate = null;
 
         DBObjectType objectType = identifierPsiElement.getObjectType();
-        if (objectType != DBObjectType.ANY) {
-            NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
-            PsiLookupAdapter lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, objectType, null);
-            underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
-        } else {
-            NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
-            PsiLookupAdapter lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.TYPE, null);
-            underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+        NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
+        if (objectType.matches(DBObjectType.DATASET)) {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.DATASET);
 
+        } else if (objectType.matches(DBObjectType.TYPE)) {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.TYPE);
+
+        } else if (objectType == DBObjectType.ANY || objectType == DBObjectType.ARGUMENT) {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.TYPE);
             if (underlyingObjectCandidate == null) {
-                lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, DBObjectType.DATASET, null);
-                underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
+                underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, DBObjectType.DATASET);
             }
+        } else {
+            underlyingObjectCandidate = findObject(identifierPsiElement, enclosingNamedPsiElement, objectType);
         }
 
         return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;
+    }
+
+    private BasePsiElement findObject(IdentifierPsiElement identifierPsiElement, NamedPsiElement enclosingNamedPsiElement, DBObjectType objectType) {
+        PsiLookupAdapter lookupAdapter = new IdentifierLookupAdapter(identifierPsiElement, null, null, objectType, null);
+        return lookupAdapter.findInElement(enclosingNamedPsiElement);
     }
 }
