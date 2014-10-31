@@ -93,13 +93,14 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 int elementsCount = sequenceElementType.getChildCount();
 
                 if (position < elementsCount) {
-                    for (int i=position+1; i<elementsCount; i++) {
-                        ElementTypeRef next = sequenceElementType.getChild(i);
-                        next.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
-                        if (!next.isOptional()) {
+                    ElementTypeRef child = sequenceElementType.getChild(position + 1);
+                    while (child != null) {
+                        child.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
+                        if (!child.isOptional()) {
                             pathNode = null;
                             break;
                         }
+                        child = child.getNext();
                     }
                 }
             } else if (elementType instanceof IterationElementType) {
@@ -140,8 +141,8 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     position++;
                 }
                 if (position < elementsCount) {
-                    for (int i=position; i<elementsCount; i++) {
-                        ElementTypeRef child = sequenceElementType.getChild(i);
+                    ElementTypeRef child = sequenceElementType.getChild(position);
+                    while (child != null) {
                         Set<TokenType> firstPossibleTokens = child.getLookupCache().getFirstPossibleTokens();
                         if (firstPossibleTokens.contains(tokenType)) {
                             return true;
@@ -150,6 +151,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                         if (!child.isOptional() && !child.isOptionalFromHere()) {
                             return false;
                         }
+                        child = child.getNext();
                     }
                 }
             } else if (elementType instanceof IterationElementType) {
@@ -180,21 +182,21 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
     public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode) {
         Set<LeafElementType> requiredLeafs = new THashSet<LeafElementType>();
-        int index = 0;
+        int position = 0;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();
 
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
-                int elementsCount = sequenceElementType.getChildCount();
 
-                for (int i=index+1; i<elementsCount; i++) {
-                    ElementTypeRef next = sequenceElementType.getChild(i);
-                    if (!next.isOptional()) {
-                        requiredLeafs.addAll(next.getLookupCache().getFirstRequiredLeafs());
+                ElementTypeRef child = sequenceElementType.getChild(position + 1);
+                while (child != null) {
+                    if (!child.isOptional()) {
+                        requiredLeafs.addAll(child.getLookupCache().getFirstRequiredLeafs());
                         pathNode = null;
                         break;
                     }
+                    child = child.getNext();
                 }
             } else if (elementType instanceof IterationElementType) {
                 IterationElementType iteration = (IterationElementType) elementType;
@@ -202,7 +204,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 Collections.addAll(requiredLeafs, separatorTokens);
             }
             if (pathNode != null) {
-                index = pathNode.getIndexInParent();
+                position = pathNode.getIndexInParent();
                 pathNode = pathNode.getParent();
             }
         }
