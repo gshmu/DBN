@@ -28,13 +28,9 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
         TokenType tokenType = builder.getTokenType();
 
         if (tokenType!= null && !tokenType.isChameleon()) {
-            String tokenText = builder.getTokenText();
             // TODO !!!! if elementType is an identifier: then BUILD VARIANTS!!!
             for (ElementTypeRef child : elementType.getChildren()) {
-                if (context.check(child) && (
-                        isDummyToken(tokenText) ||
-                        child.getLookupCache().couldStartWithToken(tokenType) ||
-                        isSuppressibleReservedWord(tokenType, node, context))) {
+                if (context.check(child) && shouldParseElement(child.getElementType(), node, context)) {
                     ParseResult result = child.getParser().parse(node, true, depth + 1, context);
                     if (result.isMatch()) {
                         return stepOut(node, context, depth, result.getType(), result.getMatchedTokens());
@@ -48,4 +44,5 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
         }
         return stepOut(node, context, depth, ParseResultType.NO_MATCH, 0);
     }
+
 }

@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
@@ -123,11 +122,11 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                 ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
                 if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
                     LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
-                    if (lastResolvedLeaf == null || lastResolvedLeaf.isNextPossibleToken(tokenType, node)) {
-                        return false;
+                    if (lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context)) {
+                        return true;
                     }
 
-                    return true;
+                    return false;
                 }
 
 
@@ -138,25 +137,17 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
         return false;
     }
 
-    private boolean isFollowedByToken(TokenType tokenType, ParsePathNode node) {
-        ParsePathNode parent = node;
-        while (parent != null) {
-            if (parent.getElementType() instanceof SequenceElementType) {
-                SequenceElementType sequenceElementType = (SequenceElementType) parent.getElementType();
-                if (sequenceElementType.isPossibleTokenFromIndex(tokenType, parent.getCursorPosition() + 1)) {
-                    return true;
-                }
-            }
-            // break when statement boundary found
-            /*if (parent.getElementType().is(ElementTypeAttribute.STATEMENT)) {
-                return false;
-            }*/
-            parent = parent.getParent();
-        }
-        return false;
-    }
-
     public ElementTypeBundle getElementBundle() {
         return elementType.getElementBundle();
+    }
+
+    protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
+        ParserBuilder builder = context.getBuilder();
+        TokenType tokenType = builder.getTokenType();
+
+        return
+            elementType.getLookupCache().couldStartWithToken(tokenType) ||
+            isSuppressibleReservedWord(tokenType, node, context) ||
+            isDummyToken(builder.getTokenText());
     }
 }

@@ -13,8 +13,10 @@ import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
+import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -124,9 +126,8 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
     }
 
     @Override
-    public boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode) {
+    public boolean isNextPossibleToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context) {
         while (pathNode != null) {
-            int position = pathNode.getCursorPosition();
             ElementType elementType = pathNode.getElementType();
 
             if (elementType instanceof SequenceElementType) {
@@ -134,15 +135,19 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 int elementsCount = sequenceElementType.getChildCount();
 
+                int position = pathNode.getCursorPosition();
+                if (pathNode.getCurrentOffset() < context.getBuilder().getCurrentOffset()) {
+                    position++;
+                }
                 if (position < elementsCount) {
                     for (int i=position; i<elementsCount; i++) {
-                        ElementTypeRef next = sequenceElementType.getChild(i);
-                        Set<TokenType> firstPossibleTokens = next.getLookupCache().getFirstPossibleTokens();
+                        ElementTypeRef child = sequenceElementType.getChild(i);
+                        Set<TokenType> firstPossibleTokens = child.getLookupCache().getFirstPossibleTokens();
                         if (firstPossibleTokens.contains(tokenType)) {
                             return true;
                         }
 
-                        if (!next.isOptional() || i == elementsCount-1) {
+                        if (position > 0 && !child.isOptional() && !child.isOptionalFromHere()) {
                             return false;
                         }
                     }
@@ -161,6 +166,11 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 QualifiedIdentifierElementType qualifiedIdentifierElementType = (QualifiedIdentifierElementType) elementType;
                 if (this == qualifiedIdentifierElementType.getSeparatorToken()) {
                     break;
+                }
+            } else if (elementType instanceof WrapperElementType) {
+                WrapperElementType wrapperElementType = (WrapperElementType) elementType;
+                if (wrapperElementType.getEndTokenElement().getTokenType() == tokenType) {
+                    return true;
                 }
             }
             pathNode = pathNode.getParent();
