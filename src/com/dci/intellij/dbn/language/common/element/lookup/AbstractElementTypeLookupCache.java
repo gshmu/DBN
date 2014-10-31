@@ -185,10 +185,10 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
                     int elementsCount = sequenceElementType.getChildCount();
                     int index = sequenceElementType.indexOf(elementType, 0);
 
-                    for (int i = index + 1; i < elementsCount; i++) {
-                        ElementTypeRef next = sequenceElementType.getChild(i);
-                        nextPossibleTokens.addAll(next.getLookupCache().getFirstPossibleTokens());
-                        if (!next.isOptional()) {
+                    ElementTypeRef child = sequenceElementType.getChild(index + 1);
+                    while (child != null) {
+                        nextPossibleTokens.addAll(child.getLookupCache().getFirstPossibleTokens());
+                        if (!child.isOptional()) {
                             parentElementType = null;
                             break;
                         }

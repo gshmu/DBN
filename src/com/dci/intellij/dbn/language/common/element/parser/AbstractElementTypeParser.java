@@ -106,31 +106,29 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
      * Returns true if the token is a reserved word, but can act as an identifier in this context.
      */
     protected boolean isSuppressibleReservedWord(TokenType tokenType, ParsePathNode node, ParserContext context) {
-        if (tokenType != null) {
-            if (tokenType.isSuppressibleReservedWord()) {
-                SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
-                SimpleTokenType dot = sharedTokenTypes.getChrDot();
-                SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
-                ParserBuilder builder = context.getBuilder();
-                if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
-                    return true;
-                }
-                if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
-                    return true;
-                }
-
-                ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
-                if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
-                    LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
-                    if (lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context)) {
-                        return true;
-                    }
-
-                    return false;
-                }
-
-                return true;//!isFollowedByToken(tokenType, node);
+        if (tokenType != null && tokenType.isSuppressibleReservedWord()) {
+            SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
+            SimpleTokenType dot = sharedTokenTypes.getChrDot();
+            SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
+            ParserBuilder builder = context.getBuilder();
+            if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
+                return true;
             }
+            if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
+                return true;
+            }
+
+            ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
+            if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
+                LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
+                if (lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context)) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return true;//!isFollowedByToken(tokenType, node);
         }
         return false;
     }

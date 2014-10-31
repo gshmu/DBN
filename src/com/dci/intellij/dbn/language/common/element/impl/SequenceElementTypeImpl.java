@@ -74,8 +74,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
                 }
                 checkedBranches.addAll(supportedBranches);
             }
-            this.children[i] = new ElementTypeRef(this, elementType, optional, version, supportedBranches);
-            this.children[i].setPrevious(previous);
+            this.children[i] = new ElementTypeRef(previous, this, elementType, optional, version, supportedBranches);
             previous = this.children[i];
 
             if (child.getAttributeValue("exit") != null) exitIndex = i;

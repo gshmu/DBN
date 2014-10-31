@@ -43,8 +43,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
                 }
                 checkedBranches.addAll(supportedBranches);
             }
-            this.children[i] = new ElementTypeRef(this, elementType, false, version, supportedBranches);
-            this.children[i].setPrevious(previous);
+            this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, supportedBranches);
             previous = this.children[i];
 
         }

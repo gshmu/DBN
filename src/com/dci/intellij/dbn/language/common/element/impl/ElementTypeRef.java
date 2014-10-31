@@ -2,22 +2,21 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import java.util.Set;
 
+import com.dci.intellij.dbn.common.ChainElement;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 
-public class ElementTypeRef {
+public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     private ElementType parentElementType;
     private ElementType elementType;
     private boolean optional;
     private double version;
     private Set<Branch> supportedBranches;
 
-    private ElementTypeRef previous;
-    private ElementTypeRef next;
-
-    public ElementTypeRef(ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<Branch> supportedBranches) {
+    public ElementTypeRef(ElementTypeRef previous, ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<Branch> supportedBranches) {
+        super(previous);
         this.parentElementType = parentElementType;
         this.elementType = elementType;
         this.optional = optional;
@@ -87,14 +86,6 @@ public class ElementTypeRef {
         return true;
     }
 
-    public boolean isLast() {
-        return next == null;
-    }
-
-    public boolean isFirst() {
-        return previous == null;
-    }
-
     public double getVersion() {
         return version;
     }
@@ -105,24 +96,5 @@ public class ElementTypeRef {
 
     public ElementTypeParser getParser() {
         return elementType.getParser();
-    }
-
-    public ElementTypeRef getPrevious() {
-        return previous;
-    }
-
-    public void setPrevious(ElementTypeRef previous) {
-        if (previous != null) {
-            previous.setNext(this);
-            this.previous = previous;
-        }
-    }
-
-    public ElementTypeRef getNext() {
-        return next;
-    }
-
-    public void setNext(ElementTypeRef next) {
-        this.next = next;
     }
 }
