@@ -145,7 +145,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 int elementsCount = sequenceElementType.getChildCount();
                 if (position == -1) {
-                    position = sequenceElementType.indexOf(this, 0) + 1;
+                    position = pathNode.getCursorPosition() + 1;
                 }
 
                 //int position = sequenceElementType.indexOf(this) + 1;

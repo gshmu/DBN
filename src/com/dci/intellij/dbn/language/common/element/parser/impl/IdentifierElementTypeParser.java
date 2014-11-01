@@ -28,7 +28,7 @@ public class IdentifierElementTypeParser extends AbstractElementTypeParser<Ident
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);
             }
-            else if (getElementType().isDefinition() || isSuppressibleReservedWord(tokenType, parentNode, context)) {
+            else if ((tokenType.isSuppressibleReservedWord() && getElementType().isDefinition() && !getElementType().isAlias()) || isSuppressibleReservedWord(tokenType, parentNode, context)) {
                 PsiBuilder.Marker marker = builder.mark(null);
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);

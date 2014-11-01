@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -108,7 +109,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
-    public int getIndexInParent() {
+    public int getIndexInParent(PathNode pathNode) {
         return 0;
     }
 

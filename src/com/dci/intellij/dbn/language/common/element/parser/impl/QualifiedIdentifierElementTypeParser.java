@@ -50,19 +50,19 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
                 node.incrementIndex(builder.getCurrentOffset());
             }
 
-            if (variant.isIncomplete()) {
-                Set<TokenType> expected = new THashSet<TokenType>();
-                expected.add(separatorToken.getTokenType());
-                ParseBuilderErrorHandler.updateBuilderError(expected, context);
-                return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
-            } else {
-                return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
+            if (matchedTokens > 0) {
+                if (variant.isIncomplete()) {
+                    Set<TokenType> expected = new THashSet<TokenType>();
+                    expected.add(separatorToken.getTokenType());
+                    ParseBuilderErrorHandler.updateBuilderError(expected, context);
+                    return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
+                } else {
+                    return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
+                }
             }
-
-
-        } else {
-            return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
         }
+
+        return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
     }
 
     private QualifiedIdentifierVariant getMostProbableParseVariant(ParserBuilder builder, ParsePathNode node) {

@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -243,9 +244,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
-    public int getIndexInParent() {
-        if (parent instanceof SequenceElementType) {
-            SequenceElementType sequenceElementType = (SequenceElementType) parent;
+    public int getIndexInParent(PathNode pathNode) {
+        PathNode parentNode = pathNode.getParent();
+        if (parentNode != null && parentNode.getElementType() instanceof SequenceElementType) {
+            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.getElementType();
             return sequenceElementType.indexOf(this);
         }
         return 0;

@@ -84,7 +84,7 @@ public class BasicPathNode implements PathNode {
 
     @Override
     public int getIndexInParent() {
-        return getElementType().getIndexInParent();
+        return getElementType().getIndexInParent(this);
     }
 
     public String toString() {
