@@ -120,7 +120,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
         // register first required leafs
         if (initAsFirstRequiredLeaf) {
             firstRequiredLeafs.add(leaf);
-            firstRequiredTokens.addAll(lookupCache.getFirstRequiredTokens());
+            firstRequiredTokens.addAll(lookupCache.getFirstPossibleTokens());
         }
 
         if (initAllElements) {
