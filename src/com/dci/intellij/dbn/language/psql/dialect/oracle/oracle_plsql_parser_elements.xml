@@ -4508,7 +4508,7 @@
                 <one-of id="000002347">
                     <token id="000002348" type-id="FN_CUME_DIST" />
                     <token id="000002349" type-id="KW_DENSE_RANK" />
-                    <token id="000002350" type-id="KW_RANK" />
+                    <token id="000002350" type-id="FN_RANK" />
                     <token id="000002351" type-id="FN_PERCENT_RANK" />
                 </one-of>
                 <token id="000002352" type-id="CHR_LEFT_PARENTHESIS" />

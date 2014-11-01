@@ -15,6 +15,7 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
         TokenType tokenType = getElementType().getTokenType();
         allPossibleTokens.add(tokenType);
         firstPossibleTokens.add(tokenType);
+        firstRequiredTokens.add(tokenType);
     }
 
     @Override

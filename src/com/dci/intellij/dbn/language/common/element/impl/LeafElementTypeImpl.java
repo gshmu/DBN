@@ -136,7 +136,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
     }
 
     public boolean isNextToken(TokenType tokenType, ParsePathNode pathNode, ParserContext context, boolean required) {
-        int position = pathNode.getCursorPosition() + 1;
+        int position = -1;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();
 
@@ -144,6 +144,9 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
 
                 int elementsCount = sequenceElementType.getChildCount();
+                if (position == -1) {
+                    position = sequenceElementType.indexOf(this, 0) + 1;
+                }
 
                 //int position = sequenceElementType.indexOf(this) + 1;
 /*
