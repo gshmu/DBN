@@ -128,6 +128,11 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                 return false;
             }
 
+            if (context.getLastResolvedLeaf() != null) {
+                if (context.getLastResolvedLeaf().isNextPossibleToken(tokenType, node, context)) {
+                    return false;
+                }
+            }
             return true;//!isFollowedByToken(tokenType, node);
         }
         return false;
@@ -145,5 +150,10 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
             elementType.getLookupCache().couldStartWithToken(tokenType) ||
             isSuppressibleReservedWord(tokenType, node, context) ||
             isDummyToken(builder.getTokenText());
+    }
+
+    @Override
+    public String toString() {
+        return getElementType().toString();
     }
 }

@@ -32,7 +32,7 @@ public class TokenElementTypeParser extends AbstractElementTypeParser<TokenEleme
 
             if (tokenType.isSuppressibleReservedWord()) {
                 TokenType nextTokenType = builder.lookAhead(1);
-                if (nextTokenType == dot) {
+                if (nextTokenType == dot && !getElementType().isNextPossibleToken(dot, parentNode, context)) {
                     return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
                 }
                 if (tokenType.isFunction()) {

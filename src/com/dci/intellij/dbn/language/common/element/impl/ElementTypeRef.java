@@ -97,4 +97,9 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     public ElementTypeParser getParser() {
         return elementType.getParser();
     }
+
+    @Override
+    public String toString() {
+        return getElementType().toString();
+    }
 }
