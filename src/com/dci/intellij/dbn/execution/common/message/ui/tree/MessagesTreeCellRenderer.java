@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
+import com.dci.intellij.dbn.execution.explain.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -23,11 +24,16 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             append("Statement Execution Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
             append(" (" + node.getChildCount() + " files)", SimpleTextAttributes.GRAY_ATTRIBUTES);
         }
+        else if (value instanceof ExplainPlanMessagesNode) {
+            BundleTreeNode node = (BundleTreeNode) value;
+            append("Explain Plan Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+            append(" (" + node.getChildCount() + " files)", SimpleTextAttributes.GRAY_ATTRIBUTES);
+        }
         else if (value instanceof CompilerMessagesNode) {
             BundleTreeNode node = (BundleTreeNode) value;
             append("Compiler Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
             append(" (" + node.getChildCount() + " objects)", SimpleTextAttributes.GRAY_ATTRIBUTES);
-        }
+            }
         else if (value instanceof StatementExecutionMessagesFileNode){
             StatementExecutionMessagesFileNode node = (StatementExecutionMessagesFileNode) value;
             VirtualFile virtualFile = node.getVirtualFile();
@@ -35,6 +41,15 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             setIcon(VirtualFileUtil.getIcon(virtualFile));
             append(virtualFile.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             append(" (" + virtualFile.getPath() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+        }
+        else if (value instanceof ExplainPlanMessagesFileNode) {
+            ExplainPlanMessagesFileNode node = (ExplainPlanMessagesFileNode) value;
+            VirtualFile virtualFile = node.getVirtualFile();
+
+            setIcon(VirtualFileUtil.getIcon(virtualFile));
+            append(virtualFile.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            append(" (" + virtualFile.getPath() + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
+
         }
         else if (value instanceof CompilerMessagesObjectNode){
             CompilerMessagesObjectNode compilerMessagesObjectNode = (CompilerMessagesObjectNode) value;
@@ -98,6 +113,23 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 append(" - Connection: " + connectionHandler.getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", isOrphan ?
                         SimpleTextAttributes.GRAY_ATTRIBUTES :
                         SimpleTextAttributes.GRAY_ATTRIBUTES);
+            }
+        }
+        else if (value instanceof ExplainPlanMessageNode) {
+            ExplainPlanMessageNode explainPlanMessageNode = (ExplainPlanMessageNode) value;
+            ExplainPlanMessage message = explainPlanMessageNode.getExplainPlanMessage();
+            MessageType messageType = message.getType();
+            Icon icon =
+                    messageType == MessageType.ERROR ? Icons.EXEC_MESSAGES_ERROR :
+                    messageType == MessageType.WARNING ? Icons.EXEC_MESSAGES_WARNING_INACTIVE :
+                    messageType == MessageType.INFO ? Icons.EXEC_MESSAGES_INFO : null;
+
+            setIcon(icon);
+
+            append(message.getText(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            ConnectionHandler connectionHandler = message.getConnectionHandler();
+            if (connectionHandler != null) {
+                append(" - Connection: " + connectionHandler.getName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
         }
     }
