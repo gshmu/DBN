@@ -67,4 +67,9 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
         nullsFirst = (nullsFirst && sortDirection == SortDirection.ASCENDING) || (!nullsFirst && sortDirection == SortDirection.DESCENDING);
         return "(" + columnName + " is" + (nullsFirst ? "" : " not") + " null), " + columnName + " " + sortDirection.getSqlToken();
     }
+
+    @Override
+    public String getExplainPlanStatementPrefix() {
+        return null;
+    }
 }

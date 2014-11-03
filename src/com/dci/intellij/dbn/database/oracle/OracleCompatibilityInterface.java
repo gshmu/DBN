@@ -38,4 +38,9 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
     public String getDefaultAlternativeStatementDelimiter() {
         return null;
     }
+
+    @Override
+    public String getExplainPlanStatementPrefix() {
+        return "explain plan for ";
+    }
 }

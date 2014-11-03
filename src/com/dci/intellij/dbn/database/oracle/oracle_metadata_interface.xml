@@ -1427,6 +1427,11 @@
                 SEQUENCE asc
         </statement>
     </statement-execution-processor>
+    <statement-execution-processor id="explain-plan-result" is-query="true" is-prepared-statement="true">
+        <statement>
+            select * from PLAN_TABLE order by PARENT_ID nulls first, ID
+        </statement>
+    </statement-execution-processor>
 
     <statement-execution-processor id="compile-object">
         <statement>
