@@ -196,6 +196,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
     public void addResult(ExplainPlanResult explainPlanResult) {
         if (explainPlanResult.isError()) {
+            prepareMessagesTab();
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
             ExplainPlanMessage explainPlanMessage = new ExplainPlanMessage(explainPlanResult, MessageType.ERROR);
             messagesPane.addExplainPlanMessage(explainPlanMessage, true);
@@ -329,10 +330,14 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
      *                  Statement executions                 *
      *********************************************************/
     public void showResultTab(ExecutionResult executionResult) {
-        if (containsResultTab(executionResult)) {
-            selectResultTab(executionResult);
-        } else {
+        if (executionResult instanceof ExplainPlanResult) {
             addResultTab(executionResult);
+        } else {
+            if (containsResultTab(executionResult)) {
+                selectResultTab(executionResult);
+            } else {
+                addResultTab(executionResult);
+            }
         }
     }
 

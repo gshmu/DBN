@@ -20,7 +20,7 @@ public class ExplainPlanMessage extends ConsoleMessage {
     }
 
     public VirtualFile getVirtualFile() {
-        return null;//executionResult.getExecutionProcessor().getPsiFile().getVirtualFile();
+        return explainPlanResult.getVirtualFile();
     }
 
     public void dispose() {

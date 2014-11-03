@@ -140,7 +140,7 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
     public Object getChild(Object parent, int index) {
         if (parent instanceof ExplainPlanEntry) {
             ExplainPlanEntry entry = (ExplainPlanEntry) parent;
-            entry.getChildren().get(index);
+            return entry.getChildren().get(index);
         }
         return null;
     }

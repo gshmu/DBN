@@ -356,6 +356,11 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         executeQuery(connection, "disable-constraint", ownerName, tableName, constraintName);
     }
 
+    @Override
+    public ResultSet loadExplainPlan(Connection connection) throws SQLException {
+        return executeQuery(connection, "explain-plan-result");
+    }
+
 
     public boolean isValid(Connection connection) {
         try {
