@@ -384,14 +384,14 @@
                         </iteration>
                         <token id="000000166" type-id="KW_ON" />
                         <one-of id="000000167">
-                            <sequence id="000000168">
-                                <sequence id="000000169" optional="true">
-                                    <object-ref id="000000170" type="SCHEMA" />
-                                    <token id="000000171" type-id="CHR_DOT" />
+                            <token id="000000168" type-id="KW_DATABASE" />
+                            <sequence id="000000169">
+                                <sequence id="000000170" optional="true">
+                                    <object-ref id="000000171" type="SCHEMA" />
+                                    <token id="000000172" type-id="CHR_DOT" />
                                 </sequence>
-                                <token id="000000172" type-id="KW_SCHEMA" />
+                                <token id="000000173" type-id="KW_SCHEMA" />
                             </sequence>
-                            <token id="000000173" type-id="KW_DATABASE" />
                         </one-of>
                     </sequence>
                 </one-of>
@@ -2815,7 +2815,7 @@
         <iteration id="000001393" separator="CHR_COMMA">
             <sequence id="000001394">
                 <token id="000001395" optional="true" type-id="CHR_COLON" />
-                <qualified-identifier separator="CHR_DOT" id="000001396">
+                <qualified-identifier id="000001396" separator="CHR_DOT">
                     <variant>
                         <variable-ref id="000001397" optional="true" type="ANY" />
                         <variable-ref id="000001398" original-name="variable_name, host_variable_name, collection_name, host_array_name" type="ANY" />
