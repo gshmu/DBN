@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
+import com.dci.intellij.dbn.execution.explain.ExplainPlanMessage;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class RootNode extends BundleTreeNode {
     private MessagesTreeModel messagesTreeModel;
@@ -32,6 +33,23 @@ public class RootNode extends BundleTreeNode {
         }
 
         return execMessagesNode.addExecutionMessage(executionMessage);
+    }
+
+    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
+        ExplainPlanMessagesNode explainPlanMessagesNode = null;
+        for (TreeNode treeNode : getChildren()) {
+            if (treeNode instanceof ExplainPlanMessagesNode) {
+                explainPlanMessagesNode = (ExplainPlanMessagesNode) treeNode;
+                break;
+            }
+        }
+        if (explainPlanMessagesNode == null) {
+            explainPlanMessagesNode = new ExplainPlanMessagesNode(this);
+            addChild(explainPlanMessagesNode);
+            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+        }
+
+        return explainPlanMessagesNode.addExplainPlanMessage(explainPlanMessage);
     }
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage) {

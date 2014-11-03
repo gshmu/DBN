@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
+import com.dci.intellij.dbn.execution.explain.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -80,6 +81,15 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
         TreePath treePath = getModel().addCompilerMessage(compilerMessage);
+        scrollPathToVisible(treePath);
+        if (select) {
+            getSelectionModel().setSelectionPath(treePath);
+        }
+        return treePath;
+    }
+
+    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
+        TreePath treePath = getModel().addExplainPlanMessage(explainPlanMessage);
         scrollPathToVisible(treePath);
         if (select) {
             getSelectionModel().setSelectionPath(treePath);

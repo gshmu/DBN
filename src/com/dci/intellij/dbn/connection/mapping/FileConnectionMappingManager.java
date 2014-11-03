@@ -1,10 +1,20 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -51,13 +61,6 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.FileConnectionMappingManager",
@@ -299,6 +302,66 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         }
     }
 
+
+    public void selectConnectionAndSchema(@NotNull final DBLanguagePsiFile file, @NotNull final RunnableTask callback) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                ConnectionHandler activeConnection = file.getActiveConnection();
+                if (activeConnection == null || activeConnection.isVirtual()) {
+                    String message =
+                            activeConnection == null ?
+                                    "The file is not linked to any connection.\nTo continue with the statement execution please select a target connection." :
+                                    "The connection you selected for this file is a virtual connection, used only to decide the SQL dialect.\n" +
+                                            "You can not execute statements against this connection. Please select a proper connection to continue.";
+
+
+                    MessageUtil.showWarningDialog(message, "No valid Connection", new String[]{"Select Connection", "Cancel"}, 0,
+                            new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    if (getOption() == 0) {
+                                        promptConnectionSelector(file, true, true,
+                                                new SimpleTask() {
+                                                    @Override
+                                                    public void execute() {
+                                                        if (file.getCurrentSchema() == null) {
+                                                            promptSchemaSelector(file, callback);
+                                                        } else {
+                                                            callback.start();
+                                                        }
+
+                                                    }
+                                                });
+                                    }
+                                }
+                            });
+
+                } else if (file.getCurrentSchema() == null) {
+                    String message =
+                            "You did not select any schema to run the statement against.\n" +
+                                    "To continue with the statement execution please select a schema.";
+                    MessageUtil.showWarningDialog(message, "No valid Schema", new String[]{"Select Schema", "Cancel"}, 0,
+                            new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    if (getOption() == 0) {
+                                        promptSchemaSelector(file, callback);
+                                    }
+                                }
+                            });
+                } else {
+                    new ConnectionAction(file) {
+                        @Override
+                        public void execute() {
+                            callback.start();
+                        }
+                    }.start();
+                }
+            }
+        }.start();
+    }
+
     /***************************************************
      *             Select connection popup             *
      ***************************************************/
@@ -380,7 +443,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     /***************************************************
      *             Select schema popup                 *
      ***************************************************/
-    public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final SimpleTask callback) throws IncorrectOperationException {
+    public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
         new ConnectionAction(psiFile) {
             @Override
             public void execute() {
@@ -411,9 +474,9 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     private class SelectSchemaAction extends AnAction {
         private DBLanguagePsiFile file;
         private DBSchema schema;
-        private SimpleTask callback;
+        private RunnableTask callback;
 
-        private SelectSchemaAction(DBLanguagePsiFile file, DBSchema schema, SimpleTask callback) {
+        private SelectSchemaAction(DBLanguagePsiFile file, DBSchema schema, RunnableTask callback) {
             super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
             this.file = file;
             this.schema = schema;

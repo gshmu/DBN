@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -30,6 +31,8 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.explain.ExplainPlanMessage;
+import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -188,6 +191,16 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
             prepareMessagesTab();
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
             messagesPane.selectMessage(executionMessage, true);
+        }
+    }
+
+    public void addResult(ExplainPlanResult explainPlanResult) {
+        if (explainPlanResult.isError()) {
+            ExecutionMessagesPanel messagesPane = getMessagesPanel();
+            ExplainPlanMessage explainPlanMessage = new ExplainPlanMessage(explainPlanResult, MessageType.ERROR);
+            messagesPane.addExplainPlanMessage(explainPlanMessage, true);
+        } else {
+            showResultTab(explainPlanResult);
         }
     }
 

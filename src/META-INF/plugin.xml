@@ -220,6 +220,7 @@
         <component><implementation-class>com.dci.intellij.dbn.execution.script.ScriptExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.method.MethodExecutionManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.execution.explain.ExplainPlanManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.completion.CodeCompletionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.debugger.DatabaseDebuggerManager</implementation-class></component>

@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
+import com.dci.intellij.dbn.execution.explain.ExplainPlanMessage;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 
 
 public class MessagesTreeModel implements TreeModel, Disposable {
@@ -30,6 +31,10 @@ public class MessagesTreeModel implements TreeModel, Disposable {
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage) {
         return rootNode.addCompilerMessage(compilerMessage);
+    }
+
+    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
+        return rootNode.addExplainPlanMessage(explainPlanMessage);
     }
 
     @Nullable
