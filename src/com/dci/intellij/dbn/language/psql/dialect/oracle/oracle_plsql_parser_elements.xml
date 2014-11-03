@@ -942,6 +942,80 @@
             </iteration>
         </sequence>
     </element-def>
+    <element-def id="pragma" description="PRAGMA statement">
+        <token type-id="KW_PRAGMA"/>
+        <one-of>
+            <token type-id="KW_AUTONOMOUS_TRANSACTION" original-name="serially_resuable_pragma"/>
+            <token type-id="KW_SERIALLY_REUSABLE" original-name="autonomous_trans_pragma"/>
+            <sequence original-name="exception_init_pragma">
+                <token type-id="KW_EXCEPTION_INIT"/>
+                <wrapper template="PARENTHESES">
+                    <sequence>
+                        <element ref-id="exception"/>
+                        <token type-id="CHR_COMMA"/>
+                        <token type-id="INTEGER" original-name="error_code"/>
+                    </sequence>
+                </wrapper>
+            </sequence>
+            <sequence original-name="inline_pragma">
+                <token type-id="KW_INLINE"/>
+                <wrapper template="PARENTHESES">
+                    <sequence>
+                        <qualified-identifier original-name="subprogram" separator="CHR_DOT">
+                            <variant>
+                                <variable-ref type="METHOD"/>
+                            </variant>
+                            <variant>
+                                <object-ref type="PACKAGE" optional="true"/>
+                                <object-ref type="METHOD"/>
+                            </variant>
+                            <variant>
+                                <object-ref type="TYPE" optional="true"/>
+                                <object-ref type="METHOD"/>
+                            </variant>
+                        </qualified-identifier>
+                        <token type-id="CHR_COMMA"/>
+                        <token type-id="STRING"/>
+                    </sequence>
+                </wrapper>
+            </sequence>
+            <sequence original-name="restrict_references_pragma">
+                <token type-id="KW_RESTRICT_REFERENCES"/>
+                <wrapper template="PARENTHESES">
+                    <sequence>
+                        <one-of>
+                            <qualified-identifier original-name="subprogram" separator="CHR_DOT">
+                                <variant>
+                                    <variable-ref type="METHOD"/>
+                                </variant>
+                                <variant>
+                                    <object-ref type="PACKAGE" optional="true"/>
+                                    <object-ref type="METHOD"/>
+                                </variant>
+                                <variant>
+                                    <object-ref type="TYPE" optional="true"/>
+                                    <object-ref type="METHOD"/>
+                                </variant>
+                            </qualified-identifier>
+                            <token type-id="KW_DEFAULT"/>
+                        </one-of>
+                        <token type-id="CHR_COMMA"/>
+                        <sequence id="000000393">
+                            <one-of id="000000394">
+                                <token id="000000395" type-id="KW_RNDS" />
+                                <token id="000000396" type-id="KW_WNDS" />
+                                <token id="000000397" type-id="KW_RNPS" />
+                                <token id="000000398" type-id="KW_WNPS" />
+                                <token id="000000399" type-id="KW_TRUST" />
+                            </one-of>
+                            <token id="000000400" optional="true" type-id="CHR_COMMA" />
+                        </sequence>
+                    </sequence>
+                </wrapper>
+            </sequence>
+        </one-of>
+        <token type-id="CHR_SEMICOLON"/>
+    </element-def>
     <element-def description="DDL event" id="ddl_event">
         <one-of id="000000476">
             <token id="000000477" type-id="KW_ALTER" />
