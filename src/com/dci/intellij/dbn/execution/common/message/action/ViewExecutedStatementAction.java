@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.execution.common.message.action;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.StatementExecutionMessageNode;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
+import java.awt.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Component;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.StatementExecutionMessageNode;
+import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 
 public class ViewExecutedStatementAction extends ExecutionMessagesAction {
     public ViewExecutedStatementAction(MessagesTree messagesTree) {

@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -8,14 +11,11 @@ import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
+import com.intellij.psi.PsiFile;
 
 public class StatementExecutionBasicResult implements StatementExecutionResult{
     private String resultName;
@@ -23,7 +23,6 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private StatementExecutionStatus executionStatus;
     private int executionDuration;
     private int updateCount;
-    private StatementViewerPopup statementViewerPopup;
     private CompilerResult compilerResult;
     private DBObjectRef<DBSchemaObject> affectedObjectRef;
     private StatementExecutionProcessor executionProcessor;
@@ -35,6 +34,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
+    }
+
+    @Override
+    public PsiFile createPreviewFile() {
+        return getExecutionInput().createPreviewFile();
     }
 
     public String getResultName() {
@@ -80,15 +84,6 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     @Override
     public int getUpdateCount() {
         return updateCount;
-    }
-
-    public StatementViewerPopup getStatementViewerPopup() {
-        return statementViewerPopup;
-    }
-
-    public void setStatementViewerPopup(StatementViewerPopup statementViewerPopup) {
-        this.statementViewerPopup = statementViewerPopup;
-        Disposer.register(this, statementViewerPopup);
     }
 
     public void updateExecutionMessage(MessageType messageType, String message, String causeMessage) {
@@ -151,7 +146,6 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     public void dispose() {
         disposed = true;
-        statementViewerPopup = null;
         executionProcessor = null;
         executionMessage = null;
     }

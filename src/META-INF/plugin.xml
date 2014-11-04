@@ -342,6 +342,15 @@
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.Settings" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultSettingsAction" text="Execution Result - Settings"/>
         </group>
+        <group id="DBNavigator.ActionGroup.ExplainPlanResult">
+            <action id="DBNavigator.Actions.ExplainPlanResult.Close" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanResultCloseAction" text="Explain Plan Result - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.ViewStatement" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanResultViewStatementAction" text="Explain Plan Result - View statement" icon="/img/action/Preview.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.ExpandAll" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanResultExpandAllAction" text="Explain Plan Result - Expand All" icon="/img/action/ExpandAll.png"/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.CollapseAll" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanResultCollapseAllAction" text="Explain Plan Result - Collapse All" icon="/img/action/CollapseAll.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.Settings" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanResultSettingsAction" text="Explain Plan - Settings"/>
+        </group>
         <group id="DBNavigator.ActionGroup.Browser.ObjectProperties" text="Browser object properties">
             <action id="DBNavigator.Actions.Browser.HideObjectProperties" class="com.dci.intellij.dbn.browser.action.HideObjectPropertiesAction" text="Hide properties"/>
         </group>

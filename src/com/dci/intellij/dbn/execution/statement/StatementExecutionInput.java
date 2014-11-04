@@ -96,7 +96,7 @@ public class StatementExecutionInput implements Disposable {
         this.executionVariables = executionVariables;
     }
 
-    public PsiFile getPreviewFile() {
+    public PsiFile createPreviewFile() {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBLanguageDialect languageDialect = connectionHandler == null ?
