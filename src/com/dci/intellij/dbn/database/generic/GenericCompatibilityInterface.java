@@ -59,4 +59,9 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
     public String getDefaultAlternativeStatementDelimiter() {
         return null;
     }
+
+    @Override
+    public String getExplainPlanStatementPrefix() {
+        return null;
+    }
 }

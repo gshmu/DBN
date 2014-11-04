@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -14,7 +16,7 @@ public class CloseExecutionResultAction extends MethodExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         MethodExecutionResult executionResult = getExecutionResult();
         if (executionResult != null) {

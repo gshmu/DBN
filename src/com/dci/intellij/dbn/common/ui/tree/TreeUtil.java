@@ -5,6 +5,8 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -74,5 +76,10 @@ public class TreeUtil {
                 }
             }
         }.start();
+    }
+
+    public static TreePath getPathAtMousePosition(JTree tree) {
+        Point location = MouseInfo.getPointerInfo().getLocation();
+        return tree.getPathForLocation((int) location.getX(), (int) location.getY());
     }
 }

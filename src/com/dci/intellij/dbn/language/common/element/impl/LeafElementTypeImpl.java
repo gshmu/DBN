@@ -191,9 +191,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 }
             } else if (elementType instanceof WrapperElementType) {
                 WrapperElementType wrapperElementType = (WrapperElementType) elementType;
-                if (wrapperElementType.getEndTokenElement().getTokenType() == tokenType) {
-                    return true;
-                }
+                return wrapperElementType.getEndTokenElement().getTokenType() == tokenType;
             }
 
             position = pathNode.getIndexInParent() + 1;

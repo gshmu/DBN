@@ -30,6 +30,7 @@
             <li><b>3.0.NEXT</b>
              <ul>
                 - Parser improvements and optimizations<br>
+                - Explain plan execution support (Oracle)<br>
                 - Support for database triggers<br>
                 - Language support for XML functions (Oracle)<br>
                 - Code completion support for locally defined objects<br>
@@ -221,6 +222,7 @@
         <component><implementation-class>com.dci.intellij.dbn.execution.script.ScriptExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.method.MethodExecutionManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.execution.explain.ExplainPlanManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.completion.CodeCompletionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.debugger.DatabaseDebuggerManager</implementation-class></component>
@@ -250,6 +252,7 @@
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute statement"/>
+            <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png"/>
             <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction"/>
             <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction"/>
             <separator/>
@@ -340,6 +343,15 @@
             <action id="DBNavigator.Actions.ExecutionResult.ExportData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultExportAction" text="Execution Result - Export data" icon="/img/action/DataExport.png"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.Settings" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultSettingsAction" text="Execution Result - Settings"/>
+        </group>
+        <group id="DBNavigator.ActionGroup.ExplainPlanResult">
+            <action id="DBNavigator.Actions.ExplainPlanResult.Close" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultCloseAction" text="Explain Plan Result - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.ViewStatement" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultViewStatementAction" text="Explain Plan Result - View statement" icon="/img/action/Preview.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.ExpandAll" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultExpandAllAction" text="Explain Plan Result - Expand All" icon="/img/action/ExpandAll.png"/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.CollapseAll" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultCollapseAllAction" text="Explain Plan Result - Collapse All" icon="/img/action/CollapseAll.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.ExplainPlanResult.Settings" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultSettingsAction" text="Explain Plan - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.Browser.ObjectProperties" text="Browser object properties">
             <action id="DBNavigator.Actions.Browser.HideObjectProperties" class="com.dci.intellij.dbn.browser.action.HideObjectPropertiesAction" text="Hide properties"/>

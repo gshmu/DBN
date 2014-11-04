@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common;
 
+import javax.swing.Icon;
+import java.util.Map;
+
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
-
-import javax.swing.Icon;
-import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -86,6 +86,7 @@ public class Icons {
     public static final Icon SQL_STATEMENT            = load("SQL_STATEMENT", "/img/SQLStatement.png");
 
 
+    public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
     public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");
     public static final Icon STMT_EXECUTION_RERUN         = load("/img/action/Rerun.png");
     public static final Icon STMT_EXECUTION_RESUME        = load("/img/action/ResumeExecution.png");
@@ -97,6 +98,7 @@ public class Icons {
     public static final Icon STMT_EXECUTION_INFO_RERUN   = load("/img/action/ExecuteStatementInfo.png");
     public static final Icon STMT_EXECUTION_NAVIGATE      = load("/img/action/NavigateToResult.png");
 
+    public static final Icon EXPLAIN_PLAN_RESULT        = load("/img/ExplainPlanResult.png");
     public static final Icon STMT_EXEC_RESULTSET        = load("/img/ExecutionResultSet.png");
     public static final Icon STMT_EXEC_RESULTSET_RERUN  = load("/img/ExecutionResultSetRerun.png");
     public static final Icon STMT_EXEC_RESULTSET_ORPHAN = load("/img/ExecutionResultSetOrphan.png");

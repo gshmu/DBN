@@ -20,8 +20,6 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
@@ -203,7 +201,8 @@ public class StatementExecutionManager extends AbstractProjectComponent {
             }
         };
 
-        selectConnectionAndSchema(executionProcessor.getPsiFile(), executionTask);
+        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+        connectionMappingManager.selectConnectionAndSchema(executionProcessor.getPsiFile(), executionTask);
     }
 
     public void executeStatements(final List<StatementExecutionProcessor> executionProcessors) {
@@ -240,7 +239,8 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 }
             };
 
-            selectConnectionAndSchema(file, executionTask);
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+            connectionMappingManager.selectConnectionAndSchema(file, executionTask);
         }
     }
 
@@ -300,67 +300,6 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                     }
                 } else {
                     callback.start();
-                }
-            }
-        }.start();
-    }
-
-    private void selectConnectionAndSchema(@NotNull final DBLanguagePsiFile file, @NotNull final SimpleTask callback) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                ConnectionHandler activeConnection = file.getActiveConnection();
-                final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-                if (activeConnection == null || activeConnection.isVirtual()) {
-                    String message =
-                            activeConnection == null ?
-                                    "The file is not linked to any connection.\nTo continue with the statement execution please select a target connection." :
-                                    "The connection you selected for this file is a virtual connection, used only to decide the SQL dialect.\n" +
-                                            "You can not execute statements against this connection. Please select a proper connection to continue.";
-
-
-                    MessageUtil.showWarningDialog(message, "No valid Connection", new String[]{"Select Connection", "Cancel"}, 0,
-                            new SimpleTask() {
-                                @Override
-                                public void execute() {
-                                    if (getOption() == 0) {
-                                        connectionMappingManager.promptConnectionSelector(file, true, true,
-                                                new SimpleTask() {
-                                                    @Override
-                                                    public void execute() {
-                                                        if (file.getCurrentSchema() == null) {
-                                                            connectionMappingManager.promptSchemaSelector(file, callback);
-                                                        }
-                                                        else {
-                                                            callback.start();
-                                                        }
-
-                                                    }
-                                                });
-                                    }
-                                }
-                            });
-
-                } else if (file.getCurrentSchema() == null) {
-                    String message =
-                            "You did not select any schema to run the statement against.\n" +
-                                    "To continue with the statement execution please select a schema.";
-                    MessageUtil.showWarningDialog(message, "No valid Schema", new String[]{"Select Schema", "Cancel"}, 0,
-                            new SimpleTask() {
-                                @Override
-                                public void execute() {
-                                    if (getOption() == 0) {
-                                        connectionMappingManager.promptSchemaSelector(file, callback);
-                                    }
-                                }
-                            });
-                } else {
-                    new ConnectionAction(file) {
-                        @Override
-                        public void execute() {
-                            callback.start();
-                        }
-                    }.start();
                 }
             }
         }.start();

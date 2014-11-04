@@ -1,9 +1,15 @@
-package com.dci.intellij.dbn.execution.statement.result.ui;
+package com.dci.intellij.dbn.execution.common.ui;
+
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Point;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.Disposable;
@@ -20,21 +26,15 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.psi.PsiFile;
 
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-
 public class StatementViewerPopup implements Disposable {
     private EditorEx viewer;
     private String resultName;
 
-    public StatementViewerPopup(StatementExecutionResult executionResult) {
+    public StatementViewerPopup(ExecutionResult executionResult) {
         this.resultName = executionResult.getResultName();
         Project project = executionResult.getProject();
 
-        PsiFile previewFile = executionResult.getExecutionInput().getPreviewFile();
+        PsiFile previewFile = executionResult.createPreviewFile();
         Document document = DocumentUtil.getDocument(previewFile);
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
@@ -56,8 +56,6 @@ public class StatementViewerPopup implements Disposable {
         settings.setRightMarginShown(false);
 
         //mainPanel.setBorder(new LineBorder(Color.BLACK, 1, false));
-        executionResult.setStatementViewerPopup(this);
-
     }
 
     public void show(Component component) {

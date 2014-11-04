@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.execution.common.message.action.OpenSettingsAction;
 import com.dci.intellij.dbn.execution.common.message.action.ViewExecutedStatementAction;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
@@ -53,6 +54,10 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
 
     public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
         return messagesTree.addCompilerMessage(compilerMessage, select);
+    }
+
+    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
+        return messagesTree.addExplainPlanMessage(explainPlanMessage, select);
     }
 
     public void reset() {
