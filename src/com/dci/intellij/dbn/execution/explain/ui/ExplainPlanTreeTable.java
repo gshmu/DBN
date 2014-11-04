@@ -2,31 +2,44 @@ package com.dci.intellij.dbn.execution.explain.ui;
 
 import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 
+import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanEntry;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.codeInsight.template.impl.TemplateColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 
 public class ExplainPlanTreeTable extends TreeTable{
-    private static final int MAX_TREE_COLUMN_WIDTH = 600;
-    private static final int MAX_COLUMN_WIDTH = 250;
+    private static final int MAX_TREE_COLUMN_WIDTH = 900;
+    private static final int MAX_COLUMN_WIDTH = 200;
     private static final int MIN_COLUMN_WIDTH = 10;
+
+    private SimpleTextAttributes operationAttributes;
 
     public ExplainPlanTreeTable(ExplainPlanTreeTableModel treeTableModel) {
         super(treeTableModel);
+        EditorColorsScheme scheme = EditorColorsManager.getInstance().getGlobalScheme();
+        TextAttributes attributes = scheme.getAttributes(TemplateColors.TEMPLATE_VARIABLE_ATTRIBUTES);
+        operationAttributes = new SimpleTextAttributes(null, attributes.getForegroundColor(), null, SimpleTextAttributes.STYLE_PLAIN);
         setTreeCellRenderer(treeCellRenderer);
         setDefaultRenderer(Object.class, tableCellRenderer);
         setAutoResizeMode(AUTO_RESIZE_OFF);
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         getTree().addTreeExpansionListener(new TreeExpansionListener() {
             @Override
             public void treeExpanded(TreeExpansionEvent event) {
@@ -39,26 +52,37 @@ public class ExplainPlanTreeTable extends TreeTable{
             }
         });
         accommodateColumnsSize();
+        TreeUtil.expandAll(getTree());
     }
 
     private final ColoredTreeCellRenderer treeCellRenderer = new ColoredTreeCellRenderer() {
         @Override
+        protected void processMouseMotionEvent(MouseEvent e) {
+            super.processMouseMotionEvent(e);
+        }
+
+        @Override
         public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             ExplainPlanEntry entry = (ExplainPlanEntry) value;
-            String operation = entry.getOperation();
-            String options = entry.getOperationOptions();
-            append(operation, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            if (StringUtil.isNotEmpty(options)) {
-                if (options.equals("FULL")) {
-                    append(" (" + options.toLowerCase() + ")", SimpleTextAttributes.ERROR_ATTRIBUTES);
-                } else {
-                    append(" (" + options.toLowerCase() + ")", SimpleTextAttributes.GRAYED_ATTRIBUTES);
-                }
-            }
+
             DBObjectRef objectRef = entry.getObjectRef();
             if (objectRef != null) {
                 setIcon(objectRef.getObjectType().getIcon());
+                append(objectRef.getPath() + " - ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
+
+            String operation = entry.getOperation();
+            String options = entry.getOperationOptions();
+            append(operation, selected ? SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES : operationAttributes);
+            if (StringUtil.isNotEmpty(options)) {
+                if (options.equals("FULL")) {
+                    append(" (" + options.toLowerCase() + ")", selected ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.ERROR_ATTRIBUTES);
+                } else {
+                    append(" (" + options.toLowerCase() + ")", selected ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.GRAYED_ATTRIBUTES);
+                }
+            }
+
+
 
         }
     };

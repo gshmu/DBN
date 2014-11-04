@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.dci.intellij.dbn.execution.explain.ExplainPlanEntry;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 
 public class ExplainPlanTreeTableModel implements TreeTableModel{
@@ -26,13 +25,13 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
                     return this; /*entry.getOperation() + (StringUtil.isEmpty(options) ? "" : "(" + options + ")");*/
                 }
             },
+/*
             new Column("OBJECT", DBObjectRef.class) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
                     return entry.getObjectRef();
                 }
             },
-/*
             new Column("DEPTH", BigDecimal.class) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {

@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.NEXT</b>
              <ul>
+                - Explain plan execution support (Oracle)<br>
                 - Support for database triggers<br>
                 - Language support for XML functions (Oracle)<br>
                 - Code completion support for locally defined objects<br>
