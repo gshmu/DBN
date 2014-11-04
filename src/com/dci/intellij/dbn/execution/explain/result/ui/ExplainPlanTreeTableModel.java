@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain.ui;
+package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
@@ -6,8 +6,8 @@ import javax.swing.tree.TreePath;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.dci.intellij.dbn.execution.explain.ExplainPlanEntry;
-import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 
 public class ExplainPlanTreeTableModel implements TreeTableModel{

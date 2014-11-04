@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
-import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;

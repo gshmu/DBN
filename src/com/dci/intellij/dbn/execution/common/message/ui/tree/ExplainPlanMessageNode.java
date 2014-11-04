@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 import javax.swing.tree.TreeNode;
 import java.util.Enumeration;
 
-import com.dci.intellij.dbn.execution.explain.ExplainPlanMessage;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 

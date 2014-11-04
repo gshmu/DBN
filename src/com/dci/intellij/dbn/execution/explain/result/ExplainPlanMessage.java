@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain;
+package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;

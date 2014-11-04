@@ -1,9 +1,9 @@
-package com.dci.intellij.dbn.execution.explain.action;
+package com.dci.intellij.dbn.execution.explain.result.action;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
 public class ExplainPlanResultExpandAllAction extends AbstractExplainPlanResultAction {

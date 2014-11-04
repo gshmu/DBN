@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain;
+package com.dci.intellij.dbn.execution.explain.result;
 
 import javax.swing.Icon;
 import java.sql.ResultSet;
@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.execution.explain.ui.ExplainPlanResultForm;
+import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;

@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanManager;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -36,8 +39,13 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction {
         if (psiFile.getVirtualFile().getFileType() instanceof DBLanguageFileType) {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             FileEditor fileEditor = EditorUtil.getFileEditor(editor);
-            if (executable != null && fileEditor != null) {
-                return executable.is(ElementTypeAttribute.DATA_MANIPULATION);
+            if (executable != null && fileEditor != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
+                ConnectionHandler activeConnection = executable.getActiveConnection();
+                if (activeConnection != null) {
+                    DatabaseCompatibilityInterface compatibilityInterface = activeConnection.getInterfaceProvider().getCompatibilityInterface();
+                    return compatibilityInterface.supportsFeature(DatabaseFeature.EXPLAIN_PLAN);
+                }
+
             }
         }
         return false;
