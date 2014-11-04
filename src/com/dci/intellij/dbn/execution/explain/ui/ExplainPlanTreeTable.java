@@ -8,7 +8,9 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.tree.TreePath;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -23,6 +25,7 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
+import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 
 public class ExplainPlanTreeTable extends TreeTable{
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
@@ -40,7 +43,8 @@ public class ExplainPlanTreeTable extends TreeTable{
         setDefaultRenderer(Object.class, tableCellRenderer);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        getTree().addTreeExpansionListener(new TreeExpansionListener() {
+        final TreeTableTree tree = getTree();
+        tree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
             public void treeExpanded(TreeExpansionEvent event) {
                 accommodateColumnsSize();
@@ -52,7 +56,16 @@ public class ExplainPlanTreeTable extends TreeTable{
             }
         });
         accommodateColumnsSize();
-        TreeUtil.expandAll(getTree());
+        TreeUtil.expandAll(tree);
+        tree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                TreePath pathAtMousePosition = TreeUtil.getPathAtMousePosition(tree);
+                if (pathAtMousePosition != null) {
+                    Object lastPathComponent = pathAtMousePosition.getLastPathComponent();
+                }
+            }
+        });
     }
 
     private final ColoredTreeCellRenderer treeCellRenderer = new ColoredTreeCellRenderer() {

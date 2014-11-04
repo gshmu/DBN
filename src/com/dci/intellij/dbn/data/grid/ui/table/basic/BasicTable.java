@@ -10,6 +10,8 @@ import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -27,6 +29,8 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupAdapter;
+import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.ui.components.JBViewport;
 import com.intellij.util.ui.UIUtil;
 
@@ -48,6 +52,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         EditorColorsManager.getInstance().addEditorColorsListener(this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
+        addMouseListener(lobValueMouseListener);
     }
 
     protected BasicTableGutter createTableGutter() {
@@ -195,11 +200,31 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
                     initLargeValuePopup(viewer);
                     Point location = cellRect.getLocation();
                     location.setLocation(location.getX() + 4, location.getY() + 20);
+
                     valuePopup = viewer.show(this, location);
+                    valuePopup.addListener(
+                        new JBPopupAdapter() {
+                            @Override
+                            public void onClosed(LightweightWindowEvent event) {
+                                valuePopup.cancel();
+                                valuePopup = null;
+                            }
+                        }
+                    );
                 }
             }
         }
     }
+
+    private MouseAdapter lobValueMouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && valuePopup == null) {
+                showCellValuePopup();
+            }
+        }
+    };
+
 
     protected void initLargeValuePopup(LargeValuePreviewPopup viewer) {
     }
