@@ -1432,6 +1432,11 @@
             select * from PLAN_TABLE order by PARENT_ID nulls first, ID
         </statement>
     </statement-execution-processor>
+    <statement-execution-processor id="clear-explain-plan-data" is-prepared-statement="true">
+        <statement>
+            delete PLAN_TABLE
+        </statement>
+    </statement-execution-processor>
 
     <statement-execution-processor id="compile-object">
         <statement>
