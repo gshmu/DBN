@@ -1,10 +1,10 @@
-package com.dci.intellij.dbn.execution.explain.action;
+package com.dci.intellij.dbn.execution.explain.result.action;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 

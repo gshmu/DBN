@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain.ui;
+package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
-import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain.action;
+package com.dci.intellij.dbn.execution.explain.result.action;
 
 import org.jetbrains.annotations.NotNull;
 

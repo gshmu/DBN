@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain;
+package com.dci.intellij.dbn.execution.explain.result;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;

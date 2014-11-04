@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.execution.explain.ui;
+package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import javax.swing.JTable;
 import javax.swing.JTree;
@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.execution.explain.ExplainPlanEntry;
+import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.codeInsight.template.impl.TemplateColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
