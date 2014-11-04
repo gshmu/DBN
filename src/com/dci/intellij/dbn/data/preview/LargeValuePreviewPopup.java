@@ -35,6 +35,7 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Computable;
 
@@ -57,7 +58,6 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
 
     private boolean isLargeTextLayout;
     private boolean isPinned;
-
 
     public LargeValuePreviewPopup(BasicTable table, DataModelCell cell, int preferredWidth) {
         this.table = table;
@@ -98,6 +98,11 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
 
 
         valueTextArea.addKeyListener(keyListener);
+
+
+    }
+
+    public void addPopupListener(JBPopupListener listener) {
     }
 
     private void loadContent(boolean initial) {
