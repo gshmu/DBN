@@ -5,7 +5,6 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreePath;
 import java.math.BigDecimal;
 import java.util.List;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.execution.explain.ExplainPlanEntry;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanResult;
@@ -19,12 +18,12 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
         this.result = result;
     }
 
-    private static Column[] COLUMNS = new Column[]{
-            new Column("OPERATION", String.class) {
+    private Column[] COLUMNS = new Column[]{
+            new Column("OPERATION", TreeTableModel.class) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
                     String options = entry.getOperationOptions();
-                    return entry.getOperation() + (StringUtil.isEmpty(options) ? "" : "(" + options + ")");
+                    return this; /*entry.getOperation() + (StringUtil.isEmpty(options) ? "" : "(" + options + ")");*/
                 }
             },
             new Column("OBJECT", DBObjectRef.class) {
@@ -33,6 +32,7 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
                     return entry.getObjectRef();
                 }
             },
+/*
             new Column("DEPTH", BigDecimal.class) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
@@ -45,6 +45,13 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
                     return entry.getPosition();
                 }
             },
+*/
+            new Column("COST", BigDecimal.class) {
+                @Override
+                public Object getValue(ExplainPlanEntry entry) {
+                    return entry.getCost();
+                }
+            },
             new Column("CARDINALITY", BigDecimal.class) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
@@ -55,12 +62,6 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
                     return entry.getBytes();
-                }
-            },
-            new Column("COST", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getCost();
                 }
             },
             new Column("CPU_COST", BigDecimal.class) {
@@ -119,7 +120,7 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
     public Object getValueAt(Object node, int column) {
         if (node instanceof ExplainPlanEntry) {
             ExplainPlanEntry entry = (ExplainPlanEntry) node;
-            COLUMNS[column].getValue(entry);
+            return COLUMNS[column].getValue(entry);
         }
         return null;
     }

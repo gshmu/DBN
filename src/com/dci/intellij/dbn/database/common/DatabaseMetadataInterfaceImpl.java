@@ -361,6 +361,11 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return executeQuery(connection, "explain-plan-result");
     }
 
+    @Override
+    public void clearExplainPlanData(Connection connection) throws SQLException {
+        executeUpdate(connection, "clear-explain-plan-data");
+    }
+
 
     public boolean isValid(Connection connection) {
         try {

@@ -31,6 +31,7 @@ public class ExplainPlanEntry implements Disposable {
     private String filterPredicates;
     private String projection;
 
+    private ExplainPlanEntry parent;
     private List<ExplainPlanEntry> children;
 
     public ExplainPlanEntry(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
@@ -62,8 +63,11 @@ public class ExplainPlanEntry implements Disposable {
             DBObjectType objectType = DBObjectType.ANY;
             if (objectTypeName.startsWith("TABLE")) {
                 objectType = DBObjectType.TABLE;
-            }
-            if (objectTypeName.startsWith("INDEX")) {
+            } else if (objectTypeName.startsWith("MAT_VIEW")) {
+                objectType = DBObjectType.MATERIALIZED_VIEW;
+            } else if (objectTypeName.startsWith("VIEW")) {
+                objectType = DBObjectType.VIEW;
+            } else if (objectTypeName.startsWith("INDEX")) {
                 objectType = DBObjectType.INDEX;
             }
 
@@ -72,6 +76,14 @@ public class ExplainPlanEntry implements Disposable {
             objectRef = new DBObjectRef(schemaRef, objectType, objectName);
         }
 
+    }
+
+    public ExplainPlanEntry getParent() {
+        return parent;
+    }
+
+    public void setParent(ExplainPlanEntry parent) {
+        this.parent = parent;
     }
 
     public void addChild(ExplainPlanEntry child) {
@@ -152,5 +164,6 @@ public class ExplainPlanEntry implements Disposable {
     @Override
     public void dispose() {
         DisposerUtil.dispose(children);
+        parent = null;
     }
 }

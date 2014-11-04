@@ -49,6 +49,7 @@ public class ExplainPlanResult implements ExecutionResult {
             } else {
                 ExplainPlanEntry parentEntry = entries.get(parentId);
                 parentEntry.addChild(entry);
+                entry.setParent(parentEntry);
             }
         }
     }
@@ -144,7 +145,7 @@ public class ExplainPlanResult implements ExecutionResult {
     @Override
     public void dispose() {
         disposed = true;
-        DisposerUtil.dispose(resultForm);
+        resultForm = null;
         DisposerUtil.dispose(root);
     }
 
