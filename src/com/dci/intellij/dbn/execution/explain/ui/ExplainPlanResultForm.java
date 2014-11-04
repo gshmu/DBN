@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -25,7 +26,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
 
     public ExplainPlanResultForm(final ExplainPlanResult explainPlanResult) {
         this.explainPlanResult = explainPlanResult;
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.StatementExecutionResult");
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.ExplainPlanResult");
 
         actionsPanel.add(actionToolbar.getComponent());
 
@@ -40,6 +41,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
 
         Disposer.register(this, explainPlanResult);
+        ActionUtil.registerDataProvider(explainPlanTreeTable, explainPlanResult.getDataProvider(), false);
     }
 
     public ExplainPlanTreeTable getExplainPlanTreeTable() {
@@ -67,5 +69,13 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
     @Override
     public ExecutionResult getExecutionResult() {
         return null;
+    }
+
+    public void collapseAllNodes() {
+        TreeUtil.collapseAll(explainPlanTreeTable.getTree());    
+    }
+
+    public void expandAllNodes() {
+        TreeUtil.expandAll(explainPlanTreeTable.getTree());
     }
 }

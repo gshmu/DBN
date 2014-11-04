@@ -15,20 +15,24 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.explain.ui.ExplainPlanResultForm;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 
 public class ExplainPlanResult implements ExecutionResult {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
     private ConnectionHandlerRef connectionHandlerRef;
+    private String statementText;
     private String resultName;
     private String errorMessage;
     private VirtualFile virtualFile;
@@ -62,6 +66,7 @@ public class ExplainPlanResult implements ExecutionResult {
         virtualFile = file.getVirtualFile();
         this.resultName = executablePsiElement.createSubjectList();
         this.errorMessage = errorMessage;
+        this.statementText = executablePsiElement.getText();
     }
 
     public VirtualFile getVirtualFile() {
@@ -79,13 +84,23 @@ public class ExplainPlanResult implements ExecutionResult {
     }
 
     @Override
+    public PsiFile createPreviewFile() {
+        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DBLanguageDialect languageDialect = connectionHandler == null ?
+                SQLLanguage.INSTANCE.getMainLanguageDialect() :
+                connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+        return psiFileFactory.createFileFromText("preview", languageDialect, statementText);
+    }
+
+    @Override
     public Project getProject() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler == null ? null : connectionHandler.getProject();
     }
 
     @Override
-    public ExecutionResultForm getResultPanel() {
+    public ExplainPlanResultForm getResultPanel() {
         if (resultForm == null) {
             resultForm = new ExplainPlanResultForm(this);
         }
@@ -149,5 +164,4 @@ public class ExplainPlanResult implements ExecutionResult {
         resultForm = null;
         DisposerUtil.dispose(root);
     }
-
 }
