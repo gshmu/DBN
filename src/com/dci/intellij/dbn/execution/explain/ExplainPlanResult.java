@@ -9,6 +9,7 @@ import java.util.Map;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -98,7 +99,7 @@ public class ExplainPlanResult implements ExecutionResult {
 
     @Override
     public Icon getResultIcon() {
-        return null;
+        return Icons.EXPLAIN_PLAN_RESULT;
     }
 
     public boolean isError() {
