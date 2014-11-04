@@ -26,6 +26,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
             case AUTHID_METHOD_EXECUTION: return true;
             case FUNCTION_OUT_ARGUMENTS: return true;
             case DEBUGGING: return true;
+            case EXPLAIN_PLAN: return true;
             default: return false;
         }
     }
@@ -37,5 +38,10 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
     @Override
     public String getDefaultAlternativeStatementDelimiter() {
         return null;
+    }
+
+    @Override
+    public String getExplainPlanStatementPrefix() {
+        return "explain plan for ";
     }
 }

@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.PsiFile;
 
 public class MethodExecutionResult implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
@@ -108,6 +109,11 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
 
     public ConnectionHandler getConnectionHandler() {
         return getMethod().getConnectionHandler();
+    }
+
+    @Override
+    public PsiFile createPreviewFile() {
+        return null;
     }
 
     public boolean hasCursorResults() {

@@ -61,4 +61,9 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
     public String getDefaultAlternativeStatementDelimiter() {
         return null;
     }
+
+    @Override
+    public String getExplainPlanStatementPrefix() {
+        return "explain analyze verbose ";
+    }
 }

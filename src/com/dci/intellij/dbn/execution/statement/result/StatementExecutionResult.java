@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.execution.statement.result.ui.StatementViewerPopup;
 
 public interface StatementExecutionResult extends ExecutionResult {
     StatementExecutionProcessor getExecutionProcessor();
@@ -23,9 +22,6 @@ public interface StatementExecutionResult extends ExecutionResult {
     void navigateToEditor(boolean requestFocus);
 
     int getUpdateCount();
-
-    StatementViewerPopup getStatementViewerPopup();
-    void setStatementViewerPopup(StatementViewerPopup statementViewerPopup);
 
     CompilerResult getCompilerResult();
     boolean hasCompilerResult();

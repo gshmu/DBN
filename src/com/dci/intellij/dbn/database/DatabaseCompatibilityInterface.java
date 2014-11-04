@@ -30,4 +30,6 @@ public abstract class DatabaseCompatibilityInterface {
     public String getOrderByClause(String columnName, SortDirection sortDirection, boolean nullsFirst) {
         return columnName + " " + sortDirection.getSqlToken() + " nulls " + (nullsFirst ? " first" : " last");
     }
+
+    public abstract String getExplainPlanStatementPrefix();
 }

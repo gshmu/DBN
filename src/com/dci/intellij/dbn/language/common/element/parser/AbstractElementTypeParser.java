@@ -114,18 +114,19 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
             if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
                 return true;
             }
+
             if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
-                return true;
+                T elementType = getElementType();
+                if (elementType instanceof LeafElementType) {
+                    LeafElementType leafElementType = (LeafElementType) elementType;
+                    return !leafElementType.isNextRequiredToken(leftParenthesis, node, context);
+                }
             }
 
             ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
             if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
                 LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
-                if (lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context)) {
-                    return true;
-                }
-
-                return false;
+                return lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context);
             }
 
             if (context.getLastResolvedLeaf() != null) {

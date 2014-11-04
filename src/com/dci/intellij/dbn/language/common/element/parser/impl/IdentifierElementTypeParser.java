@@ -28,12 +28,23 @@ public class IdentifierElementTypeParser extends AbstractElementTypeParser<Ident
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);
             }
-            else if ((tokenType.isSuppressibleReservedWord() && getElementType().isDefinition() && !getElementType().isAlias()) || isSuppressibleReservedWord(tokenType, parentNode, context)) {
+            else if (isSuppressibleReservedWord(parentNode, context, tokenType)) {
                 PsiBuilder.Marker marker = builder.mark(null);
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);
             }
         }
         return stepOut(null, null, context, depth, ParseResultType.NO_MATCH, 0);
-    }  
+    }
+
+    private boolean isSuppressibleReservedWord(ParsePathNode parentNode, ParserContext context, TokenType tokenType) {
+        if (tokenType.isSuppressibleReservedWord()) {
+            if (context.isWavedTokenType(tokenType)) {
+                return true;
+            }
+
+            return (getElementType().isDefinition() && !getElementType().isAlias()) || isSuppressibleReservedWord(tokenType, parentNode, context);
+        }
+        return false;
+    }
 }
