@@ -57,7 +57,7 @@
           </grid>
         </children>
       </scrollpane>
-      <grid id="6ea4f" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="6ea4f" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="4" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -130,7 +130,7 @@
           </component>
           <component id="8f28f" class="javax.swing.JCheckBox" binding="commitCheckBox">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -138,6 +138,15 @@
               <inheritsPopupMenu value="true"/>
               <margin top="0" left="0" bottom="0" right="0"/>
               <text value="&amp;Commit after execution"/>
+            </properties>
+          </component>
+          <component id="d5b2" class="javax.swing.JCheckBox" binding="enableLoggingCheckBox">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <margin top="0" left="0" bottom="0" right="0"/>
+              <text value="Enable &amp;Logging"/>
             </properties>
           </component>
         </children>

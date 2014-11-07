@@ -113,6 +113,7 @@ public class Icons {
     public static final Icon EXEC_RESULT_OPTIONS          = load("/img/action/Properties.png");
     public static final Icon EXEC_RESULT_MESSAGES         = load("/img/common/Messages.png");
     public static final Icon EXEC_CONFIG                  = load("/img/DBProgram.png");
+    public static final Icon EXEC_LOG_OUTPUT_CONSOLE      = load("/img/LogOutputConsole.png");
 
     public static final Icon NAVIGATION_GO_TO_SPEC       = load("/img/GoToSpec.png");
     public static final Icon NAVIGATION_GO_TO_BODY       = load("/img/GoToBody.png");

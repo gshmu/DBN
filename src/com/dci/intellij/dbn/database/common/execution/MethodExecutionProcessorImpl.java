@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
@@ -20,9 +24,11 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private DBMethodRef<T> method;
 
     protected MethodExecutionProcessorImpl(T method) {
@@ -50,9 +56,9 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
 
     public void execute(MethodExecutionInput executionInput, boolean debug) throws SQLException {
-        boolean usePoolConnection = executionInput.isUsePoolConnection();
         T method = getMethod();
         if (method != null) {
+            boolean usePoolConnection = executionInput.isUsePoolConnection();
             ConnectionHandler connectionHandler = method.getConnectionHandler();
             DBSchema executionSchema = executionInput.getExecutionSchema();
             Connection connection = usePoolConnection ?
@@ -61,13 +67,16 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             if (usePoolConnection) {
                 connection.setAutoCommit(false);
             }
+
             execute(executionInput, connection, debug);
         }
     }
 
     public void execute(MethodExecutionInput executionInput, Connection connection, boolean debug) throws SQLException {
+        DatabaseMetadataInterface metadataInterface = null;
         ConnectionHandler connectionHandler = null;
         boolean usePoolConnection = false;
+        boolean useLogging = executionInput.isEnableLogging();
         try {
             long startTime = System.currentTimeMillis();
 
@@ -75,7 +84,14 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             T method = getMethod();
             if (method != null) {
                 connectionHandler = method.getConnectionHandler();
+                DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+                metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                useLogging = useLogging && compatibilityInterface.supportsFeature(DatabaseFeature.EXECUTION_LOGGING);
+
                 usePoolConnection = executionInput.isUsePoolConnection();
+                if (useLogging) {
+                    metadataInterface.enableLogOutput(connection);
+                }
 
                 PreparedStatement preparedStatement = isQuery() ?
                         connection.prepareStatement(command) :
@@ -95,12 +111,25 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 if (executionResult != null) {
                     loadValues(executionResult, preparedStatement);
                     executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
+
+                    if (useLogging) {
+                        String logOutput = metadataInterface.readLogOutput(connection);
+                        executionResult.setLogOutput(logOutput);
+                    }
                 }
 
                 if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
             }
 
         } finally {
+            if (metadataInterface != null && useLogging) {
+                try {
+                    metadataInterface.disableLogOutput(connection);
+                } catch (SQLException e) {
+                    LOGGER.warn("Error disabling database logging", e);
+                }
+            }
+
             if (executionInput.isCommitAfterExecution()) {
                 if (usePoolConnection) {
                     connection.commit();

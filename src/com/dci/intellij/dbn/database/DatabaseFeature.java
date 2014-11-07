@@ -10,7 +10,9 @@ public enum DatabaseFeature {
     AUTHID_METHOD_EXECUTION("AUDHID method execution (execution on different schema)"),
     FUNCTION_OUT_ARGUMENTS("OUT arguments for functions"),
     DEBUGGING("Program execution debugging"),
-    EXPLAIN_PLAN("Statement explain plan");
+    EXPLAIN_PLAN("Statement explain plan"),
+    EXECUTION_LOGGING("Execution logging"),
+    ;
 
     private String description;
 
