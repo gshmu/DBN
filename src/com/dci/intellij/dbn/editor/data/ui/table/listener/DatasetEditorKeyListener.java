@@ -29,7 +29,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                     case 10:  // enter
                         int index = model.getInsertRowIndex();
                         try {
-                            model.postInsertRecord(false, true);
+                            model.postInsertRecord(false, true, false);
                             if (!model.isInserting()) {
                                 model.insertRecord(index + 1);
                             }

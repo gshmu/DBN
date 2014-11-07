@@ -429,7 +429,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             int insertRowIndex = getModel().getInsertRowIndex();
             if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
                 try {
-                    model.postInsertRecord(false, true);
+                    model.postInsertRecord(false, true, false);
                 } catch (SQLException e1) {
                     MessageUtil.showErrorDialog("Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
                 }
