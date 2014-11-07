@@ -48,6 +48,7 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     private JLabel connectionLabel;
     private JScrollPane argumentsScrollPane;
     private AutoCommitLabel autoCommitLabel;
+    private JCheckBox enableLoggingCheckBox;
 
 
     private List<MethodExecutionArgumentForm> argumentForms = new ArrayList<MethodExecutionArgumentForm>();
@@ -118,6 +119,9 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         commitCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.setEnabled(!debug);
+
+        enableLoggingCheckBox.setSelected(executionInput.isEnableLogging());
+        enableLoggingCheckBox.setVisible(compatibilityInterface.supportsFeature(DatabaseFeature.EXECUTION_LOGGING));
 
         Disposer.register(this, autoCommitLabel);
     }

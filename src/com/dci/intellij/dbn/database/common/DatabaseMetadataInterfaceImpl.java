@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
 import com.intellij.openapi.diagnostic.Logger;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
@@ -366,6 +367,22 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         executeUpdate(connection, "clear-explain-plan-data");
     }
 
+    @Override
+    public void enableLogOutput(Connection connection) throws SQLException {
+        executeCall(connection, null, "enable-log-output");
+    }
+
+    @Override
+    public void disableLogOutput(Connection connection) throws SQLException {
+        executeCall(connection, null, "disable-log-output");
+    }
+
+    @Override
+    public String readLogOutput(Connection connection) throws SQLException {
+        ExecutionLogOutput outputReader = new ExecutionLogOutput();
+        executeCall(connection, outputReader, "read-log-output");
+        return outputReader.getLog();
+    }
 
     public boolean isValid(Connection connection) {
         try {

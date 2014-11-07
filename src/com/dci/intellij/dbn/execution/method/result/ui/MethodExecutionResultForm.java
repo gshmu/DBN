@@ -1,10 +1,20 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
+import java.io.StringReader;
+import java.util.List;
+import org.jetbrains.generate.tostring.util.StringUtil;
+
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.common.output.ui.ExecutionLogOutputConsole;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -15,18 +25,14 @@ import com.dci.intellij.dbn.execution.method.result.action.PromptMethodExecution
 import com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionAction;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.intellij.diagnostic.logging.LogConsoleBase;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
-import java.util.List;
 
 public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
     private JPanel mainPanel;
@@ -97,6 +103,19 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     private void updateCursorArgumentsPanel() {
         cursorOutputTabs.removeAllTabs();
+        Project project = getMethod().getProject();
+        String logOutput = executionResult.getLogOutput();
+        StringReader stringReader = null;
+        if (StringUtil.isNotEmpty(logOutput)) {
+            stringReader = new StringReader(logOutput);
+        }
+        LogConsoleBase outputConsole = new ExecutionLogOutputConsole(project, stringReader, "Output");
+
+        TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
+        outputTabInfo.setText(outputConsole.getTitle());
+        outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
+        cursorOutputTabs.addTab(outputTabInfo);
+
         for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
             if (argumentValue.isCursor()) {
                 DBArgument argument = argumentValue.getArgument();
@@ -118,7 +137,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     public void selectCursorOutput(DBArgument argument) {
         for (TabInfo tabInfo : cursorOutputTabs.getTabs()) {
-            if (tabInfo.getObject().equals(argument)) {
+            Object object = tabInfo.getObject();
+            if (object != null && object.equals(argument)) {
                 cursorOutputTabs.select(tabInfo, true);
                 break;
             }

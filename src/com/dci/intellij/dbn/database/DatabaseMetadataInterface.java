@@ -634,6 +634,10 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     void clearExplainPlanData(Connection connection) throws SQLException;
 
+    void enableLogOutput(Connection connection) throws SQLException;
+    void disableLogOutput(Connection connection) throws SQLException;
+    String readLogOutput(Connection connection) throws SQLException;
+
     boolean isValid(Connection connection);
 
     String createDateString(Date date);

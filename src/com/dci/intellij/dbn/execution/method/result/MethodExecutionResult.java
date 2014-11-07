@@ -32,6 +32,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     private Map<DBArgumentRef, ResultSetDataModel> cursorModels;
     private int executionDuration;
     private boolean debug;
+    private String logOutput;
 
     public MethodExecutionResult(MethodExecutionInput executionInput, boolean debug) {
         this.executionInput = executionInput;
@@ -145,6 +146,14 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
 
     public ResultSetDataModel getTableModel(DBArgument argument) {
         return cursorModels.get(argument.getRef());
+    }
+
+    public String getLogOutput() {
+        return logOutput;
+    }
+
+    public void setLogOutput(String logOutput) {
+        this.logOutput = logOutput;
     }
 
     /********************************************************

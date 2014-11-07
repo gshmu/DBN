@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -16,14 +24,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
     private DBMethodRef<DBMethod> methodRef;
@@ -31,6 +31,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     private Map<String, String> valuesMap = new HashMap<String, String>();
     private boolean usePoolConnection = true;
     private boolean commitAfterExecution = true;
+    private boolean enableLogging = true;
     private boolean isExecuting = false;
 
 
@@ -162,6 +163,14 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         this.commitAfterExecution = commitAfterExecution;
     }
 
+    public boolean isEnableLogging() {
+        return enableLogging;
+    }
+
+    public void setEnableLogging(boolean enableLogging) {
+        this.enableLogging = enableLogging;
+    }
+
     public Project getProject() {
         return getMethod().getProject();
     }
@@ -183,6 +192,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         executionSchema = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
         usePoolConnection = SettingsUtil.getBooleanAttribute(element, "use-pool-connection", true);
         commitAfterExecution = SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true);
+        enableLogging = SettingsUtil.getBooleanAttribute(element, "enable-logging", true);
         Element argumentsElement = element.getChild("argument-list");
         for (Object object : argumentsElement.getChildren()) {
             Element argumentElement = (Element) object;
@@ -197,6 +207,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         element.setAttribute("execution-schema", CommonUtil.nvl(executionSchema.getPath(), ""));
         SettingsUtil.setBooleanAttribute(element, "use-pool-connection", usePoolConnection);
         SettingsUtil.setBooleanAttribute(element, "commit-after-execution", commitAfterExecution);
+        SettingsUtil.setBooleanAttribute(element, "enable-logging", enableLogging);
 
         Element argumentsElement = new Element("argument-list");
         element.addContent(argumentsElement);
@@ -244,6 +255,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         executionInput.executionSchema = executionSchema;
         executionInput.usePoolConnection = usePoolConnection;
         executionInput.commitAfterExecution = commitAfterExecution;
+        executionInput.enableLogging = enableLogging;
         executionInput.valuesMap = new HashMap<String, String>(valuesMap);
         return executionInput;
     }
