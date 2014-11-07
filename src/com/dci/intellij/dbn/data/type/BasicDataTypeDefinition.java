@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.type;
 
+import org.jetbrains.annotations.Nullable;
+
 public class BasicDataTypeDefinition implements DataTypeDefinition {
     private GenericDataType genericDataType;
     private String name;
@@ -35,7 +37,7 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
         return name;
     }
 
-    public Object convert(Object object) {
+    public Object convert(@Nullable Object object) {
         return object;
     }
 }

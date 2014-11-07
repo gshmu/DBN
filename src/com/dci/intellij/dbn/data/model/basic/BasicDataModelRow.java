@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.openapi.project.Project;
 
 public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<T> {
     protected BasicDataModel model;
@@ -64,5 +65,9 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
             cells = null;
             model = null;
         }
+    }
+
+    public Project getProject() {
+        return model == null ? null : model.getProject();
     }
 }
