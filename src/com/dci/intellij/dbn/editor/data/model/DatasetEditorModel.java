@@ -318,7 +318,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         }
     }
 
-    public void postInsertRecord(boolean propagateError, boolean rebuild) throws SQLException {
+    public void postInsertRecord(boolean propagateError, boolean rebuild, boolean reset) throws SQLException {
         DatasetEditorTable editorTable = getEditorTable();
         if (editorTable != null) {
             DatasetEditorModelRow row = getInsertRow();
@@ -333,13 +333,16 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 if (rebuild) load(true, true);
             } catch (SQLException e) {
                 DatasetEditorError error = new DatasetEditorError(getConnectionHandler(), e);
-                row.notifyError(error, true, true);
-                try {
-                    resultSet.moveToInsertRow();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+                if (reset) {
+                    isInserting = false;
+                } else {
+                    row.notifyError(error, true, true);
+                    try {
+                        resultSet.moveToInsertRow();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
                 }
-
                 if (!error.isNotified() || propagateError) throw e;
             } finally {
             }
