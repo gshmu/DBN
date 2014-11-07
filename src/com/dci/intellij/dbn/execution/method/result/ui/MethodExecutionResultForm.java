@@ -10,6 +10,7 @@ import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -86,9 +87,14 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     public void rebuild() {
-        updateArgumentValueTables();
-        updateCursorArgumentsPanel();
-        updateStatusBarLabels();
+        new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                updateArgumentValueTables();
+                updateCursorArgumentsPanel();
+                updateStatusBarLabels();
+            }
+        }.start();
     }
 
     private void updateArgumentValueTables() {
@@ -110,12 +116,14 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             stringReader = new StringReader(logOutput);
         }
         LogConsoleBase outputConsole = new ExecutionLogOutputConsole(project, stringReader, "Output");
+        outputConsole.activate();
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
         outputTabInfo.setText(outputConsole.getTitle());
         outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
         cursorOutputTabs.addTab(outputTabInfo);
 
+        boolean isFirst = true;
         for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
             if (argumentValue.isCursor()) {
                 DBArgument argument = argumentValue.getArgument();
@@ -128,6 +136,10 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                 tabInfo.setIcon(argument.getIcon());
                 tabInfo.setObject(argument);
                 cursorOutputTabs.addTab(tabInfo);
+                if (isFirst) {
+                    cursorOutputTabs.select(tabInfo, false);
+                    isFirst = false;
+                }
             }
         }
 
