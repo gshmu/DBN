@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -109,8 +110,11 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             if (userValue instanceof String) {
                 editorComponent.setText((String) userValue);
             } else {
-                String stringValue = getFormatter().formatObject(userValue);
-                editorComponent.setText(stringValue);
+                Formatter formatter = getFormatter();
+                if (formatter != null) {
+                    String stringValue = formatter.formatObject(userValue);
+                    editorComponent.setText(stringValue);
+                }
             }
         } else {
             editorComponent.setText("");
@@ -135,7 +139,8 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             if (trim) textValue = textValue.trim();
             
             if (textValue.length() > 0) {
-                Object value = getFormatter().parseObject(clazz, textValue);
+                Formatter formatter = getFormatter();
+                Object value = formatter == null ? null : formatter.parseObject(clazz, textValue);
                 return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
             } else {
                 return null;
@@ -149,9 +154,10 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         return editorComponent.getText().trim();
     }
 
+    @Nullable
     private Formatter getFormatter() {
-        Project project = cell.getRow().getModel().getDataset().getProject();
-        return Formatter.getInstance(project);
+        Project project = cell.getProject();
+        return project == null ? null : Formatter.getInstance(project);
     }
 
     /********************************************************

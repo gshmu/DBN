@@ -26,7 +26,7 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public Project getProject() {
-        return row.getModel().getProject();
+        return row == null ? null : row.getProject();
     }
 
     public TextContentType getContentType() {

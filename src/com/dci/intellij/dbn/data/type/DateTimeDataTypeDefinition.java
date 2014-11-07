@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.type;
 
 import java.lang.reflect.Constructor;
 import java.util.Date;
+import org.jetbrains.annotations.Nullable;
 
 public class DateTimeDataTypeDefinition extends BasicDataTypeDefinition {
     private Constructor constructor;
@@ -16,19 +17,22 @@ public class DateTimeDataTypeDefinition extends BasicDataTypeDefinition {
     }
 
     @Override
-    public Object convert(Object object) {
-        assert object instanceof Date;
+    public Object convert(@Nullable Object object) {
+        if (object == null) {
+            return null;
+        } else {
+            assert object instanceof Date;
 
-        Date date = (Date) object;
-        if (object.getClass().equals(getTypeClass())) {
-            return object;
+            Date date = (Date) object;
+            if (object.getClass().equals(getTypeClass())) {
+                return object;
+            }
+            try {
+                return constructor.newInstance(date.getTime());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return object;
+            }            
         }
-        try {
-            return constructor.newInstance(date.getTime());
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return object;
-        }
-
     }
 }

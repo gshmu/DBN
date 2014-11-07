@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.type;
 
 import java.lang.reflect.Constructor;
+import org.jetbrains.annotations.Nullable;
 
 public class NumericDataTypeDefinition extends BasicDataTypeDefinition {
     private Constructor constructor;
@@ -15,18 +16,22 @@ public class NumericDataTypeDefinition extends BasicDataTypeDefinition {
     }
 
     @Override
-    public Object convert(Object object) {
-        assert object instanceof Number;
+    public Object convert(@Nullable Object object) {
+        if (object == null) {
+            return null;
+        } else {
+            assert object instanceof Number;
 
-        Number number = (Number) object;
-        if (object.getClass().equals(getTypeClass())) {
-            return object;
-        }
-        try {
-            return constructor.newInstance(number.toString());
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return object;
+            Number number = (Number) object;
+            if (object.getClass().equals(getTypeClass())) {
+                return object;
+            }
+            try {
+                return constructor.newInstance(number.toString());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                return object;
+            }
         }
     }
 }
