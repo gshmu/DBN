@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.common.output.ui.ExecutionLogOutputConsole;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
@@ -115,7 +116,18 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         if (StringUtil.isNotEmpty(logOutput)) {
             stringReader = new StringReader(logOutput);
         }
-        LogConsoleBase outputConsole = new ExecutionLogOutputConsole(project, stringReader, "Output");
+        String logConsoleName = "Output";
+        ConnectionHandler connectionHandler = getExecutionResult().getConnectionHandler();
+        if (connectionHandler != null) {
+            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            String databaseLogName = compatibilityInterface.getDatabaseLogName();
+            if (databaseLogName != null) {
+                logConsoleName = databaseLogName;
+            }
+        }
+
+
+        LogConsoleBase outputConsole = new ExecutionLogOutputConsole(project, stringReader, logConsoleName);
         outputConsole.activate();
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -24,6 +26,11 @@ public abstract class DatabaseCompatibilityInterface {
     public abstract boolean supportsFeature(DatabaseFeature feature);
 
     public abstract char getIdentifierQuotes();
+
+    @Nullable
+    public String getDatabaseLogName() {
+        return null;
+    }
 
     public abstract String getDefaultAlternativeStatementDelimiter();
 
