@@ -45,4 +45,9 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
     public String getExplainPlanStatementPrefix() {
         return "explain plan for ";
     }
+
+    @Override
+    public String getDatabaseLogName() {
+        return "DBMS Output";
+    }
 }

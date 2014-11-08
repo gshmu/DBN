@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -122,6 +123,10 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
 
         enableLoggingCheckBox.setSelected(executionInput.isEnableLogging());
         enableLoggingCheckBox.setVisible(compatibilityInterface.supportsFeature(DatabaseFeature.EXECUTION_LOGGING));
+        String databaseLogName = compatibilityInterface.getDatabaseLogName();
+        if (StringUtil.isNotEmpty(databaseLogName)) {
+            enableLoggingCheckBox.setText("Enable logging (" + databaseLogName + ")");
+        }
 
         Disposer.register(this, autoCommitLabel);
     }
