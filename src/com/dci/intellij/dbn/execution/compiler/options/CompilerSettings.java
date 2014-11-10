@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.execution.compiler.options;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.options.ui.CompilerSettingsForm;
-import org.jdom.Element;
 
 public class CompilerSettings extends Configuration<CompilerSettingsForm>{
     private CompileTypeOption compileTypeOption = CompileTypeOption.KEEP;
@@ -62,7 +63,7 @@ public class CompilerSettings extends Configuration<CompilerSettingsForm>{
 
     public void readConfiguration(Element element) {
         compileTypeOption = CompileTypeOption.get(SettingsUtil.getString(element, "compile-type", compileTypeOption.name()));
-        compileTypeOption = CompileTypeOption.get(SettingsUtil.getString(element, "compile-dependencies", compileDependenciesOption.name()));
+        compileDependenciesOption = CompileDependenciesOption.get(SettingsUtil.getString(element, "compile-dependencies", compileDependenciesOption.name()));
         alwaysShowCompilerControls = SettingsUtil.getBoolean(element, "always-show-controls", alwaysShowCompilerControls);
     }
 

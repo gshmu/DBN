@@ -5484,7 +5484,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="DATA_MANIPULATION, QUERY, SPECIFIC" description="MERGE statement" id="merge_statement">
+    <element-def attributes="DATA_MANIPULATION, SPECIFIC" description="MERGE statement" id="merge_statement">
         <token id="000003047" type-id="KW_MERGE" />
         <token id="000003048" type-id="KW_INTO" />
         <qualified-identifier id="000003049" separator="CHR_DOT">
