@@ -806,13 +806,13 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="package-functions" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select
                 OBJECT_NAME as FUNCTION_NAME,
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
@@ -831,7 +831,7 @@
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 POSITION = 0 and
@@ -847,13 +847,13 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="package-procedures" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select
                 OBJECT_NAME as PROCEDURE_NAME,
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
@@ -873,7 +873,7 @@
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 POSITION = 1 and
@@ -890,9 +890,9 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="package-types" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select distinct TYPE_SUBNAME as TYPE_NAME
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 TYPE_SUBNAME is not null and 
                 TYPE_OWNER = {0} and
@@ -902,11 +902,11 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="all-package-types" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select distinct
                 TYPE_NAME as PACKAGE_NAME,
                 TYPE_SUBNAME as TYPE_NAME
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 TYPE_SUBNAME is not null and
                 TYPE_OWNER = {0}
@@ -1013,7 +1013,7 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="program-type-attributes" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement  prefixes="DBA, ALL">
             select distinct
                 ARGUMENT_NAME as ATTRIBUTE_NAME,
                 POSITION,
@@ -1024,13 +1024,13 @@
                 DATA_PRECISION,
                 DATA_SCALE,
                 'N' as IS_SET
-            from ALL_ARGUMENTS aa1
+            from [PREFIX]_ARGUMENTS aa1
             where
                 ARGUMENT_NAME is not null and
                 DATA_LEVEL = 1 and
                 PACKAGE_NAME = (
                     select PACKAGE_NAME
-                    from ALL_ARGUMENTS
+                    from [PREFIX]_ARGUMENTS
                     where
                        TYPE_OWNER = {0} and
                        TYPE_NAME = {1} and
@@ -1040,7 +1040,7 @@
                 SEQUENCE
                      between(
                         select SEQUENCE
-                        from ALL_ARGUMENTS aa2
+                        from [PREFIX]_ARGUMENTS aa2
                         where
                             aa2.TYPE_OWNER = {0} and
                             aa2.TYPE_NAME = {1} and
@@ -1053,7 +1053,7 @@
                             nvl(aa2.OVERLOAD, 9999) = nvl(aa1.OVERLOAD, 9999) )
                      and nvl((
                         select min(SEQUENCE)
-                        from ALL_ARGUMENTS aa3
+                        from [PREFIX]_ARGUMENTS aa3
                         where
                             aa3.OWNER = aa1.OWNER and
                             aa3.PACKAGE_NAME = aa1.PACKAGE_NAME and
@@ -1063,7 +1063,7 @@
                             rownum = 1 and
                             SEQUENCE > (
                                 select SEQUENCE
-                                from ALL_ARGUMENTS aa4
+                                from [PREFIX]_ARGUMENTS aa4
                                 where
                                     aa4.TYPE_OWNER = {0} and
                                     aa4.TYPE_NAME = {1} and
@@ -1079,13 +1079,13 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="type-functions" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement  prefixes="DBA, ALL">
             select
                 OBJECT_NAME as FUNCTION_NAME,
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
@@ -1104,7 +1104,7 @@
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 POSITION = 0 and
@@ -1120,14 +1120,14 @@
     </statement-execution-processor>
 
     <statement-execution-processor id="type-procedures" is-query="true" is-prepared-statement="true">
-        <statement>
+        <statement prefixes="DBA, ALL">
             select
                 OBJECT_NAME as PROCEDURE_NAME,
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
             from
-                ALL_ARGUMENTS
+                [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
@@ -1147,7 +1147,7 @@
                 OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 POSITION = 1 and
@@ -1181,7 +1181,7 @@
                 DATA_PRECISION,
                 DATA_SCALE,
                 'N' as IS_SET
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 PACKAGE_NAME is null and
@@ -1213,7 +1213,7 @@
                 DATA_PRECISION,
                 DATA_SCALE,
                 'N' as IS_SET
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
@@ -1244,7 +1244,7 @@
                 DATA_PRECISION,
                 DATA_SCALE,
                 'N' as IS_SET
-            from ALL_ARGUMENTS
+            from [PREFIX]_ARGUMENTS
             where
                 OWNER = {0} and
                 DATA_LEVEL = 0
