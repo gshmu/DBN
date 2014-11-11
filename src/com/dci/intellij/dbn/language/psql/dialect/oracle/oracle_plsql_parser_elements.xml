@@ -3461,7 +3461,7 @@
                         <alias-ref id="000001725" type="COLUMN" />
                     </variant>
                     <variant>
-                        <object-ref id="000001726" local="true" type="ARGUMENT" />
+                        <object-ref id="000001726" type="ARGUMENT" />
                         <object-ref id="000001727" local="true" optional="true" type="ANY" />
                     </variant>
                     <variant>

@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.code.common.completion;
 
+import java.util.Collection;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.IdentifierLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.TokenChainLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
@@ -12,9 +15,6 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 public class CodeCompletionLookupConsumer implements LookupConsumer {
     private CodeCompletionContext context;
@@ -49,6 +49,9 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
                     lookupItemBuilder = new VariableLookupItemBuilder(chars, true);
                 } else if (identifierType == IdentifierType.ALIAS) {
                     lookupItemBuilder = new AliasLookupItemBuilder(chars, true);
+                } else if (identifierType == IdentifierType.OBJECT && identifierPsiElement.isDefinition()) {
+                    lookupItemBuilder = new IdentifierLookupItemBuilder(identifierPsiElement);
+
                 }
             }
         } else if (object instanceof String) {
