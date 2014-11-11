@@ -467,6 +467,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return DBContentType.CODE;
     }
 
+    public boolean isQuery() {
+        return false;
+    }
+
     /********************************************************
      *                    Disposable                        *
      ********************************************************/

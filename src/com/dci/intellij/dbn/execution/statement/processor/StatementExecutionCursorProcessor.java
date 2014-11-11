@@ -76,4 +76,9 @@ public class StatementExecutionCursorProcessor extends StatementExecutionBasicPr
         }
 
     }
+
+    @Override
+    public boolean isQuery() {
+         return true;
+    }
 }
