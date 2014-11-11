@@ -219,6 +219,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                                     if (referencedPsiElement instanceof DBObject) {
                                         DBObject object = (DBObject) referencedPsiElement;
                                         consumer.consume(object);
+                                    } else {
+                                        consumer.consume(identifierPsiElement);
                                     }
                                 }
                             }

@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.completion.BasicInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupItem;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 
 public class CodeCompletionLookupItem extends LookupItem {
@@ -64,5 +64,10 @@ public class CodeCompletionLookupItem extends LookupItem {
     @Override
     public int hashCode() {
         return getLookupString().hashCode();
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 }
