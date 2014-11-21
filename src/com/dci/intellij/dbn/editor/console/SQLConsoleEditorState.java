@@ -68,7 +68,7 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
                         textEditor.getEditor().getDocument().setText(content);
                         SQLConsoleEditorState.super.applyToEditor(textEditor);
                         DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
-                        if (currentSchema != null) {
+                        if (StringUtil.isNotEmpty(currentSchema)) {
                             file.setCurrentSchemaName(currentSchema);
                         }
                     }
