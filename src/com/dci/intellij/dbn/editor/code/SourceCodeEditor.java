@@ -30,10 +30,14 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
         Document document = this.textEditor.getEditor().getDocument();
         if (document.getTextLength() > 0) {
             offsets = sourceCodeFile.getOffsets();
-            int guardedBlockEndOffset = offsets.getGuardedBlockEndOffset();
-            if (guardedBlockEndOffset > 0) {
-                DocumentUtil.createGuardedBlock(document, 0, guardedBlockEndOffset, null
+            if (offsets == null) {
+                offsets = new SourceCodeOffsets();
+            } else {
+                int guardedBlockEndOffset = offsets.getGuardedBlockEndOffset();
+                if (guardedBlockEndOffset > 0) {
+                    DocumentUtil.createGuardedBlock(document, 0, guardedBlockEndOffset, null
                         /*"You are not allowed to change the name of the " + object.getTypeName()*/);
+                }
             }
         } else {
             offsets = new SourceCodeOffsets();
