@@ -1132,7 +1132,7 @@
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
                 POSITION = 1 and
-                SEQUENCE = 1
+                SEQUENCE IN (1, 0)
             order by
                 OBJECT_NAME,
                 OVERLOAD asc
@@ -1151,7 +1151,7 @@
             where
                 OWNER = {0} and
                 POSITION = 1 and
-                SEQUENCE = 1 and
+                SEQUENCE IN (1, 0) and
                 PACKAGE_NAME in (
                     select OBJECT_NAME
                     from [PREFIX]_OBJECTS
@@ -1183,6 +1183,7 @@
                 'N' as IS_SET
             from [PREFIX]_ARGUMENTS
             where
+                ARGUMENT_NAME is not null and
                 OWNER = {0} and
                 PACKAGE_NAME is null and
                 OBJECT_NAME = {1} and
@@ -1215,6 +1216,7 @@
                 'N' as IS_SET
             from [PREFIX]_ARGUMENTS
             where
+                ARGUMENT_NAME is not null and
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
                 OBJECT_NAME = {2} and
@@ -1246,6 +1248,7 @@
                 'N' as IS_SET
             from [PREFIX]_ARGUMENTS
             where
+                ARGUMENT_NAME is not null and
                 OWNER = {0} and
                 DATA_LEVEL = 0
             order by
