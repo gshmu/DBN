@@ -104,7 +104,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             if (schemaObject.equals(getObject())) {
                 if (isModified()) {
                     MessageUtil.showQuestionDialog(
-                            "Unsaved changes",
+                            getProject(), "Unsaved changes",
                             "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
                             "Do you want to discard the changes and reload the updated database version?",
                             new String[]{"Reload", "Keep changes"}, 0,
@@ -222,6 +222,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public boolean reloadFromDatabase() {
+        Project project = getProject();
         try {
             updateChangeTimestamp();
             originalContent = null;
@@ -244,11 +245,10 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             sourceLoadError = e.getMessage();
             DBSchemaObject object = mainDatabaseFile.getObject();
             if (object != null) {
-                MessageUtil.showErrorDialog("Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
+                MessageUtil.showErrorDialog(project, "Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
             }
             return false;
         } finally {
-            Project project = getProject();
             if (project != null && !project.isDisposed()) {
                 EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
             }

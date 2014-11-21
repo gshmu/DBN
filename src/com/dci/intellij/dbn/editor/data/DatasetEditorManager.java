@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.data;
 
+import java.awt.Component;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -32,15 +41,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.Component;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 
 @State(
     name = "DBNavigator.Project.DataEditorManager",
@@ -88,7 +88,7 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
             RecordViewerDialog dialog = new RecordViewerDialog(record);
             dialog.show();
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog("Could not load record details", e);
+            MessageUtil.showErrorDialog(getProject(), "Could not load record details", e);
         }
     }
 

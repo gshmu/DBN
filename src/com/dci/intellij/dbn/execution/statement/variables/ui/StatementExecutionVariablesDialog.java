@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
+import com.intellij.openapi.project.Project;
 
 public class StatementExecutionVariablesDialog extends DBNDialog {
     private StatementExecutionVariablesForm variablesForm;
@@ -53,15 +54,20 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
         public void actionPerformed(ActionEvent e) {
             variablesForm.saveValues();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
+            Project project = getProject();
             if (executionVariables.isIncomplete()) {
                 MessageUtil.showErrorDialog(
-                        "Statement execution", "You didn't specify values for all the variables. \n" +
-                                "Please enter values for all the listed variables and try again."
+                        project,
+                        "Statement execution",
+                        "You didn't specify values for all the variables. \n" +
+                            "Please enter values for all the listed variables and try again."
                 );
             } else if (executionVariables.hasErrors()) {
                 MessageUtil.showErrorDialog(
-                        "Statement execution", "You provided invalid/unsupported variable values. \n" +
-                        "Please correct your input and try again."
+                        project,
+                        "Statement execution",
+                        "You provided invalid/unsupported variable values. \n" +
+                            "Please correct your input and try again."
                 );
             } else {
                 doOKAction();

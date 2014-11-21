@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -10,6 +11,7 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 
 public class CursorResultFetchNextRecordsAction extends DumbAwareAction {
     private ResultSetTable<? extends ResultSetDataModel> table;
@@ -21,7 +23,7 @@ public class CursorResultFetchNextRecordsAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         try {
             ResultSetDataModel model = table.getModel();
             if (!model.isResultSetExhausted()) {
@@ -31,8 +33,9 @@ public class CursorResultFetchNextRecordsAction extends DumbAwareAction {
                 model.fetchNextRecords(fetchBlockSize, false);
             }
 
-        } catch (SQLException e) {
-            MessageUtil.showErrorDialog("Could not perform operation.", e);
+        } catch (SQLException ex) {
+            Project project = getEventProject(e);
+            MessageUtil.showErrorDialog(project, "Could not perform operation.", ex);
         }
 
     }

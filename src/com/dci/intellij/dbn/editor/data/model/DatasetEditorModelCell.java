@@ -1,6 +1,13 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -17,13 +24,6 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private Object originalUserValue;
@@ -50,7 +50,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 resultSet = isInsertRow ? row.getResultSet() : row.scrollResultSet();
             } catch (Exception e) {
                 e.printStackTrace();
-                MessageUtil.showErrorDialog("Could not update cell value for " + getColumnInfo().getName() + ".", e);
+                MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }
             boolean isValueAdapter = userValue instanceof ValueAdapter;

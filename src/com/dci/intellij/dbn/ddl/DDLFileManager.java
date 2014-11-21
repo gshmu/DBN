@@ -148,7 +148,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                         "Following file associations have been restored: \"" + restoredAssociations.toString() + "\". " +
                                 "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
                                 "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).";
-                MessageUtil.showWarningDialog(message, "Restored file extensions");
+                MessageUtil.showWarningDialog(getProject(), "Restored file extensions", message);
             }
         }    };
 

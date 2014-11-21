@@ -42,6 +42,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             SortableTable table,
             DataExportInstructions instructions,
             ConnectionHandler connectionHandler) {
+        final Project project = getProject();
         boolean isSelection = instructions.getScope() == DataExportInstructions.Scope.SELECTION;
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
         try {
@@ -49,7 +50,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             processor.export(exportModel, instructions, connectionHandler);
             DataExportInstructions.Destination destination = instructions.getDestination();
             if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                MessageUtil.showInfoDialog("Export info", "Content exported to clipboard.");
+                MessageUtil.showInfoDialog(project, "Export info", "Content exported to clipboard.");
 
             } else if (destination == DataExportInstructions.Destination.FILE) {
                 final File file = instructions.getFile();
@@ -58,6 +59,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                     //Icon icon = view.getSystemIcon(file);
 
                     MessageUtil.showInfoDialog(
+                            project,
                             "Export info",
                             "Content exported to file " + file.getPath(),
                             new String[]{"OK", "Open File"}, 0,
@@ -68,22 +70,24 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                         try {
                                             Desktop.getDesktop().open(file);
                                         } catch (IOException e) {
-                                            MessageUtil.showErrorDialog("Open file",
+                                            MessageUtil.showErrorDialog(
+                                                    project,
+                                                    "Open file",
                                                     "Could not open file " + file.getPath() + ".\n" +
-                                                    "The file type is most probably not associated with any program."
+                                                        "The file type is most probably not associated with any program."
                                             );
                                         }
                                     }
                                 }
                             });
                 } else {
-                    MessageUtil.showInfoDialog("Export info", "Content exported to file " + file.getPath());
+                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath());
                 }
             }
 
             return true;
         } catch (DataExportException e) {
-            MessageUtil.showErrorDialog("Error performing data export.", e);
+            MessageUtil.showErrorDialog(project, "Error performing data export.", e);
             return false;
         }
     }

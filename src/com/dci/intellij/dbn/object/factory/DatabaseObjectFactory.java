@@ -43,10 +43,11 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     private void notifyFactoryEvent(ObjectFactoryEvent event) {
         DBSchemaObject object = event.getObject();
         int eventType = event.getEventType();
+        Project project = getProject();
         if (eventType == ObjectFactoryEvent.EVENT_TYPE_CREATE) {
-            EventManager.notify(getProject(), ObjectFactoryListener.TOPIC).objectCreated(object);
+            EventManager.notify(project, ObjectFactoryListener.TOPIC).objectCreated(object);
         } else if (eventType == ObjectFactoryEvent.EVENT_TYPE_DROP) {
-            EventManager.notify(getProject(), ObjectFactoryListener.TOPIC).objectDropped(object);
+            EventManager.notify(project, ObjectFactoryListener.TOPIC).objectDropped(object);
         }
     }
 
@@ -57,7 +58,8 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             objectType == DBObjectType.PROCEDURE ? new ProcedureFactoryInputForm(schema, objectType, 0) : null;
 
         if (inputForm == null) {
-            MessageUtil.showErrorDialog("Operation not supported", "Creation of " + objectType.getListName() + " is not supported yet.");
+            Project project = getProject();
+            MessageUtil.showErrorDialog(project, "Operation not supported", "Creation of " + objectType.getListName() + " is not supported yet.");
         } else {
             ObjectFactoryInputDialog dialog = new ObjectFactoryInputDialog(inputForm);
             dialog.show();
@@ -65,6 +67,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     public boolean createObject(ObjectFactoryInput factoryInput) {
+        Project project = getProject();
         List<String> errors = new ArrayList<String>();
         factoryInput.validate(errors);
         if (errors.size() > 0) {
@@ -72,7 +75,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             for (String error : errors) {
                 buffer.append(" - ").append(error).append("\n");
             }
-            MessageUtil.showErrorDialog(buffer.toString());
+            MessageUtil.showErrorDialog(project, buffer.toString());
             return false;
         }
         if (factoryInput instanceof MethodFactoryInput) {
@@ -89,7 +92,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 DatabaseFileSystem.getInstance().openEditor(method, true);
                 notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
             } catch (SQLException e) {
-                MessageUtil.showErrorDialog("Could not create " + factoryInput.getObjectType().getName() + ".", e);
+                MessageUtil.showErrorDialog(project, "Could not create " + factoryInput.getObjectType().getName() + ".", e);
                 return false;
             }
         }
@@ -133,7 +136,8 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                                     notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
                                 } catch (SQLException e) {
                                     String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
-                                    MessageUtil.showErrorDialog(message, e);
+                                    Project project = getProject();
+                                    MessageUtil.showErrorDialog(project, message, e);
                                 } finally {
                                     connectionHandler.freePoolConnection(connection);
                                 }
@@ -147,7 +151,9 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         };
 
         MessageUtil.showQuestionDialog(
-                "Drop object", "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
+                getProject(),
+                "Drop object",
+                "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
                 MessageUtil.OPTIONS_YES_NO, 0, dropObjectAction);
     }
 

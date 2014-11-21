@@ -53,7 +53,7 @@ public class SaveToFileEditorAction extends DumbAwareAction {
                         FileEditorManager.getInstance(project).openFile(newVirtualFile, true);
                     }
                 } catch (IOException e1) {
-                    MessageUtil.showErrorDialog("Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1, "Error Saving To File");
+                    MessageUtil.showErrorDialog(project, "Error Saving To File", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);
                 }
             }
         }

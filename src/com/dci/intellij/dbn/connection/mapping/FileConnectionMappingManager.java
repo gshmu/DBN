@@ -316,7 +316,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                             "You can not execute statements against this connection. Please select a proper connection to continue.";
 
 
-                    MessageUtil.showWarningDialog(message, "No valid Connection", new String[]{"Select Connection", "Cancel"}, 0,
+                    MessageUtil.showWarningDialog(project, "No valid Connection", message, new String[]{"Select Connection", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
                                 public void execute() {
@@ -341,7 +341,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     String message =
                             "You did not select any schema to run the statement against.\n" +
                                     "To continue with the statement execution please select a schema.";
-                    MessageUtil.showWarningDialog(message, "No valid Schema", new String[]{"Select Schema", "Cancel"}, 0,
+                    MessageUtil.showWarningDialog(project, "No valid Schema", message, new String[]{"Select Schema", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
                                 public void execute() {

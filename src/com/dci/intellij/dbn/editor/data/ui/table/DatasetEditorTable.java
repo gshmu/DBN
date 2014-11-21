@@ -431,7 +431,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 try {
                     model.postInsertRecord(false, true, false);
                 } catch (SQLException e1) {
-                    MessageUtil.showErrorDialog("Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                    MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
                 }
             }
         }

@@ -39,7 +39,7 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
                             initProgressIndicator(progressIndicator, true);
                             StatementGeneratorResult result = generateStatement(project);
                             if (result.getMessages().hasErrors()) {
-                                MessageUtil.showErrorDialog(result.getMessages(), "Error generating statement");
+                                MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
                             } else {
                                 pasteStatement(result, project);
                             }
@@ -57,15 +57,15 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
                 Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
                 if (editor != null)
                     pasteToEditor(editor, result); else
-                    pasteToClipboard(result);
+                    pasteToClipboard(result, project);
             }
         }.start();
     }
 
-    private void pasteToClipboard(StatementGeneratorResult result) {
+    private void pasteToClipboard(StatementGeneratorResult result, Project project) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(result.getStatement()), null);
-        MessageUtil.showInfoDialog("Statement extracted", "SQL statement exported to clipboard.");
+        MessageUtil.showInfoDialog(project, "Statement extracted", "SQL statement exported to clipboard.");
     }
 
     private void pasteToEditor(final Editor editor, final StatementGeneratorResult generatorResult) {

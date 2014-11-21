@@ -57,10 +57,12 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
     private JPanel destinationPanel;
     private JPanel optionsPanel;
 
-    private DBObject sourceObject;
     private DataExportInstructions instructions;
+    private ConnectionHandler connectionHandler;
+    private DBObject sourceObject;
 
     public ExportDataForm(DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
+        this.connectionHandler = connectionHandler;
         this.sourceObject = sourceObject;
         this.instructions = instructions;
         updateBorderTitleForeground(scopePanel);
@@ -188,16 +190,17 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
             }
         }
 
+        Project project = connectionHandler.getProject();
         if (buffer.length() > 0) {
             buffer.insert(0, "Please provide values for: ");
-            MessageUtil.showErrorDialog("Required input", buffer.toString());
+            MessageUtil.showErrorDialog(project, "Required input", buffer.toString());
             return;
         }
 
         if (destinationFileRadioButton.isSelected()) {
             File file = getExportInstructions().getFile();
             if (file.exists()) {
-                MessageUtil.showQuestionDialog("File exists",
+                MessageUtil.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
                         MessageUtil.OPTIONS_YES_NO, 0,
                         new SimpleTask() {

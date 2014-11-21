@@ -73,7 +73,9 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
             Disposer.register(this, datasetEditorTable);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
-                    "Error opening data editor for " + dataset.getQualifiedNameWithType(), e, "Error");
+                    datasetEditor.getProject(),
+                    "Error",
+                    "Error opening data editor for " + dataset.getQualifiedNameWithType(), e);
         }
 
         if (dataset.isEditable(DBContentType.DATA)) {

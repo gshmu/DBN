@@ -284,7 +284,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 }
             } catch (SQLException e) {
                 if (dataset != null) {
-                    MessageUtil.showErrorDialog("Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
+                    MessageUtil.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
                 }
             }
         }
@@ -312,7 +312,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 }
             } catch (SQLException e) {
                 if (dataset != null) {
-                    MessageUtil.showErrorDialog("Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
+                    MessageUtil.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
                 }
             }
         }

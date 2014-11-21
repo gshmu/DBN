@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 
 public class ImportDataAction extends AbstractDataEditorAction {
 
@@ -12,11 +15,12 @@ public class ImportDataAction extends AbstractDataEditorAction {
         super("Import Data", Icons.DATA_IMPORT);
     }
 
-    public void actionPerformed(AnActionEvent e) {
-        MessageUtil.showInfoDialog("Not implemented", "Data import is not implemented yet.");
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = getEventProject(e);
+        MessageUtil.showInfoDialog(project, "Not implemented", "Data import is not implemented yet.");
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Import Data");
         DatasetEditor datasetEditor = getDatasetEditor(e);

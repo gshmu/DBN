@@ -81,7 +81,7 @@ public class ProjectSettingsDialog extends DBNDialog {
             projectSettings.disposeUIResources();
             super.doOKAction();
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(e.getMessage());
+            MessageUtil.showErrorDialog(getProject(), e.getMessage());
         }
 
     }
@@ -92,7 +92,7 @@ public class ProjectSettingsDialog extends DBNDialog {
             bApply.setEnabled(false);
             setCancelButtonText("Close");
         } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(e.getTitle(), e.getMessage());
+            MessageUtil.showErrorDialog(getProject(), e.getTitle(), e.getMessage());
         }
     }
 
