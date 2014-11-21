@@ -78,7 +78,7 @@ public class DBNativeDataType implements DynamicContentElement{
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
             Object object = resultSet.getObject(columnIndex);
-            LOGGER.error("Error resolving result set value for '" + object + "'. (generic data type " + genericDataType + ")", e);
+            LOGGER.error("Error resolving result set value for '" + object + "'. (data type definition " + dataTypeDefinition + ")", e);
             return object;
         }
     }

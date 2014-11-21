@@ -34,7 +34,7 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
 
     @Override
     public String toString() {
-        return name;
+        return "[NAME = " + name + ", GENERIC_TYPE = " + genericDataType + " TYPE_CLASS = " + typeClass + " SQL_TYPE = " + sqlType + "]";
     }
 
     public Object convert(@Nullable Object object) {
