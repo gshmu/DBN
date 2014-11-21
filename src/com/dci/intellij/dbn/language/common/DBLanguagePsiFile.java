@@ -177,7 +177,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     @Nullable
     public ConnectionHandler getActiveConnection() {
         VirtualFile file = getVirtualFile();
-        if (file != null) {
+        if (file != null && !getProject().isDisposed()) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
                 DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
                 return originalFile == null || originalFile == this ? activeConnection : originalFile.getActiveConnection();
