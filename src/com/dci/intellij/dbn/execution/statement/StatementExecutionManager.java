@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -86,9 +87,8 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 FileEditor[] fileEditors = fileEditorManager.getAllEditors(virtualFile);
                 for (FileEditor fileEditor : fileEditors) {
-                    if (fileEditor instanceof DDLFileEditor) {
-                        DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
-                        refreshEditorExecutionProcessors(ddlFileEditor);
+                    if (fileEditor instanceof DDLFileEditor || fileEditor instanceof SQLConsoleEditor) {
+                        refreshEditorExecutionProcessors(fileEditor);
                     }
                 }
             }
