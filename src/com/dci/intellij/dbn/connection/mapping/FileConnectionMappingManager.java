@@ -321,7 +321,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                 @Override
                                 public void execute() {
                                     if (getOption() == 0) {
-                                        promptConnectionSelector(file, true, true,
+                                        promptConnectionSelector(file, false, true,
                                                 new SimpleTask() {
                                                     @Override
                                                     public void execute() {

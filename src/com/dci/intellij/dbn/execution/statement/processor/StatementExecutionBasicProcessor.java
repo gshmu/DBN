@@ -226,7 +226,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         Project project = getProject();
         if (continueExecution) {
             try {
-                if (!activeConnection.isDisposed()) {
+                if (activeConnection != null && !activeConnection.isDisposed()) {
                     Connection connection = activeConnection.getStandaloneConnection(currentSchema);
                     Statement statement = connection.createStatement();
 

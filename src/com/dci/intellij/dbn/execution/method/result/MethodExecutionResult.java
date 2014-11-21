@@ -88,6 +88,10 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return resultPanel;
     }
 
+    public MethodExecutionResultForm getResultPanelNoCreate() {
+        return resultPanel;
+    }
+
     public String getResultName() {
         return getMethod().getName();
     }
