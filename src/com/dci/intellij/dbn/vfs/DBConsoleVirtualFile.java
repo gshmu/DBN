@@ -41,7 +41,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
         this.connectionHandlerRef = connectionHandler.getRef();
-        this.currentSchemaRef = DBObjectRef.from(connectionHandler.getUserSchema());
+        setCurrentSchemaName(connectionHandler.getUserName());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
