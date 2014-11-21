@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+             <ul>
+                - Execution logging - Oracle DBMS_OUTPUT (work in progress)<br>
+                - Improved code completion support for local objects<br>
+                - Minor bug fixes and improvements<br>
+            </ul>
             <li><b>3.0.3501</b>
              <ul>
                 - Parser improvements and optimizations<br>
