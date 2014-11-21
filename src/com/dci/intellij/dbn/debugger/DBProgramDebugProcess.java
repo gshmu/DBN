@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -45,11 +51,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
 
 public class DBProgramDebugProcess extends XDebugProcess {
     private Connection targetConnection;
@@ -92,6 +93,11 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandler;
+    }
+
+    @Nullable
+    public Project getProject() {
+        return connectionHandler == null ? null : connectionHandler.getProject();
     }
 
     @NotNull
@@ -158,14 +164,14 @@ public class DBProgramDebugProcess extends XDebugProcess {
                 } catch (SQLException e) {
                     // typically a timeout
                     getSession().stop();
-                    MessageUtil.showErrorDialog("Could not initialize debug environment on connection \"" + connectionHandler.getName() + "\". ", e);
+                    MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + connectionHandler.getName() + "\". ", e);
                 }
             }
         }.start();
     }
 
     private void executeMethod() {
-        new DebugOperationThread("execute method") {
+        new DebugOperationThread("execute method", getProject()) {
             public void executeOperation() throws SQLException {
                 XDebugSession session = getSession();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(session.getProject());
@@ -306,7 +312,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void startStepOver() {
-        new DebugOperationThread("step over") {
+        new DebugOperationThread("step over", getProject()) {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepOver(debugConnection);
@@ -317,7 +323,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void startStepInto() {
-        new DebugOperationThread("step into") {
+        new DebugOperationThread("step into", getProject()) {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepInto(debugConnection);
@@ -328,7 +334,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void startStepOut() {
-        new DebugOperationThread("step out") {
+        new DebugOperationThread("step out", getProject()) {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.stepOut(debugConnection);
@@ -339,7 +345,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void resume() {
-        new DebugOperationThread("resume execution") {
+        new DebugOperationThread("resume execution", getProject()) {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.resumeExecution(debugConnection);
@@ -350,7 +356,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void runToPosition(@NotNull final XSourcePosition position) {
-        new DebugOperationThread("run to position") {
+        new DebugOperationThread("run to position", getProject()) {
             public void executeOperation() throws SQLException {
                 DBSchemaObject object = DBProgramDebugUtil.getObject(position);
                 if (object != null) {
@@ -371,7 +377,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
     @Override
     public void startPausing() {
         // NOT SUPPORTED!!!
-        new DebugOperationThread("run to position") {
+        new DebugOperationThread("run to position", getProject()) {
             public void executeOperation() throws SQLException {
                 DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                 runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
@@ -381,7 +387,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     private void showErrorDialog(SQLException e) {
-        MessageUtil.showErrorDialog("Could not perform operation.", e);
+        MessageUtil.showErrorDialog(getProject(), "Could not perform operation.", e);
     }
 
     private void suspendSession() {
@@ -487,8 +493,9 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     abstract class DebugOperationThread extends Thread {
+        private Project project;
         private String operationName;
-        protected DebugOperationThread(String operationName) {
+        protected DebugOperationThread(String operationName, Project project) {
             super(Constants.DBN_TITLE_PREFIX + "Debug (" + operationName + ")");
             this.operationName = operationName;
         }
@@ -498,7 +505,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
             try {
                 executeOperation();
             } catch (final SQLException e) {
-                MessageUtil.showErrorDialog("Could not perform debug operation (" + operationName + ").", e);
+                MessageUtil.showErrorDialog(project, "Could not perform debug operation (" + operationName + ").", e);
             }
         }
         public abstract void executeOperation() throws SQLException;

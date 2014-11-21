@@ -108,7 +108,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
             MessageUtil.showQuestionDialog(
-                    "Default Project Settings",
+                    project, "Default Project Settings",
                     "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
                     new String[]{"Yes", "No"}, 0,
                     new SimpleTask() {

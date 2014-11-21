@@ -46,7 +46,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
 
                                     } catch (SQLException e1) {
                                         MessageUtil.showErrorDialog(
-                                                "Could not load sourcecode for " +
+                                                project, "Could not load sourcecode for " +
                                                         object.getQualifiedNameWithType() + " from database.", e1);
                                     }
                                 }

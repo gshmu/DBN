@@ -79,6 +79,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         new ConnectionAction(executionInput) {
             @Override
             public void execute() {
+                Project project = getProject();
                 ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
                 if (connectionHandler.isValid(true)) {
                     DBMethod method = executionInput.getMethod();
@@ -86,7 +87,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         String message =
                                 "Can not execute method " +
                                         executionInput.getMethodRef().getPath() + ".\nMethod not found!";
-                        MessageUtil.showErrorDialog(message);
+                        MessageUtil.showErrorDialog(project, message);
                     } else {
                         MethodExecutionDialog executionDialog = new MethodExecutionDialog(executionInput, debug);
                         executionDialog.show();
@@ -98,7 +99,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                             "Can not execute method " + executionInput.getMethodRef().getPath() + ".\n" +
                                     "No connectivity to '" + connectionHandler.getQualifiedName() + "'. " +
                                     "Please check your connection settings and try again.";
-                    MessageUtil.showErrorDialog(message);
+                    MessageUtil.showErrorDialog(project, message);
                 }
             }
         }.start();
@@ -138,7 +139,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         final DBMethod method = executionInput.getMethod();
         if (method == null) {
             DBMethodRef methodRef = executionInput.getMethodRef();
-            MessageUtil.showErrorDialog("Could not resolve " + methodRef.getMethodObjectType().getName() + " \"" + methodRef.getSchemaName() + "." + methodRef.getQualifiedMethodName() + "\".");
+            MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getMethodObjectType().getName() + " \"" + methodRef.getSchemaName() + "." + methodRef.getQualifiedMethodName() + "\".");
         } else {
             final Project project = method.getProject();
             DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
@@ -166,7 +167,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         if (!executionInput.isExecutionCancelled()) {
                             new SimpleLaterInvocator() {
                                 public void execute() {
-                                    MessageUtil.showErrorDialog("Could not execute " + method.getTypeName() + ".", e);
+                                    MessageUtil.showErrorDialog(project, "Could not execute " + method.getTypeName() + ".", e);
                                     if (promptExecutionDialog(executionInput, false)) {
                                         MethodExecutionManager.this.execute(executionInput);
                                     }
@@ -200,7 +201,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                 if (!executionInput.isExecutionCancelled()) {
                     new SimpleLaterInvocator() {
                         public void execute() {
-                            MessageUtil.showErrorDialog("Could not execute " + method.getTypeName() + ".", e);
+                            MessageUtil.showErrorDialog(getProject(), "Could not execute " + method.getTypeName() + ".", e);
                         }
                     }.start();
                 }

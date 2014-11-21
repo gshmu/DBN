@@ -90,7 +90,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 @Override
                 public void execute() {
                     object.getStatus().set(DBObjectStatus.SAVING, true);
-                    Project project = virtualFile.getProject();
+                    final Project project = virtualFile.getProject();
                     final DBContentType contentType = virtualFile.getContentType();
 
                     new BackgroundTask(project, "Checking for third party changes on " + object.getQualifiedNameWithType(), false) {
@@ -107,7 +107,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                             String message =
                                                     "The " + object.getQualifiedNameWithType() +
                                                             " has been changed by another user. \nYou will be prompted to merge the changes";
-                                            MessageUtil.showErrorDialog("Version conflict", message);
+                                            MessageUtil.showErrorDialog(project, "Version conflict", message);
 
                                             String databaseContent = loadSourceCodeFromDatabase(object, contentType);
                                             showSourceDiffDialog(databaseContent, virtualFile, fileEditor);
@@ -119,14 +119,14 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                     } else {
                                         String message = "You are not allowed to change the name or the type of the object";
                                         object.getStatus().set(DBObjectStatus.SAVING, false);
-                                        MessageUtil.showErrorDialog("Illegal action", message);
+                                        MessageUtil.showErrorDialog(project, "Illegal action", message);
                                     }
                                 }
                             } catch (SQLException ex) {
                                 if (!DatabaseCompatibilityInterface.getInstance(object).supportsFeature(DatabaseFeature.OBJECT_REPLACING)) {
                                     virtualFile.updateChangeTimestamp();
                                 }
-                                MessageUtil.showErrorDialog("Could not save changes to database.", ex);
+                                MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
                                 object.getStatus().set(DBObjectStatus.SAVING, false);
                             }
                         }
@@ -232,6 +232,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", false) {
             @Override
             public void execute(@NotNull ProgressIndicator indicator) {
+                Project project = getProject();
                 try {
                     Editor editor = EditorUtil.getEditor(fileEditor);
                     if (editor != null) {
@@ -246,7 +247,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         }
 
                         if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
-                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
+                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                             DBContentType contentType = virtualFile.getContentType();
                             CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
                             compilerManager.createCompilerResult(object, compilerAction);
@@ -254,7 +255,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         object.reload();
                     }
                 } catch (SQLException e) {
-                    MessageUtil.showErrorDialog("Could not save changes to database.", e);
+                    MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
                 } finally {
                      object.getStatus().set(DBObjectStatus.SAVING, false);
                 }

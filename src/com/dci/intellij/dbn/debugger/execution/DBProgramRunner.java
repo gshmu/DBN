@@ -114,8 +114,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                 }
 
                 MessageUtil.showWarningDialog(
-                        buffer.toString(),
-                        "Insufficient privileges",
+                        project, "Insufficient privileges", buffer.toString(),
                         new String[]{"Continue anyway", "Cancel"}, 0,
                         new SimpleTask() {
                             @Override

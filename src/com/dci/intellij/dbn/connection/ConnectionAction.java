@@ -40,6 +40,7 @@ public abstract class ConnectionAction extends SimpleTask {
                 execute();
             } else {
                 MessageUtil.showInfoDialog(
+                        connectionHandler.getProject(),
                         "Not Connected to Database",
                         "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
                                 "If you want to continue with this operation, you need to connect.",

@@ -26,7 +26,9 @@ public class FileListCellRenderer extends ColoredListCellRenderer {
             append(virtualFile.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         } else {
             VirtualFile contentRoot = getModuleContentRoot(module, virtualFile);
-            String relativePath = virtualFile.getPath().substring(contentRoot.getParent().getPath().length());
+            VirtualFile parent = contentRoot.getParent();
+            int relativePathIndex = parent == null ? 0 : parent.getPath().length();
+            String relativePath = virtualFile.getPath().substring(relativePathIndex);
             append("[" + module.getName() + "]", SimpleTextAttributes.REGULAR_ATTRIBUTES);
             append(relativePath, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
@@ -41,7 +43,7 @@ public class FileListCellRenderer extends ColoredListCellRenderer {
         while (virtualFile != null) {
             virtualFile = virtualFile.getParent();
             for (VirtualFile contentRoot : contentRoots) {
-                if (contentRoot == virtualFile) {
+                if (contentRoot.equals(virtualFile)) {
                     return contentRoot;
                 }
             }

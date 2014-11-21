@@ -75,11 +75,12 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
     }
 
     public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
+        final Project project = getProject();
         SimpleTask deleteTask = new SimpleTask() {
             @Override
             public void execute() {
                 if (getOption() == 0) {
-                    FileEditorManager.getInstance(getProject()).closeFile(consoleFile);
+                    FileEditorManager.getInstance(project).closeFile(consoleFile);
                     ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
                     String fileName = consoleFile.getName();
                     connectionHandler.getConsoleBundle().removeConsole(fileName);
@@ -88,6 +89,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
             }
         };
         MessageUtil.showQuestionDialog(
+                project,
                 "Delete Console",
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",

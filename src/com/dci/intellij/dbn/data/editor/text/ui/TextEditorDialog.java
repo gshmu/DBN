@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -7,12 +13,6 @@ import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.sql.SQLException;
 
 public class TextEditorDialog extends DBNDialog implements DocumentListener {
     private TextEditorForm mainForm;
@@ -41,7 +41,7 @@ public class TextEditorDialog extends DBNDialog implements DocumentListener {
             TextEditorDialog dialog = new TextEditorDialog(project, textEditorAdapter);
             dialog.show();
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog("Could not load LOB content from database.", e);
+            MessageUtil.showErrorDialog(project, "Could not load LOB content from database.", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class TextEditorDialog extends DBNDialog implements DocumentListener {
         try {
             mainForm.writeUserValue();
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog("Could not write LOB content to database.", e);
+            MessageUtil.showErrorDialog(getProject(), "Could not write LOB content to database.", e);
         }
     }
 

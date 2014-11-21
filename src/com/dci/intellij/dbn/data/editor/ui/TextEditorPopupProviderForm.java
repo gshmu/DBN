@@ -14,6 +14,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -84,7 +85,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
                 try {
                     text = largeObjectValue.read();
                 } catch (SQLException e) {
-                    MessageUtil.showErrorDialog(e.getMessage(), e);
+                    MessageUtil.showErrorDialog(getProject(), e.getMessage(), e);
                     return null;
                 }
             }
@@ -144,7 +145,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             String text = editorTextArea.getText().trim();
             UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
             userValueHolder.updateUserValue(text, false);
@@ -159,7 +160,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
 
         @Override
-        public void update(AnActionEvent anActionEvent) {
+        public void update(@NotNull AnActionEvent e) {
             getTemplatePresentation().setEnabled(changed);
         }
     }

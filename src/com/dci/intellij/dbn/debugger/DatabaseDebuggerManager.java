@@ -73,7 +73,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
     public boolean checkForbiddenOperation(ConnectionHandler connectionHandler, String message) {
         if (activeDebugSessions.contains(connectionHandler)) {
-            MessageUtil.showErrorDialog(message == null ? "Operation not supported during active debug session." : message);
+            MessageUtil.showErrorDialog(getProject(), message == null ? "Operation not supported during active debug session." : message);
             return false;
         }
         return true;
@@ -131,13 +131,15 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         runManager.setSelectedConfiguration(runConfigurationSetting);
         ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBProgramRunner.RUNNER_ID);
-        try {
-            ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(DefaultDebugExecutor.getDebugExecutorInstance(), programRunner, runConfigurationSetting, getProject());
-            programRunner.execute(executionEnvironment);
-        } catch (ExecutionException e) {
-            MessageUtil.showErrorDialog(
-                    "Could not start debugger for " + method.getQualifiedName() + ". \n" +
-                            "Reason: " + e.getMessage());
+        if (programRunner != null) {
+            try {
+                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(DefaultDebugExecutor.getDebugExecutorInstance(), programRunner, runConfigurationSetting, getProject());
+                programRunner.execute(executionEnvironment);
+            } catch (ExecutionException e) {
+                MessageUtil.showErrorDialog(
+                        getProject(), "Could not start debugger for " + method.getQualifiedName() + ". \n" +
+                                "Reason: " + e.getMessage());
+            }
         }
     }
 

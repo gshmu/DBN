@@ -583,7 +583,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                             schema.refreshObjectsStatus();
                         }
                     } catch (SQLException e) {
-                        MessageUtil.showErrorDialog("Could not refresh dependencies", e, "Object Dependencies Refresh");
+                        MessageUtil.showErrorDialog(getProject(), "Object Dependencies Refresh", "Could not refresh dependencies", e);
                     }
                 }
 

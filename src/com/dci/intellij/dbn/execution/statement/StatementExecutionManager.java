@@ -252,7 +252,9 @@ public class StatementExecutionManager extends AbstractProjectComponent {
                 executeStatement(executionProcessor);
             } else {
                 MessageUtil.showQuestionDialog(
-                        "Multiple Statement Execution", "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
+                        getProject(),
+                        "Multiple Statement Execution",
+                        "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
                         OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
                             @Override
                             public void execute() {

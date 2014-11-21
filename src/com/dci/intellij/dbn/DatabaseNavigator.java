@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -8,11 +7,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -77,46 +72,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
             }
         }
         return false;
-    }
-
-    private void resolvePluginConflict() {
-        if (showPluginConflictDialog && sqlPluginActive()) {
-            showPluginConflictDialog = false;
-            new SimpleLaterInvocator() {
-                public void execute() {
-                    final List<String> disabledList = PluginManager.getDisabledPlugins();
-                    String message =
-                        "Database Navigator plugin (DBN) is not compatible with the IntelliJ IDEA built-in SQL functionality. " +
-                        "They both provide similar features but present quite different use-cases.\n" +
-                        "In order to have access to the full functionality of Database Navigator plugin and avoid usage confusions, we strongly advise you disable the IDEA SQL plugin. \n" +
-                        "You can enable it at any time from your plugin manager.\n\n" +
-                        "For more details about the plugin conflict, please visit the Database Navigator support page.\n" +
-                        "Note: IDEA will need to restart if you choose to make changes in the plugin configuration.\n\n" +
-                        "Please pick an option to proceed.";
-                    String title = Constants.DBN_TITLE_PREFIX + "Plugin Conflict";
-                    String[] options = {
-                            "Disable IDEA SQL plugin (restart)",
-                            "Disable DBN plugin (restart)",
-                            "Ignore and continue (not recommended)"};
-                    MessageUtil.showWarningDialog(message, title, options, 0, new SimpleTask() {
-                        @Override
-                        public void execute() {
-                            int option = getOption();
-                            if (option == 0 || option == 1) {
-                                try {
-                                    disabledList.add(option == 1 ? DBN_PLUGIN_ID : SQL_PLUGIN_ID);
-                                    PluginManager.saveDisabledPlugins(disabledList, false);
-                                    ApplicationManager.getApplication().restart();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-                    });
-                }
-            }.start();
-        }
     }
 
     public static DatabaseNavigator getInstance() {

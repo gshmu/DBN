@@ -32,6 +32,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -98,12 +99,13 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
         List<String> stringValues = new ArrayList<String>();
         UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
+        Project project = getProject();
         try {
             Object userValue = userValueHolder.getUserValue();
             ArrayValue array = (ArrayValue) userValue;
             stringValues.addAll(array.read());
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog(e.getMessage(), e);
+            MessageUtil.showErrorDialog(project, e.getMessage(), e);
             return null;
         }
         list.setStringValues(stringValues);
@@ -122,7 +124,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, list);
         popupBuilder.setRequestFocus(true);
         popupBuilder.setResizable(true);
-        popupBuilder.setDimensionServiceKey(getProject(), "ArrayEditor." + userValueHolder.getName(), false);
+        popupBuilder.setDimensionServiceKey(project, "ArrayEditor." + userValueHolder.getName(), false);
         return popupBuilder.createPopup();
     }
 

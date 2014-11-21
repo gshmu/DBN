@@ -321,7 +321,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                         "The operation was timed out. Please check your timeout configuration in Data Editor settings." :
                                                         "Database error message: " + e.getMessage());
 
-                                MessageUtil.showErrorDialog(message);
+                                MessageUtil.showErrorDialog(project, message);
                             }
                         } else {
                             String message =
@@ -332,7 +332,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                                             "Database error message: " + e.getMessage());
                             String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
-                            MessageUtil.showErrorDialog(message, "Error", options, 0, new SimpleTask() {
+                            MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
                                 @Override
                                 public void execute() {
                                     int option = getOption();
@@ -359,7 +359,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                         String message =
                                 "Error loading data for " + datasetName + ". Could not connect to database.\n" +
                                 "Database error message: " + e.getMessage();
-                        MessageUtil.showErrorDialog(message);
+                        MessageUtil.showErrorDialog(project, message);
                     }
                 }
 
@@ -523,7 +523,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                             try {
                                 model.postInsertRecord(true, false, true);
                             } catch (SQLException e1) {
-                                MessageUtil.showErrorDialog("Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                                MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
                                 model.cancelInsert(true);
                             }
                         }

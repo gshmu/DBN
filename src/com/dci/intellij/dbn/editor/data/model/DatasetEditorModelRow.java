@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -10,10 +14,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> {
     private int resultSetRowIndex;
@@ -75,7 +75,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
             isModified = false;
             isNew = false;
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog("Could not delete row at index " + getIndex() + ".", e);
+            MessageUtil.showErrorDialog(getProject(), "Could not delete row at index " + getIndex() + ".", e);
         }
     }
 

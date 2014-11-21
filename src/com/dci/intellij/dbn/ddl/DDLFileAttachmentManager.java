@@ -231,7 +231,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                             databaseFile.updateDDLFiles();
                             DatabaseFileSystem.getInstance().reopenEditor(object);
                         } catch (IOException e) {
-                            MessageUtil.showErrorDialog("Could not create file " + parentDirectory + File.separator + fileName + ".", e);
+                            MessageUtil.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
                         }
                     }
                 }.start();
@@ -261,7 +261,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             }
 
             String[] options = {"OK", "Create new..."};
-            MessageUtil.showInfoDialog("No DDL Files found", message.toString(), options, 0,
+            MessageUtil.showInfoDialog(getProject(),
+                    "No DDL Files found",
+                    message.toString(), options, 0,
                     new SimpleTask() {
                         @Override
                         public void execute() {

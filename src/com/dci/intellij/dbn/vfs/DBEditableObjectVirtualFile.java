@@ -90,7 +90,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                             return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                         } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
                             MessageUtil.showQuestionDialog(
-                                    "No DDL file found",
+                                    project, "No DDL file found",
                                     "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                     "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
                                     new SimpleTask() {
