@@ -2,10 +2,11 @@ package com.dci.intellij.dbn.execution.logging;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
