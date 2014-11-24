@@ -361,6 +361,10 @@
             <separator/>
             <action id="DBNavigator.Actions.ExplainPlanResult.Settings" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultSettingsAction" text="Explain Plan - Settings"/>
         </group>
+        <group id="DBNavigator.ActionGroup.DatabaseLogOutput">
+            <action id="DBNavigator.Actions.DatabaseLogOutput.Close" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputCloseAction" text="Database Log Output - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.DatabaseLogOutput.Settings" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputSettingsAction" text="Database Log Output - Settings"/>
+        </group>
         <group id="DBNavigator.ActionGroup.Browser.ObjectProperties" text="Browser object properties">
             <action id="DBNavigator.Actions.Browser.HideObjectProperties" class="com.dci.intellij.dbn.browser.action.HideObjectPropertiesAction" text="Hide properties"/>
         </group>

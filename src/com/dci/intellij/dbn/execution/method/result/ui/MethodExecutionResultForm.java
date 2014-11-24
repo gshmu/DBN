@@ -116,7 +116,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                 logConsoleName = databaseLogName;
             }
 
-            DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName);
+            DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
             outputConsole.writeToConsole(logOutput);
 
             TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());

@@ -28,7 +28,7 @@
             <sequence id="000000007">
                 <token id="000000008" type-id="KW_FROM" />
                 <element ref-id="table_identifier_with_alias" />
-                <one-of id="000000009">
+                <one-of id="000000009" optional="true">
                     <sequence id="000000010">
                         <element optional="true" ref-id="where_clause" />
                         <element optional="true" ref-id="order_by_clause" />
@@ -384,7 +384,7 @@
         <element ref-id="subquery" />
         <element ref-id="end" />
     </element-def>
-    <element-def attributes="EXECUTABLE, DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
+    <element-def attributes="DATA_MANIPULATION, QUERY" description="Subquery" id="subquery" virtual-object="DATASET">
         <token id="000000189" type-id="KW_SELECT" />
         <one-of id="000000190" optional="true">
             <token id="000000191" type-id="KW_ALL" />
