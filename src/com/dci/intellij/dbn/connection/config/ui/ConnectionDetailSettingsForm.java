@@ -50,6 +50,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JTextField alternativeStatementDelimiterTextField;
     private JCheckBox autoConnectCheckBox;
     private JPanel autoConnectHintPanel;
+    private JCheckBox databaseLoggingCheckBox;
 
     private PropertiesEditorForm propertiesEditorForm;
 
@@ -153,6 +154,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         Charset newCharset = (Charset) encodingComboBox.getSelectedItem();
         boolean newAutoCommit = autoCommitCheckBox.isSelected();
         boolean newDdlFileBinding = ddlFileBindingCheckBox.isSelected();
+        boolean newDatabaseLogging = databaseLoggingCheckBox.isSelected();
         EnvironmentType newEnvironmentType = (EnvironmentType) environmentTypesComboBox.getSelectedItem();
         final String newEnvironmentTypeId = newEnvironmentType.getId();
 
@@ -160,7 +162,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
                 !configuration.getProperties().equals(newProperties) ||
                 !configuration.getCharset().equals(newCharset) ||
                 configuration.isEnableAutoCommit() != newAutoCommit ||
-                configuration.isEnableDdlFileBinding() != newDdlFileBinding;
+                configuration.isEnableDdlFileBinding() != newDdlFileBinding ||
+                configuration.isEnableDatabaseLogging() != newDatabaseLogging;
 
         final boolean environmentChanged =
                 !configuration.getEnvironmentType().getId().equals(newEnvironmentTypeId);
@@ -172,6 +175,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnableAutoCommit(newAutoCommit);
         configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
         configuration.setEnableDdlFileBinding(newDdlFileBinding);
+        configuration.setEnableDatabaseLogging(newDatabaseLogging);
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle Time to Disconnect (minutes)", 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max Connection Pool Size", 3, 20, "");
@@ -202,6 +206,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         propertiesEditorForm.setProperties(configuration.getProperties());
         autoCommitCheckBox.setSelected(configuration.isEnableAutoCommit());
         ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
+        databaseLoggingCheckBox.setSelected(configuration.isEnableDatabaseLogging());
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
         environmentTypesComboBox.setSelectedItem(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
