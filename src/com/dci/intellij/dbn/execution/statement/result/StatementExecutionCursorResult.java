@@ -38,7 +38,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         dataModel = new ResultSetDataModel(resultSet, executionProcessor.getConnectionHandler(), fetchBlockSize);
         resultPanel = new StatementExecutionResultForm(this);
         resultPanel.updateVisibleComponents();
-        resultPanel.getResultTable().setName(getResultName());
+        resultPanel.getResultTable().setName(getName());
 
         Disposer.register(this, dataModel);
     }
@@ -92,7 +92,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         resultPanel.updateVisibleComponents();
     }
 
-    public StatementExecutionResultForm getResultPanel() {
+    public StatementExecutionResultForm getForm() {
         return resultPanel;
     }
 

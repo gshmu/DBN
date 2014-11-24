@@ -50,8 +50,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
             @Override
             protected RecordViewInfo run() {
                 return new RecordViewInfo(
-                                executionResult.getResultName(),
-                                executionResult.getResultIcon());
+                                executionResult.getName(),
+                                executionResult.getIcon());
             }
         }.start();
 

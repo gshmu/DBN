@@ -77,7 +77,6 @@ public class ExplainPlanResult implements ExecutionResult {
         return root;
     }
 
-    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
@@ -100,7 +99,7 @@ public class ExplainPlanResult implements ExecutionResult {
     }
 
     @Override
-    public ExplainPlanResultForm getResultPanel() {
+    public ExplainPlanResultForm getForm() {
         if (resultForm == null) {
             resultForm = new ExplainPlanResultForm(this);
         }
@@ -108,12 +107,12 @@ public class ExplainPlanResult implements ExecutionResult {
     }
 
     @Override
-    public String getResultName() {
+    public String getName() {
         return resultName;
     }
 
     @Override
-    public Icon getResultIcon() {
+    public Icon getIcon() {
         return Icons.EXPLAIN_PLAN_RESULT;
     }
 
@@ -124,9 +123,6 @@ public class ExplainPlanResult implements ExecutionResult {
     public String getErrorMessage() {
         return errorMessage;
     }
-
-    @Override public void setExecutionDuration(int executionDuration) {}
-    @Override public int getExecutionDuration() { return 0; }
 
     /********************************************************
      *                    Data Provider                     *

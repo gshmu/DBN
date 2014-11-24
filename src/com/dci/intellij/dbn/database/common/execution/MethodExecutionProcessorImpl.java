@@ -13,10 +13,9 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -76,7 +75,9 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         DatabaseMetadataInterface metadataInterface = null;
         ConnectionHandler connectionHandler = null;
         boolean usePoolConnection = false;
-        boolean useLogging = executionInput.isEnableLogging();
+        boolean loggingEnabled = executionInput.isEnableLogging();
+        Project project = getProject();
+        DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         try {
             long startTime = System.currentTimeMillis();
 
@@ -84,13 +85,10 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             T method = getMethod();
             if (method != null) {
                 connectionHandler = method.getConnectionHandler();
-                DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-                metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                useLogging = useLogging && compatibilityInterface.supportsFeature(DatabaseFeature.EXECUTION_LOGGING);
-
                 usePoolConnection = executionInput.isUsePoolConnection();
-                if (useLogging) {
-                    metadataInterface.enableLogOutput(connection);
+                loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
+                if (loggingEnabled) {
+                    loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
                 }
 
                 PreparedStatement preparedStatement = isQuery() ?
@@ -99,7 +97,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
                 bindParameters(executionInput, preparedStatement);
 
-                MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(getProject()).getMethodExecutionSettings();
+                MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
                 int timeout = debug ?
                         methodExecutionSettings.getDebugExecutionTimeout() :
                         methodExecutionSettings.getExecutionTimeout();
@@ -112,8 +110,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                     loadValues(executionResult, preparedStatement);
                     executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
 
-                    if (useLogging) {
-                        String logOutput = metadataInterface.readLogOutput(connection);
+                    if (loggingEnabled) {
+                        String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
                         executionResult.setLogOutput(logOutput);
                     }
                 }
@@ -122,12 +120,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             }
 
         } finally {
-            if (metadataInterface != null && useLogging) {
-                try {
-                    metadataInterface.disableLogOutput(connection);
-                } catch (SQLException e) {
-                    LOGGER.warn("Error disabling database logging", e);
-                }
+            if (loggingEnabled) {
+                loggingManager.disableLogger(connectionHandler, connection);
             }
 
             if (executionInput.isCommitAfterExecution()) {

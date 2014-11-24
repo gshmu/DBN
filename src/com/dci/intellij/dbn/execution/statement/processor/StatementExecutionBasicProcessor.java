@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
@@ -224,10 +225,17 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         }
 
         Project project = getProject();
+        boolean loggingEnabled = false;
         if (continueExecution) {
+            DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+            Connection connection = null;
             try {
                 if (activeConnection != null && !activeConnection.isDisposed()) {
-                    Connection connection = activeConnection.getStandaloneConnection(currentSchema);
+                    connection = activeConnection.getStandaloneConnection(currentSchema);
+
+                    if (activeConnection.isLoggingEnabled()) {
+                        loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
+                    }
                     Statement statement = connection.createStatement();
 
                     statement.setQueryTimeout(getStatementExecutionSettings().getExecutionTimeout());
@@ -240,6 +248,12 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                         if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
                     } else{
                         if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(virtualFile);
+                    }
+
+                    executionResult.setLoggingActive(loggingEnabled);
+                    if (loggingEnabled) {
+                        String logOutput = loggingManager.readLoggerOutput(activeConnection, connection);
+                        executionResult.setLoggingOutput(logOutput);
                     }
 
 
@@ -260,6 +274,10 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 }
             } catch (SQLException e) {
                 executionResult = createErrorExecutionResult(e.getMessage());
+            } finally {
+                if (loggingEnabled) {
+                    loggingManager.disableLogger(activeConnection, connection);
+                }
             }
         }
 

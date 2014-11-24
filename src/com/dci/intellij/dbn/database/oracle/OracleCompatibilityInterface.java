@@ -27,7 +27,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
             case FUNCTION_OUT_ARGUMENTS: return true;
             case DEBUGGING: return true;
             case EXPLAIN_PLAN: return true;
-            case EXECUTION_LOGGING: return true;
+            case DATABASE_LOGGING: return true;
             default: return false;
         }
     }

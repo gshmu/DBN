@@ -3,18 +3,13 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -22,10 +17,8 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -58,7 +51,9 @@ public interface ConnectionHandler extends Disposable{
     boolean isValid();
     boolean isVirtual();
     boolean isAutoCommit();
+    boolean isLoggingEnabled();
     void setAutoCommit(boolean autoCommit) throws SQLException;
+    void setLoggingEnabled(boolean loggingEnabled);
     void disconnect() throws SQLException;
 
     String getId();

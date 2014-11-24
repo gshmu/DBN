@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import javax.swing.Icon;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -26,6 +25,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private CompilerResult compilerResult;
     private DBObjectRef<DBSchemaObject> affectedObjectRef;
     private StatementExecutionProcessor executionProcessor;
+    private String loggingOutput;
+    private boolean loggingActive;
 
     public StatementExecutionBasicResult(
             StatementExecutionProcessor executionProcessor,
@@ -41,11 +42,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return getExecutionInput().createPreviewFile();
     }
 
-    public String getResultName() {
+    public String getName() {
         return resultName;
     }
 
-    public Icon getResultIcon() {
+    public Icon getIcon() {
         return executionProcessor == null || executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
     }
 
@@ -105,12 +106,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return executionProcessor == null ? null : executionProcessor.getProject();
     }
 
-    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return executionProcessor == null ? null : executionProcessor.getConnectionHandler();
     }
 
-    public ExecutionResultForm getResultPanel() {
+    public ExecutionResultForm getForm() {
         return null;
     }
 
@@ -132,6 +132,26 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     public void setCompilerResult(CompilerResult compilerResult) {
         this.compilerResult = compilerResult;
+    }
+
+    @Override
+    public String getLoggingOutput() {
+        return loggingOutput;
+    }
+
+    @Override
+    public void setLoggingOutput(String loggingOutput) {
+        this.loggingOutput = loggingOutput;
+    }
+
+    @Override
+    public boolean isLoggingActive() {
+        return loggingActive;
+    }
+
+    @Override
+    public void setLoggingActive(boolean loggingActive) {
+        this.loggingActive = loggingActive;
     }
 
     /********************************************************

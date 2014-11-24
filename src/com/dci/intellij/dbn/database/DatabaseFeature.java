@@ -11,7 +11,7 @@ public enum DatabaseFeature {
     FUNCTION_OUT_ARGUMENTS("OUT arguments for functions"),
     DEBUGGING("Program execution debugging"),
     EXPLAIN_PLAN("Statement explain plan"),
-    EXECUTION_LOGGING("Execution logging"),
+    DATABASE_LOGGING("Database logging"),
     ;
 
     private String description;

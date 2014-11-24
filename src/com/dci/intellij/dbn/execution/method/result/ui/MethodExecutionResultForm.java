@@ -16,8 +16,8 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.execution.common.output.ui.ExecutionLogOutputConsole;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputConsole;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.action.CloseExecutionResultAction;
@@ -29,7 +29,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.diagnostic.logging.LogConsoleBase;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
@@ -110,7 +109,6 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     private void updateCursorArgumentsPanel() {
         cursorOutputTabs.removeAllTabs();
-        Project project = getMethod().getProject();
         String logOutput = executionResult.getLogOutput();
         StringReader stringReader = null;
         if (StringUtil.isNotEmpty(logOutput)) {
@@ -124,39 +122,38 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             if (databaseLogName != null) {
                 logConsoleName = databaseLogName;
             }
-        }
 
+            LogConsoleBase outputConsole = new DatabaseLogOutputConsole(connectionHandler, stringReader, logConsoleName);
+            outputConsole.activate();
 
-        LogConsoleBase outputConsole = new ExecutionLogOutputConsole(project, stringReader, logConsoleName);
-        outputConsole.activate();
+            TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
+            outputTabInfo.setText(outputConsole.getTitle());
+            outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
+            cursorOutputTabs.addTab(outputTabInfo);
 
-        TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
-        outputTabInfo.setText(outputConsole.getTitle());
-        outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
-        cursorOutputTabs.addTab(outputTabInfo);
+            boolean isFirst = true;
+            for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
+                if (argumentValue.isCursor()) {
+                    DBArgument argument = argumentValue.getArgument();
 
-        boolean isFirst = true;
-        for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
-            if (argumentValue.isCursor()) {
-                DBArgument argument = argumentValue.getArgument();
+                    MethodExecutionCursorResultForm cursorResultComponent =
+                            new MethodExecutionCursorResultForm(executionResult, argument);
 
-                MethodExecutionCursorResultForm cursorResultComponent =
-                        new MethodExecutionCursorResultForm(executionResult, argument);
-
-                TabInfo tabInfo = new TabInfo(cursorResultComponent.getComponent());
-                tabInfo.setText(argument.getName());
-                tabInfo.setIcon(argument.getIcon());
-                tabInfo.setObject(argument);
-                cursorOutputTabs.addTab(tabInfo);
-                if (isFirst) {
-                    cursorOutputTabs.select(tabInfo, false);
-                    isFirst = false;
+                    TabInfo tabInfo = new TabInfo(cursorResultComponent.getComponent());
+                    tabInfo.setText(argument.getName());
+                    tabInfo.setIcon(argument.getIcon());
+                    tabInfo.setObject(argument);
+                    cursorOutputTabs.addTab(tabInfo);
+                    if (isFirst) {
+                        cursorOutputTabs.select(tabInfo, false);
+                        isFirst = false;
+                    }
                 }
             }
-        }
 
-        cursorOutputTabs.revalidate();
-        cursorOutputTabs.repaint();
+            cursorOutputTabs.revalidate();
+            cursorOutputTabs.repaint();
+        }
     }
 
     public void selectCursorOutput(DBArgument argument) {

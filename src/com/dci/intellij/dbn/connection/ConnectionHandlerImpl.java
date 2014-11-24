@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -47,6 +48,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private DatabaseInterfaceProvider interfaceProvider;
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
+    private DatabaseLogOutput logOutput;
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;
@@ -227,6 +229,15 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public boolean isAutoCommit() {
         return connectionSettings.getDetailSettings().isEnableAutoCommit();
+    }
+
+    @Override
+    public boolean isLoggingEnabled() {
+        return connectionSettings.getDetailSettings().isEnableDatabaseLogging();
+    }
+
+    public void setLoggingEnabled(boolean loggingEnabled) {
+        connectionSettings.getDetailSettings().setEnableDatabaseLogging(loggingEnabled);
     }
 
     @Override

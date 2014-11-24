@@ -15,7 +15,7 @@ public class ExplainPlanResultCollapseAllAction extends AbstractExplainPlanResul
     public void actionPerformed(@NotNull AnActionEvent e) {
         ExplainPlanResult explainPlanResult = getExplainPlanResult(e);
         if (explainPlanResult != null && !explainPlanResult.isDisposed()) {
-            explainPlanResult.getResultPanel().collapseAllNodes();
+            explainPlanResult.getForm().collapseAllNodes();
         }
     }
 

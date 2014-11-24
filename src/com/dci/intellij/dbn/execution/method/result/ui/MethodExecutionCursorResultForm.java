@@ -29,8 +29,8 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNF
     public MethodExecutionCursorResultForm(MethodExecutionResult executionResult, DBArgument argument) {
         ResultSetDataModel dataModel = executionResult.getTableModel(argument);
         RecordViewInfo recordViewInfo = new RecordViewInfo(
-                executionResult.getResultName(),
-                executionResult.getResultIcon());
+                executionResult.getName(),
+                executionResult.getIcon());
 
         ResultSetTable resultTable = new ResultSetTable(dataModel, true, recordViewInfo);
         resultTable.setPreferredScrollableViewportSize(new Dimension(500, -1));
