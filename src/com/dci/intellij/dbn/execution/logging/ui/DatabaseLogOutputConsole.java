@@ -10,12 +10,13 @@ import com.intellij.diagnostic.logging.DefaultLogFilterModel;
 import com.intellij.diagnostic.logging.LogConsoleBase;
 import com.intellij.diagnostic.logging.LogFilterModel;
 import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.openapi.actionSystem.ActionGroup;
 
 public class DatabaseLogOutputConsole extends LogConsoleBase{
     public static final StringReader EMPTY_READER = new StringReader("");
     private ConnectionHandlerRef connectionHandlerRef;
-    public DatabaseLogOutputConsole(@NotNull ConnectionHandler connectionHandler, String title) {
-        super(connectionHandler.getProject(), EMPTY_READER, title, true, createFilterModel(connectionHandler));
+    public DatabaseLogOutputConsole(@NotNull ConnectionHandler connectionHandler, String title, boolean buildInActions) {
+        super(connectionHandler.getProject(), EMPTY_READER, title, buildInActions, createFilterModel(connectionHandler));
         connectionHandlerRef = connectionHandler.getRef();
     }
 
@@ -38,5 +39,10 @@ public class DatabaseLogOutputConsole extends LogConsoleBase{
         if (StringUtil.isNotEmpty(text)) {
             writeToConsole(text, ProcessOutputTypes.STDOUT);
         }
+    }
+
+    @Override
+    public ActionGroup getOrCreateActions() {
+        return super.getOrCreateActions();
     }
 }

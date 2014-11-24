@@ -1,14 +1,18 @@
 package com.dci.intellij.dbn.execution.logging;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NonNls;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
+import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -65,6 +69,26 @@ public class DatabaseLogOutput implements ExecutionResult {
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
             logOutputForm.getConsole().writeToConsole(string);
         }
+    }
+
+    /********************************************************
+     *                    Data Provider                     *
+     ********************************************************/
+    public DataProvider dataProvider = new DataProvider() {
+        @Override
+        public Object getData(@NonNls String dataId) {
+            if (DBNDataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
+                return DatabaseLogOutput.this;
+            }
+            if (PlatformDataKeys.PROJECT.is(dataId)) {
+                return getProject();
+            }
+            return null;
+        }
+    };
+
+    public DataProvider getDataProvider() {
+        return dataProvider;
     }
 
     /********************************************************
