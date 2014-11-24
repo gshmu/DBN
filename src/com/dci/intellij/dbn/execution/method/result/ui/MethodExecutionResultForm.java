@@ -118,10 +118,12 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
             DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
             outputConsole.writeToConsole(logOutput);
+            Disposer.register(this, outputConsole);
 
             TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
             outputTabInfo.setText(outputConsole.getTitle());
             outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
+            outputTabInfo.setObject(outputConsole);
             cursorOutputTabs.addTab(outputTabInfo);
 
             boolean isFirst = true;
@@ -135,7 +137,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     TabInfo tabInfo = new TabInfo(cursorResultComponent.getComponent());
                     tabInfo.setText(argument.getName());
                     tabInfo.setIcon(argument.getIcon());
-                    tabInfo.setObject(argument);
+                    tabInfo.setObject(cursorResultComponent);
                     cursorOutputTabs.addTab(tabInfo);
                     if (isFirst) {
                         cursorOutputTabs.select(tabInfo, false);
@@ -152,12 +154,14 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     public void selectCursorOutput(DBArgument argument) {
         for (TabInfo tabInfo : cursorOutputTabs.getTabs()) {
             Object object = tabInfo.getObject();
-            if (object != null && object.equals(argument)) {
-                cursorOutputTabs.select(tabInfo, true);
-                break;
+            if (object instanceof MethodExecutionCursorResultForm) {
+                MethodExecutionCursorResultForm cursorResultForm = (MethodExecutionCursorResultForm) object;
+                if (cursorResultForm.getArgument().equals(argument)) {
+                    cursorOutputTabs.select(tabInfo, true);
+                    break;
+                }
             }
         }
-
     }
 
     private void updateStatusBarLabels() {
