@@ -1,22 +1,28 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
-import java.io.Reader;
+import java.io.StringReader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.diagnostic.logging.DefaultLogFilterModel;
 import com.intellij.diagnostic.logging.LogConsoleBase;
+import com.intellij.diagnostic.logging.LogFilterModel;
+import com.intellij.execution.process.ProcessOutputTypes;
 
 public class DatabaseLogOutputConsole extends LogConsoleBase{
+    public static final StringReader EMPTY_READER = new StringReader("");
     private ConnectionHandlerRef connectionHandlerRef;
-    public DatabaseLogOutputConsole(@NotNull ConnectionHandler connectionHandler, Reader reader, String title) {
-        super(connectionHandler.getProject(), reader, title, true, createFilterModel(connectionHandler));
+    public DatabaseLogOutputConsole(@NotNull ConnectionHandler connectionHandler, String title) {
+        super(connectionHandler.getProject(), EMPTY_READER, title, true, createFilterModel(connectionHandler));
         connectionHandlerRef = connectionHandler.getRef();
     }
 
-    private static DefaultLogFilterModel createFilterModel(ConnectionHandler connectionHandler) {
-        return new DefaultLogFilterModel(connectionHandler.getProject());
+    private static LogFilterModel createFilterModel(ConnectionHandler connectionHandler) {
+        DefaultLogFilterModel defaultLogFilterModel = new DefaultLogFilterModel(connectionHandler.getProject());
+        defaultLogFilterModel.setCheckStandartFilters(false);
+        return defaultLogFilterModel;
     }
 
     @Override
@@ -26,5 +32,11 @@ public class DatabaseLogOutputConsole extends LogConsoleBase{
 
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.get(connectionHandlerRef);
+    }
+
+    public void writeToConsole(String text) {
+        if (StringUtil.isNotEmpty(text)) {
+            writeToConsole(text, ProcessOutputTypes.STDOUT);
+        }
     }
 }

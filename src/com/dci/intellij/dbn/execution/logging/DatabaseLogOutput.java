@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.logging;
 
 import javax.swing.Icon;
-import java.io.Reader;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -17,7 +16,6 @@ import com.intellij.psi.PsiFile;
 public class DatabaseLogOutput implements ExecutionResult {
     private ConnectionHandlerRef connectionHandlerRef;
     private DatabaseLogOutputForm logOutputForm;
-    private DatabaseLogOutputReader reader = new DatabaseLogOutputReader("");
 
     public DatabaseLogOutput(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
@@ -63,14 +61,9 @@ public class DatabaseLogOutput implements ExecutionResult {
         return null;
     }
 
-    public Reader getReader() {
-        return reader;
-    }
-
     public void write(String string) {
-        reader.setString(string);
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
-            logOutputForm.getConsole().activate();
+            logOutputForm.getConsole().writeToConsole(string);
         }
     }
 

@@ -20,7 +20,7 @@ public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResul
 
     public DatabaseLogOutputForm(DatabaseLogOutput databaseLogOutput) {
         ConnectionHandler connectionHandler = databaseLogOutput.getConnectionHandler();
-        console = new DatabaseLogOutputConsole(connectionHandler, databaseLogOutput.getReader(), databaseLogOutput.getName());
+        console = new DatabaseLogOutputConsole(connectionHandler, databaseLogOutput.getName());
         consolePanel.add(console.getComponent(), BorderLayout.CENTER);
         Disposer.register(this, console);
     }

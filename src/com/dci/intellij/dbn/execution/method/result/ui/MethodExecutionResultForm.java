@@ -4,9 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import java.awt.BorderLayout;
-import java.io.StringReader;
 import java.util.List;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -27,7 +25,6 @@ import com.dci.intellij.dbn.execution.method.result.action.PromptMethodExecution
 import com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionAction;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.intellij.diagnostic.logging.LogConsoleBase;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
@@ -110,10 +107,6 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     private void updateCursorArgumentsPanel() {
         cursorOutputTabs.removeAllTabs();
         String logOutput = executionResult.getLogOutput();
-        StringReader stringReader = null;
-        if (StringUtil.isNotEmpty(logOutput)) {
-            stringReader = new StringReader(logOutput);
-        }
         String logConsoleName = "Output";
         ConnectionHandler connectionHandler = getExecutionResult().getConnectionHandler();
         if (connectionHandler != null) {
@@ -123,8 +116,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                 logConsoleName = databaseLogName;
             }
 
-            LogConsoleBase outputConsole = new DatabaseLogOutputConsole(connectionHandler, stringReader, logConsoleName);
-            outputConsole.activate();
+            DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName);
+            outputConsole.writeToConsole(logOutput);
 
             TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
             outputTabInfo.setText(outputConsole.getTitle());
