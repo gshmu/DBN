@@ -19,6 +19,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private String environmentTypeId = EnvironmentType.DEFAULT.getId();
     private boolean enableAutoCommit;
     private boolean enableDdlFileBinding = true;
+    private boolean enableDatabaseLogging = false;
     protected boolean connectAutomatically = true;
     private int idleTimeToDisconnect = 30;
     private int maxConnectionPoolSize = 7;
@@ -86,6 +87,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.enableDdlFileBinding = enableDdlFileBinding;
     }
 
+    public boolean isEnableDatabaseLogging() {
+        return enableDatabaseLogging;
+    }
+
+    public void setEnableDatabaseLogging(boolean enableDatabaseLogging) {
+        this.enableDatabaseLogging = enableDatabaseLogging;
+    }
+
     public boolean isConnectAutomatically() {
         return connectAutomatically;
     }
@@ -138,6 +147,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         
         enableAutoCommit = getBoolean(element, "auto-commit", enableAutoCommit);
         enableDdlFileBinding = getBoolean(element, "ddl-file-binding", enableDdlFileBinding);
+        enableDatabaseLogging = getBoolean(element, "database-logging", enableDatabaseLogging);
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
         environmentTypeId = getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
@@ -161,6 +171,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         
         setBoolean(element, "auto-commit", enableAutoCommit);
         setBoolean(element, "ddl-file-binding", enableDdlFileBinding);
+        setBoolean(element, "database-logging", enableDatabaseLogging);
         setString(element, "environment-type", environmentTypeId);
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);

@@ -13,7 +13,7 @@ public class ExecutionResultFindDataAction extends AbstractExecutionResultAction
     public void actionPerformed(AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
-            executionResult.getResultPanel().showSearchHeader();
+            executionResult.getForm().showSearchHeader();
         }
     }
 

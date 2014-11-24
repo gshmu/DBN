@@ -121,6 +121,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             public void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                if (executionResult.isLoggingActive()) {
+                    executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), executionResult.getLoggingOutput());
+                }
+
                 executionConsoleForm.addResult(executionResult);
                 if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
                     executionResult.navigateToEditor(true);
@@ -140,9 +144,9 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void addExecutionResult(final MethodExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
             public void execute() {
+                showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 executionConsoleForm.addResult(executionResult);
-                showExecutionConsole();
             }
         }.start();
     }

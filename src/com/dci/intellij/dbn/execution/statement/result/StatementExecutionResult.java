@@ -18,6 +18,10 @@ public interface StatementExecutionResult extends ExecutionResult {
     void updateExecutionMessage(MessageType messageType, String message, String causeMessage);
     void updateExecutionMessage(MessageType messageType, String message);
     void clearExecutionMessage();
+    void setExecutionDuration(int executionDuration);
+    int getExecutionDuration();
+
+
 
     void navigateToEditor(boolean requestFocus);
 
@@ -26,4 +30,9 @@ public interface StatementExecutionResult extends ExecutionResult {
     CompilerResult getCompilerResult();
     boolean hasCompilerResult();
     boolean isBulkExecution();
+
+    String getLoggingOutput();
+    void setLoggingOutput(String loggerOutput);
+    boolean isLoggingActive();
+    void setLoggingActive(boolean databaseLogActive);
 }

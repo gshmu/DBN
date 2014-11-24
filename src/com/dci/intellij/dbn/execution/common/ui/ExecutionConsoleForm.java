@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -326,6 +327,49 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         }
     }
 
+    private boolean isMessagesTabVisible() {
+        if (resultTabs.getTabCount() > 0) {
+            JComponent messagesPanelComponent = getMessagesPanel().getComponent();
+            TabInfo tabInfo = resultTabs.getTabAt(0);
+            return tabInfo.getComponent() == messagesPanelComponent;
+        }
+        return false;
+    }
+
+    /*********************************************************
+     *                       Logging                         *
+     *********************************************************/
+    public void displayLogOutput(ConnectionHandler connectionHandler, String output) {
+        for (TabInfo tabInfo : resultTabs.getTabs()) {
+            Object object = tabInfo.getObject();
+            if (object instanceof DatabaseLogOutput) {
+                DatabaseLogOutput logOutput = (DatabaseLogOutput) object;
+                if (logOutput.getConnectionHandler() == connectionHandler) {
+                    logOutput.write(output);
+                    return;
+                }
+            }
+        }
+        boolean messagesTabVisible = isMessagesTabVisible();
+
+        DatabaseLogOutput logOutput = new DatabaseLogOutput(connectionHandler);
+        JComponent component = logOutput.getForm().getComponent();
+        TabInfo tabInfo = new TabInfo(component);
+        tabInfo.setObject(logOutput);
+        tabInfo.setText(logOutput.getName());
+        tabInfo.setIcon(logOutput.getIcon());
+
+        EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+        if (visibilitySettings.getExecutionResultTabs().value()){
+            tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
+        } else {
+            tabInfo.setTabColor(null);
+        }
+
+        resultTabs.addTab(tabInfo, messagesTabVisible ? 1 : 0);
+        logOutput.write(output);
+    }
+
     /*********************************************************
      *                  Statement executions                 *
      *********************************************************/
@@ -342,7 +386,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     public void addResultTab(ExecutionResult executionResult) {
-        JComponent component = executionResult.getResultPanel().getComponent();
+        JComponent component = executionResult.getForm().getComponent();
         TabInfo tabInfo = new TabInfo(component);
         tabInfo.setObject(executionResult);
         EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
@@ -351,21 +395,21 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         } else {
             tabInfo.setTabColor(null);
         }
-        tabInfo.setText(executionResult.getResultName());
-        tabInfo.setIcon(executionResult.getResultIcon());
+        tabInfo.setText(executionResult.getName());
+        tabInfo.setIcon(executionResult.getIcon());
         resultTabs.addTab(tabInfo);
         selectResultTab(tabInfo);
     }
 
     public boolean containsResultTab(ExecutionResult executionProcessor) {
-        Component component = executionProcessor.getResultPanel().getComponent();
+        Component component = executionProcessor.getForm().getComponent();
         return containsResultTab(component);
     }
 
     public void removeResultTab(ExecutionResult executionResult) {
         try {
             canScrollToSource = false;
-            ExecutionResultForm resultComponent = executionResult.getResultPanel();
+            ExecutionResultForm resultComponent = executionResult.getForm();
             TabInfo tabInfo = resultTabs.findInfo(resultComponent.getComponent());
             if (resultTabs.getTabs().contains(tabInfo)) {
                 resultTabs.removeTab(tabInfo);
@@ -389,12 +433,12 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     public void selectResultTab(ExecutionResult executionResult) {
-        executionResult.getResultPanel().setExecutionResult(executionResult);
-        JComponent component = executionResult.getResultPanel().getComponent();
+        executionResult.getForm().setExecutionResult(executionResult);
+        JComponent component = executionResult.getForm().getComponent();
         TabInfo tabInfo = resultTabs.findInfo(component);
         if (tabInfo != null) {
-            tabInfo.setText(executionResult.getResultName());
-            tabInfo.setIcon(executionResult.getResultIcon());
+            tabInfo.setText(executionResult.getName());
+            tabInfo.setIcon(executionResult.getIcon());
             selectResultTab(tabInfo);
         }
     }

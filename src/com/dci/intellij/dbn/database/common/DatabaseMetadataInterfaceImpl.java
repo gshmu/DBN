@@ -368,17 +368,17 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
-    public void enableLogOutput(Connection connection) throws SQLException {
+    public void enableLogger(Connection connection) throws SQLException {
         executeCall(connection, null, "enable-log-output");
     }
 
     @Override
-    public void disableLogOutput(Connection connection) throws SQLException {
+    public void disableLogger(Connection connection) throws SQLException {
         executeCall(connection, null, "disable-log-output");
     }
 
     @Override
-    public String readLogOutput(Connection connection) throws SQLException {
+    public String readLoggerOutput(Connection connection) throws SQLException {
         ExecutionLogOutput outputReader = new ExecutionLogOutput();
         executeCall(connection, outputReader, "read-log-output");
         return outputReader.getLog();

@@ -229,6 +229,7 @@
         <component><implementation-class>com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.method.MethodExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.explain.ExplainPlanManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.completion.CodeCompletionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.debugger.DatabaseDebuggerManager</implementation-class></component>
@@ -255,6 +256,7 @@
 
     <actions>
         <group id="DBNavigator.ActionGroup.FileEditor" text="File Editor Controls">
+            <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLoggingToggleAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute statement"/>

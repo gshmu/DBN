@@ -31,7 +31,7 @@ public class StatementViewerPopup implements Disposable {
     private String resultName;
 
     public StatementViewerPopup(ExecutionResult executionResult) {
-        this.resultName = executionResult.getResultName();
+        this.resultName = executionResult.getName();
         Project project = executionResult.getProject();
 
         PsiFile previewFile = executionResult.createPreviewFile();

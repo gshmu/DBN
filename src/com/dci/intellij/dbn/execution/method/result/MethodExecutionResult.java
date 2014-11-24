@@ -81,7 +81,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return argumentValues;
     }
 
-    public MethodExecutionResultForm getResultPanel() {
+    public MethodExecutionResultForm getForm() {
         if (resultPanel == null) {
             resultPanel = new MethodExecutionResultForm(this);
         }
@@ -92,11 +92,11 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return resultPanel;
     }
 
-    public String getResultName() {
+    public String getName() {
         return getMethod().getName();
     }
 
-    public Icon getResultIcon() {
+    public Icon getIcon() {
         return getMethod().getOriginalIcon();
     }
 

@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -17,13 +24,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private String id;
@@ -90,20 +90,22 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return true;
     }
 
-    public String getId() {return id;}
-    public String getName() {return name;}
-    public String getPresentableText() {return getName();}
-    public String getQualifiedName() {return getName();}
-    public String getDescription() {return "Virtual database connection"; }
-    public Icon getIcon() { return Icons.CONNECTION_VIRTUAL; }
-    public boolean isVirtual() {return true;}
-    public boolean isAutoCommit() {return false;}
-    public void setAutoCommit(boolean autoCommit) throws SQLException {}
-    public UncommittedChangeBundle getUncommittedChanges() {return null;}
-    public boolean isConnected() {return false;}
+    @Override public String getId() {return id;}
+    @Override public String getName() {return name;}
+    @Override public String getPresentableText() {return getName();}
+    @Override public String getQualifiedName() {return getName();}
+    @Override public String getDescription() {return "Virtual database connection"; }
+    @Override public Icon getIcon() { return Icons.CONNECTION_VIRTUAL; }
+    @Override public boolean isVirtual() {return true;}
+    @Override public boolean isAutoCommit() {return false;}
 
-    @Override
-    public boolean isDisposed() {
+    @Override public boolean isLoggingEnabled() {return false;}
+    @Override public void setAutoCommit(boolean autoCommit) throws SQLException {}
+    @Override public void setLoggingEnabled(boolean loggingEnabled) {}
+
+    @Override public UncommittedChangeBundle getUncommittedChanges() {return null;}
+    @Override public boolean isConnected() {return false;}
+    @Override public boolean isDisposed() {
         return false;
     }
 
