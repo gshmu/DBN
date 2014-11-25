@@ -123,7 +123,7 @@ public class StatementGutterAction extends AnAction {
                 }
             }
         }
-        return "Execute statement";
+        return null;//"Execute statement";
     }
 
 }

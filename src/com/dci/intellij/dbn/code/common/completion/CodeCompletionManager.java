@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.SelectCurrentSchemaIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -40,6 +41,7 @@ public class CodeCompletionManager extends AbstractProjectComponent implements P
         intentionManager.addAction(new JumpToExecutionResultIntentionAction());
         intentionManager.addAction(new SelectConnectionIntentionAction());
         intentionManager.addAction(new SelectCurrentSchemaIntentionAction());
+        intentionManager.addAction(new ToggleDatabaseLoggingIntentionAction());
         //intentionManager.addAction(new SetupCodeCompletionIntentionAction());
     }
 

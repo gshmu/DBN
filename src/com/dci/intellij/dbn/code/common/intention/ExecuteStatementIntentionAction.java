@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -42,12 +41,15 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction {
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);
                 if (executable != null && fileEditor != null) {
+                    return true;
+/*
                     StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                     StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
                     if (executionProcessor != null) {
                         StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
                         return executionResult != null;
                     }
+*/
                 }
             }
         }

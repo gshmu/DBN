@@ -22,7 +22,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction {
 
     @NotNull
     public String getFamilyName() {
-        return "Database intentions";
+        return "Connection intentions";
     }
 
     @Override
