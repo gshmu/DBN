@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -27,6 +26,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
