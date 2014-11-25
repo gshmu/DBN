@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
 import java.io.StringReader;
+import java.util.Date;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.generate.tostring.util.StringUtil;
 
+import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.diagnostic.logging.DefaultLogFilterModel;
@@ -36,7 +38,13 @@ public class DatabaseLogOutputConsole extends LogConsoleBase{
     }
 
     public void writeToConsole(String text) {
-        if (StringUtil.isNotEmpty(text)) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null && !connectionHandler.isDisposed() && StringUtil.isNotEmpty(text)) {
+            Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
+            String date = formatter.formatDateTime(new Date());
+
+            String headline = connectionHandler.getName() + " - " + date + "\n";
+            writeToConsole(headline, ProcessOutputTypes.SYSTEM);
             writeToConsole(text, ProcessOutputTypes.STDOUT);
         }
     }
