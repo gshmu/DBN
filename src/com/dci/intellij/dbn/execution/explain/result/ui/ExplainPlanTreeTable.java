@@ -53,6 +53,8 @@ public class ExplainPlanTreeTable extends TreeTable{
         setDefaultRenderer(BigDecimal.class, tableCellRenderer);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        SimpleTextAttributes plainDataAttributes = textAttributes.getPlainData(false, false);
+        setBackground(plainDataAttributes.getBgColor());
 
         Font font = getFont();
         LineMetrics lineMetrics = font.getLineMetrics("ABC", SwingUtilities2.getFontRenderContext(this));
@@ -61,6 +63,7 @@ public class ExplainPlanTreeTable extends TreeTable{
 
         final TreeTableTree tree = getTree();
         tree.setOpaque(false);
+        tree.setBackground(plainDataAttributes.getBgColor());
         tree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
             public void treeExpanded(TreeExpansionEvent event) {
