@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import javax.swing.Icon;
-
-import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -21,7 +20,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction {
 
     @NotNull
     public String getFamilyName() {
-        return "DBNavigator environment intentions";
+        return "Connection intentions";
     }
 
     public Icon getIcon(int flags) {
