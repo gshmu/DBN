@@ -11,7 +11,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.LineMetrics;
@@ -19,13 +22,19 @@ import java.math.BigDecimal;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.codeInsight.template.impl.TemplateColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupAdapter;
+import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -42,6 +51,7 @@ public class ExplainPlanTreeTable extends TreeTable{
 
     DataGridTextAttributes textAttributes = new DataGridTextAttributes();
     private SimpleTextAttributes operationAttributes;
+    private JBPopup largeValuePopup;
 
     public ExplainPlanTreeTable(ExplainPlanTreeTableModel treeTableModel) {
         super(treeTableModel);
@@ -84,6 +94,13 @@ public class ExplainPlanTreeTable extends TreeTable{
                 if (pathAtMousePosition != null) {
                     Object lastPathComponent = pathAtMousePosition.getLastPathComponent();
                 }
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showCellValuePopup();
             }
         });
     }
@@ -141,9 +158,48 @@ public class ExplainPlanTreeTable extends TreeTable{
 
             setBorder(null);
             //setBorder(new CustomLineBorder(DBNTable.GRID_COLOR, 0, 0, 1, 1));
-
+            ExplainPlanTreeTableModel tableModel = (ExplainPlanTreeTableModel) getTableModel();
+            if (tableModel.isLargeValue(column)) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
         }
     };
+
+    private void showCellValuePopup() {
+        if (largeValuePopup != null) {
+            largeValuePopup.cancel();
+            largeValuePopup = null;
+        }
+        if (getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
+            int rowIndex = getSelectedRows()[0];
+            int columnIndex = getSelectedColumns()[0];
+            ExplainPlanTreeTableModel tableModel = (ExplainPlanTreeTableModel) getTableModel();
+            Object value = getValueAt(rowIndex, columnIndex);
+            if (tableModel.isLargeValue(columnIndex) && value instanceof String && StringUtil.isNotEmpty((String) value)) {
+                Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
+
+                TableColumn column = getColumnModel().getColumn(columnIndex);
+                UserValueHolder userValueHolder = new UserValueHolderImpl(tableModel.getColumnName(columnIndex), tableModel.getProject());
+                userValueHolder.setUserValue(value);
+
+                int preferredWidth = column.getWidth();
+                LargeValuePreviewPopup viewer = new LargeValuePreviewPopup(this, userValueHolder, preferredWidth);
+                Point location = cellRect.getLocation();
+                location.setLocation(location.getX() + 4, location.getY() + 20);
+
+                largeValuePopup = viewer.show(this, location);
+                largeValuePopup.addListener(
+                        new JBPopupAdapter() {
+                            @Override
+                            public void onClosed(LightweightWindowEvent event) {
+                                largeValuePopup.cancel();
+                                largeValuePopup = null;
+                            }
+                        }
+                );
+            }
+        }
+    }
 
     public void accommodateColumnsSize() {
         for (int columnIndex = 0; columnIndex < getColumnCount(); columnIndex++){
