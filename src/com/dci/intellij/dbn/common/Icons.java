@@ -340,6 +340,8 @@ public class Icons {
     public static final Icon DBO_TYPE_COLLECTION_ERR             = load("/img/object/TypeCollectionErr.png");
     public static final Icon DBO_TYPE_ERR                        = load("/img/object/TypeErr.png");
     public static final Icon DBO_TYPE_DEBUG                      = load("/img/object/TypeDebug.png");
+    public static final Icon DBO_TYPE_SPEC                       = load("DBO_TYPE_SPEC", "/img/object/TypeSpec.png");
+    public static final Icon DBO_TYPE_BODY                       = load("DBO_TYPE_BODY", "/img/object/TypeBody.png");
     public static final Icon DBO_TYPES                           = load("/img/object/Types.png");
     public static final Icon DBO_USER                            = load("/img/object/User.png");
     public static final Icon DBO_USER_EXPIRED                    = load("/img/object/UserExpired.png");
