@@ -26,7 +26,6 @@ public class StatementGutterRenderer extends GutterIconRenderer {
 
     @Nullable
     public synchronized AnAction getClickAction() {
-        Thread.dumpStack();
         return action;
     }
 

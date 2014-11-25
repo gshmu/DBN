@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.JTableHeader;
@@ -10,11 +11,15 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.TreePath;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.LineMetrics;
+import java.math.BigDecimal;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.codeInsight.template.impl.TemplateColors;
@@ -25,13 +30,17 @@ import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
+import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
+import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import sun.swing.SwingUtilities2;
 
 public class ExplainPlanTreeTable extends TreeTable{
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
-    private static final int MAX_COLUMN_WIDTH = 200;
+    private static final int MAX_COLUMN_WIDTH = 250;
     private static final int MIN_COLUMN_WIDTH = 10;
 
+    DataGridTextAttributes textAttributes = new DataGridTextAttributes();
     private SimpleTextAttributes operationAttributes;
 
     public ExplainPlanTreeTable(ExplainPlanTreeTableModel treeTableModel) {
@@ -40,10 +49,18 @@ public class ExplainPlanTreeTable extends TreeTable{
         TextAttributes attributes = scheme.getAttributes(TemplateColors.TEMPLATE_VARIABLE_ATTRIBUTES);
         operationAttributes = new SimpleTextAttributes(null, attributes.getForegroundColor(), null, SimpleTextAttributes.STYLE_PLAIN);
         setTreeCellRenderer(treeCellRenderer);
-        setDefaultRenderer(Object.class, tableCellRenderer);
+        setDefaultRenderer(String.class, tableCellRenderer);
+        setDefaultRenderer(BigDecimal.class, tableCellRenderer);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        Font font = getFont();
+        LineMetrics lineMetrics = font.getLineMetrics("ABC", SwingUtilities2.getFontRenderContext(this));
+        int fontHeight = Math.round(lineMetrics.getHeight());
+        setRowHeight(fontHeight + 2);
+
         final TreeTableTree tree = getTree();
+        tree.setOpaque(false);
         tree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
             public void treeExpanded(TreeExpansionEvent event) {
@@ -79,36 +96,49 @@ public class ExplainPlanTreeTable extends TreeTable{
             ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
             DBObjectRef objectRef = entry.getObjectRef();
+            SimpleTextAttributes selectedCellAttributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
             if (objectRef != null) {
                 setIcon(objectRef.getObjectType().getIcon());
-                append(objectRef.getPath() + " - ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                append(objectRef.getPath() + " - ", selected ? selectedCellAttributes : SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
 
             String operation = entry.getOperation();
             String options = entry.getOperationOptions();
-            append(operation, selected ? SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES : operationAttributes);
+            append(operation, selected ? selectedCellAttributes.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null) : operationAttributes);
             if (StringUtil.isNotEmpty(options)) {
-                if (options.equals("FULL")) {
-                    append(" (" + options.toLowerCase() + ")", selected ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.ERROR_ATTRIBUTES);
-                } else {
-                    append(" (" + options.toLowerCase() + ")", selected ? SimpleTextAttributes.REGULAR_ATTRIBUTES : SimpleTextAttributes.GRAYED_ATTRIBUTES);
-                }
+                SimpleTextAttributes regularAttributes = options.equals("FULL") ?
+                        SimpleTextAttributes.ERROR_ATTRIBUTES :
+                        SimpleTextAttributes.GRAYED_ATTRIBUTES;
+                append(" (" + options.toLowerCase() + ")", selected ? selectedCellAttributes : regularAttributes);
             }
-
-
-
+            setBorder(null);
         }
     };
+
+    public TreeTableCellRenderer createTableRenderer(TreeTableModel treeTableModel) {
+        return new ExplainPlanTreeTableCellRenderer(this, getTree());
+    }
 
     private final ColoredTableCellRenderer tableCellRenderer = new ColoredTableCellRenderer() {
         @Override
         protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+            SimpleTextAttributes attributes = selected ?
+                    SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES :
+                    textAttributes.getPlainData(false, false);
             if (value instanceof DBObjectRef) {
                 DBObjectRef objectRef = (DBObjectRef) value;
-                append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                append(objectRef.getPath(), attributes);
             } else if (value instanceof String){
-                append((String) value);
+                append((String) value, attributes);
+            } else if (value instanceof BigDecimal) {
+                BigDecimal bigDecimal = (BigDecimal) value;
+                append(bigDecimal.toPlainString(), attributes);
+                setTextAlign(SwingConstants.RIGHT);
             }
+
+            setBorder(null);
+            //setBorder(new CustomLineBorder(DBNTable.GRID_COLOR, 0, 0, 1, 1));
+
         }
     };
 
