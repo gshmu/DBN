@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 
 public class ExplainPlanTreeTableModel implements TreeTableModel{
@@ -75,19 +76,19 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
                     return entry.getIoCost();
                 }
             },
-            new Column("ACCESS_PREDICATES", String.class) {
+            new Column("ACCESS_PREDICATES", String.class, true) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
                     return entry.getAccessPredicates();
                 }
             },
-            new Column("FILTER_PREDICATES", String.class) {
+            new Column("FILTER_PREDICATES", String.class, true) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
                     return entry.getFilterPredicates();
                 }
             },
-            new Column("PROJECTION", String.class) {
+            new Column("PROJECTION", String.class, true) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
                     return entry.getProjection();
@@ -95,6 +96,10 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
             }
 
     };
+
+    public Project getProject() {
+        return result.getProject();
+    }
 
     /***************************************************************
      *                         TableModel                          *
@@ -127,6 +132,9 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
     @Override public boolean isCellEditable(Object node, int column) {return false;}
     @Override public void setValueAt(Object aValue, Object node, int column) {}
     @Override public void setTree(JTree tree) {}
+    boolean isLargeValue(int column) {
+        return COLUMNS[column].isLarge();
+    }
 
     /***************************************************************
      *                          TreeModel                          *
@@ -179,10 +187,17 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
     public static abstract class Column {
         private String name;
         private Class clazz;
+        private boolean large;
 
         public Column(String name, Class clazz) {
             this.name = name;
             this.clazz = clazz;
+        }
+
+        public Column(String name, Class clazz, boolean large) {
+            this.name = name;
+            this.clazz = clazz;
+            this.large = large;
         }
 
         public String getName() {
@@ -191,6 +206,10 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
 
         public Class getClazz() {
             return clazz;
+        }
+
+        public boolean isLarge() {
+            return large;
         }
 
         public abstract Object getValue(ExplainPlanEntry entry);
