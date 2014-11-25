@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.grid.color;
 
-import java.awt.*;
+import java.awt.Color;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.ui.UIUtil;
 
 public class DataGridTextAttributes extends CommonUtil {
     private SimpleTextAttributes plainData;
@@ -55,6 +56,9 @@ public class DataGridTextAttributes extends CommonUtil {
         modifiedDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, modifiedData.getFgColor(), null, modifiedData.getFontStyle());
 
         plainData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA);
+        if (plainData.getFgColor() == null) plainData = plainData.derive(plainData.getStyle(), UIUtil.getTextFieldForeground(), plainData.getBgColor(), null);
+        if (plainData.getBgColor() == null) plainData = plainData.derive(plainData.getStyle(), plainData.getFgColor(), UIUtil.getTextFieldBackground(), null);
+
         plainDataModified = new SimpleTextAttributes(
                 nvln(modifiedData.getBgColor(), plainData.getBgColor()),
                 nvln(modifiedData.getFgColor(), plainData.getFgColor()), null,
@@ -121,7 +125,7 @@ public class DataGridTextAttributes extends CommonUtil {
     public SimpleTextAttributes getPlainData(boolean modified, boolean atCaretRow) {
         return modified && atCaretRow ? plainDataAtCaretRowModified :
                 atCaretRow ? plainDataAtCaretRow :
-                        modified ? plainDataModified : plainData;
+                modified ? plainDataModified : plainData;
     }
 
     public SimpleTextAttributes getModifiedData(boolean atCaretRow) {
