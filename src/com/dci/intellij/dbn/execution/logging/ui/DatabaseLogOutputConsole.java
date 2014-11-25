@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.execution.logging.ui;
 import java.io.StringReader;
 import java.util.Date;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.diagnostic.logging.DefaultLogFilterModel;
