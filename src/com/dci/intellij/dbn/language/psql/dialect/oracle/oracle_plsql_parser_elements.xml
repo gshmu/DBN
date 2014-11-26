@@ -3501,6 +3501,7 @@
 
     <element-def description="Expr" id="expr" wrapping-template="PARENTHESES">
         <one-of id="000001741">
+            <exec-variable id="000003482" />
             <!--<element ref-id="compound_expression" />-->
             <element ref-id="sql_cursor_expression" />
             <element ref-id="case_expression" />
