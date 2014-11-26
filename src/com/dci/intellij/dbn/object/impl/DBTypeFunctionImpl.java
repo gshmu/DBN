@@ -37,10 +37,6 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
         return getType();
     }
 
-    public int getOverload() {
-        return overload;
-    }
-
     public boolean isProgramMethod() {
         return true;
     }

@@ -8,13 +8,14 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class DatabaseConnectIntentionAction extends GenericIntentionAction {
+public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
     @NotNull
     public String getText() {
         return "Connect to database";

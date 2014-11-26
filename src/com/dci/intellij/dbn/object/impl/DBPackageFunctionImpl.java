@@ -39,10 +39,6 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
         return getPackage();
     }
 
-    public int getOverload() {
-        return overload;
-    }
-
     public boolean isProgramMethod() {
         return true;
     }

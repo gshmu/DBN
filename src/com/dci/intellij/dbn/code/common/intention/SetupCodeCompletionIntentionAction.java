@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class SetupCodeCompletionIntentionAction extends GenericIntentionAction {
+public class SetupCodeCompletionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @NotNull
     public String getText() {
         return "Setup code completion";

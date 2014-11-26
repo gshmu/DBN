@@ -11,13 +11,14 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class JumpToExecutionResultIntentionAction extends GenericIntentionAction {
+public class JumpToExecutionResultIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private WeakReference<StatementExecutionProcessor> cachedExecutionProcessor;
 
     @NotNull

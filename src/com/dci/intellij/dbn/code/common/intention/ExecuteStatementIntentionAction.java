@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -18,7 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class ExecuteStatementIntentionAction extends GenericIntentionAction {
+public class ExecuteStatementIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @NotNull
     public String getText() {
         return "Execute statement";
