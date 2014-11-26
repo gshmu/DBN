@@ -3926,7 +3926,7 @@
             <sequence id="000001962">
                 <one-of id="000001963">
                     <token id="000001964" type-id="FN_LPAD" />
-                    <token id="000001965" type-id="KW_REPLACE" />
+                    <token id="000001965" type-id="KW_REPLACE" flavor="function" />
                     <token id="000001966" type-id="FN_RPAD" />
                     <token id="000001967" type-id="FN_SUBSTR" />
                     <token id="000001968" type-id="FN_SUBSTRB" />
