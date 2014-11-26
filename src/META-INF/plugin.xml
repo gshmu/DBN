@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3570</b>
              <ul>
+                - Excel 2007 (xlsx) data export format<br>
                 - Oracle Type language support<br>
                 - Execution logging - Oracle DBMS_OUTPUT<br>
                 - Improved code completion support for local objects<br>

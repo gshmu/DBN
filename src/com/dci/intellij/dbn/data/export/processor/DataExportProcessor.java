@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.export.DataExportException;
-import com.dci.intellij.dbn.data.export.DataExportFormat;
-import com.dci.intellij.dbn.data.export.DataExportInstructions;
-import com.dci.intellij.dbn.data.export.DataExportModel;
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -17,6 +11,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.export.DataExportException;
+import com.dci.intellij.dbn.data.export.DataExportFormat;
+import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportModel;
+
 public abstract class DataExportProcessor {
     public abstract boolean canCreateHeader();
     public abstract boolean canExportToClipboard();
@@ -26,6 +26,7 @@ public abstract class DataExportProcessor {
     private static DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
             new SQLDataExportProcessor(),
             new ExcelDataExportProcessor(),
+            new ExcelXDataExportProcessor(),
             new CSVDataExportProcessor(),
             new HTMLDataExportProcessor(),
             new XMLDataExportProcessor(),
