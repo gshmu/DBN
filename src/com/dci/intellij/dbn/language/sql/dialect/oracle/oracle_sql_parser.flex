@@ -58,7 +58,8 @@ digit = [0-9]
 INTEGER = {digit}+("e"{sign}?{digit}+)?
 NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
-VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
+VARIABLE = ":"({IDENTIFIER}|{INTEGER})
+SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
@@ -71,7 +72,8 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
-{VARIABLE}       {return tt.getSharedTokenTypes().getVariable(); }
+{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
+{SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
 
 {PLSQL_BLOCK}    {return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);}
 

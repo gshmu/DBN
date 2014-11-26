@@ -67,15 +67,21 @@ PARAMETER   = "composite_limit"|"connect_time"|"cpu_per_call"|"cpu_per_session"|
 DATA_TYPE   = "varchar2"|"with"{ws}"time"{ws}"zone"|"with"{ws}"local"{ws}"time"{ws}"zone"|"varchar"|"urowid"|"to"{ws}"second"|"to"{ws}"month"|"timestamp"|"string"|"smallint"|"rowid"|"real"|"raw"|"pls_integer"|"nvarchar2"|"numeric"|"number"|"nclob"|"nchar"{ws}"varying"|"nchar"|"national"{ws}"character"{ws}"varying"|"national"{ws}"character"|"national"{ws}"char"{ws}"varying"|"national"{ws}"char"|"long"{ws}"varchar"|"long"{ws}"raw"|"long"|"interval"{ws}"year"|"interval"{ws}"day"|"integer"|"int"|"float"|"double"{ws}"precision"|"decimal"|"date"|"clob"|"character"{ws}"varying"|"character"|"char"|"byte"|"boolean"|"blob"|"binary_integer"|"binary_float"|"binary_double"|"bfile"
 EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cursor_already_open"|"dup_val_on_index"|"invalid_cursor"|"invalid_number"|"login_denied"|"no_data_found"|"not_logged_on"|"program_error"|"rowtype_mismatch"|"self_is_null"|"storage_error"|"subscript_beyond_count"|"subscript_outside_limit"|"sys_invalid_rowid"|"timeout_on_resource"|"too_many_rows"|"value_error"|"zero_divide"
 
+VARIABLE = ":"({IDENTIFIER}|{INTEGER})
+SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 %state DIV
 %%
 
 {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
+{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
+{SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
+
+
 {BLOCK_COMMENT}      { return tt.getTokenType("BLOCK_COMMENT"); }
 {LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
-{REM_LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
+{REM_LINE_COMMENT}   { return tt.getTokenType("LINE_COMMENT"); }
 
 {INTEGER}     { return tt.getTokenType("INTEGER"); }
 {NUMBER}      { return tt.getTokenType("NUMBER"); }

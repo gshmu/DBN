@@ -56,7 +56,8 @@ digit = [0-9]
 INTEGER = {digit}+("e"{sign}?{digit}+)?
 NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
-VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
+VARIABLE = ":"({IDENTIFIER}|{INTEGER})
+SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 operator_equals             = "="
 operator_not_equals         = (("!"|"^"|"�"){wso}"=")|("<"{wso}">")
@@ -83,9 +84,9 @@ PLSQL_EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cu
 
 
 <YYINITIAL> {
-
-    {VARIABLE}           { return tt.getTokenType("VARIABLE"); }
     {WHITE_SPACE}+       { return tt.getSharedTokenTypes().getWhiteSpace(); }
+    {VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
+    {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
     {BLOCK_COMMENT}      { return tt.getTokenType("BLOCK_COMMENT"); }
     {LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
@@ -119,6 +120,9 @@ PLSQL_EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cu
 
 <PLSQL> {
     {WHITE_SPACE}+      { return tt.getSharedTokenTypes().getWhiteSpace(); }
+    {VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
+    {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
+
 
     {BLOCK_COMMENT}     { return tt.getTokenType("BLOCK_COMMENT"); }
     {LINE_COMMENT}      { return tt.getTokenType("LINE_COMMENT"); }
