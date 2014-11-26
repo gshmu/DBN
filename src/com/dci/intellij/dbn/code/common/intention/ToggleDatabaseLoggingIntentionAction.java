@@ -18,20 +18,26 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     private WeakReference<PsiFile> lastChecked;
     @NotNull
     public String getText() {
-        if (lastChecked != null && lastChecked.get() != null) {
-            ConnectionHandler connectionHandler = getConnectionHandler(lastChecked.get());
-            if (connectionHandler != null && supportsLogging(connectionHandler)) {
-                String databaseLogName = connectionHandler.getInterfaceProvider().getCompatibilityInterface().getDatabaseLogName();
-                if (StringUtil.isEmpty(databaseLogName)) {
-                    return connectionHandler.isLoggingEnabled() ? "Disable database logging" : "Enable database logging";
-                } else {
-                    return (connectionHandler.isLoggingEnabled() ? "Disable logging (" : "Enable logging (") + databaseLogName + ")";
-                }
-
+        ConnectionHandler connectionHandler = getLastCheckedConnection();
+        if (connectionHandler != null) {
+            String databaseLogName = connectionHandler.getInterfaceProvider().getCompatibilityInterface().getDatabaseLogName();
+            if (StringUtil.isEmpty(databaseLogName)) {
+                return connectionHandler.isLoggingEnabled() ? "Disable database logging" : "Enable database logging";
+            } else {
+                return (connectionHandler.isLoggingEnabled() ? "Disable logging (" : "Enable logging (") + databaseLogName + ")";
             }
         }
 
         return "Database logging";
+    }
+
+    @Override
+    public Icon getIcon(int flags) {
+        ConnectionHandler connectionHandler = getLastCheckedConnection();
+        if (connectionHandler != null) {
+            return connectionHandler.isLoggingEnabled() ? Icons.EXEC_LOG_OUTPUT_DISABLE : Icons.EXEC_LOG_OUTPUT_ENABLE;
+        }
+        return Icons.EXEC_LOG_OUTPUT_CONSOLE;
     }
 
     @NotNull
@@ -39,9 +45,14 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return "Statement execution intentions";
     }
 
-    @Override
-    public Icon getIcon(int flags) {
-        return Icons.EXEC_LOG_OUTPUT_CONSOLE;
+    ConnectionHandler getLastCheckedConnection() {
+        if (lastChecked != null && lastChecked.get() != null) {
+            ConnectionHandler connectionHandler = getConnectionHandler(lastChecked.get());
+            if (connectionHandler != null && supportsLogging(connectionHandler)) {
+                return connectionHandler;
+            }
+        }
+        return null;
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
