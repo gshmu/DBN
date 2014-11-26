@@ -56,6 +56,7 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
     private JPanel formatPanel;
     private JPanel destinationPanel;
     private JPanel optionsPanel;
+    private JRadioButton formatExcelXRadioButton;
 
     private DataExportInstructions instructions;
     private ConnectionHandler connectionHandler;
@@ -76,6 +77,7 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
         formatHTMLRadioButton.addActionListener(actionListener);
         formatXMLRadioButton.addActionListener(actionListener);
         formatExcelRadioButton.addActionListener(actionListener);
+        formatExcelXRadioButton.addActionListener(actionListener);
         formatCSVRadioButton.addActionListener(actionListener);
         formatCustomRadioButton.addActionListener(actionListener);
         destinationClipboardRadioButton.addActionListener(actionListener);
@@ -87,15 +89,17 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
 
         formatSQLRadioButton.setEnabled(sourceObject instanceof DBTable);
 
+        DataExportFormat format = instructions.getFormat();
         if (formatSQLRadioButton.isEnabled()) {
-            formatSQLRadioButton.setSelected(instructions.getFormat() == DataExportFormat.SQL);
+            formatSQLRadioButton.setSelected(format == DataExportFormat.SQL);
         }
 
-        formatExcelRadioButton.setSelected(instructions.getFormat() == DataExportFormat.EXCEL);
-        formatHTMLRadioButton.setSelected(instructions.getFormat() == DataExportFormat.HTML);
-        formatXMLRadioButton.setSelected(instructions.getFormat() == DataExportFormat.XML);
-        formatCSVRadioButton.setSelected(instructions.getFormat() == DataExportFormat.CSV);
-        formatCustomRadioButton.setSelected(instructions.getFormat() == DataExportFormat.CUSTOM);
+        formatExcelRadioButton.setSelected(format == DataExportFormat.EXCEL);
+        formatExcelXRadioButton.setSelected(format == DataExportFormat.EXCELX);
+        formatHTMLRadioButton.setSelected(format == DataExportFormat.HTML);
+        formatXMLRadioButton.setSelected(format == DataExportFormat.XML);
+        formatCSVRadioButton.setSelected(format == DataExportFormat.CSV);
+        formatCustomRadioButton.setSelected(format == DataExportFormat.CUSTOM);
 
         valueSeparatorTextField.setText(instructions.getValueSeparator());
         createHeaderCheckBox.setSelected(instructions.createHeader());
@@ -165,6 +169,7 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
         return
             formatSQLRadioButton.isSelected() ? DataExportFormat.SQL :
             formatExcelRadioButton.isSelected() ? DataExportFormat.EXCEL :
+            formatExcelXRadioButton.isSelected() ? DataExportFormat.EXCELX :
             formatHTMLRadioButton.isSelected() ? DataExportFormat.HTML :
             formatXMLRadioButton.isSelected() ? DataExportFormat.XML :
             formatCSVRadioButton.isSelected() ? DataExportFormat.CSV :
