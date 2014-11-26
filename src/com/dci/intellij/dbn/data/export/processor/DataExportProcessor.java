@@ -27,6 +27,7 @@ public abstract class DataExportProcessor {
             new SQLDataExportProcessor(),
             new ExcelDataExportProcessor(),
             new ExcelXDataExportProcessor(),
+            new OpenDocumentSpreadsheetProcessor(),
             new CSVDataExportProcessor(),
             new HTMLDataExportProcessor(),
             new XMLDataExportProcessor(),
