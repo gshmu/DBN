@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
+    protected int position;
     protected int overload;
     protected boolean isDeterministic;
     private DBLanguage language;
@@ -115,6 +116,11 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
     public int getOverload() {
         return overload;
+    }
+
+    @Override
+    public int getPosition() {
+        return position;
     }
 
     @Override

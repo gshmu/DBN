@@ -6,13 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class SelectConnectionIntentionAction extends GenericIntentionAction {
+public class SelectConnectionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     @NotNull
     public String getText() {
         return "Select connection...";

@@ -13,13 +13,14 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class ExplainPlanIntentionAction extends GenericIntentionAction {
+public class ExplainPlanIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @NotNull
     public String getText() {
         return "Explain plan for statement";

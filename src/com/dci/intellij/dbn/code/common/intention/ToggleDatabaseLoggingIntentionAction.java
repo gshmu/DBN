@@ -8,12 +8,13 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction {
+public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
     private WeakReference<PsiFile> lastChecked;
     @NotNull
     public String getText() {
