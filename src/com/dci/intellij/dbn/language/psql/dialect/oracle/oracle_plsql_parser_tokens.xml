@@ -425,7 +425,7 @@
         <token index="364" id="KW_TRUST" value="trust" type="keyword"/>
         <token index="365" id="KW_TWO_SIDED_PROB" value="two_sided_prob" type="keyword"/>
         <token index="366" id="KW_TWO_SIDED_SIG" value="two_sided_sig" type="keyword"/>
-        <token index="367" id="KW_TYPE" value="type" type="keyword" reserved="true"/>
+        <token index="367" id="KW_TYPE" value="type" type="keyword"/>
         <token index="368" id="KW_U_STATISTIC" value="u_statistic" type="keyword"/>
         <token index="369" id="KW_UNBOUNDED" value="unbounded" type="keyword"/>
         <token index="370" id="KW_UNDER" value="under" type="keyword"/>
