@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3570</b>
              <ul>
+                - Oracle Type language support<br>
                 - Execution logging - Oracle DBMS_OUTPUT<br>
                 - Improved code completion support for local objects<br>
                 - Minor bug fixes and improvements<br>
