@@ -144,7 +144,6 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
                             }
                         }
-
                     }.start();
                 }
             }

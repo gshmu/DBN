@@ -52,6 +52,9 @@ digit = [0-9]
 INTEGER = {digit}+("e"{sign}?{digit}+)?
 NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
+VARIABLE = ":"({IDENTIFIER}|{INTEGER})
+SQLP_VARIABLE = "&""&"?{IDENTIFIER}
+
 %state DIV
 %%
 
@@ -60,6 +63,10 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 {BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
+
+{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
+{SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
+
 
 {INTEGER}     { return tt.getSharedTokenTypes().getInteger(); }
 {NUMBER}      { return tt.getSharedTokenTypes().getNumber(); }

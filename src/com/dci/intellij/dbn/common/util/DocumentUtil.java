@@ -49,7 +49,7 @@ public class DocumentUtil {
             public void run() {
                 // touch the editor to trigger parsing
 
-                String text = document.getText();
+                CharSequence text = document.getCharsSequence();
                 BlockSupport.getInstance(file.getProject()).reparseRange(file, 0, text.length(), text);
                 refreshEditorAnnotations(file);
             }
