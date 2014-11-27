@@ -94,22 +94,29 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             try {
 
                 if (leafBeforeCaret == null) {
-                    ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
-                    ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
-                    ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
-                    Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(lookupContext);
-                    for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
-                        if (firstPossibleLeaf instanceof TokenElementType) {
-                            TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
-                            consumer.consume(tokenElementType);
-                        }
-                    }
+                    addFileRootCompletions(consumer);
                 } else {
                     leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
                     buildElementRelativeVariants(leafBeforeCaret, consumer);
                 }
             } catch (ConsumerStoppedException e) {
 
+            }
+        }
+    }
+
+    private void addFileRootCompletions(CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+        CodeCompletionContext context = consumer.getContext();
+        DBLanguagePsiFile file = context.getFile();
+
+        ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
+        ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
+        ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
+        Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(lookupContext);
+        for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
+            if (firstPossibleLeaf instanceof TokenElementType) {
+                TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
+                consumer.consume(tokenElementType);
             }
         }
     }

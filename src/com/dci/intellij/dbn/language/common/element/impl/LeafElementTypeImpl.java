@@ -6,6 +6,7 @@ import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.language.common.TokenType;
+import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
@@ -117,6 +118,11 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 if (this == qualifiedIdentifierElementType.getSeparatorToken()) {
                     break;
                 }
+            } else if (elementType instanceof ChameleonElementType) {
+                ChameleonElementType chameleonElementType = (ChameleonElementType) elementType;
+                ElementTypeBundle elementTypeBundle = chameleonElementType.getParentLanguage().getParserDefinition().getParser().getElementTypes();;
+                ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
+                possibleLeafs.addAll(lookupCache.getFirstPossibleLeafs());
             }
             if (pathNode != null) {
                 position = pathNode.getIndexInParent() + 1;

@@ -24,8 +24,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
-    public ChameleonElementType(DBLanguageDialect language) {
+    private DBLanguageDialect parentLanguage;
+    public ChameleonElementType(DBLanguageDialect language,DBLanguageDialect parentLanguage) {
         super("chameleon (" + language.getDisplayName() + ")", language);
+        this.parentLanguage = parentLanguage;
     }
 
     public String getId() {
@@ -147,7 +149,11 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     public ElementTypeBundle getElementBundle() {
-        return null;
+        return getLanguageDialect().getParserDefinition().getParser().getElementTypes();
+    }
+
+    public DBLanguageDialect getParentLanguage() {
+        return parentLanguage;
     }
 
     public void registerVirtualObject(DBObjectType objectType) {
