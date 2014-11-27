@@ -155,6 +155,9 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
                 }
             }
+            if (oldSelection != null && newSelection != null && newSelection.getObject() instanceof DatabaseLogOutput) {
+                newSelection.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
+            }
 
         }
     };
@@ -346,6 +349,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                 DatabaseLogOutput logOutput = (DatabaseLogOutput) object;
                 if (logOutput.getConnectionHandler() == connectionHandler) {
                     logOutput.write(output);
+                    tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
                     return;
                 }
             }
@@ -357,7 +361,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         TabInfo tabInfo = new TabInfo(component);
         tabInfo.setObject(logOutput);
         tabInfo.setText(logOutput.getName());
-        tabInfo.setIcon(logOutput.getIcon());
+        tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
 
         EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
         if (visibilitySettings.getExecutionResultTabs().value()){

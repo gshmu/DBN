@@ -103,19 +103,20 @@ public class Icons {
     public static final Icon STMT_EXEC_RESULTSET_RERUN  = load("/img/ExecutionResultSetRerun.png");
     public static final Icon STMT_EXEC_RESULTSET_ORPHAN = load("/img/ExecutionResultSetOrphan.png");
 
-    public static final Icon EXEC_RESULT_RERUN            = load("/img/action/Refresh.png");
-    public static final Icon EXEC_RESULT_OPEN_EXEC_DIALOG = load("/img/ExecuteMethodDialog.png");
-    public static final Icon EXEC_RESULT_RESUME           = load("/img/action/ResumeExecution.png");
-    public static final Icon EXEC_RESULT_STOP             = load("/img/action/StopExecution.png");
-    public static final Icon EXEC_RESULT_CLOSE            = load("/img/action/Close.png");
-    public static final Icon EXEC_RESULT_VIEW_STATEMENT   = load("/img/action/Preview.png");
-    public static final Icon EXEC_RESULT_VIEW_RECORD      = load("/img/RecordViewer.png");
-    public static final Icon EXEC_RESULT_OPTIONS          = load("/img/action/Properties.png");
-    public static final Icon EXEC_RESULT_MESSAGES         = load("/img/common/Messages.png");
-    public static final Icon EXEC_CONFIG                  = load("/img/DBProgram.png");
-    public static final Icon EXEC_LOG_OUTPUT_CONSOLE      = load("/img/LogOutputConsole.png");
-    public static final Icon EXEC_LOG_OUTPUT_ENABLE       = load("/img/LogOutputEnable.png");
-    public static final Icon EXEC_LOG_OUTPUT_DISABLE      = load("/img/LogOutputDisable.png");
+    public static final Icon EXEC_RESULT_RERUN              = load("/img/action/Refresh.png");
+    public static final Icon EXEC_RESULT_OPEN_EXEC_DIALOG   = load("/img/ExecuteMethodDialog.png");
+    public static final Icon EXEC_RESULT_RESUME             = load("/img/action/ResumeExecution.png");
+    public static final Icon EXEC_RESULT_STOP               = load("/img/action/StopExecution.png");
+    public static final Icon EXEC_RESULT_CLOSE              = load("/img/action/Close.png");
+    public static final Icon EXEC_RESULT_VIEW_STATEMENT     = load("/img/action/Preview.png");
+    public static final Icon EXEC_RESULT_VIEW_RECORD        = load("/img/RecordViewer.png");
+    public static final Icon EXEC_RESULT_OPTIONS            = load("/img/action/Properties.png");
+    public static final Icon EXEC_RESULT_MESSAGES           = load("/img/common/Messages.png");
+    public static final Icon EXEC_CONFIG                    = load("/img/DBProgram.png");
+    public static final Icon EXEC_LOG_OUTPUT_CONSOLE        = load("/img/LogOutputConsole.png");
+    public static final Icon EXEC_LOG_OUTPUT_CONSOLE_UNREAD = load("/img/LogOutputConsoleUnread.png");
+    public static final Icon EXEC_LOG_OUTPUT_ENABLE         = load("/img/LogOutputEnable.png");
+    public static final Icon EXEC_LOG_OUTPUT_DISABLE        = load("/img/LogOutputDisable.png");
 
     public static final Icon NAVIGATION_GO_TO_SPEC       = load("/img/GoToSpec.png");
     public static final Icon NAVIGATION_GO_TO_BODY       = load("/img/GoToBody.png");
