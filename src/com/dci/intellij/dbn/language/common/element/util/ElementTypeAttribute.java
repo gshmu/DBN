@@ -29,6 +29,7 @@ public enum ElementTypeAttribute {
     ACTION("ACTION", "Action"),
     GENERIC("GENERIC", "Generic element"),
     SPECIFIC("SPECIFIC", "Specific element"),
+    DATABASE_LOG_PRODUCER("DATABASE_LOG_PRODUCER", "Database logging"),
     ;
 
     public static final Set<ElementTypeAttribute> EMPTY_LIST = new THashSet<ElementTypeAttribute>(0);
