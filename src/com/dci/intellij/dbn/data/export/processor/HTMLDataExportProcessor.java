@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
+import java.util.Date;
+
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -9,12 +15,6 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.Date;
 
 
 public class HTMLDataExportProcessor extends DataExportProcessor{
@@ -86,7 +86,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
     }
 
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<html>\n");
         buffer.append("    <head>\n");
@@ -115,6 +115,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
             buffer.append("            <tr>\n");
 
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+                checkCancelled();
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
                 String value = null;
                 if (genericDataType == GenericDataType.LITERAL ||

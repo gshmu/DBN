@@ -1,13 +1,16 @@
 package com.dci.intellij.dbn.common.thread;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 
-public abstract class ModalTask extends Task.Modal{
+public abstract class ModalTask extends Task.Modal implements RunnableTask{
     public ModalTask(Project project, String title, boolean canBeCancelled) {
         super(project, title, canBeCancelled);
     }
@@ -16,6 +19,19 @@ public abstract class ModalTask extends Task.Modal{
         super(project, title, false);
     }
 
+    @Override
+    public final void run() {
+        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        run(progressIndicator);
+    }
+
+    @Override
+    public final void run(@NotNull ProgressIndicator progressIndicator) {
+        progressIndicator.setIndeterminate(true);
+        execute(progressIndicator);
+    }
+
+    protected abstract void execute(@NotNull ProgressIndicator progressIndicator);
 
     public void start() {
         final ProgressManager progressManager = ProgressManager.getInstance();

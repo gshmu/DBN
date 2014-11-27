@@ -6,7 +6,8 @@ import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.ModalTask;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.data.export.DataExportManager;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.openapi.progress.ProgressIndicator;
 
 public class ExportDataDialog extends DBNDialog {
     private ExportDataForm exportDataForm;
@@ -65,18 +67,25 @@ public class ExportDataDialog extends DBNDialog {
     }
 
     protected void doOKAction() {
-        exportDataForm.validateEntries(new SimpleTask() {
+        exportDataForm.validateEntries(new ModalTask(getProject(), "Creating export file", true) {
             @Override
-            public void execute() {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
                 DataExportInstructions exportInstructions = exportDataForm.getExportInstructions();
                 exportManager.setExportInstructions(exportInstructions);
-                boolean success = exportManager.exportSortableTableContent(
+                exportManager.exportSortableTableContent(
                         table,
                         exportInstructions,
-                        connectionHandler);
-                if (success) ExportDataDialog.super.doOKAction();
+                        connectionHandler,
+                        new SimpleLaterInvocator() {
+                            @Override
+                            protected void execute() {
+                                ExportDataDialog.super.doOKAction();
+                            }
+                        });
+                    }
+
             }
-        });
+        );
     }
 }

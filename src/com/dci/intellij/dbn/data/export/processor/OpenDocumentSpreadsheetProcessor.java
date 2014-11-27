@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.data.export.processor;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -11,6 +12,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
+import org.odftoolkit.odfdom.dom.OdfContentDom;
+import org.odftoolkit.odfdom.dom.style.OdfStyleFamily;
+import org.odftoolkit.odfdom.incubator.doc.office.OdfOfficeAutomaticStyles;
+import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
@@ -52,89 +57,97 @@ public class OpenDocumentSpreadsheetProcessor extends DataExportProcessor{
         return fileName;
     }
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
-
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+        OdfSpreadsheetDocument document = null;
+        OdfContentDom contentDom = null;
+        OdfTable table = null;
         try {
-            OdfSpreadsheetDocument document = OdfSpreadsheetDocument.newSpreadsheetDocument();
-/*            OdfContentDom contentDom = document.getContentDom();
-            OdfStylesDom stylesDom = document.getStylesDom();
-            OdfOfficeAutomaticStyles contentAutoStyles = contentDom.getOrCreateAutomaticStyles();
-            OdfOfficeStyles stylesOfficeStyles = document.getOrCreateDocumentStyles();
-            OfficeSpreadsheetElement officeSpreadsheet = document.getContentRoot();*/
-
-
-            OdfTable table = OdfTable.newTable(document);
-
-            if (instructions.createHeader()) {
-                table.appendRow();
-                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
-                    table.appendColumn();
-                    String columnName = model.getColumnName(columnIndex);
-                    OdfTableCell cell = table.getCellByPosition(columnIndex + 1, 1);
-                    cell.setStringValue(columnName);
+            document = OdfSpreadsheetDocument.newSpreadsheetDocument();
+            contentDom = document.getContentDom();
+            table = document.getTableList().get(0);
+            table.setTableName("Test");
+        } catch (Exception e) {
+            throw new DataExportException("Error creating export model. Reason: " + e.getMessage());
+        }
 
 
 /*
-                    CellStyle cellStyle = workbook.createCellStyle();
-                    Font tableHeadingFont = workbook.createFont();
-                    tableHeadingFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-                    cellStyle.setFont(tableHeadingFont);
-                    cell.setCellStyle(cellStyle);
+        OdfStylesDom stylesDom = document.getStylesDom();
+
+        OdfOfficeStyles stylesOfficeStyles = document.getOrCreateDocumentStyles();
+        OfficeSpreadsheetElement officeSpreadsheet = document.getContentRoot();*/
+
+        OdfOfficeAutomaticStyles contentAutoStyles = contentDom.getOrCreateAutomaticStyles();
+        OdfStyle headerStyle = contentAutoStyles.newStyle(OdfStyleFamily.TableCell);
+
+
+        if (instructions.createHeader()) {
+            for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
+                OdfTableCell cell = table.getCellByPosition(columnIndex, 0);
+                String columnName = model.getColumnName(columnIndex);
+                cell.setStringValue(columnName);
+                //cell.setCellBackgroundColor("#d3d3d3");
+
+/*
+                CellStyle cellStyle = workbook.createCellStyle();
+                Font tableHeadingFont = workbook.createFont();
+                tableHeadingFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+                cellStyle.setFont(tableHeadingFont);
+                cell.setCellStyle(cellStyle);
 */
-                }
             }
+        }
 
-/*            CellStyleCache cellStyleCache = new CellStyleCache(workbook, model.getProject());
 
-            for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
-                Row row = sheet.createRow(rowIndex + 1);
-                for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
-                    Cell cell = row.createCell(columnIndex);
-                    Object value = model.getValue(rowIndex, columnIndex);
-                    if (value != null) {
-                        if (value instanceof Number) {
-                            Number number = (Number) value;
-                            double doubleValue = number.doubleValue();
-                            cell.setCellValue(doubleValue);
-                            cell.setCellStyle(
-                                    doubleValue % 1 == 0 ?
-                                            cellStyleCache.getIntegerStyle() :
-                                            cellStyleCache.getNumberStyle());
+        for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
+            for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
+                checkCancelled();
+                OdfTableCell cell = table.getCellByPosition(columnIndex, instructions.createHeader() ? rowIndex + 1 : rowIndex);
+                Object value = model.getValue(rowIndex, columnIndex);
+                if (value != null) {
+                    if (value instanceof Number) {
+                        Number number = (Number) value;
+                        double doubleValue = number.doubleValue();
+                        cell.setDoubleValue(doubleValue);
+/*
+                        cell.setCellStyle(
+                                doubleValue % 1 == 0 ?
+                                        cellStyleCache.getIntegerStyle() :
+                                        cellStyleCache.getNumberStyle());
 
-                        } else if (value instanceof Date) {
-                            Date date = (Date) value;
-                            boolean hasTime = hasTimeComponent(date);
-                            cell.setCellValue(date);
-                            cell.setCellStyle(hasTime ?
-                                    cellStyleCache.getDatetimeStyle() :
-                                    cellStyleCache.getDateStyle());
-                        } else {
-                            cell.setCellValue(value.toString());
-                        }
+*/
+                    } else if (value instanceof Date) {
+                        Date date = (Date) value;
+                        boolean hasTime = hasTimeComponent(date);
+                        Calendar calendar = new GregorianCalendar();
+                        calendar.setTime(date);
+
+                        cell.setDateValue(calendar);
+/*
+                        cell.setCellStyle(hasTime ?
+                                cellStyleCache.getDatetimeStyle() :
+                                cellStyleCache.getDateStyle());
+*/
+                    } else {
+                        cell.setStringValue(value.toString());
                     }
                 }
             }
-
-            for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                sheet.autoSizeColumn(columnIndex);
-            }*/
-
-            File file = instructions.getFile();
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                document.save(fileOutputStream);
-                fileOutputStream.flush();
-                fileOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new DataExportException(
-                        "Could not write file " + file.getPath() +".\n" +
-                                "Reason: " + e.getMessage());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
+/*
+        for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+            sheet.autoSizeColumn(columnIndex);
+        }
+*/
+        File file = instructions.getFile();
+        try {
+            document.save(file);
+        } catch (Exception e) {
+            throw new DataExportException(
+                    "Could not write file " + file.getPath() +".\n" +
+                            "Reason: " + e.getMessage());
+        }
     }
 
     protected Workbook createWorkbook() {

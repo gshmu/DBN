@@ -56,7 +56,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         return fileName;
     }
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         Workbook workbook = createWorkbook();
         try {
             Sheet sheet = workbook.createSheet(model.getTableName());
@@ -83,6 +83,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
             for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
                 Row row = sheet.createRow(rowIndex + 1);
                 for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
+                    checkCancelled();
                     Cell cell = row.createCell(columnIndex);
                     Object value = model.getValue(rowIndex, columnIndex);
                     if (value != null) {

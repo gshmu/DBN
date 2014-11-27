@@ -28,7 +28,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
         return true;
     }
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         if (instructions.createHeader()) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
@@ -68,6 +68,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+                checkCancelled();
                 String columnName = model.getColumnName(columnIndex);
                 Object object = model.getValue(rowIndex, columnIndex);
                 String value = object == null ? "" : object.toString();
