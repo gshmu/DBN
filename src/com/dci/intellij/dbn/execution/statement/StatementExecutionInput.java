@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -154,5 +155,9 @@ public class StatementExecutionInput implements Disposable {
     public String getStatementDescription() {
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
         return executablePsiElement == null ? "SQL Statement" : executablePsiElement.getPresentableText();
+    }
+
+    public boolean isDatabaseLogProducer() {
+        return executablePsiElement != null && executablePsiElement.getElementType().is(ElementTypeAttribute.DATABASE_LOG_PRODUCER);
     }
 }

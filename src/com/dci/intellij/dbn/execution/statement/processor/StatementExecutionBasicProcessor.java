@@ -233,7 +233,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                 if (activeConnection != null && !activeConnection.isDisposed()) {
                     connection = activeConnection.getStandaloneConnection(currentSchema);
 
-                    if (activeConnection.isLoggingEnabled()) {
+                    if (activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                         loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
                     }
                     Statement statement = connection.createStatement();
