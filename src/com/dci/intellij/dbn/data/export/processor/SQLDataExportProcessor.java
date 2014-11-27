@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import java.util.Date;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -7,8 +9,6 @@ import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.util.text.StringUtil;
-
-import java.util.Date;
 
 
 public class SQLDataExportProcessor extends DataExportProcessor{
@@ -42,7 +42,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
     }
 
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             buffer.append("insert into ");
@@ -64,6 +64,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
 
             realColumnIndex = 0;
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+                checkCancelled();
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
                 if (genericDataType == GenericDataType.LITERAL ||
                         genericDataType == GenericDataType.NUMERIC ||

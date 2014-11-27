@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import java.awt.datatransfer.Transferable;
+import java.util.Date;
+
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
@@ -10,9 +13,6 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-
-import java.awt.datatransfer.Transferable;
-import java.util.Date;
 
 
 public class XMLDataExportProcessor extends DataExportProcessor{
@@ -50,7 +50,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
         return ClipboardUtil.createXmlContent(content);
     }
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<table name=\"");
         buffer.append(model.getTableName());
@@ -62,6 +62,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
             buffer.append(rowIndex);
             buffer.append("\">\n");
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
+                checkCancelled();
                 String columnName = model.getColumnName(columnIndex);
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
                 String value = null;

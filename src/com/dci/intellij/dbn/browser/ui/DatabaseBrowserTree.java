@@ -1,5 +1,20 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JPopupMenu;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
@@ -37,21 +52,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JPopupMenu;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class DatabaseBrowserTree extends DBNTree implements Disposable {
     public static final EmptyBrowserTreeModel EMPTY_TREE_MODEL = new EmptyBrowserTreeModel();
@@ -351,8 +351,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                     if (lastPathEntity.isDisposed()) return;
 
                     new ModalTask(lastPathEntity.getProject(), "Loading object information", true) {
-                        public void run(@NotNull ProgressIndicator progressIndicator) {
-                            progressIndicator.setIndeterminate(true);
+                        public void execute(@NotNull ProgressIndicator progressIndicator) {
                             ActionGroup actionGroup = null;
                             if (lastPathEntity instanceof DBObjectList) {
                                 DBObjectList objectList = (DBObjectList) lastPathEntity;

@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.application.Application;
@@ -11,8 +14,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BackgroundTask extends Task.Backgroundable implements RunnableTask {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -45,6 +46,7 @@ public abstract class BackgroundTask extends Task.Backgroundable implements Runn
         int priority = Thread.currentThread().getPriority();
         try {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            progressIndicator.setIndeterminate(true);
             execute(progressIndicator);
         } catch (InterruptedException e) {
             // no action required here

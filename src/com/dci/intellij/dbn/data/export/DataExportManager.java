@@ -38,10 +38,11 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         return project.getComponent(DataExportManager.class);
     }
 
-    public boolean exportSortableTableContent(
+    public void exportSortableTableContent(
             SortableTable table,
             DataExportInstructions instructions,
-            ConnectionHandler connectionHandler) {
+            ConnectionHandler connectionHandler,
+            final SimpleTask successCallback) {
         final Project project = getProject();
         boolean isSelection = instructions.getScope() == DataExportInstructions.Scope.SELECTION;
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
@@ -58,37 +59,38 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                     //FileSystemView view = FileSystemView.getFileSystemView();
                     //Icon icon = view.getSystemIcon(file);
 
+                    SimpleTask openFileTask = new SimpleTask() {
+                        @Override
+                        public void execute() {
+                            successCallback.start();
+                            if (getOption() == 1) {
+                                try {
+                                    Desktop.getDesktop().open(file);
+                                } catch (IOException e) {
+                                    MessageUtil.showErrorDialog(
+                                            project,
+                                            "Open file",
+                                            "Could not open file " + file.getPath() + ".\n" +
+                                                    "The file type is most probably not associated with any program."
+                                    );
+                                }
+                            }
+                        }
+                    };
                     MessageUtil.showInfoDialog(
                             project,
                             "Export info",
                             "Content exported to file " + file.getPath(),
                             new String[]{"OK", "Open File"}, 0,
-                            new SimpleTask() {
-                                @Override
-                                public void execute() {
-                                    if (getOption() == 1) {
-                                        try {
-                                            Desktop.getDesktop().open(file);
-                                        } catch (IOException e) {
-                                            MessageUtil.showErrorDialog(
-                                                    project,
-                                                    "Open file",
-                                                    "Could not open file " + file.getPath() + ".\n" +
-                                                        "The file type is most probably not associated with any program."
-                                            );
-                                        }
-                                    }
-                                }
-                            });
+                            openFileTask);
                 } else {
-                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath());
+                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath(), null, 0, successCallback);
                 }
             }
-
-            return true;
         } catch (DataExportException e) {
             MessageUtil.showErrorDialog(project, "Error performing data export.", e);
-            return false;
+        } catch (InterruptedException e) {
+
         }
     }
 

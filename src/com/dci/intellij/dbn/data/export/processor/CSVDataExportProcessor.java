@@ -16,7 +16,7 @@ public class CSVDataExportProcessor extends CustomDataExportProcessor{
         return "csv";
     }
 
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         instructions.setValueSeparator(",");
         super.performExport(model, instructions, connectionHandler);
     }
