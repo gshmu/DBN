@@ -98,9 +98,9 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
         return null;
     }
 
-    public synchronized ChameleonElementType getChameleonElementType() {
+    public synchronized ChameleonElementType getChameleonElementType(DBLanguageDialect parentLanguage) {
         if (chameleonElementType == null) {
-            chameleonElementType = new ChameleonElementType(this);
+            chameleonElementType = new ChameleonElementType(this, parentLanguage);
         }
         return chameleonElementType;
     }
