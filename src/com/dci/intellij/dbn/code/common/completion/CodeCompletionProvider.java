@@ -314,7 +314,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         PsiElement sourceElement = context.getElementAtCaret();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
 
-        if (connectionHandler != null ) {
+        if (connectionHandler != null && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
             if (sourceElement.getParent() instanceof QualifiedIdentifierPsiElement && sourceElement.getParent().getFirstChild() != sourceElement) {
                 QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();
