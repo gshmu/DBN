@@ -926,20 +926,27 @@
                 max(case apo.OBJECT_TYPE when 'TYPE BODY' then decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') end) as IS_BODY_DEBUG,
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
-                t.TYPECODE
+                t.TYPECODE,
+                ct.ELEM_TYPE_OWNER as COLLECTION_ELEMENT_TYPE_OWNER,
+                ct.ELEM_TYPE_NAME as COLLECTION_ELEMENT_TYPE_NAME
             from
                 [PREFIX]_TYPES t,
+                [PREFIX]_COLL_TYPES ct,
                 SYS.ALL_PROBE_OBJECTS apo
             where
                 t.OWNER = {0} and
                 apo.OWNER (+) = t.OWNER and
                 apo.OBJECT_NAME (+) = t.TYPE_NAME and
-                apo.OBJECT_TYPE in ('TYPE', 'TYPE BODY')
+                apo.OBJECT_TYPE in ('TYPE', 'TYPE BODY') and
+                ct.OWNER (+) = t.OWNER and
+                ct.TYPE_NAME (+) = t.TYPE_NAME
             group by
                 t.TYPE_NAME,
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
-                t.TYPECODE
+                t.TYPECODE,
+                ct.ELEM_TYPE_OWNER,
+                ct.ELEM_TYPE_NAME
             order by
                 t.TYPE_NAME,
                 t.TYPECODE asc
@@ -1183,12 +1190,12 @@
                 'N' as IS_SET
             from [PREFIX]_ARGUMENTS
             where
-                ARGUMENT_NAME is not null and
                 OWNER = {0} and
                 PACKAGE_NAME is null and
                 OBJECT_NAME = {1} and
                 DATA_LEVEL = 0 and
-                (OVERLOAD = {3} or (OVERLOAD is NULL and {3} = 0))
+                (OVERLOAD = {3} or (OVERLOAD is NULL and {3} = 0)) and
+                (ARGUMENT_NAME is not null or POSITION = 0)
             order by
                 OBJECT_NAME,
                 OVERLOAD,
@@ -1216,12 +1223,12 @@
                 'N' as IS_SET
             from [PREFIX]_ARGUMENTS
             where
-                ARGUMENT_NAME is not null and
                 OWNER = {0} and
                 PACKAGE_NAME = {1} and
                 OBJECT_NAME = {2} and
                 DATA_LEVEL = 0 and
-                (OVERLOAD = {3} or (OVERLOAD is NULL and {3} = 0))
+                (OVERLOAD = {3} or (OVERLOAD is NULL and {3} = 0)) and
+                (ARGUMENT_NAME is not null or POSITION = 0)
             order by
                 OVERLOAD,
                 SEQUENCE asc
@@ -1248,9 +1255,9 @@
                 'N' as IS_SET
             from [PREFIX]_ARGUMENTS
             where
-                ARGUMENT_NAME is not null and
                 OWNER = {0} and
-                DATA_LEVEL = 0
+                DATA_LEVEL = 0 and
+                (ARGUMENT_NAME is not null or POSITION = 0)
             order by
                 PACKAGE_NAME,
                 OBJECT_NAME,
