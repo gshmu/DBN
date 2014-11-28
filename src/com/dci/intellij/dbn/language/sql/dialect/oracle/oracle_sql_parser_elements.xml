@@ -8704,7 +8704,14 @@
         </qualified-identifier>
         <wrapper exit="true" id="000004737" template="PARENTHESES">
             <iteration id="000004738" optional="true" separator="CHR_COMMA">
-                <element ref-id="expression" />
+                <sequence>
+                    <sequence id="000001309" optional="true">
+                        <object-ref id="000001310" type="ARGUMENT" />
+                        <token exit="true" id="000001311" type-id="CHR_EQUAL" />
+                        <token id="000001312" type-id="CHR_GREATER" />
+                    </sequence>
+                    <element ref-id="expression" />
+                </sequence>
             </iteration>
         </wrapper>
     </element-def>
