@@ -927,8 +927,13 @@
                 t.SUPERTYPE_OWNER,
                 t.SUPERTYPE_NAME,
                 t.TYPECODE,
-                ct.ELEM_TYPE_OWNER as COLLECTION_ELEMENT_TYPE_OWNER,
-                ct.ELEM_TYPE_NAME as COLLECTION_ELEMENT_TYPE_NAME
+                ct.ELEM_TYPE_OWNER as COLLECTION_DATA_TYPE_OWNER,
+                ct.ELEM_TYPE_NAME  as COLLECTION_DATA_TYPE_NAME,
+                null               as COLLECTION_DATA_TYPE_PACKAGE,
+                ct.LENGTH          as COLLECTION_DATA_LENGTH,
+                ct.PRECISION       as COLLECTION_DATA_PRECISION,
+                ct.SCALE           as COLLECTION_DATA_SCALE,
+                'N'                as COLLECTION_IS_SET
             from
                 [PREFIX]_TYPES t,
                 [PREFIX]_COLL_TYPES ct,
@@ -946,7 +951,10 @@
                 t.SUPERTYPE_NAME,
                 t.TYPECODE,
                 ct.ELEM_TYPE_OWNER,
-                ct.ELEM_TYPE_NAME
+                ct.ELEM_TYPE_NAME,
+                ct.LENGTH,
+                ct.PRECISION,
+                ct.SCALE
             order by
                 t.TYPE_NAME,
                 t.TYPECODE asc
