@@ -15,6 +15,8 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
@@ -36,6 +38,9 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
+import com.dci.intellij.dbn.object.properties.PresentableProperty;
 
 public class DBTypeImpl extends DBProgramImpl implements DBType {
     protected DBObjectList<DBTypeAttribute> attributes;
@@ -43,7 +48,11 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
     private String superTypeOwner;
     private String superTypeName;
-    private DBType superType;
+    private DBObjectRef<DBType> superType;
+
+    private String collectionElementTypeOwner;
+    private String collectionElementTypeName;
+    private DBDataType collectionElementType;
 
     private DBNativeDataType nativeDataType;
     private boolean isCollection;
@@ -67,6 +76,10 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         String typecode = resultSet.getString("TYPECODE");
         isCollection = "COLLECTION".equals(typecode);
         nativeDataType = getConnectionHandler().getObjectBundle().getNativeDataType(typecode);
+        if (isCollection) {
+            collectionElementTypeOwner = resultSet.getString("COLLECTION_ELEMENT_TYPE_OWNER");
+            collectionElementTypeName = resultSet.getString("COLLECTION_ELEMENT_TYPE_NAME");
+        }
     }
 
     protected void initLists() {
@@ -111,17 +124,53 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     }
 
     public DBType getSuperType() {
-        if (superType == null && superTypeOwner != null && superTypeName != null) {
-            superType = getConnectionHandler().getObjectBundle().getSchema(superTypeOwner).getType(superTypeName);
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (superType == null && superTypeOwner != null && superTypeName != null && connectionHandler != null) {
+            DBType type = connectionHandler.getObjectBundle().getSchema(superTypeOwner).getType(superTypeName);
+            superType = DBObjectRef.from(type);
             superTypeOwner = null;
             superTypeName = null;
         }
-        if (superType != null) {
-            superType = (DBType) superType.getUndisposedElement();
-        }
-        return superType;
+        return DBObjectRef.get(superType);
     }
 
+    public DBDataType getCollectionElementType() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (collectionElementType == null && collectionElementTypeName != null && connectionHandler != null) {
+            if (collectionElementTypeOwner != null) {
+                DBType type = connectionHandler.getObjectBundle().getSchema(collectionElementTypeOwner).getType(collectionElementTypeName);
+                if (type != null) {
+                    collectionElementType = DBDataType.get(connectionHandler, type);
+                }
+            } else{
+
+            }
+            collectionElementTypeOwner = null;
+            collectionElementTypeName = null;
+        }
+        return collectionElementType;
+    }
+
+    public DBObject getDefaultNavigationObject() {
+        if (isCollection()) {
+            DBDataType dataType = getCollectionElementType();
+            if (dataType != null && dataType.isDeclared()) {
+                return dataType.getDeclaredType();
+            }
+
+        }
+        return null;
+    }
+
+    @Override
+    public List<PresentableProperty> getPresentableProperties() {
+        List<PresentableProperty> properties = super.getPresentableProperties();
+        DBDataType collectionElementType = getCollectionElementType();
+        if (collectionElementType != null) {
+            properties.add(0, new DBDataTypePresentableProperty("Collection element type", collectionElementType));
+        }
+        return properties;
+    }
 
     public List<DBType> getSubTypes() {
         return subTypes.getObjects();
@@ -322,6 +371,15 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
         if (subTypes != null && subTypes.size() > 0) {
             objectNavigationLists.add(new DBObjectNavigationListImpl<DBType>("Sub Types", subTypes.getObjects()));
+        }
+        if (isCollection()) {
+            DBDataType dataType = getCollectionElementType();
+            if (dataType != null && dataType.isDeclared()) {
+                DBType collectionElementType = dataType.getDeclaredType();
+                if (collectionElementType != null) {
+                    objectNavigationLists.add(new DBObjectNavigationListImpl("Collection element type", collectionElementType));
+                }
+            }
         }
 
 

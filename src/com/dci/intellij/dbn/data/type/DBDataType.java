@@ -84,6 +84,27 @@ public class DBDataType {
         return dataType;
     }
 
+    public static DBDataType get(ConnectionHandler connectionHandler, DBType declaredType) {
+        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+        List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
+        for (DBDataType dataType : cachedDataTypes) {
+            if (CommonUtil.safeEqual(dataType.declaredType, declaredType)){
+                return dataType;
+            }
+        }
+
+        DBDataType dataType = new DBDataType();
+        dataType.nativeDataType = null;
+        dataType.declaredType = declaredType;
+        dataType.name = declaredType.getName();
+        dataType.length = 0;
+        dataType.precision = 0;
+        dataType.scale = 0;
+        dataType.set = false;
+        cachedDataTypes.add(dataType);
+        return dataType;
+    }
+
     private DBDataType() {
     }
 

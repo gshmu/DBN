@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3570</b>
              <ul>
+                - Support method executions with collection return types (Oracle) <br>
                 - Excel 2007 (xlsx) data export format<br>
                 - Oracle Type language support<br>
                 - Execution logging - Oracle DBMS_OUTPUT<br>
