@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 public class WrapperElementTypeImpl extends AbstractElementType implements WrapperElementType {
     private WrappingDefinition wrappingDefinition;
     private ElementType wrappedElement;
-    private boolean isWrappingOptional;
 
     public WrapperElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -65,7 +64,6 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         String type = child.getName();
         wrappedElement = bundle.resolveElementDefinition(child, type, this);
 
-        isWrappingOptional = Boolean.parseBoolean(def.getAttributeValue("wrapping-optional"));
 
         //getLookupCache().registerFirstLeaf(beginTokenElement, isOptional);
     }
@@ -94,11 +92,6 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
 
     public ElementType getWrappedElement() {
         return wrappedElement;
-    }
-
-    @Deprecated
-    public boolean isWrappingOptional() {
-        return isWrappingOptional;
     }
 
     public String getDebugName() {

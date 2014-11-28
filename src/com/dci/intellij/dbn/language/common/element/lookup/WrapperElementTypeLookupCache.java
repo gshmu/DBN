@@ -26,10 +26,7 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
     @Override
     boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
         ElementTypeLookupCache startTokenLC = getElementType().getBeginTokenElement().getLookupCache();
-        ElementTypeLookupCache wrappedTokenLC = getElementType().getWrappedElement().getLookupCache();
-
-        return (!getElementType().isWrappingOptional() && startTokenLC.shouldStartWithLeaf(leaf)) ||
-               (getElementType().isWrappingOptional() && wrappedTokenLC.shouldStartWithLeaf(leaf));
+        return startTokenLC.shouldStartWithLeaf(leaf);
     }
 
     public boolean containsLandmarkToken(TokenType tokenType, PathNode node) {
@@ -40,8 +37,7 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
     }
 
     public boolean startsWithIdentifier(PathNode node) {
-        return getElementType().isWrappingOptional() &&
-                getElementType().getWrappedElement().getLookupCache().startsWithIdentifier(node);
+        return false;
     }
 
     @Override
@@ -49,10 +45,6 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
         bucket = initBucket(bucket);
         WrapperElementType elementType = getElementType();
         bucket.add(elementType.getBeginTokenElement());
-        if (elementType.isWrappingOptional()) {
-            ElementTypeLookupCache lookupCache = elementType.getWrappedElement().getLookupCache();
-            lookupCache.collectFirstPossibleLeafs(context, bucket);
-        }
         return bucket;
     }
 
@@ -61,10 +53,6 @@ public class WrapperElementTypeLookupCache extends AbstractElementTypeLookupCach
         bucket = initBucket(bucket);
         WrapperElementType elementType = getElementType();
         bucket.add(elementType.getBeginTokenElement().getTokenType());
-        if (elementType.isWrappingOptional()) {
-            ElementTypeLookupCache lookupCache = elementType.getWrappedElement().getLookupCache();
-            lookupCache.collectFirstPossibleTokens(context, bucket);
-        }
         return bucket;
     }
 }
