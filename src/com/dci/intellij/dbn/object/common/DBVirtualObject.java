@@ -114,7 +114,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 name.append(tableName);
             }
 
-            this.name = "subquery" + name.toString() + "";
+            this.name = "subquery " + name.toString() + "";
         }
         objectRef = new DBObjectRef(this);
     }
