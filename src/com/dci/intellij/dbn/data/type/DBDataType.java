@@ -27,85 +27,10 @@ public class DBDataType {
     private boolean set;
 
     public static DBDataType get(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        String dataTypeName = resultSet.getString("DATA_TYPE_NAME");
-        long length = resultSet.getLong("DATA_LENGTH");
-        int precision = resultSet.getInt("DATA_PRECISION");
-        int scale = resultSet.getInt("DATA_SCALE");
-        boolean set = "Y".equals(resultSet.getString("IS_SET"));
-
-        String typeOwner = resultSet.getString("DATA_TYPE_OWNER");
-        String typePackage = resultSet.getString("DATA_TYPE_PACKAGE");
-
-        String name = null;
-        DBType declaredType = null;
-        DBNativeDataType nativeDataType = null;
-
-        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-        if (typeOwner != null) {
-            DBSchema typeSchema = objectBundle.getSchema(typeOwner);
-            if (typeSchema != null) {
-                if (typePackage != null) {
-                    DBPackage packagee = typeSchema.getPackage(typePackage);
-                    if (packagee != null) {
-                        declaredType = packagee.getType(dataTypeName);
-                    }
-                } else {
-                    declaredType = typeSchema.getType(dataTypeName);
-                }
-            }
-            if (declaredType == null) name = dataTypeName;
-        } else {
-            nativeDataType = objectBundle.getNativeDataType(dataTypeName);
-            if (nativeDataType == null) name = dataTypeName;
-        }
-
-        List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
-        for (DBDataType dataType : cachedDataTypes) {
-            if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
-                CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
-                CommonUtil.safeEqual(dataType.name, name) &&
-                dataType.length == length &&
-                dataType.precision == precision &&
-                dataType.scale == scale &&
-                dataType.set == set) {
-                return dataType;
-            }
-        }
-
-        DBDataType dataType = new DBDataType();
-        dataType.nativeDataType = nativeDataType;
-        dataType.declaredType = declaredType;
-        dataType.name = name;
-        dataType.length = length;
-        dataType.precision = precision;
-        dataType.scale = scale;
-        dataType.set = set;
-        cachedDataTypes.add(dataType);
-        return dataType;
+        return new Ref(resultSet, "").get(connectionHandler);
     }
 
-    public static DBDataType get(ConnectionHandler connectionHandler, DBType declaredType) {
-        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-        List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
-        for (DBDataType dataType : cachedDataTypes) {
-            if (CommonUtil.safeEqual(dataType.declaredType, declaredType)){
-                return dataType;
-            }
-        }
-
-        DBDataType dataType = new DBDataType();
-        dataType.nativeDataType = null;
-        dataType.declaredType = declaredType;
-        dataType.name = declaredType.getName();
-        dataType.length = 0;
-        dataType.precision = 0;
-        dataType.scale = 0;
-        dataType.set = false;
-        cachedDataTypes.add(dataType);
-        return dataType;
-    }
-
-    private DBDataType() {
+    protected DBDataType() {
     }
 
 /*    public DBDataType(DBObject parent, ResultSet resultSet) throws SQLException {
@@ -261,6 +186,75 @@ public class DBDataType {
 
     public GenericDataType getGenericDataType() {
         return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
+    }
 
+    public static class Ref {
+        String dataTypeName;
+        String dataTypeOwner;
+        String dataTypePackage;
+        long length;
+        int precision;
+        int scale;
+        boolean set;
+
+        public Ref(ResultSet resultSet, String lookupPrefix) throws SQLException {
+            dataTypeName = resultSet.getString(lookupPrefix + "DATA_TYPE_NAME");
+            length = resultSet.getLong(lookupPrefix + "DATA_LENGTH");
+            precision = resultSet.getInt(lookupPrefix + "DATA_PRECISION");
+            scale = resultSet.getInt(lookupPrefix + "DATA_SCALE");
+            set = "Y".equals(resultSet.getString(lookupPrefix + "IS_SET"));
+
+            dataTypeOwner = resultSet.getString(lookupPrefix + "DATA_TYPE_OWNER");
+            dataTypePackage = resultSet.getString(lookupPrefix + "DATA_TYPE_PACKAGE");
+        }
+
+        public DBDataType get(ConnectionHandler connectionHandler) {
+            String name = null;
+            DBType declaredType = null;
+            DBNativeDataType nativeDataType = null;
+
+            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            if (dataTypeOwner != null) {
+                DBSchema typeSchema = objectBundle.getSchema(dataTypeOwner);
+                if (typeSchema != null) {
+                    if (dataTypePackage != null) {
+                        DBPackage packagee = typeSchema.getPackage(dataTypePackage);
+                        if (packagee != null) {
+                            declaredType = packagee.getType(dataTypeName);
+                        }
+                    } else {
+                        declaredType = typeSchema.getType(dataTypeName);
+                    }
+                }
+                if (declaredType == null) name = dataTypeName;
+            } else {
+                nativeDataType = objectBundle.getNativeDataType(dataTypeName);
+                if (nativeDataType == null) name = dataTypeName;
+            }
+
+            List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
+            for (DBDataType dataType : cachedDataTypes) {
+                if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
+                        CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
+                        CommonUtil.safeEqual(dataType.name, name) &&
+                        dataType.length == length &&
+                        dataType.precision == precision &&
+                        dataType.scale == scale &&
+                        dataType.set == set) {
+                    return dataType;
+                }
+            }
+
+            DBDataType dataType = new DBDataType();
+            dataType.nativeDataType = nativeDataType;
+            dataType.declaredType = declaredType;
+            dataType.name = name;
+            dataType.length = length;
+            dataType.precision = precision;
+            dataType.scale = scale;
+            dataType.set = set;
+            cachedDataTypes.add(dataType);
+            return dataType;
+        }
     }
 }

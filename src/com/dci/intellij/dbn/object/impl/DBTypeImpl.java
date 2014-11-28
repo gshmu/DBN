@@ -50,8 +50,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     private String superTypeName;
     private DBObjectRef<DBType> superType;
 
-    private String collectionElementTypeOwner;
-    private String collectionElementTypeName;
+    private DBDataType.Ref collectionElementTypeRef;
     private DBDataType collectionElementType;
 
     private DBNativeDataType nativeDataType;
@@ -75,10 +74,12 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
         String typecode = resultSet.getString("TYPECODE");
         isCollection = "COLLECTION".equals(typecode);
-        nativeDataType = getConnectionHandler().getObjectBundle().getNativeDataType(typecode);
-        if (isCollection) {
-            collectionElementTypeOwner = resultSet.getString("COLLECTION_ELEMENT_TYPE_OWNER");
-            collectionElementTypeName = resultSet.getString("COLLECTION_ELEMENT_TYPE_NAME");
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if  (connectionHandler != null) {
+            nativeDataType = connectionHandler.getObjectBundle().getNativeDataType(typecode);
+            if (isCollection) {
+                collectionElementTypeRef = new DBDataType.Ref(resultSet,  "COLLECTION_");
+            }
         }
     }
 
@@ -136,17 +137,9 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
     public DBDataType getCollectionElementType() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (collectionElementType == null && collectionElementTypeName != null && connectionHandler != null) {
-            if (collectionElementTypeOwner != null) {
-                DBType type = connectionHandler.getObjectBundle().getSchema(collectionElementTypeOwner).getType(collectionElementTypeName);
-                if (type != null) {
-                    collectionElementType = DBDataType.get(connectionHandler, type);
-                }
-            } else{
-
-            }
-            collectionElementTypeOwner = null;
-            collectionElementTypeName = null;
+        if (collectionElementType == null && collectionElementTypeRef != null && connectionHandler != null) {
+            collectionElementType = collectionElementTypeRef.get(connectionHandler);
+            collectionElementTypeRef = null;
         }
         return collectionElementType;
     }
