@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
+import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -59,7 +60,7 @@ public class PsiUtil {
             BasePsiElement scope = basePsiElement.findEnclosingNamedPsiElement();
 
             DBObjectType objectType = aliasElement.getObjectType();
-            ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(aliasElement, objectType);
+            IdentifierLookupAdapter lookupInput = new IdentifierLookupAdapter(aliasElement, null, null, objectType, null);
 
             BasePsiElement objectPsiElement = lookupInput.findInScope(scope);
             if (objectPsiElement == null) {
