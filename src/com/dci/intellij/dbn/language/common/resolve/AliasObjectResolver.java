@@ -29,6 +29,13 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
                 if (underlyingPsiElement instanceof DBObject) {
                     return (DBObject) underlyingPsiElement;
                 }
+
+                if (underlyingPsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement underlyingIdentifierPsiElement = (IdentifierPsiElement) underlyingPsiElement;
+                    if (underlyingIdentifierPsiElement.isAlias() && underlyingIdentifierPsiElement.isDefinition()) {
+                        return INSTANCE.resolve(underlyingIdentifierPsiElement);
+                    }
+                }
             }
         }
         return null;
