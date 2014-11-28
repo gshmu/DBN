@@ -38,7 +38,6 @@
         begin-token CDATA #IMPLIED
         end-token CDATA #IMPLIED
         template (PARENTHESES | BEGIN_END | BRACKETS) #IMPLIED
-        wrapping-optional (true | false) #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED

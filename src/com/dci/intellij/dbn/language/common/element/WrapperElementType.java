@@ -7,7 +7,4 @@ public interface WrapperElementType extends ElementType {
     TokenElementType getEndTokenElement();
 
     ElementType getWrappedElement();
-
-    @Deprecated
-    boolean isWrappingOptional();
 }
