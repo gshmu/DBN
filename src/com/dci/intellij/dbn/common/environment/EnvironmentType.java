@@ -58,10 +58,10 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         this.description = description;
         this.regularColor = regularColor;
         this.darkColor = darkColor;
-        if (regularColor != null && darkColor != null) {
-            this.color = new JBColor(regularColor, darkColor);
-        }
 
+        if (regularColor == null) regularColor = Color.LIGHT_GRAY;
+        if (darkColor == null) darkColor = Color.DARK_GRAY;
+        this.color = new JBColor(regularColor, darkColor);
     }
 
     public String getId() {
@@ -94,8 +94,8 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         } else {
             regularColor = color;
         }
-        Color regularColor = CommonUtil.nvl(this.regularColor, Color.lightGray);
-        Color darkColor = CommonUtil.nvl(this.darkColor, Color.darkGray);
+        Color regularColor = CommonUtil.nvl(this.regularColor, Color.LIGHT_GRAY);
+        Color darkColor = CommonUtil.nvl(this.darkColor, Color.DARK_GRAY);
         this.color = new JBColor(regularColor, darkColor);
     }
 
@@ -119,10 +119,11 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
 
         EnvironmentType that = (EnvironmentType) o;
 
-        if (color != null ? !color.equals(that.color) : that.color != null) return false;
+        if (darkColor != null ? !darkColor.equals(that.darkColor) : that.darkColor != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (!id.equals(that.id)) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (!name.equals(that.name)) return false;
+        if (regularColor != null ? !regularColor.equals(that.regularColor) : that.regularColor != null) return false;
 
         return true;
     }
@@ -130,9 +131,10 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + name.hashCode();
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (regularColor != null ? regularColor.hashCode() : 0);
+        result = 31 * result + (darkColor != null ? darkColor.hashCode() : 0);
         return result;
     }
 
@@ -150,8 +152,11 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         } else {
             int index = value.indexOf("/");
             if (index > -1) {
-                regularColor = new Color(Integer.parseInt(value.substring(0, index)));
-                darkColor = new Color(Integer.parseInt(value.substring(index + 1)));
+                String regularRgb = value.substring(0, index);
+                String darkRgb = value.substring(index + 1);
+
+                regularColor = StringUtil.isEmpty(regularRgb) ? Color.LIGHT_GRAY : new Color(Integer.parseInt(regularRgb));
+                darkColor = StringUtil.isEmpty(darkRgb) ? Color.LIGHT_GRAY : new Color(Integer.parseInt(darkRgb));
                 color = new JBColor(regularColor, darkColor);
             }
         }
@@ -167,10 +172,9 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
     public void writeConfiguration(Element element) {
         element.setAttribute("id", id);
         element.setAttribute("name", name);
-        element.setAttribute("description", description);
-        if (regularColor != null && darkColor != null){
-            String attributeValue = Integer.toString(regularColor.getRGB()) + "/" + Integer.toString(darkColor.getRGB());
-            element.setAttribute("color", attributeValue);
-        }
+        element.setAttribute("description", CommonUtil.nvl(description, ""));
+        element.setAttribute("color",
+                (regularColor != null ? regularColor.getRGB() : "") + "/" +
+                (darkColor != null ? darkColor.getRGB() : ""));
     }
 }

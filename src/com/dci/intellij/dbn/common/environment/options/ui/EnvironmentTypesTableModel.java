@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.JBColor;
 
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
@@ -85,13 +84,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
                 environmentType.setDescription((String) o);
             } else if (columnIndex == 2) {
                 Color color = (Color) o;
-                JBColor environmentColor = environmentType.getColor();
-                if (environmentColor == null) {
-                    environmentColor = new JBColor(color, color);
-                } else {
-                    environmentType.setColor(color);
-                }
-                environmentType.setColor(environmentColor);
+                environmentType.setColor(color);
             }
 
             notifyListeners(rowIndex, rowIndex, columnIndex);
