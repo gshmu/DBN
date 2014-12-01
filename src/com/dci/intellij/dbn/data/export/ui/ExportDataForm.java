@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -30,6 +18,18 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class ExportDataForm extends DBNFormImpl implements DBNForm {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);
@@ -44,7 +44,6 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
     private JRadioButton formatHTMLRadioButton;
     private JRadioButton formatXMLRadioButton;
     private JRadioButton formatExcelXRadioButton;
-    private JRadioButton formatOpenOfficeRadioButton;
 
     private JTextField valueSeparatorTextField;
     private JRadioButton destinationClipboardRadioButton;
@@ -73,9 +72,6 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
         updateBorderTitleForeground(destinationPanel);
         updateBorderTitleForeground(optionsPanel);
 
-        //TODO to remove
-        formatOpenOfficeRadioButton.setVisible(false);
-
         scopeGlobalRadioButton.addActionListener(actionListener);
         scopeSelectionRadioButton.addActionListener(actionListener);
         formatSQLRadioButton.addActionListener(actionListener);
@@ -83,7 +79,6 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
         formatXMLRadioButton.addActionListener(actionListener);
         formatExcelRadioButton.addActionListener(actionListener);
         formatExcelXRadioButton.addActionListener(actionListener);
-        formatOpenOfficeRadioButton.addActionListener(actionListener);
         formatCSVRadioButton.addActionListener(actionListener);
         formatCustomRadioButton.addActionListener(actionListener);
         destinationClipboardRadioButton.addActionListener(actionListener);
@@ -102,7 +97,6 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
 
         formatExcelRadioButton.setSelected(format == DataExportFormat.EXCEL);
         formatExcelXRadioButton.setSelected(format == DataExportFormat.EXCELX);
-        formatOpenOfficeRadioButton.setSelected(format == DataExportFormat.OPENDOC);
         formatHTMLRadioButton.setSelected(format == DataExportFormat.HTML);
         formatXMLRadioButton.setSelected(format == DataExportFormat.XML);
         formatCSVRadioButton.setSelected(format == DataExportFormat.CSV);
@@ -177,7 +171,6 @@ public class ExportDataForm extends DBNFormImpl implements DBNForm {
             formatSQLRadioButton.isSelected() ? DataExportFormat.SQL :
             formatExcelRadioButton.isSelected() ? DataExportFormat.EXCEL :
             formatExcelXRadioButton.isSelected() ? DataExportFormat.EXCELX :
-            formatOpenOfficeRadioButton.isSelected() ? DataExportFormat.OPENDOC :
             formatHTMLRadioButton.isSelected() ? DataExportFormat.HTML :
             formatXMLRadioButton.isSelected() ? DataExportFormat.XML :
             formatCSVRadioButton.isSelected() ? DataExportFormat.CSV :

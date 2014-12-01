@@ -4,7 +4,6 @@ public enum DataExportFormat {
     SQL,
     EXCEL,
     EXCELX,
-    OPENDOC,
     HTML,
     XML,
     CSV,
