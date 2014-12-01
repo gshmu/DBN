@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.environment;
 import java.awt.Color;
 import java.util.UUID;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.Cloneable;
@@ -11,7 +12,10 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
-public class EnvironmentType implements Cloneable, PersistentConfiguration {
+public class EnvironmentType extends CommonUtil implements Cloneable, PersistentConfiguration {
+
+    public static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
+    public static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;
 
     public interface EnvironmentColor {
 /*        JBColor DEVELOPMENT = new JBColor(new Color(-2430209), new Color(0x445F80));
@@ -37,7 +41,8 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
     private String description;
     private Color regularColor;
     private Color darkColor;
-    private JBColor color;
+    private transient JBColor color;
+    private boolean isDarkScheme = UIUtil.isUnderDarcula();
 
     public static EnvironmentType forName(String name) {
         for (EnvironmentType environmentType : DEFAULT_ENVIRONMENT_TYPES){
@@ -58,10 +63,6 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         this.description = description;
         this.regularColor = regularColor;
         this.darkColor = darkColor;
-
-        if (regularColor == null) regularColor = Color.LIGHT_GRAY;
-        if (darkColor == null) darkColor = Color.DARK_GRAY;
-        this.color = new JBColor(regularColor, darkColor);
     }
 
     public String getId() {
@@ -84,23 +85,31 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         this.description = description;
     }
 
+    @Nullable
     public JBColor getColor() {
+        if (isDarkScheme != UIUtil.isUnderDarcula()) {
+            isDarkScheme = UIUtil.isUnderDarcula();
+            color = null;
+        }
+
+        if (color == null) {
+            if (isDarkScheme && darkColor != null) {
+                Color regularColor = nvl(this.regularColor, DEFAULT_REGULAR_COLOR);
+                color = new JBColor(regularColor, darkColor);
+            } else if (!isDarkScheme && regularColor != null) {
+                Color darkColor = nvl(this.darkColor, DEFAULT_DARK_COLOR);
+                this.color = new JBColor(regularColor, darkColor);
+            }
+        }
+
         return color;
     }
 
     public void setColor(Color color) {
-        if (UIUtil.isUnderDarcula()) {
-            darkColor = color;
-        } else {
+        if (UIUtil.isUnderDarcula())
+            darkColor = color; else
             regularColor = color;
-        }
-        Color regularColor = CommonUtil.nvl(this.regularColor, Color.LIGHT_GRAY);
-        Color darkColor = CommonUtil.nvl(this.darkColor, Color.DARK_GRAY);
-        this.color = new JBColor(regularColor, darkColor);
-    }
-
-    public void setColor(JBColor color) {
-        this.color = color;
+        this.color = null;
     }
 
     public EnvironmentType clone() {
@@ -145,19 +154,13 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         description = element.getAttributeValue("description");
 
         String value = element.getAttributeValue("color");
-        if (StringUtil.isEmptyOrSpaces(value)) {
-            if (regularColor != null && darkColor != null) {
-                color = new JBColor(regularColor, darkColor);
-            }
-        } else {
+        if (StringUtil.isNotEmpty(value)) {
             int index = value.indexOf("/");
             if (index > -1) {
                 String regularRgb = value.substring(0, index);
                 String darkRgb = value.substring(index + 1);
-
-                regularColor = StringUtil.isEmpty(regularRgb) ? Color.LIGHT_GRAY : new Color(Integer.parseInt(regularRgb));
-                darkColor = StringUtil.isEmpty(darkRgb) ? Color.LIGHT_GRAY : new Color(Integer.parseInt(darkRgb));
-                color = new JBColor(regularColor, darkColor);
+                regularColor = StringUtil.isEmpty(regularRgb) ? null : new Color(Integer.parseInt(regularRgb));
+                darkColor = StringUtil.isEmpty(darkRgb) ? null : new Color(Integer.parseInt(darkRgb));
             }
         }
 
