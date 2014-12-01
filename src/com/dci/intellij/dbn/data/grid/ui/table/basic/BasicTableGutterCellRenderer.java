@@ -8,11 +8,9 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.EditorFontType;
@@ -20,12 +18,6 @@ import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
 public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
-    public interface Colors {
-        Color LINE_NUMBER_COLOR = getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR);
-        Color SELECTION_FOREGROUND_COLOR = getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR);
-        Color SELECTION_BACKGROUND_COLOR = getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR);
-        Color CARET_ROW_COLOR = getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR);
-    }
 
     static EditorColorsScheme getGlobalScheme() {
         return EditorColorsManager.getInstance().getGlobalScheme();
@@ -39,7 +31,7 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         setBorder(BORDER);
         setLayout(new BorderLayout());
         textLabel = new JLabel();
-        textLabel.setForeground(Colors.LINE_NUMBER_COLOR);
+        textLabel.setForeground(BasicTableColors.getLineNumberColor());
         textLabel.setFont(EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN));
         add(textLabel, BorderLayout.EAST);
     }
@@ -51,11 +43,11 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
 
         setBackground(isSelected ?
-                Colors.SELECTION_BACKGROUND_COLOR :
+                BasicTableColors.getSelectionBackgroundColor() :
                 isCaretRow ?
-                        Colors.CARET_ROW_COLOR :
+                        BasicTableColors.getCaretRowColor() :
                         UIUtil.getPanelBackground());
-        textLabel.setForeground(isSelected ? Colors.SELECTION_FOREGROUND_COLOR : Colors.LINE_NUMBER_COLOR);
+        textLabel.setForeground(isSelected ? BasicTableColors.getSelectionBackgroundColor() : BasicTableColors.getLineNumberColor());
         return this;
     }
 }

@@ -9,12 +9,12 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.JBColor;
 
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
@@ -85,11 +85,11 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
                 environmentType.setDescription((String) o);
             } else if (columnIndex == 2) {
                 Color color = (Color) o;
-                DBNColor environmentColor = environmentType.getColor();
+                JBColor environmentColor = environmentType.getColor();
                 if (environmentColor == null) {
-                    environmentColor = new DBNColor(color, color);
+                    environmentColor = new JBColor(color, color);
                 } else {
-                    environmentColor = environmentColor.set(color);
+                    environmentType.setColor(color);
                 }
                 environmentType.setColor(environmentColor);
             }

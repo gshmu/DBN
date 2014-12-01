@@ -5,24 +5,27 @@ import java.util.UUID;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 
 public class EnvironmentType implements Cloneable, PersistentConfiguration {
+
     public interface EnvironmentColor {
-        DBNColor DEVELOPMENT = new DBNColor(new Color(-2430209), new Color(0x445F80));
-        DBNColor INTEGRATION = new DBNColor(new Color(-2621494), new Color(0x466646));
-        DBNColor PRODUCTION = new DBNColor(new Color(-11574), new Color(0x634544));
-        DBNColor OTHER = new DBNColor(new Color(-1576), new Color(0x5C5B41));
-        DBNColor NONE = new DBNColor(new Color(0xffffff), Color.DARK_GRAY);
+/*        JBColor DEVELOPMENT = new JBColor(new Color(-2430209), new Color(0x445F80));
+        JBColor INTEGRATION = new JBColor(new Color(-2621494), new Color(0x466646));
+        JBColor PRODUCTION = new JBColor(new Color(-11574), new Color(0x634544));
+        JBColor OTHER = new JBColor(new Color(-1576), new Color(0x5C5B41));*/
+        JBColor NONE = new JBColor(new Color(0xffffff), Color.DARK_GRAY);
     }
 
-    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null);
-    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", EnvironmentColor.DEVELOPMENT);
-    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", EnvironmentColor.INTEGRATION);
-    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", EnvironmentColor.PRODUCTION);
-    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", EnvironmentColor.OTHER);
+    public static final EnvironmentType DEFAULT     = new EnvironmentType("default", "", "", null, null);
+    public static final EnvironmentType DEVELOPMENT = new EnvironmentType("development", "Development", "Development environment", new Color(-2430209), new Color(0x445F80));
+    public static final EnvironmentType INTEGRATION = new EnvironmentType("integration", "Integration", "Integration environment", new Color(-2621494), new Color(0x466646));
+    public static final EnvironmentType PRODUCTION  = new EnvironmentType("production", "Production", "Productive environment", new Color(-11574), new Color(0x634544));
+    public static final EnvironmentType OTHER       = new EnvironmentType("other", "Other", "", new Color(-1576), new Color(0x5C5B41));
     public static final EnvironmentType[] DEFAULT_ENVIRONMENT_TYPES = new EnvironmentType[] {
             DEVELOPMENT,
             INTEGRATION,
@@ -32,7 +35,9 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
     private String id;
     private String name;
     private String description;
-    private DBNColor color;
+    private Color regularColor;
+    private Color darkColor;
+    private JBColor color;
 
     public static EnvironmentType forName(String name) {
         for (EnvironmentType environmentType : DEFAULT_ENVIRONMENT_TYPES){
@@ -47,11 +52,16 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         id = UUID.randomUUID().toString();
     }
 
-    public EnvironmentType(String id, String name, String description, DBNColor color) {
+    public EnvironmentType(String id, String name, String description, Color regularColor, Color darkColor) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.color = color;
+        this.regularColor = regularColor;
+        this.darkColor = darkColor;
+        if (regularColor != null && darkColor != null) {
+            this.color = new JBColor(regularColor, darkColor);
+        }
+
     }
 
     public String getId() {
@@ -74,16 +84,27 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         this.description = description;
     }
 
-    public DBNColor getColor() {
+    public JBColor getColor() {
         return color;
     }
 
-    public void setColor(DBNColor color) {
+    public void setColor(Color color) {
+        if (UIUtil.isUnderDarcula()) {
+            darkColor = color;
+        } else {
+            regularColor = color;
+        }
+        Color regularColor = CommonUtil.nvl(this.regularColor, Color.lightGray);
+        Color darkColor = CommonUtil.nvl(this.darkColor, Color.darkGray);
+        this.color = new JBColor(regularColor, darkColor);
+    }
+
+    public void setColor(JBColor color) {
         this.color = color;
     }
 
     public EnvironmentType clone() {
-        return new EnvironmentType(id, name, description, color);
+        return new EnvironmentType(id, name, description, regularColor, darkColor);
     }
     
     @Override
@@ -120,17 +141,26 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         id = element.getAttributeValue("id");
         name = element.getAttributeValue("name");
         description = element.getAttributeValue("description");
-        color = SettingsUtil.getColorAttribute(element, "color", color);
+
+        String value = element.getAttributeValue("color");
+        if (StringUtil.isEmptyOrSpaces(value)) {
+            if (regularColor != null && darkColor != null) {
+                color = new JBColor(regularColor, darkColor);
+            }
+        } else {
+            int index = value.indexOf("/");
+            if (index > -1) {
+                regularColor = new Color(Integer.parseInt(value.substring(0, index)));
+                darkColor = new Color(Integer.parseInt(value.substring(index + 1)));
+                color = new JBColor(regularColor, darkColor);
+            }
+        }
 
         EnvironmentType defaultEnvironmentType = forName(name);
         if (defaultEnvironmentType != null) {
             if (id == null) id = defaultEnvironmentType.getId();
-            if (color != null && color.getRegularRgb() == color.getDarkRgb()) {
-                color = new DBNColor(color.getRegularRgb(), defaultEnvironmentType.getColor().getDarkRgb());
-            }
         }
         if (id == null) id = name.toLowerCase();
-
     }
 
     @Override
@@ -138,6 +168,9 @@ public class EnvironmentType implements Cloneable, PersistentConfiguration {
         element.setAttribute("id", id);
         element.setAttribute("name", name);
         element.setAttribute("description", description);
-        SettingsUtil.setColorAttribute(element, "color", color);
+        if (regularColor != null && darkColor != null){
+            String attributeValue = Integer.toString(regularColor.getRGB()) + "/" + Integer.toString(darkColor.getRGB());
+            element.setAttribute("color", attributeValue);
+        }
     }
 }
