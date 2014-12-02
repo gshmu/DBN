@@ -39,7 +39,7 @@ public class DatabaseLogOutputConsole extends LogConsoleBase{
 
     public void writeToConsole(String text) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !connectionHandler.isDisposed() && StringUtil.isNotEmpty(text)) {
+        if (connectionHandler != null && !connectionHandler.isDisposed() && StringUtil.isNotEmptyOrSpaces(text)) {
             Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
             String date = formatter.formatDateTime(new Date());
 
