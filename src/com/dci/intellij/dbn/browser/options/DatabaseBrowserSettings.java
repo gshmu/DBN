@@ -11,11 +11,13 @@ import com.intellij.openapi.project.Project;
 public class DatabaseBrowserSettings extends CompositeProjectConfiguration<DatabaseBrowserSettingsForm> {
     private DatabaseBrowserGeneralSettings generalSettings;
     private DatabaseBrowserFilterSettings filterSettings;
+    private DatabaseBrowserSortingSettings sortingSettings;
 
     public DatabaseBrowserSettings(Project project) {
         super(project);
         filterSettings = new DatabaseBrowserFilterSettings(project);
         generalSettings = new DatabaseBrowserGeneralSettings(project);
+        sortingSettings = new DatabaseBrowserSortingSettings(project);
     }
 
     @Override
@@ -58,6 +60,10 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return filterSettings;
     }
 
+    public DatabaseBrowserSortingSettings getSortingSettings() {
+        return sortingSettings;
+    }
+
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
@@ -66,7 +72,8 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 generalSettings,
-                filterSettings};
+                filterSettings,
+                sortingSettings};
     }
 
     @Override
