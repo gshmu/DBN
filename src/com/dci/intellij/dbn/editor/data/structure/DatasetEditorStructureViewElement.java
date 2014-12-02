@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.structure;
 
 import javax.swing.Icon;
-import java.util.Arrays;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +83,6 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
                 for (int i=0; i<children.length; i++) {
                     children[i] = new DatasetEditorStructureViewElement(columns.get(i), datasetEditor);
                 }
-                Arrays.sort(children);
             }
             else {
                 children = EMPTY_ARRAY;

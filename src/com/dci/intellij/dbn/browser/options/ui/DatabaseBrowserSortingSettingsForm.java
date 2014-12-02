@@ -6,7 +6,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.JTableHeader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,27 +83,12 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent e) {
-                    if (!e.getValueIsAdjusting()) {
-                        int selectedRow = getSelectedRow();
-                        int selectedColumn = getSelectedColumn();
-                        if (selectedColumn == 1) {
-                            editCellAt(selectedRow, selectedColumn);
-                        };
-                    }
                 }
             });
         }
 
         public void columnSelectionChanged(ListSelectionEvent e) {
             super.columnSelectionChanged(e);
-            JTableHeader tableHeader = getTableHeader();
-            if (!e.getValueIsAdjusting() && tableHeader != null && tableHeader.getDraggedColumn() == null) {
-                int selectedRow = getSelectedRow();
-                int selectedColumn = getSelectedColumn();
-                if (selectedColumn == 1) {
-                    editCellAt(selectedRow, selectedColumn);
-                }
-            }
         }
     }
 
