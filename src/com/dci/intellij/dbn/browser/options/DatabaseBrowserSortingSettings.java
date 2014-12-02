@@ -30,6 +30,15 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
         this.comparators = comparators;
     }
 
+    public DBObjectComparator getComparator(DBObjectType objectType) {
+        for (DBObjectComparator comparator : comparators) {
+            if (comparator.getObjectType().matches(objectType)) {
+                return comparator;
+            }
+        }
+        return null;
+    }
+
     private boolean contains(List<DBObjectComparator> comparators, DBObjectType objectType) {
         for (DBObjectComparator comparator : comparators) {
             if (comparator.getObjectType() == objectType){
