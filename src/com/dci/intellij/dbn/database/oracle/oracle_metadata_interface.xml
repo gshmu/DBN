@@ -1459,7 +1459,7 @@
 
     <statement-execution-processor id="enable-log-output" is-prepared-statement="true">
         <statement>
-            begin dbms_output.enable(32000); end;
+            begin dbms_output.enable(1000000); end;
         </statement>
     </statement-execution-processor>
     <statement-execution-processor id="disable-log-output" is-prepared-statement="true">
@@ -1470,7 +1470,7 @@
     <statement-execution-processor id="read-log-output" is-prepared-statement="true">
         <statement>
             declare 
-                l_line varchar2(255); 
+                l_line varchar2(32767);
                 l_done number; 
                 l_buffer long; 
             begin 
