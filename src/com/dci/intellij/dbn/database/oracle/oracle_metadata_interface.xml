@@ -691,6 +691,7 @@
         <statement prefixes="DBA, ALL">
             select
                 ao.OBJECT_NAME as FUNCTION_NAME,
+                0 as POSITION,
                 0 as OVERLOAD,
                 decode(ao.STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') as IS_DEBUG,
@@ -710,6 +711,7 @@
         <statement prefixes="DBA, ALL">
             select
                 OBJECT_NAME as FUNCTION_NAME,
+                0 as POSITION,
                 0 as OVERLOAD,
                 decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 'N' as IS_DEBUG,
@@ -728,6 +730,7 @@
             select
                 ao.OBJECT_NAME as PROCEDURE_NAME,
                 0 as OVERLOAD,
+                0 as POSITION,
                 decode(ao.STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 decode(nvl(apo.DEBUGINFO, 'F'), 'T', 'Y', 'N') as IS_DEBUG,
                 'Y' as IS_DETERMINISTIC,
@@ -747,6 +750,7 @@
             select
                 OBJECT_NAME as PROCEDURE_NAME,
                 0 as OVERLOAD,
+                0 as POSITION,
                 decode(STATUS, 'VALID', 'Y', 'N') as IS_VALID,
                 'N' as IS_DEBUG,
                 'Y' as IS_DETERMINISTIC,
@@ -808,84 +812,111 @@
     <statement-execution-processor id="package-functions" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                OBJECT_NAME as FUNCTION_NAME,
-                OVERLOAD,
+                a.OBJECT_NAME as FUNCTION_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                PACKAGE_NAME = {1} and
-                POSITION = 0
+                a.OWNER = {0} and
+                a.PACKAGE_NAME = {1} and
+                a.POSITION = 0 and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="all-package-functions" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                PACKAGE_NAME,
-                OBJECT_NAME as FUNCTION_NAME,
-                OVERLOAD,
+                a.PACKAGE_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OBJECT_NAME as FUNCTION_NAME,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from [PREFIX]_ARGUMENTS a,
+                 [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                POSITION = 0 and
-                PACKAGE_NAME in (
+                a.OWNER = {0} and
+                a.POSITION = 0 and
+                a.PACKAGE_NAME in (
                     select OBJECT_NAME
                     from [PREFIX]_OBJECTS
-                    where OWNER = {0} and OBJECT_TYPE = 'PACKAGE')
+                    where OWNER = {0} and OBJECT_TYPE = 'PACKAGE') and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                PACKAGE_NAME,
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.PACKAGE_NAME,
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="package-procedures" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                OBJECT_NAME as PROCEDURE_NAME,
-                OVERLOAD,
+                a.OBJECT_NAME as PROCEDURE_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                PACKAGE_NAME = {1} and
-                POSITION = 1 and
-                SEQUENCE IN (1, 0)
+                a.OWNER = {0} and
+                a.PACKAGE_NAME = {1} and
+                a.POSITION = 1 and
+                a.SEQUENCE IN (1, 0) and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="all-package-procedures" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                PACKAGE_NAME,
-                OBJECT_NAME as PROCEDURE_NAME,
-                OVERLOAD,
+                a.PACKAGE_NAME,
+                a.OBJECT_NAME as PROCEDURE_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                POSITION = 1 and
-                SEQUENCE IN (1, 0) and
-                PACKAGE_NAME in (
+                a.OWNER = {0} and
+                a.POSITION = 1 and
+                a.SEQUENCE IN (1, 0) and
+                a.PACKAGE_NAME in (
                     select OBJECT_NAME
                     from [PREFIX]_OBJECTS
-                    where OWNER = {0} and OBJECT_TYPE = 'PACKAGE')
+                    where OWNER = {0} and OBJECT_TYPE = 'PACKAGE') and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                PACKAGE_NAME,
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.PACKAGE_NAME,
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
@@ -1096,85 +1127,112 @@
     <statement-execution-processor id="type-functions" is-query="true" is-prepared-statement="true">
         <statement  prefixes="DBA, ALL">
             select
-                OBJECT_NAME as FUNCTION_NAME,
-                OVERLOAD,
+                a.OBJECT_NAME as FUNCTION_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                PACKAGE_NAME = {1} and
-                POSITION = 0
+                a.OWNER = {0} and
+                a.PACKAGE_NAME = {1} and
+                a.POSITION = 0  and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="all-type-functions" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                PACKAGE_NAME as TYPE_NAME,
-                OBJECT_NAME as FUNCTION_NAME,
-                OVERLOAD,
+                a.PACKAGE_NAME as TYPE_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OBJECT_NAME as FUNCTION_NAME,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                POSITION = 0 and
-                PACKAGE_NAME in (
+                a.OWNER = {0} and
+                a.POSITION = 0 and
+                a.PACKAGE_NAME in (
                     select OBJECT_NAME
                     from  [PREFIX]_OBJECTS
-                    where OWNER = {0} and OBJECT_TYPE = 'TYPE')
+                    where OWNER = {0} and OBJECT_TYPE = 'TYPE') and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                PACKAGE_NAME,
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.PACKAGE_NAME,
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="type-procedures" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                OBJECT_NAME as PROCEDURE_NAME,
-                OVERLOAD,
+                a.OBJECT_NAME as PROCEDURE_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
             from
-                [PREFIX]_ARGUMENTS
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                PACKAGE_NAME = {1} and
-                POSITION = 1 and
-                SEQUENCE IN (1, 0)
+                a.OWNER = {0} and
+                a.PACKAGE_NAME = {1} and
+                a.POSITION = 1 and
+                a.SEQUENCE IN (1, 0) and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
     <statement-execution-processor id="all-type-procedures" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                PACKAGE_NAME as TYPE_NAME,
-                OBJECT_NAME as PROCEDURE_NAME,
-                OVERLOAD,
+                a.PACKAGE_NAME as TYPE_NAME,
+                p.SUBPROGRAM_ID as POSITION,
+                a.OBJECT_NAME as PROCEDURE_NAME,
+                a.OVERLOAD,
                 'N' as IS_DETERMINISTIC,
                 'PSQL' as LANGUAGE
-            from [PREFIX]_ARGUMENTS
+            from
+                [PREFIX]_ARGUMENTS a,
+                [PREFIX]_PROCEDURES p
             where
-                OWNER = {0} and
-                POSITION = 1 and
-                SEQUENCE IN (1, 0) and
-                PACKAGE_NAME in (
+                a.OWNER = {0} and
+                a.POSITION = 1 and
+                a.SEQUENCE IN (1, 0) and
+                a.PACKAGE_NAME in (
                     select OBJECT_NAME
                     from [PREFIX]_OBJECTS
-                    where OWNER = {0} and OBJECT_TYPE = 'TYPE')
+                    where OWNER = {0} and OBJECT_TYPE = 'TYPE') and
+                p.OWNER = a.OWNER and
+                p.OBJECT_NAME = a.PACKAGE_NAME and
+                p.PROCEDURE_NAME = a.OBJECT_NAME and
+                nvl(p.OVERLOAD, 9999) = nvl(a.OVERLOAD, 9999)
             order by
-                PACKAGE_NAME,
-                OBJECT_NAME,
-                OVERLOAD asc
+                a.PACKAGE_NAME,
+                a.OBJECT_NAME,
+                a.OVERLOAD asc
         </statement>
     </statement-execution-processor>
 
