@@ -14,6 +14,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public class SelectConnectionAction extends DumbAwareAction {
     private final ConnectionHandler connectionHandler;
@@ -24,7 +25,7 @@ public class SelectConnectionAction extends DumbAwareAction {
         this.connectionHandler = connectionHandler;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project != null && editor != null) {
@@ -32,7 +33,7 @@ public class SelectConnectionAction extends DumbAwareAction {
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         boolean enabled = true;
         Project project = ActionUtil.getProject(e);
