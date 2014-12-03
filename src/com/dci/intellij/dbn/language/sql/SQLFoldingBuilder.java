@@ -38,7 +38,7 @@ public class SQLFoldingBuilder implements FoldingBuilder {
 
                 for (ExecutablePsiElement executablePsiElement : rootPsiElement.getExecutablePsiElements()) {
                     TextRange textRange = executablePsiElement.getTextRange();
-                    if (textRange.getLength() > 2) {
+                    if (textRange.getLength() > 10) {
                         ASTNode childNode = executablePsiElement.getNode();
                         FoldingDescriptor foldingDescriptor = new FoldingDescriptor(childNode, textRange);
                         descriptors.add(foldingDescriptor);
