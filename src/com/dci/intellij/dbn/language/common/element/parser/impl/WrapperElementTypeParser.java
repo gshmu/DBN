@@ -25,9 +25,10 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        ElementType wrappedElement = getElementType().getWrappedElement();
-        TokenElementType beginTokenElement = getElementType().getBeginTokenElement();
-        TokenElementType endTokenElement = getElementType().getEndTokenElement();
+        WrapperElementType elementType = getElementType();
+        ElementType wrappedElement = elementType.getWrappedElement();
+        TokenElementType beginTokenElement = elementType.getBeginTokenElement();
+        TokenElementType endTokenElement = elementType.getEndTokenElement();
 
         int matchedTokens = 0;
 
@@ -47,7 +48,11 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
             matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
 
             ParseResultType wrappedResultType = wrappedResult.getType();
-            builder.setExplicitRange(beginTokenType, true);
+            if (wrappedResultType == ParseResultType.NO_MATCH && !isStrong && !elementType.isWrappedElementOptional()) {
+                builder.setExplicitRange(beginTokenType, initialExplicitRange);
+                return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+            }
+
             // check the end element => exit with partial match if not available
             ParseResult endTokenResult = endTokenElement.getParser().parse(node, false, depth -1, context);
             if (endTokenResult.isMatch()) {
@@ -55,14 +60,8 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
                 return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);
             } else {
                 builder.setExplicitRange(beginTokenType, initialExplicitRange);
+                return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
             }
-
-            if (wrappedResultType == ParseResultType.NO_MATCH) {
-                builder.setExplicitRange(beginTokenType, initialExplicitRange);
-            }
-
-
-            return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
         }
 
         return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);

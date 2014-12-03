@@ -4278,8 +4278,8 @@
             <token id="000002172" type-id="KW_USER" />
             <sequence id="000002173">
                 <token id="000002174" type-id="FN_CV" />
-                <wrapper id="000002175" optional="true" template="PARENTHESES">
-                    <element ref-id="expression" />
+                <wrapper id="000002175" template="PARENTHESES">
+                    <element ref-id="expression" optional="true"/>
                 </wrapper>
             </sequence>
             <sequence id="000002176">
@@ -5325,7 +5325,7 @@
     <element-def description="OVER analytic clause" id="over_analytic_clause">
         <token id="000002779" type-id="KW_OVER" />
         <wrapper id="000002780" template="PARENTHESES">
-            <element ref-id="analytic_clause" />
+            <element ref-id="analytic_clause" optional="true" />
         </wrapper>
     </element-def>
     <element-def attributes="CLAUSE" description="Analytic clause" id="analytic_clause">
