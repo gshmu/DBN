@@ -1,5 +1,26 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
+import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,25 +37,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Driver;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
-import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
-import com.dci.intellij.dbn.driver.DatabaseDriverManager;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
 
 public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
     private JButton testButton;
@@ -205,8 +207,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         return mainPanel;
     }
 
-    public void applyChanges(GenericConnectionDatabaseSettings connectionConfig) {
-
+    public void applyChanges(GenericConnectionDatabaseSettings connectionConfig){
         connectionConfig.setActive(activeCheckBox.isSelected());
         connectionConfig.setName(nameTextField.getText());
         connectionConfig.setDescription(descriptionTextField.getText());
@@ -220,7 +221,8 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         connectionConfig.updateHashCode();
     }
 
-    public void applyFormChanges() {
+    public void applyFormChanges() throws ConfigurationException {
+        ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
         final GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
         final boolean settingsChanged =
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
