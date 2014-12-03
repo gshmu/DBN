@@ -12,13 +12,13 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
@@ -162,7 +162,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             for (TabInfo tabInfo : connectionTabs.getTabs()) {
                 SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                 ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-                DBNColor environmentColor = connectionHandler.getEnvironmentType().getColor();
+                JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
                 if (visibilitySettings.getConnectionTabs().value()) {
                     tabInfo.setTabColor(environmentColor);
                 } else {

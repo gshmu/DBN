@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
-import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -23,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.text.BlockSupport;
 
 public class DocumentUtil {
 
@@ -32,8 +30,9 @@ public class DocumentUtil {
         final Document document = editor.getDocument();
 
         // restart highlighting
+        Project project = editor.getProject();
         final PsiFile file = DocumentUtil.getFile(editor);
-        if (file instanceof DBLanguagePsiFile) {
+        if (project != null && !project.isDisposed() && file instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
             if (dbLanguage != null) {
@@ -43,19 +42,10 @@ public class DocumentUtil {
                 EditorHighlighter editorHighlighter = HighlighterFactory.createHighlighter(syntaxHighlighter, editor.getColorsScheme());
                 ((EditorEx) editor).setHighlighter(editorHighlighter);
             }
+
+            PsiDocumentManager.getInstance(project).commitDocument(document);
+            refreshEditorAnnotations(file);
         }
-
-        new CommandWriteActionRunner(editor.getProject()) {
-            public void run() {
-                // touch the editor to trigger parsing
-
-                CharSequence text = document.getCharsSequence();
-                BlockSupport.getInstance(file.getProject()).reparseRange(file, 0, text.length(), text);
-                refreshEditorAnnotations(file);
-            }
-        }.start();
-
-        //refreshEditorAnnotations(editor.getProject());
     }
 
     private static DBLanguageSyntaxHighlighter getSyntaxHighlighter(DBLanguage dbLanguage, ConnectionHandler connectionHandler) {

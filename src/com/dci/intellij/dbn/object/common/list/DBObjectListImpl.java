@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.common.list;
 
 import javax.swing.Icon;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
+import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
@@ -22,6 +25,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
@@ -76,7 +80,17 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return null;
     }
 
-
+    @Override
+    public void sortElements(List<T> elements) {
+        DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
+        DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
+        DBObjectComparator comparator = sortingSettings.getComparator(getObjectType());
+        if (comparator != null) {
+            Collections.sort(elements, comparator);
+        } else {
+            super.sortElements(elements);
+        }
+    }
 
     public String getName() {
         return objectType.getListName();

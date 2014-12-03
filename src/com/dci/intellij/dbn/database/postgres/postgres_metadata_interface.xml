@@ -390,6 +390,7 @@
                         r3.ROUTINE_SCHEMA = {0} and
                         r3.SPECIFIC_NAME = r1.SPECIFIC_NAME)
                 else 0 end as OVERLOAD,
+                0 as POSITION,
                 'Y' as IS_VALID,
                 'N' as IS_DEBUG,
                 left(IS_DETERMINISTIC, 1) as IS_DETERMINISTIC,
