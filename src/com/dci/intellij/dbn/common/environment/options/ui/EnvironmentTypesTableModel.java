@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.ui.DBNColor;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -85,13 +84,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
                 environmentType.setDescription((String) o);
             } else if (columnIndex == 2) {
                 Color color = (Color) o;
-                DBNColor environmentColor = environmentType.getColor();
-                if (environmentColor == null) {
-                    environmentColor = new DBNColor(color, color);
-                } else {
-                    environmentColor = environmentColor.set(color);
-                }
-                environmentType.setColor(environmentColor);
+                environmentType.setColor(color);
             }
 
             notifyListeners(rowIndex, rowIndex, columnIndex);

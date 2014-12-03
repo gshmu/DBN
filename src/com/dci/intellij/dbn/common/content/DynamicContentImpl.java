@@ -224,8 +224,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             elements = EMPTY_CONTENT;
             index = null;
         } else {
-            Collections.sort(elements);
-
+            sortElements(elements);
         }
         List<T> oldElements = this.elements;
         this.elements = elements;
@@ -236,6 +235,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
             DisposerUtil.dispose(oldElements);
         }
+    }
+
+    public void sortElements(List<T> elements) {
+        Collections.sort(elements);
     }
 
     @NotNull

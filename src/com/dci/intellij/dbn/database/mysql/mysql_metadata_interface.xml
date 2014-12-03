@@ -468,6 +468,7 @@
         <statement>
             select
                 ROUTINE_NAME as FUNCTION_NAME,
+                0 as POSITION,
                 0 as OVERLOAD,
                 'Y' as IS_VALID,
                 'N' as IS_DEBUG,
@@ -485,6 +486,7 @@
         <statement>
             select
                 ROUTINE_NAME as PROCEDURE_NAME,
+                0 as POSITION,
                 0 as OVERLOAD,
                 'Y' as IS_VALID,
                 'N' as IS_DEBUG,

@@ -49,6 +49,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected void initObject(ResultSet resultSet) throws SQLException {
         isDeterministic = resultSet.getString("IS_DETERMINISTIC").equals("Y");
         overload = resultSet.getInt("OVERLOAD");
+        position = resultSet.getInt("POSITION");
         language = DBLanguage.getLanguage(resultSet.getString("LANGUAGE"));
     }
 
