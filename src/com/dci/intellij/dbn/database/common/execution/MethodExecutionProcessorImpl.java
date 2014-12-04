@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -72,10 +71,9 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
     public void execute(MethodExecutionInput executionInput, Connection connection, boolean debug) throws SQLException {
-        DatabaseMetadataInterface metadataInterface = null;
         ConnectionHandler connectionHandler = null;
         boolean usePoolConnection = false;
-        boolean loggingEnabled = executionInput.isEnableLogging();
+        boolean loggingEnabled = !debug && executionInput.isEnableLogging();
         Project project = getProject();
         DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         try {
