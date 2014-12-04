@@ -506,6 +506,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         protected DebugOperationThread(String operationName, Project project) {
             super(Constants.DBN_TITLE_PREFIX + "Debug (" + operationName + ")");
             this.operationName = operationName;
+            setPriority(MIN_PRIORITY);
         }
 
         @Override
