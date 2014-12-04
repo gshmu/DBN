@@ -96,9 +96,11 @@ public class PSQLFoldingBuilder implements FoldingBuilder {
                             textRange = new TextRange(firstElementEndOffset, blockEndOffset);
                         }
 
-                        FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
-                        foldingDescriptors.add(foldingDescriptor);
-                        nestingIndex++;
+                        if (textRange.getLength() > 10) {
+                            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
+                            foldingDescriptors.add(foldingDescriptor);
+                            nestingIndex++;
+                        }
                     }
                 }
 
