@@ -61,7 +61,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
         NotificationGroup notificationGroup = new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
 
-        Timer updateChecker = new Timer("Plugin Update check task");
+        Timer updateChecker = new Timer("DBN Plugin Update check task");
         updateChecker.schedule(new PluginUpdateChecker(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_HOUR);
     }
 
