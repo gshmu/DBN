@@ -84,7 +84,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public void sortElements(List<T> elements) {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
-        DBObjectComparator comparator = sortingSettings.getComparator(getObjectType());
+        DBObjectType objectType = getObjectType();
+        DBObjectComparator comparator = objectType == DBObjectType.ANY ? null : sortingSettings.getComparator(objectType);
         if (comparator != null) {
             Collections.sort(elements, comparator);
         } else {
