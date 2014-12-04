@@ -121,7 +121,8 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         usePoolConnectionCheckBox.addActionListener(actionListener);
         usePoolConnectionCheckBox.setEnabled(!debug);
 
-        enableLoggingCheckBox.setSelected(executionInput.isEnableLogging());
+        enableLoggingCheckBox.setEnabled(!debug);
+        enableLoggingCheckBox.setSelected(!debug && executionInput.isEnableLogging());
         enableLoggingCheckBox.setVisible(compatibilityInterface.supportsFeature(DatabaseFeature.DATABASE_LOGGING));
         String databaseLogName = compatibilityInterface.getDatabaseLogName();
         if (StringUtil.isNotEmpty(databaseLogName)) {
