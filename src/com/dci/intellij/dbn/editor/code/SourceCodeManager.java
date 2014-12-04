@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -56,7 +57,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -266,10 +266,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public BasePsiElement getObjectNavigationElement(DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
         DBEditableObjectVirtualFile databaseFile = parentObject.getVirtualFile();
-        PsiManager psiManager = PsiManager.getInstance(parentObject.getProject());
         DBContentVirtualFile contentFile = databaseFile.getContentFile(contentType);
         if (contentFile != null) {
-            PSQLFile file = (PSQLFile) psiManager.findFile(contentFile);
+            PSQLFile file = (PSQLFile) PsiUtil.getPsiFile(getProject(), contentFile);
             if (file != null) {
                 return
                     contentType == DBContentType.CODE_BODY ? file.lookupObjectDeclaration(objectType, objectName) :

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -256,8 +257,13 @@ public class PsiUtil {
         return psiDocumentManager == null ? null : psiDocumentManager.getPsiFile(document);
     }
 
-    public static PsiFile getPsiFile(Project project, VirtualFile virtualFile) {
-        return PsiManager.getInstance(project).findFile(virtualFile);
+    public static PsiFile getPsiFile(final Project project, final VirtualFile virtualFile) {
+        return new ConditionalReadActionRunner<PsiFile>() {
+            @Override
+            protected PsiFile run() {
+                return PsiManager.getInstance(project).findFile(virtualFile);
+            }
+        }.start();
     }
 
 

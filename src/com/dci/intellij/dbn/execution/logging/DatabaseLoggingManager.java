@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.execution.logging;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -47,7 +46,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
                 metadataInterface.enableLogger(connection);
                 return true;
             } catch (SQLException e) {
-                LOGGER.error("Error enabling database logging", e);
+                LOGGER.warn("Error enabling database logging", e);
                 String logName = getLogName(compatibilityInterface);
                 NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Database Logging", "Error enabling " + logName + ": " + e.getMessage());
                 return false;

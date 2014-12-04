@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEvaluator;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -98,8 +98,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
             frameName = object.getName();
             frameIcon = object.getIcon();
             DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
-            PsiManager psiManager = PsiManager.getInstance(sourceCodeFile.getProject());
-            PSQLFile psiFile = (PSQLFile) psiManager.findFile(sourceCodeFile);
+            PSQLFile psiFile = (PSQLFile) PsiUtil.getPsiFile(sourceCodeFile.getProject(), sourceCodeFile);
             if (psiFile != null) {
                 Document document = DocumentUtil.getDocument(sourceCodeFile);
                 int offset = document.getLineEndOffset(sourcePosition.getLine());
@@ -136,8 +135,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
         valuesMap = new THashMap<String, DBProgramDebugValue>();
 
         DBSourceCodeVirtualFile sourceCodeFile = DBProgramDebugUtil.getSourceCodeFile(sourcePosition);
-        PsiManager psiManager = PsiManager.getInstance(sourceCodeFile.getProject());
-        PSQLFile psiFile = (PSQLFile) psiManager.findFile(sourceCodeFile);
+        PSQLFile psiFile = (PSQLFile) PsiUtil.getPsiFile(sourceCodeFile.getProject(), sourceCodeFile);
         if (psiFile != null) {
             Document document = DocumentUtil.getDocument(sourceCodeFile);
             int offset = document.getLineStartOffset(sourcePosition.getLine());

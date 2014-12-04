@@ -8,7 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -33,7 +35,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
@@ -129,7 +130,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
                     debuggerInterface.enableDebugging(targetConnection);
                     debuggerInterface.attachSession(sessionInfo.getSessionId(), debugConnection);
 
-                    synchronizeSession();
+                    synchronizeSession(progressIndicator);
                     executeMethod();
                 } catch (SQLException e) {
                     getSession().stop();
@@ -139,43 +140,39 @@ public class DBProgramDebugProcess extends XDebugProcess {
         }.start();
     }
 
-    private void synchronizeSession() {
-        final Project project = getSession().getProject();
-        new BackgroundTask(project, "Initialize debug environment", true) {
+    private void synchronizeSession(@NotNull ProgressIndicator progressIndicator) throws SQLException {
+        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
+        if (status.PROCESS_IS_TERMINATING) getSession().stop();
+        try {
+            progressIndicator.setText("Synchronizing debug session");
+            runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
 
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
-                if (getStatus().PROCESS_IS_TERMINATING) getSession().stop();
-                try {
-                    progressIndicator.setText("Synchronizing debug session");
-                    runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
+            if (status.TARGET_EXECUTION_TERMINATED) {
+                getSession().stop();
+            } else {
+                status.CAN_SET_BREAKPOINTS = true;
+                progressIndicator.setText("Registering breakpoints");
+                registerBreakpoints();
+                runtimeInfo = debuggerInterface.stepOver(debugConnection);
 
-                    if (getStatus().TARGET_EXECUTION_TERMINATED) {
-                        getSession().stop();
-                    } else {
-                        getStatus().CAN_SET_BREAKPOINTS = true;
-                        progressIndicator.setText("Registering breakpoints");
-                        registerBreakpoints();
-                        runtimeInfo = debuggerInterface.stepOver(debugConnection);
-
-                        progressIndicator.setText("Suspending session");
-                        suspendSession();
-                    }
-                } catch (SQLException e) {
-                    // typically a timeout
-                    getSession().stop();
-                    MessageUtil.showErrorDialog(project, "Could not initialize debug environment on connection \"" + connectionHandler.getName() + "\". ", e);
-                }
+                progressIndicator.setText("Suspending session");
+                suspendSession();
             }
-        }.start();
+        } catch (SQLException e) {
+            // typically a timeout
+            status.SESSION_SYNCHRONIZING_THREW_EXCEPTION = true;
+            throw e;
+        }
     }
 
     private void executeMethod() {
         new DebugOperationThread("execute method", getProject()) {
             public void executeOperation() throws SQLException {
+
                 XDebugSession session = getSession();
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(session.getProject());
                 if (status.PROCESS_IS_TERMINATING) return;
+                if (status.SESSION_SYNCHRONIZING_THREW_EXCEPTION) return;
 
                 try {
                     executionManager.debugExecute(executionInput, targetConnection);
@@ -185,6 +182,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
                     // to explicitly be called here
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
                     getDebuggerInterface().disableDebugging(targetConnection);
+                    MessageUtil.showErrorDialog(getProject(), "Error executing method " + executionInput.getMethodRef().getQualifiedMethodName() + " in debug mode.", e);
 
                 } finally {
                     status.TARGET_EXECUTION_TERMINATED = true;
@@ -201,21 +199,26 @@ public class DBProgramDebugProcess extends XDebugProcess {
      * otherwise they do not get valid ids
      */
     private void registerBreakpoints() {
-        Runnable readProcess = new Runnable() {
-            public void run() {
+        final Collection<XLineBreakpoint> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint>>() {
+            @Override
+            protected Collection<XLineBreakpoint> run() {
                 XBreakpointType localXBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(breakpointHandler.getBreakpointTypeClass());
                 Project project = getSession().getProject();
                 XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-                Collection<XLineBreakpoint> breakpoints= breakpointManager.getBreakpoints(localXBreakpointType);
+                return breakpointManager.getBreakpoints(localXBreakpointType);
+            }
+        }.start();
 
+        new WriteActionRunner() {
+            @Override
+            public void run() {
                 for (XLineBreakpoint breakpoint : breakpoints) {
                     breakpointHandler.registerBreakpoint(breakpoint);
                 }
 
                 registerDefaultBreakpoint();
             }
-        };
-        ApplicationManager.getApplication().runWriteAction(readProcess);
+        }.start();
     }
 
     private void registerDefaultBreakpoint() {
@@ -251,13 +254,19 @@ public class DBProgramDebugProcess extends XDebugProcess {
      * breakpoints need to be unregistered before closing the database session, otherwise they remain resident.
      */
     private void unregisterBreakpoints() {
-        Runnable readProcess = new Runnable() {
-            public void run() {
+        final Collection<XLineBreakpoint> breakpoints = new ReadActionRunner<Collection<XLineBreakpoint>>() {
+            @Override
+            protected Collection<XLineBreakpoint> run() {
                 XBreakpointType localXBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(breakpointHandler.getBreakpointTypeClass());
                 Project project = getSession().getProject();
                 XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-                Collection<XLineBreakpoint> breakpoints= breakpointManager.getBreakpoints(localXBreakpointType);
+                return breakpointManager.getBreakpoints(localXBreakpointType);
+            }
+        }.start();
 
+        new WriteActionRunner() {
+            @Override
+            public void run() {
                 for (XLineBreakpoint breakpoint : breakpoints) {
                     breakpointHandler.unregisterBreakpoint(breakpoint, false);
                 }
@@ -266,12 +275,11 @@ public class DBProgramDebugProcess extends XDebugProcess {
                     if (defaultBreakpointInfo != null) {
                         getDebuggerInterface().removeBreakpoint(defaultBreakpointInfo.getBreakpointId(), debugConnection);
                     }
-
                 } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
-        };
-        ApplicationManager.getApplication().runReadAction(readProcess);
+        }.start();
     }
 
     @Override
@@ -280,12 +288,12 @@ public class DBProgramDebugProcess extends XDebugProcess {
         final Project project = getSession().getProject();
 
         if (status.PROCESS_IS_TERMINATING) return;
+        status.PROCESS_IS_TERMINATING = true;
 
         new BackgroundTask(project, "Stopping debugger", true) {
             public void execute(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setText("Cancelling / resuming method execution.");
                 try {
-                    status.PROCESS_IS_TERMINATING = true;
                     unregisterBreakpoints();
                     rollOutDebugger();
                     status.CAN_SET_BREAKPOINTS = false;
