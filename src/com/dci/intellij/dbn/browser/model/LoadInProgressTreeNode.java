@@ -21,7 +21,7 @@ import com.intellij.openapi.vcs.FileStatus;
 public class LoadInProgressTreeNode implements BrowserTreeNode {
     public static final LoadInProgressTreeNode LOOSE_INSTANCE = new LoadInProgressTreeNode(null);
     static {
-        Timer updateChecker = new Timer("Load in progress icon roller");
+        Timer updateChecker = new Timer("DBN Load in progress icon roller");
         updateChecker.schedule(new TimerTask() {
             @Override
             public void run() {

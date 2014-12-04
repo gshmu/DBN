@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.JComponent;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.project.Project;
 
 public abstract class DialogWithTimeout extends DBNDialog{
     private DialogWithTimeoutForm form;
@@ -18,7 +18,7 @@ public abstract class DialogWithTimeout extends DBNDialog{
         super(project, title, canBeParent);
         secondsLeft = timeoutSeconds;
         form = new DialogWithTimeoutForm(secondsLeft);
-        timeoutTimer = new Timer("Timeout dialog task [" + getProject().getName() + "]");
+        timeoutTimer = new Timer("DBN Timeout dialog task [" + getProject().getName() + "]");
         timeoutTimer.schedule(new TimeoutTask(), TimeUtil.ONE_SECOND, TimeUtil.ONE_SECOND);
     }
 
