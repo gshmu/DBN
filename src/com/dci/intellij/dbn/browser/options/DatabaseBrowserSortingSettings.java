@@ -76,7 +76,8 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
 
     public void readConfiguration(Element element) {
         List<DBObjectComparator> newComparators = new ArrayList<>();
-        for (Element child : element.getChildren()) {
+        List<Element> children = element.getChildren();
+        for (Element child : children) {
             String objectTypeName = child.getAttributeValue("name");
             String sortingTypeName = child.getAttributeValue("sorting-type");
             DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
