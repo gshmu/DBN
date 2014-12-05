@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T>{
-    public static final List<DBObjectComparator> REGISTRY = new ArrayList<>();
+    public static final List<DBObjectComparator> REGISTRY = new ArrayList<DBObjectComparator>();
     static {
         new DBColumnNameComparator();
         new DBColumnPositionComparator();
