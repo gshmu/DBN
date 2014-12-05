@@ -93,7 +93,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
     }
 
     public class SortingTypeTableModel extends DBNEditableTableModel {
-        private List<DBObjectComparator> comparators = new ArrayList<>();
+        private List<DBObjectComparator> comparators = new ArrayList<DBObjectComparator>();
 
         public SortingTypeTableModel(List<DBObjectComparator> comparators) {
             this.comparators = new ArrayList<DBObjectComparator>(comparators);
