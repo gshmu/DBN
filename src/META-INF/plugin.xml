@@ -294,7 +294,7 @@
             <action id="DBNavigator.Actions.SourceEditor.Save" class="com.dci.intellij.dbn.editor.code.action.SaveChangesAction" text="Source Editor - Save">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl S"/>
             </action>
-            <action id="DBNavigator.Actions.CodeEditor.Rollback" class="com.dci.intellij.dbn.editor.code.action.RollbackChangesAction" text="Code Editor - Rollback"/>
+            <action id="DBNavigator.Actions.CodeEditor.Rollback" class="com.dci.intellij.dbn.editor.code.action.RevertChangesAction" text="Code Editor - Revert changes"/>
             <action id="DBNavigator.Actions.CodeEditor.Reload" class="com.dci.intellij.dbn.editor.code.action.ReloadSourceCodeAction" text="Code Editor - Reload"/>
             <action id="DBNavigator.Actions.CodeEditor.Compile" class="com.dci.intellij.dbn.editor.code.action.CompileObjectAction" text="Code Editor - Compile"/>
             <separator/>
