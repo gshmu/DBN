@@ -120,7 +120,7 @@ PLSQL_EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cu
 
 <PLSQL> {
     {WHITE_SPACE}+      { return tt.getSharedTokenTypes().getWhiteSpace(); }
-    {VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
+    //{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
     {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
 
