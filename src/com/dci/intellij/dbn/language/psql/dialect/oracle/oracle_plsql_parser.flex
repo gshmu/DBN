@@ -64,7 +64,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
-{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
+//{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
 
 

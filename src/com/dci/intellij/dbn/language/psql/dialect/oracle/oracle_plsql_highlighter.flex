@@ -75,7 +75,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
-{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
+//{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
 
