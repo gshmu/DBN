@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -13,10 +11,11 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
-public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
-    public RollbackChangesAction() {
-        super("Rollback changes", null, Icons.CODE_EDITOR_RESET);
+public class RevertChangesAction extends AbstractSourceCodeEditorAction {
+    public RevertChangesAction() {
+        super("Revert changes", null, Icons.CODE_EDITOR_RESET);
     }
 
     public void actionPerformed(@NotNull final AnActionEvent e) {
@@ -55,6 +54,6 @@ public class RollbackChangesAction extends AbstractSourceCodeEditorAction {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(virtualFile!= null && virtualFile.isModified());
-        presentation.setText("Rollback changes");
+        presentation.setText("Revert changes");
     }
 }
