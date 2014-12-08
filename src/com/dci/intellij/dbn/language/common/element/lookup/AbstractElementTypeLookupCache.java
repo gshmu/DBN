@@ -186,7 +186,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
      * is done only until first named element is hit.
      * (named elements do not have parents)
      */
-    public Set<TokenType> getNextPossibleTokens() {
+    public synchronized Set<TokenType> getNextPossibleTokens() {
         if (nextPossibleTokens == null) {
             nextPossibleTokens = new THashSet<TokenType>();
             ElementType elementType = getElementType();
