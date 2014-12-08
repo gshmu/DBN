@@ -55,14 +55,21 @@ NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 VARIABLE = ":"({IDENTIFIER}|{INTEGER})
 SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
-%state DIV
+%state PLSQL, WRAPPED
 %%
+
+<WRAPPED> {
+    .*                 { return tt.getTokenType("LINE_COMMENT"); }
+}
+
 
 {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
 {BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
 {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
+
+"wrapped"            { yybegin(WRAPPED); return tt.getSharedTokenTypes().getBlockComment();}
 
 //{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
@@ -808,11 +815,6 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 
 
-
-
-
-
-
 "access_into_null" {return tt.getExceptionTokenType(0);}
 "case_not_found" {return tt.getExceptionTokenType(1);}
 "collection_is_null" {return tt.getExceptionTokenType(2);}
@@ -837,9 +839,8 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 
 
-{IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{IDENTIFIER}           { return tt.getSharedTokenTypes().getIdentifier(); }
+{QUOTED_IDENTIFIER}    { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+.                      { return tt.getSharedTokenTypes().getIdentifier(); }
 
-<YYINITIAL> {
-    .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-}
+
