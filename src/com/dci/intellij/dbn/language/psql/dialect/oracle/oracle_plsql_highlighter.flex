@@ -70,8 +70,14 @@ EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cursor_a
 VARIABLE = ":"({IDENTIFIER}|{INTEGER})
 SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
-%state DIV
+%state PLSQL, WRAPPED
 %%
+
+<WRAPPED> {
+    .*                 { return tt.getTokenType("LINE_COMMENT"); }
+}
+
+
 
 {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
@@ -83,21 +89,23 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 {LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
 {REM_LINE_COMMENT}   { return tt.getTokenType("LINE_COMMENT"); }
 
-{INTEGER}     { return tt.getTokenType("INTEGER"); }
-{NUMBER}      { return tt.getTokenType("NUMBER"); }
-{STRING}      { return tt.getTokenType("STRING"); }
+"wrapped"            { yybegin(WRAPPED); return tt.getTokenType("KEYWORD");}
 
-{FUNCTION}             { yybegin(YYINITIAL); return tt.getTokenType("FUNCTION");}
-{PARAMETER}            { yybegin(YYINITIAL); return tt.getTokenType("PARAMETER");}
-{EXCEPTION}            { yybegin(YYINITIAL); return tt.getTokenType("EXCEPTION");}
+{INTEGER}              { return tt.getTokenType("INTEGER"); }
+{NUMBER}               { return tt.getTokenType("NUMBER"); }
+{STRING}               { return tt.getTokenType("STRING"); }
 
-{DATA_TYPE}            { yybegin(YYINITIAL); return tt.getTokenType("DATA_TYPE"); }
-{KEYWORD}              { yybegin(YYINITIAL); return tt.getTokenType("KEYWORD"); }
-{OPERATOR}             { yybegin(YYINITIAL); return tt.getTokenType("OPERATOR"); }
+{FUNCTION}             { return tt.getTokenType("FUNCTION");}
+{PARAMETER}            { return tt.getTokenType("PARAMETER");}
+{EXCEPTION}            { return tt.getTokenType("EXCEPTION");}
+
+{DATA_TYPE}            { return tt.getTokenType("DATA_TYPE"); }
+{KEYWORD}              { return tt.getTokenType("KEYWORD"); }
+{OPERATOR}             { return tt.getTokenType("OPERATOR"); }
 
 
-{IDENTIFIER}           { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-{QUOTED_IDENTIFIER}    { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getQuotedIdentifier(); }
+{IDENTIFIER}           { return tt.getSharedTokenTypes().getIdentifier(); }
+{QUOTED_IDENTIFIER}    { return tt.getSharedTokenTypes().getQuotedIdentifier(); }
 
 
 "("                    { return tt.getTokenType("CHR_LEFT_PARENTHESIS"); }
@@ -105,6 +113,5 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 "["                    { return tt.getTokenType("CHR_LEFT_BRACKET"); }
 "]"                    { return tt.getTokenType("CHR_RIGHT_BRACKET"); }
 
-<YYINITIAL> {
-    .                  { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
-}
+.                      { return tt.getSharedTokenTypes().getIdentifier(); }
+
