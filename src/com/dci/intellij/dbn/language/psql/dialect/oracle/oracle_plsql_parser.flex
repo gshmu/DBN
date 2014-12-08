@@ -59,7 +59,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 %%
 
 <WRAPPED> {
-    .*                 { return tt.getTokenType("LINE_COMMENT"); }
+    .*               { return tt.getSharedTokenTypes().getLineComment(); }
 }
 
 

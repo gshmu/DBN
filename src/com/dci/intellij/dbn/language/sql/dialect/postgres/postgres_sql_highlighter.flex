@@ -79,8 +79,8 @@ PARAMETER = "security_barrier"|"check_option"
 
 {WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
-{BLOCK_COMMENT}      { return tt.getTokenType("BLOCK_COMMENT"); }
-{LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
+{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
+{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
 
 {INTEGER}     { return tt.getTokenType("INTEGER"); }
 {NUMBER}      { return tt.getTokenType("NUMBER"); }

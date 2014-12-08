@@ -74,20 +74,20 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 %%
 
 <WRAPPED> {
-    .*                 { return tt.getTokenType("LINE_COMMENT"); }
+    .*                 { return tt.getSharedTokenTypes().getLineComment(); }
 }
 
 
 
-{WHITE_SPACE}+   { return tt.getSharedTokenTypes().getWhiteSpace(); }
+{WHITE_SPACE}+       { return tt.getSharedTokenTypes().getWhiteSpace(); }
 
 //{VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
 
-{BLOCK_COMMENT}      { return tt.getTokenType("BLOCK_COMMENT"); }
-{LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
-{REM_LINE_COMMENT}   { return tt.getTokenType("LINE_COMMENT"); }
+{BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
+{LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+{REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
 "wrapped"            { yybegin(WRAPPED); return tt.getTokenType("KEYWORD");}
 

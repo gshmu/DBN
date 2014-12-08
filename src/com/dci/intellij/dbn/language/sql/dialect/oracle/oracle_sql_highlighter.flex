@@ -88,9 +88,9 @@ PLSQL_EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cu
     {VARIABLE}           {return tt.getSharedTokenTypes().getVariable(); }
     {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
-    {BLOCK_COMMENT}      { return tt.getTokenType("BLOCK_COMMENT"); }
-    {LINE_COMMENT}       { return tt.getTokenType("LINE_COMMENT"); }
-    {REM_LINE_COMMENT}   { return tt.getTokenType("LINE_COMMENT"); }
+    {BLOCK_COMMENT}      { return tt.getSharedTokenTypes().getBlockComment(); }
+    {LINE_COMMENT}       { return tt.getSharedTokenTypes().getLineComment(); }
+    {REM_LINE_COMMENT}   { return tt.getSharedTokenTypes().getLineComment(); }
 
     {PLSQL_BLOCK_START}  { yybegin(PLSQL); return tt.getTokenType("KEYWORD");}
 
@@ -124,9 +124,9 @@ PLSQL_EXCEPTION   = "access_into_null"|"case_not_found"|"collection_is_null"|"cu
     {SQLP_VARIABLE}      {return tt.getSharedTokenTypes().getVariable(); }
 
 
-    {BLOCK_COMMENT}     { return tt.getTokenType("BLOCK_COMMENT"); }
-    {LINE_COMMENT}      { return tt.getTokenType("LINE_COMMENT"); }
-    {REM_LINE_COMMENT}  { return tt.getTokenType("LINE_COMMENT"); }
+    {BLOCK_COMMENT}     { return tt.getSharedTokenTypes().getBlockComment(); }
+    {LINE_COMMENT}      { return tt.getSharedTokenTypes().getLineComment(); }
+    {REM_LINE_COMMENT}  { return tt.getSharedTokenTypes().getLineComment(); }
 
     {PLSQL_BLOCK_END}   { yybegin(YYINITIAL); return tt.getSharedTokenTypes().getIdentifier(); }
 
