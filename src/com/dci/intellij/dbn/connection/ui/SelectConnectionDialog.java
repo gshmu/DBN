@@ -45,7 +45,7 @@ public class SelectConnectionDialog extends DBNDialog implements ListSelectionLi
         file.setActiveConnection(activeConnection);
         file.setCurrentSchema(currentSchema);
         Editor editor = EditorUtil.getSelectedEditor(file.getProject());
-        DocumentUtil.touchDocument(editor);
+        DocumentUtil.touchDocument(editor, true);
         super.doOKAction();
     }
 
