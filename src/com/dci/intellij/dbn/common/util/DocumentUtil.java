@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -16,17 +17,19 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.ex.DocumentBulkUpdateListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtilCore;
 
 public class DocumentUtil {
-
+    private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
 
     public static void touchDocument(final Editor editor, boolean reparse) {
         final Document document = editor.getDocument();
@@ -45,8 +48,10 @@ public class DocumentUtil {
                 ((EditorEx) editor).setHighlighter(editorHighlighter);
             }
             if (reparse) {
+                EventManager.notify(project, DocumentBulkUpdateListener.TOPIC).updateStarted(document);
                 FileContentUtilCore.reparseFiles(file.getVirtualFile());
-                CodeFoldingManager.getInstance(project).buildInitialFoldings(document);
+                CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
+                codeFoldingManager.buildInitialFoldings(editor);
             }
             refreshEditorAnnotations(file);
         }

@@ -35,7 +35,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             ConnectionHandler activeConnection = dbLanguagePsiFile.getActiveConnection();
-            if (activeConnection != null && !activeConnection.canConnect() && !activeConnection.isConnected()) {
+            if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual() && !activeConnection.canConnect() && !activeConnection.isConnected()) {
                 return true;
             }
         }
@@ -46,7 +46,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             final ConnectionHandler activeConnection = dbLanguagePsiFile.getActiveConnection();
-            if (activeConnection != null) {
+            if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
                 activeConnection.setAllowConnection(true);
                 new BackgroundTask(project, "Trying to connect to " + activeConnection.getName(), false) {
                     @Override
