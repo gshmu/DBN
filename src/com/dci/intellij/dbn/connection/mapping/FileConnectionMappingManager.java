@@ -275,7 +275,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             if (virtualFile != null && VirtualFileUtil.isLocalFileSystem(virtualFile) ) {
                 boolean changed = setActiveConnection(virtualFile, connectionHandler);
                 if (changed) {
-                    DocumentUtil.touchDocument(editor);
+                    DocumentUtil.touchDocument(editor, true);
 
                     FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
                     if (fileEditor != null) {
@@ -296,7 +296,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             if (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile) {
                 boolean changed = setCurrentSchema(virtualFile, schema);
                 if (changed) {
-                    DocumentUtil.touchDocument(editor);
+                    DocumentUtil.touchDocument(editor, false);
                 }
             }
         }

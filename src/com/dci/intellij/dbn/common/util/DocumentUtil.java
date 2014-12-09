@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.DBLanguageSyntaxHighlighter;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -22,11 +23,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.FileContentUtilCore;
 
 public class DocumentUtil {
 
 
-    public static void touchDocument(final Editor editor) {
+    public static void touchDocument(final Editor editor, boolean reparse) {
         final Document document = editor.getDocument();
 
         // restart highlighting
@@ -42,8 +44,10 @@ public class DocumentUtil {
                 EditorHighlighter editorHighlighter = HighlighterFactory.createHighlighter(syntaxHighlighter, editor.getColorsScheme());
                 ((EditorEx) editor).setHighlighter(editorHighlighter);
             }
-
-            PsiDocumentManager.getInstance(project).commitDocument(document);
+            if (reparse) {
+                FileContentUtilCore.reparseFiles(file.getVirtualFile());
+                CodeFoldingManager.getInstance(project).buildInitialFoldings(document);
+            }
             refreshEditorAnnotations(file);
         }
     }
