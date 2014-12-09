@@ -30,7 +30,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         CodeCompletionLookupItem lookupItem = super.createLookupItem(source, consumer);
         DBObject object = getObject();
-        if (object != null && lookupItem != null) {
+        if (object != null && !object.isDisposed() && lookupItem != null) {
             if (object.needsNameQuoting()) {
                 char quoteChar = DatabaseCompatibilityInterface.getInstance(object).getIdentifierQuotes();
                 String lookupString = quoteChar + lookupItem.getLookupString() + quoteChar;
