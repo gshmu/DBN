@@ -3373,7 +3373,7 @@
                         <token id="000002038" type-id="KW_LOG" />
                         <one-of id="000002039">
                             <element ref-id="supplemental_log_grp_clause" />
-                            <element ref-id="supplemental_id_key_claus" />
+                            <element ref-id="supplemental_id_key_clause" />
                         </one-of>
                     </sequence>
 
