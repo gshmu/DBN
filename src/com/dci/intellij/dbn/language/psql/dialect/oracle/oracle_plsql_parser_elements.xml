@@ -2646,7 +2646,7 @@
             <token id="000001304" type-id="CHR_AT" />
             <object-ref id="000001305" type="DBLINK" />
         </sequence>
-        <wrapper id="000001306" optional="true" template="PARENTHESES">
+        <wrapper id="000001306" optional="true" template="PARENTHESES" parameter-handler="METHOD_PARAMETER_HANDLER">
             <iteration id="000001307" optional="true" separator="CHR_COMMA">
                 <sequence id="000001308">
                     <sequence id="000001309" optional="true">
