@@ -1,12 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import java.util.Iterator;
-import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
@@ -26,6 +23,10 @@ import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.Set;
 
 public class PsiUtil {
 
@@ -147,6 +148,20 @@ public class PsiUtil {
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
                 if (basePsiElement.getElementType().is(typeAttribute)) {
+                    return basePsiElement;
+                }
+            }
+            psiElement = psiElement.getParent();
+        }
+        return null;
+    }
+
+    public static BasePsiElement lookupWrapperElementAtOffset(PsiFile file, int offset) {
+        PsiElement psiElement = file.findElementAt(offset);
+        while (psiElement != null) {
+            if (psiElement instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+                if (basePsiElement.getElementType() instanceof WrapperElementType) {
                     return basePsiElement;
                 }
             }
