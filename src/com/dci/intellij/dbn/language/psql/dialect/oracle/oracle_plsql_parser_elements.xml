@@ -5495,7 +5495,7 @@
                 <!--TODO this is a compromise-->
             </variant>
         </qualified-identifier>
-        <wrapper exit="true" id="000002871" template="PARENTHESES">
+        <wrapper exit="true" id="000002871" template="PARENTHESES" parameter-handler="METHOD_PARAMETER_HANDLER">
             <iteration id="000002872" optional="true" separator="CHR_COMMA">
                 <sequence id="000002873">
                     <sequence id="000002874" optional="true">
