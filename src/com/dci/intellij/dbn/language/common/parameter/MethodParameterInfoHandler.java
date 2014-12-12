@@ -26,6 +26,7 @@ import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
 import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 
 public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiElement, DBMethod> {
     private String id = "METHOD_PARAMETER_HANDLER";
@@ -51,29 +52,46 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     @Override
     public BasePsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
-        BasePsiElement basePsiElement = PsiUtil.lookupWrapperElementAtOffset(context.getFile(), context.getOffset());
+        BasePsiElement basePsiElement = lookupWrapperElement(context.getFile(), context.getOffset());
         if (basePsiElement != null) {
-            WrapperElementType wrapperElementType = (WrapperElementType) basePsiElement.getElementType();
-            if (id.equals(wrapperElementType.getParameterHandler())) {
-                NamedPsiElement enclosingNamedPsiElement = basePsiElement.findEnclosingNamedPsiElement();
-                BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
-                if (methodPsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
-                    DBObject object = identifierPsiElement.resolveUnderlyingObject();
-                    if (object instanceof DBMethod) {
-                        DBMethod method = (DBMethod) object;
-                        DBProgram program = method.getProgram();
-                        if (program != null) {
-                            DBObjectList objectList = program.getChildObjectList(method.getObjectType());
-                            List<DBMethod> methods = objectList.getObjects(method.getName());
-                            context.setItemsToShow(methods.toArray());
-                        } else {
-                            context.setItemsToShow(new Object[]{method});
-                        }
-                        return identifierPsiElement;
+            NamedPsiElement enclosingNamedPsiElement = basePsiElement.findEnclosingNamedPsiElement();
+            BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
+            if (methodPsiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
+                DBObject object = identifierPsiElement.resolveUnderlyingObject();
+                if (object instanceof DBMethod) {
+                    DBMethod method = (DBMethod) object;
+                    DBProgram program = method.getProgram();
+                    if (program != null) {
+                        DBObjectList objectList = program.getChildObjectList(method.getObjectType());
+                        List<DBMethod> methods = objectList.getObjects(method.getName());
+                        context.setItemsToShow(methods.toArray());
+                    } else {
+                        context.setItemsToShow(new Object[]{method});
+                    }
+                    return identifierPsiElement;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public BasePsiElement lookupWrapperElement(PsiFile file, int offset) {
+        PsiElement psiElement = file.findElementAt(offset);
+        while (psiElement != null) {
+            if (psiElement instanceof BasePsiElement) {
+                ElementType elementType = PsiUtil.getElementType(psiElement);
+                if (elementType instanceof WrapperElementType) {
+                    WrapperElementType wrapperElementType = (WrapperElementType) elementType;
+                    if (id.equals(wrapperElementType.getParameterHandler())) {
+                        return (BasePsiElement) psiElement;
+                    } else {
+                        return null;
                     }
                 }
             }
+            psiElement = psiElement.getParent();
         }
         return null;
     }
@@ -87,6 +105,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Override
     public BasePsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
         BasePsiElement wrappedPsiElement = getWrappedPsiElement(context);
+        int offset = context.getOffset();
         if (wrappedPsiElement != null) {
             IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.getElementType();
             PsiElement paramPsiElement = wrappedPsiElement.getFirstChild();
@@ -96,7 +115,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 if (elementType instanceof TokenElementType) {
                     TokenElementType tokenElementType = (TokenElementType) elementType;
                     if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
-                        if (paramPsiElement.getTextOffset() >= context.getOffset()) {
+                        if (paramPsiElement.getTextOffset() >= offset) {
                             break;
                         }
                     }
@@ -108,10 +127,13 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 paramPsiElement = paramPsiElement.getNextSibling();
             }
             return iteratedPsiElement;
+        } else {
+            BasePsiElement basePsiElement = lookupWrapperElement(context.getFile(), offset);
+            if (basePsiElement != null && basePsiElement.getTextOffset()< offset && basePsiElement.getTextRange().contains(offset)) {
+                return basePsiElement;
+            }
         }
-
-
-        return PsiUtil.lookupLeafAtOffset(context.getFile(), context.getOffset());
+        return null;
     }
 
     @Override
@@ -119,6 +141,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         BasePsiElement wrappedPsiElement = getWrappedPsiElement(context);
         if (wrappedPsiElement != null) {
             IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.getElementType();
+            int offset = context.getOffset();
             int index = 0;
             PsiElement paramPsiElement = wrappedPsiElement.getFirstChild();
             while (paramPsiElement != null) {
@@ -126,7 +149,8 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 if (elementType instanceof TokenElementType) {
                     TokenElementType tokenElementType = (TokenElementType) elementType;
                     if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
-                        if (paramPsiElement.getTextOffset() >= context.getOffset()) {
+
+                        if (paramPsiElement.getTextOffset() >= offset) {
                             break;
                         }
                         index++;
@@ -139,16 +163,13 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     }
 
     public BasePsiElement getWrappedPsiElement(UpdateParameterInfoContext context) {
-        BasePsiElement basePsiElement = PsiUtil.lookupWrapperElementAtOffset(context.getFile(), context.getOffset());
+        BasePsiElement basePsiElement = lookupWrapperElement(context.getFile(), context.getOffset());
         if (basePsiElement != null) {
-            WrapperElementType wrapperElementType = (WrapperElementType) basePsiElement.getElementType();
-            if (id.equals(wrapperElementType.getParameterHandler())) {
-                PsiElement psiElement = basePsiElement.getFirstChild();
-                while (psiElement != null) {
-                    psiElement = psiElement.getNextSibling();
-                    if (PsiUtil.getElementType(psiElement) instanceof IterationElementType) {
-                        return (BasePsiElement) psiElement;
-                    }
+            PsiElement psiElement = basePsiElement.getFirstChild();
+            while (psiElement != null) {
+                psiElement = psiElement.getNextSibling();
+                if (PsiUtil.getElementType(psiElement) instanceof IterationElementType) {
+                    return (BasePsiElement) psiElement;
                 }
             }
         }
@@ -183,7 +204,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 if (text.length() > 0) {
                     text.append(", ");
                 }
-                text.append(argument.getName());
+                text.append(argument.getName().toLowerCase());
                 //text.append(" ");
                 //text.append(argument.getDataType().getQualifiedName());
                 if (highlight) {
@@ -196,6 +217,6 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         if (text.length() == 0) {
             text.append("<no parameters>");
         }
-        context.setupUIComponentPresentation(text.toString().toLowerCase(), highlightStartOffset, highlightEndOffset, disable, disable, false, context.getDefaultParameterColor());
+        context.setupUIComponentPresentation(text.toString(), highlightStartOffset, highlightEndOffset, disable, false, false, context.getDefaultParameterColor());
     }
 }
