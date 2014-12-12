@@ -248,8 +248,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             return underlyingObject;
         }
 
-
-
 /*        DBObjectType objectType = getObjectType();
         if (isObject()) {
             if (psiReferenceElement instanceof DBObject) {
