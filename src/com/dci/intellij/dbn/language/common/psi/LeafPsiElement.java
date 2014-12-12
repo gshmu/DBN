@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -110,7 +110,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
 
             Set<BasePsiElement> parentObjectPsiElements = null;
             for (DBObjectType parentObjectType : parentTypes) {
-                PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(lookupIssuer, parentObjectType, null);
+                PsiLookupAdapter lookupAdapter = new ObjectLookupAdapter(lookupIssuer, parentObjectType, null);
                 parentObjectPsiElements = !objectType.isSchemaObject() && parentObjectType.isSchemaObject() ?
                         lookupAdapter.collectInScope(sourceScope, parentObjectPsiElements) :
                         lookupAdapter.collectInParentScopeOf(sourceScope, parentObjectPsiElements);
