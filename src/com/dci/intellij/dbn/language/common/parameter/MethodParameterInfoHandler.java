@@ -31,6 +31,7 @@ import com.intellij.psi.PsiFile;
 public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiElement, DBMethod> {
     private String id = "METHOD_PARAMETER_HANDLER";
     public static final ObjectReferenceLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.METHOD, null);
+    public static final ObjectReferenceLookupAdapter ARGUMENT_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.ARGUMENT, null);
 
     @Override
     public boolean couldShowInLookup() {
@@ -137,24 +138,29 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     }
 
     @Override
-    public void updateParameterInfo(@NotNull BasePsiElement o, @NotNull UpdateParameterInfoContext context) {
+    public void updateParameterInfo(@NotNull BasePsiElement parameter, @NotNull UpdateParameterInfoContext context) {
         BasePsiElement wrappedPsiElement = getWrappedPsiElement(context);
         if (wrappedPsiElement != null) {
+            BasePsiElement argumentPsiElement = ARGUMENT_LOOKUP_ADAPTER.findInElement(parameter);
+            if (argumentPsiElement != null) {
+                DBArgument argument = (DBArgument) argumentPsiElement.resolveUnderlyingObject();
+                if (argument != null) {
+                    context.setCurrentParameter(argument.getPosition() -1);
+                    return;
+                }
+            }
+
             IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.getElementType();
-            int offset = context.getOffset();
             int index = 0;
             PsiElement paramPsiElement = wrappedPsiElement.getFirstChild();
             while (paramPsiElement != null) {
                 ElementType elementType = PsiUtil.getElementType(paramPsiElement);
-                if (elementType instanceof TokenElementType) {
-                    TokenElementType tokenElementType = (TokenElementType) elementType;
-                    if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
-
-                        if (paramPsiElement.getTextOffset() >= offset) {
-                            break;
-                        }
-                        index++;
+                if (elementType == iterationElementType.getIteratedElementType()) {
+                    if (paramPsiElement == parameter) {
+                        context.setCurrentParameter(index);
+                        return;
                     }
+                    index++;
                 }
                 paramPsiElement = paramPsiElement.getNextSibling();
             }
