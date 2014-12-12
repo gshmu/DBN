@@ -8,8 +8,6 @@ import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
@@ -154,37 +152,6 @@ public class PsiUtil {
                 }
             }
             psiElement = psiElement.getParent();
-        }
-        return null;
-    }
-
-    public static BasePsiElement lookupWrapperElementAtOffset(PsiFile file, int offset) {
-        PsiElement psiElement = file.findElementAt(offset);
-        while (psiElement != null) {
-            if (psiElement instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                if (basePsiElement.getElementType() instanceof WrapperElementType) {
-                    return basePsiElement;
-                }
-            }
-            psiElement = psiElement.getParent();
-        }
-        return null;
-    }
-
-    public static BasePsiElement lookupIterationElementAtOffset(PsiFile file, int offset) {
-        PsiElement psiElement = file.findElementAt(offset);
-        while (psiElement != null) {
-            if (psiElement instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                if (basePsiElement.getElementType() instanceof IterationElementType) {
-                    return basePsiElement;
-                }
-            }
-            psiElement = psiElement.getParent();
-            if (psiElement instanceof NamedPsiElement) {
-                break;
-            }
         }
         return null;
     }
