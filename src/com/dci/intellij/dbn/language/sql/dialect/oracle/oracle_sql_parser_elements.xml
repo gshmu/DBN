@@ -8664,7 +8664,7 @@
                 <object-ref id="000004734" type="FUNCTION" />
             </variant>
         </qualified-identifier>
-        <wrapper exit="true" id="000004735" template="PARENTHESES" parameter-handler="METHOD_PARAMETER_HANDLER">
+        <wrapper exit="true" id="000004735" template="PARENTHESES" attributes="METHOD_PARAMETER_HANDLER">
             <iteration id="000004736" optional="true" separator="CHR_COMMA">
                 <sequence id="000004737">
                     <sequence id="000004738" optional="true">

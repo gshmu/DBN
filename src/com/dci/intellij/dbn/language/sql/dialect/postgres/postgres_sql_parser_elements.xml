@@ -1095,7 +1095,7 @@
                         <object-ref id="000000549" type="FUNCTION" />
                     </variant>
                 </qualified-identifier>
-                <wrapper id="000000550" optional="true" template="PARENTHESES">
+                <wrapper id="000000550" optional="true" template="PARENTHESES" attributes="METHOD_PARAMETER_HANDLER">
                     <iteration id="000000551" optional="true" separator="CHR_COMMA">
                         <element ref-id="expression" />
                     </iteration>
@@ -1197,7 +1197,7 @@
                         <object-ref id="000000603" type="FUNCTION" />
                     </variant>
                 </qualified-identifier>
-                <wrapper exit="true" id="000000604" template="PARENTHESES">
+                <wrapper exit="true" id="000000604" template="PARENTHESES" attributes="METHOD_PARAMETER_HANDLER">
                     <iteration id="000000605" optional="true" separator="CHR_COMMA">
                         <element ref-id="expression" />
                     </iteration>
