@@ -26,7 +26,9 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.FileContentUtilCore;
+import com.intellij.util.FileContentUtil;
+
+import java.util.ArrayList;
 
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
@@ -49,7 +51,9 @@ public class DocumentUtil {
             }
             if (reparse) {
                 EventManager.notify(project, DocumentBulkUpdateListener.TOPIC).updateStarted(document);
-                FileContentUtilCore.reparseFiles(file.getVirtualFile());
+                ArrayList<VirtualFile> files = new ArrayList<>();
+                files.add(file.getVirtualFile());
+                FileContentUtil.reparseFiles(project, files, true);
                 CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
                 codeFoldingManager.buildInitialFoldings(editor);
             }
