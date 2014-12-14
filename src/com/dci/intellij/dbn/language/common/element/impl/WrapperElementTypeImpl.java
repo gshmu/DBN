@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.List;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -13,15 +16,11 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jdom.Element;
-
-import java.util.List;
 
 public class WrapperElementTypeImpl extends AbstractElementType implements WrapperElementType {
     private WrappingDefinition wrappingDefinition;
     private ElementType wrappedElement;
     private boolean wrappedElementOptional;
-    private String parameterHandler;
 
     public WrapperElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -32,7 +31,6 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         super.loadDefinition(def);
         ElementTypeBundle bundle = getElementBundle();
         String templateId = def.getAttributeValue("template");
-        parameterHandler = def.getAttributeValue("parameter-handler");
 
         TokenElementType beginTokenElement;
         TokenElementType endTokenElement;
@@ -107,10 +105,5 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
     }
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
-    }
-
-    @Override
-    public String getParameterHandler() {
-        return parameterHandler;
     }
 }

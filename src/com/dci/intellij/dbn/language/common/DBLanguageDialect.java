@@ -8,7 +8,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
+import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
+import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
 import com.intellij.lang.LanguageDialect;
+import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IFileElementType;
 
 public abstract class DBLanguageDialect extends LanguageDialect implements DBFileElementTypeProvider {
@@ -103,5 +106,11 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
             chameleonElementType = new ChameleonElementType(this, parentLanguage);
         }
         return chameleonElementType;
+    }
+
+    public Map<TokenPairTemplate,TokenPairRangeMonitor> createTokenPairRangeMonitors(PsiBuilder builder){
+        Map<TokenPairTemplate,TokenPairRangeMonitor> tokenPairRangeMonitors = new HashMap<TokenPairTemplate,TokenPairRangeMonitor>();
+        tokenPairRangeMonitors.put(TokenPairTemplate.PARENTHESES, new TokenPairRangeMonitor(builder, this, TokenPairTemplate.PARENTHESES));
+        return tokenPairRangeMonitors;
     }
 }

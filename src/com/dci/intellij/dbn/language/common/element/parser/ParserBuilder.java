@@ -15,19 +15,17 @@ import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashMap;
 
 public class ParserBuilder {
     private PsiBuilder builder;
-    private Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors = new THashMap<TokenPairTemplate, TokenPairRangeMonitor>();
+    private Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors;
     private String cachedTokenText;
 
 
     public ParserBuilder(PsiBuilder builder, DBLanguageDialect languageDialect) {
         this.builder = builder;
         builder.setDebugMode(true);
-        tokenPairRangeMonitors.put(TokenPairTemplate.PARENTHESES, new TokenPairRangeMonitor(builder, languageDialect, TokenPairTemplate.PARENTHESES));
-        tokenPairRangeMonitors.put(TokenPairTemplate.BEGIN_END, new TokenPairRangeMonitor(builder, languageDialect, TokenPairTemplate.BEGIN_END));
+        tokenPairRangeMonitors = languageDialect.createTokenPairRangeMonitors(builder);
     }
 
     public void advanceLexer(@NotNull ParsePathNode node) {

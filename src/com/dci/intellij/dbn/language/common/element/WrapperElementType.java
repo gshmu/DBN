@@ -9,6 +9,4 @@ public interface WrapperElementType extends ElementType {
     ElementType getWrappedElement();
 
     boolean isWrappedElementOptional();
-
-    String getParameterHandler();
 }

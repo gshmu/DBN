@@ -999,7 +999,7 @@
                 <object-ref id="000000494" type="FUNCTION" />
             </variant>
         </qualified-identifier>
-        <wrapper exit="true" id="000000495" template="PARENTHESES">
+        <wrapper exit="true" id="000000495" template="PARENTHESES" attributes="METHOD_PARAMETER_HANDLER">
             <iteration id="000000496" optional="true" separator="CHR_COMMA">
                 <element ref-id="expr" />
             </iteration>

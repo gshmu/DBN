@@ -30,6 +30,9 @@ public enum ElementTypeAttribute {
     GENERIC("GENERIC", "Generic element"),
     SPECIFIC("SPECIFIC", "Specific element"),
     DATABASE_LOG_PRODUCER("DATABASE_LOG_PRODUCER", "Database logging"),
+    METHOD_PARAMETER_HANDLER("METHOD_PARAMETER_HANDLER", "Method parameter handler"),
+    COLUMN_PARAMETER_HANDLER("COLUMN_PARAMETER_HANDLER", "Column parameter handler"),
+    COLUMN_PARAMETER_PROVIDER("COLUMN_PARAMETER_PROVIDER", "Column parameter provider"),
     ;
 
     public static final Set<ElementTypeAttribute> EMPTY_LIST = new THashSet<ElementTypeAttribute>(0);

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
@@ -29,7 +30,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
 public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiElement, DBMethod> {
-    private String id = "METHOD_PARAMETER_HANDLER";
     public static final ObjectReferenceLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.METHOD, null);
     public static final ObjectReferenceLookupAdapter ARGUMENT_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.ARGUMENT, null);
 
@@ -85,7 +85,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 ElementType elementType = PsiUtil.getElementType(psiElement);
                 if (elementType instanceof WrapperElementType) {
                     WrapperElementType wrapperElementType = (WrapperElementType) elementType;
-                    if (id.equals(wrapperElementType.getParameterHandler())) {
+                    if (wrapperElementType.is(ElementTypeAttribute.METHOD_PARAMETER_HANDLER)) {
                         return (BasePsiElement) psiElement;
                     } else {
                         return null;
