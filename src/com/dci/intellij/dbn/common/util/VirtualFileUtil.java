@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -26,15 +27,15 @@ public class VirtualFileUtil {
         return virtualFile.getFileType().getIcon();
     }
 
-    public static boolean isDatabaseFileSystem(VirtualFile file) {
+    public static boolean isDatabaseFileSystem(@NotNull VirtualFile file) {
         return file.getFileSystem() == DatabaseFileSystem.getInstance();
     }
 
-    public static boolean isLocalFileSystem(VirtualFile file) {
+    public static boolean isLocalFileSystem(@NotNull VirtualFile file) {
         return file.isInLocalFileSystem();
     }
 
-    public static boolean isVirtualFileSystem(VirtualFile file) {
+    public static boolean isVirtualFileSystem(@NotNull VirtualFile file) {
         return !isDatabaseFileSystem(file) && !isLocalFileSystem(file);
     }    
 

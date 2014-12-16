@@ -122,7 +122,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     }
 
     @Nullable
-    public ConnectionHandler getActiveConnection(VirtualFile virtualFile) {
+    public ConnectionHandler getActiveConnection(@NotNull VirtualFile virtualFile) {
         // if the file is a database content file then get the connection from the underlying database object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
             if (virtualFile instanceof DBContentVirtualFile) {
@@ -175,7 +175,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         return null;
     }
 
-    public DBSchema getCurrentSchema(VirtualFile virtualFile) {
+    public DBSchema getCurrentSchema(@NotNull VirtualFile virtualFile) {
         // if the file is a database content file then get the schema from the underlying schema object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
             if (virtualFile instanceof DBContentVirtualFile) {
