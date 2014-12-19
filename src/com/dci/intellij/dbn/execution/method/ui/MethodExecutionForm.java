@@ -63,8 +63,7 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         DBMethod method = executionInput.getMethod();
 
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
-        if (compatibilityInterface.supportsFeature(DatabaseFeature.AUTHID_METHOD_EXECUTION)) {
+        if (DatabaseFeature.AUTHID_METHOD_EXECUTION.isSupported(connectionHandler)) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
             executionSchemaActionPanel.add(new SchemaSelector(), BorderLayout.CENTER);
         } else {
@@ -123,8 +122,9 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
 
         enableLoggingCheckBox.setEnabled(!debug);
         enableLoggingCheckBox.setSelected(!debug && executionInput.isEnableLogging());
-        enableLoggingCheckBox.setVisible(compatibilityInterface.supportsFeature(DatabaseFeature.DATABASE_LOGGING));
-        String databaseLogName = compatibilityInterface.getDatabaseLogName();
+        enableLoggingCheckBox.setVisible(DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler));
+        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
+        String databaseLogName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
         if (StringUtil.isNotEmpty(databaseLogName)) {
             enableLoggingCheckBox.setText("Enable logging (" + databaseLogName + ")");
         }
