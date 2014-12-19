@@ -1,20 +1,5 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
- import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
- import com.dci.intellij.dbn.common.ui.MouseUtil;
- import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
- import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
- import com.dci.intellij.dbn.data.model.ColumnInfo;
- import com.dci.intellij.dbn.data.type.DBDataType;
- import com.dci.intellij.dbn.data.type.GenericDataType;
- import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
- import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
- import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
- import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
- import com.dci.intellij.dbn.object.DBColumn;
- import com.intellij.ui.JBColor;
- import com.intellij.ui.SimpleTextAttributes;
-
  import javax.swing.JTextField;
  import javax.swing.border.Border;
  import javax.swing.border.CompoundBorder;
@@ -31,6 +16,21 @@
  import java.awt.event.MouseListener;
  import java.awt.event.MouseMotionAdapter;
  import java.awt.event.MouseMotionListener;
+
+ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+ import com.dci.intellij.dbn.common.ui.MouseUtil;
+ import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
+ import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+ import com.dci.intellij.dbn.data.model.ColumnInfo;
+ import com.dci.intellij.dbn.data.type.DBDataType;
+ import com.dci.intellij.dbn.data.type.GenericDataType;
+ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
+ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
+ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+ import com.dci.intellij.dbn.object.DBColumn;
+ import com.intellij.ui.JBColor;
+ import com.intellij.ui.SimpleTextAttributes;
 
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
     public static final Border EMPTY_BORDER = new EmptyBorder(0, 3, 0, 3);
@@ -198,9 +198,14 @@
             JTextField textField = getTextField();
             DatasetEditorModelCell cell = getCell();
             if (e.isControlDown() && cell.isNavigable()) {
-                DBColumn foreignKeyColumn = cell.getColumnInfo().getColumn().getForeignKeyColumn();
-                textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
-                textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                DBColumn column = cell.getColumnInfo().getColumn();
+                if (column != null) {
+                    DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                    if (foreignKeyColumn != null) {
+                        textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
+                        textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    }
+                }
             } else {
                 textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
                 textField.setToolTipText(null);
