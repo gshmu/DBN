@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySett
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -64,7 +65,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             SimpleBrowserForm browserForm = new SimpleBrowserForm(connectionHandler);
             JComponent component = browserForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
-            tabInfo.setText(connectionHandler.getName());
+            tabInfo.setText(CommonUtil.nvl(connectionHandler.getName(), "[unnamed connection]"));
             tabInfo.setObject(browserForm);
             //tabInfo.setIcon(connectionHandler.getIcon());
             connectionTabs.addTab(tabInfo);
