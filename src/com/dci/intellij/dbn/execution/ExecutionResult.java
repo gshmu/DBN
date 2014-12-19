@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -12,6 +13,7 @@ public interface ExecutionResult extends Disposable {
 
     ExecutionResultForm getForm();
 
+    @NotNull
     String getName();
 
     Icon getIcon();

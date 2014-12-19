@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.logging;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
@@ -34,6 +35,7 @@ public class DatabaseLogOutput implements ExecutionResult {
     }
 
     @Override
+    @NotNull
     public String getName() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) {
