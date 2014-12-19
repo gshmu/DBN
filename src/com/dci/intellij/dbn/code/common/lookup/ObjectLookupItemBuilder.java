@@ -32,8 +32,12 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         DBObject object = getObject();
         if (object != null && !object.isDisposed() && lookupItem != null) {
             if (object.needsNameQuoting()) {
-                char quoteChar = DatabaseCompatibilityInterface.getInstance(object).getIdentifierQuotes();
-                String lookupString = quoteChar + lookupItem.getLookupString() + quoteChar;
+                DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
+                String lookupString = lookupItem.getLookupString();
+                if (compatibilityInterface != null) {
+                    char quoteChar = compatibilityInterface.getIdentifierQuotes();
+                    lookupString = quoteChar + lookupString + quoteChar;
+                }
                 lookupItem.setLookupString(lookupString);
             }
 

@@ -123,7 +123,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                     }
                                 }
                             } catch (SQLException ex) {
-                                if (!DatabaseCompatibilityInterface.getInstance(object).supportsFeature(DatabaseFeature.OBJECT_REPLACING)) {
+                                if (DatabaseFeature.OBJECT_REPLACING.isSupported(object)) {
                                     virtualFile.updateChangeTimestamp();
                                 }
                                 MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
@@ -241,8 +241,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         virtualFile.updateToDatabase();
 
                         ConnectionHandler connectionHandler = object.getConnectionHandler();
-                        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-                        if (compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
+                        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
                             connectionHandler.getObjectBundle().refreshObjectsStatus(object);
                         }
 
