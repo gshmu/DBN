@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTree;
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -90,14 +91,19 @@ public class ArgumentValuesTree extends DBNTree{
                 String displayValue = originalValue instanceof ResultSet ? "" : "" + originalValue;
 
                 if (attribute == null) {
-                    setIcon(argument.getIcon());
-                    append(argument.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    append(" = ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                    DBDataType dataType = argument.getDataType();
-                    if (dataType != null) {
-                        append("{" + dataType.getName().toLowerCase() + "} " , SimpleTextAttributes.GRAY_ATTRIBUTES);
+                    if (argument == null) {
+                        setIcon(DBObjectType.ARGUMENT.getIcon());
+                        append("[unknown]", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                        append(" = ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                    } else{
+                        setIcon(argument.getIcon());
+                        append(argument.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                        append(" = ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                        DBDataType dataType = argument.getDataType();
+                        if (dataType != null) {
+                            append("{" + dataType.getName().toLowerCase() + "} " , SimpleTextAttributes.GRAY_ATTRIBUTES);
+                        }
                     }
-
                     append(displayValue, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
                 } else {
                     setIcon(attribute.getIcon());
