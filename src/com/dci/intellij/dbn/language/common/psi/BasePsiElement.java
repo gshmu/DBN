@@ -246,16 +246,20 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return psiElement;
     }
 
+    @Nullable
     public BasePsiElement getPrevElement() {
         PsiElement preElement = getPrevSibling();
         while (preElement != null && preElement instanceof PsiWhiteSpace && preElement instanceof PsiComment) {
             preElement = preElement.getPrevSibling();
         }
-        BasePsiElement previous = (BasePsiElement) preElement;
-        while (previous != null && previous.getLastChild() instanceof BasePsiElement) {
-            previous = (BasePsiElement) previous.getLastChild();
+        if (preElement instanceof BasePsiElement) {
+            BasePsiElement previous = (BasePsiElement) preElement;
+            while (previous.getLastChild() instanceof BasePsiElement) {
+                previous = (BasePsiElement) previous.getLastChild();
+            }
+            return previous;
         }
-        return previous;
+        return null;
     }
 
     public LeafPsiElement getPrevLeaf() {
