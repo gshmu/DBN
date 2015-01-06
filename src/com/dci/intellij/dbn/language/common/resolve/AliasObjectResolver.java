@@ -24,8 +24,8 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
             if (aliasedObject.isVirtualObject()) {
                 return aliasedObject.resolveUnderlyingObject();
             } else if (aliasedObject instanceof IdentifierPsiElement) {
-                identifierPsiElement = (IdentifierPsiElement) aliasedObject;
-                PsiElement underlyingPsiElement = identifierPsiElement.resolve();
+                IdentifierPsiElement aliasedPsiElement = (IdentifierPsiElement) aliasedObject;
+                PsiElement underlyingPsiElement = aliasedPsiElement.resolve();
                 if (underlyingPsiElement instanceof DBObject) {
                     return (DBObject) underlyingPsiElement;
                 }
@@ -33,7 +33,7 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
                 if (underlyingPsiElement instanceof IdentifierPsiElement && underlyingPsiElement != identifierPsiElement) {
                     IdentifierPsiElement underlyingIdentifierPsiElement = (IdentifierPsiElement) underlyingPsiElement;
                     if (underlyingIdentifierPsiElement.isAlias() && underlyingIdentifierPsiElement.isDefinition()) {
-                        return INSTANCE.resolve(underlyingIdentifierPsiElement);
+                        return resolve(underlyingIdentifierPsiElement);
                     }
                 }
             }
