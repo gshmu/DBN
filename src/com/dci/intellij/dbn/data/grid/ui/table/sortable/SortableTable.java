@@ -32,6 +32,9 @@ public abstract class SortableTable<T extends SortableDataModel> extends BasicTa
 
     public void sort() {
         getModel().sort();
+        JTableHeader tableHeader = getTableHeader();
+        tableHeader.revalidate();
+        tableHeader.repaint();
     }
 
     public boolean sort(int columnIndex, SortDirection sortDirection, boolean keepExisting) {
