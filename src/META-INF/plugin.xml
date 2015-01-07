@@ -28,7 +28,12 @@
     <change-notes><![CDATA[
         <ul>
             <li><b>3.0.3601</b>
-             <ul>
+            <ul>
+                - Method call parameter info (Ctrl-P)<br>
+                - Minor bug fixes<br>
+            </ul>
+            <li><b>3.0.3601</b>
+            <ul>
                 - Object sorting options in database browser<br>
                 - Icon rework for better visibility in dark schemes<br>
                 - Support method executions with collection return types (Oracle) <br>
