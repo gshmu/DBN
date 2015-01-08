@@ -7,5 +7,6 @@ import java.sql.SQLException;
 public interface ValueAdapter<T> {
     T read() throws SQLException;
     void write(Connection connection, ResultSet resultSet, int columnIndex, T value) throws SQLException;
+    void copy(Connection connection, ResultSet resultSet, int columnIndex, ValueAdapter<T> source) throws SQLException;
     public String getDisplayValue();
 }
