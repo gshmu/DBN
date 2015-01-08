@@ -8,8 +8,6 @@ import java.util.Map;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -27,7 +25,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
         if (tableCellEditor == null) {
             DBDataType dataType = columnInfo.getDataType();
             tableCellEditor =
-                dataType.getNativeDataType() != null ? createEditorForNativeType(columnInfo, table) :
+                dataType.isNative() || dataType.isPseudoNative() ? createEditorForNativeType(columnInfo, table) :
                 dataType.getDeclaredType() != null ? createEditorForDeclaredType(columnInfo, table) : null;
             cache.put(columnInfo, tableCellEditor);
         }

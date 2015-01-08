@@ -32,6 +32,14 @@ public class BasicDataModelCell implements DataModelCell {
     public TextContentType getContentType() {
         DataModelState state = row.getModel().getState();
         String contentTypeName = state.getTextContentTypeName(getColumnInfo().getName());
+        if (contentTypeName == null) {
+            Object userValue = getUserValue();
+
+            if (userValue instanceof LargeObjectValue) {
+                LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
+                contentTypeName = largeObjectValue.getContentTypeName();
+            }
+        }
         DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(getProject()).getQualifiedEditorSettings();
         return qualifiedEditorSettings.getContentType(contentTypeName);
     }

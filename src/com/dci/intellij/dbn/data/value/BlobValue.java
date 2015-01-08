@@ -82,6 +82,11 @@ public class BlobValue implements LargeObjectValue {
         return blob == null ? 0 : blob.length();
     }
 
+    @Override
+    public String getContentTypeName() {
+        return null;
+    }
+
     public String getDisplayValue() {
         /*try {
             return "[BLOB] " + size() + "";

@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 
 public class TextEditorForm extends DBNFormImpl implements DBNForm {
@@ -65,7 +66,6 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         editor.getContentComponent().setFocusTraversalKeysEnabled(false);
 
         editorPanel.add(editor.getComponent(), BorderLayout.CENTER);
-
     }
 
     private TextContentType getPlainTextContentType() {
@@ -97,7 +97,7 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
     }
 
     public void setContentType(TextContentType contentType) {
-        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighter.PROVIDER.create(contentType.getFileType(), userValueHolder.getProject(), null);
+        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), userValueHolder.getProject(), null);
         EditorColorsScheme colorsScheme = editor.getColorsScheme();
         editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
         userValueHolder.setContentType(contentType);
