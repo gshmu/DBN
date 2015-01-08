@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.data.editor.text.actions;
 
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -10,9 +13,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
 
 public class TextContentTypeComboBoxAction extends DBNComboBoxAction {
     private TextEditorForm editorForm;
@@ -23,7 +23,6 @@ public class TextContentTypeComboBoxAction extends DBNComboBoxAction {
         TextContentType contentType = editorForm.getContentType();
         presentation.setText(contentType.getName());
         presentation.setIcon(contentType.getIcon());
-
     }
 
     @NotNull

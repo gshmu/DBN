@@ -80,6 +80,11 @@ public class ClobValue implements LargeObjectValue {
         return clob == null ? 0 : clob.length();
     }
 
+    @Override
+    public String getContentTypeName() {
+        return null;
+    }
+
     public String getDisplayValue() {
         /*try {
             return "[CLOB] " + size() + "";

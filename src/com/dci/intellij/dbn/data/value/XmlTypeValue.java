@@ -4,17 +4,18 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class XmlTypeValue implements LargeObjectValue{
-    //private XMLType xmlType;
+import oracle.jdbc.OracleResultSet;
+import oracle.sql.OPAQUE;
 
-    public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
+public class XmlTypeValue implements LargeObjectValue{
+    private OPAQUE opaque;
+
+    public XmlTypeValue(OracleResultSet resultSet, int columnIndex) throws SQLException {
         try {
-            //this.xmlType = XMLType.createXML(((OracleResultSet)resultSet).getOPAQUE(columnIndex));
+            opaque = resultSet.getOPAQUE(columnIndex);
         } catch (RuntimeException e) {
             e.printStackTrace();
-        } finally {
         }
-
     }
 
     public String read() throws SQLException {
@@ -23,13 +24,12 @@ public class XmlTypeValue implements LargeObjectValue{
 
     @Override
     public String read(int maxSize) throws SQLException {
-        return "";
-        //return xmlType.getStringVal();
+        return new String(opaque.getBytesValue());
     }
 
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
-
+        opaque.setValue(value.getBytes());
     }
 
     @Override
@@ -40,6 +40,11 @@ public class XmlTypeValue implements LargeObjectValue{
     @Override
     public long size() throws SQLException {
         return 0;
+    }
+
+    @Override
+    public String getContentTypeName() {
+        return "XML";
     }
 
     @Override

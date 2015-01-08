@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.data.value.BlobValue;
 import com.dci.intellij.dbn.data.value.ClobValue;
 import com.dci.intellij.dbn.data.value.XmlTypeValue;
 import com.intellij.openapi.diagnostic.Logger;
+import oracle.jdbc.OracleResultSet;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -56,7 +57,7 @@ public class DBNativeDataType implements DynamicContentElement{
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.BLOB) return new BlobValue(resultSet, columnIndex);
         if (genericDataType == GenericDataType.CLOB) return new ClobValue(resultSet, columnIndex);
-        if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue(resultSet, columnIndex);
+        if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue((OracleResultSet) resultSet, columnIndex);
         if (genericDataType == GenericDataType.ARRAY) return new ArrayValue(resultSet, columnIndex);
         if (genericDataType == GenericDataType.ROWID) return "[ROWID]";
         if (genericDataType == GenericDataType.FILE) return "[FILE]";

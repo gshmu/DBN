@@ -211,7 +211,9 @@ public class DBDataType {
     }
 
     public GenericDataType getGenericDataType() {
-        return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
+        return nativeDataType != null ? nativeDataType.getGenericDataType() :
+                pseudoNativeDataType != null ? pseudoNativeDataType.getGenericDataType() :
+                GenericDataType.OBJECT;
     }
 
     public static class Ref {
