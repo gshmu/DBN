@@ -30,9 +30,28 @@ public class ArrayValue implements ValueAdapter<List<String>>{
 
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, List<String> values) throws SQLException {
-        this.values = values;
-        Array array = connection.createArrayOf(this.array.getBaseTypeName(), values.toArray());
-        resultSet.updateArray(columnIndex, array);
+        try {
+            this.values = values;
+            array = connection.createArrayOf(array.getBaseTypeName(), values.toArray());
+            resultSet.updateArray(columnIndex, array);
+        } catch (Throwable e) {
+            if (e instanceof SQLException) throw e;
+            throw new SQLException("Could not write array value. Your JDBC driver may not support this feature", e);
+        }
+    }
+
+    @Override
+    public void copy(Connection connection, ResultSet resultSet, int columnIndex, ValueAdapter<List<String>> source) throws SQLException {
+        ArrayValue sourceValue = (ArrayValue) source;
+        try {
+            this.values = source.read();
+            array = connection.createArrayOf(sourceValue.array.getBaseTypeName(), values.toArray());
+            resultSet.updateArray(columnIndex, array);
+        } catch (Throwable e) {
+            if (e instanceof SQLException) throw e;
+            throw new SQLException("Could not write array value. Your JDBC driver may not support this feature", e);
+        }
+
     }
 
     @Override

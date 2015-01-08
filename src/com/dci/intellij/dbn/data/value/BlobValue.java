@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 
-public class BlobValue implements LargeObjectValue {
+public class BlobValue extends LargeObjectValue {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private Blob blob;

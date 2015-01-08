@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.OPAQUE;
 
-public class XmlTypeValue implements LargeObjectValue{
+public class XmlTypeValue extends LargeObjectValue{
     private OPAQUE opaque;
 
     public XmlTypeValue() {

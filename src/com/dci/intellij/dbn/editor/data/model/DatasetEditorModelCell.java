@@ -67,10 +67,11 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                     ValueAdapter valueAdapter = (ValueAdapter) userValue;
                     Connection connection = connectionHandler.getStandaloneConnection();
                     if (newUserValue instanceof ValueAdapter) {
-                        ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
-                        newUserValue = newValueAdapter.read();
+                        valueAdapter.copy(connection, resultSet, columnIndex, (ValueAdapter) newUserValue);
+                    } else {
+                        valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
                     }
-                    valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
+
                 } else {
                     DBDataType dataType = getColumnInfo().getDataType();
                     dataType.setValueToResultSet(resultSet, columnIndex, newUserValue);
