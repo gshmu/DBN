@@ -6,6 +6,9 @@ public interface DataTypeDefinition {
     String getName();
     Class getTypeClass();
     int getSqlType();
+
+    boolean isPseudoNative();
+
     GenericDataType getGenericDataType();
     Object convert(@Nullable Object object);
 }

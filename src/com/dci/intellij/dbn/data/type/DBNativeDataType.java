@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.BlobValue;
 import com.dci.intellij.dbn.data.value.ClobValue;
+import com.dci.intellij.dbn.data.value.XmlTypeValue;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class DBNativeDataType implements DynamicContentElement{
@@ -42,6 +43,10 @@ public class DBNativeDataType implements DynamicContentElement{
         return dataTypeDefinition.getGenericDataType();
     }
 
+    public boolean isPseudoNative() {
+        return dataTypeDefinition.isPseudoNative();
+    }
+
     public boolean isLOB() {
         return getGenericDataType().isLOB();
     }
@@ -49,9 +54,10 @@ public class DBNativeDataType implements DynamicContentElement{
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
         // FIXME: add support for stream updatable types
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
-        if (genericDataType == GenericDataType.BLOB) return new BlobValue(resultSet.getBlob(columnIndex));
-        if (genericDataType == GenericDataType.CLOB) return new ClobValue(resultSet.getClob(columnIndex));
-        if (genericDataType == GenericDataType.ARRAY) return new ArrayValue(resultSet.getArray(columnIndex));
+        if (genericDataType == GenericDataType.BLOB) return new BlobValue(resultSet, columnIndex);
+        if (genericDataType == GenericDataType.CLOB) return new ClobValue(resultSet, columnIndex);
+        if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue(resultSet, columnIndex);
+        if (genericDataType == GenericDataType.ARRAY) return new ArrayValue(resultSet, columnIndex);
         if (genericDataType == GenericDataType.ROWID) return "[ROWID]";
         if (genericDataType == GenericDataType.FILE) return "[FILE]";
 
@@ -88,6 +94,7 @@ public class DBNativeDataType implements DynamicContentElement{
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.BLOB) return;
         if (genericDataType == GenericDataType.CLOB) return;
+        if (genericDataType == GenericDataType.XMLTYPE) return;
         if (genericDataType == GenericDataType.ROWID) return;
         if (genericDataType == GenericDataType.FILE) return;
         if (genericDataType == GenericDataType.ARRAY) return;
