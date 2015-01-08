@@ -263,6 +263,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     @Override
     public void dispose() {
         super.dispose();
+        Object userValue = userValueHolder.getUserValue();
+        if (userValue instanceof LargeObjectValue) {
+            LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
+            largeObjectValue.release();
+        }
+
         popup.dispose();
         popup = null;
         table = null;

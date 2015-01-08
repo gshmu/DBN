@@ -7,13 +7,19 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
     private String name;
     private Class typeClass;
     private int sqlType;
+    private boolean pseudoNative = false;
 
 
     public BasicDataTypeDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
+        this(name, typeClass, sqlType, genericDataType, false);
+    }
+
+    public BasicDataTypeDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative) {
         this.name = name;
         this.typeClass = typeClass;
         this.sqlType = sqlType;
         this.genericDataType = genericDataType;
+        this.pseudoNative = pseudoNative;
     }
 
     public String getName() {
@@ -26,6 +32,11 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
 
     public int getSqlType() {
         return sqlType;
+    }
+
+    @Override
+    public boolean isPseudoNative() {
+        return pseudoNative;
     }
 
     public GenericDataType getGenericDataType() {

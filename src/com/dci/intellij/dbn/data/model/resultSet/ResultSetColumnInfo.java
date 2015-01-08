@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
-import com.dci.intellij.dbn.data.model.basic.BasicColumnInfo;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+
+import com.dci.intellij.dbn.data.model.basic.BasicColumnInfo;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class ResultSetColumnInfo extends BasicColumnInfo {
     int resultSetColumnIndex;
@@ -19,8 +18,8 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
         String dataTypeName = metaData.getColumnTypeName(resultSetColumnIndex);
         int precision = getPrecision(metaData);
         int scale = metaData.getScale(resultSetColumnIndex);
-        DBNativeDataType nativeDataType = objectBundle.getNativeDataType(dataTypeName);
-        dataType = new DBDataType(nativeDataType, precision, scale);
+
+        dataType = DBDataType.get(objectBundle.getConnectionHandler(), dataTypeName, precision, precision, scale, false);
     }
 
     public ResultSetColumnInfo(int columnIndex) {

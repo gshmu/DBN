@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
     private DBNativeDataType nativeDataType;
+    private DBNativeDataType pseudoNativeDataType;
     private DBType declaredType;
     private String name;
     private String qualifiedName;
@@ -28,6 +29,25 @@ public class DBDataType {
 
     public static DBDataType get(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         return new Ref(resultSet, "").get(connectionHandler);
+    }
+
+    public static DBDataType get(ConnectionHandler connectionHandler, String dataTypeName, long length, int precision, int scale, boolean set) {
+        String dataTypeOwner = null;
+        String dataTypePackage = null;
+        if (dataTypeName.contains(".")) {
+            String[] nameChain = dataTypeName.split("\\.");
+            if (nameChain.length == 1) {
+                dataTypeName = nameChain[0];
+            } else if (nameChain.length == 2) {
+                dataTypeOwner = nameChain[0];
+                dataTypeName = nameChain[1];
+            } else if (nameChain.length == 3) {
+                dataTypeOwner = nameChain[0];
+                dataTypePackage = nameChain[1];
+                dataTypeName = nameChain[2];
+            }
+        }
+        return new Ref(dataTypeName, dataTypeOwner, dataTypePackage, length, precision, scale, set).get(connectionHandler);
     }
 
     protected DBDataType() {
@@ -78,6 +98,10 @@ public class DBDataType {
         return nativeDataType != null;
     }
 
+    public boolean isPseudoNative() {
+        return pseudoNativeDataType != null;
+    }
+
     public String getName() {
         return (set ? "set of " : "") +
                 (nativeDataType == null && declaredType == null ? name :
@@ -117,6 +141,8 @@ public class DBDataType {
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
         if (nativeDataType != null) {
             return nativeDataType.getValueFromResultSet(resultSet, columnIndex);
+        } else if (pseudoNativeDataType != null) {
+            return pseudoNativeDataType.getValueFromResultSet(resultSet, columnIndex);
         } else {
             return declaredType == null ? "[UNKNOWN]" : "[" + declaredType.getName() + "]";
         }
@@ -208,10 +234,21 @@ public class DBDataType {
             dataTypePackage = resultSet.getString(lookupPrefix + "DATA_TYPE_PACKAGE");
         }
 
+        public Ref(String dataTypeName, String dataTypeOwner, String dataTypePackage, long length, int precision, int scale, boolean set) {
+            this.dataTypeName = dataTypeName;
+            this.dataTypeOwner = dataTypeOwner;
+            this.dataTypePackage = dataTypePackage;
+            this.length = length;
+            this.precision = precision;
+            this.scale = scale;
+            this.set = set;
+        }
+
         public DBDataType get(ConnectionHandler connectionHandler) {
             String name = null;
             DBType declaredType = null;
             DBNativeDataType nativeDataType = null;
+            DBNativeDataType pseudoNativeDataType = null;
 
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
             if (dataTypeOwner != null) {
@@ -226,7 +263,15 @@ public class DBDataType {
                         declaredType = typeSchema.getType(dataTypeName);
                     }
                 }
-                if (declaredType == null) name = dataTypeName;
+                if (declaredType == null)  {
+                    name = dataTypeName;
+                } else {
+                    DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
+                    if (nDataType != null && nDataType.getDataTypeDefinition().isPseudoNative()) {
+                        pseudoNativeDataType = nDataType;
+                    }
+                }
+
             } else {
                 nativeDataType = objectBundle.getNativeDataType(dataTypeName);
                 if (nativeDataType == null) name = dataTypeName;
@@ -247,6 +292,7 @@ public class DBDataType {
 
             DBDataType dataType = new DBDataType();
             dataType.nativeDataType = nativeDataType;
+            dataType.pseudoNativeDataType = pseudoNativeDataType;
             dataType.declaredType = declaredType;
             dataType.name = name;
             dataType.length = length;

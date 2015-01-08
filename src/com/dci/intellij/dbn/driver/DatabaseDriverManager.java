@@ -78,8 +78,8 @@ public class DatabaseDriverManager implements ApplicationComponent {
             ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
             try {
                 drivers = new ArrayList<Driver>();
-                URL[] urls = new URL[]{new File(libraryName).toURL()};
-                URLClassLoader classLoader = new URLClassLoader(urls);
+                URL[] urls = new URL[]{new File(libraryName).toURI().toURL()};
+                URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
 
                 JarFile jarFile = new JarFile(libraryName);
                 Enumeration<JarEntry> entries = jarFile.entries();

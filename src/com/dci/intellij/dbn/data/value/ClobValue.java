@@ -1,19 +1,25 @@
 package com.dci.intellij.dbn.data.value;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class ClobValue implements LargeObjectValue {
-    private Clob clob;
+    private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    public ClobValue(Clob clob) {
-        this.clob = clob;
+    private Clob clob;
+    private Reader reader;
+
+    public ClobValue(ResultSet resultSet, int columnIndex) throws SQLException {
+        this.clob = resultSet.getClob(columnIndex);
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
@@ -41,13 +47,30 @@ public class ClobValue implements LargeObjectValue {
         if (clob == null) {
             return null;
         } else {
+            long totalLength = clob.length();
+            int size = (int) (maxSize == 0 ? totalLength : Math.min(maxSize, totalLength));
             try {
-                int size = (int) (maxSize == 0 ? clob.length() : Math.min(maxSize, clob.length()));
                 char[] buffer = new char[size];
-                clob.getCharacterStream().read(buffer, 0, size);
+                reader = clob.getCharacterStream();
+                reader.read(buffer, 0, size);
                 return new String(buffer);
             } catch (IOException e) {
                 throw new SQLException("Could not read value from CLOB.");
+            } finally {
+                if (totalLength <= size) {
+                    release();
+                }
+            }
+        }
+    }
+
+    public void release(){
+        if (reader != null) {
+            try {
+                reader.close();
+                reader = null;
+            } catch (IOException e) {
+                LOGGER.error("Could not close CLOB input reader.", e);
             }
         }
     }

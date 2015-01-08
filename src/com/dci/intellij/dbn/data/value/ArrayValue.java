@@ -11,11 +11,11 @@ public class ArrayValue implements ValueAdapter<List<String>>{
     private Array array;
     private List<String> values = new ArrayList<String>();
 
-    public ArrayValue(Array array) throws SQLException {
-        this.array = array;
-        ResultSet resultSet = array.getResultSet();
-        while (resultSet.next()) {
-            Object object = resultSet.getObject(2);
+    public ArrayValue(ResultSet resultSet, int columnIndex) throws SQLException {
+        this.array = resultSet.getArray(columnIndex);
+        ResultSet arrayResultSet = array.getResultSet();
+        while (arrayResultSet.next()) {
+            Object object = arrayResultSet.getObject(2);
             values.add(object.toString());
         }
     }
@@ -28,7 +28,6 @@ public class ArrayValue implements ValueAdapter<List<String>>{
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, List<String> values) throws SQLException {
         this.values = values;
-        this.array.getBaseTypeName();
         Array array = connection.createArrayOf(this.array.getBaseTypeName(), values.toArray());
         resultSet.updateArray(columnIndex, array);
     }
