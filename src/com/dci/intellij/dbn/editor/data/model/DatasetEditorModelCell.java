@@ -53,7 +53,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }
-            boolean isValueAdapter = userValue instanceof ValueAdapter;
+            boolean isValueAdapter = userValue instanceof ValueAdapter || newUserValue instanceof ValueAdapter;
 
             ConnectionHandler connectionHandler = getConnectionHandler();
             try {
@@ -61,8 +61,15 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 int columnIndex = getColumnInfo().getResultSetColumnIndex();
 
                 if (isValueAdapter) {
+                    if (userValue == null) {
+                        userValue = newUserValue.getClass().newInstance();
+                    }
                     ValueAdapter valueAdapter = (ValueAdapter) userValue;
                     Connection connection = connectionHandler.getStandaloneConnection();
+                    if (newUserValue instanceof ValueAdapter) {
+                        ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
+                        newUserValue = newValueAdapter.read();
+                    }
                     valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
                 } else {
                     DBDataType dataType = getColumnInfo().getDataType();

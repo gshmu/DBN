@@ -18,25 +18,24 @@ public class BlobValue implements LargeObjectValue {
     private Blob blob;
     private InputStream inputStream;
 
+    public BlobValue() {}
+
     public BlobValue(ResultSet resultSet, int columnIndex) throws SQLException {
         this.blob = resultSet.getBlob(columnIndex);
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
+        value = CommonUtil.nvl(value, "");
         if (blob == null) {
-            value = CommonUtil.nvl(value, "");
-            resultSet.updateBlob(columnIndex, new ByteArrayInputStream(value.getBytes()));
-            //resultSet.updateBinaryStream(columnIndex, new ByteArrayInputStream(value.getBytes()));
+            resultSet.updateBlob(columnIndex, new ByteArrayInputStream(new byte[0]));
             blob = resultSet.getBlob(columnIndex);
         } else {
             if (blob.length() > value.length()) {
                 blob.truncate(value.length());
             }
-
-            blob.setBytes(1, value.getBytes());
-            resultSet.updateBlob(columnIndex, blob);
-            //resultSet.updateBinaryStream(columnIndex, new ByteArrayInputStream(value.getBytes()));
         }
+        blob.setBytes(1, value.getBytes());
+        resultSet.updateBlob(columnIndex, blob);
     }
 
     public String read() throws SQLException {

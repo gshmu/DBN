@@ -10,6 +10,9 @@ import oracle.sql.OPAQUE;
 public class XmlTypeValue implements LargeObjectValue{
     private OPAQUE opaque;
 
+    public XmlTypeValue() {
+    }
+
     public XmlTypeValue(OracleResultSet resultSet, int columnIndex) throws SQLException {
         try {
             opaque = resultSet.getOPAQUE(columnIndex);
@@ -30,6 +33,7 @@ public class XmlTypeValue implements LargeObjectValue{
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
         opaque.setValue(value.getBytes());
+        resultSet.updateObject(columnIndex, opaque);
     }
 
     @Override

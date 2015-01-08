@@ -11,6 +11,9 @@ public class ArrayValue implements ValueAdapter<List<String>>{
     private Array array;
     private List<String> values = new ArrayList<String>();
 
+    public ArrayValue() {
+    }
+
     public ArrayValue(ResultSet resultSet, int columnIndex) throws SQLException {
         this.array = resultSet.getArray(columnIndex);
         ResultSet arrayResultSet = array.getResultSet();
