@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -26,7 +27,7 @@ public class ClobValue extends LargeObjectValue {
         this.clob = resultSet.getClob(columnIndex);
     }
 
-    public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
+    public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
         int columnType = resultSet.getMetaData().getColumnType(columnIndex);
 
         if (clob == null) {
@@ -49,6 +50,7 @@ public class ClobValue extends LargeObjectValue {
 
     }
 
+    @Nullable
     public String read() throws SQLException {
         return read(0);
     }

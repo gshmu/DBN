@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
@@ -83,7 +84,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             } else if (userValue instanceof LargeObjectValue) {
                 LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
                 try {
-                    text = largeObjectValue.read();
+                    text = CommonUtil.nvl(largeObjectValue.read(), "");
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(getProject(), e.getMessage(), e);
                     return null;

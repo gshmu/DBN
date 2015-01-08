@@ -3,9 +3,11 @@ package com.dci.intellij.dbn.data.value;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.OPAQUE;
+import oracle.sql.OpaqueDescriptor;
 
 public class XmlTypeValue extends LargeObjectValue{
     private OPAQUE opaque;
@@ -21,18 +23,37 @@ public class XmlTypeValue extends LargeObjectValue{
         }
     }
 
+    @Nullable
     public String read() throws SQLException {
         return read(0);
     }
 
     @Override
+    @Nullable
     public String read(int maxSize) throws SQLException {
-        return new String(opaque.getBytesValue());
+        if (opaque == null) {
+            return null;
+        } else {
+            byte[] value = opaque.getBytesValue();
+            if (value == null) {
+                return null;
+            } else {
+                return new String(value);
+            }
+        }
     }
 
     @Override
-    public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
-        opaque.setValue(value.getBytes());
+    public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
+        if (opaque == null) {
+            OpaqueDescriptor opaqueDescriptor = OpaqueDescriptor.createDescriptor("SYS.XMLTYPE", connection);
+            opaque = new OPAQUE(opaqueDescriptor, new byte[0], connection);
+        }
+        if (value != null) {
+            byte[] bytes = value.getBytes();
+            opaque.setValue(bytes);
+            opaque.setShareBytes(bytes);
+        }
         resultSet.updateObject(columnIndex, opaque);
     }
 

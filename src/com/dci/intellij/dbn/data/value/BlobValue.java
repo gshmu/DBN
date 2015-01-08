@@ -7,6 +7,7 @@ import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -24,7 +25,7 @@ public class BlobValue extends LargeObjectValue {
         this.blob = resultSet.getBlob(columnIndex);
     }
 
-    public void write(Connection connection, ResultSet resultSet, int columnIndex, String value) throws SQLException {
+    public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
         value = CommonUtil.nvl(value, "");
         if (blob == null) {
             resultSet.updateBlob(columnIndex, new ByteArrayInputStream(new byte[0]));
@@ -38,6 +39,7 @@ public class BlobValue extends LargeObjectValue {
         resultSet.updateBlob(columnIndex, blob);
     }
 
+    @Nullable
     public String read() throws SQLException {
         return read(0);
     }

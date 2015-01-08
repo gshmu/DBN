@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -75,6 +76,7 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
 
     }
 
+    @Nullable
     public String readUserValue() throws SQLException {
         Object userValue = userValueHolder.getUserValue();
         if (userValue instanceof String) {
