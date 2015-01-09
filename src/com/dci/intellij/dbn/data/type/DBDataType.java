@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
     private DBNativeDataType nativeDataType;
-    private DBNativeDataType pseudoNativeDataType;
     private DBType declaredType;
     private String name;
     private String qualifiedName;
@@ -80,12 +79,6 @@ public class DBDataType {
         }
     }*/
 
-    public DBDataType(DBNativeDataType nativeDataType, int precision, int scale) throws SQLException {
-        this.precision = precision;
-        this.scale = scale;
-        this.nativeDataType = nativeDataType;
-    }
-
     public boolean isSet() {
         return set;
     }
@@ -96,10 +89,6 @@ public class DBDataType {
 
     public boolean isNative() {
         return nativeDataType != null;
-    }
-
-    public boolean isPseudoNative() {
-        return pseudoNativeDataType != null;
     }
 
     public String getName() {
@@ -141,8 +130,6 @@ public class DBDataType {
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
         if (nativeDataType != null) {
             return nativeDataType.getValueFromResultSet(resultSet, columnIndex);
-        } else if (pseudoNativeDataType != null) {
-            return pseudoNativeDataType.getValueFromResultSet(resultSet, columnIndex);
         } else {
             return declaredType == null ? "[UNKNOWN]" : "[" + declaredType.getName() + "]";
         }
@@ -211,9 +198,7 @@ public class DBDataType {
     }
 
     public GenericDataType getGenericDataType() {
-        return nativeDataType != null ? nativeDataType.getGenericDataType() :
-                pseudoNativeDataType != null ? pseudoNativeDataType.getGenericDataType() :
-                GenericDataType.OBJECT;
+        return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
     }
 
     public static class Ref {
@@ -250,7 +235,6 @@ public class DBDataType {
             String name = null;
             DBType declaredType = null;
             DBNativeDataType nativeDataType = null;
-            DBNativeDataType pseudoNativeDataType = null;
 
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
             if (dataTypeOwner != null) {
@@ -270,7 +254,7 @@ public class DBDataType {
                 } else {
                     DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
                     if (nDataType != null && nDataType.getDataTypeDefinition().isPseudoNative()) {
-                        pseudoNativeDataType = nDataType;
+                        nativeDataType = nDataType;
                     }
                 }
 
@@ -294,7 +278,6 @@ public class DBDataType {
 
             DBDataType dataType = new DBDataType();
             dataType.nativeDataType = nativeDataType;
-            dataType.pseudoNativeDataType = pseudoNativeDataType;
             dataType.declaredType = declaredType;
             dataType.name = name;
             dataType.length = length;

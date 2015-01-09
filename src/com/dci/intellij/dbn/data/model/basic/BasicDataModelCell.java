@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelState;
+import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
@@ -33,13 +34,12 @@ public class BasicDataModelCell implements DataModelCell {
         DataModelState state = row.getModel().getState();
         String contentTypeName = state.getTextContentTypeName(getColumnInfo().getName());
         if (contentTypeName == null) {
-            Object userValue = getUserValue();
-
-            if (userValue instanceof LargeObjectValue) {
-                LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
-                contentTypeName = largeObjectValue.getContentTypeName();
+            DBDataType dataType = getColumnInfo().getDataType();
+            if (dataType.isNative()) {
+                contentTypeName = dataType.getNativeDataType().getDataTypeDefinition().getContentTypeName();
             }
         }
+
         DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(getProject()).getQualifiedEditorSettings();
         return qualifiedEditorSettings.getContentType(contentTypeName);
     }
