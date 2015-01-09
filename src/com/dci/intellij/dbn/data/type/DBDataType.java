@@ -91,6 +91,18 @@ public class DBDataType {
         return nativeDataType != null;
     }
 
+    public boolean isPurelyDeclared() {
+        return isDeclared() && !isNative();
+    }
+
+    public boolean isPurelyNative() {
+        return isNative() && !isDeclared();
+    }
+
+    public boolean isNativeDeclared() {
+        return nativeDataType != null && declaredType != null;
+    }
+
     public String getName() {
         return (set ? "set of " : "") +
                 (nativeDataType == null && declaredType == null ? name :

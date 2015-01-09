@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.data.value.ClobValue;
 import com.dci.intellij.dbn.data.value.XmlTypeValue;
 import com.intellij.openapi.diagnostic.Logger;
 import oracle.jdbc.OracleResultSet;
+import oracle.xdb.XMLType;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -127,6 +128,10 @@ public class DBNativeDataType implements DynamicContentElement{
     public void setValueToPreparedStatement(PreparedStatement preparedStatement, int parameterIndex, Object value) throws SQLException {
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.CURSOR) return;
+        if (genericDataType == GenericDataType.XMLTYPE) {
+            preparedStatement.setObject(parameterIndex, XMLType.createXML(preparedStatement.getConnection(), (String) value));
+            return;
+        }
 
         if (value == null) {
             preparedStatement.setObject(parameterIndex, null);
