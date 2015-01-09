@@ -59,10 +59,6 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
         return contentTypes;
     }
 
-    public TextContentType getPlainTextContentType() {
-        return getContentType("Text");
-    }
-
     private void createContentType(String name, String fileTypeName) {
         TextContentType contentType = TextContentType.create(name, fileTypeName);
         if (contentType != null) {

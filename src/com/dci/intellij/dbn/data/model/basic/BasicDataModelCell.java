@@ -9,8 +9,6 @@ import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
-import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.project.Project;
 
 public class BasicDataModelCell implements DataModelCell {
@@ -40,8 +38,7 @@ public class BasicDataModelCell implements DataModelCell {
             }
         }
 
-        DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(getProject()).getQualifiedEditorSettings();
-        return qualifiedEditorSettings.getContentType(contentTypeName);
+        return TextContentType.get(getProject(), contentTypeName);
     }
 
     public void setContentType(TextContentType contentType) {
