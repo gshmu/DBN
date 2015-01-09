@@ -155,7 +155,7 @@ public class DBDataType {
 
     public void setValueToPreparedStatement(PreparedStatement preparedStatement, int index, Object value) throws SQLException {
         if (nativeDataType != null) {
-            nativeDataType.setValueToPreparedStatement(preparedStatement, index, value);
+            nativeDataType.setValueToStatement(preparedStatement, index, value);
         }
     }
 

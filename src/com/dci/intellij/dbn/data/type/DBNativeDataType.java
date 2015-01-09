@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.type;
 
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +18,9 @@ import com.dci.intellij.dbn.data.value.BlobValue;
 import com.dci.intellij.dbn.data.value.ClobValue;
 import com.dci.intellij.dbn.data.value.XmlTypeValue;
 import com.intellij.openapi.diagnostic.Logger;
+import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleResultSet;
+import oracle.sql.OPAQUE;
 import oracle.xdb.XMLType;
 
 public class DBNativeDataType implements DynamicContentElement{
@@ -125,7 +128,18 @@ public class DBNativeDataType implements DynamicContentElement{
         }
     }
 
-    public void setValueToPreparedStatement(PreparedStatement preparedStatement, int parameterIndex, Object value) throws SQLException {
+    public Object getValueFromStatement(CallableStatement callableStatement, int parameterIndex) throws SQLException {
+        GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
+        if (genericDataType == GenericDataType.XMLTYPE) {
+            OracleCallableStatement oracleCallableStatement = (OracleCallableStatement) callableStatement;
+            OPAQUE opaque = oracleCallableStatement.getOPAQUE(parameterIndex);
+            XMLType xmlType = opaque == null ? null : XMLType.createXML(opaque);
+            return xmlType == null ? null : xmlType.getStringVal();
+        }
+        return callableStatement.getObject(parameterIndex);
+    }
+
+    public void setValueToStatement(PreparedStatement preparedStatement, int parameterIndex, Object value) throws SQLException {
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (genericDataType == GenericDataType.CURSOR) return;
         if (genericDataType == GenericDataType.XMLTYPE) {
