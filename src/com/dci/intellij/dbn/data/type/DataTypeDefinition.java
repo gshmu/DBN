@@ -11,4 +11,5 @@ public interface DataTypeDefinition {
 
     GenericDataType getGenericDataType();
     Object convert(@Nullable Object object);
+    @Nullable String getContentTypeName();
 }

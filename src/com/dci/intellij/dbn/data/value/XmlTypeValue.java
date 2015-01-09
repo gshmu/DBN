@@ -33,7 +33,7 @@ public class XmlTypeValue extends LargeObjectValue{
 
     @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
-        xmlType = XMLType.createXML(connection, value);
+        xmlType = value == null ? null : XMLType.createXML(connection, value);
         resultSet.updateObject(columnIndex, xmlType);
     }
 
@@ -45,11 +45,6 @@ public class XmlTypeValue extends LargeObjectValue{
     @Override
     public long size() throws SQLException {
         return 0;
-    }
-
-    @Override
-    public String getContentTypeName() {
-        return "XML";
     }
 
     @Override

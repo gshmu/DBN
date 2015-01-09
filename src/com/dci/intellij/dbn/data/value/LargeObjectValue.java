@@ -5,6 +5,5 @@ import java.sql.SQLException;
 public abstract class LargeObjectValue implements ValueAdapter<String> {
     public abstract String read(int maxSize) throws SQLException;
     public abstract long size() throws SQLException;
-    public abstract String getContentTypeName();
     public abstract void release();
 }

@@ -25,7 +25,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
         if (tableCellEditor == null) {
             DBDataType dataType = columnInfo.getDataType();
             tableCellEditor =
-                dataType.isNative() || dataType.isPseudoNative() ? createEditorForNativeType(columnInfo, table) :
+                dataType.isNative() ? createEditorForNativeType(columnInfo, table) :
                 dataType.getDeclaredType() != null ? createEditorForDeclaredType(columnInfo, table) : null;
             cache.put(columnInfo, tableCellEditor);
         }

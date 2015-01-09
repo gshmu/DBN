@@ -56,7 +56,7 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
         createBasicDefinition("BLOB", Blob.class, OracleTypes.BLOB, GenericDataType.BLOB);
         createBasicDefinition("CLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
         createBasicDefinition("NCLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
-        createBasicDefinition("XMLTYPE", Clob.class, Types.SQLXML, GenericDataType.XMLTYPE, true);
+        createBasicDefinition("XMLTYPE", Clob.class, Types.SQLXML, GenericDataType.XMLTYPE, true, "XML");
 
         createBasicDefinition("BFILE", Object.class, OracleTypes.BFILE, GenericDataType.FILE);
         createBasicDefinition("ROWID", Object.class, OracleTypes.ROWID, GenericDataType.ROWID);

@@ -15,11 +15,11 @@ public abstract class DatabaseNativeDataTypes {
     public List<DataTypeDefinition> list() {return dataTypes;}
 
     protected DataTypeDefinition createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
-        return createBasicDefinition(name, typeClass, sqlType, genericDataType, false);
+        return createBasicDefinition(name, typeClass, sqlType, genericDataType, false, null);
     }
 
-    protected DataTypeDefinition createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative) {
-        BasicDataTypeDefinition dataTypeDefinition = new BasicDataTypeDefinition(name, typeClass, sqlType, genericDataType, pseudoNative);
+    protected DataTypeDefinition createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
+        BasicDataTypeDefinition dataTypeDefinition = new BasicDataTypeDefinition(name, typeClass, sqlType, genericDataType, pseudoNative, contentTypeName);
         dataTypes.add(dataTypeDefinition);
         return dataTypeDefinition;
     }
