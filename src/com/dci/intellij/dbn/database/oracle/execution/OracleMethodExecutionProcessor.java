@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessorImpl;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -224,7 +225,8 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
         if (returnArgument != null) {
             DBDataType dataType = returnArgument.getDataType();
             if (!dataType.isPurelyDeclared() && !isBoolean(dataType)) {
-                Object result = callableStatement.getObject(parameterIndex);
+                DBNativeDataType nativeDataType = dataType.getNativeDataType();
+                Object result = nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
                 executionResult.addArgumentValue(returnArgument, result);
                 parameterIndex++;
 
@@ -237,7 +239,8 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
                 DBDataType dataType = argument.getDataType();
                 if (dataType.isNative() && !isBoolean(dataType)) {
                     if (argument.isOutput()){
-                        Object result = callableStatement.getObject(parameterIndex);
+                        DBNativeDataType nativeDataType = dataType.getNativeDataType();
+                        Object result = nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
                         executionResult.addArgumentValue(argument, result);
                     }
                     parameterIndex++;
@@ -251,20 +254,23 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
             if (argument.isOutput()) {
                 if (dataType.isPurelyDeclared()) {
                     if (dataType.getDeclaredType().isCollection()) {
-                        Object result = callableStatement.getObject(parameterIndex);
+                        DBNativeDataType nativeDataType = dataType.getNativeDataType();
+                        Object result = nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
                         executionResult.addArgumentValue(argument, result);
                         parameterIndex++;
                     } else {
                         executionResult.addArgumentValue(argument, null);
                         List<DBTypeAttribute> attributes = dataType.getDeclaredType().getAttributes();
                         for (DBTypeAttribute attribute : attributes) {
-                            Object result = callableStatement.getObject(parameterIndex);
+                            // TODO assuming type attributes are all native
+                            DBNativeDataType nativeDataType = attribute.getDataType().getNativeDataType();
+                            Object result = nativeDataType.getValueFromStatement(callableStatement, parameterIndex);
                             executionResult.addArgumentValue(argument, attribute, result);
                             parameterIndex++;
                         }
                     }
                 } else if (isBoolean(dataType)) {
-                    Object result = callableStatement.getObject(parameterIndex);
+                    Object result = dataType.getNativeDataType().getValueFromStatement(callableStatement, parameterIndex);
                     executionResult.addArgumentValue(argument, result);
                     parameterIndex++;
 
