@@ -84,6 +84,15 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return argumentValues;
     }
 
+    public ArgumentValue getArgumentValue(DBArgumentRef argumentRef) {
+        for (ArgumentValue argumentValue : argumentValues) {
+            if (argumentValue.getArgumentRef().equals(argumentRef)) {
+                return argumentValue;
+            }
+        }
+        return null;
+    }
+
     public MethodExecutionResultForm getForm() {
         if (resultPanel == null) {
             resultPanel = new MethodExecutionResultForm(this);
