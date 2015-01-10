@@ -48,8 +48,8 @@ public class ArgumentValuesTree extends DBNTree{
                         DBArgument argument = argumentValue.getArgument();
                         if (argument.isOutput()) {
                             Object value = argumentValue.getValue();
-                            if (value instanceof ResultSet) {
-                                parentForm.selectCursorOutput(argument);
+                            if (value instanceof ResultSet || argumentValue.isLargeObject()) {
+                                parentForm.selectArgumentOutputTab(argument);
                             }
                         }
                     }
@@ -88,7 +88,7 @@ public class ArgumentValuesTree extends DBNTree{
                 DBArgument argument = argumentValue.getArgument();
                 DBTypeAttribute attribute = argumentValue.getAttribute();
                 Object originalValue = argumentValue.getValue();
-                String displayValue = originalValue instanceof ResultSet ? "" : "" + originalValue;
+                String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() ? "" : "" + originalValue;
 
                 if (attribute == null) {
                     if (argument == null) {

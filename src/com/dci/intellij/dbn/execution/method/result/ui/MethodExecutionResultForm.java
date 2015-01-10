@@ -166,7 +166,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         }
     }
 
-    public void selectCursorOutput(DBArgument argument) {
+    public void selectArgumentOutputTab(DBArgument argument) {
         for (TabInfo tabInfo : cursorOutputTabs.getTabs()) {
             Object object = tabInfo.getObject();
             if (object instanceof MethodExecutionCursorResultForm) {
@@ -175,7 +175,15 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     cursorOutputTabs.select(tabInfo, true);
                     break;
                 }
+            } else if (object instanceof MethodExecutionLargeValueResultForm) {
+                MethodExecutionLargeValueResultForm largeValueResultForm = (MethodExecutionLargeValueResultForm) object;
+                if (largeValueResultForm.getArgument().equals(argument)) {
+                    cursorOutputTabs.select(tabInfo, true);
+                    break;
+                }
             }
+
+
         }
     }
 
