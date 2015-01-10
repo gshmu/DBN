@@ -52,7 +52,7 @@ public class DBNativeDataType implements DynamicContentElement{
         return dataTypeDefinition.isPseudoNative();
     }
 
-    public boolean isLOB() {
+    public boolean isLargeObject() {
         return getGenericDataType().isLOB();
     }
 

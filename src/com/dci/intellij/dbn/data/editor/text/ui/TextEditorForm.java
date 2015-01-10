@@ -94,7 +94,6 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         EditorColorsScheme colorsScheme = editor.getColorsScheme();
         editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
         userValueHolder.setContentType(contentType);
-
     }
 
     public void dispose() {

@@ -213,6 +213,10 @@ public class DBDataType {
         return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
     }
 
+    public String getContentTypeName() {
+        return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().getContentTypeName();
+    }
+
     public static class Ref {
         String dataTypeName;
         String dataTypeOwner;

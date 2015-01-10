@@ -44,7 +44,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                         for (int columnIndex : table.getSelectedColumns()) {
                             DatasetEditorModelCell cell = model.getCellAt(rowIndex, columnIndex);
                             DBDataType dataType = cell.getColumnInfo().getDataType();
-                            if (dataType != null && dataType.isNative() && !dataType.getNativeDataType().isLOB()) {
+                            if (dataType != null && dataType.isNative() && !dataType.getNativeDataType().isLargeObject()) {
                                 cell.updateUserValue(null, true);
                             }
                         }
