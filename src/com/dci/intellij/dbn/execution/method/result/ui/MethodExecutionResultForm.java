@@ -131,13 +131,28 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                 if (argumentValue.isCursor()) {
                     DBArgument argument = argumentValue.getArgument();
 
-                    MethodExecutionCursorResultForm cursorResultComponent =
+                    MethodExecutionCursorResultForm cursorResultForm =
                             new MethodExecutionCursorResultForm(executionResult, argument);
 
-                    TabInfo tabInfo = new TabInfo(cursorResultComponent.getComponent());
+                    TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
                     tabInfo.setText(argument.getName());
                     tabInfo.setIcon(argument.getIcon());
-                    tabInfo.setObject(cursorResultComponent);
+                    tabInfo.setObject(cursorResultForm);
+                    cursorOutputTabs.addTab(tabInfo);
+                    if (isFirst) {
+                        cursorOutputTabs.select(tabInfo, false);
+                        isFirst = false;
+                    }
+                } else if (argumentValue.isLargeObject()) {
+                    DBArgument argument = argumentValue.getArgument();
+
+                    MethodExecutionLargeValueResultForm largeValueResultForm =
+                            new MethodExecutionLargeValueResultForm(executionResult, argument);
+
+                    TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
+                    tabInfo.setText(argument.getName());
+                    tabInfo.setIcon(argument.getIcon());
+                    tabInfo.setObject(largeValueResultForm);
                     cursorOutputTabs.addTab(tabInfo);
                     if (isFirst) {
                         cursorOutputTabs.select(tabInfo, false);
@@ -151,7 +166,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         }
     }
 
-    public void selectCursorOutput(DBArgument argument) {
+    public void selectArgumentOutputTab(DBArgument argument) {
         for (TabInfo tabInfo : cursorOutputTabs.getTabs()) {
             Object object = tabInfo.getObject();
             if (object instanceof MethodExecutionCursorResultForm) {
@@ -160,7 +175,15 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     cursorOutputTabs.select(tabInfo, true);
                     break;
                 }
+            } else if (object instanceof MethodExecutionLargeValueResultForm) {
+                MethodExecutionLargeValueResultForm largeValueResultForm = (MethodExecutionLargeValueResultForm) object;
+                if (largeValueResultForm.getArgument().equals(argument)) {
+                    cursorOutputTabs.select(tabInfo, true);
+                    break;
+                }
             }
+
+
         }
     }
 

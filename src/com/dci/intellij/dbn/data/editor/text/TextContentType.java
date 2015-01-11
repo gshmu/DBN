@@ -1,12 +1,15 @@
 package com.dci.intellij.dbn.data.editor.text;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.list.Selectable;
+import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
+import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.project.Project;
 
 public class TextContentType implements Selectable<TextContentType> {
     private String name;
@@ -26,6 +29,15 @@ public class TextContentType implements Selectable<TextContentType> {
             return new TextContentType(name, fileType);
         }
         return null;
+    }
+
+    public static TextContentType get(Project project, String contentTypeName) {
+        DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(project).getQualifiedEditorSettings();
+        return qualifiedEditorSettings.getContentType(contentTypeName);
+    }
+
+    public static TextContentType getPlainText(Project project) {
+        return get(project, "Text");
     }
 
     public String getName() {

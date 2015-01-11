@@ -13,8 +13,10 @@ public abstract class DatabaseCompatibilityInterface {
         this.provider = parent;
     }
 
+    @Nullable
     public static DatabaseCompatibilityInterface getInstance(DBObject object) {
-        return getInstance(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        return connectionHandler == null ? null : getInstance(connectionHandler);
     }
 
     public static DatabaseCompatibilityInterface getInstance(ConnectionHandler connectionHandler) {

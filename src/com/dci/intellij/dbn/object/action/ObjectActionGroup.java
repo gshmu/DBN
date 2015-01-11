@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.action;
 
 import java.util.List;
 
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.action.CompileActionGroup;
@@ -22,8 +21,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 public class ObjectActionGroup extends DefaultActionGroup {
 
     public ObjectActionGroup(DBObject object) {
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
-
         DBObjectProperties properties = object.getProperties();
         if(object instanceof DBSchemaObject) {
             DBSchemaObject schemaObject = (DBSchemaObject) object;
@@ -39,17 +36,17 @@ public class ObjectActionGroup extends DefaultActionGroup {
                 }
             }
 
-            if (properties.is(DBObjectProperty.COMPILABLE) && compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
+            if (properties.is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
                 add(new CompileActionGroup(schemaObject));
             }
 
-            if (properties.is(DBObjectProperty.DISABLEABLE) && compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_DISABLING)) {
+            if (properties.is(DBObjectProperty.DISABLEABLE) && DatabaseFeature.OBJECT_DISABLING.isSupported(object)) {
                 add(new EnableDisableAction(schemaObject));
             }
         }
 
-        if (object instanceof DBMethod) {
-            if (compatibilityInterface.supportsFeature(DatabaseFeature.DEBUGGING)) {
+        if (object instanceof DBMethod ) {
+            if (DatabaseFeature.DEBUGGING.isSupported(object)) {
                 add(new ExecuteActionGroup((DBSchemaObject) object));
             } else {
                 add(new RunMethodAction((DBMethod) object));
@@ -57,7 +54,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
         }
 
         if (object instanceof DBProgram && properties.is(DBObjectProperty.SCHEMA_OBJECT)) {
-            if (compatibilityInterface.supportsFeature(DatabaseFeature.DEBUGGING)) {
+            if (DatabaseFeature.DEBUGGING.isSupported(object)) {
                 add(new ExecuteActionGroup((DBSchemaObject) object));
             } else {
                 add(new RunProgramMethodAction((DBProgram) object));
@@ -71,7 +68,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
                 //add(new TestAction(object));
             }
 
-            if(properties.is(DBObjectProperty.REFERENCEABLE) && compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_DEPENDENCIES)) {
+            if(properties.is(DBObjectProperty.REFERENCEABLE) && DatabaseFeature.OBJECT_DEPENDENCIES.isSupported(object)) {
                 addSeparator();
                 add (new DependenciesActionGroup((DBSchemaObject) object));
             }

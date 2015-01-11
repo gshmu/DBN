@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -56,10 +56,11 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
         boolean visible = false;
         String name = "Database Logging";
         if (activeConnection != null) {
-            DatabaseCompatibilityInterface compatibilityInterface = activeConnection.getInterfaceProvider().getCompatibilityInterface();
-            boolean supportsLogging = compatibilityInterface.supportsFeature(DatabaseFeature.DATABASE_LOGGING);
+
+            boolean supportsLogging = DatabaseFeature.DATABASE_LOGGING.isSupported(activeConnection);
             if (supportsLogging) {
                 visible = true;
+                DatabaseCompatibilityInterface compatibilityInterface = activeConnection.getInterfaceProvider().getCompatibilityInterface();
                 String databaseLogName = compatibilityInterface.getDatabaseLogName();
                 if (StringUtil.isNotEmpty(databaseLogName)) {
                     name = name + " (" + databaseLogName + ")";

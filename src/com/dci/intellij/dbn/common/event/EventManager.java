@@ -46,8 +46,10 @@ public class EventManager implements ApplicationComponent{
     }
     
     public static <T> void subscribe(Project project, Topic<T> topic, T handler) {
-        MessageBusConnection messageBusConnection = connect(project, handler);
-        messageBusConnection.subscribe(topic, handler);
+        if (project != null) {
+            MessageBusConnection messageBusConnection = connect(project, handler);
+            messageBusConnection.subscribe(topic, handler);
+        }
     }
 
     public static <T> void subscribe(Topic<T> topic, T handler) {

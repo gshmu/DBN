@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -50,8 +49,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
 
             DBSchemaObject schemaObject = virtualFile.getObject();
             if (schemaObject != null) {
-                DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(schemaObject);
-                if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) &&  compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
+                if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
                     CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
                     CompileTypeOption compileType = compilerSettings.getCompileTypeOption();
                     DBObjectStatusHolder status = schemaObject.getStatus();

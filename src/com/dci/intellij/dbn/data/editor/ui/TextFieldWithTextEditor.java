@@ -49,12 +49,13 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
         Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
         String shortcutText = KeymapUtil.getShortcutsText(shortcuts);
 
-        button.setToolTipText("Open editor (" + shortcutText +")");
+        button.setToolTipText("Open editor (" + shortcutText + ")");
         add(button, BorderLayout.EAST);
         textField.setPreferredSize(new Dimension(150, -1));
         textField.addKeyListener(keyListener);
         textField.setEditable(false);
         button.addKeyListener(keyListener);
+        addKeyListener(keyListener);
 
         customizeButton(button);
         customizeTextField(textField);
@@ -150,9 +151,10 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
      *                 TextEditorListener                   *
      ********************************************************/
     public void afterUpdate() {
-        if (userValueHolder.getUserValue() instanceof String) {
-            String text = (String) userValueHolder.getUserValue();
-            setEditable(text == null || (text.length() < 1000 && text.indexOf('\n') == -1));
+        Object userValue = userValueHolder.getUserValue();
+        if (userValue instanceof String) {
+            String text = (String) userValue;
+            setEditable(text.length() < 1000 && text.indexOf('\n') == -1);
             setText(text);
         }
     }

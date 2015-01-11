@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -31,6 +32,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     VirtualFile getVirtualFile();
 
+    @NotNull
     String getResultName();
 
     String getStatementName();

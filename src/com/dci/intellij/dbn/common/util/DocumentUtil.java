@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
+import java.util.ArrayList;
+
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -28,8 +30,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 
-import java.util.ArrayList;
-
 public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
 
@@ -51,7 +51,7 @@ public class DocumentUtil {
             }
             if (reparse) {
                 EventManager.notify(project, DocumentBulkUpdateListener.TOPIC).updateStarted(document);
-                ArrayList<VirtualFile> files = new ArrayList<>();
+                ArrayList<VirtualFile> files = new ArrayList<VirtualFile>();
                 files.add(file.getVirtualFile());
                 FileContentUtil.reparseFiles(project, files, true);
                 CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);

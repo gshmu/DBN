@@ -78,7 +78,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     public boolean hasLobColumns() {
         for (DBColumn column : getColumns()) {
             DBDataType dataType = column.getDataType();
-            if (dataType.isNative() && dataType.getNativeDataType().isLOB()) {
+            if (dataType.isNative() && dataType.getNativeDataType().isLargeObject()) {
                 return true;
             }
 

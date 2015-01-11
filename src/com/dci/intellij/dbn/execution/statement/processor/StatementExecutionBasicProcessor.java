@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -376,6 +377,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return psiFile == null ? null : psiFile.getProject();
     }
 
+    @NotNull
     public synchronized String getResultName() {
         if (resultName == null) {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();

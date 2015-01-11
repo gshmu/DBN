@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
@@ -51,8 +50,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         this.methodRef = new DBMethodRef<DBMethod>(method);
         this.executionSchema = method.getSchema().getRef();
 
-        DatabaseCompatibilityInterface compatibilityInterface = method.getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
-        if (compatibilityInterface.supportsFeature(DatabaseFeature.DATABASE_LOGGING)) {
+        if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
             enableLogging = method.getConnectionHandler().isLoggingEnabled();
         }
     }

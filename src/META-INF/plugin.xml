@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3601</version>
+    <version>3.0.3674</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,8 +27,15 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.3674</b>
+            <ul>
+                - Support for Oracle XMLTYPE editing / method execution<br>
+                - Support for BLOB/CLOB method execution arguments<br>
+                - Method call parameter info (Ctrl-P)<br>
+                - Minor bug fixes<br>
+            </ul>
             <li><b>3.0.3601</b>
-             <ul>
+            <ul>
                 - Object sorting options in database browser<br>
                 - Icon rework for better visibility in dark schemes<br>
                 - Support method executions with collection return types (Oracle) <br>

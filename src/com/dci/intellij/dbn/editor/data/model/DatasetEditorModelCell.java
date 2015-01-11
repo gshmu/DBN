@@ -41,8 +41,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void updateUserValue(Object newUserValue, boolean bulk) {
-        boolean sameValue = compareUserValues(newUserValue, userValue);
-        if (hasError() || !sameValue) {
+        boolean valueChanged = userValueChanged(newUserValue);
+        if (hasError() || valueChanged) {
             DatasetEditorModelRow row = getRow();
             ResultSet resultSet;
             boolean isInsertRow = row.isInsert();
@@ -53,7 +53,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 MessageUtil.showErrorDialog(getProject(), "Could not update cell value for " + getColumnInfo().getName() + ".", e);
                 return;
             }
-            boolean isValueAdapter = userValue instanceof ValueAdapter;
+            boolean isValueAdapter = userValue instanceof ValueAdapter || newUserValue instanceof ValueAdapter;
 
             ConnectionHandler connectionHandler = getConnectionHandler();
             try {
@@ -61,9 +61,17 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 int columnIndex = getColumnInfo().getResultSetColumnIndex();
 
                 if (isValueAdapter) {
+                    if (userValue == null) {
+                        userValue = newUserValue.getClass().newInstance();
+                    }
                     ValueAdapter valueAdapter = (ValueAdapter) userValue;
                     Connection connection = connectionHandler.getStandaloneConnection();
+                    if (newUserValue instanceof ValueAdapter) {
+                        ValueAdapter newUserValueAdapter = (ValueAdapter) newUserValue;
+                        newUserValue = newUserValueAdapter.read();
+                    }
                     valueAdapter.write(connection, resultSet, columnIndex, newUserValue);
+
                 } else {
                     DBDataType dataType = getColumnInfo().getDataType();
                     dataType.setValueToResultSet(resultSet, columnIndex, newUserValue);
@@ -79,7 +87,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 // if error was not notified yet on row level, notify it on cell isolation level
                 if (!error.isNotified()) notifyError(error, !bulk);
             } finally {
-                if (!sameValue) {
+                if (valueChanged) {
                     if (!isValueAdapter) {
                         setUserValue(newUserValue);
                     }
@@ -100,22 +108,45 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         }
     }
 
+    public void setUserValueToResultSet(ResultSet resultSet) throws SQLException {
+        boolean isValueAdapter = userValue instanceof ValueAdapter;
+        int columnIndex = getColumnInfo().getResultSetColumnIndex();
+        if (isValueAdapter) {
+            ValueAdapter valueAdapter = (ValueAdapter) userValue;
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            Connection connection = connectionHandler.getStandaloneConnection();
+            valueAdapter.write(connection, resultSet, columnIndex, valueAdapter.read());
+        } else {
+            DBDataType dataType = getColumnInfo().getDataType();
+            dataType.setValueToResultSet(resultSet, columnIndex, userValue);
+        }
+    }
+
     protected DBDataset getDataset() {
         return getRow().getModel().getDataset();
     }
 
-    private boolean compareUserValues(Object value1, Object value2) {
-        if (value1 != null && value2 != null) {
-            if (value1.equals(value2)) {
+    private boolean userValueChanged(Object newUserValue) {
+        if (userValue instanceof ValueAdapter) {
+            ValueAdapter valueAdapter = (ValueAdapter) userValue;
+            try {
+                return !CommonUtil.safeEqual(valueAdapter.read(), newUserValue);
+            } catch (SQLException e) {
                 return true;
             }
+        }
+
+        if (userValue != null && newUserValue != null) {
+            if (userValue.equals(newUserValue)) {
+                return false;
+            }
             // user input may not contain the entire precision (e.g. date time format)
-            String formattedValue1 = Formatter.getInstance(getProject()).formatObject(value1);
-            String formattedValue2 = Formatter.getInstance(getProject()).formatObject(value2);
+            String formattedValue1 = Formatter.getInstance(getProject()).formatObject(userValue);
+            String formattedValue2 = Formatter.getInstance(getProject()).formatObject(newUserValue);
             return formattedValue1.equals(formattedValue2);
         }
         
-        return CommonUtil.safeEqual(value1, value2);
+        return !CommonUtil.safeEqual(userValue, newUserValue);
     }
 
     public void updateUserValue(Object userValue, String errorMessage) {

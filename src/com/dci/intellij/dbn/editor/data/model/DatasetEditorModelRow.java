@@ -67,6 +67,13 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
         }
     }
 
+    public void setUserValuesToResultSet(ResultSet resultSet) throws SQLException {
+        for (int i=0; i<getCells().size(); i++) {
+            DatasetEditorModelCell newCell = getCellAtIndex(i);
+            newCell.setUserValueToResultSet(resultSet);
+        }
+    }
+
     public void delete() {
         try {
             ResultSet resultSet = scrollResultSet();

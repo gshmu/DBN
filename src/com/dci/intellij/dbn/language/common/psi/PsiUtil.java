@@ -38,12 +38,15 @@ public class PsiUtil {
         }
         if (currentSchema == null) {
             VirtualFile virtualFile = getVirtualFileForElement(psiElement);
-            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
-            currentSchema = mappingManager.getCurrentSchema(virtualFile);
+            if (virtualFile != null) {
+                FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
+                currentSchema = mappingManager.getCurrentSchema(virtualFile);
+            }
         }
         return currentSchema;
     }
 
+    @Nullable
     public static VirtualFile getVirtualFileForElement(PsiElement psiElement) {
         PsiFile psiFile = null;
         try {

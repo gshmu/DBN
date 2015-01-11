@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -81,6 +84,15 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return argumentValues;
     }
 
+    public ArgumentValue getArgumentValue(DBArgumentRef argumentRef) {
+        for (ArgumentValue argumentValue : argumentValues) {
+            if (argumentValue.getArgumentRef().equals(argumentRef)) {
+                return argumentValue;
+            }
+        }
+        return null;
+    }
+
     public MethodExecutionResultForm getForm() {
         if (resultPanel == null) {
             resultPanel = new MethodExecutionResultForm(this);
@@ -92,28 +104,34 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return resultPanel;
     }
 
+    @NotNull
     public String getName() {
-        return getMethod().getName();
+        DBMethod method = getMethod();
+        return method == null ? "[unknown]" : method.getName();
     }
 
     public Icon getIcon() {
-        return getMethod().getOriginalIcon();
+        DBMethod method = getMethod();
+        return method == null ? Icons.DBO_METHOD : method.getOriginalIcon();
     }
 
     public MethodExecutionInput getExecutionInput() {
         return executionInput;
     }
 
+    @Nullable
     public DBMethod getMethod() {
         return executionInput.getMethod();
     }
+
 
     public Project getProject() {
         return getMethod().getProject();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return getMethod().getConnectionHandler();
+        DBMethod method = getMethod();
+        return method == null ? null : method.getConnectionHandler();
     }
 
     @Override

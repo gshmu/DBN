@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
@@ -107,6 +107,7 @@ public class ExplainPlanResult implements ExecutionResult {
     }
 
     @Override
+    @NotNull
     public String getName() {
         return resultName;
     }

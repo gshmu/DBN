@@ -175,12 +175,15 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
                 return children.length-1;
             }
         }
-        ElementTypeRef child = children[fromIndex];
-        while (child != null) {
-            if (child.getElementType() == elementType) {
-                return child.getIndex();
+
+        if (fromIndex < children.length) {
+            ElementTypeRef child = children[fromIndex];
+            while (child != null) {
+                if (child.getElementType() == elementType) {
+                    return child.getIndex();
+                }
+                child = child.getNext();
             }
-            child = child.getNext();
         }
         return -1;
     }

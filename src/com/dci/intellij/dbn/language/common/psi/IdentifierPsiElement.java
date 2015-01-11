@@ -219,7 +219,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      * @return real underlying database object behind the identifier.
      */
     @Nullable
-    public synchronized DBObject resolveUnderlyingObject() {
+    public DBObject resolveUnderlyingObject() {
         UnderlyingObjectResolver underlyingObjectResolver = getElementType().getUnderlyingObjectResolver();
         if (underlyingObjectResolver != null) {
             DBObject underlyingObject = underlyingObjectResolver.resolve(this);

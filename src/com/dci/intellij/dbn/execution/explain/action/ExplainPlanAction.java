@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.explain.ExplainPlanManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -52,10 +51,7 @@ public class ExplainPlanAction extends AnAction {
                 DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) psiFile;
 
                 ConnectionHandler activeConnection = languagePsiFile.getActiveConnection();
-                if (activeConnection != null) {
-                    DatabaseCompatibilityInterface compatibilityInterface = activeConnection.getInterfaceProvider().getCompatibilityInterface();
-                    visible = compatibilityInterface.supportsFeature(DatabaseFeature.EXPLAIN_PLAN);
-                }
+                visible = DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
 
                 ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
                 if (executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
