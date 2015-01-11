@@ -88,12 +88,23 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             }
             else if (genericDataType == GenericDataType.XMLTYPE) {
                 TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project);
-                userValueHolder = new UserValueHolderImpl("Value", project);
+                userValueHolder = new UserValueHolderImpl<String>("Value", project);
 
                 TextContentType contentType = TextContentType.get(project, "XML");
                 if (contentType == null) {
                     contentType = TextContentType.getPlainText(project);
                 }
+                userValueHolder.setContentType(contentType);
+                inputField.setUserValueHolder(userValueHolder);
+
+                inputField.setPreferredSize(new Dimension(200, -1));
+                inputComponent = inputField;
+                inputTextField = inputField.getTextField();
+            } else if (genericDataType == GenericDataType.CLOB) {
+                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project);
+                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+
+                TextContentType contentType = TextContentType.getPlainText(project);
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
 
