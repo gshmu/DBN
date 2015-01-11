@@ -2,9 +2,10 @@ package com.dci.intellij.dbn.editor.data.options;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
