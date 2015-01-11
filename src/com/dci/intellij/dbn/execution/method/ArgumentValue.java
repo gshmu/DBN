@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.sql.ResultSet;
+
+import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
-
-import java.sql.ResultSet;
 
 public class ArgumentValue {
     private DBArgumentRef argumentRef;
@@ -43,6 +44,15 @@ public class ArgumentValue {
 
     public Object getValue() {
         return value;
+    }
+
+    public boolean isLargeObject() {
+        DBArgument argument = getArgument();
+        if (argument != null) {
+            DBDataType dataType = argument.getDataType();
+            return dataType.isNative() && dataType.getNativeDataType().isLargeObject();
+        }
+        return false;
     }
 
     public boolean isCursor() {

@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.TableUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
@@ -131,9 +132,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
                 text = initial ?
                         largeObjectValue.read(INITIAL_MAX_SIZE) :
                         largeObjectValue.read();
-                if (text == null) {
-                    text = "";
-                }
+                text = CommonUtil.nvl(text, "");
 
                 long contentSize = largeObjectValue.size();
                 if (initial && contentSize > INITIAL_MAX_SIZE) {
@@ -263,6 +262,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
     @Override
     public void dispose() {
         super.dispose();
+        Object userValue = userValueHolder.getUserValue();
+        if (userValue instanceof LargeObjectValue) {
+            LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
+            largeObjectValue.release();
+        }
+
         popup.dispose();
         popup = null;
         table = null;

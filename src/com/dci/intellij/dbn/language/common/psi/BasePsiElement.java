@@ -252,6 +252,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (preElement != null && preElement instanceof PsiWhiteSpace && preElement instanceof PsiComment) {
             preElement = preElement.getPrevSibling();
         }
+
         if (preElement instanceof BasePsiElement) {
             BasePsiElement previous = (BasePsiElement) preElement;
             while (previous.getLastChild() instanceof BasePsiElement) {

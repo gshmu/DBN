@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.generator.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -10,8 +11,6 @@ import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-
-import java.util.List;
 
 public class GenerateStatementActionGroup extends DefaultActionGroup {
 
@@ -27,10 +26,9 @@ public class GenerateStatementActionGroup extends DefaultActionGroup {
             add(new GenerateInsertStatementAction(table));
         }
 
-        DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
         if (object instanceof DBSchemaObject &&
                 object.getParentObject() instanceof DBSchema &&
-                compatibilityInterface.supportsFeature(DatabaseFeature.OBJECT_DDL_EXTRACTION)) {
+                DatabaseFeature.OBJECT_DDL_EXTRACTION.isSupported(object)) {
             if (getChildrenCount() > 1) {
                 addSeparator();
             }

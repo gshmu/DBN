@@ -227,7 +227,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
              connectionHandler = DatabaseBrowserManager.getInstance(project).getActiveConnection();
          }
 
-         if (connectionHandler == null && virtualFile!= null) {
+         if (connectionHandler == null && virtualFile != null) {
              connectionHandler = FileConnectionMappingManager.getInstance(project).getActiveConnection(virtualFile);
          }
 

@@ -103,7 +103,10 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         try {
             Object userValue = userValueHolder.getUserValue();
             ArrayValue array = (ArrayValue) userValue;
-            stringValues.addAll(array.read());
+            List<String> values = array.read();
+            if (values != null) {
+                stringValues.addAll(values);
+            }
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(project, e.getMessage(), e);
             return null;

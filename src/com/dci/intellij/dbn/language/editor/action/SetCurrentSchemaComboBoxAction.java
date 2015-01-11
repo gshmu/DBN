@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -16,10 +20,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 public class SetCurrentSchemaComboBoxAction extends DBNComboBoxAction {
     private static final String NAME = "Schema";
@@ -27,12 +27,14 @@ public class SetCurrentSchemaComboBoxAction extends DBNComboBoxAction {
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         Project project = ActionUtil.getProject(component);
-        VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(DataManager.getInstance().getDataContext(component));
-        ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getActiveConnection(virtualFile);
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
-            for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
-                actionGroup.add(new SetCurrentSchemaAction(schema));
+        VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(DataManager.getInstance().getDataContext(component));
+        if (virtualFile != null) {
+            ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getActiveConnection(virtualFile);
+            if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
+                for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
+                    actionGroup.add(new SetCurrentSchemaAction(schema));
+                }
             }
         }
         return actionGroup;

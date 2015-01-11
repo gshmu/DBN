@@ -29,8 +29,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     private ResultSetDataModel dataModel;
 
     public StatementExecutionCursorResult(
-            StatementExecutionProcessor executionProcessor,
-            String resultName,
+            @NotNull StatementExecutionProcessor executionProcessor,
+            @NotNull String resultName,
             ResultSet resultSet,
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
@@ -50,7 +50,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public StatementExecutionCursorResult(
             StatementExecutionProcessor executionProcessor,
-            String resultName,
+            @NotNull String resultName,
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
     }

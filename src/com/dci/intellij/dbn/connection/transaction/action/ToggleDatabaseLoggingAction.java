@@ -30,7 +30,7 @@ public class ToggleDatabaseLoggingAction extends ToggleAction {
     public void update(AnActionEvent e) {
         super.update(e);
         DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-        boolean supportsLogging = compatibilityInterface.supportsFeature(DatabaseFeature.DATABASE_LOGGING);
+        boolean supportsLogging = DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler);
         Presentation presentation = e.getPresentation();
         presentation.setVisible(supportsLogging);
         String databaseLogName = compatibilityInterface.getDatabaseLogName();

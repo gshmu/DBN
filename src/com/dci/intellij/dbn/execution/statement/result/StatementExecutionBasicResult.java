@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -29,8 +30,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private boolean loggingActive;
 
     public StatementExecutionBasicResult(
-            StatementExecutionProcessor executionProcessor,
-            String resultName,
+            @NotNull StatementExecutionProcessor executionProcessor,
+            @NotNull String resultName,
             int updateCount) {
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
@@ -42,6 +43,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return getExecutionInput().createPreviewFile();
     }
 
+    @NotNull
     public String getName() {
         return resultName;
     }

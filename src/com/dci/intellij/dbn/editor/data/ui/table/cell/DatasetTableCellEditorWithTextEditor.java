@@ -63,7 +63,7 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
         JTextField textField = getTextField();
         if (dataType.isNative()) {
             highlight(cell.hasError() ? HIGHLIGHT_TYPE_ERROR : HIGHLIGHT_TYPE_NONE);
-            if (dataType.getNativeDataType().isLOB()) {
+            if (dataType.getNativeDataType().isLargeObject()) {
                 setEditable(false);
             } else {
                 String userValue = (String) cell.getUserValue();

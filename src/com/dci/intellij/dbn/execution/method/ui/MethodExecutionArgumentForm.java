@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.type.DataTypeDefinition;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -25,6 +11,24 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.data.editor.text.TextContentType;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.DBNativeDataType;
+import com.dci.intellij.dbn.data.type.DataTypeDefinition;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.object.DBArgument;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.UIUtil;
+
 public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JLabel argumentLabel;
@@ -35,6 +39,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
 
     private JComponent inputComponent;
     private JTextField inputTextField;
+    private UserValueHolderImpl<String> userValueHolder;
 
     private DBArgument argument;
     private List<MethodExecutionTypeAttributeForm> typeAttributeForms = new ArrayList<MethodExecutionTypeAttributeForm>();
@@ -49,35 +54,63 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
         DBDataType dataType = argument.getDataType();
 
         argumentTypeLabel.setForeground(UIUtil.getInactiveTextColor());
-        if (dataType.isDeclared()) {
-            DBType declaredType = dataType.getDeclaredType();
-            argumentTypeLabel.setIcon(declaredType.getIcon());
-            argumentTypeLabel.setText(declaredType.getName());
 
+        DBType declaredType = dataType.getDeclaredType();
+
+        if (dataType.isNative()) {
+            argumentTypeLabel.setText(dataType.getQualifiedName());
+            typeAttributesPanel.setVisible(false);
+        } else if (declaredType != null) {
             typeAttributesPanel.setLayout(new BoxLayout(typeAttributesPanel, BoxLayout.Y_AXIS));
             List<DBTypeAttribute> attributes = declaredType.getAttributes();
             for (DBTypeAttribute attribute : attributes) {
                 addAttributePanel(attribute);
             }
-
-        } else {
-            argumentTypeLabel.setText(dataType.getQualifiedName());
-            typeAttributesPanel.setVisible(false);
         }
 
+        if (declaredType != null) {
+            argumentTypeLabel.setIcon(declaredType.getIcon());
+            argumentTypeLabel.setText(declaredType.getName());
+        }
 
-        if (argument.isInput() && !dataType.isDeclared() && dataType.isNative()) {
+        if (argument.isInput() && dataType.isNative()) {
             DBNativeDataType nativeDataType = dataType.getNativeDataType();
             DataTypeDefinition dataTypeDefinition = nativeDataType.getDataTypeDefinition();
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
+            Project project = argument.getProject();
             if (genericDataType == GenericDataType.DATE_TIME) {
-                TextFieldWithPopup inputField = new TextFieldWithPopup(argument.getProject());
+                TextFieldWithPopup inputField = new TextFieldWithPopup(project);
                 inputField.setPreferredSize(new Dimension(200, -1));
                 inputField.createCalendarPopup(false);
-                inputComponent  = inputField;
+                inputComponent = inputField;
                 inputTextField = inputField.getTextField();
+            }
+            else if (genericDataType == GenericDataType.XMLTYPE) {
+                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project);
+                userValueHolder = new UserValueHolderImpl<String>("Value", project);
 
+                TextContentType contentType = TextContentType.get(project, "XML");
+                if (contentType == null) {
+                    contentType = TextContentType.getPlainText(project);
+                }
+                userValueHolder.setContentType(contentType);
+                inputField.setUserValueHolder(userValueHolder);
+
+                inputField.setPreferredSize(new Dimension(200, -1));
+                inputComponent = inputField;
+                inputTextField = inputField.getTextField();
+            } else if (genericDataType == GenericDataType.CLOB) {
+                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project);
+                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+
+                TextContentType contentType = TextContentType.getPlainText(project);
+                userValueHolder.setContentType(contentType);
+                inputField.setUserValueHolder(userValueHolder);
+
+                inputField.setPreferredSize(new Dimension(200, -1));
+                inputComponent = inputField;
+                inputTextField = inputField.getTextField();
             } else {
                 inputTextField = new JTextField();
                 inputTextField.setPreferredSize(new Dimension(200, -1));
@@ -108,6 +141,9 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             for (MethodExecutionTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                 typeAttributeComponent.updateExecutionInput();
             }
+        } else if (userValueHolder != null ) {
+            String value = userValueHolder.getUserValue();
+            executionComponent.getExecutionInput().setInputValue(argument, value);
         } else {
             String value = CommonUtil.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
             executionComponent.getExecutionInput().setInputValue(argument, value);

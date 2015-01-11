@@ -570,7 +570,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public void refreshObjectsStatus(final DBSchemaObject requester) {
-        if (DatabaseCompatibilityInterface.getInstance(getConnectionHandler()).supportsFeature(DatabaseFeature.OBJECT_INVALIDATION)) {
+        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             new BackgroundTask(getProject(), "Updating objects status", true) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {

@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -14,8 +15,6 @@ import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
-import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Document;
@@ -24,6 +23,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 
 public class TextEditorForm extends DBNFormImpl implements DBNForm {
@@ -48,7 +48,7 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         Project project = userValueHolder.getProject();
 
         if (userValueHolder.getContentType() == null) {
-            userValueHolder.setContentType(getPlainTextContentType());
+            userValueHolder.setContentType(TextContentType.getPlainText(project));
         }
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -65,16 +65,9 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         editor.getContentComponent().setFocusTraversalKeysEnabled(false);
 
         editorPanel.add(editor.getComponent(), BorderLayout.CENTER);
-
     }
 
-    private TextContentType getPlainTextContentType() {
-        Project project = userValueHolder.getProject();
-        DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(project).getQualifiedEditorSettings();
-        return qualifiedEditorSettings.getPlainTextContentType();
-
-    }
-
+    @Nullable
     public String readUserValue() throws SQLException {
         Object userValue = userValueHolder.getUserValue();
         if (userValue instanceof String) {
@@ -97,11 +90,10 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
     }
 
     public void setContentType(TextContentType contentType) {
-        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighter.PROVIDER.create(contentType.getFileType(), userValueHolder.getProject(), null);
+        SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), userValueHolder.getProject(), null);
         EditorColorsScheme colorsScheme = editor.getColorsScheme();
         editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
         userValueHolder.setContentType(contentType);
-
     }
 
     public void dispose() {

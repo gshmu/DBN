@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -74,8 +73,7 @@ public class DBProgramRunConfiguration extends RunConfigurationBase implements L
         }
 
         ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-        if (!compatibilityInterface.supportsFeature(DatabaseFeature.DEBUGGING)){
+        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
             throw new RuntimeConfigurationError(
                     "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
         }

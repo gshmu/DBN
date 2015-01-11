@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.database;
 
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.object.common.DBObject;
+
 public enum DatabaseFeature {
     OBJECT_REPLACING("Replacing existing objects via DDL"),
     OBJECT_DEPENDENCIES("Object dependencies"),
@@ -22,5 +27,16 @@ public enum DatabaseFeature {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isSupported(@Nullable DBObject object) {
+        return object != null && isSupported(object.getConnectionHandler());
+    }
+    public boolean isSupported(@Nullable ConnectionHandler connectionHandler) {
+        if (connectionHandler != null) {
+            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            return compatibilityInterface != null && compatibilityInterface.supportsFeature(this);
+        }
+        return false;
     }
 }

@@ -337,11 +337,6 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                     isInserting = false;
                 } else {
                     row.notifyError(error, true, true);
-                    try {
-                        resultSet.moveToInsertRow();
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    }
                 }
                 if (!error.isNotified() || propagateError) throw e;
             } finally {

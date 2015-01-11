@@ -30,6 +30,25 @@ public class DBDataType {
         return new Ref(resultSet, "").get(connectionHandler);
     }
 
+    public static DBDataType get(ConnectionHandler connectionHandler, String dataTypeName, long length, int precision, int scale, boolean set) {
+        String dataTypeOwner = null;
+        String dataTypePackage = null;
+        if (dataTypeName.contains(".")) {
+            String[] nameChain = dataTypeName.split("\\.");
+            if (nameChain.length == 1) {
+                dataTypeName = nameChain[0];
+            } else if (nameChain.length == 2) {
+                dataTypeOwner = nameChain[0];
+                dataTypeName = nameChain[1];
+            } else if (nameChain.length == 3) {
+                dataTypeOwner = nameChain[0];
+                dataTypePackage = nameChain[1];
+                dataTypeName = nameChain[2];
+            }
+        }
+        return new Ref(dataTypeName, dataTypeOwner, dataTypePackage, length, precision, scale, set).get(connectionHandler);
+    }
+
     protected DBDataType() {
     }
 
@@ -60,12 +79,6 @@ public class DBDataType {
         }
     }*/
 
-    public DBDataType(DBNativeDataType nativeDataType, int precision, int scale) throws SQLException {
-        this.precision = precision;
-        this.scale = scale;
-        this.nativeDataType = nativeDataType;
-    }
-
     public boolean isSet() {
         return set;
     }
@@ -76,6 +89,18 @@ public class DBDataType {
 
     public boolean isNative() {
         return nativeDataType != null;
+    }
+
+    public boolean isPurelyDeclared() {
+        return isDeclared() && !isNative();
+    }
+
+    public boolean isPurelyNative() {
+        return isNative() && !isDeclared();
+    }
+
+    public boolean isNativeDeclared() {
+        return nativeDataType != null && declaredType != null;
     }
 
     public String getName() {
@@ -130,7 +155,7 @@ public class DBDataType {
 
     public void setValueToPreparedStatement(PreparedStatement preparedStatement, int index, Object value) throws SQLException {
         if (nativeDataType != null) {
-            nativeDataType.setValueToPreparedStatement(preparedStatement, index, value);
+            nativeDataType.setValueToStatement(preparedStatement, index, value);
         }
     }
 
@@ -188,6 +213,10 @@ public class DBDataType {
         return nativeDataType != null ? nativeDataType.getGenericDataType() : GenericDataType.OBJECT;
     }
 
+    public String getContentTypeName() {
+        return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().getContentTypeName();
+    }
+
     public static class Ref {
         String dataTypeName;
         String dataTypeOwner;
@@ -208,6 +237,16 @@ public class DBDataType {
             dataTypePackage = resultSet.getString(lookupPrefix + "DATA_TYPE_PACKAGE");
         }
 
+        public Ref(String dataTypeName, String dataTypeOwner, String dataTypePackage, long length, int precision, int scale, boolean set) {
+            this.dataTypeName = dataTypeName;
+            this.dataTypeOwner = dataTypeOwner;
+            this.dataTypePackage = dataTypePackage;
+            this.length = length;
+            this.precision = precision;
+            this.scale = scale;
+            this.set = set;
+        }
+
         public DBDataType get(ConnectionHandler connectionHandler) {
             String name = null;
             DBType declaredType = null;
@@ -226,7 +265,15 @@ public class DBDataType {
                         declaredType = typeSchema.getType(dataTypeName);
                     }
                 }
-                if (declaredType == null) name = dataTypeName;
+                if (declaredType == null)  {
+                    name = dataTypeName;
+                } else {
+                    DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
+                    if (nDataType != null && nDataType.getDataTypeDefinition().isPseudoNative()) {
+                        nativeDataType = nDataType;
+                    }
+                }
+
             } else {
                 nativeDataType = objectBundle.getNativeDataType(dataTypeName);
                 if (nativeDataType == null) name = dataTypeName;

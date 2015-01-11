@@ -65,12 +65,12 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return connectionHandler != null &&
                 !connectionHandler.isDisposed() &&
                 !connectionHandler.isVirtual() &&
-                connectionHandler.getInterfaceProvider().getCompatibilityInterface().supportsFeature(DatabaseFeature.DATABASE_LOGGING);
+                DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler);
     }
 
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
-        if (connectionHandler != null && connectionHandler.getInterfaceProvider().getCompatibilityInterface().supportsFeature(DatabaseFeature.DATABASE_LOGGING)) {
+        if (connectionHandler != null && DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
             connectionHandler.setLoggingEnabled(!connectionHandler.isLoggingEnabled());
         }
     }
