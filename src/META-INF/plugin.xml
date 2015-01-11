@@ -30,6 +30,7 @@
             <li><b>3.0.3601</b>
             <ul>
                 - Support for Oracle XMLTYPE editing / method execution<br>
+                - Support for BLOB/CLOB method execution arguments<br>
                 - Method call parameter info (Ctrl-P)<br>
                 - Minor bug fixes<br>
             </ul>
