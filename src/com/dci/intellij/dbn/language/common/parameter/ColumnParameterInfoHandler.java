@@ -51,26 +51,30 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         if (handlerPsiElement != null && providerPsiElement != null) {
             context.setItemsToShow(new Object[]{providerPsiElement});
 
-/*
-            NamedPsiElement enclosingNamedPsiElement = handlerPsiElement.findEnclosingNamedPsiElement();
-            BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
-            if (methodPsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
-                DBObject object = identifierPsiElement.resolveUnderlyingObject();
-                if (object instanceof DBMethod) {
-                    DBMethod method = (DBMethod) object;
-                    DBProgram program = method.getProgram();
-                    if (program != null) {
-                        DBObjectList objectList = program.getChildObjectList(method.getObjectType());
-                        List<DBMethod> methods = objectList.getObjects(method.getName());
-                        context.setItemsToShow(methods.toArray());
-                    } else {
-                        context.setItemsToShow(new Object[]{method});
+            BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
+            if (iterationPsiElement != null) {
+                int offset = context.getOffset();
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+                PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
+                BasePsiElement iteratedPsiElement = null;
+                while (paramPsiElement != null) {
+                    ElementType elementType = PsiUtil.getElementType(paramPsiElement);
+                    if (elementType instanceof TokenElementType) {
+                        TokenElementType tokenElementType = (TokenElementType) elementType;
+                        if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
+                            if (paramPsiElement.getTextOffset() >= offset) {
+                                break;
+                            }
+                        }
                     }
-                    return identifierPsiElement;
+                    if (elementType == iterationElementType.getIteratedElementType()) {
+                        iteratedPsiElement = (BasePsiElement) paramPsiElement;
+                    }
+
+                    paramPsiElement = paramPsiElement.getNextSibling();
                 }
+                return iteratedPsiElement;
             }
-*/
         }
         return providerPsiElement;
     }
