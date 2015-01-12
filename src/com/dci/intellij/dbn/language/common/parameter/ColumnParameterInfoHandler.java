@@ -137,8 +137,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                                 break;
                             }
                         }
-                    }
-                    if (elementType == iterationElementType.getIteratedElementType()) {
+                    } else if (paramPsiElement instanceof BasePsiElement) {
                         iteratedPsiElement = (BasePsiElement) paramPsiElement;
                     }
 
