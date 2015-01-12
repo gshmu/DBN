@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.method.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -20,7 +22,7 @@ public class DebugMethodAction extends DumbAwareAction {
         this.method = method;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(method.getProject());
         executionManager.createDebugConfiguration(method);
     }
