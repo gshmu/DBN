@@ -151,6 +151,7 @@ public class DBNativeDataType implements DynamicContentElement{
                     int size = (int) clob.length();
                     char[] buffer = new char[size];
                     reader.read(buffer, 0, size);
+                    reader.close();
                     return new String(buffer);
                 }
             } catch (IOException e) {
@@ -167,6 +168,7 @@ public class DBNativeDataType implements DynamicContentElement{
                     byte[] buffer = new byte[size];
                     InputStream inputStream = blob.getBinaryStream();
                     inputStream.read(buffer, 0, size);
+                    inputStream.close();
                     return new String(buffer);
                 }
             } catch (IOException e) {
