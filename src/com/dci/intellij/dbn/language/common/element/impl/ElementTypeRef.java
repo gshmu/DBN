@@ -65,6 +65,8 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     }
 
     public boolean isOptionalToHere() {
+        if (getIndex() == 0) return false;
+
         ElementTypeRef previous = getPrevious();
         while (previous != null) {
             if (!previous.isOptional()) {

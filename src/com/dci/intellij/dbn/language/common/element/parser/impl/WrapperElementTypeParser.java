@@ -36,7 +36,7 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         ParseResult beginTokenResult = beginTokenElement.getParser().parse(node, optional, depth + 1, context);
 
         TokenType beginTokenType = beginTokenElement.getTokenType();
-        boolean isStrong = beginTokenType.isReservedWord();
+        boolean isStrong = elementType.isStrong();
 
         boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && !builder.isExplicitRange(beginTokenType));
         if (beginMatched) {
