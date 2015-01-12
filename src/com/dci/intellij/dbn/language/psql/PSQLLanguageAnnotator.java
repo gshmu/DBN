@@ -130,7 +130,7 @@ public class PSQLLanguageAnnotator implements Annotator {
     }
 
     private void annotateSpecDeclarationNavigable(BasePsiElement basePsiElement, AnnotationHolder holder) {
-        BasePsiElement subjectPsiElement = basePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
         if (subjectPsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
             DBObjectType objectType = identifierPsiElement.getObjectType();
@@ -160,7 +160,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                                 BasePsiElement rootPsiElement = identifierPsiElement.findEnclosingPsiElement(ElementTypeAttribute.ROOT);
 
                                 BasePsiElement targetElement = rootPsiElement == null ? null :
-                                        rootPsiElement.lookupPsiElementBySubject(targetAttribute,
+                                        rootPsiElement.findPsiElementBySubject(targetAttribute,
                                                 identifierPsiElement.getChars(),
                                                 identifierPsiElement.getObjectType());
 

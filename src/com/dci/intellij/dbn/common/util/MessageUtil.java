@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
 import javax.swing.Icon;
-import java.awt.Component;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
@@ -9,11 +8,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.wm.IdeFocusManager;
 
 public class MessageUtil {
 
@@ -87,21 +84,6 @@ public class MessageUtil {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                Component lastFocusedComponent = IdeFocusManager.getGlobalInstance().getLastFocusedFor(IdeFocusManager.getGlobalInstance().getLastFocusedFrame());
-                if (lastFocusedComponent == null) {
-                    new SimpleLaterInvocator() {
-                        @Override
-                        protected void execute() {
-                            showDialog();
-                        }
-                    }.start();
-                } else {
-                    showDialog();
-                }
-
-            }
-
-            private void showDialog() {
                 int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon);
                 if (callback != null) {
                     callback.setOption(option);

@@ -24,20 +24,22 @@ public class UnknownPsiElement extends BasePsiElement {
         return getTextLength();
     }
 
-    public BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
-    public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
+    @Override public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
+    @Override public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
 
 
-    public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {}
-    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
-    public NamedPsiElement lookupNamedPsiElement(String id) {return null;}
-    public BasePsiElement lookupFirstPsiElement(ElementTypeAttribute attribute) {return null;}
-    public BasePsiElement lookupFirstLeafPsiElement() {return null;}
-    public BasePsiElement lookupPsiElementByAttribute(ElementTypeAttribute attribute) {return null;}
+    @Override public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {}
+    @Override public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
+    @Override public NamedPsiElement findNamedPsiElement(String id) {return null;}
+    @Override public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {return null;}
+    @Override public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) { return null; }
 
-    public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
+    @Override public BasePsiElement findFirstLeafPsiElement() {return null;}
+    @Override public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {return null;}
 
-    public boolean hasErrors() {
+    @Override public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
+
+    @Override public boolean hasErrors() {
         return true;
     }
 
@@ -50,6 +52,7 @@ public class UnknownPsiElement extends BasePsiElement {
         }
     }
 
+    @Override
     public String toString() {
         return getElementType().getDebugName();
 

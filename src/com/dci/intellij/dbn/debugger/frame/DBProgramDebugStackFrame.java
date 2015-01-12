@@ -111,7 +111,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
                     BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
                     BasePsiElement objectDeclarationPsiElement = basePsiElement.findEnclosingPsiElement(ElementTypeAttribute.OBJECT_DECLARATION);
                     if (objectDeclarationPsiElement != null) {
-                        IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) objectDeclarationPsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                        IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) objectDeclarationPsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                         if (subjectPsiElement != null) {
                             frameName = frameName + "." + subjectPsiElement.getChars();
                             frameIcon = subjectPsiElement.getObjectType().getIcon();

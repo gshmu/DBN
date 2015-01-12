@@ -51,7 +51,7 @@ public abstract class DBLanguageStructureViewModel extends TextEditorBasedStruct
             SQLStructureViewElement sqlElement = (SQLStructureViewElement) element;
             if (sqlElement.getPsiElement() instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) sqlElement.getPsiElement();
-                BasePsiElement childStructureElement = basePsiElement.lookupFirstPsiElement(ElementTypeAttribute.STRUCTURE);
+                BasePsiElement childStructureElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.STRUCTURE);
                 if (childStructureElement == null) {
                     return true;
                 }

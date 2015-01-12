@@ -245,7 +245,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
             if (method != null) {
                 BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
                 if (basePsiElement != null) {
-                    BasePsiElement subject = basePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                     int offset = subject.getTextOffset();
                     Document document = DocumentUtil.getDocument(psqlFile);
                     int line = document.getLineNumber(offset);

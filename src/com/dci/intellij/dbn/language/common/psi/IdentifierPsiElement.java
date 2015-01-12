@@ -109,7 +109,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      * Lookup routines                 *
      * *******************************************************
      */
-    public BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
+    public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
         if (lookupAdapter instanceof IdentifierLookupAdapter) {
             IdentifierLookupAdapter identifierLookupAdapter = (IdentifierLookupAdapter) lookupAdapter;
             if (identifierLookupAdapter.matchesName(this)) {
@@ -324,11 +324,11 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return object;
     }
 
-    public NamedPsiElement lookupNamedPsiElement(String id) {
+    public NamedPsiElement findNamedPsiElement(String id) {
         return null;
     }
 
-    public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
+    public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
         if (getElementType().is(attribute) && getElementType().is(ElementTypeAttribute.SUBJECT)) {
             if (subjectType == getObjectType() && StringUtil.equalsIgnoreCase(subjectName, this.getChars())) {
                 return this;

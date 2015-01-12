@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Comparator;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,8 +57,8 @@ public class PSQLStructureViewModelSorter implements Sorter {
                 if (psiElement1 instanceof BasePsiElement && psiElement2 instanceof BasePsiElement) {
                     BasePsiElement namedPsiElement1 = (BasePsiElement) psiElement1;
                     BasePsiElement namedPsiElement2 = (BasePsiElement) psiElement2;
-                    BasePsiElement subjectPsiElement1 = namedPsiElement1.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                    BasePsiElement subjectPsiElement2 = namedPsiElement2.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    BasePsiElement subjectPsiElement1 = namedPsiElement1.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    BasePsiElement subjectPsiElement2 = namedPsiElement2.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                     if (subjectPsiElement1 != null && subjectPsiElement2 != null) {
                         return subjectPsiElement1.getText().toUpperCase().compareTo(subjectPsiElement2.getText().toUpperCase());
                     }
