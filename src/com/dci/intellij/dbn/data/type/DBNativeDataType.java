@@ -144,11 +144,15 @@ public class DBNativeDataType implements DynamicContentElement{
         if (genericDataType == GenericDataType.CLOB) {
             try {
                 Clob clob = callableStatement.getClob(parameterIndex);
-                Reader reader = clob.getCharacterStream();
-                int size = (int) clob.length();
-                char[] buffer = new char[size];
-                reader.read(buffer, 0, size);
-                return new String(buffer);
+                if (clob == null) {
+                    return null;
+                } else {
+                    Reader reader = clob.getCharacterStream();
+                    int size = (int) clob.length();
+                    char[] buffer = new char[size];
+                    reader.read(buffer, 0, size);
+                    return new String(buffer);
+                }
             } catch (IOException e) {
                 throw new SQLException("Could not real CLOB value", e);
             }
@@ -156,11 +160,15 @@ public class DBNativeDataType implements DynamicContentElement{
         if (genericDataType == GenericDataType.BLOB) {
             try {
                 Blob blob = callableStatement.getBlob(parameterIndex);
-                int size = (int) blob.length();
-                byte[] buffer = new byte[size];
-                InputStream inputStream = blob.getBinaryStream();
-                inputStream.read(buffer, 0, size);
-                return new String(buffer);
+                if (blob == null) {
+                    return null;
+                } else {
+                    int size = (int) blob.length();
+                    byte[] buffer = new byte[size];
+                    InputStream inputStream = blob.getBinaryStream();
+                    inputStream.read(buffer, 0, size);
+                    return new String(buffer);
+                }
             } catch (IOException e) {
                 throw new SQLException("Could not real BLOB value", e);
             }
