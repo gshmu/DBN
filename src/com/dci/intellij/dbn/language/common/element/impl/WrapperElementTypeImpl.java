@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
+import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
@@ -98,6 +99,25 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
     @Override
     public boolean isWrappedElementOptional() {
         return wrappedElementOptional;
+    }
+
+    @Override
+    public boolean isStrong() {
+        if (getBeginTokenElement().getTokenType().isReservedWord()) {
+            return true;
+        }
+        if (getParent() instanceof SequenceElementType) {
+            SequenceElementType sequenceElementType = (SequenceElementType) getParent();
+            int index = sequenceElementType.indexOf(this);
+
+            ElementTypeRef child = sequenceElementType.getChild(index);
+            if (child.isOptional()) {
+                return false;
+            }
+
+            return index > 0 && !child.isOptionalToHere();
+        }
+        return false;
     }
 
     public String getDebugName() {
