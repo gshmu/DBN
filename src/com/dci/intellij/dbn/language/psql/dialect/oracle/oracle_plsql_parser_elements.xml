@@ -3225,8 +3225,8 @@
             </sequence>
         </one-of>
         <alias-def id="000001597" optional="true" type="DATASET" />
-        <wrapper id="000001598" optional="true" template="PARENTHESES">
-            <iteration id="000001599" separator="CHR_COMMA" attributes="COLUMN_PARAMETER_PROVIDER">
+        <wrapper id="000001598" optional="true" template="PARENTHESES" attributes="COLUMN_PARAMETER_PROVIDER">
+            <iteration id="000001599" separator="CHR_COMMA">
                 <qualified-identifier id="000001600" original-name="column" separator="CHR_DOT">
                     <variant>
                         <object-ref id="000001601" optional="true" type="DATASET" />

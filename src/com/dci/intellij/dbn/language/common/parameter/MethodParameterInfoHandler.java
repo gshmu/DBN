@@ -53,9 +53,9 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     @Override
     public BasePsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
-        BasePsiElement basePsiElement = lookupWrapperElement(context.getFile(), context.getOffset());
-        if (basePsiElement != null) {
-            NamedPsiElement enclosingNamedPsiElement = basePsiElement.findEnclosingNamedPsiElement();
+        BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), context.getOffset());
+        if (handlerPsiElement != null) {
+            NamedPsiElement enclosingNamedPsiElement = handlerPsiElement.findEnclosingNamedPsiElement();
             BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
             if (methodPsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
@@ -78,7 +78,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     }
 
 
-    public BasePsiElement lookupWrapperElement(PsiFile file, int offset) {
+    public BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
         PsiElement psiElement = file.findElementAt(offset);
         while (psiElement != null) {
             if (psiElement instanceof BasePsiElement) {
@@ -105,81 +105,73 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     @Override
     public BasePsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
-        BasePsiElement wrappedPsiElement = getWrappedPsiElement(context);
         int offset = context.getOffset();
-        if (wrappedPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.getElementType();
-            PsiElement paramPsiElement = wrappedPsiElement.getFirstChild();
-            BasePsiElement iteratedPsiElement = null;
-            while (paramPsiElement != null) {
-                ElementType elementType = PsiUtil.getElementType(paramPsiElement);
-                if (elementType instanceof TokenElementType) {
-                    TokenElementType tokenElementType = (TokenElementType) elementType;
-                    if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
-                        if (paramPsiElement.getTextOffset() >= offset) {
-                            break;
+        BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), offset);
+        if (handlerPsiElement != null) {
+            BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
+            if (iterationPsiElement != null) {
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+                PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
+                BasePsiElement iteratedPsiElement = null;
+                while (paramPsiElement != null) {
+                    ElementType elementType = PsiUtil.getElementType(paramPsiElement);
+                    if (elementType instanceof TokenElementType) {
+                        TokenElementType tokenElementType = (TokenElementType) elementType;
+                        if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
+                            if (paramPsiElement.getTextOffset() >= offset) {
+                                break;
+                            }
                         }
                     }
-                }
-                if (elementType == iterationElementType.getIteratedElementType()) {
-                    iteratedPsiElement = (BasePsiElement) paramPsiElement;
-                }
+                    if (elementType == iterationElementType.getIteratedElementType()) {
+                        iteratedPsiElement = (BasePsiElement) paramPsiElement;
+                    }
 
-                paramPsiElement = paramPsiElement.getNextSibling();
-            }
-            return iteratedPsiElement;
-        } else {
-            BasePsiElement basePsiElement = lookupWrapperElement(context.getFile(), offset);
-            if (basePsiElement != null && basePsiElement.getTextOffset()< offset && basePsiElement.getTextRange().contains(offset)) {
-                return basePsiElement;
+                    paramPsiElement = paramPsiElement.getNextSibling();
+                }
+                return iteratedPsiElement;
+            } else {
+                if (handlerPsiElement.getTextOffset()< offset && handlerPsiElement.getTextRange().contains(offset)) {
+                    return handlerPsiElement;
+                }
             }
         }
+
         return null;
     }
 
     @Override
     public void updateParameterInfo(@NotNull BasePsiElement parameter, @NotNull UpdateParameterInfoContext context) {
-        BasePsiElement wrappedPsiElement = getWrappedPsiElement(context);
-        if (wrappedPsiElement != null) {
-            BasePsiElement argumentPsiElement = ARGUMENT_LOOKUP_ADAPTER.findInElement(parameter);
-            if (argumentPsiElement != null) {
-                DBArgument argument = (DBArgument) argumentPsiElement.resolveUnderlyingObject();
-                if (argument != null) {
-                    context.setCurrentParameter(argument.getPosition() -1);
-                    return;
-                }
-            }
-
-            IterationElementType iterationElementType = (IterationElementType) wrappedPsiElement.getElementType();
-            int index = 0;
-            PsiElement paramPsiElement = wrappedPsiElement.getFirstChild();
-            while (paramPsiElement != null) {
-                ElementType elementType = PsiUtil.getElementType(paramPsiElement);
-                if (elementType == iterationElementType.getIteratedElementType()) {
-                    if (paramPsiElement == parameter) {
-                        context.setCurrentParameter(index);
+        BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), context.getOffset());
+        if (handlerPsiElement != null) {
+            BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
+            if (iterationPsiElement != null) {
+                BasePsiElement argumentPsiElement = ARGUMENT_LOOKUP_ADAPTER.findInElement(parameter);
+                if (argumentPsiElement != null) {
+                    DBArgument argument = (DBArgument) argumentPsiElement.resolveUnderlyingObject();
+                    if (argument != null) {
+                        context.setCurrentParameter(argument.getPosition() -1);
                         return;
                     }
-                    index++;
                 }
-                paramPsiElement = paramPsiElement.getNextSibling();
-            }
-            context.setCurrentParameter(index);
-        }
-    }
 
-    public BasePsiElement getWrappedPsiElement(UpdateParameterInfoContext context) {
-        BasePsiElement basePsiElement = lookupWrapperElement(context.getFile(), context.getOffset());
-        if (basePsiElement != null) {
-            PsiElement psiElement = basePsiElement.getFirstChild();
-            while (psiElement != null) {
-                psiElement = psiElement.getNextSibling();
-                if (PsiUtil.getElementType(psiElement) instanceof IterationElementType) {
-                    return (BasePsiElement) psiElement;
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+                int index = 0;
+                PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
+                while (paramPsiElement != null) {
+                    ElementType elementType = PsiUtil.getElementType(paramPsiElement);
+                    if (elementType == iterationElementType.getIteratedElementType()) {
+                        if (paramPsiElement == parameter) {
+                            context.setCurrentParameter(index);
+                            return;
+                        }
+                        index++;
+                    }
+                    paramPsiElement = paramPsiElement.getNextSibling();
                 }
+                context.setCurrentParameter(index);
             }
         }
-        return null;
     }
 
     @Nullable

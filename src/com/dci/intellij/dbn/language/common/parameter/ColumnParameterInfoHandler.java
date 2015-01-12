@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.NamedPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -51,9 +50,9 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         if (handlerPsiElement != null && providerPsiElement != null) {
             context.setItemsToShow(new Object[]{providerPsiElement});
 
+            int offset = context.getOffset();
             BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
             if (iterationPsiElement != null) {
-                int offset = context.getOffset();
                 IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 BasePsiElement iteratedPsiElement = null;
@@ -74,6 +73,8 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     paramPsiElement = paramPsiElement.getNextSibling();
                 }
                 return iteratedPsiElement;
+            } else {
+                return handlerPsiElement;
             }
         }
         return providerPsiElement;
@@ -103,9 +104,9 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     public BasePsiElement lookupProviderElement(@Nullable BasePsiElement handlerPsiElement) {
         if (handlerPsiElement != null) {
-            NamedPsiElement enclosingNamedPsiElement = handlerPsiElement.findEnclosingNamedPsiElement();
-            if (enclosingNamedPsiElement != null) {
-                return enclosingNamedPsiElement.findFirstPsiElement(ElementTypeAttribute.COLUMN_PARAMETER_PROVIDER);
+            BasePsiElement statementPsiElement = handlerPsiElement.findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
+            if (statementPsiElement != null) {
+                return statementPsiElement.findFirstPsiElement(ElementTypeAttribute.COLUMN_PARAMETER_PROVIDER);
             }
         }
         return null;
@@ -119,34 +120,36 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     @Nullable
     @Override
     public BasePsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
-        BasePsiElement iterationPsiElement = getWrappedPsiElement(context);
         int offset = context.getOffset();
-        if (iterationPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
-            PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
-            BasePsiElement iteratedPsiElement = null;
-            while (paramPsiElement != null) {
-                ElementType elementType = PsiUtil.getElementType(paramPsiElement);
-                if (elementType instanceof TokenElementType) {
-                    TokenElementType tokenElementType = (TokenElementType) elementType;
-                    if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
-                        if (paramPsiElement.getTextOffset() >= offset) {
-                            break;
+        BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), offset);
+        if (handlerPsiElement != null) {
+            BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
+            if (iterationPsiElement != null) {
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+                PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
+                BasePsiElement iteratedPsiElement = null;
+                while (paramPsiElement != null) {
+                    ElementType elementType = PsiUtil.getElementType(paramPsiElement);
+                    if (elementType instanceof TokenElementType) {
+                        TokenElementType tokenElementType = (TokenElementType) elementType;
+                        if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
+                            if (paramPsiElement.getTextOffset() >= offset) {
+                                break;
+                            }
                         }
                     }
-                }
-                if (elementType == iterationElementType.getIteratedElementType()) {
-                    iteratedPsiElement = (BasePsiElement) paramPsiElement;
-                }
+                    if (elementType == iterationElementType.getIteratedElementType()) {
+                        iteratedPsiElement = (BasePsiElement) paramPsiElement;
+                    }
 
-                paramPsiElement = paramPsiElement.getNextSibling();
+                    paramPsiElement = paramPsiElement.getNextSibling();
+                }
+                return iteratedPsiElement == null ? handlerPsiElement : iteratedPsiElement;
+            } else {
+                return handlerPsiElement;
             }
-            return iteratedPsiElement;
-        } else {
-            BasePsiElement basePsiElement = lookupHandlerElement(context.getFile(), offset);
-            if (basePsiElement != null && basePsiElement.getTextOffset()< offset && basePsiElement.getTextRange().contains(offset)) {
-                return basePsiElement;
-            }
+
+
         }
         return null;
     }
@@ -193,38 +196,42 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     }
 
     @Override
-    public void updateUI(BasePsiElement iterationPsiElement, @NotNull ParameterInfoUIContext context) {
+    public void updateUI(BasePsiElement handlerPsiElement, @NotNull ParameterInfoUIContext context) {
         context.setUIComponentEnabled(true);
         StringBuilder text = new StringBuilder();
         int highlightStartOffset = 0;
         int highlightEndOffset = 0;
         int index = 0;
         int currentIndex = context.getCurrentParameterIndex();
-        IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
-        PsiElement child = iterationPsiElement.getFirstChild();
-        while (child != null) {
-            if (child instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) child;
-                if (basePsiElement.getElementType()  == iterationElementType.getIteratedElementType()) {
-                    boolean highlight = index == currentIndex || (index == 0 && currentIndex == -1);
-                    if (highlight) {
-                        highlightStartOffset = text.length();
+        BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
+        if (iterationPsiElement != null) {
+            IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+            PsiElement child = iterationPsiElement.getFirstChild();
+            while (child != null) {
+                if (child instanceof BasePsiElement) {
+                    BasePsiElement basePsiElement = (BasePsiElement) child;
+                    if (basePsiElement.getElementType()  == iterationElementType.getIteratedElementType()) {
+                        boolean highlight = index == currentIndex || (index == 0 && currentIndex == -1);
+                        if (highlight) {
+                            highlightStartOffset = text.length();
+                        }
+                        if (text.length() > 0) {
+                            text.append(", ");
+                        }
+                        text.append(basePsiElement.getText());
+                        //text.append(" ");
+                        //text.append(argument.getDataType().getQualifiedName());
+                        if (highlight) {
+                            highlightEndOffset = text.length();
+                        }
+                        index++;
                     }
-                    if (text.length() > 0) {
-                        text.append(", ");
-                    }
-                    text.append(basePsiElement.getText());
-                    //text.append(" ");
-                    //text.append(argument.getDataType().getQualifiedName());
-                    if (highlight) {
-                        highlightEndOffset = text.length();
-                    }
-                    index++;
                 }
-            }
 
-            child = child.getNextSibling();
+                child = child.getNextSibling();
+            }
         }
+
 
 
 /*        for (DBArgument argument : providerPsiElement.getArguments()) {

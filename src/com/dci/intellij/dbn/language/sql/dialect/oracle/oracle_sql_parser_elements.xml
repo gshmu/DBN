@@ -5359,7 +5359,7 @@
         <token id="000002990" type-id="KW_INTO" />
         <element ref-id="dml_table_expression_clause" />
         <alias-def id="000002991" optional="true" original-name="t_alias" type="DATASET" />
-        <wrapper id="000002992" optional="true" template="PARENTHESES">
+        <wrapper id="000002992" optional="true" template="PARENTHESES" attributes="COLUMN_PARAMETER_PROVIDER">
             <iteration id="000002993" separator="CHR_COMMA">
                 <object-ref id="000002994" type="COLUMN" />
             </iteration>
@@ -5367,7 +5367,7 @@
     </element-def>
     <element-def attributes="CLAUSE" description="VALUES clause" id="values_clause">
         <token id="000002995" type-id="KW_VALUES" />
-        <wrapper id="000002996" template="PARENTHESES">
+        <wrapper id="000002996" template="PARENTHESES" attributes="COLUMN_PARAMETER_HANDLER">
             <iteration id="000002997" separator="CHR_COMMA">
                 <one-of id="000002998">
                     <element ref-id="expression" />
