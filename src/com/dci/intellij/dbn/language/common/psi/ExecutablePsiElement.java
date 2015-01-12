@@ -91,15 +91,15 @@ public class ExecutablePsiElement extends NamedPsiElement{
         String action = "";
         String subjectType = "";
         if (is(ElementTypeAttribute.DATA_DEFINITION)) {
-            IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+            IdentifierPsiElement subjectPsiElement = (IdentifierPsiElement) findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (subjectPsiElement != null) {
                 subject = subjectPsiElement.getUnquotedText().toString();
             }
-            BasePsiElement actionPsiElement = lookupFirstPsiElement(ElementTypeAttribute.ACTION);
+            BasePsiElement actionPsiElement = findFirstPsiElement(ElementTypeAttribute.ACTION);
             if (actionPsiElement != null) {
                 action = actionPsiElement.getText() + " ";
                 if (subjectPsiElement != null) {
-                    BasePsiElement compilableBlockPsiElement = lookupFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
+                    BasePsiElement compilableBlockPsiElement = findFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
                     if (compilableBlockPsiElement != null) {
                         DBObjectType objectType = subjectPsiElement.getObjectType();
                         subjectType = objectType.getName().toUpperCase() + " ";

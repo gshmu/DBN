@@ -22,14 +22,14 @@ public class ExecVariablePsiElement extends LeafPsiElement {
         return (ExecVariableElementType) super.getElementType();
     }
 
-    public BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
+    public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
     public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
 
 
     public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) { bucket.add(this);}
     public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
-    public NamedPsiElement lookupNamedPsiElement(String id) {return null;}
-    public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
+    public NamedPsiElement findNamedPsiElement(String id) {return null;}
+    public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 
 
     /*********************************************************

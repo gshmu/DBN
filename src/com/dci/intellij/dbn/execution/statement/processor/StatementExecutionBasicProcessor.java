@@ -470,11 +470,11 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     @Nullable
     public IdentifierPsiElement getSubjectPsiElement() {
-        return cachedExecutable == null ? null : (IdentifierPsiElement) cachedExecutable.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        return cachedExecutable == null ? null : (IdentifierPsiElement) cachedExecutable.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
     }
 
     public BasePsiElement getCompilableBlockPsiElement() {
-        return cachedExecutable == null ? null : cachedExecutable.lookupFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
+        return cachedExecutable == null ? null : cachedExecutable.findFirstPsiElement(ElementTypeAttribute.COMPILABLE_BLOCK);
     }
 
     public DBContentType getCompilableContentType() {

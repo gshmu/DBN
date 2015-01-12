@@ -48,7 +48,7 @@ public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
                 boolean folded = false;
 
                 if (elementType.is(ElementTypeAttribute.FOLDABLE_BLOCK)) {
-                    BasePsiElement subjectPsiElement = basePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                    BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                     if (subjectPsiElement == null) {
                         PsiElement firstChild = basePsiElement.getFirstChild();
                         if (firstChild instanceof TokenPsiElement) {
@@ -78,12 +78,12 @@ public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
                     if (basePsiElement.containsLineBreaks()) {
                         TextRange textRange = null;
 
-                        BasePsiElement firstPsiElement = basePsiElement.lookupFirstLeafPsiElement();
+                        BasePsiElement firstPsiElement = basePsiElement.findFirstLeafPsiElement();
                         int firstElementEndOffset = firstPsiElement.getTextOffset() + firstPsiElement.getTextLength();
                         int firstElementLineNumber = document.getLineNumber(firstElementEndOffset);
 
 
-                        BasePsiElement subjectPsiElement = basePsiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                        BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                         if (subjectPsiElement != null && subjectPsiElement.getParent() == basePsiElement) {
                             int subjectEndOffset = subjectPsiElement.getTextOffset() + subjectPsiElement.getTextLength();
                             int subjectLineNumber = document.getLineNumber(subjectEndOffset);

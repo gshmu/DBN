@@ -45,7 +45,7 @@ public class SequencePsiElement extends BasePsiElement {
      *                   Lookup routines                     *
      *********************************************************/
 
-    public BasePsiElement lookupPsiElement(
+    public BasePsiElement findPsiElement(
             PsiLookupAdapter lookupAdapter,
             int scopeCrossCount) {
 
@@ -58,7 +58,7 @@ public class SequencePsiElement extends BasePsiElement {
                     boolean isScopeBoundary = basePsiElement.isScopeBoundary();
                     if (!isScopeBoundary || scopeCrossCount > 0) {
                         int childScopeCrossCount = isScopeBoundary ? scopeCrossCount-1 : scopeCrossCount;
-                        BasePsiElement result = basePsiElement.lookupPsiElement(lookupAdapter, childScopeCrossCount);
+                        BasePsiElement result = basePsiElement.findPsiElement(lookupAdapter, childScopeCrossCount);
                         if (result != null) return result;
                     }
                 }
@@ -137,7 +137,7 @@ public class SequencePsiElement extends BasePsiElement {
         //}
     }
 
-    public NamedPsiElement lookupNamedPsiElement(String id) {
+    public NamedPsiElement findNamedPsiElement(String id) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof SequencePsiElement) {
@@ -149,7 +149,7 @@ public class SequencePsiElement extends BasePsiElement {
                     }
                 }
 
-                NamedPsiElement namedPsiElement = bundlePsiElement.lookupNamedPsiElement(id);
+                NamedPsiElement namedPsiElement = bundlePsiElement.findNamedPsiElement(id);
                 if (namedPsiElement != null) {
                     return namedPsiElement;
                 }
@@ -160,7 +160,7 @@ public class SequencePsiElement extends BasePsiElement {
     }
 
     @Override
-    public BasePsiElement lookupFirstPsiElement(ElementTypeAttribute attribute) {
+    public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {
         if (this.getElementType().is(attribute)) {
             return this;
         }
@@ -169,7 +169,7 @@ public class SequencePsiElement extends BasePsiElement {
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                BasePsiElement firstElement = basePsiElement.lookupFirstPsiElement(attribute);
+                BasePsiElement firstElement = basePsiElement.findFirstPsiElement(attribute);
                 if (firstElement != null) {
                     return firstElement;
                 }
@@ -178,21 +178,42 @@ public class SequencePsiElement extends BasePsiElement {
         }
         return null;
     }
-    public BasePsiElement lookupFirstLeafPsiElement() {
+
+    @Override
+    public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) {
+        if (clazz.isAssignableFrom(this.getElementType().getClass())) {
+            return this;
+        }
+
+        PsiElement child = getFirstChild();
+        while (child != null) {
+            if (child instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) child;
+                BasePsiElement firstElement = basePsiElement.findFirstPsiElement(clazz);
+                if (firstElement != null) {
+                    return firstElement;
+                }
+            }
+            child = child.getNextSibling();
+        }
+        return null;
+    }
+
+    public BasePsiElement findFirstLeafPsiElement() {
         PsiElement firstChild = getFirstChild();
         while (firstChild != null) {
             if (firstChild instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) firstChild;
-                return basePsiElement.lookupFirstLeafPsiElement();
+                return basePsiElement.findFirstLeafPsiElement();
             }
             firstChild = firstChild.getNextSibling();
         }
         return null;
     }
 
-    public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
+    public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
         if (getElementType().is(attribute)) {
-            BasePsiElement subjectPsiElement = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+            BasePsiElement subjectPsiElement = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (subjectPsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
                 if (identifierPsiElement.getObjectType() == subjectType &&
@@ -205,7 +226,7 @@ public class SequencePsiElement extends BasePsiElement {
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                BasePsiElement childPsiElement = basePsiElement.lookupPsiElementBySubject(attribute, subjectName, subjectType);
+                BasePsiElement childPsiElement = basePsiElement.findPsiElementBySubject(attribute, subjectName, subjectType);
                 if (childPsiElement != null) {
                     return childPsiElement;
                 }
@@ -216,7 +237,7 @@ public class SequencePsiElement extends BasePsiElement {
     }
 
     @Override
-    public BasePsiElement lookupPsiElementByAttribute(ElementTypeAttribute attribute) {
+    public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {
         if (getElementType().is(attribute)) {
             return this;
         }
@@ -224,7 +245,7 @@ public class SequencePsiElement extends BasePsiElement {
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                BasePsiElement childPsiElement = basePsiElement.lookupPsiElementByAttribute(attribute);
+                BasePsiElement childPsiElement = basePsiElement.findPsiElementByAttribute(attribute);
                 if (childPsiElement != null) {
                     return childPsiElement;
                 }

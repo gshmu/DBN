@@ -3226,7 +3226,7 @@
         </one-of>
         <alias-def id="000001597" optional="true" type="DATASET" />
         <wrapper id="000001598" optional="true" template="PARENTHESES">
-            <iteration id="000001599" separator="CHR_COMMA">
+            <iteration id="000001599" separator="CHR_COMMA" attributes="COLUMN_PARAMETER_PROVIDER">
                 <qualified-identifier id="000001600" original-name="column" separator="CHR_DOT">
                     <variant>
                         <object-ref id="000001601" optional="true" type="DATASET" />
@@ -3243,7 +3243,7 @@
             <sequence id="000001606">
                 <token id="000001607" type-id="KW_VALUES" />
                 <one-of id="000001608">
-                    <wrapper id="000001609" template="PARENTHESES">
+                    <wrapper id="000001609" template="PARENTHESES" attributes="COLUMN_PARAMETER_HANDLER">
                         <one-of id="000001610">
                             <iteration id="000001611" separator="CHR_COMMA">
                                 <element original-name="sql_expression" ref-id="expression" />

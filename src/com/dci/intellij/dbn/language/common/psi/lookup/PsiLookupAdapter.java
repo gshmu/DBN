@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
+import java.util.Set;
+
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-
-import java.util.Set;
 
 public abstract class PsiLookupAdapter {
     public abstract boolean matches(BasePsiElement element);
@@ -14,7 +14,7 @@ public abstract class PsiLookupAdapter {
         //System.out.println(this);
         LookupScopeVisitor finder = new LookupScopeVisitor() {
             protected BasePsiElement performLookup(BasePsiElement scope) {
-                BasePsiElement result = scope.lookupPsiElement(PsiLookupAdapter.this, 10);
+                BasePsiElement result = scope.findPsiElement(PsiLookupAdapter.this, 10);
                 return result == null || result == source ? null : result;
             }
         };
@@ -22,11 +22,11 @@ public abstract class PsiLookupAdapter {
     }
 
     public final BasePsiElement findInScope(BasePsiElement scope) {
-        return scope.lookupPsiElement(this, 100);
+        return scope.findPsiElement(this, 100);
     }
 
     public final BasePsiElement findInElement(BasePsiElement element) {
-        return element.lookupPsiElement(this, 100);
+        return element.findPsiElement(this, 100);
     }
 
 

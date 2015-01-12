@@ -23,7 +23,7 @@ public class TokenPsiElement extends LeafPsiElement {
         return (TokenElementType) super.getElementType();
     }
 
-    public BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
+    public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
         if (lookupAdapter.matches(this)) {
             return this;
         }
@@ -33,8 +33,8 @@ public class TokenPsiElement extends LeafPsiElement {
 
     public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {}
     public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
-    public NamedPsiElement lookupNamedPsiElement(String id) {return null;}
-    public BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
+    public NamedPsiElement findNamedPsiElement(String id) {return null;}
+    public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 
 
     /*********************************************************

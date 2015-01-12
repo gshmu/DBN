@@ -88,7 +88,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 this.name = relevantPsiElement.getText();
             }
         } else if (objectType == DBObjectType.TYPE || objectType == DBObjectType.TYPE_ATTRIBUTE || objectType == DBObjectType.CURSOR) {
-            BasePsiElement relevantPsiElement = psiElement.lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+            BasePsiElement relevantPsiElement = psiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (relevantPsiElement != null) {
                 this.relevantPsiElement = relevantPsiElement;
                 this.name = relevantPsiElement.getText();

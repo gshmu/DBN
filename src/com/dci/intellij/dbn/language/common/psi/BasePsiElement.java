@@ -389,7 +389,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return bucket;
     }
 
-    public abstract BasePsiElement lookupPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount);
+    public abstract BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount);
     public abstract Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount);
 
     public abstract void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket);
@@ -405,11 +405,12 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         }
     }
 
-    public abstract NamedPsiElement lookupNamedPsiElement(String id);
-    public abstract BasePsiElement lookupFirstPsiElement(ElementTypeAttribute attribute);
-    public abstract BasePsiElement lookupFirstLeafPsiElement();
-    public abstract BasePsiElement lookupPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType);
-    public abstract BasePsiElement lookupPsiElementByAttribute(ElementTypeAttribute attribute);
+    public abstract NamedPsiElement findNamedPsiElement(String id);
+    public abstract BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute);
+    public abstract BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz);
+    public abstract BasePsiElement findFirstLeafPsiElement();
+    public abstract BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType);
+    public abstract BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute);
 
 
     public boolean containsPsiElement(BasePsiElement basePsiElement) {
@@ -618,7 +619,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public ElementType getSpecificElementType() {
         ElementType elementType = this.elementType;
         if (elementType.is(ElementTypeAttribute.GENERIC)) {
-            BasePsiElement specificElement = lookupFirstPsiElement(ElementTypeAttribute.SPECIFIC);
+            BasePsiElement specificElement = findFirstPsiElement(ElementTypeAttribute.SPECIFIC);
             if (specificElement != null) {
                 elementType = specificElement.getElementType();
             }

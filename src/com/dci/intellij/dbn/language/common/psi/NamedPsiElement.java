@@ -49,7 +49,7 @@ public class NamedPsiElement extends SequencePsiElement {
      *                       ItemPresentation                *
      *********************************************************/
     public String getPresentableText() {
-        BasePsiElement subject = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
         if (subject instanceof IdentifierPsiElement && subject.getParent() == this) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;
             if (identifierPsiElement.isObject()) {
@@ -61,7 +61,7 @@ public class NamedPsiElement extends SequencePsiElement {
 
     @Nullable
     public String getLocationString() {
-        BasePsiElement subject = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+        BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
         if (subject instanceof IdentifierPsiElement && subject.getParent() == this) {
 
         } else {
@@ -78,7 +78,7 @@ public class NamedPsiElement extends SequencePsiElement {
     public Icon getIcon(boolean open) {
         Icon icon = super.getIcon(open);
         if (icon == null) {
-            BasePsiElement subject = lookupFirstPsiElement(ElementTypeAttribute.SUBJECT);
+            BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (subject != null && subject.getParent() == this) {
                 if (subject instanceof IdentifierPsiElement) {
                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subject;

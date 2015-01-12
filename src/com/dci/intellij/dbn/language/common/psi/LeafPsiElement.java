@@ -143,19 +143,26 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
     }
 
     @Override
-    public BasePsiElement lookupPsiElementByAttribute(ElementTypeAttribute attribute) {
+    public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {
         return getElementType().is(attribute) ? this : null;
     }
 
-    public BasePsiElement lookupFirstPsiElement(ElementTypeAttribute attribute) {
+    public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {
         if (this.getElementType().is(attribute)) {
             return this;
         }
         return null;
     }
 
+    @Override
+    public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) {
+        if (this.getElementType().getClass().isAssignableFrom(clazz)) {
+            return this;
+        }
+        return null;
+    }
 
-    public BasePsiElement lookupFirstLeafPsiElement() {
+    public BasePsiElement findFirstLeafPsiElement() {
         return this;
     }
 }
