@@ -283,7 +283,7 @@
                 </iteration>
             </sequence>
             <sequence id="000000139">
-                <wrapper id="000000140" optional="true" template="PARENTHESES">
+                <wrapper id="000000140" optional="true" template="PARENTHESES" attributes="COLUMN_PARAMETER_PROVIDER">
                     <iteration id="000000141" separator="CHR_COMMA">
                         <element ref-id="column_identifier" />
                     </iteration>
@@ -296,7 +296,7 @@
                             <token id="000000146" type-id="KW_VALUES" />
                         </one-of>
                         <iteration id="000000147" separator="CHR_COMMA">
-                            <wrapper id="000000148" template="PARENTHESES">
+                            <wrapper id="000000148" template="PARENTHESES" attributes="COLUMN_PARAMETER_HANDLER">
                                 <iteration id="000000149" separator="CHR_COMMA">
                                     <one-of id="000000150">
                                         <element ref-id="expr" />
