@@ -52,7 +52,7 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         }
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
-                "DBNavigator.Place.DataEditor.LonContentTypeEditor", true,
+                "DBNavigator.Place.DataEditor.LobContentTypeEditor", true,
                 new TextContentTypeComboBoxAction(this));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 
