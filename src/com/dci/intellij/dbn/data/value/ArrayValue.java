@@ -45,7 +45,7 @@ public class ArrayValue implements ValueAdapter<List<String>>{
                 resultSet.updateArray(columnIndex, array);
             }
         } catch (Throwable e) {
-            if (e instanceof SQLException) throw e;
+            if (e instanceof SQLException) throw (SQLException) e;
             throw new SQLException("Could not write array value. Your JDBC driver may not support this feature", e);
         }
     }
