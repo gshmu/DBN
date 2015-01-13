@@ -1,12 +1,70 @@
 package com.dci.intellij.dbn.data.value;
 
+import java.lang.reflect.Constructor;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
-public interface ValueAdapter<T> {
-    @Nullable T read() throws SQLException;
-    void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable T value) throws SQLException;
-    public String getDisplayValue();
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.intellij.openapi.diagnostic.Logger;
+import gnu.trove.THashMap;
+
+public abstract class ValueAdapter<T> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
+    public abstract GenericDataType getGenericDataType();
+    public abstract @Nullable T read() throws SQLException;
+    public abstract void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable T value) throws SQLException;
+    public abstract void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable T value) throws SQLException;
+    public abstract String getDisplayValue();
+
+    public static final Map<GenericDataType, Class<? extends ValueAdapter>> REGISTRY = new THashMap<GenericDataType, Class<? extends ValueAdapter>>();
+    static {
+        REGISTRY.put(GenericDataType.ARRAY, ArrayValue.class);
+        REGISTRY.put(GenericDataType.BLOB, BlobValue.class);
+        REGISTRY.put(GenericDataType.CLOB, ClobValue.class);
+        REGISTRY.put(GenericDataType.XMLTYPE, XmlTypeValue.class);
+    }
+
+    public static boolean supports(GenericDataType genericDataType) {
+        return REGISTRY.containsKey(genericDataType);
+    }
+
+    public static ValueAdapter create(GenericDataType genericDataType) {
+        try {
+            Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
+            return valueAdapterClass.newInstance();
+        } catch (Exception e) {
+            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
+            return null;
+        }
+    }
+
+    public static ValueAdapter create(GenericDataType genericDataType, ResultSet resultSet, int columnIndex) {
+        try {
+            Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
+            Constructor<? extends ValueAdapter> constructor = valueAdapterClass.getConstructor(ResultSet.class, int.class);
+            return constructor.newInstance(resultSet, columnIndex);
+        } catch (Exception e) {
+            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
+            return null;
+        }
+    }
+
+    public static ValueAdapter create(GenericDataType genericDataType, CallableStatement callableStatement, int parameterIndex) {
+        Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
+        try {
+            Constructor<? extends ValueAdapter> constructor = valueAdapterClass.getConstructor(CallableStatement.class, int.class);
+            return constructor.newInstance(callableStatement, parameterIndex);
+        } catch (Exception e) {
+            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
+            return null;
+        }
+
+    }
 }

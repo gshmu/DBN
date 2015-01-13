@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.data.type.BasicDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.DateTimeDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.data.type.LargeObjectDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.LiteralDataTypeDefinition;
 import com.dci.intellij.dbn.data.type.NumericDataTypeDefinition;
 
@@ -20,6 +21,18 @@ public abstract class DatabaseNativeDataTypes {
 
     protected DataTypeDefinition createBasicDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
         BasicDataTypeDefinition dataTypeDefinition = new BasicDataTypeDefinition(name, typeClass, sqlType, genericDataType, pseudoNative, contentTypeName);
+        dataTypes.add(dataTypeDefinition);
+        return dataTypeDefinition;
+    }
+
+    protected DataTypeDefinition createLargeValueDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
+        LargeObjectDataTypeDefinition dataTypeDefinition = new LargeObjectDataTypeDefinition(name, typeClass, sqlType, genericDataType, pseudoNative, contentTypeName);
+        dataTypes.add(dataTypeDefinition);
+        return dataTypeDefinition;
+    }
+
+    protected DataTypeDefinition createLargeValueDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
+        LargeObjectDataTypeDefinition dataTypeDefinition = new LargeObjectDataTypeDefinition(name, typeClass, sqlType, genericDataType);
         dataTypes.add(dataTypeDefinition);
         return dataTypeDefinition;
     }

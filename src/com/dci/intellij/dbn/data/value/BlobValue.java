@@ -4,13 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class BlobValue extends LargeObjectValue {
@@ -21,8 +24,23 @@ public class BlobValue extends LargeObjectValue {
 
     public BlobValue() {}
 
+    public BlobValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
+        blob = callableStatement.getBlob(parameterIndex);
+    }
+
     public BlobValue(ResultSet resultSet, int columnIndex) throws SQLException {
         this.blob = resultSet.getBlob(columnIndex);
+    }
+
+    @Override
+    public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
+        if (value == null) {
+            preparedStatement.setBlob(parameterIndex, (Blob) null);
+        } else {
+            Blob blob = connection.createBlob();
+            blob.setBytes(1, value.getBytes());
+            preparedStatement.setBlob(parameterIndex, blob);
+        }
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
@@ -37,6 +55,11 @@ public class BlobValue extends LargeObjectValue {
         }
         blob.setBytes(1, value.getBytes());
         resultSet.updateBlob(columnIndex, blob);
+    }
+
+    @Override
+    public GenericDataType getGenericDataType() {
+        return GenericDataType.BLOB;
     }
 
     @Nullable

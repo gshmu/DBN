@@ -1,22 +1,36 @@
 package com.dci.intellij.dbn.data.value;
 
 import java.sql.Array;
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
-public class ArrayValue implements ValueAdapter<List<String>>{
+import com.dci.intellij.dbn.data.type.GenericDataType;
+
+public class ArrayValue extends ValueAdapter<List<String>>{
     private Array array;
     private List<String> values;
 
     public ArrayValue() {
     }
 
+    public ArrayValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
+        this.array = callableStatement.getArray(parameterIndex);
+        values = readArray(array);
+    }
+
     public ArrayValue(ResultSet resultSet, int columnIndex) throws SQLException {
-        this.array = resultSet.getArray(columnIndex);
+        array = resultSet.getArray(columnIndex);
+        values = readArray(array);
+    }
+
+    private static List<String> readArray(Array array) throws SQLException {
+        List<String> values = null;
         if (array != null) {
             ResultSet arrayResultSet = array.getResultSet();
             while (arrayResultSet.next()) {
@@ -24,13 +38,37 @@ public class ArrayValue implements ValueAdapter<List<String>>{
                 Object object = arrayResultSet.getObject(2);
                 values.add(object.toString());
             }
+            arrayResultSet.close();
         }
+        return values;
+    }
+
+    @Override
+    public GenericDataType getGenericDataType() {
+        return GenericDataType.ARRAY;
     }
 
     @Nullable
     @Override
     public List<String> read() throws SQLException {
         return values;
+    }
+
+    @Override
+    public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable List<String> values) throws SQLException {
+        try {
+            this.values = values;
+            if (values == null) {
+                preparedStatement.setArray(parameterIndex, null);
+            } else {
+                array = connection.createArrayOf("varchar", values.toArray());
+                preparedStatement.setArray(parameterIndex, array);
+            }
+        } catch (Throwable e) {
+            if (e instanceof SQLException) throw (SQLException) e;
+            throw new SQLException("Could not write array value. Your JDBC driver may not support this feature", e);
+        }
+
     }
 
     @Override

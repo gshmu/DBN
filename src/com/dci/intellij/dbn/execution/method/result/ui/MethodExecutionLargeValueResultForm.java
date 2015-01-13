@@ -3,14 +3,17 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
+import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
@@ -46,7 +49,13 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl implements 
         Project project = argument.getProject();
 
         ArgumentValue argumentValue = executionResult.getArgumentValue(argumentRef);
-        String text = (String) argumentValue.getValue();
+        LargeObjectValue value = (LargeObjectValue) argumentValue.getValue();
+        String text = null;
+        try {
+            text = value.read();
+        } catch (SQLException e) {
+            MessageUtil.showWarningDialog(project, "Load Error", "Could not load value for argument " + argument.getName() + ". Cause: " + e.getMessage());
+        }
 
         Document document = EditorFactory.getInstance().createDocument(text == null ? "" : StringUtil.removeCharacter(text, '\r'));
         contentType = TextContentType.get(project, argument.getDataType().getContentTypeName());

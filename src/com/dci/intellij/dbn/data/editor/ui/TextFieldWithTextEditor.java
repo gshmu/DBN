@@ -19,12 +19,14 @@ import java.awt.event.MouseListener;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorDialog;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.UIUtil;
 
 public class TextFieldWithTextEditor extends JPanel implements DataEditorComponent, TextEditorAdapter {
     private JTextField textField;
@@ -32,10 +34,15 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
     private UserValueHolder userValueHolder;
     private Project project;
+    private String displayValue;
 
     public TextFieldWithTextEditor(Project project) {
+        this(project, null);
+    }
+    public TextFieldWithTextEditor(Project project, String displayValue) {
         super(new BorderLayout(2, 0));
         this.project = project;
+        this.displayValue = displayValue;
         setBounds(0, 0, 0, 0);
 
         textField = new JTextField();
@@ -51,9 +58,15 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
         button.setToolTipText("Open editor (" + shortcutText + ")");
         add(button, BorderLayout.EAST);
+        if (StringUtil.isNotEmpty(displayValue)) {
+            textField.setText(displayValue);
+            textField.setEnabled(false);
+            textField.setDisabledTextColor(UIUtil.getLabelDisabledForeground());
+        }
         textField.setPreferredSize(new Dimension(150, -1));
         textField.addKeyListener(keyListener);
         textField.setEditable(false);
+
         button.addKeyListener(keyListener);
         addKeyListener(keyListener);
 
@@ -152,7 +165,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
      ********************************************************/
     public void afterUpdate() {
         Object userValue = userValueHolder.getUserValue();
-        if (userValue instanceof String) {
+        if (userValue instanceof String && StringUtil.isEmpty(displayValue)) {
             String text = (String) userValue;
             setEditable(text.length() < 1000 && text.indexOf('\n') == -1);
             setText(text);

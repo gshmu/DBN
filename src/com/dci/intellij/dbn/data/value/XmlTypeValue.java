@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.data.value;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.OPAQUE;
 import oracle.xdb.XMLType;
@@ -15,9 +19,21 @@ public class XmlTypeValue extends LargeObjectValue{
     public XmlTypeValue() {
     }
 
-    public XmlTypeValue(OracleResultSet resultSet, int columnIndex) throws SQLException {
-        OPAQUE opaque = resultSet.getOPAQUE(columnIndex);
+    public XmlTypeValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
+        OracleCallableStatement oracleCallableStatement = (OracleCallableStatement) callableStatement;
+        OPAQUE opaque = oracleCallableStatement.getOPAQUE(parameterIndex);
         xmlType = opaque == null ? null : XMLType.createXML(opaque);
+    }
+
+    public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
+        OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
+        OPAQUE opaque = oracleResultSet.getOPAQUE(columnIndex);
+        xmlType = opaque == null ? null : XMLType.createXML(opaque);
+    }
+
+    @Override
+    public GenericDataType getGenericDataType() {
+        return GenericDataType.XMLTYPE;
     }
 
     @Nullable
@@ -29,6 +45,11 @@ public class XmlTypeValue extends LargeObjectValue{
     @Nullable
     public String read(int maxSize) throws SQLException {
         return xmlType == null ? null : xmlType.getStringVal();
+    }
+
+    public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
+        xmlType = XMLType.createXML(connection, value);
+        preparedStatement.setObject(parameterIndex, xmlType);
     }
 
     @Override

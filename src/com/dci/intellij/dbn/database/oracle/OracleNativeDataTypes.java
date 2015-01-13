@@ -53,10 +53,10 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
         createBasicDefinition("INTERVAL DAY TO SECOND", Object.class, OracleTypes.INTERVALDS, GenericDataType.DATE_TIME);
         createBasicDefinition("INTERVAL YEAR TO MONTH", Object.class, OracleTypes.INTERVALYM, GenericDataType.DATE_TIME);
 
-        createBasicDefinition("BLOB", Blob.class, OracleTypes.BLOB, GenericDataType.BLOB);
-        createBasicDefinition("CLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
-        createBasicDefinition("NCLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
-        createBasicDefinition("XMLTYPE", Clob.class, Types.SQLXML, GenericDataType.XMLTYPE, true, "XML");
+        createLargeValueDefinition("BLOB", Blob.class, OracleTypes.BLOB, GenericDataType.BLOB);
+        createLargeValueDefinition("CLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
+        createLargeValueDefinition("NCLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
+        createLargeValueDefinition("XMLTYPE", Clob.class, Types.SQLXML, GenericDataType.XMLTYPE, true, "XML");
 
         createBasicDefinition("BFILE", Object.class, OracleTypes.BFILE, GenericDataType.FILE);
         createBasicDefinition("ROWID", Object.class, OracleTypes.ROWID, GenericDataType.ROWID);
