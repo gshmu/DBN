@@ -86,7 +86,7 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
         int[] metrics = new int[]{0, 0};
 
         //topSeparator.setVisible(false);
-        List<DBArgument> arguments = new ArrayList(method.getArguments());
+        List<DBArgument> arguments = new ArrayList<DBArgument>(method.getArguments());
         noArgumentsLabel.setVisible(arguments.size() == 0);
         for (DBArgument argument: arguments) {
             if (argument.isInput()) {
