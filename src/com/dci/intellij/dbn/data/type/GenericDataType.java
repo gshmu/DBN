@@ -20,7 +20,6 @@ public enum GenericDataType {
     private GenericDataType(String name) {
         this.name = name;
     }
-
     public String getName() {
         return name;
     }

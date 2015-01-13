@@ -79,6 +79,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
             Project project = argument.getProject();
+            String value = executionComponent.getExecutionInput().getInputValue(argument);
             if (genericDataType == GenericDataType.DATE_TIME) {
                 TextFieldWithPopup inputField = new TextFieldWithPopup(project);
                 inputField.setPreferredSize(new Dimension(200, -1));
@@ -87,13 +88,15 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 inputTextField = inputField.getTextField();
             }
             else if (genericDataType == GenericDataType.XMLTYPE) {
-                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project);
-                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[XMLTYPE]");
 
                 TextContentType contentType = TextContentType.get(project, "XML");
                 if (contentType == null) {
                     contentType = TextContentType.getPlainText(project);
                 }
+
+                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+                userValueHolder.setUserValue(value);
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
 
@@ -101,10 +104,11 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 inputComponent = inputField;
                 inputTextField = inputField.getTextField();
             } else if (genericDataType == GenericDataType.CLOB) {
-                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project);
-                userValueHolder = new UserValueHolderImpl<String>("Value", project);
-
+                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[CLOB]");
                 TextContentType contentType = TextContentType.getPlainText(project);
+
+                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+                userValueHolder.setUserValue(value);
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
 
@@ -116,8 +120,10 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 inputTextField.setPreferredSize(new Dimension(200, -1));
                 inputComponent = inputTextField;
             }
-            String value = executionComponent.getExecutionInput().getInputValue(argument);
-            inputTextField.setText(value);
+
+            if (!genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
+                inputTextField.setText(value);
+            }
             inputFieldPanel.add(inputComponent, BorderLayout.CENTER);
             inputTextField.setDisabledTextColor(inputTextField.getForeground());
         } else {

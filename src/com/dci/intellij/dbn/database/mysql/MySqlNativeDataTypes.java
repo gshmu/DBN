@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
-
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Timestamp;
 import java.sql.Types;
+
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 
 public class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
     {
@@ -41,13 +41,13 @@ public class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
         createDateTimeDefinition("TIME", Timestamp.class, Types.TIME);
         createDateTimeDefinition("YEAR", Timestamp.class, Types.DATE);
 
-        createBasicDefinition("TINYBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createBasicDefinition("TINYTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
-        createBasicDefinition("BLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createBasicDefinition("TEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
-        createBasicDefinition("MEDIUMBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createBasicDefinition("MEDIUMTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
-        createBasicDefinition("LONGBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
-        createBasicDefinition("LONGTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
+        createLargeValueDefinition("TINYBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
+        createLargeValueDefinition("TINYTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
+        createLargeValueDefinition("BLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
+        createLargeValueDefinition("TEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
+        createLargeValueDefinition("MEDIUMBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
+        createLargeValueDefinition("MEDIUMTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
+        createLargeValueDefinition("LONGBLOB", Blob.class, Types.BLOB, GenericDataType.BLOB);
+        createLargeValueDefinition("LONGTEXT", Blob.class, Types.CLOB, GenericDataType.CLOB);
     }
 }

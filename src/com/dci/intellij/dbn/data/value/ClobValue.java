@@ -3,8 +3,10 @@ package com.dci.intellij.dbn.data.value;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -12,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class ClobValue extends LargeObjectValue {
@@ -23,8 +26,23 @@ public class ClobValue extends LargeObjectValue {
     public ClobValue() {
     }
 
+    public ClobValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
+        clob = callableStatement.getClob(parameterIndex);
+    }
+
     public ClobValue(ResultSet resultSet, int columnIndex) throws SQLException {
         this.clob = resultSet.getClob(columnIndex);
+    }
+
+    @Override
+    public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
+        if (value == null) {
+            preparedStatement.setClob(parameterIndex, (Clob) null);
+        } else {
+            Clob clob = connection.createClob();
+            clob.setString(1, value);
+            preparedStatement.setClob(parameterIndex, clob);
+        }
     }
 
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
@@ -48,6 +66,11 @@ public class ClobValue extends LargeObjectValue {
         clob.setString(1, value);
         resultSet.updateClob(columnIndex, clob);
 
+    }
+
+    @Override
+    public GenericDataType getGenericDataType() {
+        return GenericDataType.ARRAY;
     }
 
     @Nullable

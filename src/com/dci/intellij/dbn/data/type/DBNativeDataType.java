@@ -1,12 +1,7 @@
 package com.dci.intellij.dbn.data.type;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.sql.CallableStatement;
-import java.sql.Clob;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,15 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
-import com.dci.intellij.dbn.data.value.ArrayValue;
-import com.dci.intellij.dbn.data.value.BlobValue;
-import com.dci.intellij.dbn.data.value.ClobValue;
-import com.dci.intellij.dbn.data.value.XmlTypeValue;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.diagnostic.Logger;
-import oracle.jdbc.OracleCallableStatement;
-import oracle.jdbc.OracleResultSet;
-import oracle.sql.OPAQUE;
-import oracle.xdb.XMLType;
 
 public class DBNativeDataType implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -63,11 +51,18 @@ public class DBNativeDataType implements DynamicContentElement{
 
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
         // FIXME: add support for stream updatable types
+
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
+        if (ValueAdapter.supports(genericDataType)) {
+            return ValueAdapter.create(genericDataType, resultSet, columnIndex);
+        }
+
+/*
         if (genericDataType == GenericDataType.BLOB) return new BlobValue(resultSet, columnIndex);
         if (genericDataType == GenericDataType.CLOB) return new ClobValue(resultSet, columnIndex);
         if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue((OracleResultSet) resultSet, columnIndex);
         if (genericDataType == GenericDataType.ARRAY) return new ArrayValue(resultSet, columnIndex);
+*/
         if (genericDataType == GenericDataType.ROWID) return "[ROWID]";
         if (genericDataType == GenericDataType.FILE) return "[FILE]";
 
@@ -135,79 +130,29 @@ public class DBNativeDataType implements DynamicContentElement{
 
     public Object getValueFromStatement(CallableStatement callableStatement, int parameterIndex) throws SQLException {
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
-        if (genericDataType == GenericDataType.XMLTYPE) {
-            OracleCallableStatement oracleCallableStatement = (OracleCallableStatement) callableStatement;
-            OPAQUE opaque = oracleCallableStatement.getOPAQUE(parameterIndex);
-            XMLType xmlType = opaque == null ? null : XMLType.createXML(opaque);
-            return xmlType == null ? null : xmlType.getStringVal();
+        if (ValueAdapter.supports(genericDataType)) {
+            return ValueAdapter.create(genericDataType, callableStatement, parameterIndex);
         }
-        if (genericDataType == GenericDataType.CLOB) {
-            try {
-                Clob clob = callableStatement.getClob(parameterIndex);
-                if (clob == null) {
-                    return null;
-                } else {
-                    Reader reader = clob.getCharacterStream();
-                    int size = (int) clob.length();
-                    char[] buffer = new char[size];
-                    reader.read(buffer, 0, size);
-                    reader.close();
-                    return new String(buffer);
-                }
-            } catch (IOException e) {
-                throw new SQLException("Could not real CLOB value", e);
-            }
-        }
-        if (genericDataType == GenericDataType.BLOB) {
-            try {
-                Blob blob = callableStatement.getBlob(parameterIndex);
-                if (blob == null) {
-                    return null;
-                } else {
-                    int size = (int) blob.length();
-                    byte[] buffer = new byte[size];
-                    InputStream inputStream = blob.getBinaryStream();
-                    inputStream.read(buffer, 0, size);
-                    inputStream.close();
-                    return new String(buffer);
-                }
-            } catch (IOException e) {
-                throw new SQLException("Could not real BLOB value", e);
-            }
-        }
+/*
+        if (genericDataType == GenericDataType.BLOB) return new BlobValue(callableStatement, parameterIndex);
+        if (genericDataType == GenericDataType.CLOB) return new ClobValue(callableStatement, parameterIndex);
+        if (genericDataType == GenericDataType.XMLTYPE) return new XmlTypeValue((OracleCallableStatement) callableStatement, parameterIndex);
+*/
 
         return callableStatement.getObject(parameterIndex);
     }
 
     public void setValueToStatement(PreparedStatement preparedStatement, int parameterIndex, Object value) throws SQLException {
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
-        if (genericDataType == GenericDataType.CURSOR) {
-            // not supported
+        if (ValueAdapter.supports(genericDataType)) {
+            ValueAdapter valueAdapter = ValueAdapter.create(genericDataType);
+            valueAdapter.write(preparedStatement.getConnection(), preparedStatement, parameterIndex, value);
+            return;
         }
-        else if (genericDataType == GenericDataType.XMLTYPE) {
-            XMLType xmlType = XMLType.createXML(preparedStatement.getConnection(), (String) value);
-            preparedStatement.setObject(parameterIndex, xmlType);
-        }
-        else if (genericDataType == GenericDataType.CLOB) {
-            if (value == null) {
-                preparedStatement.setClob(parameterIndex, (Clob) null);
-            } else {
-                Clob clob = preparedStatement.getConnection().createClob();
-                clob.setString(1, (String) value);
-                preparedStatement.setClob(parameterIndex, clob);
-            }
-        }
-        else if (genericDataType == GenericDataType.BLOB) {
-            if (value == null) {
-                preparedStatement.setBlob(parameterIndex, (Blob) null);
-            } else {
-                Blob blob = preparedStatement.getConnection().createBlob();
-                blob.setBytes(1, ((String) value).getBytes());
-                preparedStatement.setBlob(parameterIndex, blob);
-            }
-        }
+        if (genericDataType == GenericDataType.CURSOR) return;// not supported
 
-        else if (value == null) {
+
+        if (value == null) {
             preparedStatement.setObject(parameterIndex, null);
         } else {
             Class clazz = dataTypeDefinition.getTypeClass();
