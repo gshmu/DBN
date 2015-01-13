@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.intellij.openapi.util.Disposer;
 
 public class MethodExecutionDialog extends DBNDialog {
     private MethodExecutionForm mainComponent;
@@ -21,6 +22,7 @@ public class MethodExecutionDialog extends DBNDialog {
         setModal(true);
         setResizable(true);
         mainComponent = new MethodExecutionForm(executionInput, true, debug);
+        Disposer.register(this, mainComponent);
         init();
     }
 
@@ -37,6 +39,12 @@ public class MethodExecutionDialog extends DBNDialog {
         };
     }
 
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        return mainComponent.getComponent();
+    }
+
     @Override
     protected void doOKAction() {
         super.doOKAction();
@@ -45,8 +53,8 @@ public class MethodExecutionDialog extends DBNDialog {
     private class ExecuteAction extends AbstractAction {
         public ExecuteAction() {
             super(debug ? "Debug" : "Execute",
-                   debug ? Icons.METHOD_EXECUTION_DEBUG : Icons.METHOD_EXECUTION_RUN);
-            //putValue(DEFAULT_ACTION, Boolean.FALSE);
+                    debug ? Icons.METHOD_EXECUTION_DEBUG : Icons.METHOD_EXECUTION_RUN);
+            putValue(FOCUSED_ACTION, Boolean.TRUE);
         }
 
         public void actionPerformed(ActionEvent e) {

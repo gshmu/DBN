@@ -4,33 +4,63 @@ import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 
-public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction implements HighPriorityAction {
+public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction {
     private WeakReference<DBMethod> lastChecked;
+    public static final ObjectLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectLookupAdapter(null, IdentifierCategory.DEFINITION, DBObjectType.METHOD);
+
+    @NotNull
+    public final String getText() {
+        DBMethod method = getMethod();
+        if (method != null) {
+            DBObjectType objectType = method.getObjectType();
+            if (objectType.matches(DBObjectType.PROCEDURE)) objectType = DBObjectType.PROCEDURE;
+            if (objectType.matches(DBObjectType.FUNCTION)) objectType = DBObjectType.FUNCTION;
+            return getActionName() + " " + objectType.getName() + " " + method.getName();
+        }
+        return getActionName() + " method";
+    }
+
+    protected abstract String getActionName();
 
     @Nullable
-    protected DBMethod resolveMethod(PsiFile psiFile) {
-        if (psiFile != null) {
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (virtualFile instanceof DBSourceCodeVirtualFile) {
-                DBSourceCodeVirtualFile codeVirtualFile = (DBSourceCodeVirtualFile) virtualFile;
-                DBSchemaObject object = codeVirtualFile.getObject();
-                if (object != null) {
-                    if (object instanceof DBMethod) {
-                        DBMethod method = (DBMethod) object;
-                        lastChecked = new WeakReference<DBMethod>(method);
-                        return method;
-                    }
+    protected DBMethod resolveMethod(Editor editor, PsiFile psiFile) {
+        if (psiFile instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
+            DBObject underlyingObject = dbLanguagePsiFile.getUnderlyingObject();
 
-                    if (object.getObjectType().isParentOf(DBObjectType.METHOD)) {
+            if (underlyingObject != null) {
+                if (underlyingObject instanceof DBMethod) {
+                    DBMethod method = (DBMethod) underlyingObject;
+                    lastChecked = new WeakReference<DBMethod>(method);
+                    return method;
+                }
 
+                if (underlyingObject.getObjectType().isParentOf(DBObjectType.METHOD) && editor != null) {
+                    BasePsiElement psiElement = PsiUtil.lookupLeafAtOffset(psiFile, editor.getCaretModel().getOffset());
+                    if (psiElement != null) {
+                        BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement);
+                        if (methodPsiElement instanceof IdentifierPsiElement) {
+                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
+                            DBObject object = identifierPsiElement.resolveUnderlyingObject();
+                            if (object instanceof DBMethod) {
+                                DBMethod method = (DBMethod) object;
+                                lastChecked = new WeakReference<DBMethod>(method);
+                                return method;
+                            }
+
+                        }
                     }
                 }
             }

@@ -13,13 +13,9 @@ import com.intellij.util.IncorrectOperationException;
 
 public class DebugMethodIntentionAction extends AbstractMethodExecutionIntentionAction {
 
-    @NotNull
-    public String getText() {
-        DBMethod method = getMethod();
-        if (method != null) {
-            return "Debug " + method.getObjectType().getName() + " " + method.getName();
-        }
-        return "Debug method";
+    @Override
+    protected String getActionName() {
+        return "Debug";
     }
 
     @Override
@@ -29,14 +25,14 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
-            DBMethod method = resolveMethod(psiFile);
+            DBMethod method = resolveMethod(editor, psiFile);
             return method != null;
         }
         return false;
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        DBMethod method = resolveMethod(psiFile);
+        DBMethod method = resolveMethod(editor, psiFile);
         if (method != null) {
             DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
             executionManager.createDebugConfiguration(method);

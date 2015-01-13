@@ -3,14 +3,13 @@ package com.dci.intellij.dbn.language.common.psi.lookup;
 import java.util.Set;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 
 public abstract class PsiLookupAdapter {
     public abstract boolean matches(BasePsiElement element);
 
     public abstract boolean accepts(BasePsiElement element);
 
-    public final BasePsiElement findInParentScopeOf(final IdentifierPsiElement source) {
+    public final BasePsiElement findInParentScopeOf(final BasePsiElement source) {
         //System.out.println(this);
         LookupScopeVisitor finder = new LookupScopeVisitor() {
             protected BasePsiElement performLookup(BasePsiElement scope) {
