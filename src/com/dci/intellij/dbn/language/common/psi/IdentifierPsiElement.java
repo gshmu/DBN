@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +13,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
@@ -633,5 +636,19 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     public IdentifierType getIdentifierType() {
         return getElementType().getIdentifierType();
+    }
+
+    public List<BasePsiElement> findQualifiedUsages() {
+        List<BasePsiElement> qualifiedUsages= new ArrayList<BasePsiElement>();
+        BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
+        IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
+        Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
+        for (BasePsiElement basePsiElement : basePsiElements) {
+            BasePsiElement qualifiedIdentifierPsiElement = basePsiElement.findEnclosingPsiElement(QualifiedIdentifierElementType.class);
+            if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getFirstChild() != qualifiedIdentifierPsiElement.getLastChild()) {
+                qualifiedUsages.add(qualifiedIdentifierPsiElement);
+            }
+        }
+        return qualifiedUsages;
     }
 }
