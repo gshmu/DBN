@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
@@ -20,11 +19,11 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     private ElementTypeAttribute attribute;
     private LeafPsiElement lookupIssuer;
 
-    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, IdentifierType identifierType, IdentifierCategory identifierCategory, DBObjectType objectType, CharSequence identifierName) {
+    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @Nullable DBObjectType objectType, CharSequence identifierName) {
         this(lookupIssuer, identifierType, identifierCategory, objectType, identifierName, null);
     }
 
-    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @NotNull DBObjectType objectType, CharSequence identifierName, ElementTypeAttribute attribute) {
+    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @Nullable DBObjectType objectType, CharSequence identifierName, ElementTypeAttribute attribute) {
         this.lookupIssuer = lookupIssuer;
         this.identifierType = identifierType;
         this.objectType = objectType;
@@ -51,7 +50,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
     public boolean matchesObjectType(IdentifierPsiElement identifierPsiElement) {
-        return identifierPsiElement.isObjectOfType(objectType);
+        return objectType == null || identifierPsiElement.isObjectOfType(objectType);
     }
 
     public boolean matchesName(IdentifierPsiElement identifierPsiElement) {

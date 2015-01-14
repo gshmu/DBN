@@ -3,11 +3,15 @@ package com.dci.intellij.dbn.debugger.frame;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -19,6 +23,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -140,11 +145,27 @@ public class DBProgramDebugStackFrame extends XStackFrame {
             Document document = DocumentUtil.getDocument(sourceCodeFile);
             int offset = document.getLineStartOffset(sourcePosition.getLine());
             Set<BasePsiElement> variables = psiFile.lookupVariableDefinition(offset);
+            CodeStyleCaseSettings codeStyleCaseSettings = DBLCodeStyleManager.getInstance(psiFile.getProject()).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
+            CodeStyleCaseOption objectCaseOption = codeStyleCaseSettings.getObjectCaseOption();
 
             List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
             for (final BasePsiElement basePsiElement : variables) {
-                String variableName = basePsiElement.getText();
-                DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, variableName, basePsiElement.getIcon(true), index);
+                String variableName = objectCaseOption.changeCase(basePsiElement.getText());
+                //DBObject object = basePsiElement.resolveUnderlyingObject();
+
+                Set<String> childVariableNames = null;
+                if (basePsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                    List<BasePsiElement> qualifiedUsages = identifierPsiElement.findQualifiedUsages();
+                    for (BasePsiElement qualifiedUsage : qualifiedUsages) {
+                        if (childVariableNames == null) childVariableNames = new HashSet<String>();
+
+                        String childVariableName = objectCaseOption.changeCase(qualifiedUsage.getText());
+                        childVariableNames.add(childVariableName);
+                    }
+                }
+                Icon icon = basePsiElement.getIcon(true);
+                DBProgramDebugValue value = new DBProgramDebugValue(debugProcess, null, variableName, childVariableNames, icon, index);
                 values.add(value);
                 valuesMap.put(variableName.toLowerCase(), value);
             }
