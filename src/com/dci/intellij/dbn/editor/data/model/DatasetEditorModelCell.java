@@ -143,7 +143,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             // user input may not contain the entire precision (e.g. date time format)
             String formattedValue1 = Formatter.getInstance(getProject()).formatObject(userValue);
             String formattedValue2 = Formatter.getInstance(getProject()).formatObject(newUserValue);
-            return formattedValue1.equals(formattedValue2);
+            return !formattedValue1.equals(formattedValue2);
         }
         
         return !CommonUtil.safeEqual(userValue, newUserValue);
