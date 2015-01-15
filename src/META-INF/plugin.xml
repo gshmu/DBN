@@ -30,9 +30,10 @@
             <li><b>3.0.3674</b>
             <ul>
                 - Method execution/debug intention actions (Alt-Enter)<br>
-                - Column parameter info (Ctrl-P) for insert statements<br>
                 - Support for Oracle XMLTYPE editing / method execution<br>
                 - Support for BLOB/CLOB method execution arguments<br>
+                - Oracle PLSQL Debugger enhancements (support for record variables) <br>
+                - Column parameter info (Ctrl-P) for insert statements<br>
                 - Method call parameter info (Ctrl-P)<br>
                 - Minor bug fixes<br>
             </ul>

@@ -20,7 +20,7 @@ import com.intellij.xdebugger.frame.XValuePlace;
 public class DBProgramDebugValue extends XNamedValue implements Comparable<DBProgramDebugValue>{
     private DBProgramDebugValueModifier modifier;
     private DBProgramDebugProcess debugProcess;
-    private String textPresentation;
+    private String value;
     private String errorMessage;
     private Icon icon;
     private int frameIndex;
@@ -29,7 +29,15 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
     public DBProgramDebugValue(DBProgramDebugProcess debugProcess, DBProgramDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon, int frameIndex) {
         super(variableName);
         this.debugProcess = debugProcess;
-        this.icon = icon == null ? Icons.DBO_VARIABLE : icon;
+        if (icon == null) {
+            if (parentValue == null) {
+                icon = Icons.DBO_VARIABLE;
+            } else {
+                icon = Icons.DBO_ATTRIBUTE;
+            }
+        }
+        this.icon = icon;
+
         this.frameIndex = frameIndex;
         this.childVariableNames = childVariableNames;
         try {
@@ -37,25 +45,28 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
             VariableInfo variableInfo = debugProcess.getDebuggerInterface().getVariableInfo(
                     databaseVariableName.toUpperCase(), frameIndex,
                     debugProcess.getDebugConnection());
-            textPresentation = variableInfo.getValue();
+            value = variableInfo.getValue();
             errorMessage = variableInfo.getError();
             if (childVariableNames != null) {
                 errorMessage = null;
             }
 
-            if (textPresentation == null) {
-                textPresentation = childVariableNames != null ? "[object]" : "null";
+            if (value == null) {
+                value = childVariableNames != null ? "" : "null";
             } else {
-                if (!StringUtil.isNumber(textPresentation)) {
-                    textPresentation = '"' + textPresentation + '"';
+                if (!StringUtil.isNumber(value)) {
+                    value = '"' + value + '"';
                 }
             }
 
             if (errorMessage != null) {
                 errorMessage = errorMessage.toLowerCase();
             }
+            if (childVariableNames != null) {
+                errorMessage = "record";
+            }
         } catch (SQLException e) {
-            textPresentation = "";
+            value = "";
             errorMessage = e.getMessage();
         }
     }
@@ -72,9 +83,13 @@ public class DBProgramDebugValue extends XNamedValue implements Comparable<DBPro
         return errorMessage;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
-        node.setPresentation(icon, errorMessage, textPresentation, childVariableNames != null);
+        node.setPresentation(icon, errorMessage, value, childVariableNames != null);
     }
 
     @Override

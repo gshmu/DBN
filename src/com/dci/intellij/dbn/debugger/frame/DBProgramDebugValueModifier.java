@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.debugger.frame;
 
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.database.common.debug.BasicOperationInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.intellij.xdebugger.frame.XValueModifier;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLException;
 
 public class DBProgramDebugValueModifier extends XValueModifier {
     private DBProgramDebugValue value;
@@ -32,5 +33,11 @@ public class DBProgramDebugValueModifier extends XValueModifier {
         } catch (SQLException e) {
             callback.errorOccurred(e.getMessage());
         }
+    }
+
+    @Nullable
+    @Override
+    public String getInitialValueEditorText() {
+        return value == null ? null : value.getValue();
     }
 }
