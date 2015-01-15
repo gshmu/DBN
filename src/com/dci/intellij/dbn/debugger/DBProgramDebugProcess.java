@@ -52,6 +52,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointManager;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.ui.XDebugTabLayouter;
 
 public class DBProgramDebugProcess extends XDebugProcess {
     private Connection targetConnection;
@@ -396,6 +397,12 @@ public class DBProgramDebugProcess extends XDebugProcess {
                 suspendSession();
             }
         }.start();
+    }
+
+    @NotNull
+    @Override
+    public XDebugTabLayouter createTabLayouter() {
+        return new DBProgramDebugTabLayouter();
     }
 
     @Override
