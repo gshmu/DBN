@@ -551,13 +551,27 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
 
 
-    public BasePsiElement findEnclosingPsiElement(Class<? extends ElementType> type) {
+/*    public BasePsiElement findEnclosingPsiElement(Class<? extends BasePsiElement> type) {
         PsiElement parent = getParent();
         while (parent != null) {
             if (parent instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) parent;
                 if (type.isAssignableFrom(basePsiElement.getElementType().getClass())) {
                     return (BasePsiElement) parent;
+                }
+            }
+            parent = parent.getParent();
+        }
+        return null;
+    }*/
+
+    public <T extends BasePsiElement> T findEnclosingPsiElement(Class<T> psiClass) {
+        PsiElement parent = getParent();
+        while (parent != null) {
+            if (parent instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) parent;
+                if (psiClass.isAssignableFrom(basePsiElement.getClass())) {
+                    return (T) parent;
                 }
             }
             parent = parent.getParent();
