@@ -5,10 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class DatabaseBrowserSettings extends CompositeProjectConfiguration<DatabaseBrowserSettingsForm> {
+public class DatabaseBrowserSettings extends CompositeProjectConfiguration<DatabaseBrowserSettingsForm> implements TopLevelConfig {
     private DatabaseBrowserGeneralSettings generalSettings;
     private DatabaseBrowserFilterSettings filterSettings;
     private DatabaseBrowserSortingSettings sortingSettings;
@@ -41,6 +43,11 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
 
     public String getHelpTopic() {
         return "browserSettings";
+    }
+
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.BROWSER;
     }
 
     @Override

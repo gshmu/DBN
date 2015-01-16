@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -14,17 +16,15 @@ public class OpenSettingsAction extends DumbAwareAction {
         super("Settings", null, Icons.ACTION_SETTINGS);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
-            ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-            DataEditorSettings settings = DataEditorSettings.getInstance(project);
-            globalSettingsDialog.focusSettings(settings);
-            globalSettingsDialog.show();
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            settingsManager.openProjectSettings(ConfigId.DATA_EDITOR);
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Settings");
     }

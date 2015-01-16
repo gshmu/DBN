@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -18,6 +19,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
+import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -95,6 +97,24 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         return projectSettings.getDdlFileSettings();
     }
 
+    public void openProjectSettings(ConfigId configId) {
+        Project project = getProject();
+        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
+        globalSettingsDialog.focusSettings(configId);
+        globalSettingsDialog.show();
+    }
+
+    public void openConnectionSettings(@Nullable ConnectionHandler connectionHandler) {
+        Project project = getProject();
+        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
+        globalSettingsDialog.focusConnectionSettings(connectionHandler);
+        globalSettingsDialog.show();
+    }
+
+    private Project getProject() {
+        return projectSettings.getProject();
+    }
+
     @Override
     public void projectOpened() {
         System.out.println();
@@ -105,7 +125,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     @Override
     public void initComponent() {
-        final Project project = projectSettings.getProject();
+        final Project project = getProject();
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
             new SimpleLaterInvocator() {
@@ -155,6 +175,6 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     @Override
     public void loadState(Element element) {
         projectSettings.readConfiguration(element);
-        projectSettings.getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY, true);
+        getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY, true);
     }
 }

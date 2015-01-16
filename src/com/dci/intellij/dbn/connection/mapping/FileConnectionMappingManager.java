@@ -29,7 +29,8 @@ import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -434,8 +435,8 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = ActionUtil.getProject(e);
             if (project != null) {
-                ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-                globalSettingsDialog.show();
+                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
             }
         }
     }

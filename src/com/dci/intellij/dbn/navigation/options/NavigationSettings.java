@@ -5,10 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.navigation.options.ui.NavigationSettingsForm;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class NavigationSettings extends CompositeProjectConfiguration<NavigationSettingsForm> {
+public class NavigationSettings extends CompositeProjectConfiguration<NavigationSettingsForm> implements TopLevelConfig {
     private ObjectsLookupSettings objectsLookupSettings;
 
     public NavigationSettings(Project project) {
@@ -32,6 +34,11 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
 
     public String getHelpTopic() {
         return "navigationSettings";
+    }
+
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.NAVIGATION;
     }
 
     @Override

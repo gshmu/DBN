@@ -5,10 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorSettingsForm;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditorSettingsForm> {
+public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditorSettingsForm> implements TopLevelConfig {
     private CodeEditorGeneralSettings generalSettings = new CodeEditorGeneralSettings();
 
     public CodeEditorSettings(Project project) {
@@ -31,6 +33,11 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
 
     public String getHelpTopic() {
         return "codeEditor";
+    }
+
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.CODE_EDITOR;
     }
 
     @Override

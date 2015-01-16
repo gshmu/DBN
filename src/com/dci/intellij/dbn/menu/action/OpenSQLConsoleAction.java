@@ -13,7 +13,8 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -89,8 +90,8 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                                 @Override
                                 public void execute() {
                                     if (getOption() == 0) {
-                                        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-                                        globalSettingsDialog.show();
+                                        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                                        settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
                                     }
                                 }
                             });
