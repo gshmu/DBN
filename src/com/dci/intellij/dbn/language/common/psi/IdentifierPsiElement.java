@@ -230,14 +230,16 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
 
         PsiElement psiReferenceElement = resolve();
-        if (psiReferenceElement instanceof DBObject) {
-            DBObject underlyingObject = (DBObject) psiReferenceElement;
-            return resolveActualObject(underlyingObject.getUndisposedElement());
-        }
+        if (psiReferenceElement != this) {
+            if (psiReferenceElement instanceof DBObject) {
+                DBObject underlyingObject = (DBObject) psiReferenceElement;
+                return resolveActualObject(underlyingObject.getUndisposedElement());
+            }
 
-        if (psiReferenceElement instanceof IdentifierPsiElement) {
-            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
-            return identifierPsiElement.resolveUnderlyingObject();
+            if (psiReferenceElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
+                return identifierPsiElement.resolveUnderlyingObject();
+            }
         }
 
         if (isAlias() && isDefinition()) {
