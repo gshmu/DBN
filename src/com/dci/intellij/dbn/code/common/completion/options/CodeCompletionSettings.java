@@ -10,10 +10,12 @@ import com.dci.intellij.dbn.code.common.completion.options.ui.CodeCompletionSett
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCompletionSettingsForm> {
+public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCompletionSettingsForm> implements TopLevelConfig {
     private CodeCompletionFiltersSettings filtersSettings;
     private CodeCompletionSortingSettings sortingSettings;
 
@@ -43,7 +45,12 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
         return "codeEditor";
     }
 
-   private void loadDefaults() {
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.CODE_COMPLETION;
+    }
+
+    private void loadDefaults() {
        try {
            Document document = CommonUtil.loadXmlFile(getClass(), "default-settings.xml");
            Element root = document.getRootElement();

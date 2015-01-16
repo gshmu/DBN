@@ -5,10 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorSettingsForm;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class DataEditorSettings extends CompositeProjectConfiguration<DataEditorSettingsForm> {
+public class DataEditorSettings extends CompositeProjectConfiguration<DataEditorSettingsForm> implements TopLevelConfig {
     private DataEditorPopupSettings popupSettings = new DataEditorPopupSettings();
     private DataEditorValueListPopupSettings valueListPopupSettings = new DataEditorValueListPopupSettings();
     private DataEditorFilterSettings filterSettings = new DataEditorFilterSettings();
@@ -36,6 +38,11 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
 
     public String getHelpTopic() {
         return "dataEditor";
+    }
+
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.DATA_EDITOR;
     }
 
     @Override

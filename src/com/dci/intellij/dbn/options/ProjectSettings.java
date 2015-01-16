@@ -32,6 +32,7 @@ public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
         implements SearchableConfigurable.Parent {
 
+
     private GeneralProjectSettings generalSettings;
     private DatabaseBrowserSettings browserSettings;
     private NavigationSettings navigationSettings;
@@ -150,6 +151,18 @@ public class ProjectSettings
         return getConfigurations();
     }
 
+    @Nullable
+    public Configuration getConfiguration(ConfigId settingsId) {
+        for (Configurable configurable : getConfigurables()) {
+            TopLevelConfig topLevelConfig = (TopLevelConfig) configurable;
+            if (topLevelConfig.getConfigId() == settingsId) {
+                return (Configuration) configurable;
+            }
+        }
+        return null;
+    }
+
+
     /*********************************************************
      *                    Configuration                      *
      *********************************************************/
@@ -205,4 +218,5 @@ public class ProjectSettings
     public void projectClosed() {}
     public void initComponent() {}
     public void disposeComponent() {}
+
 }

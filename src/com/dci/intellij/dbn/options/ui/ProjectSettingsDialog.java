@@ -6,11 +6,12 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.application.ModalityState;
@@ -128,17 +129,17 @@ public class ProjectSettingsDialog extends DBNDialog {
         }
     }
 
-    public void focusConnectionSettings(ConnectionHandler connectionHandler) {
+    public void focusConnectionSettings(@Nullable ConnectionHandler connectionHandler) {
         ProjectSettingsEditorForm globalSettingsEditor = projectSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
             globalSettingsEditor.focusConnectionSettings(connectionHandler);
         }
     }
 
-    public void focusSettings(Configuration configuration) {
+    public void focusSettings(ConfigId configId) {
         ProjectSettingsEditorForm globalSettingsEditor = projectSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
-            globalSettingsEditor.focusSettingsEditor(configuration);
+            globalSettingsEditor.focusSettingsEditor(configId);
         }
     }
 }

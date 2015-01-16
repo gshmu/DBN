@@ -9,10 +9,12 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> {
+public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
     private ConnectionBundle connectionBundle;
     public ConnectionBundleSettings(Project project) {
         super(project);
@@ -35,6 +37,11 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
 
     public String getHelpTopic() {
         return "connectionBundle";
+    }
+
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.CONNECTIONS;
     }
 
     @Override

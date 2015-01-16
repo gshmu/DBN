@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.connection.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -16,12 +18,11 @@ public class OpenConnectionSettingsAction extends DumbAwareAction {
         this.connectionHandler = connectionHandler;
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
-            ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-            globalSettingsDialog.focusConnectionSettings(connectionHandler);
-            globalSettingsDialog.show();
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            settingsManager.openConnectionSettings(connectionHandler);
         }
     }
 }

@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.browser.action;
 
-import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -14,17 +17,17 @@ public class OpenSettingsAction extends AnAction {
         super("Settings", null, Icons.ACTION_SETTINGS);
     }
 
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
-            ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-            DatabaseBrowserSettings databaseBrowserSettings = DatabaseBrowserSettings.getInstance(project);
-            globalSettingsDialog.focusSettings(databaseBrowserSettings);
-            globalSettingsDialog.show();
+            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            ConnectionHandler activeConnection = browserManager.getActiveConnection();
+            settingsManager.openConnectionSettings(activeConnection);
         }
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Settings");
     }

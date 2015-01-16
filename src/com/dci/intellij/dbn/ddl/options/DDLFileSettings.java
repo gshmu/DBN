@@ -5,10 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.ddl.options.ui.DDFileSettingsForm;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
-public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSettingsForm> {
+public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSettingsForm> implements TopLevelConfig {
     private DDLFileExtensionSettings extensionSettings;
     private DDLFileGeneralSettings generalSettings;
 
@@ -42,6 +44,11 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
 
     public String getHelpTopic() {
         return "ddlFileSettings";
+    }
+
+    @Override
+    public ConfigId getConfigId() {
+        return ConfigId.DDL_FILES;
     }
 
     @Override

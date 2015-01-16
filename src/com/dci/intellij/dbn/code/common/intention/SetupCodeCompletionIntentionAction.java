@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.code.common.intention;
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -33,10 +33,8 @@ public class SetupCodeCompletionIntentionAction extends GenericIntentionAction i
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-        CodeCompletionSettings settings = CodeCompletionSettings.getInstance(project);
-        globalSettingsDialog.focusSettings(settings);
-        globalSettingsDialog.show();
+        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+        settingsManager.openProjectSettings(ConfigId.CODE_COMPLETION);
     }
 
     public boolean startInWriteAction() {

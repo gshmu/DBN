@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -158,8 +159,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void selectConnection(ConnectionHandler connectionHandler) {
-        connectionsList.setSelectedValue(connectionHandler.getSettings(), true);
+    public void selectConnection(@Nullable ConnectionHandler connectionHandler) {
+        if (connectionHandler != null) {
+            connectionsList.setSelectedValue(connectionHandler.getSettings(), true);
+        }
     }
 
     public void valueChanged(ListSelectionEvent listSelectionEvent) {

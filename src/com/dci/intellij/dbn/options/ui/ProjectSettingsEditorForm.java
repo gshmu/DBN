@@ -4,11 +4,13 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -19,6 +21,7 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
+import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ui.components.JBScrollPane;
@@ -74,20 +77,26 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         return mainPanel;
     }
 
-    public void focusConnectionSettings(ConnectionHandler connectionHandler) {
+    public void focusConnectionSettings(@Nullable ConnectionHandler connectionHandler) {
         ConnectionBundleSettings connectionSettings = getConfiguration().getConnectionSettings();
         ConnectionBundleSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
         if (settingsEditor != null) {
             settingsEditor.selectConnection(connectionHandler);
-            focusSettingsEditor(connectionSettings);
+            focusSettingsEditor(ConfigId.CONNECTIONS);
         }
     }
 
-    public void focusSettingsEditor(Configuration configuration) {
-        JComponent component = configuration.getSettingsEditor().getComponent();
-        if (component != null) {
-            TabInfo tabInfo = getTabInfo(component);
-            configurationTabs.select(tabInfo, true);
+    public void focusSettingsEditor(ConfigId configId) {
+        Configuration configuration = getConfiguration().getConfiguration(configId);
+        if (configuration != null) {
+            ConfigurationEditorForm settingsEditor = configuration.getSettingsEditor();
+            if (settingsEditor != null) {
+                JComponent component = settingsEditor.getComponent();
+                if (component != null) {
+                    TabInfo tabInfo = getTabInfo(component);
+                    configurationTabs.select(tabInfo, true);
+                }
+            }
         }
     }
 
