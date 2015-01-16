@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,12 +48,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 public class StatementExecutionManager extends AbstractProjectComponent {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
-    private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new THashMap<FileEditor, List<StatementExecutionProcessor>>();
+    private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
 
     private static int sequence;
     public int getNextSequence() {
