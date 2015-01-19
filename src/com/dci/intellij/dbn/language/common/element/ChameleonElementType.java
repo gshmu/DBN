@@ -20,6 +20,10 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBu
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
+import com.intellij.lang.PsiParser;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
 
@@ -34,6 +38,13 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return "";
     }
 
+    @Override
+    protected ASTNode doParseContents(@NotNull final ASTNode chameleon, @NotNull final PsiElement psi) {
+        Project project = psi.getProject();
+        PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, getLanguageDialect(), chameleon.getChars());
+        PsiParser parser = getLanguageDialect().getParserDefinition().getParser();
+        return parser.parse(this, builder).getFirstChildNode();
+    }
 
     @NotNull
     @Override
@@ -250,6 +261,4 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     public boolean matches(TokenType tokenType) {
         return this.equals(tokenType);
     }
-
-
 }
