@@ -15,11 +15,12 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -70,32 +71,19 @@ public class StatementExecutionVariablesBundle implements Disposable{
     }
 
     private DBDataType lookupDataType(ExecVariablePsiElement variablePsiElement) {
-        BasePsiElement parent = variablePsiElement.findEnclosingNamedPsiElement();
-        Set<BasePsiElement> bucket = null;
-        while (parent != null) {
-            bucket = parent.collectObjectPsiElements(bucket, DBObjectType.COLUMN.getFamilyTypes(), IdentifierCategory.REFERENCE);
-            if (bucket != null) {
-                if (bucket.size() > 1) {
-                    return null;
-                }
+        BasePsiElement conditionPsiElement = variablePsiElement.findEnclosingPsiElement(ElementTypeAttribute.CONDITION);
 
-                if (bucket.size() == 1) {
-                    Object psiElement = bucket.toArray()[0];
-                    if (psiElement instanceof IdentifierPsiElement) {
-                        IdentifierPsiElement columnPsiElement = (IdentifierPsiElement) psiElement;
-                        DBObject object = columnPsiElement.resolveUnderlyingObject();
-                        if (object != null && object instanceof DBColumn) {
-                            DBColumn column = (DBColumn) object;
-                            return column.getDataType();
-                        }
-
-                    }
-                    return null;
+        if (conditionPsiElement != null) {
+            ObjectLookupAdapter lookupAdapter = new ObjectLookupAdapter(variablePsiElement, IdentifierCategory.REFERENCE, DBObjectType.COLUMN);
+            BasePsiElement basePsiElement = lookupAdapter.findInScope(conditionPsiElement);
+            if (basePsiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement columnPsiElement = (IdentifierPsiElement) basePsiElement;
+                DBObject object = columnPsiElement.resolveUnderlyingObject();
+                if (object != null && object instanceof DBColumn) {
+                    DBColumn column = (DBColumn) object;
+                    return column.getDataType();
                 }
             }
-
-            parent = parent.findEnclosingNamedPsiElement();
-            if (parent instanceof ExecutablePsiElement) break;
         }
         return null;
     }

@@ -20,6 +20,7 @@ public enum ElementTypeAttribute {
     SUBJECT("SUBJECT", "Statement subject"),
     STATEMENT("STATEMENT", "Statement"),
     CLAUSE("CLAUSE", "Statement clause"),
+    CONDITION("CONDITION", "Condition expression"),
     STRUCTURE("STRUCTURE", "Structure view element"),
     SCOPE_ISOLATION("SCOPE_ISOLATION", "Scope isolation"),
     SCOPE_DEMARCATION("SCOPE_DEMARCATION", "Scope demarcation"),

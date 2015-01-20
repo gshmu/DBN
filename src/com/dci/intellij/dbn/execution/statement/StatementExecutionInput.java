@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
@@ -63,14 +64,14 @@ public class StatementExecutionInput implements Disposable {
     public ExecutablePsiElement getExecutablePsiElement() {
         if (executablePsiElement == null) {
             final ConnectionHandler connectionHandler = getConnectionHandler();
+            final DBSchema currentSchema = getCurrentSchema();
             if (connectionHandler != null) {
                 executablePsiElement = new ReadActionRunner<ExecutablePsiElement>() {
-
                     @Override
                     protected ExecutablePsiElement run() {
                         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
                         DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
-                        PsiFile previewFile = psiFileFactory.createFileFromText("preview", languageDialect, originalStatementText);
+                        DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, originalStatementText, connectionHandler, currentSchema);
 
                         PsiElement firstChild = previewFile.getFirstChild();
                         if (firstChild instanceof ExecutableBundlePsiElement) {
@@ -99,11 +100,13 @@ public class StatementExecutionInput implements Disposable {
 
     public PsiFile createPreviewFile() {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DBLanguageDialect languageDialect = connectionHandler == null ?
+        ConnectionHandler activeConnection = getConnectionHandler();
+        DBSchema currentSchema = getCurrentSchema();
+        DBLanguageDialect languageDialect = activeConnection == null ?
                 SQLLanguage.INSTANCE.getMainLanguageDialect() :
-                connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
-        return psiFileFactory.createFileFromText("preview", languageDialect, executableStatementText);
+                activeConnection.getLanguageDialect(SQLLanguage.INSTANCE);
+
+        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, executableStatementText, activeConnection, currentSchema);
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {

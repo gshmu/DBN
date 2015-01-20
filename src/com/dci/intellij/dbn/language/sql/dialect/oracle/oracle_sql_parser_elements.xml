@@ -6742,7 +6742,7 @@
     <element-def description="Condition" id="condition" wrapping-template="PARENTHESES">
         <token id="000003637" optional="true" type-id="KW_NOT" />
         <iteration id="000003638" original-name="compound_condition" separator="KW_AND, KW_OR" wrapping-template="PARENTHESES">
-            <sequence id="000003639">
+            <sequence id="000003639" attributes="CONDITION">
                 <token id="000003640" optional="true" type-id="KW_NOT" />
                 <one-of id="000003641" wrapping-template="PARENTHESES">
                     <!--element ref-id="logical_conditions"/-->

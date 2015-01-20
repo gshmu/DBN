@@ -22,8 +22,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
-import com.dci.intellij.dbn.language.sql.SQLFile;
+import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -33,7 +35,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
 
@@ -112,6 +113,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
 
     private void updatePreview() {
         ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
+        DBSchema currentSchema = executionProcessor.getCurrentSchema();
         Project project = connectionHandler.getProject();
 
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
@@ -125,22 +127,14 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         }
 
         if (previewDocument == null) {
-            PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
-
-            SQLFile selectStatementFile = (SQLFile)
-                psiFileFactory.createFileFromText(
-                    "filter.sql",
-                    connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE),
-                    previewText);
-
-            selectStatementFile.setActiveConnection(connectionHandler);
-            selectStatementFile.setCurrentSchema(executionProcessor.getCurrentSchema());
+            DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+            DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(project, "preview", languageDialect, previewText, connectionHandler, currentSchema);
             previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
             viewer.setEmbeddedIntoDialogWrapper(true);
             JScrollPane viewerScrollPane = viewer.getScrollPane();
-            SyntaxHighlighter syntaxHighlighter = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
+            SyntaxHighlighter syntaxHighlighter = languageDialect.getSyntaxHighlighter();
             EditorColorsScheme colorsScheme = viewer.getColorsScheme();
             viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
             viewer.setBackgroundColor(colorsScheme.getColor(ColorKey.find("CARET_ROW_COLOR")));

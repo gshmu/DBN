@@ -40,6 +40,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.source.PsiFileImpl;
@@ -302,6 +303,14 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     public double getDatabaseVersion() {
         ConnectionHandler activeConnection = getActiveConnection();
         return activeConnection == null ? ElementLookupContext.MAX_DB_VERSION : activeConnection.getDatabaseVersion();
+    }
+
+    public static DBLanguagePsiFile createFromText(Project project, String fileName, DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, DBSchema currentSchema) {
+        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
+        DBLanguagePsiFile psiFile = (DBLanguagePsiFile) psiFileFactory.createFileFromText(fileName, languageDialect, text);
+        psiFile.setActiveConnection(activeConnection);
+        psiFile.setCurrentSchema(currentSchema);
+        return psiFile;
     }
 
     /********************************************************
