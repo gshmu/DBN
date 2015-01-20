@@ -1,15 +1,16 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class StatementExecutionVariable implements Comparable<StatementExecutionVariable>{
     private GenericDataType dataType;
     private String name;
     private String value;
-    private TemporaryValueProvider temporaryValueProvider;
+    private TemporaryValueProvider previewValueProvider;
     private transient Project project;
 
     public StatementExecutionVariable(ExecVariablePsiElement variablePsiElement) {
@@ -41,12 +42,12 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
         this.value = value;
     }
 
-    public TemporaryValueProvider getTemporaryValueProvider() {
-        return temporaryValueProvider;
+    public TemporaryValueProvider getPreviewValueProvider() {
+        return previewValueProvider;
     }
 
-    public void setTemporaryValueProvider(TemporaryValueProvider temporaryValueProvider) {
-        this.temporaryValueProvider = temporaryValueProvider;
+    public void setPreviewValueProvider(TemporaryValueProvider previewValueProvider) {
+        this.previewValueProvider = previewValueProvider;
     }
 
     @Override

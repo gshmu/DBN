@@ -102,13 +102,13 @@ public class StatementExecutionVariablesBundle implements Disposable{
         return variables;
     }
 
-    public String prepareStatementText(ConnectionHandler connectionHandler, String statementText, boolean temporary) {
+    public String prepareStatementText(ConnectionHandler connectionHandler, String statementText, boolean forPreview) {
         errorMap = null;
         List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(this.variables);
         Collections.sort(variables);
         for (StatementExecutionVariable variable : variables) {
-            String value = temporary ? variable.getTemporaryValueProvider().getValue() : variable.getValue();
-            GenericDataType genericDataType = temporary ? variable.getTemporaryValueProvider().getDataType() : variable.getDataType();
+            String value = forPreview ? variable.getPreviewValueProvider().getValue() : variable.getValue();
+            GenericDataType genericDataType = forPreview ? variable.getPreviewValueProvider().getDataType() : variable.getDataType();
 
             if (!StringUtil.isEmpty(value)) {
                 RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
