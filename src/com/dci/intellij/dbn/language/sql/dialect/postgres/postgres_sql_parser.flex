@@ -22,13 +22,13 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 
 %{
     private TokenTypeBundle tt;
-    private int blockNesting = 0;
-    private int blockStartPos = 0;
 
     public PostgresSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
     }
 
+    private int blockNesting = 0;
+    private int blockStartPos = 0;
     public void startPsqlBlock(boolean incNesting) {
         yybegin(PSQL_BLOCK);
         blockStartPos = zzStartRead;
