@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
-
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -23,6 +13,16 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormImpl implements DBNForm {
@@ -59,9 +59,14 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
 
         textField.addKeyListener(ComboBoxSelectionKeyListener.create(dataTypeComboBox, false));
 
-        variable.setTemporaryValueProvider(new StatementExecutionVariable.TemporaryValueProvider() {
-            public String getValue() { return textField.getText().trim(); }
-            public GenericDataType getDataType() { return (GenericDataType) dataTypeComboBox.getSelectedItem();}
+        variable.setPreviewValueProvider(new StatementExecutionVariable.TemporaryValueProvider() {
+            public String getValue() {
+                return textField.getText().trim();
+            }
+
+            public GenericDataType getDataType() {
+                return (GenericDataType) dataTypeComboBox.getSelectedItem();
+            }
         });
 
         dataTypeComboBox.addActionListener(new ActionListener() {
