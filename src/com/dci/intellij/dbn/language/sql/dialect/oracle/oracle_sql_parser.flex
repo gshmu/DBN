@@ -54,6 +54,7 @@ PSQL_BLOCK_START_CREATE_PACKAGE = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"package"
 PSQL_BLOCK_START_CREATE_TRIGGER = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"trigger"
 PSQL_BLOCK_START_CREATE_METHOD  = {PSQL_BLOCK_START_CREATE_OR_REPLACE}("function"|"procedure")
 PSQL_BLOCK_START_CREATE_TYPE    = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"type"
+PSQL_BLOCK_START_CREATE = {PSQL_BLOCK_START_CREATE_PACKAGE}|{PSQL_BLOCK_START_CREATE_TRIGGER}|{PSQL_BLOCK_START_CREATE_METHOD}|{PSQL_BLOCK_START_CREATE_TYPE}
 PSQL_BLOCK_START_DECLARE = "declare"
 PSQL_BLOCK_START_BEGIN = "begin"
 PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop")";"
@@ -97,9 +98,10 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     {LINE_COMMENT}   {}
     {STRING}         {}
 
-    {PSQL_BLOCK_START_BEGIN} { blockNesting++; }
-    {PSQL_BLOCK_END_IGNORE}  {}
-    {PSQL_BLOCK_END}         { blockNesting--; if (blockNesting == 0) return endPsqlBlock();}
+    {PSQL_BLOCK_START_BEGIN}   { blockNesting++; }
+    {PSQL_BLOCK_START_CREATE}  { blockNesting = 0; yypushback(yylength()); return endPsqlBlock(); }
+    {PSQL_BLOCK_END_IGNORE}    {}
+    {PSQL_BLOCK_END}           { blockNesting--; if (blockNesting == 0) return endPsqlBlock();}
 
     {WHITE_SPACE}+   {}
     \n|\r|.          {}
@@ -117,6 +119,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     {PSQL_BLOCK_START_CREATE_PACKAGE}  { startPsqlBlock(true); }
     {PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
     {PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
+    {PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
     {PSQL_BLOCK_START_DECLARE}         { startPsqlBlock(true); }
     {PSQL_BLOCK_START_BEGIN}           { startPsqlBlock(true); }
 
