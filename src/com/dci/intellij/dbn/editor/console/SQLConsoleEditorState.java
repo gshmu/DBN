@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.editor.console;
 
 import org.jdom.CDATA;
+import org.jdom.Content;
 import org.jdom.Element;
+import org.jdom.Text;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
@@ -40,11 +42,17 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
         if (contentElement != null) {
             currentSchema = contentElement.getAttributeValue("current-schema");
             if (contentElement.getContentSize() > 0) {
-                CDATA cdata = (CDATA) contentElement.getContent(0);
 
-                String content = StringUtil.replace(cdata.getText(), "<br>", "\n");
-                content = StringUtil.replace(content, "<sp>", "  ");
-                this.content = content;
+                Content content = contentElement.getContent(0);
+                String textContent = "";
+                if (content instanceof Text) {
+                    Text cdata = (Text) content;
+                    textContent = cdata.getText();
+                }
+
+                textContent = StringUtil.replace(textContent, "<br>", "\n");
+                textContent = StringUtil.replace(textContent, "<sp>", "  ");
+                this.content = textContent;
             }
         }
     }
