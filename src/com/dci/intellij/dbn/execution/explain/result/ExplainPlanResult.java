@@ -20,18 +20,20 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 
 public class ExplainPlanResult implements ExecutionResult {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
     private ConnectionHandlerRef connectionHandlerRef;
+    private DBObjectRef<DBSchema> currentSchemaRef;
     private String statementText;
     private String resultName;
     private String errorMessage;
@@ -63,6 +65,7 @@ public class ExplainPlanResult implements ExecutionResult {
         DBLanguagePsiFile file = executablePsiElement.getFile();
         ConnectionHandler connectionHandler = file.getConnectionHandler();
         connectionHandlerRef = connectionHandler.getRef();
+        currentSchemaRef = DBObjectRef.from(file.getCurrentSchema());
         virtualFile = file.getVirtualFile();
         this.resultName = executablePsiElement.createSubjectList();
         this.errorMessage = errorMessage;
@@ -79,17 +82,21 @@ public class ExplainPlanResult implements ExecutionResult {
 
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return ConnectionHandlerRef.get(connectionHandlerRef);
+    }
+
+    public DBSchema getCurrentSchema() {
+        return DBObjectRef.get(currentSchemaRef);
     }
 
     @Override
     public PsiFile createPreviewFile() {
-        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        DBLanguageDialect languageDialect = connectionHandler == null ?
+        ConnectionHandler activeConnection = getConnectionHandler();
+        DBSchema currentSchema = getCurrentSchema();
+        DBLanguageDialect languageDialect = activeConnection == null ?
                 SQLLanguage.INSTANCE.getMainLanguageDialect() :
-                connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
-        return psiFileFactory.createFileFromText("preview", languageDialect, statementText);
+                activeConnection.getLanguageDialect(SQLLanguage.INSTANCE);
+        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, activeConnection, currentSchema);
     }
 
     @Override
