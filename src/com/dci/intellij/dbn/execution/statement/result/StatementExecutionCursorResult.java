@@ -38,7 +38,6 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         dataModel = new ResultSetDataModel(resultSet, executionProcessor.getConnectionHandler(), fetchBlockSize);
         resultPanel = new StatementExecutionResultForm(this);
         resultPanel.updateVisibleComponents();
-        resultPanel.getResultTable().setName(getName());
 
         Disposer.register(this, dataModel);
     }
