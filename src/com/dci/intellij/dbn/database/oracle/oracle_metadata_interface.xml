@@ -1761,16 +1761,17 @@
     <statement-execution-processor id="read-log-output" is-prepared-statement="true">
         <statement>
             declare 
-                l_line varchar2(32767);
-                l_done number; 
-                l_buffer long; 
-            begin 
-              loop 
-                exit when l_done = 1;
-                dbms_output.get_line( l_line, l_done ); 
-                l_buffer := l_buffer || l_line || chr(10); 
-              end loop; 
-             :buffer := l_buffer;
+                v_line varchar2(32767);
+                v_done number;
+                v_report_clob CLOB;
+            begin
+              dbms_lob.createtemporary(v_report_clob, TRUE, dbms_lob.call);
+              loop
+                exit when v_done = 1;
+                dbms_output.get_line( v_line, v_done );
+                dbms_lob.append(v_report_clob, TO_CLOB(v_line || chr(10)));
+              end loop;
+             :buffer := v_report_clob;
             end;
         </statement>
     </statement-execution-processor>
