@@ -6,9 +6,12 @@ import com.dci.intellij.dbn.code.common.completion.BasicInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.BracketsInsertHandler;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
+import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
+import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
@@ -52,7 +55,8 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
         }
 
         String userInput = completionContext.getUserInput();
-        if (userInput != null && userInput.length() > 0 && !text.startsWith(userInput)) {
+        CodeCompletionFormatSettings codeCompletionFormatSettings = CodeCompletionSettings.getInstance(project).getFormatSettings();
+        if (StringUtil.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
             char firstInputChar = userInput.charAt(0);
             char firstPresentationChar = text.charAt(0);
 

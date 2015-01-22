@@ -5,6 +5,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFiltersSettings;
+import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
 import com.dci.intellij.dbn.code.common.completion.options.ui.CodeCompletionSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
@@ -16,13 +17,15 @@ import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 
 public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCompletionSettingsForm> implements TopLevelConfig {
-    private CodeCompletionFiltersSettings filtersSettings;
+    private CodeCompletionFiltersSettings filterSettings;
     private CodeCompletionSortingSettings sortingSettings;
+    private CodeCompletionFormatSettings formatSettings;
 
     public CodeCompletionSettings(Project project) {
         super(project);
-        filtersSettings = new CodeCompletionFiltersSettings();
+        filterSettings = new CodeCompletionFiltersSettings();
         sortingSettings = new CodeCompletionSortingSettings();
+        formatSettings = new CodeCompletionFormatSettings();
         loadDefaults();
     }
 
@@ -64,11 +67,15 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     *                         Custom                        *
     *********************************************************/
     public CodeCompletionFiltersSettings getFilterSettings() {
-        return filtersSettings;
+        return filterSettings;
     }
 
     public CodeCompletionSortingSettings getSortingSettings() {
         return sortingSettings;
+    }
+
+    public CodeCompletionFormatSettings getFormatSettings() {
+        return formatSettings;
     }
 
     /*********************************************************
@@ -86,7 +93,8 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
 
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
-                filtersSettings,
-                sortingSettings};
+                filterSettings,
+                sortingSettings,
+                formatSettings};
     }
 }

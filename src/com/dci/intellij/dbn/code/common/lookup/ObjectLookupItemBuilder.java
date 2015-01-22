@@ -5,6 +5,8 @@ import javax.swing.Icon;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
+import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
+import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
@@ -96,7 +98,8 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         }
 
         String userInput = context.getUserInput();
-        if (userInput != null && userInput.length() > 0 && !text.startsWith(userInput)) {
+        CodeCompletionFormatSettings codeCompletionFormatSettings = CodeCompletionSettings.getInstance(project).getFormatSettings();
+        if (StringUtil.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
             char firstInputChar = userInput.charAt(0);
             char firstPresentationChar = text.charAt(0);
 
