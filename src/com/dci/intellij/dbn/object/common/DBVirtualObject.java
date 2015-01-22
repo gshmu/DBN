@@ -97,12 +97,14 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             ObjectLookupAdapter lookupAdapter = new ObjectLookupAdapter(null, IdentifierCategory.REFERENCE, DBObjectType.DATASET);
             Set<BasePsiElement> basePsiElements = lookupAdapter.collectInElement(psiElement, null);
             List<String> tableNames = new ArrayList<String>();
-            for (BasePsiElement basePsiElement : basePsiElements) {
-                if (basePsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                    String tableName = identifierPsiElement.getText().toUpperCase();
-                    if (!tableNames.contains(tableName)) {
-                        tableNames.add(tableName);
+            if (basePsiElements != null) {
+                for (BasePsiElement basePsiElement : basePsiElements) {
+                    if (basePsiElement instanceof IdentifierPsiElement) {
+                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                        String tableName = identifierPsiElement.getText().toUpperCase();
+                        if (!tableNames.contains(tableName)) {
+                            tableNames.add(tableName);
+                        }
                     }
                 }
             }
@@ -148,7 +150,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getChildObjectList(objectType).getObject(name);
     }
 
-    public DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
+    public synchronized DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
         DBObjectListContainer childObjects = initChildObjects();
         DBObjectList<DBObject> objectList = childObjects.getObjectList(objectType);
         if (objectList != null) {
@@ -189,12 +191,14 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                                 }
                             } else {
                                 Set<BasePsiElement> basePsiElements = DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, null);
-                                for (BasePsiElement basePsiElement : basePsiElements) {
-                                    DBObject object = basePsiElement.resolveUnderlyingObject();
-                                    if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
-                                        List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
-                                        for (DBObject column : columns) {
-                                            objectList.addObject(column);
+                                if (basePsiElements != null) {
+                                    for (BasePsiElement basePsiElement : basePsiElements) {
+                                        DBObject object = basePsiElement.resolveUnderlyingObject();
+                                        if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
+                                            List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
+                                            for (DBObject column : columns) {
+                                                objectList.addObject(column);
+                                            }
                                         }
                                     }
                                 }

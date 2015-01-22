@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 
@@ -50,6 +51,7 @@ public abstract class PsiLookupAdapter {
         return scope.collectPsiElements(this, bucket, 100);
     }
 
+    @Nullable
     public final Set<BasePsiElement> collectInElement(BasePsiElement element, Set<BasePsiElement> bucket) {
         return element.collectPsiElements(this, bucket, 100);
     }

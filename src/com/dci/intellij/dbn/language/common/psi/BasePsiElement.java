@@ -389,11 +389,11 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return bucket;
     }
 
-    public abstract BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount);
-    public abstract Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount);
+    public abstract @Nullable BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount);
+    public abstract @Nullable Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount);
 
-    public abstract void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket);
-    public abstract void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket);
+    public abstract void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket);
+    public abstract void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket);
 
 
     public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {

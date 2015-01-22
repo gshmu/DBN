@@ -21,7 +21,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 
 public class StatementExecutionInput implements Disposable {
     private StatementExecutionProcessor executionProcessor;
@@ -69,7 +68,6 @@ public class StatementExecutionInput implements Disposable {
                 executablePsiElement = new ReadActionRunner<ExecutablePsiElement>() {
                     @Override
                     protected ExecutablePsiElement run() {
-                        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
                         DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
                         DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, originalStatementText, connectionHandler, currentSchema);
 
@@ -99,7 +97,6 @@ public class StatementExecutionInput implements Disposable {
     }
 
     public PsiFile createPreviewFile() {
-        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
         ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
         DBLanguageDialect languageDialect = activeConnection == null ?
