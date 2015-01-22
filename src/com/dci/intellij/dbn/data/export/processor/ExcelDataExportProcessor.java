@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.jetbrains.generate.tostring.util.StringUtil;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
@@ -59,7 +60,8 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         Workbook workbook = createWorkbook();
         try {
-            Sheet sheet = workbook.createSheet(model.getTableName());
+            String sheetName = model.getTableName();
+            Sheet sheet = StringUtil.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
 
             if (instructions.createHeader()) {
                 Row headerRow = sheet.createRow(0);

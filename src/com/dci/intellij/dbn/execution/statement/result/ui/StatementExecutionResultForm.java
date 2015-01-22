@@ -57,6 +57,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
+        resultTable.setName(executionResult.getName());
 
         resultScrollPane.setViewportView(resultTable);
         resultScrollPane.getViewport().setBackground(resultTable.getBackground());
@@ -91,6 +92,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
                     resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
                     resultScrollPane.setViewportView(resultTable);
                     resultTable.initTableGutter();
+                    resultTable.setName(executionResult.getName());
                 }
             }
         }.start();
