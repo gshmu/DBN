@@ -17,7 +17,7 @@ public class CodeCompletionLookupItem extends LookupItem {
         setIcon(lookupItemBuilder.getIcon());
         if (lookupItemBuilder.isBold()) setBold();
         setAttribute(LookupItem.TYPE_TEXT_ATTR, lookupItemBuilder.getTextHint());
-        setLookupString(text);
+        addLookupStrings(text.toUpperCase(), text.toLowerCase());
         setPresentableText(NamingUtil.unquote(text));
         CodeCompletionSortingSettings sortingSettings = completionContext.getCodeCompletionSettings().getSortingSettings();
         if (sortingSettings.isEnabled()) {
@@ -33,6 +33,7 @@ public class CodeCompletionLookupItem extends LookupItem {
 
     public CodeCompletionLookupItem(Object source, Icon icon, @NotNull String text, String description, boolean bold) {
         super(source, text);
+        addLookupStrings(text.toUpperCase(), text.toLowerCase());
         setIcon(icon);
         if (bold) setBold();
         setAttribute(LookupItem.TYPE_TEXT_ATTR, description);
