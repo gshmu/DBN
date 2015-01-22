@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import com.dci.intellij.dbn.data.value.ClobValue;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 
 public class ExecutionLogOutput implements CallableStatementOutput{
@@ -11,12 +12,12 @@ public class ExecutionLogOutput implements CallableStatementOutput{
 
     @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
-        statement.registerOutParameter(1, Types.VARCHAR);
+        statement.registerOutParameter(1, Types.CLOB);
     }
 
     @Override
     public void read(CallableStatement statement) throws SQLException {
-        log = statement.getString(1);
+        log = new ClobValue(statement, 1).read();
     }
 
     public String getLog() {
