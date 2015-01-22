@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 
 public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFormatSettingsForm>{
-    private boolean enforceCodeStyleCase = false;
+    private boolean enforceCodeStyleCase = true;
 
     public boolean isEnforceCodeStyleCase() {
         return enforceCodeStyleCase;

@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3674</b>
             <ul>
+                - Code completion enhancements (ignore case lookup / enforce code style case option)<br>
                 - Method execution/debug intention actions (Alt-Enter)<br>
                 - Support for Oracle XMLTYPE editing / method execution<br>
                 - Support for BLOB/CLOB method execution arguments<br>
