@@ -111,6 +111,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      * Lookup routines                 *
      * *******************************************************
      */
+    @Nullable
     public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
         if (lookupAdapter instanceof IdentifierLookupAdapter) {
             IdentifierLookupAdapter identifierLookupAdapter = (IdentifierLookupAdapter) lookupAdapter;
@@ -130,7 +131,8 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     }
 
-    public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {
+    @Nullable
+    public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {
         if (lookupAdapter instanceof IdentifierLookupAdapter) {
             IdentifierLookupAdapter identifierLookupAdapter = (IdentifierLookupAdapter) lookupAdapter;
             if (identifierLookupAdapter.matchesName(this)) {
@@ -144,13 +146,13 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return bucket;
     }
 
-    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {
+    public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
         if (getElementType().is(ElementTypeAttribute.SUBJECT)) {
             bucket.add(this);
         }
     }
 
-    public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {
+    public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {
     }
 
     /**
@@ -644,10 +646,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
         IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
         Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
-        for (BasePsiElement basePsiElement : basePsiElements) {
-            QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
-            if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
-                qualifiedUsages.add(qualifiedIdentifierPsiElement);
+        if (basePsiElements != null) {
+            for (BasePsiElement basePsiElement : basePsiElements) {
+                QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+                if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
+                    qualifiedUsages.add(qualifiedIdentifierPsiElement);
+                }
             }
         }
         return qualifiedUsages;

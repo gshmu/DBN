@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -24,12 +26,14 @@ public class UnknownPsiElement extends BasePsiElement {
         return getTextLength();
     }
 
+    @Nullable
     @Override public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
-    @Override public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
+    @Nullable
+    @Override public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
 
 
-    @Override public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {}
-    @Override public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {}
+    @Override public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {}
+    @Override public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {}
     @Override public NamedPsiElement findNamedPsiElement(String id) {return null;}
     @Override public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {return null;}
     @Override public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) { return null; }

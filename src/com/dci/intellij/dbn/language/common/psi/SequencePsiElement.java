@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -45,6 +47,7 @@ public class SequencePsiElement extends BasePsiElement {
      *                   Lookup routines                     *
      *********************************************************/
 
+    @Nullable
     public BasePsiElement findPsiElement(
             PsiLookupAdapter lookupAdapter,
             int scopeCrossCount) {
@@ -68,9 +71,10 @@ public class SequencePsiElement extends BasePsiElement {
         return null;
     }
 
+    @Nullable
     public Set<BasePsiElement> collectPsiElements(
             PsiLookupAdapter lookupAdapter,
-            Set<BasePsiElement> bucket,
+            @Nullable Set<BasePsiElement> bucket,
             int scopeCrossCount) {
 
         if (lookupAdapter.matches(this)) {
@@ -96,7 +100,7 @@ public class SequencePsiElement extends BasePsiElement {
         return bucket;
     }
 
-    public void collectExecVariablePsiElements(Set<ExecVariablePsiElement> bucket) {
+    public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof BasePsiElement) {
@@ -107,7 +111,7 @@ public class SequencePsiElement extends BasePsiElement {
         }
     }
 
-    public void collectSubjectPsiElements(Set<IdentifierPsiElement> bucket) {
+    public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof BasePsiElement) {
