@@ -32,6 +32,7 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
 
         StringBuilder buffer = new StringBuilder();
         buffer.append("declare\n");
+        buffer.append("     v_timeout BINARY_INTEGER;\n");
 
         // variable declarations
         List<DBArgument> arguments = getArguments();
