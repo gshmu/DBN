@@ -468,8 +468,13 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     private void rollOutDebugger() {
         try {
+            long millis = System.currentTimeMillis();
             while (!getStatus().TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo!= null && !runtimeInfo.isTerminated()) {
                 runtimeInfo = getDebuggerInterface().stepOut(debugConnection);
+                // force closing the target connection
+                if (System.currentTimeMillis() - millis > 20000) {
+                    break;
+                }
             }
         } catch (SQLException e) {
             showErrorDialog(e);
@@ -479,7 +484,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
     private void navigateInEditor(final DBEditableObjectVirtualFile databaseFile, final int line) {
         new SimpleLaterInvocator() {
             public void execute() {
-                // todo review this!!!
+                // todo review this
                 SourceCodeEditor sourceCodeEditor = null;
                 DBSourceCodeVirtualFile mainContentFile = (DBSourceCodeVirtualFile) databaseFile.getMainContentFile();
                 if (databaseFile.getContentFiles().size() > 1) {
