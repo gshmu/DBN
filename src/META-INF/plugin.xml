@@ -34,6 +34,7 @@
                 - Oracle PLSQL Debugger enhancements (support for record variables) <br>
                 - Column parameter info (Ctrl-P) for insert statements<br>
                 - Plugin update notification in configuration dialog<br>
+                - Discontinued support for IntelliJ IDEA 12.x and related products<br>
                 - Minor bug fixes<br>
             </ul>
             <li><b>3.0.3674</b>
