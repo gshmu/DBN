@@ -658,4 +658,16 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="user-sessions" is-prepared-statement="true">
+        <statement>
+            show processlist
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="kill-session" is-prepared-statement="true">
+        <statement>
+            kill {0}
+        </statement>
+    </statement-execution-processor>
+
 </data-dictionary>
