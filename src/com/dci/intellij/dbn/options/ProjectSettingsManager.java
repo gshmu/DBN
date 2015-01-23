@@ -27,6 +27,8 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.wm.IdeFocusManager;
 
 @State(
         name = "DBNavigator.Project.Settings",
@@ -120,28 +122,39 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         final Project project = getProject();
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
-            new SimpleLaterInvocator() {
-                @Override
-                protected void execute() {
-                    MessageUtil.showQuestionDialog(
-                            project, "Default Project Settings",
-                            "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
-                            new String[]{"Yes", "No"}, 0,
-                            new SimpleTask() {
-                                @Override
-                                public void execute() {
-                                    if (getOption() == 0) {
-                                        ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
-                                        Element element = new Element("state");
-                                        defaultProjectSettings.writeConfiguration(element);
-                                        projectSettings.readConfiguration(element);
-                                    }
-
-                                }
-                            });
-                }
-            }.start();
+            if (SystemInfo.isMac) {
+                IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(new Runnable() {
+                    @Override
+                    public void run() {
+                        importProjectSettings(project);}
+                });
+            } else {
+                importProjectSettings(project);
+            }
         }
+    }
+
+    private void importProjectSettings(final Project project) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                MessageUtil.showQuestionDialog(
+                        project, "Default Project Settings",
+                        "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
+                        new String[]{"Yes", "No"}, 0,
+                        new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                if (getOption() == 0) {
+                                    ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
+                                    Element element = new Element("state");
+                                    defaultProjectSettings.writeConfiguration(element);
+                                    projectSettings.readConfiguration(element);
+                                }
+
+                            }
+                        });            }
+        }.start();
     }
 
     @Override

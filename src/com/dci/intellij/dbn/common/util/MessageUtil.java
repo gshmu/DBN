@@ -11,8 +11,6 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.wm.IdeFocusManager;
 
 public class MessageUtil {
 
@@ -86,7 +84,6 @@ public class MessageUtil {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                if (SystemInfo.isMac) IdeFocusManager.getGlobalInstance().requestDefaultFocus(true);
                 int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon);
                 if (callback != null) {
                     callback.setOption(option);
