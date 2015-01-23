@@ -39,7 +39,11 @@ public class ProjectSettingsDialog extends DBNDialog {
     }
 
     protected JComponent createCenterPanel() {
-        return getProjectSettings().createCustomComponent();
+        ProjectSettings projectSettings = getProjectSettings();
+        JComponent component = projectSettings.createCustomComponent();
+        ProjectSettingsEditorForm settingsEditor = projectSettings.getSettingsEditor();
+        if (settingsEditor != null) settingsEditor.setDialog(this);
+        return component;
     }
 
     private ProjectSettings getProjectSettings() {

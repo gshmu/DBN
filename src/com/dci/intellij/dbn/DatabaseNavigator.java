@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn;
 
+import java.net.ProxySelector;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,6 +23,8 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.extensions.PluginId;
+import com.intellij.util.proxy.CommonProxy;
 
 @State(
     name = "DBNavigator.Application.Settings",
@@ -110,13 +113,25 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         return null;
     }
 
+    public String getPluginVersion() {
+        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(PluginId.getId(DatabaseNavigator.DBN_PLUGIN_ID));
+        return pluginDescriptor.getVersion();
+    }
+
     public String getRepositoryPluginVersion() {
         return repositoryPluginVersion;
     }
 
     private class PluginUpdateChecker extends TimerTask {
         public void run() {
+            ProxySelector initialProxySelector = ProxySelector.getDefault();
+            CommonProxy defaultProxy = CommonProxy.getInstance();
+            boolean changeProxy = defaultProxy != initialProxySelector;
             try {
+                if (changeProxy) {
+                    ProxySelector.setDefault(defaultProxy);
+                }
+
                 List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadPluginsFromRepository(null);
                 for (IdeaPluginDescriptor descriptor : descriptors) {
                     if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
@@ -125,6 +140,10 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                     }
                 }
             } catch (Exception e) {
+            } finally {
+                if (changeProxy) {
+                    ProxySelector.setDefault(initialProxySelector);
+                }
             }
         }
     }
