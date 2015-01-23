@@ -83,6 +83,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result
@@ -114,6 +115,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result
@@ -145,6 +147,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result
@@ -176,6 +179,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result
@@ -207,6 +211,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result
@@ -338,6 +343,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result
@@ -369,6 +375,7 @@
                 ? := v_runtime_info.line#;
                 ? := v_runtime_info.terminated;
                 ? := v_runtime_info.breakpoint;
+                ? := v_runtime_info.reason;
 
                 v_message :=
                     case v_result

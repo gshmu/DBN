@@ -10,6 +10,7 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
     private Integer namespace;
     private Integer lineNumber;
     private int breakpointId;
+    private int reason;
     private boolean terminated;
 
     public DebuggerRuntimeInfo() {}
@@ -45,6 +46,10 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         return namespace;
     }
 
+    public int getReason() {
+        return reason;
+    }
+
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.VARCHAR);
         statement.registerOutParameter(2, Types.VARCHAR);
@@ -52,7 +57,8 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         statement.registerOutParameter(4, Types.NUMERIC);
         statement.registerOutParameter(5, Types.NUMERIC);
         statement.registerOutParameter(6, Types.NUMERIC);
-        statement.registerOutParameter(7, Types.VARCHAR);
+        statement.registerOutParameter(7, Types.NUMERIC);
+        statement.registerOutParameter(8, Types.VARCHAR);
     }
 
     public void read(CallableStatement statement) throws SQLException {
@@ -62,7 +68,8 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         lineNumber = Math.max(statement.getInt(4) - 1, 0);
         terminated = statement.getInt(5) != 0;
         breakpointId = statement.getInt(6);
-        error = statement.getString(7);
+        reason = statement.getInt(7);
+        error = statement.getString(8);
     }
 
     @Override
