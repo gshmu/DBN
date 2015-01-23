@@ -96,7 +96,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                 @Override
                 protected void hyperlinkActivated(HyperlinkEvent e) {
                     if (dialog != null) dialog.doCancelAction();
-                    UpdateChecker.updateAndShowResult(generalSettings.getProject(), false, null, UpdateSettings.getInstance());
+                    UpdateChecker.updateAndShowResult(generalSettings.getProject(), false, UpdateSettings.getInstance());
                 }
             });
             pluginUpdateLinkPanel.add(label, BorderLayout.WEST);
