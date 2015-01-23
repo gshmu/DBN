@@ -36,6 +36,7 @@
                 - Oracle PLSQL Debugger enhancements (support for record variables) <br>
                 - Column parameter info (Ctrl-P) for insert statements<br>
                 - Method call parameter info (Ctrl-P)<br>
+                - Plugin update notification in configuration dialog<br>
                 - Minor bug fixes<br>
             </ul>
             <li><b>3.0.3601</b>
