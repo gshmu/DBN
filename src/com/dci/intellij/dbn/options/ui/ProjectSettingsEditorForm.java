@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.options.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.generate.tostring.util.StringUtil;
-
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
@@ -41,6 +31,16 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.PlatformColors;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.generate.tostring.util.StringUtil;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<ProjectSettings> {
     private JPanel mainPanel;
@@ -96,7 +96,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                 @Override
                 protected void hyperlinkActivated(HyperlinkEvent e) {
                     if (dialog != null) dialog.doCancelAction();
-                    UpdateChecker.updateAndShowResult(generalSettings.getProject(), false, UpdateSettings.getInstance());
+                    UpdateChecker.updateAndShowResult(generalSettings.getProject(), false, null, UpdateSettings.getInstance());
                 }
             });
             pluginUpdateLinkPanel.add(label, BorderLayout.WEST);
