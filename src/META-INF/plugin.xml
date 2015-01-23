@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.3674</version>
+    <version>3.0.3789</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,16 +27,20 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.3674</b>
+            <li><b>3.0.3789</b>
             <ul>
                 - Code completion enhancements (ignore case lookup / enforce code style case option)<br>
                 - Method execution/debug intention actions (Alt-Enter)<br>
-                - Support for Oracle XMLTYPE editing / method execution<br>
-                - Support for BLOB/CLOB method execution arguments<br>
                 - Oracle PLSQL Debugger enhancements (support for record variables) <br>
                 - Column parameter info (Ctrl-P) for insert statements<br>
-                - Method call parameter info (Ctrl-P)<br>
                 - Plugin update notification in configuration dialog<br>
+                - Minor bug fixes<br>
+            </ul>
+            <li><b>3.0.3674</b>
+            <ul>
+                - Support for Oracle XMLTYPE editing / method execution<br>
+                - Support for BLOB/CLOB method execution arguments<br>
+                - Method call parameter info (Ctrl-P)<br>
                 - Minor bug fixes<br>
             </ul>
             <li><b>3.0.3601</b>
