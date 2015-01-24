@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -34,6 +24,16 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -152,13 +152,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         executionInput.initExecutionResult(false);
                         executionProcessor.execute(executionInput, false);
                         if (!executionInput.isExecutionCancelled()) {
-                            new SimpleLaterInvocator() {
-                                public void execute() {
-                                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                                    executionManager.addExecutionResult(executionInput.getExecutionResult());
-                                    executionInput.setExecuting(false);
-                                }
-                            }.start();
+                            ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                            executionManager.addExecutionResult(executionInput.getExecutionResult());
+                            executionInput.setExecuting(false);
                         }
 
                         executionInput.setExecutionCancelled(false);
@@ -185,28 +181,14 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         if (method != null) {
             DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
-            try {
-                executionInput.initExecutionResult(true);
-                executionProcessor.execute(executionInput, connection, true);
-                if (!executionInput.isExecutionCancelled()) {
-                    new SimpleLaterInvocator() {
-                        public void execute() {
-                            ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
-                            executionManager.addExecutionResult(executionInput.getExecutionResult());
-                        }
-                    }.start();
-                }
-                executionInput.setExecutionCancelled(false);
-            } catch (final SQLException e) {
-                if (!executionInput.isExecutionCancelled()) {
-                    new SimpleLaterInvocator() {
-                        public void execute() {
-                            MessageUtil.showErrorDialog(getProject(), "Could not execute " + method.getTypeName() + ".", e);
-                        }
-                    }.start();
-                }
-                throw e;
+
+            executionInput.initExecutionResult(true);
+            executionProcessor.execute(executionInput, connection, true);
+            if (!executionInput.isExecutionCancelled()) {
+                ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
+                executionManager.addExecutionResult(executionInput.getExecutionResult());
             }
+            executionInput.setExecutionCancelled(false);
         }
     }
 

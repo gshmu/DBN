@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -33,6 +27,7 @@ import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
@@ -53,6 +48,12 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
 
 public class DBProgramDebugProcess extends XDebugProcess {
     private Connection targetConnection;
@@ -199,7 +200,8 @@ public class DBProgramDebugProcess extends XDebugProcess {
                     // hence the session will hag as debuggable. To avoid this, disable debugging has
                     // to explicitly be called here
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                    MessageUtil.showErrorDialog(getProject(), "Error executing method " + executionInput.getMethodRef().getQualifiedMethodName() + " in debug mode.", e);
+                    DBMethodRef methodRef = executionInput.getMethodRef();
+                    MessageUtil.showErrorDialog(getProject(), "Error executing " + methodRef.getObjectType().getName() + " " + methodRef.getQualifiedMethodName(), e);
                     getDebuggerInterface().disableDebugging(targetConnection);
 
                 } finally {
