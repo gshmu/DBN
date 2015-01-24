@@ -1,9 +1,14 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Date;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.export.DataExportException;
+import com.dci.intellij.dbn.data.export.DataExportFormat;
+import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportModel;
+import com.intellij.openapi.project.Project;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -15,16 +20,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.jetbrains.generate.tostring.util.StringUtil;
 
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.export.DataExportException;
-import com.dci.intellij.dbn.data.export.DataExportFormat;
-import com.dci.intellij.dbn.data.export.DataExportInstructions;
-import com.dci.intellij.dbn.data.export.DataExportModel;
-import com.intellij.openapi.project.Project;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
 
 public class ExcelDataExportProcessor extends DataExportProcessor{
 
