@@ -94,17 +94,17 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         executionSchema = schema.getRef();
     }
 
-    public void setInputValue(DBArgument argument, DBTypeAttribute typeAttribute, String value) {
+    public void setInputValue(@NotNull DBArgument argument, DBTypeAttribute typeAttribute, String value) {
         ArgumentValue argumentValue = getArgumentValue(argument, typeAttribute);
         argumentValue.setValue(value);
     }
 
-    public void setInputValue(DBArgument argument, String value) {
+    public void setInputValue(@NotNull DBArgument argument, String value) {
         ArgumentValue argumentValue = getArgumentValue(argument);
         argumentValue.setValue(value);
     }
 
-    public String getInputValue(DBArgument argument) {
+    public String getInputValue(@NotNull DBArgument argument) {
         ArgumentValue argumentValue = getArgumentValue(argument);
         return (String) argumentValue.getValue();
     }
@@ -118,9 +118,9 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return argumentValues;
     }
 
-    private ArgumentValue getArgumentValue(DBArgument argument) {
+    private ArgumentValue getArgumentValue(@NotNull DBArgument argument) {
         for (ArgumentValue argumentValue : argumentValues) {
-            if (argumentValue.getArgument().equals(argument)) {
+            if (argument.equals(argumentValue.getArgument())) {
                 return argumentValue;
             }
         }
