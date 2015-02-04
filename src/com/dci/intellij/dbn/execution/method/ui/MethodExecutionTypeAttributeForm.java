@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.data.type.DBNativeDataType;
-import com.dci.intellij.dbn.data.type.DataTypeDefinition;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,6 +7,17 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.object.DBArgument;
+import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
+import com.intellij.util.ui.UIUtil;
 
 public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBNForm {
     private JLabel attributeTypeLabel;
@@ -30,6 +29,7 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
     private JComponent inputComponent;
     private JTextField inputTextField;
 
+    private DBArgumentRef argumentRef; // TODO replace with argument ref
     private DBArgument argument;
     private DBTypeAttribute typeAttribute;
     private MethodExecutionForm executionComponent;

@@ -576,10 +576,11 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                     try {
                         List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 
-                        for (int i=0; i<schemas.size(); i++) {
+                        int size = schemas.size();
+                        for (int i=0; i<size; i++) {
                             DBSchema schema = schemas.get(i);
                             progressIndicator.setText("Updating object status in schema " + schema.getName() + "... ");
-                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, schemas.size()));
+                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
                             schema.refreshObjectsStatus();
                         }
                     } catch (SQLException e) {
