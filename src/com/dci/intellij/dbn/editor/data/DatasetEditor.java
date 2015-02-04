@@ -46,6 +46,7 @@ import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -207,6 +208,12 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
         return new TreeBasedStructureViewBuilder() {
+            @NotNull
+            @Override
+            public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+                return createStructureViewModel();
+            }
+
             @NotNull
             public StructureViewModel createStructureViewModel() {
                 // Structure does not change. so it can be cached.
