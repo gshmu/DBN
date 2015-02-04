@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -119,6 +118,13 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     @Override
     public void projectOpened() {
+    }
+
+    @Override
+    public void projectClosed() {}
+
+    @Override
+    public void initComponent() {
         final Project project = getProject();
         Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY);
         if (settingsLoaded == null || !settingsLoaded) {
@@ -135,34 +141,25 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     }
 
     private void importProjectSettings(final Project project) {
-        new SimpleLaterInvocator() {
-            @Override
-            protected void execute() {
-                MessageUtil.showQuestionDialog(
-                        project, "Default Project Settings",
-                        "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
-                        new String[]{"Yes", "No"}, 0,
-                        new SimpleTask() {
-                            @Override
-                            public void execute() {
-                                if (getOption() == 0) {
-                                    ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
-                                    Element element = new Element("state");
-                                    defaultProjectSettings.writeConfiguration(element);
-                                    projectSettings.readConfiguration(element);
-                                }
+        MessageUtil.showQuestionDialog(
+                project, "Default Project Settings",
+                "Do you want to import the default project settings into project \"" + project.getName() + "\"?",
+                new String[]{"Yes", "No"}, 0,
+                new SimpleTask() {
+                    @Override
+                    public void execute() {
+                        if (getOption() == 0) {
+                            ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getProjectSettings();
+                            Element element = new Element("state");
+                            defaultProjectSettings.writeConfiguration(element);
+                            projectSettings.readConfiguration(element);
+                        }
 
-                            }
-                        });            }
-        }.start();
+                    }
+                });
     }
 
-    @Override
-    public void projectClosed() {}
 
-    @Override
-    public void initComponent() {
-    }
 
     @Override
     public void disposeComponent() {}
