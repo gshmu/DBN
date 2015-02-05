@@ -61,7 +61,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         private DBConsoleVirtualFile consoleVirtualFile;
 
         public SelectConsoleAction(ConnectionHandler connectionHandler) {
-            super("Create new...");
+            super("Create New...");
             this.connectionHandler = connectionHandler;
         }
 

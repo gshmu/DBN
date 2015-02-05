@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 public class CreateDDLFileAction extends AnAction {
     private DBSchemaObject object;
     public CreateDDLFileAction(DBSchemaObject object) {
-        super("Create new...", null, Icons.CODE_EDITOR_DDL_FILE_NEW);
+        super("Create New...", null, Icons.CODE_EDITOR_DDL_FILE_NEW);
         this.object = object;
     }
 
