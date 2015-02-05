@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.3791</b>
             <ul>
+                - Support for IntelliJ IDEA latest EAP version (14.1)</br>
                 - Code completion enhancements (ignore case lookup / enforce code style case option)<br>
                 - Method execution/debug intention actions (Alt-Enter)<br>
                 - Oracle PLSQL Debugger enhancements (support for record variables) <br>
