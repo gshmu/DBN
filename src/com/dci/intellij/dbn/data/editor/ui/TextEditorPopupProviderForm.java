@@ -185,7 +185,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class DeleteAction extends AnAction {
         private DeleteAction() {
-            super("Delete content", null, Icons.TEXT_CELL_EDIT_DELETE);
+            super("Delete Content", null, Icons.TEXT_CELL_EDIT_DELETE);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK));
             //registerAction(this);
         }

@@ -7,6 +7,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public class NavigateToSpecificationAction extends NavigationAction{
     public NavigateToSpecificationAction(DBObject parentObject, BasePsiElement navigationElement, DBObjectType objectType) {
-        super("Go to " + objectType.getName() + " specification", Icons.NAVIGATION_GO_TO_SPEC, parentObject, navigationElement);
+        super("Go to " + objectType.getName() + " Specification", Icons.NAVIGATION_GO_TO_SPEC, parentObject, navigationElement);
     }
 }

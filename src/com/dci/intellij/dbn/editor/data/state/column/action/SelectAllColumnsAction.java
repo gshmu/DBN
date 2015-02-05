@@ -9,7 +9,7 @@ public class SelectAllColumnsAction extends AnAction {
     private CheckBoxList list;
 
     public SelectAllColumnsAction(CheckBoxList list)  {
-        super("Select all columns", null, Icons.ACTION_SELECT_ALL);
+        super("Select All Columns", null, Icons.ACTION_SELECT_ALL);
         this.list = list;
     }
 

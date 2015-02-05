@@ -10,7 +10,7 @@ public class OrderAlphabeticallyAction extends AnAction {
     private CheckBoxList list;
 
     public OrderAlphabeticallyAction(CheckBoxList list)  {
-        super("Order columns alphabetically", null, Icons.ACTION_SORT_ALPHA);
+        super("Order Columns Alphabetically", null, Icons.ACTION_SORT_ALPHA);
         this.list = list;
     }
 

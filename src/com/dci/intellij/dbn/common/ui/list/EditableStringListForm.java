@@ -60,7 +60,7 @@ public class EditableStringListForm extends DBNFormImpl{
 
     public class AddRowAction extends AnAction {
         public AddRowAction() {
-            super("Add row", null, Icons.ACTION_ADD);
+            super("Add Row", null, Icons.ACTION_ADD);
         }
 
         public void actionPerformed(@NotNull AnActionEvent e) {
@@ -71,7 +71,7 @@ public class EditableStringListForm extends DBNFormImpl{
     public class DeleteRowAction extends AnAction {
 
         public DeleteRowAction() {
-            super("Delete row", null, Icons.ACTION_REMOVE);
+            super("Delete Row", null, Icons.ACTION_REMOVE);
         }
 
         public void actionPerformed(@NotNull AnActionEvent e) {

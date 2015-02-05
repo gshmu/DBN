@@ -1,17 +1,18 @@
 package com.dci.intellij.dbn.object.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.jetbrains.annotations.NotNull;
 
 public class EditObjectCodeAction extends AnAction {
     private DBSchemaObject object;
     public EditObjectCodeAction(DBSchemaObject object) {
-        super("Edit code", null, Icons.OBEJCT_EDIT_SOURCE);
+        super("Edit Code", null, Icons.OBEJCT_EDIT_SOURCE);
         this.object = object;
         setDefaultIcon(true);
     }

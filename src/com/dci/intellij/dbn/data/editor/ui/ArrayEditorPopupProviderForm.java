@@ -217,7 +217,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class DeleteAction extends AnAction {
         private DeleteAction() {
-            super("Delete content", null, Icons.TEXT_CELL_EDIT_DELETE);
+            super("Delete Content", null, Icons.TEXT_CELL_EDIT_DELETE);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK));
             registerAction(this);
         }
@@ -231,7 +231,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class AddAction extends AnAction {
         private AddAction() {
-            super("Add value", null, Icons.ARRAY_CELL_EDIT_ADD);
+            super("Add Value", null, Icons.ARRAY_CELL_EDIT_ADD);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ADD, InputEvent.CTRL_MASK));
             registerAction(this);
@@ -244,7 +244,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class RemoveAction extends AnAction {
         private RemoveAction() {
-            super("Remove value", null, Icons.ARRAY_CELL_EDIT_REMOVE);
+            super("Remove Value", null, Icons.ARRAY_CELL_EDIT_REMOVE);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK));
             registerAction(this);

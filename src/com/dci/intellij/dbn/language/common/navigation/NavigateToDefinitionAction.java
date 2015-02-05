@@ -7,6 +7,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 
 public class NavigateToDefinitionAction extends NavigationAction{
     public NavigateToDefinitionAction(DBObject parentObject, BasePsiElement navigationElement, DBObjectType objectType) {
-        super("Go to " + objectType.getName() + " definition", Icons.NAVIGATION_GO_TO_BODY, parentObject, navigationElement);
+        super("Go to " + objectType.getName() + " Definition", Icons.NAVIGATION_GO_TO_BODY, parentObject, navigationElement);
     }
 }
