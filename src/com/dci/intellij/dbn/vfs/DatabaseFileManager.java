@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -12,8 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -153,6 +157,26 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
         }
     };
+
+    public void closeDatabaseFiles(@Nullable final List<ConnectionHandler> connectionHandlers, @Nullable final RunnableTask callback) {
+        new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                for (VirtualFile virtualFile : fileEditorManager.getOpenFiles()) {
+                    if (virtualFile instanceof DBVirtualFile) {
+                        DBVirtualFile databaseVirtualFile = (DBVirtualFile) virtualFile;
+                        if (connectionHandlers == null || connectionHandlers.contains(databaseVirtualFile.getConnectionHandler())) {
+                            fileEditorManager.closeFile(virtualFile);
+                        }
+                    }
+                }
+                if (callback != null) {
+                    callback.start();
+                }
+            }
+        }.start();
+    }
 
     @Override
     public void projectClosing(Project project) {

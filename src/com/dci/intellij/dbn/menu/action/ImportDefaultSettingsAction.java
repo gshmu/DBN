@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class LoadDefaultSettingsAction extends DumbAwareAction {
+public class ImportDefaultSettingsAction extends DumbAwareAction {
 
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
@@ -20,7 +20,7 @@ public class LoadDefaultSettingsAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);
         presentation.setEnabled(project != null);
-        presentation.setText("Load default project settings");
+        presentation.setText("Import...");
     }
 
 }

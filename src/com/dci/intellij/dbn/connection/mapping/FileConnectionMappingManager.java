@@ -150,13 +150,17 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             // if the file is an attached ddl file, then resolve the object which it is
             // linked to, and return its database connection
             DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
-            if (schemaObject != null && DatabaseFileSystem.getInstance().isFileOpened(schemaObject)) {
-                return schemaObject.getConnectionHandler();
+            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            if (schemaObject != null) {
+                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                if (connectionHandler != null && databaseFileSystem.isFileOpened(schemaObject)) {
+                    return connectionHandler;
+                }
             }
 
             // lookup connection mappings
             ConnectionHandler connectionHandler = virtualFile.getUserData(ACTIVE_CONNECTION_KEY);
-            if (connectionHandler == null) {
+            if (connectionHandler == null || connectionHandler.isDisposed()) {
                 FileConnectionMapping mapping = lookupMapping(virtualFile);
                 if (mapping != null) {
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);

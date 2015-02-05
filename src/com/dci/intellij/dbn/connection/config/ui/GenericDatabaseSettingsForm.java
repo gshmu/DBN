@@ -1,5 +1,22 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.sql.Driver;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
@@ -20,23 +37,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.sql.Driver;
-import java.util.List;
 
 public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
     private JButton testButton;
@@ -135,10 +135,9 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 if (source == testButton || source == infoButton) {
                     temporaryConfig = new GenericConnectionDatabaseSettings(getConfiguration().getParent());
                     applyChanges(temporaryConfig);
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(configuration.getProject());
 
-                    if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
-                    if (source == infoButton) connectionManager.showConnectionInfo(temporaryConfig, null);
+                    if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
+                    if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig, null);
                 }
                 else if (source == osAuthenticationCheckBox) {
                     userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());

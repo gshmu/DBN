@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
@@ -47,12 +48,12 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     }
 
     public DBObjectList getObjectList() {
-        return virtualFile.getObjectList();
+        return virtualFile == null ? null : virtualFile.getObjectList();
     }
 
     @NotNull
     public VirtualFile getVirtualFile() {
-        return virtualFile;
+        return FailsafeUtil.get(virtualFile);
     }
 
     @Override
@@ -79,7 +80,9 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return getObjectList().getProject();
+        DBObjectList objectList = getObjectList();
+        Project project = objectList == null ? null : objectList.getProject();
+        return FailsafeUtil.get(project);
     }
 
     @NotNull

@@ -208,7 +208,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public byte[] contentsToByteArray() throws IOException {
         DBContentType mainContentType = getMainContentType();
         if (mainContentType != null) {
-            return getContentFile(mainContentType).contentsToByteArray();
+            DBContentVirtualFile contentFile = getContentFile(mainContentType);
+            return contentFile == null ? new byte[0] : contentFile.contentsToByteArray();
         }
         return new byte[0];
     }

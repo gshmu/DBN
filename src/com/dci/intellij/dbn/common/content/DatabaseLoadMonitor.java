@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.common.content;
 
+import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
+
 public class DatabaseLoadMonitor {
-    private static ThreadLocal<Boolean> loadingInBackground = new ThreadLocal<Boolean>();
-    private static ThreadLocal<Boolean> ensureDataLoaded = new ThreadLocal<Boolean>();
+    private static ThreadLocalFlag loadingInBackground = new ThreadLocalFlag(false);
+    private static ThreadLocalFlag ensureDataLoaded = new ThreadLocalFlag(true);
 
     public static boolean isLoadingInBackground() {
         // default false
-        Boolean isLoadingInBackground = loadingInBackground.get();
-        return isLoadingInBackground != null && isLoadingInBackground;
+        return loadingInBackground.get();
     }
 
     public static void startBackgroundLoad() {
@@ -21,8 +22,7 @@ public class DatabaseLoadMonitor {
 
     public static boolean isEnsureDataLoaded() {
         // default true
-        Boolean isEnsureDataLoaded = ensureDataLoaded.get();
-        return isEnsureDataLoaded == null || isEnsureDataLoaded;
+        return ensureDataLoaded.get();
     }
 
     public static void setEnsureDataLoaded(boolean value) {

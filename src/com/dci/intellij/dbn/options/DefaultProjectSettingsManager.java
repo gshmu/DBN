@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -90,12 +92,18 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
                     @Override
                     public void execute() {
                         if (getOption() == 0) {
-                            ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
-                            Element element = new Element("state");
-                            projectSettings.writeConfiguration(element);
-                            defaultProjectSettings.readConfiguration(element);
-                        }
+                            try {
+                                ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
+                                Element element = new Element("state");
+                                projectSettings.writeConfiguration(element);
 
+                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                                defaultProjectSettings.readConfiguration(element);
+                                MessageUtil.showInfoDialog(project, "Project Settings", "Project settings saved as default");
+                            } finally {
+                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
+                            }
+                        }
                     }
                 });
     }
@@ -114,10 +122,19 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
                         @Override
                         public void execute() {
                             if (getOption() == 0) {
-                                ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
-                                Element element = new Element("state");
-                                defaultProjectSettings.writeConfiguration(element);
-                                projectSettings.readConfiguration(element);
+                                try {
+                                    ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
+                                    Element element = new Element("state");
+                                    defaultProjectSettings.writeConfiguration(element);
+
+                                    ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                                    projectSettings.readConfiguration(element);
+                                    ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
+                                    if (listener != null) listener.settingsChanged();
+                                    MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded");
+                                } finally {
+                                    ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
+                                }
                             }
 
                         }
