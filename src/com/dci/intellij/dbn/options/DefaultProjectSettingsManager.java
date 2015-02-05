@@ -86,7 +86,7 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
     public void saveDefaultProjectSettings(final Project project) {
         MessageUtil.showQuestionDialog(
                 project, "Default Project Settings",
-                "This will overwrite your default settings with the current project settings, including database connections configuration. \nAre you sure you want to continue?",
+                "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
                 new SimpleTask() {
                     @Override
@@ -99,7 +99,7 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
 
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                 defaultProjectSettings.readConfiguration(element);
-                                MessageUtil.showInfoDialog(project, "Project Settings", "Project settings saved as default");
+                                MessageUtil.showInfoDialog(project, "Project Settings", "Project settings exported as default");
                             } finally {
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                             }
@@ -131,7 +131,7 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
                                     projectSettings.readConfiguration(element);
                                     ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
                                     if (listener != null) listener.settingsChanged();
-                                    MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded");
+                                    MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                                 } finally {
                                     ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                                 }

@@ -14,7 +14,7 @@ public class DeleteBasicFilterConditionAction extends DumbAwareAction {
 
     public void update(AnActionEvent e) {
         e.getPresentation().setIcon(Icons.DATASET_FILTER_CONDITION_REMOVE);
-        e.getPresentation().setText("Remove condition");
+        e.getPresentation().setText("Remove Condition");
     }
 
     public void actionPerformed(AnActionEvent e) {

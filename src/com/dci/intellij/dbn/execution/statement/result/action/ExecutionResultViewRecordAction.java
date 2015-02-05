@@ -26,6 +26,6 @@ public class ExecutionResultViewRecordAction extends AbstractExecutionResultActi
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         boolean enabled = executionResult != null && executionResult.getResultTable() != null && executionResult.getResultTable().getSelectedColumn() > -1;
         e.getPresentation().setEnabled(enabled);
-        e.getPresentation().setText("View record");
+        e.getPresentation().setText("View Record");
     }
 }

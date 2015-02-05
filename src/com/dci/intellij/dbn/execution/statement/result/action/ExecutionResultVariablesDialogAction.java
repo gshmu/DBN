@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -9,7 +11,6 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class ExecutionResultVariablesDialogAction extends AbstractExecutionResultAction {
     public ExecutionResultVariablesDialogAction() {
@@ -45,6 +46,6 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             }
         }
         e.getPresentation().setVisible(visible);
-        e.getPresentation().setText("Open variables dialog");
+        e.getPresentation().setText("Open Variables Dialog");
     }
 }

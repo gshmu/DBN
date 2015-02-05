@@ -25,6 +25,6 @@ public class ExecutionResultViewStatementAction extends AbstractExecutionResultA
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setText("View SQL statement");
+        e.getPresentation().setText("View SQL Statement");
     }
 }

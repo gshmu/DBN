@@ -20,7 +20,7 @@ public class ExportAsDefaultSettingsAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);
         presentation.setEnabled(project != null);
-        presentation.setText("Export...");
+        presentation.setText("Export Settings...");
     }
 
 }

@@ -20,6 +20,6 @@ public class ExecutionResultFindDataAction extends AbstractExecutionResultAction
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
-        getTemplatePresentation().setText("Find data");
+        getTemplatePresentation().setText("Find Data");
     }
 }

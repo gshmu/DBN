@@ -28,6 +28,6 @@ public class ExpandTreeAction extends DumbAwareAction {
 
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setText("Expand all");
+        presentation.setText("Expand All");
     }
 }

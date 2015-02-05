@@ -29,6 +29,6 @@ public class ShowObjectPropertiesAction extends ToggleAction implements DumbAwar
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setText(isSelected(e) ? "Hide object properties" : "Show object properties");
+        e.getPresentation().setText(isSelected(e) ? "Hide Object Properties" : "Show Object Properties");
     }
 }

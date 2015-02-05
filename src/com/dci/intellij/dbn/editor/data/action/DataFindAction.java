@@ -33,7 +33,7 @@ public class DataFindAction extends AbstractDataEditorAction {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 
         Presentation presentation = e.getPresentation();
-        presentation.setText("Find data...");
+        presentation.setText("Find Data...");
 
         if (datasetEditor == null) {
             presentation.setEnabled(false);

@@ -60,7 +60,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
 
     public void update(@NotNull AnActionEvent e) {
         Editor editor = getEditor(e);
-        e.getPresentation().setText("Compare with database");
+        e.getPresentation().setText("Compare with Database");
         e.getPresentation().setEnabled(editor != null);
     }
 }

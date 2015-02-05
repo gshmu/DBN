@@ -27,6 +27,6 @@ public class CollapseTreeAction extends DumbAwareAction {
 
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setText("Collapse all");
+        presentation.setText("Collapse All");
     }
 }

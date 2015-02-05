@@ -14,7 +14,7 @@ public class DeleteSortingCriteriaAction extends DumbAwareAction {
 
     public void update(AnActionEvent e) {
         e.getPresentation().setIcon(Icons.ACTION_DELETE);
-        e.getPresentation().setText("Remove sorting criteria");
+        e.getPresentation().setText("Remove Sorting Criteria");
     }
 
     public void actionPerformed(AnActionEvent e) {

@@ -31,7 +31,7 @@ public class CreateConsoleEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText("Create console");
+        presentation.setText("Create Console");
     }
 
 

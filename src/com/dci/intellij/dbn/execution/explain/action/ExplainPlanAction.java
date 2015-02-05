@@ -38,7 +38,7 @@ public class ExplainPlanAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_EXPLAIN);
-        presentation.setText("Explain plan for statement");
+        presentation.setText("Explain Plan for Statement");
 
         boolean visible = false;
         boolean enabled = false;

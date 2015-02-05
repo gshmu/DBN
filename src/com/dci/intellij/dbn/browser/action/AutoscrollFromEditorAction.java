@@ -35,7 +35,7 @@ public class AutoscrollFromEditorAction extends ToggleAction implements DumbAwar
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setText("Autoscroll from editor");
+        e.getPresentation().setText("Autoscroll from Editor");
     }
 
 }

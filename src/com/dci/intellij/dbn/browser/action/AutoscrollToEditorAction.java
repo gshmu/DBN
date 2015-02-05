@@ -33,7 +33,7 @@ public class AutoscrollToEditorAction extends ToggleAction implements DumbAware{
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setText("Autoscroll to editor");
+        e.getPresentation().setText("Autoscroll to Editor");
     }
 
 }

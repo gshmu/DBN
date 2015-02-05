@@ -20,7 +20,7 @@ public class ImportDefaultSettingsAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);
         presentation.setEnabled(project != null);
-        presentation.setText("Import...");
+        presentation.setText("Import Settings...");
     }
 
 }

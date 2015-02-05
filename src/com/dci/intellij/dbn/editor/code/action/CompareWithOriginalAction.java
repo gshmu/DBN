@@ -13,16 +13,18 @@ public class CompareWithOriginalAction extends AbstractDiffAction {
     public void actionPerformed(AnActionEvent e) {
         Editor editor = getEditor(e);
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        String content = editor.getDocument().getText();
-        virtualFile.setContent(content);
-        String referenceText = virtualFile.getOriginalContent();
+        if (editor != null && virtualFile != null) {
+            String content = editor.getDocument().getText();
+            virtualFile.setContent(content);
+            String referenceText = virtualFile.getOriginalContent();
 
-        openDiffWindow(e, referenceText, "Original version", "Local version");
+            openDiffWindow(e, referenceText, "Original version", "Local version");
+        }
     }
 
     public void update(AnActionEvent e) {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        e.getPresentation().setText("Compare with original");
+        e.getPresentation().setText("Compare with Original");
         e.getPresentation().setEnabled(virtualFile != null && (
                 virtualFile.getOriginalContent() != null || virtualFile.isModified()));
     }

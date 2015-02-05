@@ -26,6 +26,6 @@ public class ExecutionResultExportAction extends AbstractExecutionResultAction {
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
-        getTemplatePresentation().setText("Export data");
+        getTemplatePresentation().setText("Export Data");
     }
 }

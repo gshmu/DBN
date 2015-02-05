@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -11,10 +15,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
     MethodExecutionBrowserForm browserComponent;
@@ -47,7 +47,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
 
     public synchronized void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        String text = "Select connection";
+        String text = "Select Connection";
         Icon icon = null;
 
         ConnectionHandler connectionHandler = browserComponent.getSettings().getConnectionHandler();

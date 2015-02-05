@@ -63,7 +63,7 @@ public class SaveToFileEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText("Save to file");
+        presentation.setText("Save to File");
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         presentation.setVisible(virtualFile instanceof DBConsoleVirtualFile);
         presentation.setEnabled(true);
