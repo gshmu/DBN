@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,10 +85,11 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     public void readConfiguration(Element element) {
         if (IS_IMPORT_EXPORT_ACTION.get()) {
             Project project = getProject();
+            List<ConnectionHandler> connectionHandlers = connectionBundle.getAllConnectionHandlers();
             if (project instanceof DefaultProject) {
-                DisposerUtil.dispose(connectionBundle.getAllConnectionHandlers());
+                DisposerUtil.dispose(connectionHandlers);
             } else {
-                ConnectionManager.getInstance(project).disposeConnections(null);
+                ConnectionManager.getInstance(project).disposeConnections(connectionHandlers);
             }
         }
 
