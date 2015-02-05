@@ -59,10 +59,10 @@ public class CreateEditDatasetFilterAction extends AbstractDataEditorAction {
                 DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
                 DatasetFilter activeFilter = filterManager.getActiveFilter(dataset);
                 if (activeFilter == null || activeFilter.getFilterType() == DatasetFilterType.NONE) {
-                    presentation.setText("Create filter");
+                    presentation.setText("Create Filter");
                     presentation.setIcon(Icons.DATASET_FILTER_NEW);
                 } else {
-                    presentation.setText("Edit filter");
+                    presentation.setText("Edit Filter");
                     presentation.setIcon(Icons.DATASET_FILTER_EDIT);
                 }
             } else {

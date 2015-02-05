@@ -22,7 +22,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
 
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setText("Delete records");
+        presentation.setText("Delete Records");
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor == null || !datasetEditor.getActiveConnection().isConnected()) {
             presentation.setEnabled(false);

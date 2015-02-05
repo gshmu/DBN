@@ -304,9 +304,9 @@
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentSlowDatabase" class="com.dci.intellij.dbn.menu.action.SimulateSlowDatabaseAction" text="Simulate Slow Database Connection"/>
             </group>
             <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Default Settings" popup="true">
-                <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.OpenDefaultSettingsAction" text="Open default settings"/>
-                <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.ImportDefaultSettingsAction" text="Import"/>
-                <action id="DBNavigator.Actions.MainMenu.SaveDefaultSettings" class="com.dci.intellij.dbn.menu.action.ExportAsDefaultSettingsAction" text="Export"/>
+                <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.OpenDefaultSettingsAction" text="Open Default Settings..."/>
+                <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.ImportDefaultSettingsAction" text="Import Settings..."/>
+                <action id="DBNavigator.Actions.MainMenu.SaveDefaultSettings" class="com.dci.intellij.dbn.menu.action.ExportAsDefaultSettingsAction" text="Export Settings..."/>
             </group>
             <action id="DBNavigator.Actions.MainMenu.OpenSettings" class="com.dci.intellij.dbn.menu.action.OpenSettingsAction" text="Settings"/>
             <action id="DBNavigator.Actions.MainMenu.OpenAbout" class="com.dci.intellij.dbn.menu.action.OpenAboutPageAction" text="About"/>
@@ -316,12 +316,12 @@
             <action id="DBNavigator.Actions.SourceEditor.Save" class="com.dci.intellij.dbn.editor.code.action.SaveChangesAction" text="Source Editor - Save">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl S"/>
             </action>
-            <action id="DBNavigator.Actions.CodeEditor.Rollback" class="com.dci.intellij.dbn.editor.code.action.RevertChangesAction" text="Code Editor - Revert changes"/>
+            <action id="DBNavigator.Actions.CodeEditor.Rollback" class="com.dci.intellij.dbn.editor.code.action.RevertChangesAction" text="Code Editor - Revert Changes"/>
             <action id="DBNavigator.Actions.CodeEditor.Reload" class="com.dci.intellij.dbn.editor.code.action.ReloadSourceCodeAction" text="Code Editor - Reload"/>
             <action id="DBNavigator.Actions.CodeEditor.Compile" class="com.dci.intellij.dbn.editor.code.action.CompileObjectAction" text="Code Editor - Compile"/>
             <separator/>
-            <action id="DBNavigator.Actions.CodeEditor.CompareWithOriginal" class="com.dci.intellij.dbn.editor.code.action.CompareWithOriginalAction" text="Code Editor - Compare with original"/>
-            <action id="DBNavigator.Actions.CodeEditor.CompareWithDatabase" class="com.dci.intellij.dbn.editor.code.action.CompareWithDatabaseAction" text="Code Editor - Compare with database"/>
+            <action id="DBNavigator.Actions.CodeEditor.CompareWithOriginal" class="com.dci.intellij.dbn.editor.code.action.CompareWithOriginalAction" text="Code Editor - Compare with Original"/>
+            <action id="DBNavigator.Actions.CodeEditor.CompareWithDatabase" class="com.dci.intellij.dbn.editor.code.action.CompareWithDatabaseAction" text="Code Editor - Compare with Database"/>
             <separator/>
             <action id="DBNavigator.Actions.CodeEditor.RunMethod" class="com.dci.intellij.dbn.editor.code.action.RunMethodAction" text="Code Editor - Run Method" icon="/img/action/ExecuteMethod.png"/>
             <action id="DBNavigator.Actions.CodeEditor.DebugMethod" class="com.dci.intellij.dbn.editor.code.action.DebugMethodAction" text="Code Editor - Debug Method" icon="/img/action/DebugMethod.png"/>

@@ -6,6 +6,6 @@ public class LookupDatabaseObjectAction extends GoToDatabaseObjectAction{
     @Override
     public void update(AnActionEvent event) {
         super.update(event);
-        event.getPresentation().setText("Lookup database object...");
+        event.getPresentation().setText("Lookup Database Object...");
     }
 }

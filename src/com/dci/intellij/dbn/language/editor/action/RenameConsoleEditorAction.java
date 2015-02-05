@@ -32,7 +32,7 @@ public class RenameConsoleEditorAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         Presentation presentation = e.getPresentation();
-        presentation.setText("Rename console");
+        presentation.setText("Rename Console");
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;

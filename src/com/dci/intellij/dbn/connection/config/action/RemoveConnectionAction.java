@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.connection.config.action;
 
+import javax.swing.JList;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.ListUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JList;
 
 public class RemoveConnectionAction extends DumbAwareAction {
     private ConnectionBundleSettings connectionBundleSettings;
@@ -56,6 +56,6 @@ public class RemoveConnectionAction extends DumbAwareAction {
         int length = list.getSelectedValues().length;
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(length > 0);
-        presentation.setText(length > 1 ? "Remove connections" : "Remove connection");
+        presentation.setText(length > 1 ? "Remove Connections" : "Remove Connection");
     }
 }

@@ -36,7 +36,7 @@ public class ExecuteStatementAction extends AnAction {
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(isEnabled(e));
         presentation.setIcon(Icons.STMT_EXECUTION_RUN);
-        presentation.setText("Execute statement");
+        presentation.setText("Execute Statement");
     }
 
     private boolean isEnabled(AnActionEvent e) {

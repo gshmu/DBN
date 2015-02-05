@@ -24,7 +24,7 @@ public class OpenDefaultSettingsAction extends DumbAwareAction {
         presentation.setEnabled(project != null);
         if (e.getPlace().equals(ActionPlaces.MAIN_MENU)) {
             presentation.setIcon(null);
-            presentation.setText("Open default settings");
+            presentation.setText("Open Default Settings...");
         }
     }
 

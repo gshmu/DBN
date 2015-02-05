@@ -25,6 +25,6 @@ public class ExplainPlanResultViewStatementAction extends AbstractExplainPlanRes
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setText("View SQL statement");
+        e.getPresentation().setText("View SQL Statement");
     }
 }

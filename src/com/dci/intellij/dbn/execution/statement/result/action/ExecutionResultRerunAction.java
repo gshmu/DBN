@@ -27,6 +27,6 @@ public class ExecutionResultRerunAction extends AbstractExecutionResultAction {
                 executionResult.getResultTable() != null &&
                 !executionResult.getResultTable().isLoading());
         
-        presentation.setText("Rerun statement");
+        presentation.setText("Rerun Statement");
     }
 }

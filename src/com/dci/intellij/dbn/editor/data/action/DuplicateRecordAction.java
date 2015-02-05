@@ -21,7 +21,7 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
 
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        presentation.setText("Duplicate record");
+        presentation.setText("Duplicate Record");
         DatasetEditor datasetEditor = getDatasetEditor(e);
 
         if (datasetEditor == null ||!datasetEditor.getActiveConnection().isConnected()) {

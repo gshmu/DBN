@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.code.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -11,7 +13,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class RevertChangesAction extends AbstractSourceCodeEditorAction {
     public RevertChangesAction() {
@@ -54,6 +55,6 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
         DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(virtualFile!= null && virtualFile.isModified());
-        presentation.setText("Revert changes");
+        presentation.setText("Revert Changes");
     }
 }

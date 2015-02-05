@@ -31,6 +31,6 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
 
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
-        presentation.setText("Fetch next records");
+        presentation.setText("Fetch Next Records");
     }
 }

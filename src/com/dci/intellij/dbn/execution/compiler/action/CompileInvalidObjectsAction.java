@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.compiler.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -8,7 +10,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class CompileInvalidObjectsAction extends AnAction {
     private DBSchema schema;
@@ -26,7 +27,7 @@ public class CompileInvalidObjectsAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         CompileTypeOption compileType = getCompilerSettings(schema.getProject()).getCompileTypeOption();
-        String text = "Compile invalid objects";
+        String text = "Compile Invalid Objects";
         if (compileType == CompileTypeOption.DEBUG) text = text + " (Debug)";
         if (compileType == CompileTypeOption.ASK) text = text + "...";
 

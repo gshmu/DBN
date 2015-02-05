@@ -303,7 +303,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
             super.update(e);
             DatasetEditorManager dataEditorManager = getDataEditorManager(e);
             boolean isWrapped = dataEditorManager != null && dataEditorManager.isValuePreviewTextWrapping();
-            e.getPresentation().setText(isWrapped ? "Unwrap content" : "Wrap content");
+            e.getPresentation().setText(isWrapped ? "Unwrap Content" : "Wrap Content");
 
         }
     }

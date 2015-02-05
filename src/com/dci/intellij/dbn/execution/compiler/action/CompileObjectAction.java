@@ -55,8 +55,8 @@ public class CompileObjectAction extends AnAction {
         presentation.setEnabled(isEnabled);
 
         String text =
-                contentType == DBContentType.CODE_SPEC ? "Compile spec" :
-                contentType == DBContentType.CODE_BODY ? "Compile body" : "Compile";
+                contentType == DBContentType.CODE_SPEC ? "Compile Spec" :
+                contentType == DBContentType.CODE_BODY ? "Compile Body" : "Compile";
         if (isDebug) text = text + " (Debug)";
         if (compileType == CompileTypeOption.ASK) text = text + "...";
         presentation.setText(text);
