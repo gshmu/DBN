@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 
 public class HideObjectPropertiesAction extends AnAction{
     public HideObjectPropertiesAction() {
-        super("Hide properties", null, Icons.ACTION_CLOSE);
+        super("Hide Properties", null, Icons.ACTION_CLOSE);
     }
 
     @Override

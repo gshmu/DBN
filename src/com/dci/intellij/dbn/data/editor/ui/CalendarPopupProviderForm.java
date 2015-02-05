@@ -423,7 +423,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
      ******************************************************/
     private class NextMonthAction extends AnAction {
         private NextMonthAction() {
-            super("Next month", null, Icons.CALENDAR_CELL_EDIT_NEXT_MONTH);
+            super("Next Month", null, Icons.CALENDAR_CELL_EDIT_NEXT_MONTH);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK));
             registerAction(this);
         }
@@ -435,7 +435,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     private class NextYearAction extends AnAction {
         private NextYearAction() {
-            super("Next year", null, Icons.CALENDAR_CELL_EDIT_NEXT_YEAR);
+            super("Next Year", null, Icons.CALENDAR_CELL_EDIT_NEXT_YEAR);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
             registerAction(this);
         }
@@ -447,7 +447,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     private class PreviousMonthAction extends AnAction {
         private PreviousMonthAction() {
-            super("Previous month", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_MONTH);
+            super("Previous Month", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_MONTH);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK));
             registerAction(this);
 
@@ -460,7 +460,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     private class PreviousYearAction extends AnAction {
         private PreviousYearAction() {
-            super("Previous year", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_YEAR);
+            super("Previous Year", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_YEAR);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
             registerAction(this);
         }
@@ -472,7 +472,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     private class ClearTimeAction extends AnAction {
         private ClearTimeAction() {
-            super("Reset time", null, Icons.CALENDAR_CELL_EDIT_CLEAR_TIME);
+            super("Reset Time", null, Icons.CALENDAR_CELL_EDIT_CLEAR_TIME);
             registerAction(this);
         }
         public void actionPerformed(AnActionEvent e) {

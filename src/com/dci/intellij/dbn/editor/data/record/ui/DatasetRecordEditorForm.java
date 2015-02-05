@@ -192,7 +192,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
 
     private class FirstRecordAction extends AnAction {
         private FirstRecordAction() {
-            super("First record", null, Icons.DATA_EDITOR_FIRST_RECORD);
+            super("First Record", null, Icons.DATA_EDITOR_FIRST_RECORD);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -209,7 +209,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
 
     private class PreviousRecordAction extends AnAction {
         private PreviousRecordAction() {
-            super("Previus record", null, Icons.DATA_EDITOR_PREVIOUS_RECORD);
+            super("Previous Record", null, Icons.DATA_EDITOR_PREVIOUS_RECORD);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -229,7 +229,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
 
     private class NextRecordAction extends AnAction {
         private NextRecordAction() {
-            super("Next record", null, Icons.DATA_EDITOR_NEXT_RECORD);
+            super("Next Record", null, Icons.DATA_EDITOR_NEXT_RECORD);
         }
 
         public void actionPerformed(AnActionEvent e) {

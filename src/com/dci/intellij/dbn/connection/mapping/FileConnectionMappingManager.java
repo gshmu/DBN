@@ -432,7 +432,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
     private class SetupConnectionAction extends AnAction {
         private SetupConnectionAction() {
-            super("Setup new connection", null, Icons.CONNECTION_NEW);
+            super("Setup New Connection", null, Icons.CONNECTION_NEW);
         }
 
         @Override

@@ -10,7 +10,7 @@ public class RevertColumnOrderAction extends AnAction {
     private CheckBoxList list;
 
     public RevertColumnOrderAction(CheckBoxList list)  {
-        super("Revert column order", null, Icons.ACTION_REVERT_CHANGES);
+        super("Revert Column Order", null, Icons.ACTION_REVERT_CHANGES);
         this.list = list;
     }
 

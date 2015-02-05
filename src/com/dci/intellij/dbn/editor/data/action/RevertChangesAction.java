@@ -9,7 +9,7 @@ public class RevertChangesAction extends AnAction{
     private DatasetEditorModelCell cell;
 
     public RevertChangesAction(DatasetEditorModelCell cell) {
-        super("Revert changes", null, Icons.ACTION_REVERT_CHANGES);
+        super("Revert Changes", null, Icons.ACTION_REVERT_CHANGES);
         this.cell = cell;
     }
 

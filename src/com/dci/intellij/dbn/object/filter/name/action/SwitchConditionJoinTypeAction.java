@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 public class SwitchConditionJoinTypeAction extends ObjectNameFilterAction{
 
     public SwitchConditionJoinTypeAction(ObjectNameFilterSettingsForm settingsForm) {
-        super("Switch join type", Icons.CONDITION_JOIN_TYPE, settingsForm);
+        super("Switch Join Type", Icons.CONDITION_JOIN_TYPE, settingsForm);
     }
 
     @Override
