@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.options.DefaultProjectSettingsManager;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -12,7 +12,7 @@ public class ExportAsDefaultSettingsAction extends DumbAwareAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null && !project.isDisposed()) {
-            DefaultProjectSettingsManager.getInstance().saveDefaultProjectSettings(project);
+            ProjectSettingsManager.getInstance(project).exportToDefaultSettings();
         }
     }
 

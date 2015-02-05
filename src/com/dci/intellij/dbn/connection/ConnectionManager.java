@@ -296,11 +296,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void disposeConnections(@Nullable List<ConnectionHandler> connectionHandlers) {
+    public void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
         final Project project = getProject();
-        if (connectionHandlers == null) {
-            connectionHandlers = getConnectionBundle().getAllConnectionHandlers();
-        }
         final ArrayList<ConnectionHandler> disposeList = new ArrayList<ConnectionHandler>(connectionHandlers);
         connectionHandlers.clear();
 
