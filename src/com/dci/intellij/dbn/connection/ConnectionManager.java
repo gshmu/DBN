@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -12,8 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
@@ -32,11 +35,13 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
+import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -138,8 +143,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
-        Project project = getProject();
+    public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
+        Project project = databaseSettings.getProject();
         try {
             Connection connection = ConnectionUtil.connect(databaseSettings, null, false, null);
             ConnectionUtil.closeConnection(connection);
@@ -181,14 +186,15 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return showConnectionInfo(databaseSettings, detailSettings);
     }
 
-    public ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings, @Nullable ConnectionDetailSettings detailSettings) {
+    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings, @Nullable ConnectionDetailSettings detailSettings) {
+        Project project = databaseSettings.getProject();
         try {
             Map<String, String> connectionProperties = detailSettings == null ? null : detailSettings.getProperties();
             Connection connection = ConnectionUtil.connect(databaseSettings, connectionProperties, false, null);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             ConnectionUtil.closeConnection(connection);
             MessageDialog.showInfoDialog(
-                    getProject(),
+                    project,
                     "Database details for connection \"" + databaseSettings.getName() + "\"",
                     connectionInfo.toString(),
                     false);
@@ -196,7 +202,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
         } catch (Exception e) {
             MessageDialog.showErrorDialog(
-                    getProject(),
+                    project,
                     "Could not connect to \"" + databaseSettings.getName() + "\".",
                     databaseSettings.getConnectionDetails() + "\n\n" + e.getMessage(),
                     false);
@@ -288,6 +294,24 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 }
             }
         }
+    }
+
+    public void disposeConnections(@Nullable List<ConnectionHandler> connectionHandlers) {
+        final Project project = getProject();
+        if (connectionHandlers == null) {
+            connectionHandlers = getConnectionBundle().getAllConnectionHandlers();
+        }
+        final ArrayList<ConnectionHandler> disposeList = new ArrayList<ConnectionHandler>(connectionHandlers);
+        connectionHandlers.clear();
+
+        DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+        databaseFileManager.closeDatabaseFiles(disposeList,
+                new BackgroundTask(project, "Cleaning up connections", true) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        DisposerUtil.dispose(disposeList);
+                    }
+                });
     }
 
     /**********************************************

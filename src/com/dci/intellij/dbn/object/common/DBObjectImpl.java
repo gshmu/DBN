@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -703,10 +704,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return objectRef.hashCode();
     }
 
-    @Nullable
+    @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        Project project = connectionHandler == null ? null : connectionHandler.getProject();
+        return FailsafeUtil.get(project);
     }
 
     public int compareTo(@NotNull Object o) {

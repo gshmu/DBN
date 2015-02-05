@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -242,7 +243,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public Project getProject() {
-        return underlyingPsiElement.getProject();
+        return FailsafeUtil.get(underlyingPsiElement.getProject());
     }
 
     public DBObjectType getObjectType() {

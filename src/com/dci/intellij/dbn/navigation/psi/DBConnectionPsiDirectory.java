@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -46,7 +47,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @NotNull
     public VirtualFile getVirtualFile() {
-        return virtualFile;
+        return FailsafeUtil.get(virtualFile);
     }
 
     @NotNull
@@ -87,7 +88,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return virtualFile.getProject();
+        return FailsafeUtil.get(virtualFile == null ? null : virtualFile.getProject());
     }
 
     @NotNull
@@ -359,7 +360,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     }
 
     public Icon getIcon(int flags) {
-        return virtualFile.getIcon();
+        return virtualFile == null ? null : virtualFile.getIcon();
     }
 
     public <T> T getUserData(@NotNull Key<T> key) {

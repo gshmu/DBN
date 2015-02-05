@@ -1,11 +1,20 @@
 package com.dci.intellij.dbn.navigation.psi;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
@@ -29,13 +38,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     private DBObjectRef objectRef;
@@ -72,7 +74,8 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObject object = getObject();
-        return object == null ? null : object.getProject();
+        Project project = object == null ? null : object.getProject();
+        return FailsafeUtil.get(project);
     }
 
     @NotNull
@@ -335,7 +338,8 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @NotNull
     public VirtualFile getVirtualFile() {
         DBObject object = getObject();
-        return object == null ? null : object.getVirtualFile();
+        DBObjectVirtualFile virtualFile = object == null ? null : object.getVirtualFile();
+        return FailsafeUtil.get(virtualFile);
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {

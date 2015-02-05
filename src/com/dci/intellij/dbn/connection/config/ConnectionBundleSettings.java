@@ -3,18 +3,25 @@ package com.dci.intellij.dbn.connection.config;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
+import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.impl.DefaultProject;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
+    public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
+
     private ConnectionBundle connectionBundle;
     public ConnectionBundleSettings(Project project) {
         super(project);
@@ -75,6 +82,15 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
      *                      Configurable                     *
      *********************************************************/
     public void readConfiguration(Element element) {
+        if (IS_IMPORT_EXPORT_ACTION.get()) {
+            Project project = getProject();
+            if (project instanceof DefaultProject) {
+                DisposerUtil.dispose(connectionBundle.getAllConnectionHandlers());
+            } else {
+                ConnectionManager.getInstance(project).disposeConnections(null);
+            }
+        }
+
         for (Object o : element.getChildren()) {
             Element connectionElement = (Element) o;
             String connectionId = connectionElement.getAttributeValue("id");
@@ -98,7 +114,10 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
                 for (Object c : consolesElement.getChildren()) {
                     Element consoleElement = (Element) c;
                     String consoleName = consoleElement.getAttributeValue("name");
-                    connectionHandler.getConsoleBundle().createConsole(consoleName);
+                    DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
+                    if (consoleBundle.getConsole(consoleName) == null) {
+                        consoleBundle.createConsole(consoleName);
+                    }
                 }
             }
         }

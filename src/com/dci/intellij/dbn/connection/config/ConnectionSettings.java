@@ -68,7 +68,11 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     @Override
     public void readConfiguration(Element element) {
-        connectionId = element.getAttributeValue("id");
+        if (ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get()) {
+            generateNewId();
+        } else {
+            connectionId = element.getAttributeValue("id");
+        }
         super.readConfiguration(element);
     }
 

@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
-
 import java.util.Collection;
 import java.util.Map;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
+
 public class DisposerUtil {
+
 
     public static void dispose(Disposable disposable) {
         if (disposable != null) {

@@ -24,6 +24,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 
 @State(
         name = "DBNavigator.Project.Settings",
@@ -92,6 +93,12 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     public DDLFileSettings getDdlFileSettings() {
         return projectSettings.getDdlFileSettings();
+    }
+
+    public void openDefaultProjectSettings() {
+        Project project = ProjectManager.getInstance().getDefaultProject();
+        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
+        globalSettingsDialog.show();
     }
 
     public void openProjectSettings(ConfigId configId) {

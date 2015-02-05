@@ -303,9 +303,10 @@
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentSlowDatabase" class="com.dci.intellij.dbn.menu.action.SimulateSlowDatabaseAction" text="Simulate Slow Database Connection"/>
             </group>
-            <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Import/Export Settings" popup="true">
-                <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.LoadDefaultSettingsAction" text="Load default project settings"/>
-                <action id="DBNavigator.Actions.MainMenu.SaveDefaultSettings" class="com.dci.intellij.dbn.menu.action.SaveAsDefaultSettingsAction" text="Save project settings as default"/>
+            <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Default Settings" popup="true">
+                <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.OpenDefaultSettingsAction" text="Open default settings"/>
+                <action id="DBNavigator.Actions.MainMenu.LoadDefaultSettings" class="com.dci.intellij.dbn.menu.action.ImportDefaultSettingsAction" text="Import"/>
+                <action id="DBNavigator.Actions.MainMenu.SaveDefaultSettings" class="com.dci.intellij.dbn.menu.action.ExportAsDefaultSettingsAction" text="Export"/>
             </group>
             <action id="DBNavigator.Actions.MainMenu.OpenSettings" class="com.dci.intellij.dbn.menu.action.OpenSettingsAction" text="Settings"/>
             <action id="DBNavigator.Actions.MainMenu.OpenAbout" class="com.dci.intellij.dbn.menu.action.OpenAboutPageAction" text="About"/>
