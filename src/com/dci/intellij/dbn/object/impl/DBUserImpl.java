@@ -16,9 +16,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
-import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -99,16 +99,16 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         return roles.getObjects();
     }
 
-    public boolean hasPrivilege(DBPrivilege privilege) {
+    public boolean hasSystemPrivilege(DBSystemPrivilege systemPrivilege) {
         for (DBGrantedPrivilege grantedPrivilege : getPrivileges()) {
-            if (grantedPrivilege.getPrivilege().equals(privilege)) {
+            if (grantedPrivilege.getPrivilege().equals(systemPrivilege)) {
                 return true;
             }
         }
         DatabaseCompatibilityInterface compatibilityInterface = getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsObjectType(DBObjectType.GRANTED_ROLE.getTypeId())) {
             for (DBGrantedRole grantedRole : getRoles()) {
-                if (grantedRole.getRole().hasPrivilege(privilege)) {
+                if (grantedRole.getRole().hasPrivilege(systemPrivilege)) {
                     return true;
                 }
             }

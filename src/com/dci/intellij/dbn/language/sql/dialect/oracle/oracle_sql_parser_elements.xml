@@ -2682,7 +2682,7 @@
                         </sequence>
                     </sequence>
                     <sequence id="000001505">
-                        <token id="000001506" type-id="KW_RESUMABLE" />
+                        <token id="000001506" type-id="OBJ_RESUMABLE" flavor="keyword"/>
                         <sequence id="000001507" optional="true">
                             <token id="000001508" type-id="KW_TIMEOUT" />
                             <token id="000001509" type-id="INTEGER" />

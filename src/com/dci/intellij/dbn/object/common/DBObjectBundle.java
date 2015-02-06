@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.object.DBCharset;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.Disposable;
@@ -20,7 +21,7 @@ public interface DBObjectBundle extends BrowserTreeNode, Disposable {
     List<DBSchema> getSchemas();
     List<DBUser> getUsers();
     List<DBRole> getRoles();
-    List<DBPrivilege> getPrivileges();
+    List<DBSystemPrivilege> getSystemPrivileges();
     List<DBCharset> getCharsets();
     List<DBNativeDataType> getNativeDataTypes();
     DBNativeDataType getNativeDataType(String name);
@@ -31,6 +32,7 @@ public interface DBObjectBundle extends BrowserTreeNode, Disposable {
     DBUser getUser(String name);
     DBRole getRole(String name);
     DBPrivilege getPrivilege(String name);
+    DBSystemPrivilege getSystemPrivilege(String name);
     DBCharset getCharset(String name);
     List<DBDataType> getCachedDataTypes();
 

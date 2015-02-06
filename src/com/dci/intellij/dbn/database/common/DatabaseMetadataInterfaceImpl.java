@@ -57,8 +57,12 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
 
-    public ResultSet loadPrivileges(Connection connection) throws SQLException {
-        return executeQuery(connection, "privileges");
+    public ResultSet loadSystemPrivileges(Connection connection) throws SQLException {
+        return executeQuery(connection, "system-privileges");
+    }
+
+    public ResultSet loadObjectPrivileges(Connection connection) throws SQLException {
+        return executeQuery(connection, "object-privileges");
     }
 
     public ResultSet loadAllUserPrivileges(Connection connection) throws SQLException {

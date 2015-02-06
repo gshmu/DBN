@@ -458,160 +458,160 @@
         <token index="401" id="KW_RESOURCE" value="resource" type="keyword" reserved="true"/>
         <token index="402" id="KW_RESTRICT" value="restrict" type="keyword"/>
         <token index="403" id="KW_RESTRICTED" value="restricted" type="keyword"/>
-        <token index="404" id="KW_RESUMABLE" value="resumable" type="keyword"/>
-        <token index="405" id="KW_RESUME" value="resume" type="keyword"/>
-        <token index="406" id="KW_RETENTION" value="retention" type="keyword"/>
-        <token index="407" id="KW_RETURN" value="return" type="keyword"/>
-        <token index="408" id="KW_RETURNING" value="returning" type="keyword"/>
-        <token index="409" id="KW_REUSE" value="reuse" type="keyword"/>
-        <token index="410" id="KW_REVERSE" value="reverse" type="keyword"/>
-        <token index="411" id="KW_REVOKE" value="revoke" type="keyword" reserved="true"/>
-        <token index="412" id="KW_REWRITE" value="rewrite" type="keyword"/>
-        <token index="413" id="KW_RIGHT" value="right" type="keyword"/>
-        <token index="414" id="KW_ROLE" value="role" type="keyword"/>
-        <token index="415" id="KW_ROLLBACK" value="rollback" type="keyword"/>
-        <token index="416" id="KW_ROLLUP" value="rollup" type="keyword"/>
-        <token index="417" id="KW_ROW" value="row" type="keyword" reserved="true"/>
-        <token index="418" id="KW_ROWNUM" value="rownum" type="keyword" reserved="true"/>
-        <token index="419" id="KW_ROWS" value="rows" type="keyword" reserved="true"/>
-        <token index="420" id="KW_RULES" value="rules" type="keyword"/>
-        <token index="421" id="KW_SALT" value="salt" type="keyword"/>
-        <token index="422" id="KW_SAMPLE" value="sample" type="keyword"/>
-        <token index="423" id="KW_SAVEPOINT" value="savepoint" type="keyword"/>
-        <token index="424" id="KW_SCAN" value="scan" type="keyword"/>
-        <token index="425" id="KW_SCHEMACHECK" value="schemacheck" type="keyword"/>
-        <token index="426" id="KW_SCN" value="scn" type="keyword"/>
-        <token index="427" id="KW_SCOPE" value="scope" type="keyword"/>
-        <token index="428" id="KW_SECOND" value="second" type="keyword"/>
-        <token index="429" id="KW_SEED" value="seed" type="keyword"/>
-        <token index="430" id="KW_SEGMENT" value="segment" type="keyword"/>
-        <token index="431" id="KW_SELECT" value="select" type="keyword" reserved="true"/>
-        <token index="432" id="KW_SEQUENCE" value="sequence" type="keyword"/>
-        <token index="433" id="KW_SEQUENTIAL" value="sequential" type="keyword"/>
-        <token index="434" id="KW_SERIALIZABLE" value="serializable" type="keyword"/>
-        <token index="435" id="KW_SESSION" value="session" type="keyword" reserved="true"/>
-        <token index="436" id="KW_SET" value="set" type="keyword" reserved="true"/>
-        <token index="437" id="KW_SETS" value="sets" type="keyword"/>
-        <token index="438" id="KW_SETTINGS" value="settings" type="keyword"/>
-        <token index="439" id="KW_SHARE" value="share" type="keyword" reserved="true"/>
-        <token index="440" id="KW_SHARED_POOL" value="shared_pool" type="keyword"/>
-        <token index="441" id="KW_SHOW" value="show" type="keyword"/>
-        <token index="442" id="KW_SHRINK" value="shrink" type="keyword"/>
-        <token index="443" id="KW_SHUTDOWN" value="shutdown" type="keyword"/>
-        <token index="444" id="KW_SIBLINGS" value="siblings" type="keyword"/>
-        <token index="445" id="KW_SID" value="sid" type="keyword"/>
-        <token index="446" id="KW_SIG" value="sig" type="keyword"/>
-        <token index="447" id="KW_SINGLE" value="single" type="keyword"/>
-        <token index="448" id="KW_SIZE" value="size" type="keyword" reserved="true"/>
-        <token index="449" id="KW_SKIP" value="skip" type="keyword"/>
-        <token index="450" id="KW_SMALLFILE" value="smallfile" type="keyword"/>
-        <token index="451" id="KW_SOME" value="some" type="keyword"/>
-        <token index="452" id="KW_SORT" value="sort" type="keyword"/>
-        <token index="453" id="KW_SOURCE" value="source" type="keyword"/>
-        <token index="454" id="KW_SPACE" value="space" type="keyword"/>
-        <token index="455" id="KW_SPECIFICATION" value="specification" type="keyword"/>
-        <token index="456" id="KW_SPFILE" value="spfile" type="keyword"/>
-        <token index="457" id="KW_SPLIT" value="split" type="keyword"/>
-        <token index="458" id="KW_STANDALONE" value="standalone" type="keyword"/>
-        <token index="459" id="KW_STANDBY" value="standby" type="keyword"/>
-        <token index="460" id="KW_START" value="start" type="keyword" reserved="true"/>
-        <token index="461" id="KW_STATISTIC" value="statistic" type="keyword"/>
-        <token index="462" id="KW_STATISTICS" value="statistics" type="keyword"/>
-        <token index="463" id="KW_STOP" value="stop" type="keyword"/>
-        <token index="464" id="KW_STORAGE" value="storage" type="keyword"/>
-        <token index="465" id="KW_STORE" value="store" type="keyword"/>
-        <token index="466" id="KW_SUBMULTISET" value="submultiset" type="keyword"/>
-        <token index="467" id="KW_SUBPARTITION" value="subpartition" type="keyword"/>
-        <token index="468" id="KW_SUBPARTITIONS" value="subpartitions" type="keyword"/>
-        <token index="469" id="KW_SUBSTITUTABLE" value="substitutable" type="keyword"/>
-        <token index="470" id="KW_SUCCESSFUL" value="successful" type="keyword" reserved="true"/>
-        <token index="471" id="KW_SUM_SQUARES_BETWEEN" value="sum_squares_between" type="keyword"/>
-        <token index="472" id="KW_SUM_SQUARES_WITHIN" value="sum_squares_within" type="keyword"/>
-        <token index="473" id="KW_SUPPLEMENTAL" value="supplemental" type="keyword"/>
-        <token index="474" id="KW_SUSPEND" value="suspend" type="keyword"/>
-        <token index="475" id="KW_SWITCH" value="switch" type="keyword"/>
-        <token index="476" id="KW_SWITCHOVER" value="switchover" type="keyword"/>
-        <token index="477" id="KW_SYNONYM" value="synonym" type="keyword" reserved="true"/>
-        <token index="478" id="KW_SYSTEM" value="system" type="keyword"/>
-        <token index="479" id="KW_TABLE" value="table" type="keyword" reserved="true"/>
-        <token index="480" id="KW_TABLES" value="tables" type="keyword"/>
-        <token index="481" id="KW_TABLESPACE" value="tablespace" type="keyword"/>
-        <token index="482" id="KW_TEMPFILE" value="tempfile" type="keyword"/>
-        <token index="483" id="KW_TEMPLATE" value="template" type="keyword"/>
-        <token index="484" id="KW_TEMPORARY" value="temporary" type="keyword"/>
-        <token index="485" id="KW_TEST" value="test" type="keyword"/>
-        <token index="486" id="KW_THAN" value="than" type="keyword"/>
-        <token index="487" id="KW_THEN" value="then" type="keyword" reserved="true"/>
-        <token index="488" id="KW_THREAD" value="thread" type="keyword"/>
-        <token index="489" id="KW_THROUGH" value="through" type="keyword"/>
-        <token index="490" id="KW_TIME" value="time" type="keyword"/>
-        <token index="491" id="KW_TIME_ZONE" value="time_zone" type="keyword"/>
-        <token index="492" id="KW_TIMEOUT" value="timeout" type="keyword"/>
-        <token index="493" id="KW_TIMEZONE_ABBR" value="timezone_abbr" type="keyword"/>
-        <token index="494" id="KW_TIMEZONE_HOUR" value="timezone_hour" type="keyword"/>
-        <token index="495" id="KW_TIMEZONE_MINUTE" value="timezone_minute" type="keyword"/>
-        <token index="496" id="KW_TIMEZONE_REGION" value="timezone_region" type="keyword"/>
-        <token index="497" id="KW_TO" value="to" type="keyword" reserved="true"/>
-        <token index="498" id="KW_TRACE" value="trace" type="keyword"/>
-        <token index="499" id="KW_TRACKING" value="tracking" type="keyword"/>
-        <token index="500" id="KW_TRAILING" value="trailing" type="keyword"/>
-        <token index="501" id="KW_TRANSACTION" value="transaction" type="keyword"/>
-        <token index="502" id="KW_TRIGGER" value="trigger" type="keyword" reserved="true"/>
-        <token index="503" id="KW_TRUNCATE" value="truncate" type="keyword"/>
-        <token index="504" id="KW_TRUSTED" value="trusted" type="keyword"/>
-        <token index="505" id="KW_TWO_SIDED_PROB" value="two_sided_prob" type="keyword"/>
-        <token index="506" id="KW_TWO_SIDED_SIG" value="two_sided_sig" type="keyword"/>
-        <token index="507" id="KW_TYPE" value="type" type="keyword"/>
-        <token index="508" id="KW_U_STATISTIC" value="u_statistic" type="keyword"/>
-        <token index="509" id="KW_UID" value="uid" type="keyword" reserved="true"/>
-        <token index="510" id="KW_UNARCHIVED" value="unarchived" type="keyword"/>
-        <token index="511" id="KW_UNBOUNDED" value="unbounded" type="keyword"/>
-        <token index="512" id="KW_UNDER" value="under" type="keyword"/>
-        <token index="513" id="KW_UNDER_PATH" value="under_path" type="keyword"/>
-        <token index="514" id="KW_UNDROP" value="undrop" type="keyword"/>
-        <token index="515" id="KW_UNION" value="union" type="keyword" reserved="true"/>
-        <token index="516" id="KW_UNIQUE" value="unique" type="keyword" reserved="true"/>
-        <token index="517" id="KW_UNLIMITED" value="unlimited" type="keyword"/>
-        <token index="518" id="KW_UNPIVOT" value="unpivot" type="keyword"/>
-        <token index="519" id="KW_UNPROTECTED" value="unprotected" type="keyword"/>
-        <token index="520" id="KW_UNQUIESCE" value="unquiesce" type="keyword"/>
-        <token index="521" id="KW_UNRECOVERABLE" value="unrecoverable" type="keyword"/>
-        <token index="522" id="KW_UNTIL" value="until" type="keyword"/>
-        <token index="523" id="KW_UNUSABLE" value="unusable" type="keyword"/>
-        <token index="524" id="KW_UNUSED" value="unused" type="keyword"/>
-        <token index="525" id="KW_UPDATE" value="update" type="keyword" reserved="true"/>
-        <token index="526" id="KW_UPDATED" value="updated" type="keyword"/>
-        <token index="527" id="KW_UPGRADE" value="upgrade" type="keyword"/>
-        <token index="528" id="KW_UPSERT" value="upsert" type="keyword"/>
-        <token index="529" id="KW_USAGE" value="usage" type="keyword"/>
-        <token index="530" id="KW_USER" value="user" type="keyword" reserved="true"/>
-        <token index="531" id="KW_USING" value="using" type="keyword"/>
-        <token index="532" id="KW_VALIDATE" value="validate" type="keyword" reserved="true"/>
-        <token index="533" id="KW_VALIDATION" value="validation" type="keyword"/>
-        <token index="534" id="KW_VALUES" value="values" type="keyword" reserved="true"/>
-        <token index="535" id="KW_VARRAY" value="varray" type="keyword"/>
-        <token index="536" id="KW_VERSION" value="version" type="keyword"/>
-        <token index="537" id="KW_VERSIONS" value="versions" type="keyword"/>
-        <token index="538" id="KW_VIEW" value="view" type="keyword" reserved="true"/>
-        <token index="539" id="KW_WAIT" value="wait" type="keyword"/>
-        <token index="540" id="KW_WELLFORMED" value="wellformed" type="keyword"/>
-        <token index="541" id="KW_WHEN" value="when" type="keyword"/>
-        <token index="542" id="KW_WHENEVER" value="whenever" type="keyword" reserved="true"/>
-        <token index="543" id="KW_WHERE" value="where" type="keyword" reserved="true"/>
-        <token index="544" id="KW_WITH" value="with" type="keyword" reserved="true"/>
-        <token index="545" id="KW_WITHIN" value="within" type="keyword"/>
-        <token index="546" id="KW_WITHOUT" value="without" type="keyword"/>
-        <token index="547" id="KW_WORK" value="work" type="keyword"/>
-        <token index="548" id="KW_WRITE" value="write" type="keyword"/>
-        <token index="549" id="KW_XML" value="xml" type="keyword"/>
-        <token index="550" id="KW_XMLNAMESPACES" value="xmlnamespaces" type="keyword"/>
-        <token index="551" id="KW_XMLSCHEMA" value="xmlschema" type="keyword"/>
-        <token index="552" id="KW_XMLTYPE" value="xmltype" type="keyword"/>
-        <token index="553" id="KW_YEAR" value="year" type="keyword"/>
-        <token index="554" id="KW_YES" value="yes" type="keyword"/>
-        <token index="555" id="KW_ZONE" value="zone" type="keyword"/>
-        <token index="556" id="KW_FALSE" value="false" type="keyword" reserved="true"/>
-        <token index="557" id="KW_TRUE" value="true" type="keyword" reserved="true"/>
+        <token index="404" id="KW_RESUME" value="resume" type="keyword"/>
+        <token index="405" id="KW_RETENTION" value="retention" type="keyword"/>
+        <token index="406" id="KW_RETURN" value="return" type="keyword"/>
+        <token index="407" id="KW_RETURNING" value="returning" type="keyword"/>
+        <token index="408" id="KW_REUSE" value="reuse" type="keyword"/>
+        <token index="409" id="KW_REVERSE" value="reverse" type="keyword"/>
+        <token index="410" id="KW_REVOKE" value="revoke" type="keyword" reserved="true"/>
+        <token index="411" id="KW_REWRITE" value="rewrite" type="keyword"/>
+        <token index="412" id="KW_RIGHT" value="right" type="keyword"/>
+        <token index="413" id="KW_ROLE" value="role" type="keyword"/>
+        <token index="414" id="KW_ROLLBACK" value="rollback" type="keyword"/>
+        <token index="415" id="KW_ROLLUP" value="rollup" type="keyword"/>
+        <token index="416" id="KW_ROW" value="row" type="keyword" reserved="true"/>
+        <token index="417" id="KW_ROWNUM" value="rownum" type="keyword" reserved="true"/>
+        <token index="418" id="KW_ROWS" value="rows" type="keyword" reserved="true"/>
+        <token index="419" id="KW_RULES" value="rules" type="keyword"/>
+        <token index="420" id="KW_SALT" value="salt" type="keyword"/>
+        <token index="421" id="KW_SAMPLE" value="sample" type="keyword"/>
+        <token index="422" id="KW_SAVEPOINT" value="savepoint" type="keyword"/>
+        <token index="423" id="KW_SCAN" value="scan" type="keyword"/>
+        <token index="424" id="KW_SCHEMACHECK" value="schemacheck" type="keyword"/>
+        <token index="425" id="KW_SCN" value="scn" type="keyword"/>
+        <token index="426" id="KW_SCOPE" value="scope" type="keyword"/>
+        <token index="427" id="KW_SECOND" value="second" type="keyword"/>
+        <token index="428" id="KW_SEED" value="seed" type="keyword"/>
+        <token index="429" id="KW_SEGMENT" value="segment" type="keyword"/>
+        <token index="430" id="KW_SELECT" value="select" type="keyword" reserved="true"/>
+        <token index="431" id="KW_SEQUENCE" value="sequence" type="keyword"/>
+        <token index="432" id="KW_SEQUENTIAL" value="sequential" type="keyword"/>
+        <token index="433" id="KW_SERIALIZABLE" value="serializable" type="keyword"/>
+        <token index="434" id="KW_SESSION" value="session" type="keyword" reserved="true"/>
+        <token index="435" id="KW_SET" value="set" type="keyword" reserved="true"/>
+        <token index="436" id="KW_SETS" value="sets" type="keyword"/>
+        <token index="437" id="KW_SETTINGS" value="settings" type="keyword"/>
+        <token index="438" id="KW_SHARE" value="share" type="keyword" reserved="true"/>
+        <token index="439" id="KW_SHARED_POOL" value="shared_pool" type="keyword"/>
+        <token index="440" id="KW_SHOW" value="show" type="keyword"/>
+        <token index="441" id="KW_SHRINK" value="shrink" type="keyword"/>
+        <token index="442" id="KW_SHUTDOWN" value="shutdown" type="keyword"/>
+        <token index="443" id="KW_SIBLINGS" value="siblings" type="keyword"/>
+        <token index="444" id="KW_SID" value="sid" type="keyword"/>
+        <token index="445" id="KW_SIG" value="sig" type="keyword"/>
+        <token index="446" id="KW_SINGLE" value="single" type="keyword"/>
+        <token index="447" id="KW_SIZE" value="size" type="keyword" reserved="true"/>
+        <token index="448" id="KW_SKIP" value="skip" type="keyword"/>
+        <token index="449" id="KW_SMALLFILE" value="smallfile" type="keyword"/>
+        <token index="450" id="KW_SOME" value="some" type="keyword"/>
+        <token index="451" id="KW_SORT" value="sort" type="keyword"/>
+        <token index="452" id="KW_SOURCE" value="source" type="keyword"/>
+        <token index="453" id="KW_SPACE" value="space" type="keyword"/>
+        <token index="454" id="KW_SPECIFICATION" value="specification" type="keyword"/>
+        <token index="455" id="KW_SPFILE" value="spfile" type="keyword"/>
+        <token index="456" id="KW_SPLIT" value="split" type="keyword"/>
+        <token index="457" id="KW_STANDALONE" value="standalone" type="keyword"/>
+        <token index="458" id="KW_STANDBY" value="standby" type="keyword"/>
+        <token index="459" id="KW_START" value="start" type="keyword" reserved="true"/>
+        <token index="460" id="KW_STATISTIC" value="statistic" type="keyword"/>
+        <token index="461" id="KW_STATISTICS" value="statistics" type="keyword"/>
+        <token index="462" id="KW_STOP" value="stop" type="keyword"/>
+        <token index="463" id="KW_STORAGE" value="storage" type="keyword"/>
+        <token index="464" id="KW_STORE" value="store" type="keyword"/>
+        <token index="465" id="KW_SUBMULTISET" value="submultiset" type="keyword"/>
+        <token index="466" id="KW_SUBPARTITION" value="subpartition" type="keyword"/>
+        <token index="467" id="KW_SUBPARTITIONS" value="subpartitions" type="keyword"/>
+        <token index="468" id="KW_SUBSTITUTABLE" value="substitutable" type="keyword"/>
+        <token index="469" id="KW_SUCCESSFUL" value="successful" type="keyword" reserved="true"/>
+        <token index="470" id="KW_SUM_SQUARES_BETWEEN" value="sum_squares_between" type="keyword"/>
+        <token index="471" id="KW_SUM_SQUARES_WITHIN" value="sum_squares_within" type="keyword"/>
+        <token index="472" id="KW_SUPPLEMENTAL" value="supplemental" type="keyword"/>
+        <token index="473" id="KW_SUSPEND" value="suspend" type="keyword"/>
+        <token index="474" id="KW_SWITCH" value="switch" type="keyword"/>
+        <token index="475" id="KW_SWITCHOVER" value="switchover" type="keyword"/>
+        <token index="476" id="KW_SYNONYM" value="synonym" type="keyword" reserved="true"/>
+        <token index="477" id="KW_SYSTEM" value="system" type="keyword"/>
+        <token index="478" id="KW_TABLE" value="table" type="keyword" reserved="true"/>
+        <token index="479" id="KW_TABLES" value="tables" type="keyword"/>
+        <token index="480" id="KW_TABLESPACE" value="tablespace" type="keyword"/>
+        <token index="481" id="KW_TEMPFILE" value="tempfile" type="keyword"/>
+        <token index="482" id="KW_TEMPLATE" value="template" type="keyword"/>
+        <token index="483" id="KW_TEMPORARY" value="temporary" type="keyword"/>
+        <token index="484" id="KW_TEST" value="test" type="keyword"/>
+        <token index="485" id="KW_THAN" value="than" type="keyword"/>
+        <token index="486" id="KW_THEN" value="then" type="keyword" reserved="true"/>
+        <token index="487" id="KW_THREAD" value="thread" type="keyword"/>
+        <token index="488" id="KW_THROUGH" value="through" type="keyword"/>
+        <token index="489" id="KW_TIME" value="time" type="keyword"/>
+        <token index="490" id="KW_TIME_ZONE" value="time_zone" type="keyword"/>
+        <token index="491" id="KW_TIMEOUT" value="timeout" type="keyword"/>
+        <token index="492" id="KW_TIMEZONE_ABBR" value="timezone_abbr" type="keyword"/>
+        <token index="493" id="KW_TIMEZONE_HOUR" value="timezone_hour" type="keyword"/>
+        <token index="494" id="KW_TIMEZONE_MINUTE" value="timezone_minute" type="keyword"/>
+        <token index="495" id="KW_TIMEZONE_REGION" value="timezone_region" type="keyword"/>
+        <token index="496" id="KW_TO" value="to" type="keyword" reserved="true"/>
+        <token index="497" id="KW_TRACE" value="trace" type="keyword"/>
+        <token index="498" id="KW_TRACKING" value="tracking" type="keyword"/>
+        <token index="499" id="KW_TRAILING" value="trailing" type="keyword"/>
+        <token index="500" id="KW_TRANSACTION" value="transaction" type="keyword"/>
+        <token index="501" id="KW_TRIGGER" value="trigger" type="keyword" reserved="true"/>
+        <token index="502" id="KW_TRUNCATE" value="truncate" type="keyword"/>
+        <token index="503" id="KW_TRUSTED" value="trusted" type="keyword"/>
+        <token index="504" id="KW_TWO_SIDED_PROB" value="two_sided_prob" type="keyword"/>
+        <token index="505" id="KW_TWO_SIDED_SIG" value="two_sided_sig" type="keyword"/>
+        <token index="506" id="KW_TYPE" value="type" type="keyword"/>
+        <token index="507" id="KW_U_STATISTIC" value="u_statistic" type="keyword"/>
+        <token index="508" id="KW_UID" value="uid" type="keyword" reserved="true"/>
+        <token index="509" id="KW_UNARCHIVED" value="unarchived" type="keyword"/>
+        <token index="510" id="KW_UNBOUNDED" value="unbounded" type="keyword"/>
+        <token index="511" id="KW_UNDER" value="under" type="keyword"/>
+        <token index="512" id="KW_UNDER_PATH" value="under_path" type="keyword"/>
+        <token index="513" id="KW_UNDROP" value="undrop" type="keyword"/>
+        <token index="514" id="KW_UNION" value="union" type="keyword" reserved="true"/>
+        <token index="515" id="KW_UNIQUE" value="unique" type="keyword" reserved="true"/>
+        <token index="516" id="KW_UNLIMITED" value="unlimited" type="keyword"/>
+        <token index="517" id="KW_UNPIVOT" value="unpivot" type="keyword"/>
+        <token index="518" id="KW_UNPROTECTED" value="unprotected" type="keyword"/>
+        <token index="519" id="KW_UNQUIESCE" value="unquiesce" type="keyword"/>
+        <token index="520" id="KW_UNRECOVERABLE" value="unrecoverable" type="keyword"/>
+        <token index="521" id="KW_UNTIL" value="until" type="keyword"/>
+        <token index="522" id="KW_UNUSABLE" value="unusable" type="keyword"/>
+        <token index="523" id="KW_UNUSED" value="unused" type="keyword"/>
+        <token index="524" id="KW_UPDATE" value="update" type="keyword" reserved="true"/>
+        <token index="525" id="KW_UPDATED" value="updated" type="keyword"/>
+        <token index="526" id="KW_UPGRADE" value="upgrade" type="keyword"/>
+        <token index="527" id="KW_UPSERT" value="upsert" type="keyword"/>
+        <token index="528" id="KW_USAGE" value="usage" type="keyword"/>
+        <token index="529" id="KW_USER" value="user" type="keyword" reserved="true"/>
+        <token index="530" id="KW_USING" value="using" type="keyword"/>
+        <token index="531" id="KW_VALIDATE" value="validate" type="keyword" reserved="true"/>
+        <token index="532" id="KW_VALIDATION" value="validation" type="keyword"/>
+        <token index="533" id="KW_VALUES" value="values" type="keyword" reserved="true"/>
+        <token index="534" id="KW_VARRAY" value="varray" type="keyword"/>
+        <token index="535" id="KW_VERSION" value="version" type="keyword"/>
+        <token index="536" id="KW_VERSIONS" value="versions" type="keyword"/>
+        <token index="537" id="KW_VIEW" value="view" type="keyword" reserved="true"/>
+        <token index="538" id="KW_WAIT" value="wait" type="keyword"/>
+        <token index="539" id="KW_WELLFORMED" value="wellformed" type="keyword"/>
+        <token index="540" id="KW_WHEN" value="when" type="keyword"/>
+        <token index="541" id="KW_WHENEVER" value="whenever" type="keyword" reserved="true"/>
+        <token index="542" id="KW_WHERE" value="where" type="keyword" reserved="true"/>
+        <token index="543" id="KW_WITH" value="with" type="keyword" reserved="true"/>
+        <token index="544" id="KW_WITHIN" value="within" type="keyword"/>
+        <token index="545" id="KW_WITHOUT" value="without" type="keyword"/>
+        <token index="546" id="KW_WORK" value="work" type="keyword"/>
+        <token index="547" id="KW_WRITE" value="write" type="keyword"/>
+        <token index="548" id="KW_XML" value="xml" type="keyword"/>
+        <token index="549" id="KW_XMLNAMESPACES" value="xmlnamespaces" type="keyword"/>
+        <token index="550" id="KW_XMLSCHEMA" value="xmlschema" type="keyword"/>
+        <token index="551" id="KW_XMLTYPE" value="xmltype" type="keyword"/>
+        <token index="552" id="KW_YEAR" value="year" type="keyword"/>
+        <token index="553" id="KW_YES" value="yes" type="keyword"/>
+        <token index="554" id="KW_ZONE" value="zone" type="keyword"/>
+        <token index="555" id="KW_FALSE" value="false" type="keyword" reserved="true"/>
+        <token index="556" id="KW_TRUE" value="true" type="keyword" reserved="true"/>
+
 
 
 
@@ -1097,6 +1097,214 @@
         <token index="232" id="PRM_USER_DUMP_DEST" value="user_dump_dest" type="parameter"/>
         <token index="233" id="PRM_UTL_FILE_DIR" value="utl_file_dir" type="parameter"/>
         <token index="234" id="PRM_WORKAREA_SIZE_POLICY" value="workarea_size_policy" type="parameter"/>
+
+
+
+        <!-- OBJECTS -->
+        <token index="0" id="OBJ_ADMINISTER_ANY_SQL_TUNING_SET" value="administer any sql tuning set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="1" id="OBJ_ADMINISTER_DATABASE_TRIGGER" value="administer database trigger" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="2" id="OBJ_ADMINISTER_RESOURCE_MANAGER" value="administer resource manager" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="3" id="OBJ_ADMINISTER_SQL_MANAGEMENT_OBJECT" value="administer sql management object" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="4" id="OBJ_ADMINISTER_SQL_TUNING_SET" value="administer sql tuning set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="5" id="OBJ_ADVISOR" value="advisor" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="6" id="OBJ_ALTER_ANY_ASSEMBLY" value="alter any assembly" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="7" id="OBJ_ALTER_ANY_CLUSTER" value="alter any cluster" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="8" id="OBJ_ALTER_ANY_CUBE" value="alter any cube" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="9" id="OBJ_ALTER_ANY_CUBE_DIMENSION" value="alter any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="10" id="OBJ_ALTER_ANY_DIMENSION" value="alter any dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="11" id="OBJ_ALTER_ANY_EDITION" value="alter any edition" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="12" id="OBJ_ALTER_ANY_EVALUATION_CONTEXT" value="alter any evaluation context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="13" id="OBJ_ALTER_ANY_INDEX" value="alter any index" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="14" id="OBJ_ALTER_ANY_INDEXTYPE" value="alter any indextype" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="15" id="OBJ_ALTER_ANY_LIBRARY" value="alter any library" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="16" id="OBJ_ALTER_ANY_MATERIALIZED_VIEW" value="alter any materialized view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="17" id="OBJ_ALTER_ANY_MINING_MODEL" value="alter any mining model" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="18" id="OBJ_ALTER_ANY_OPERATOR" value="alter any operator" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="19" id="OBJ_ALTER_ANY_OUTLINE" value="alter any outline" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="20" id="OBJ_ALTER_ANY_PROCEDURE" value="alter any procedure" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="21" id="OBJ_ALTER_ANY_ROLE" value="alter any role" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="22" id="OBJ_ALTER_ANY_RULE" value="alter any rule" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="23" id="OBJ_ALTER_ANY_RULE_SET" value="alter any rule set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="24" id="OBJ_ALTER_ANY_SEQUENCE" value="alter any sequence" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="25" id="OBJ_ALTER_ANY_SQL_PROFILE" value="alter any sql profile" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="26" id="OBJ_ALTER_ANY_TABLE" value="alter any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="27" id="OBJ_ALTER_ANY_TRIGGER" value="alter any trigger" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="28" id="OBJ_ALTER_ANY_TYPE" value="alter any type" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="29" id="OBJ_ALTER_DATABASE" value="alter database" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="30" id="OBJ_ALTER_PROFILE" value="alter profile" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="31" id="OBJ_ALTER_RESOURCE_COST" value="alter resource cost" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="32" id="OBJ_ALTER_ROLLBACK_SEGMENT" value="alter rollback segment" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="33" id="OBJ_ALTER_SESSION" value="alter session" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="34" id="OBJ_ALTER_SYSTEM" value="alter system" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="35" id="OBJ_ALTER_TABLESPACE" value="alter tablespace" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="36" id="OBJ_ALTER_USER" value="alter user" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="37" id="OBJ_ANALYZE_ANY" value="analyze any" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="38" id="OBJ_ANALYZE_ANY_DICTIONARY" value="analyze any dictionary" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="39" id="OBJ_AUDIT_ANY" value="audit any" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="40" id="OBJ_AUDIT_SYSTEM" value="audit system" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="41" id="OBJ_BACKUP_ANY_TABLE" value="backup any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="42" id="OBJ_BECOME_USER" value="become user" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="43" id="OBJ_CHANGE_NOTIFICATION" value="change notification" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="44" id="OBJ_COMMENT_ANY_MINING_MODEL" value="comment any mining model" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="45" id="OBJ_COMMENT_ANY_TABLE" value="comment any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="46" id="OBJ_CREATE_ANY_ASSEMBLY" value="create any assembly" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="47" id="OBJ_CREATE_ANY_CLUSTER" value="create any cluster" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="48" id="OBJ_CREATE_ANY_CONTEXT" value="create any context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="49" id="OBJ_CREATE_ANY_CUBE" value="create any cube" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="50" id="OBJ_CREATE_ANY_CUBE_BUILD_PROCESS" value="create any cube build process" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="51" id="OBJ_CREATE_ANY_CUBE_DIMENSION" value="create any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="52" id="OBJ_CREATE_ANY_DIMENSION" value="create any dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="53" id="OBJ_CREATE_ANY_DIRECTORY" value="create any directory" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="54" id="OBJ_CREATE_ANY_EDITION" value="create any edition" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="55" id="OBJ_CREATE_ANY_EVALUATION_CONTEXT" value="create any evaluation context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="56" id="OBJ_CREATE_ANY_INDEX" value="create any index" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="57" id="OBJ_CREATE_ANY_INDEXTYPE" value="create any indextype" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="58" id="OBJ_CREATE_ANY_JOB" value="create any job" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="59" id="OBJ_CREATE_ANY_LIBRARY" value="create any library" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="60" id="OBJ_CREATE_ANY_MATERIALIZED_VIEW" value="create any materialized view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="61" id="OBJ_CREATE_ANY_MEASURE_FOLDER" value="create any measure folder" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="62" id="OBJ_CREATE_ANY_MINING_MODEL" value="create any mining model" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="63" id="OBJ_CREATE_ANY_OPERATOR" value="create any operator" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="64" id="OBJ_CREATE_ANY_OUTLINE" value="create any outline" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="65" id="OBJ_CREATE_ANY_PROCEDURE" value="create any procedure" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="66" id="OBJ_CREATE_ANY_RULE" value="create any rule" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="67" id="OBJ_CREATE_ANY_RULE_SET" value="create any rule set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="68" id="OBJ_CREATE_ANY_SEQUENCE" value="create any sequence" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="69" id="OBJ_CREATE_ANY_SQL_PROFILE" value="create any sql profile" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="70" id="OBJ_CREATE_ANY_SYNONYM" value="create any synonym" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="71" id="OBJ_CREATE_ANY_TABLE" value="create any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="72" id="OBJ_CREATE_ANY_TRIGGER" value="create any trigger" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="73" id="OBJ_CREATE_ANY_TYPE" value="create any type" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="74" id="OBJ_CREATE_ANY_VIEW" value="create any view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="75" id="OBJ_CREATE_ASSEMBLY" value="create assembly" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="76" id="OBJ_CREATE_CLUSTER" value="create cluster" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="77" id="OBJ_CREATE_CUBE" value="create cube" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="78" id="OBJ_CREATE_CUBE_BUILD_PROCESS" value="create cube build process" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="79" id="OBJ_CREATE_CUBE_DIMENSION" value="create cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="80" id="OBJ_CREATE_DATABASE_LINK" value="create database link" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="81" id="OBJ_CREATE_DIMENSION" value="create dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="82" id="OBJ_CREATE_EVALUATION_CONTEXT" value="create evaluation context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="83" id="OBJ_CREATE_EXTERNAL_JOB" value="create external job" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="84" id="OBJ_CREATE_INDEXTYPE" value="create indextype" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="85" id="OBJ_CREATE_JOB" value="create job" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="86" id="OBJ_CREATE_LIBRARY" value="create library" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="87" id="OBJ_CREATE_MATERIALIZED_VIEW" value="create materialized view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="88" id="OBJ_CREATE_MEASURE_FOLDER" value="create measure folder" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="89" id="OBJ_CREATE_MINING_MODEL" value="create mining model" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="90" id="OBJ_CREATE_OPERATOR" value="create operator" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="91" id="OBJ_CREATE_PROCEDURE" value="create procedure" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="92" id="OBJ_CREATE_PROFILE" value="create profile" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="93" id="OBJ_CREATE_PUBLIC_DATABASE_LINK" value="create public database link" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="94" id="OBJ_CREATE_PUBLIC_SYNONYM" value="create public synonym" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="95" id="OBJ_CREATE_ROLE" value="create role" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="96" id="OBJ_CREATE_ROLLBACK_SEGMENT" value="create rollback segment" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="97" id="OBJ_CREATE_RULE" value="create rule" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="98" id="OBJ_CREATE_RULE_SET" value="create rule set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="99" id="OBJ_CREATE_SEQUENCE" value="create sequence" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="100" id="OBJ_CREATE_SESSION" value="create session" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="101" id="OBJ_CREATE_SYNONYM" value="create synonym" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="102" id="OBJ_CREATE_TABLE" value="create table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="103" id="OBJ_CREATE_TABLESPACE" value="create tablespace" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="104" id="OBJ_CREATE_TRIGGER" value="create trigger" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="105" id="OBJ_CREATE_TYPE" value="create type" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="106" id="OBJ_CREATE_USER" value="create user" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="107" id="OBJ_CREATE_VIEW" value="create view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="108" id="OBJ_DEBUG_ANY_PROCEDURE" value="debug any procedure" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="109" id="OBJ_DEBUG_CONNECT_SESSION" value="debug connect session" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="110" id="OBJ_DELETE_ANY_CUBE_DIMENSION" value="delete any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="111" id="OBJ_DELETE_ANY_MEASURE_FOLDER" value="delete any measure folder" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="112" id="OBJ_DELETE_ANY_TABLE" value="delete any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="113" id="OBJ_DEQUEUE_ANY_QUEUE" value="dequeue any queue" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="114" id="OBJ_DROP_ANY_ASSEMBLY" value="drop any assembly" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="115" id="OBJ_DROP_ANY_CLUSTER" value="drop any cluster" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="116" id="OBJ_DROP_ANY_CONTEXT" value="drop any context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="117" id="OBJ_DROP_ANY_CUBE" value="drop any cube" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="118" id="OBJ_DROP_ANY_CUBE_BUILD_PROCESS" value="drop any cube build process" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="119" id="OBJ_DROP_ANY_CUBE_DIMENSION" value="drop any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="120" id="OBJ_DROP_ANY_DIMENSION" value="drop any dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="121" id="OBJ_DROP_ANY_DIRECTORY" value="drop any directory" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="122" id="OBJ_DROP_ANY_EDITION" value="drop any edition" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="123" id="OBJ_DROP_ANY_EVALUATION_CONTEXT" value="drop any evaluation context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="124" id="OBJ_DROP_ANY_INDEX" value="drop any index" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="125" id="OBJ_DROP_ANY_INDEXTYPE" value="drop any indextype" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="126" id="OBJ_DROP_ANY_LIBRARY" value="drop any library" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="127" id="OBJ_DROP_ANY_MATERIALIZED_VIEW" value="drop any materialized view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="128" id="OBJ_DROP_ANY_MEASURE_FOLDER" value="drop any measure folder" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="129" id="OBJ_DROP_ANY_MINING_MODEL" value="drop any mining model" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="130" id="OBJ_DROP_ANY_OPERATOR" value="drop any operator" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="131" id="OBJ_DROP_ANY_OUTLINE" value="drop any outline" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="132" id="OBJ_DROP_ANY_PROCEDURE" value="drop any procedure" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="133" id="OBJ_DROP_ANY_ROLE" value="drop any role" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="134" id="OBJ_DROP_ANY_RULE" value="drop any rule" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="135" id="OBJ_DROP_ANY_RULE_SET" value="drop any rule set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="136" id="OBJ_DROP_ANY_SEQUENCE" value="drop any sequence" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="137" id="OBJ_DROP_ANY_SQL_PROFILE" value="drop any sql profile" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="138" id="OBJ_DROP_ANY_SYNONYM" value="drop any synonym" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="139" id="OBJ_DROP_ANY_TABLE" value="drop any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="140" id="OBJ_DROP_ANY_TRIGGER" value="drop any trigger" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="141" id="OBJ_DROP_ANY_TYPE" value="drop any type" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="142" id="OBJ_DROP_ANY_VIEW" value="drop any view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="143" id="OBJ_DROP_PROFILE" value="drop profile" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="144" id="OBJ_DROP_PUBLIC_DATABASE_LINK" value="drop public database link" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="145" id="OBJ_DROP_PUBLIC_SYNONYM" value="drop public synonym" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="146" id="OBJ_DROP_ROLLBACK_SEGMENT" value="drop rollback segment" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="147" id="OBJ_DROP_TABLESPACE" value="drop tablespace" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="148" id="OBJ_DROP_USER" value="drop user" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="149" id="OBJ_ENQUEUE_ANY_QUEUE" value="enqueue any queue" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="150" id="OBJ_EXECUTE_ANY_ASSEMBLY" value="execute any assembly" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="151" id="OBJ_EXECUTE_ANY_CLASS" value="execute any class" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="152" id="OBJ_EXECUTE_ANY_EVALUATION_CONTEXT" value="execute any evaluation context" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="153" id="OBJ_EXECUTE_ANY_INDEXTYPE" value="execute any indextype" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="154" id="OBJ_EXECUTE_ANY_LIBRARY" value="execute any library" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="155" id="OBJ_EXECUTE_ANY_OPERATOR" value="execute any operator" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="156" id="OBJ_EXECUTE_ANY_PROCEDURE" value="execute any procedure" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="157" id="OBJ_EXECUTE_ANY_PROGRAM" value="execute any program" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="158" id="OBJ_EXECUTE_ANY_RULE" value="execute any rule" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="159" id="OBJ_EXECUTE_ANY_RULE_SET" value="execute any rule set" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="160" id="OBJ_EXECUTE_ANY_TYPE" value="execute any type" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="161" id="OBJ_EXECUTE_ASSEMBLY" value="execute assembly" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="162" id="OBJ_EXEMPT_ACCESS_POLICY" value="exempt access policy" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="163" id="OBJ_EXPORT_FULL_DATABASE" value="export full database" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="164" id="OBJ_FLASHBACK_ANY_TABLE" value="flashback any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="165" id="OBJ_FLASHBACK_ARCHIVE_ADMINISTER" value="flashback archive administer" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="166" id="OBJ_FORCE_ANY_TRANSACTION" value="force any transaction" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="167" id="OBJ_FORCE_TRANSACTION" value="force transaction" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="168" id="OBJ_GLOBAL_QUERY_REWRITE" value="global query rewrite" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="169" id="OBJ_GRANT_ANY_OBJECT_PRIVILEGE" value="grant any object privilege" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="170" id="OBJ_GRANT_ANY_PRIVILEGE" value="grant any privilege" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="171" id="OBJ_GRANT_ANY_ROLE" value="grant any role" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="172" id="OBJ_IMPORT_FULL_DATABASE" value="import full database" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="173" id="OBJ_INSERT_ANY_CUBE_DIMENSION" value="insert any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="174" id="OBJ_INSERT_ANY_MEASURE_FOLDER" value="insert any measure folder" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="175" id="OBJ_INSERT_ANY_TABLE" value="insert any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="176" id="OBJ_LOCK_ANY_TABLE" value="lock any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="177" id="OBJ_MANAGE_ANY_FILE_GROUP" value="manage any file group" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="178" id="OBJ_MANAGE_ANY_QUEUE" value="manage any queue" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="179" id="OBJ_MANAGE_FILE_GROUP" value="manage file group" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="180" id="OBJ_MANAGE_SCHEDULER" value="manage scheduler" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="181" id="OBJ_MANAGE_TABLESPACE" value="manage tablespace" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="182" id="OBJ_MERGE_ANY_VIEW" value="merge any view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="183" id="OBJ_ON_COMMIT_REFRESH" value="on commit refresh" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="184" id="OBJ_QUERY_REWRITE" value="query rewrite" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="185" id="OBJ_READ_ANY_FILE_GROUP" value="read any file group" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="186" id="OBJ_RESTRICTED_SESSION" value="restricted session" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="187" id="OBJ_RESUMABLE" value="resumable" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="188" id="OBJ_SELECT_ANY_CUBE" value="select any cube" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="189" id="OBJ_SELECT_ANY_CUBE_DIMENSION" value="select any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="190" id="OBJ_SELECT_ANY_DICTIONARY" value="select any dictionary" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="191" id="OBJ_SELECT_ANY_MINING_MODEL" value="select any mining model" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="192" id="OBJ_SELECT_ANY_SEQUENCE" value="select any sequence" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="193" id="OBJ_SELECT_ANY_TABLE" value="select any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="194" id="OBJ_SELECT_ANY_TRANSACTION" value="select any transaction" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="195" id="OBJ_UNDER_ANY_TABLE" value="under any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="196" id="OBJ_UNDER_ANY_TYPE" value="under any type" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="197" id="OBJ_UNDER_ANY_VIEW" value="under any view" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="198" id="OBJ_UNLIMITED_TABLESPACE" value="unlimited tablespace" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="199" id="OBJ_UPDATE_ANY_CUBE" value="update any cube" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="200" id="OBJ_UPDATE_ANY_CUBE_BUILD_PROCESS" value="update any cube build process" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="201" id="OBJ_UPDATE_ANY_CUBE_DIMENSION" value="update any cube dimension" type="object" objectType="SYSTEM_PRIVILEGE"/>
+        <token index="202" id="OBJ_UPDATE_ANY_TABLE" value="update any table" type="object" objectType="SYSTEM_PRIVILEGE"/>
+
     </tokens>
 
     <token-sets>
