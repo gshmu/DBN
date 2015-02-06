@@ -245,7 +245,14 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return false;
     }
 
+    @NotNull
     public TokenTypeCategory getCategory() {
+        return TokenTypeCategory.CHAMELEON;
+    }
+
+    @Nullable
+    @Override
+    public DBObjectType getObjectType() {
         return null;
     }
 
