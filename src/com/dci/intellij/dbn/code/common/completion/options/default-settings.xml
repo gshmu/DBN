@@ -47,8 +47,10 @@
             <filter-element type="RESERVED_WORD" id="function" selected="false"/>
             <filter-element type="RESERVED_WORD" id="parameter" selected="false"/>
             <filter-element type="RESERVED_WORD" id="datatype" selected="true"/>
+            <filter-element type="RESERVED_WORD" id="exception" selected="true"/>
             <filter-element type="OBJECT" id="SCHEMA" selected="true"/>
             <filter-element type="OBJECT" id="USER" selected="true"/>
+            <filter-element type="OBJECT" id="PRIVILEGE" selected="true"/>
             <user-schema>
                 <filter-element type="OBJECT" id="TABLE" selected="true"/>
                 <filter-element type="OBJECT" id="VIEW" selected="true"/>

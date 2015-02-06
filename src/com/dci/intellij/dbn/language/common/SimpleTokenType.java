@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
 
@@ -18,6 +19,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
     private String description;
     private boolean isSuppressibleReservedWord;
     private TokenTypeCategory category;
+    private DBObjectType objectType;
     private int idx;
     private int hashCode;
     private FormattingDefinition formatting;
@@ -34,6 +36,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         this.description = source.getDescription();
         isSuppressibleReservedWord = source.isSuppressibleReservedWord();
         this.category = source.getCategory();
+        this.objectType = source.getObjectType();
         this.idx = source.getIdx();
 
         formatting = FormattingDefinitionFactory.cloneDefinition(source.getFormatting());
@@ -55,6 +58,11 @@ public class SimpleTokenType extends IElementType implements TokenType {
         category = TokenTypeCategory.getCategory(type);
         isSuppressibleReservedWord = isReservedWord() && !Boolean.parseBoolean(element.getAttributeValue("reserved"));
         hashCode = (language.getDisplayName() + id).hashCode();
+
+        String objectType = element.getAttributeValue("objectType");
+        if (StringUtil.isNotEmpty(objectType)) {
+            this.objectType = DBObjectType.getObjectType(objectType);
+        }
 
         formatting = FormattingDefinitionFactory.loadDefinition(element);
         tokenPairTemplate = TokenPairTemplate.get(id);
@@ -166,6 +174,12 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     public TokenTypeCategory getCategory() {
         return category;
+    }
+
+    @Nullable
+    @Override
+    public DBObjectType getObjectType() {
+        return objectType;
     }
 
     @Override
