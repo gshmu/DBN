@@ -25,11 +25,18 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadRoles(Connection connection) throws SQLException;
 
     /**
-     * Load all database privileges
+     * Load all database system privileges
      * Column names of the returned ResultSet
      *  <li> PRIVILEGE_NAME (char)
      */
-    ResultSet loadPrivileges(Connection connection) throws SQLException;
+    ResultSet loadSystemPrivileges(Connection connection) throws SQLException;
+
+    /**
+     * Load all database object privileges
+     * Column names of the returned ResultSet
+     *  <li> PRIVILEGE_NAME (char)
+     */
+    ResultSet loadObjectPrivileges(Connection connection) throws SQLException;
 
     /**
      * Load all user roles

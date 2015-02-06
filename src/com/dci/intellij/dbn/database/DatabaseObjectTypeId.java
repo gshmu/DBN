@@ -40,6 +40,8 @@ public enum DatabaseObjectTypeId {
     PACKAGE_BODY,
     PARTITION,
     PRIVILEGE,
+    SYSTEM_PRIVILEGE,
+    OBJECT_PRIVILEGE,
     PROCEDURE,
     PROFILE,
     PROGRAM,

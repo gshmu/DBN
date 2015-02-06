@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.language.common;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import org.jdom.Document;
+import org.jdom.Element;
+
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import gnu.trove.THashMap;
-import org.jdom.Document;
-import org.jdom.Element;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 public abstract class DBLanguageTokenTypeBundle {
     protected final Logger log = Logger.getInstance(getClass().getName());
@@ -21,6 +21,7 @@ public abstract class DBLanguageTokenTypeBundle {
     private SimpleTokenType[] parameters;
     private SimpleTokenType[] dataTypes;
     private SimpleTokenType[] exceptions;
+    private SimpleTokenType[] objects;
     private SimpleTokenType[] characters;
     private SimpleTokenType[] operators;
     private Map<String, SimpleTokenType> keywordsMap;
@@ -28,6 +29,7 @@ public abstract class DBLanguageTokenTypeBundle {
     private Map<String, SimpleTokenType> parametersMap;
     private Map<String, SimpleTokenType> dataTypesMap;
     private Map<String, SimpleTokenType> exceptionsMap;
+    private Map<String, SimpleTokenType> objectsMap;
     private Map<String, SimpleTokenType> charactersMap;
     private Map<String, SimpleTokenType> operatorsMap;
 
@@ -64,6 +66,7 @@ public abstract class DBLanguageTokenTypeBundle {
         List<SimpleTokenType> parameterList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> dataTypeList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> exceptionList = new ArrayList<SimpleTokenType>();
+        List<SimpleTokenType> objectsList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> characterList = new ArrayList<SimpleTokenType>();
         List<SimpleTokenType> operatorList = new ArrayList<SimpleTokenType>();
         for (Object o : tokenDefs.getChildren()) {
@@ -76,6 +79,7 @@ public abstract class DBLanguageTokenTypeBundle {
                 case PARAMETER: parameterList.add(tokenType); break;
                 case DATATYPE: dataTypeList.add(tokenType); break;
                 case EXCEPTION: exceptionList.add(tokenType); break;
+                case OBJECT: objectsList.add(tokenType); break;
                 case CHARACTER: characterList.add(tokenType); break;
                 case OPERATOR: operatorList.add(tokenType); break;
             }
@@ -115,6 +119,13 @@ public abstract class DBLanguageTokenTypeBundle {
             exceptionsMap.put(exception.getValue(), exception);
         }
 
+        objects = new SimpleTokenType[objectsList.size()];
+        objectsMap = new THashMap<String, SimpleTokenType>();
+        for (SimpleTokenType object : objectsList) {
+            objects[object.getIdx()] = object;
+            objectsMap.put(object.getValue(), object);
+        }
+
         characters = new SimpleTokenType[characterList.size()];
         charactersMap = new THashMap<String, SimpleTokenType>();
         for (SimpleTokenType character : characterList) {
@@ -148,6 +159,9 @@ public abstract class DBLanguageTokenTypeBundle {
 
     public SimpleTokenType getExceptionTokenType(int index) {
         return exceptions[index];
+    }
+    public SimpleTokenType getObjectTokenType(int index) {
+        return objects[index];
     }
 
     public SimpleTokenType getCharacterTokenType(int index) {
@@ -195,7 +209,8 @@ public abstract class DBLanguageTokenTypeBundle {
             isFunction(text) ||
             isParameter(text) ||
             isDataType(text) || 
-            isException(text);
+            isException(text) ||
+            isObject(text);
     }
 
     public boolean isKeyword(String text) {
@@ -216,6 +231,9 @@ public abstract class DBLanguageTokenTypeBundle {
 
     public boolean isException(String text) {
         return isTokenType(text, exceptionsMap);
+    }
+    public boolean isObject(String text) {
+        return isTokenType(text, objectsMap);
     }
 
 

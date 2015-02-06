@@ -6,6 +6,7 @@ public enum TokenTypeCategory {
     FUNCTION("function"),
     PARAMETER("parameter"),
     DATATYPE("datatype"),
+    OBJECT("object"),
     EXCEPTION("exception"),
     OPERATOR("operator"),
     CHARACTER("character"),

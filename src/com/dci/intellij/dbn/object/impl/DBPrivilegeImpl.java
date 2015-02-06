@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 
-public class DBPrivilegeImpl extends DBObjectImpl implements DBPrivilege {
+public abstract class DBPrivilegeImpl extends DBObjectImpl implements DBPrivilege {
     public DBPrivilegeImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler.getObjectBundle(), resultSet);
     }
@@ -26,18 +26,8 @@ public class DBPrivilegeImpl extends DBObjectImpl implements DBPrivilege {
         name = resultSet.getString("PRIVILEGE_NAME");
     }
 
-    public DBObjectType getObjectType() {
-        return DBObjectType.PRIVILEGE;
-    }
-
     public List<DBUser> getUserGrantees() {
-        List<DBUser> grantees = new ArrayList<DBUser>();
-        for (DBUser user : getConnectionHandler().getObjectBundle().getUsers()) {
-            if (user.hasPrivilege(this)) {
-                grantees.add(user);
-            }
-        }
-        return grantees;
+        return new ArrayList<DBUser>();
     }
 
     public List<DBRole> getRoleGrantees() {

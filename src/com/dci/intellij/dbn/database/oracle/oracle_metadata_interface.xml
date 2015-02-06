@@ -65,7 +65,7 @@
                 rp.GRANTED_ROLE asc
         </statement>
     </statement-execution-processor>
-    <statement-execution-processor id="privileges" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="system-privileges" is-query="true" is-prepared-statement="true">
         <statement>
             select distinct PRIVILEGE as PRIVILEGE_NAME from DBA_SYS_PRIVS
         </statement>

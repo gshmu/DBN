@@ -51,10 +51,12 @@ import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.object.DBCharset;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
+import com.dci.intellij.dbn.object.DBObjectPrivilege;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -62,11 +64,12 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.impl.DBCharsetImpl;
 import com.dci.intellij.dbn.object.impl.DBGrantedPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBGrantedRoleImpl;
-import com.dci.intellij.dbn.object.impl.DBPrivilegeImpl;
+import com.dci.intellij.dbn.object.impl.DBObjectPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBRoleImpl;
 import com.dci.intellij.dbn.object.impl.DBRolePrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBRoleRoleRelation;
 import com.dci.intellij.dbn.object.impl.DBSchemaImpl;
+import com.dci.intellij.dbn.object.impl.DBSystemPrivilegeImpl;
 import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
@@ -87,7 +90,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     private DBObjectList<DBSchema> schemas;
     private DBObjectList<DBUser> users;
     private DBObjectList<DBRole> roles;
-    private DBObjectList<DBPrivilege> privileges;
+    private DBObjectList<DBSystemPrivilege> systemPrivileges;
+    private DBObjectList<DBObjectPrivilege> objectPrivileges;
     private DBObjectList<DBCharset> charsets;
 
     private List<DBNativeDataType> nativeDataTypes;
@@ -106,9 +110,9 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         users = objectLists.createObjectList(DBObjectType.USER, this, USERS_LOADER, true, false);
         schemas = objectLists.createObjectList(DBObjectType.SCHEMA, this, SCHEMAS_LOADER, new DBObjectList[]{users}, true, false);
         roles = objectLists.createObjectList(DBObjectType.ROLE, this, ROLES_LOADER, true, false);
-        privileges = objectLists.createObjectList(DBObjectType.PRIVILEGE, this, PRIVILEGES_LOADER, true, false);
+        systemPrivileges = objectLists.createObjectList(DBObjectType.SYSTEM_PRIVILEGE, this, SYSTEM_PRIVILEGES_LOADER, true, false);
         charsets = objectLists.createObjectList(DBObjectType.CHARSET, this, CHARSETS_LOADER, true, false);
-        allPossibleTreeChildren = DatabaseBrowserUtils.createList(schemas, users, roles, privileges, charsets);
+        allPossibleTreeChildren = DatabaseBrowserUtils.createList(schemas, users, roles, systemPrivileges, charsets);
 
         objectRelationLists = new DBObjectRelationListContainer(this);
         objectRelationLists.createObjectRelationList(
@@ -121,7 +125,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 DBObjectRelationType.USER_PRIVILEGE, this,
                 "User privilege relations",
                 USER_PRIVILEGE_RELATION_LOADER,
-                users, privileges);
+                users, systemPrivileges);
 
         objectRelationLists.createObjectRelationList(
                 DBObjectRelationType.ROLE_ROLE, this,
@@ -133,7 +137,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 DBObjectRelationType.ROLE_PRIVILEGE, this,
                 "Role privilege relations",
                 ROLE_PRIVILEGE_RELATION_LOADER,
-                roles, privileges);
+                roles, systemPrivileges);
 
         EventManager.subscribe(connectionHandler.getProject(), DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
@@ -197,8 +201,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return roles.getObjects();
     }
 
-    public List<DBPrivilege> getPrivileges() {
-        return privileges.getObjects();
+    public List<DBSystemPrivilege> getSystemPrivileges() {
+        return systemPrivileges.getObjects();
     }
 
     public List<DBCharset> getCharsets() {
@@ -261,8 +265,13 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return roles.getObject(name);
     }
 
+    @Override
     public DBPrivilege getPrivilege(String name) {
-        return privileges.getObject(name);
+        return systemPrivileges.getObject(name);
+    }
+
+    public DBSystemPrivilege getSystemPrivilege(String name) {
+        return systemPrivileges.getObject(name);
     }
 
     public DBCharset getCharset(String name) {
@@ -496,7 +505,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (objectType == DBObjectType.SCHEMA) return getSchema(name);
         if (objectType == DBObjectType.USER) return getUser(name);
         if (objectType == DBObjectType.CHARSET) return getCharset(name);
-        if (objectType == DBObjectType.PRIVILEGE) return getPrivilege(name);
+        if (objectType == DBObjectType.SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
         for (DBSchema schema : getSchemas()) {
             if (schema.isPublicSchema() && objectType.isSchemaObject()) {
                 DBObject childObject = schema.getChildObject(objectType, name, true);
@@ -517,7 +526,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             if (objectType == DBObjectType.SCHEMA) consumer.consume(getSchemas()); else
             if (objectType == DBObjectType.USER) consumer.consume(getUsers()); else
             if (objectType == DBObjectType.CHARSET) consumer.consume(getCharsets());
-            if (objectType == DBObjectType.PRIVILEGE) consumer.consume(getPrivileges());
+            if (objectType == DBObjectType.SYSTEM_PRIVILEGE) consumer.consume(getSystemPrivileges());
         }
     }
 
@@ -682,14 +691,25 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     };
 
 
-    private static final DynamicContentLoader<DBPrivilege> PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBPrivilege>() {
-        public ResultSet createResultSet(DynamicContent<DBPrivilege> dynamicContent, Connection connection) throws SQLException {
+    private static final DynamicContentLoader<DBSystemPrivilege> SYSTEM_PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBSystemPrivilege>() {
+        public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadPrivileges(connection);
+            return metadataInterface.loadSystemPrivileges(connection);
         }
 
-        public DBPrivilege createElement(DynamicContent<DBPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            return new DBPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
+        public DBSystemPrivilege createElement(DynamicContent<DBSystemPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+            return new DBSystemPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
+        }
+    };
+
+    private static final DynamicContentLoader<DBObjectPrivilege> OBJECT_PRIVILEGES_LOADER = new DynamicContentResultSetLoader<DBObjectPrivilege>() {
+        public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, Connection connection) throws SQLException {
+            DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadObjectPrivileges(connection);
+        }
+
+        public DBObjectPrivilege createElement(DynamicContent<DBObjectPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
+            return new DBObjectPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
         }
     };
 

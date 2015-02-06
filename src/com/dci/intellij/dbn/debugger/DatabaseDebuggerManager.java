@@ -20,8 +20,8 @@ import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationType;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -176,8 +176,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         String[] privilegeNames = connectionHandler.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
         List<String> missingPrivileges = new ArrayList<String>();
         for (String privilegeName : privilegeNames) {
-            DBPrivilege privilege = connectionHandler.getObjectBundle().getPrivilege(privilegeName);
-            if (privilege == null || !user.hasPrivilege(privilege))  {
+            DBSystemPrivilege systemPrivilege = connectionHandler.getObjectBundle().getSystemPrivilege(privilegeName);
+            if (systemPrivilege == null || !user.hasSystemPrivilege(systemPrivilege))  {
                 missingPrivileges.add(privilegeName);
             }
         }

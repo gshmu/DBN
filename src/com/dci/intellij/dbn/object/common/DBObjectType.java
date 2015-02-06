@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.editor.DBContentType;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-import org.apache.commons.lang.StringUtils;
-
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import org.apache.commons.lang.StringUtils;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.DBContentType;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 
 public enum DBObjectType implements DynamicContentType {
     
@@ -56,6 +56,8 @@ public enum DBObjectType implements DynamicContentType {
     PACKAGE_TYPE(DatabaseObjectTypeId.PACKAGE_TYPE, "package type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
     PARTITION(DatabaseObjectTypeId.PARTITION, "partition", "partitions", null, null, false),
     PRIVILEGE(DatabaseObjectTypeId.PRIVILEGE, "privilege", "privileges", Icons.DBO_PRIVILEGE, Icons.DBO_PRIVILEGES, false),
+    SYSTEM_PRIVILEGE(DatabaseObjectTypeId.SYSTEM_PRIVILEGE, "system privilege", "system privileges", Icons.DBO_PRIVILEGE, Icons.DBO_PRIVILEGES, false),
+    OBJECT_PRIVILEGE(DatabaseObjectTypeId.OBJECT_PRIVILEGE, "object privilege", "object privileges", Icons.DBO_PRIVILEGE, Icons.DBO_PRIVILEGES, false),
     PROCEDURE(DatabaseObjectTypeId.PROCEDURE, "procedure", "procedures", Icons.DBO_PROCEDURE, Icons.DBO_PROCEDURES, false),
     PROGRAM(DatabaseObjectTypeId.PROGRAM, "program", "programs", null, null, true),
     PROFILE(DatabaseObjectTypeId.PROFILE, "profile", "profiles", null, null, false),
@@ -361,6 +363,8 @@ public enum DBObjectType implements DynamicContentType {
         DATABASE_TRIGGER.setGenericType(TRIGGER);
         XMLTYPE.setGenericType(TYPE);
 
+        SYSTEM_PRIVILEGE.setGenericType(PRIVILEGE);
+        OBJECT_PRIVILEGE.setGenericType(PRIVILEGE);
         GRANTED_PRIVILEGE.setGenericType(PRIVILEGE);
         GRANTED_ROLE.setGenericType(ROLE);
 
