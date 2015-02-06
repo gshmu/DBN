@@ -38,6 +38,8 @@
         <sorting-element type="OBJECT" id="CLUSTER"/>
         <sorting-element type="OBJECT" id="DBLINK"/>
         <sorting-element type="OBJECT" id="SCHEMA"/>
+        <sorting-element type="OBJECT" id="ROLE"/>
+        <sorting-element type="OBJECT" id="USER"/>
         <sorting-element type="RESERVED_WORD" id="function"/>
         <sorting-element type="RESERVED_WORD" id="parameter"/>
     </sorting>
@@ -49,6 +51,7 @@
             <filter-element type="RESERVED_WORD" id="datatype" selected="true"/>
             <filter-element type="RESERVED_WORD" id="exception" selected="true"/>
             <filter-element type="OBJECT" id="SCHEMA" selected="true"/>
+            <filter-element type="OBJECT" id="ROLE" selected="true"/>
             <filter-element type="OBJECT" id="USER" selected="true"/>
             <filter-element type="OBJECT" id="PRIVILEGE" selected="true"/>
             <user-schema>
@@ -108,8 +111,11 @@
             <filter-element type="RESERVED_WORD" id="function" selected="true"/>
             <filter-element type="RESERVED_WORD" id="parameter" selected="true"/>
             <filter-element type="RESERVED_WORD" id="datatype" selected="true"/>
+            <filter-element type="RESERVED_WORD" id="exception" selected="true"/>
             <filter-element type="OBJECT" id="SCHEMA" selected="true"/>
             <filter-element type="OBJECT" id="USER" selected="true"/>
+            <filter-element type="OBJECT" id="ROLE" selected="true"/>
+            <filter-element type="OBJECT" id="PRIVILEGE" selected="true"/>
             <user-schema>
                 <filter-element type="OBJECT" id="TABLE" selected="true"/>
                 <filter-element type="OBJECT" id="VIEW" selected="true"/>

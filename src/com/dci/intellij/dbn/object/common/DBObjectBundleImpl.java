@@ -504,6 +504,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     public DBObject getObject(DBObjectType objectType, String name) {
         if (objectType == DBObjectType.SCHEMA) return getSchema(name);
         if (objectType == DBObjectType.USER) return getUser(name);
+        if (objectType == DBObjectType.ROLE) return getRole(name);
         if (objectType == DBObjectType.CHARSET) return getCharset(name);
         if (objectType == DBObjectType.SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
         for (DBSchema schema : getSchemas()) {
@@ -525,6 +526,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (objectType == DBObjectType.SCHEMA) consumer.consume(getSchemas()); else
             if (objectType == DBObjectType.USER) consumer.consume(getUsers()); else
+            if (objectType == DBObjectType.ROLE) consumer.consume(getRoles()); else
             if (objectType == DBObjectType.CHARSET) consumer.consume(getCharsets());
             if (objectType == DBObjectType.SYSTEM_PRIVILEGE) consumer.consume(getSystemPrivileges());
         }
