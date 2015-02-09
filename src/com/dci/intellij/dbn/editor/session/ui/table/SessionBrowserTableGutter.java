@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
-import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableGutterRenderer;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutterCellRenderer;
 
 public class SessionBrowserTableGutter extends BasicTableGutter<SessionBrowserTable> {
     public SessionBrowserTableGutter(SessionBrowserTable table) {
@@ -16,7 +16,7 @@ public class SessionBrowserTableGutter extends BasicTableGutter<SessionBrowserTa
 
     @Override
     protected ListCellRenderer createCellRenderer() {
-        return new DatasetEditorTableGutterRenderer();
+        return new BasicTableGutterCellRenderer();
     }
 
     MouseListener mouseListener = new MouseAdapter() {

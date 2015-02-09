@@ -6,11 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 
 @State(
@@ -27,6 +29,11 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
     public static SessionBrowserManager getInstance(Project project) {
         return project.getComponent(SessionBrowserManager.class);
+    }
+
+    public void openSessionBrowser(ConnectionHandler connectionHandler) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
+        fileEditorManager.openFile(connectionHandler.getSessionBrowserFile(), true);
     }
 
 
