@@ -5585,7 +5585,7 @@
                             <token id="000003224" type-id="KW_REWRITE" />
                         </sequence>
                     </one-of>
-                    <object-ref id="000003225" type="ROLE" />
+                    <object-ref  branch="br0001" id="000003225" type="ROLE" />
                 </one-of>
                 <wrapper branch="br0002" id="000003226" optional="true" template="PARENTHESES">
                     <iteration id="000003227" separator="CHR_COMMA">

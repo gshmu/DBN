@@ -36,6 +36,7 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         ParseResult beginTokenResult = beginTokenElement.getParser().parse(node, optional, depth + 1, context);
 
         TokenType beginTokenType = beginTokenElement.getTokenType();
+        TokenType endTokenType = endTokenElement.getTokenType();
         boolean isStrong = elementType.isStrong();
 
         boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && !builder.isExplicitRange(beginTokenType));
@@ -48,7 +49,7 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
             matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
 
             ParseResultType wrappedResultType = wrappedResult.getType();
-            if (wrappedResultType == ParseResultType.NO_MATCH && !isStrong && !elementType.isWrappedElementOptional()) {
+            if (wrappedResultType == ParseResultType.NO_MATCH && !isStrong && !elementType.isWrappedElementOptional() && builder.getTokenType() != endTokenType) {
                 builder.setExplicitRange(beginTokenType, initialExplicitRange);
                 return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
             }
