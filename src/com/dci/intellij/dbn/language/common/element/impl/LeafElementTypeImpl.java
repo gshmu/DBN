@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
@@ -103,6 +104,8 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                         }
                         child = child.getNext();
                     }
+                } else if (elementType instanceof NamedElementType){
+                    context.removeBranchMarkers((NamedElementType) elementType);
                 }
             } else if (elementType instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) elementType;

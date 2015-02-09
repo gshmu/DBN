@@ -16,6 +16,10 @@ public class BranchCheck extends Branch{
         return true;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return name + "@" + version;

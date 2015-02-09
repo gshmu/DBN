@@ -26,7 +26,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
             objectTypeId == DatabaseObjectTypeId.FUNCTION ||
             objectTypeId == DatabaseObjectTypeId.PROCEDURE ||
             objectTypeId == DatabaseObjectTypeId.ARGUMENT ||
-            objectTypeId == DatabaseObjectTypeId.PRIVILEGE ||
+            objectTypeId == DatabaseObjectTypeId.SYSTEM_PRIVILEGE ||
             objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
     }
 
