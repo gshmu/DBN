@@ -4,13 +4,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.basic.BasicColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class ResultSetColumnInfo extends BasicColumnInfo {
     int resultSetColumnIndex;
-    public ResultSetColumnInfo(DBObjectBundle objectBundle, ResultSet resultSet, int columnIndex) throws SQLException {
+    public ResultSetColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
         this(columnIndex);
         ResultSetMetaData metaData = resultSet.getMetaData();
         name = metaData.getColumnName(resultSetColumnIndex);
@@ -19,7 +19,7 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
         int precision = getPrecision(metaData);
         int scale = metaData.getScale(resultSetColumnIndex);
 
-        dataType = DBDataType.get(objectBundle.getConnectionHandler(), dataTypeName, precision, precision, scale, false);
+        dataType = DBDataType.get(connectionHandler, dataTypeName, precision, precision, scale, false);
     }
 
     public ResultSetColumnInfo(int columnIndex) {
