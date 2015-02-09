@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -156,6 +157,11 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public DBObjectBundle getObjectBundle() {return null;}
     public DBSchema getUserSchema() {return null;}
+
+    @Override
+    public DBSessionBrowserVirtualFile getSessionBrowserFile() {
+        return null;
+    }
 
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {return null;}

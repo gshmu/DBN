@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
+import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -48,6 +49,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private DatabaseInterfaceProvider interfaceProvider;
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
+    private DBSessionBrowserVirtualFile sessionBrowserFile;
     private DatabaseLogOutput logOutput;
 
     private boolean isDisposed;
@@ -103,6 +105,14 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public DatabaseConsoleBundle getConsoleBundle() {
         return consoleBundle;
+    }
+
+    @Override
+    public DBSessionBrowserVirtualFile getSessionBrowserFile() {
+        if (sessionBrowserFile == null) {
+            sessionBrowserFile = new DBSessionBrowserVirtualFile(this);
+        }
+        return sessionBrowserFile;
     }
 
     public boolean isActive() {

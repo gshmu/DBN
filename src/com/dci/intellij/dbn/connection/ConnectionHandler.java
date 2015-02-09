@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
@@ -34,6 +35,7 @@ public interface ConnectionHandler extends Disposable{
     ConnectionSettings getSettings();
     ConnectionStatus getConnectionStatus();
     DatabaseConsoleBundle getConsoleBundle();
+    DBSessionBrowserVirtualFile getSessionBrowserFile();
 
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);

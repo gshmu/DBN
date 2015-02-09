@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,11 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
         connectionHandler = sessionsFile.getConnectionHandler();
         editorForm = new SessionBrowserForm(this, resultSet);
+        try {
+            editorForm.getEditorTable().getModel().load();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Disposer.register(this, editorForm);
     }
 

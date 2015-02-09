@@ -33,9 +33,9 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements Disposab
     protected String url;
 
 
-    public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler, String name) {
+    public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
-        setName(name);
+        setName(connectionHandler.getName());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
@@ -57,7 +57,7 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements Disposab
     }
 
     public Icon getIcon() {
-        return Icons.FILE_SQL_CONSOLE;
+        return Icons.FILE_SESSION_BROWSER;
     }
 
     public ConnectionHandler getConnectionHandler() {
