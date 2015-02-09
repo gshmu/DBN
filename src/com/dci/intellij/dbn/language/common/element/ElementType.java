@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import javax.swing.Icon;
-import java.util.Set;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -43,8 +42,6 @@ public interface ElementType {
 
     boolean isVirtualObject();
 
-    Set<Branch> getCheckedBranches();
-
     DBObjectType getVirtualObjectType();
 
     PsiElement createPsiElement(ASTNode astNode);
@@ -63,7 +60,7 @@ public interface ElementType {
 
     boolean isWrappingEnd(LeafElementType elementType);
 
-    Branch getBranch();
-
     int getIndexInParent(PathNode pathNode);
+
+    Branch getBranch();
 }

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import javax.swing.Icon;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,11 +139,6 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
 
     public boolean isVirtualObjectInsideLookup() {
         return false;
-    }
-
-    @Override
-    public Set<Branch> getCheckedBranches() {
-        return null;
     }
 
     public DBObjectType getVirtualObjectType() {

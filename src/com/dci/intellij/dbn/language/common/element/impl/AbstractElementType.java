@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
+import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -77,14 +78,14 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         loadDefinition(def);
     }
 
-    protected Set<Branch> parseBranchDefinitions(String definitions) {
-        Set<Branch> branches = null;
+    protected Set<BranchCheck> parseBranchChecks(String definitions) {
+        Set<BranchCheck> branches = null;
         if (definitions != null) {
-            branches = new THashSet<Branch>();
-            StringTokenizer tokenizer = new StringTokenizer(definitions, ",");
+            branches = new THashSet<BranchCheck>();
+            StringTokenizer tokenizer = new StringTokenizer(definitions, " ");
             while (tokenizer.hasMoreTokens()) {
                 String branchDef = tokenizer.nextToken().trim();
-                branches.add(new Branch(branchDef));
+                branches.add(new BranchCheck(branchDef));
             }
         }
         return branches;
@@ -264,8 +265,4 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return virtualObjectType;
     }
 
-    @Override
-    public Set<Branch> getCheckedBranches() {
-        return null;
-    }
 }

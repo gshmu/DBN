@@ -11,18 +11,16 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.OneOfElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.parser.Branch;
+import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.OneOfElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
 
 public class OneOfElementTypeImpl extends AbstractElementType implements OneOfElementType {
     protected final ElementTypeRef[] children;
     private boolean sortable;
-    private Set<Branch> checkedBranches;
 
     public OneOfElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
@@ -36,14 +34,9 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
             String type = child.getName();
             ElementType elementType = bundle.resolveElementDefinition(child, type, this);
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
-            Set<Branch> supportedBranches = parseBranchDefinitions(child.getAttributeValue("branch-check"));
-            if (supportedBranches != null) {
-                if (checkedBranches == null) {
-                    checkedBranches = new THashSet<Branch>();
-                }
-                checkedBranches.addAll(supportedBranches);
-            }
-            this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, supportedBranches);
+            Set<BranchCheck> branchChecks = parseBranchChecks(child.getAttributeValue("branch-check"));
+
+            this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, branchChecks);
             previous = this.children[i];
 
         }
@@ -62,11 +55,6 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
 
     public boolean isLeaf() {
         return false;
-    }
-
-    @Override
-    public Set<Branch> getCheckedBranches() {
-        return checkedBranches;
     }
 
     public String getDebugName() {

@@ -83,7 +83,7 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                 Branch branch = this.elementType.getBranch();
                 if (node != null && branch != null) {
                     // if node is matched add branches marker
-                    context.addBranchMarker(node.getParent(), branch);
+                    context.addBranchMarker(node, branch);
                 }
                 if (elementType instanceof LeafElementType) {
                     LeafElementType leafElementType = (LeafElementType) elementType;

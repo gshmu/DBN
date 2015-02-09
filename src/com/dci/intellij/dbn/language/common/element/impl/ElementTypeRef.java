@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ChainElement;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
+import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 
 public class ElementTypeRef extends ChainElement<ElementTypeRef> {
@@ -13,15 +14,15 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     private ElementType elementType;
     private boolean optional;
     private double version;
-    private Set<Branch> supportedBranches;
+    private Set<BranchCheck> branchChecks;
 
-    public ElementTypeRef(ElementTypeRef previous, ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<Branch> supportedBranches) {
+    public ElementTypeRef(ElementTypeRef previous, ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<BranchCheck> branchChecks) {
         super(previous);
         this.parentElementType = parentElementType;
         this.elementType = elementType;
         this.optional = optional;
         this.version = version;
-        this.supportedBranches = supportedBranches;
+        this.branchChecks = branchChecks;
     }
 
     public boolean check(Set<Branch> branches, double currentVersion) {
@@ -29,6 +30,18 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
             return false;
         }
 
+        if (branches != null && !branches.isEmpty() && branchChecks != null) {
+            for (Branch branch : branches) {
+                for (BranchCheck branchCheck : branchChecks) {
+                    if (!branchCheck.check(branch, currentVersion)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+/*
         if (branches != null) {
             Set<Branch> checkedBranches = getParentElementType().getCheckedBranches();
             if (checkedBranches != null) {
@@ -48,6 +61,7 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
                 }
             }
         }
+*/
 
         return true;
     }

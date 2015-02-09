@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
 import javax.swing.Icon;
-import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,9 +76,6 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     public boolean isVirtualObjectInsideLookup() {
         return false;
     }
-
-    @Override
-    public Set<Branch> getCheckedBranches() { return null; }
 
     public DBObjectType getVirtualObjectType() {
         return null;
