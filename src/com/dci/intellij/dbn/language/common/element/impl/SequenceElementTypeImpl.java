@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.SequenceElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.parser.Branch;
+import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.SequenceElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
@@ -25,7 +25,6 @@ import gnu.trove.THashSet;
 public class SequenceElementTypeImpl extends AbstractElementType implements SequenceElementType {
     protected ElementTypeRef[] children;
     private int exitIndex;
-    private Set<Branch> checkedBranches;
 
     public ElementTypeRef[] getChildren() {
         return children;
@@ -68,14 +67,9 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
             ElementType elementType = getElementBundle().resolveElementDefinition(child, type, this);
             boolean optional = Boolean.parseBoolean(child.getAttributeValue("optional"));
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
-            Set<Branch> supportedBranches = parseBranchDefinitions(child.getAttributeValue("branch-check"));
-            if (supportedBranches != null) {
-                if (checkedBranches == null) {
-                    checkedBranches = new THashSet<Branch>();
-                }
-                checkedBranches.addAll(supportedBranches);
-            }
-            this.children[i] = new ElementTypeRef(previous, this, elementType, optional, version, supportedBranches);
+
+            Set<BranchCheck> branchChecks = parseBranchChecks(child.getAttributeValue("branch-check"));
+            this.children[i] = new ElementTypeRef(previous, this, elementType, optional, version, branchChecks);
             previous = this.children[i];
 
             if (child.getAttributeValue("exit") != null) exitIndex = i;
@@ -84,11 +78,6 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
 
     public boolean isLeaf() {
         return false;
-    }
-
-    @Override
-    public Set<Branch> getCheckedBranches() {
-        return checkedBranches;
     }
 
     public int getChildCount() {

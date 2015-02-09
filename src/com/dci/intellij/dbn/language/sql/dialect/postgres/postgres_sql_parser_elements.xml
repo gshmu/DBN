@@ -9,23 +9,23 @@
     <element-def attributes="STRUCTURE, EXECUTABLE, GENERIC, STATEMENT" description="SQL statement" formatting-indent="ABSOLUTE_NONE" id="sql_statement">
         <element optional="true" ref-id="with_clause" version="8.4" />
         <one-of id="000000001">
-            <element ref-id="create_statement" />
-            <element ref-id="alter_statement" />
-            <element ref-id="drop_statement" />
-            <element ref-id="commit_statement" />
-            <element ref-id="rollback_statement" />
-            <element branch-check="with_clause@8.4" ref-id="select_statement" />
-            <element branch-check="with_clause@9.1" ref-id="insert_statement" />
-            <element branch-check="with_clause@9.1" ref-id="update_statement" />
-            <element branch-check="with_clause@9.1" ref-id="delete_statement" />
-            <element ref-id="truncate_statement" />
-            <element ref-id="explain_statement" />
-            <element ref-id="savepoint_statement" />
+            <element branch-check="-br0001" ref-id="create_statement" />
+            <element branch-check="-br0001" ref-id="alter_statement" />
+            <element branch-check="-br0001" ref-id="drop_statement" />
+            <element branch-check="-br0001" ref-id="commit_statement" />
+            <element branch-check="-br0001" ref-id="rollback_statement" />
+            <element branch-check="+br0001@8.4" ref-id="select_statement" />
+            <element branch-check="+br0001@9.1" ref-id="insert_statement" />
+            <element branch-check="+br0001@9.1" ref-id="update_statement" />
+            <element branch-check="+br0001@9.1" ref-id="delete_statement" />
+            <element branch-check="-br0001" ref-id="truncate_statement" />
+            <element branch-check="-br0001" ref-id="explain_statement" />
+            <element branch-check="-br0001" ref-id="savepoint_statement" />
         </one-of>
         <element ref-id="end" />
     </element-def>
 
-    <element-def attributes="CLAUSE" branch="with_clause" description="WITH clause" id="with_clause">
+    <element-def attributes="CLAUSE" branch="br0001" description="WITH clause" id="with_clause">
         <token id="000000002" type-id="KW_WITH" />
         <token id="000000003" optional="true" type-id="KW_RECURSIVE" />
         <iteration id="000000004" separator="CHR_COMMA">
@@ -94,42 +94,42 @@
     <!-- ========= CREATE ========= -->
     <element-def attributes="SCOPE_ISOLATION" description="CREATE statement" id="create_statement">
         <token id="000000035" type-id="KW_CREATE" />
-        <sequence branch="create_or_replace" id="000000036" optional="true" version="7.2">
+        <sequence branch="br0002" id="000000036" optional="true" version="7.2">
             <token id="000000037" type-id="KW_OR" />
             <token flavor="keyword" id="000000038" type-id="FN_REPLACE" />
         </sequence>
-        <one-of branch="temporary" id="000000039" optional="true" version="8.1">
+        <one-of branch="br0003" id="000000039" optional="true" version="8.1">
             <token id="000000040" type-id="KW_TEMP" />
             <token id="000000041" type-id="KW_TEMPORARY" />
         </one-of>
         <one-of id="000000042">
-            <element ref-id="create_aggregate_statement" version="7.4" />
-            <element ref-id="create_cast_statement" version="7.3" />
-            <element ref-id="create_collation_statement" version="9.1" />
-            <element ref-id="create_conversion_statement" version="7.3" />
-            <element ref-id="create_database_statement" />
-            <element ref-id="create_domain_statement" version="7.3" />
-            <element ref-id="create_event_trigger_statement" version="9.3" />
-            <element ref-id="create_extension_statement" version="9.1" />
-            <element ref-id="create_foreign_statement" version="8.4" />
-            <element branch-check="create_or_replace" ref-id="create_function_statement" />
-            <element ref-id="create_group_statement" />
-            <element ref-id="create_index_statement" />
-            <element ref-id="create_language_statement" />
-            <element ref-id="create_materialized_view_statement" version="9.3" />
-            <element ref-id="create_operator_statement" />
-            <element ref-id="create_role_statement" version="8.1" />
-            <element ref-id="create_rule_statement" version="8.1" />
-            <element ref-id="create_schema_statement" version="7.3" />
-            <element branch-check="temporary" ref-id="create_sequence_statement" />
-            <element ref-id="create_server_statement" version="8.4" />
-            <element ref-id="create_table_statement" />
-            <element ref-id="create_tablespace_statement" version="8.0" />
-            <element ref-id="create_text_search_statement" version="8.3" />
-            <element ref-id="create_trigger_statement" />
-            <element ref-id="create_type_statement" />
-            <element ref-id="create_user_statement" />
-            <element branch-check="create_or_replace, temporary" ref-id="create_view_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_aggregate_statement" version="7.4" />
+            <element branch-check="-br0002 -br0003" ref-id="create_cast_statement" version="7.3" />
+            <element branch-check="-br0002 -br0003" ref-id="create_collation_statement" version="9.1" />
+            <element branch-check="-br0002 -br0003" ref-id="create_conversion_statement" version="7.3" />
+            <element branch-check="-br0002 -br0003" ref-id="create_database_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_domain_statement" version="7.3" />
+            <element branch-check="-br0002 -br0003" ref-id="create_event_trigger_statement" version="9.3" />
+            <element branch-check="-br0002 -br0003" ref-id="create_extension_statement" version="9.1" />
+            <element branch-check="-br0002 -br0003" ref-id="create_foreign_statement" version="8.4" />
+            <element branch-check="+br0002 -br0003" ref-id="create_function_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_group_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_index_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_language_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_materialized_view_statement" version="9.3" />
+            <element branch-check="-br0002 -br0003" ref-id="create_operator_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_role_statement" version="8.1" />
+            <element branch-check="-br0002 -br0003" ref-id="create_rule_statement" version="8.1" />
+            <element branch-check="-br0002 -br0003" ref-id="create_schema_statement" version="7.3" />
+            <element branch-check="-br0002 +br0003" ref-id="create_sequence_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_server_statement" version="8.4" />
+            <element branch-check="-br0002 -br0003" ref-id="create_table_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_tablespace_statement" version="8.0" />
+            <element branch-check="-br0002 -br0003" ref-id="create_text_search_statement" version="8.3" />
+            <element branch-check="-br0002 -br0003" ref-id="create_trigger_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_type_statement" />
+            <element branch-check="-br0002 -br0003" ref-id="create_user_statement" />
+            <element branch-check="+br0002 +br0003" ref-id="create_view_statement" />
         </one-of>
     </element-def>
     <element-def attributes="DATA_DEFINITION, SPECIFIC" description="CREATE VIEW statement" id="create_view_statement">

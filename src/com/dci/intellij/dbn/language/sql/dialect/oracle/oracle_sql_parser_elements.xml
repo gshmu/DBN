@@ -5349,7 +5349,7 @@
                         <token id="000002993" optional="true" type-id="KW_PRIVILEGES" />
                     </sequence>
                     <object-ref id="000002994" type="ROLE" />
-                    <one-of branch="grant-system-privileges" id="000002995">
+                    <one-of branch="br0001" id="000002995">
                         <token id="000002996" type-id="OBJ_ADMINISTER_ANY_SQL_TUNING_SET" />
                         <token id="000002997" type-id="OBJ_ADMINISTER_DATABASE_TRIGGER" />
                         <token id="000002998" type-id="OBJ_ADMINISTER_RESOURCE_MANAGER" />
@@ -5554,7 +5554,7 @@
                         <token id="000003197" type-id="OBJ_UPDATE_ANY_CUBE_DIMENSION" />
                         <token id="000003198" type-id="OBJ_UPDATE_ANY_TABLE" />
                     </one-of>
-                    <one-of branch="grant-object-privileges" id="000003199">
+                    <one-of branch="br0002" id="000003199">
                         <token id="000003200" type-id="KW_ALTER" />
                         <token id="000003201" type-id="KW_EXECUTE" />
                         <token id="000003202" type-id="KW_DEBUG" />
@@ -5587,25 +5587,25 @@
                         </sequence>
                     </one-of>
                 </one-of>
-                <wrapper branch="grant-object-privileges" id="000003226" optional="true" template="PARENTHESES">
+                <wrapper branch="br0002" id="000003226" optional="true" template="PARENTHESES">
                     <iteration id="000003227" separator="CHR_COMMA">
                         <object-ref id="000003228" type="COLUMN" />
                     </iteration>
                 </wrapper>
             </sequence>
         </iteration>
-        <element branch-check="grant-object-privileges" optional="true" ref-id="on_object_clause" />
+        <element branch-check="-br0001 +br0002" optional="true" ref-id="on_object_clause" />
         <token id="000003229" type-id="KW_TO" />
         <element ref-id="grantee_clause" />
         <iteration id="000003230" optional="true">
             <sequence id="000003231">
                 <token id="000003232" type-id="KW_WITH" />
                 <one-of id="000003233">
-                    <token branch-check="grant-object-privileges" id="000003234" type-id="KW_HIERARCHY" />
-                    <token branch-check="grant-object-privileges" id="000003235" type-id="KW_GRANT" />
-                    <token branch-check="grant-system-privileges" id="000003236" type-id="KW_ADMIN" />
+                    <token branch-check="-br0001 +br0002" id="000003234" type-id="KW_HIERARCHY" />
+                    <token branch-check="-br0001 +br0002" id="000003235" type-id="KW_GRANT" />
+                    <token branch-check="+br0001 -br0002" id="000003236" type-id="KW_ADMIN" />
                 </one-of>
-                <token branch-check="grant-object-privileges" id="000003237" type-id="KW_OPTION" />
+                <token branch-check="-br0001 +br0002" id="000003237" type-id="KW_OPTION" />
             </sequence>
         </iteration>
     </element-def>

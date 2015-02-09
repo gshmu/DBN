@@ -2,25 +2,15 @@ package com.dci.intellij.dbn.language.common.element.parser;
 
 public class Branch {
     String name;
-    double version = 0;
+
+    public Branch() {}
 
     public Branch(String def) {
-        int index = def.indexOf("@");
-        if (index > -1) {
-            name = def.substring(0, index);
-            version = Double.parseDouble(def.substring(index + 1));
-        } else {
-            name = def;
-        }
-
+        name = def;
     }
 
     public String getName() {
         return name;
-    }
-
-    public double getVersion() {
-        return version;
     }
 
     @Override
@@ -36,8 +26,4 @@ public class Branch {
         return name.hashCode();
     }
 
-    @Override
-    public String toString() {
-        return name + "@" + version;
-    }
 }

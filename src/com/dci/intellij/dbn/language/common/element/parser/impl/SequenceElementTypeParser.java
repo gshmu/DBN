@@ -51,43 +51,46 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
 
-                ParseResult result = ParseResult.createNoMatchResult();
-                // current token can still be part of the iterated element.
-                //if (elementTypes[i].containsToken(tokenType)) {
-                if (shouldParseElement(child.getElementType(), node, context)) {
+                if (context.check(child)) {
+                    ParseResult result = ParseResult.createNoMatchResult();
+                    // current token can still be part of the iterated element.
+                    //if (elementTypes[i].containsToken(tokenType)) {
+                    if (shouldParseElement(child.getElementType(), node, context)) {
 
-                    //node = node.createVariant(builder.getCurrentOffset(), i);
-                    result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
+                        //node = node.createVariant(builder.getCurrentOffset(), i);
+                        result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
 
-                    if (result.isMatch()) {
-                        matchedTokens = matchedTokens + result.getMatchedTokens();
-                        tokenType = builder.getTokenType();
-                        matches++;
+                        if (result.isMatch()) {
+                            matchedTokens = matchedTokens + result.getMatchedTokens();
+                            tokenType = builder.getTokenType();
+                            matches++;
+                        }
+                    }
+
+                    // not matched and not optional
+                    if (result.isNoMatch() && !child.isOptional()) {
+                        boolean isWeakMatch = matches < 2 && matchedTokens < 3 && index > 1 && ignoreFirstMatch();
+
+                        if (child.isFirst()|| elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
+                            //if (isFirst(i) || isExitIndex(i)) {
+                            return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+                        }
+
+                        index = advanceLexerToNextLandmark(node, context);
+
+                        if (index <= 0) {
+                            // no landmarks found or landmark in parent found
+                            return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
+                        } else {
+                            // local landmarks found
+
+                            tokenType = builder.getTokenType();
+                            node.setCursorPosition(index);
+                            continue;
+                        }
                     }
                 }
 
-                // not matched and not optional
-                if (result.isNoMatch() && !child.isOptional()) {
-                    boolean isWeakMatch = matches < 2 && matchedTokens < 3 && index > 1 && ignoreFirstMatch();
-                    
-                    if (child.isFirst()|| elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
-                        //if (isFirst(i) || isExitIndex(i)) {
-                        return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
-                    }
-
-                    index = advanceLexerToNextLandmark(node, context);
-
-                    if (index <= 0) {
-                        // no landmarks found or landmark in parent found
-                        return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
-                    } else {
-                        // local landmarks found
-
-                        tokenType = builder.getTokenType();
-                        node.setCursorPosition(index);
-                        continue;
-                    }
-                }
 
                 // if is last element
                 if (child.isLast()) {
