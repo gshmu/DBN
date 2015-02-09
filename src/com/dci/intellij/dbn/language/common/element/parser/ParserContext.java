@@ -1,23 +1,14 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
-import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
 
 public class ParserContext extends ElementLookupContext {
     private long timestamp = System.currentTimeMillis();
     private ParserBuilder builder;
-    private Map<Branch, ParsePathNode> branchMarkers = new HashMap<Branch, ParsePathNode>();
     private LeafElementType lastResolvedLeaf;
     private TokenType wavedTokenType;
     private int wavedTokenTypeOffset;
@@ -33,39 +24,6 @@ public class ParserContext extends ElementLookupContext {
 
     public ParserBuilder getBuilder() {
         return builder;
-    }
-
-    public void addBranchMarker(ParsePathNode pathNode, Branch branch) {
-        pathNode = getNamedElementPathNode(pathNode);
-        branchMarkers.put(branch, pathNode);
-        if (pathNode != null) {
-            this.branches = branchMarkers.keySet();
-        }
-    }
-
-    @Nullable
-    private ParsePathNode getNamedElementPathNode(@NotNull ParsePathNode parentNode) {
-        parentNode = parentNode.getParent();
-        while (parentNode != null) {
-            if (parentNode.getElementType() instanceof NamedElementType) {
-                return parentNode;
-            }
-            parentNode = parentNode.getParent();
-        }
-        return null;
-    }
-
-    public void removeBranchMarkers(ParsePathNode parentNode) {
-        if (parentNode instanceof NamedElementType && branchMarkers.size() > 0 && branchMarkers.containsValue(parentNode)) {
-            Iterator<Branch> iterator = branchMarkers.keySet().iterator();
-            while (iterator.hasNext()) {
-                Branch key = iterator.next();
-                if (branchMarkers.get(key) == parentNode) {
-                    iterator.remove();
-                }
-            }
-        }
-        branches = branchMarkers.size() == 0 ? null : branchMarkers.keySet();
     }
 
     public LeafElementType getLastResolvedLeaf() {

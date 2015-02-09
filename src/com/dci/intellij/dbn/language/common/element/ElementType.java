@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -62,5 +63,6 @@ public interface ElementType {
 
     int getIndexInParent(PathNode pathNode);
 
+    @Nullable
     Branch getBranch();
 }

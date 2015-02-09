@@ -25,8 +25,8 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
             //objectTypeId == DatabaseObjectTypeId.DATABASE_TRIGGER ||
             objectTypeId == DatabaseObjectTypeId.FUNCTION ||
             objectTypeId == DatabaseObjectTypeId.ARGUMENT ||
-            objectTypeId == DatabaseObjectTypeId.PRIVILEGE ||
             objectTypeId == DatabaseObjectTypeId.SEQUENCE ||
+            objectTypeId == DatabaseObjectTypeId.SYSTEM_PRIVILEGE ||
             objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
     }
 

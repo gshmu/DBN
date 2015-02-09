@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.code.common.completion;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -264,27 +263,24 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     @Nullable
-    private ElementLookupContext computeParseBranches(ASTNode node, double databaseVersion) {
-        Set<Branch> lookupBranches = null;
-        while (node != null && !(node instanceof FileElement)) {
-            IElementType elementType = node.getElementType();
+    private ElementLookupContext computeParseBranches(ASTNode astNode, double databaseVersion) {
+        ElementLookupContext lookupContext = new ElementLookupContext(databaseVersion);
+        while (astNode != null && !(astNode instanceof FileElement)) {
+            IElementType elementType = astNode.getElementType();
             if (elementType instanceof ElementType) {
                 ElementType basicElementType = (ElementType) elementType;
                 Branch branch = basicElementType.getBranch();
                 if (branch != null) {
-                    if (lookupBranches == null) {
-                        lookupBranches = new HashSet<Branch>();
-                    }
-                    lookupBranches.add(branch);
+                    lookupContext.addBranchMarker(astNode, branch);
                 }
             }
-            ASTNode prevNode = node.getTreePrev();
-            if (prevNode == null) {
-                prevNode = node.getTreeParent();
+            ASTNode prevAstNode = astNode.getTreePrev();
+            if (prevAstNode == null) {
+                prevAstNode = astNode.getTreeParent();
             }
-            node = prevNode;
+            astNode = prevAstNode;
         }
-        return new ElementLookupContext(lookupBranches, databaseVersion);
+        return lookupContext;
     }
 
     public String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {

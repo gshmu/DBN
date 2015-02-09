@@ -31,13 +31,18 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
         }
 
         if (branches != null && !branches.isEmpty() && branchChecks != null) {
+            boolean finalCheckValue = true;
             for (Branch branch : branches) {
                 for (BranchCheck branchCheck : branchChecks) {
-                    if (!branchCheck.check(branch, currentVersion)) {
-                        return false;
+                    boolean checkValue = branchCheck.check(branch, currentVersion);
+                    if (branchCheck.getType() == BranchCheck.Type.FORBIDDEN) {
+                        if (!checkValue) return false;
+                    } else if (branchCheck.getType() == BranchCheck.Type.ALLOWED) {
+                        finalCheckValue = finalCheckValue || checkValue;
                     }
                 }
             }
+            return finalCheckValue;
         }
 
 
