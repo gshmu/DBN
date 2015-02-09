@@ -28,7 +28,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         super(connectionHandler.getProject());
         this.connectionHandler = connectionHandler;
         this.resultSet = resultSet;
-        setHeader(new ResultSetDataModelHeader(connectionHandler.getObjectBundle(), resultSet));
+        setHeader(new ResultSetDataModelHeader(connectionHandler, resultSet));
         fetchNextRecords(maxRecords, false);
     }
 

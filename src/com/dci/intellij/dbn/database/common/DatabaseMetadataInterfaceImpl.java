@@ -320,6 +320,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
    /*********************************************************
     *                   MISCELLANEOUS                       *
     *********************************************************/
+
     public ResultSet loadObjectChangeTimestamp(String ownerName, String objectName, String objectType, Connection connection) throws SQLException {
         return executeQuery(connection, "object-change-timestamp", ownerName, objectName, objectType);
     }
@@ -328,37 +329,50 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         return executeQuery(connection, "invalid-objects", ownerName);
     }
 
+    @Override
     public ResultSet loadDebugObjects(String ownerName, Connection connection) throws SQLException {
         return executeQuery(connection, "debug-objects", ownerName);
     }
 
+    @Override
     public ResultSet loadCompileObjectErrors(String ownerName, String objectName, Connection connection) throws SQLException {
         return executeQuery(connection, "object-compile-errors", ownerName, objectName);
     }
 
 
+    @Override
     public void compileObject(String ownerName, String objectName, String objectType, boolean debug, Connection connection) throws SQLException {
         executeQuery(connection, "compile-object", ownerName, objectName, objectType, debug ? "DEBUG" : "");
     }
 
+    @Override
     public void compileObjectBody(String ownerName, String objectName, String objectType, boolean debug, Connection connection) throws SQLException {
         executeQuery(connection, "compile-object-body", ownerName, objectName, objectType, debug ? "DEBUG" : "");
     }
 
+    @Override
     public void enableTrigger(String ownerName, String triggerName, Connection connection) throws SQLException {
         executeQuery(connection, "enable-trigger", ownerName, triggerName);
     }
 
+    @Override
     public void disableTrigger(String ownerName, String triggerName, Connection connection) throws SQLException {
         executeQuery(connection, "disable-trigger", ownerName, triggerName);
     }
 
+    @Override
     public void enableConstraint(String ownerName, String tableName, String constraintName, Connection connection) throws SQLException {
         executeQuery(connection, "enable-constraint", ownerName, tableName, constraintName);
     }
 
+    @Override
     public void disableConstraint(String ownerName, String tableName, String constraintName, Connection connection) throws SQLException {
         executeQuery(connection, "disable-constraint", ownerName, tableName, constraintName);
+    }
+
+    @Override
+    public ResultSet loadUserSessions(Connection connection) throws SQLException {
+        return executeQuery(connection, "user-sessions");
     }
 
     @Override

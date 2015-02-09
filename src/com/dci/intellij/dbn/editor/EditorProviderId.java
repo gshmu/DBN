@@ -8,7 +8,8 @@ public enum EditorProviderId {
     DDL0("3.DDL"),
     DDL1("4.DDL"),
     DDL2("5.DDL"),
-    CONSOLE("0.CONSOLE");
+    CONSOLE("0.CONSOLE"),
+    SESSION_BROWSER("0.SESSION_BROWSER");
 
     EditorProviderId(String id) {
         this.id = id;

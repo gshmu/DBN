@@ -240,6 +240,7 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.ddl.DDLFileEditorProvider1</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.ddl.DDLFileEditorProvider2</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.DatasetEditorProvider</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.session.SessionBrowserEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.code.SourceCodeSpecEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.console.SQLConsoleEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.event.EventManager</implementation-class></component>
@@ -277,6 +278,7 @@
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.session.SessionBrowserManager</implementation-class></component>
     </project-components>
     <module-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
@@ -335,6 +337,9 @@
             <action id="DBNavigator.Actions.CodeEditor.LinkDdlFile" class="com.dci.intellij.dbn.editor.code.action.DDLFileAction" text="Code Editor - DDL Files"/>
             <separator/>
             <action id="DBNavigator.Actions.CodeEditor.OpenSettings" class="com.dci.intellij.dbn.editor.code.action.OpenSettingsAction" text="Code Editor - Settings"/>
+        </group>
+        <group id="DBNavigator.ActionGroup.SessionEditor" text="Data Editor Controls">
+
         </group>
         <group id="DBNavigator.ActionGroup.DataEditor" text="Data Editor Controls">
             <action id="DBNavigator.Actions.DataEditor.SwitchEditableStatus" class="com.dci.intellij.dbn.editor.data.action.LockUnlockDataEditing" text="Data Editor - Lock / Unlock Editing"/>
