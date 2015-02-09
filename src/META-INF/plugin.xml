@@ -27,6 +27,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Support for Oracle GRANT SQL-statement</br>
+                - Minor bug fixes<br>
+            </ul>
             <li><b>3.0.3821</b>
             <ul>
                 - Support for IntelliJ IDEA latest EAP version (14.1)</br>
