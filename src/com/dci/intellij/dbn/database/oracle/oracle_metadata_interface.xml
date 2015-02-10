@@ -1857,6 +1857,7 @@
                               FROM gv$session)
                   SELECT
                       vs.sid SESSION_ID,
+                      vs.serial# SERIAL_NUMBER,
                       vs.username "USER",
                       vs.osuser OS_USER,
                       vs.machine HOST,
@@ -1955,7 +1956,6 @@
                              98, 'ALT PKG BODY',
                              99, 'DRP PKG BODY',
                              TO_CHAR (vs.command)) COMMAND,
-                      serial# SERIAL_NUMBER,
                       vs.sql_id SQL_ID,
                       vs.action ACTION,
                       vs.resource_consumer_group,
@@ -1971,7 +1971,13 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="kill-session" is-prepared-statement="true">
+    <statement-execution-processor id="kill-session-post-transaction" is-prepared-statement="true" timeout="10">
+        <statement>
+            ALTER SYSTEM KILL SESSION '{0},{1}' POST_TRANSACTION
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="kill-session-immediate" is-prepared-statement="true" timeout="10">
         <statement>
             ALTER SYSTEM KILL SESSION '{0},{1}' IMMEDIATE
         </statement>

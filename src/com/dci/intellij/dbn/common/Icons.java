@@ -51,6 +51,8 @@ public class Icons {
     public static final Icon ACTION_SELECT_ALL = load("/img/action/SelectAll.png");
     public static final Icon ACTION_OPTIONS = load("/img/action/Options.png");
     public static final Icon ACTION_NAVIGATE = load("/img/action/Navigate.png");
+    public static final Icon ACTION_KILL_SESSION_IMMEDIATE = load("/img/action/KillSessionImmediate.png");
+    public static final Icon ACTION_KILL_SESSION_POST_TRANSACTION = load("/img/action/KillSessionPostTransaction.png");
 
 
     public static final Icon DATABASE_NAVIGATOR = load("/img/project/DatabaseNavigator.png");

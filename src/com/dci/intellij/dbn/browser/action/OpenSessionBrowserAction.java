@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -29,7 +31,14 @@ public class OpenSessionBrowserAction extends AnAction {
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         ConnectionHandler connectionHandler = getConnectionHandler(e);
-        presentation.setEnabled(connectionHandler != null);
+        if (connectionHandler != null) {
+            presentation.setEnabled(true);
+            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            presentation.setVisible(compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_BROWSING));
+        } else {
+            presentation.setVisible(false);
+            presentation.setEnabled(false);
+        }
         presentation.setText("Open Session Browser");
     }
 

@@ -32,15 +32,9 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
 
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
-            case OBJECT_INVALIDATION: return false;
-            case OBJECT_DEPENDENCIES: return false;
-            case OBJECT_REPLACING: return false;
-            case OBJECT_DDL_EXTRACTION: return false;
-            case OBJECT_DISABLING: return false;
+            case SESSION_BROWSING: return true;
+            case SESSION_KILL_IMMEDIATE: return true;
             case OBJECT_CHANGE_TRACING: return true;
-            case AUTHID_METHOD_EXECUTION: return false;
-            case FUNCTION_OUT_ARGUMENTS: return false;
-            case DEBUGGING: return false;
             default: return false;
         }
     }

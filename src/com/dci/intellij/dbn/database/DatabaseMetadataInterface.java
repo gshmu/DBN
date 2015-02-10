@@ -639,6 +639,8 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     ResultSet loadUserSessions(Connection connection) throws SQLException;
 
+    void killUserSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException;
+
     ResultSet loadExplainPlan(Connection connection) throws SQLException;
 
     void clearExplainPlanData(Connection connection) throws SQLException;

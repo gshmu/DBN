@@ -3,16 +3,21 @@ package com.dci.intellij.dbn.editor.session;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
@@ -24,6 +29,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -61,14 +67,24 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public void reload() {
-        SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
-        SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            if (sessionBrowserModel != null) {
-                editorTable.setModel(sessionBrowserModel);
-                editorTable.accommodateColumnsSize();
+        new BackgroundTask(getProject(), "Reloading sessions", false) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                final SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
+                if (sessionBrowserModel != null) {
+                    new SimpleLaterInvocator() {
+                        @Override
+                        protected void execute() {
+                            SessionBrowserTable editorTable = getEditorTable();
+                            if (editorTable != null) {
+                                editorTable.setModel(sessionBrowserModel);
+                                refreshTable();
+                            }
+                        }
+                    }.start();
+                }
             }
-        }
+        }.start();
     }
 
     public void refreshTable() {
@@ -77,6 +93,23 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             editorTable.revalidate();
             editorTable.repaint();
             editorTable.accommodateColumnsSize();
+        }
+    }
+
+    public void killSelectedSessions(boolean immediate) {
+        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null) {
+            int[] selectedRows = editorTable.getSelectedRows();
+            Map<Object, Object> sessionIds = new HashMap<Object, Object>();
+            for (int selectedRow : selectedRows) {
+                SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
+                Object sessionId = row.getCellValue("SESSION_ID");
+                Object serialNumber = row.getCellValue("SERIAL_NUMBER");
+                sessionIds.put(sessionId, serialNumber);
+            }
+
+            sessionBrowserManager.killSessions(this, sessionIds, immediate);
         }
     }
 
