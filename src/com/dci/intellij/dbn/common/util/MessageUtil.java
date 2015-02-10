@@ -42,7 +42,7 @@ public class MessageUtil {
         if (exception != null) {
             //String className = NamingUtil.getClassName(exception.getClass());
             //message = message + "\nCause: [" + className + "] " + exception.getMessage();
-            message = message + "\n" + exception.getMessage();
+            message = message + "\n" + exception.getMessage().trim();
         }
         if (title == null) title = "Error";
         showDialog(project, message, title, OPTIONS_OK, 0, Icons.DIALOG_ERROR, null);

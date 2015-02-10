@@ -33,7 +33,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case SESSION_BROWSING: return true;
-            case SESSION_KILL_IMMEDIATE: return true;
+            case SESSION_KILL: return true;
             default: return false;
         }
     }

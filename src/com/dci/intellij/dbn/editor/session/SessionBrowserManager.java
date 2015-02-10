@@ -11,8 +11,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -47,22 +51,76 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         fileEditorManager.openFile(sessionBrowserFile, true);
     }
 
-    public void killSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final boolean immediate) {
+    public void disconnectSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final boolean kill) {
         final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
-        final DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+        final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
+        DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
+        if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT_TIMING)) {
+            Project project = connectionHandler.getProject();
+            String title;
+            String message;
+            String[] options;
+            SimpleTask task;
+
+            if (kill) {
+                title = "Kill Sessions";
+                message = "Please select kill option";
+                options = new String[] {"Kill", "Kill Immediate", "Cancel"};
+                task = new SimpleTask() {
+                    @Override
+                    protected void execute() {
+                        int option = getOption();
+                        if (option != 2) {
+                            boolean immediate = option == 1;
+                            doDisconnectSessions(sessionBrowser, sessionIds, true, immediate, false);
+                        }
+                    }
+                };
+            } else {
+                title = "Disconnect Sessions";
+                message = "Please select disconnect option";
+                options = new String[] {"Disconnect Immediate", "Disconnect Post Transaction", "Cancel"};
+                task = new SimpleTask() {
+                    @Override
+                    protected void execute() {
+                        int option = getOption();
+                        if (option != 2) {
+                            boolean immediate = option == 0;
+                            boolean postTransaction = option == 1;
+                            doDisconnectSessions(sessionBrowser, sessionIds, false, immediate, postTransaction);
+                        }
+                    }
+                };
+
+            }
+
+            MessageUtil.showQuestionDialog(project, title, message, options, 0, task);
+        } else {
+            doDisconnectSessions(sessionBrowser, sessionIds, kill, false, false);
+        }
+    }
+
+    private void doDisconnectSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final boolean kill, final boolean immediate, final boolean postTransaction) {
+        final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         new BackgroundTask(getProject(), "Killing Sessions", false, true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 Project project = connectionHandler.getProject();
                 Connection connection = null;
                 try {
+                    final String killedAction = kill ? "killed" : "disconnected";
+                    final String killingAction = kill ? "killing" : "disconnecting";
                     connection = connectionHandler.getPoolConnection();
                     Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
+                    final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
                     for (Object sessionId : sessionIds.keySet()) {
                         Object serialNumber = sessionIds.get(sessionId);
                         if (progressIndicator.isCanceled()) return;
                         try {
-                            metadataInterface.killUserSession(sessionId, serialNumber, immediate, connection);
+                            if (kill)
+                                metadataInterface.killSession(sessionId, serialNumber, immediate, connection); else
+                                metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, connection);
                         } catch (SQLException e) {
                             errors.put(sessionId, e);
                         }
@@ -71,20 +129,20 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                     if (sessionIds.size() == 1) {
                         Object sessionId = sessionIds.keySet().iterator().next();
                         if (errors.size() == 0) {
-                            MessageUtil.showInfoDialog(project, "Info", "Session with id \"" + sessionId + "\" killed.");
+                            MessageUtil.showInfoDialog(project, "Info", "Session with id \"" + sessionId + "\" " + killedAction +".");
                         } else {
                             SQLException exception = errors.get(sessionId);
-                            MessageUtil.showErrorDialog(project, "Error killing session with id \"" + sessionId + "\"" , exception);
+                            MessageUtil.showErrorDialog(project, "Error " + killingAction + " session with id \"" + sessionId + "\"." , exception);
                         }
                     } else {
                         if (errors.size() == 0) {
-                            MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions killed.");
+                            MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + killedAction + ".");
                         } else {
-                            StringBuilder message = new StringBuilder("Could not kill one or more of the selected sessions:");
+                            StringBuilder message = new StringBuilder("Error " + killingAction + " one or more of the selected sessions:");
                             for (Object sessionId : sessionIds.keySet()) {
                                 SQLException exception = errors.get(sessionId);
                                 message.append("\n - session id ").append(sessionId).append(": ");
-                                if (exception == null) message.append("killed"); else message.append(exception.getMessage().trim());
+                                if (exception == null) message.append(killedAction); else message.append(exception.getMessage().trim());
 
                             }
                             MessageUtil.showErrorDialog(project, message.toString());
@@ -99,7 +157,6 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 }
             }
         }.start();
-
     }
 
     /****************************************

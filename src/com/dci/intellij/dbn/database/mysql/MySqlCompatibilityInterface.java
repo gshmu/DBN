@@ -33,7 +33,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case SESSION_BROWSING: return true;
-            case SESSION_KILL_IMMEDIATE: return true;
+            case SESSION_KILL: return true;
             case OBJECT_CHANGE_TRACING: return true;
             default: return false;
         }

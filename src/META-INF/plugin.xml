@@ -345,8 +345,8 @@
             <action id="DBNavigator.Actions.SessionBrowser.FilterHosts" class="com.dci.intellij.dbn.editor.session.action.FilterHostsComboBoxAction" text="Session Browser - Filter Hosts"/>
             <action id="DBNavigator.Actions.SessionBrowser.FilterStatuses" class="com.dci.intellij.dbn.editor.session.action.FilterStatusesComboBoxAction" text="Session Browser - Filter Statuses"/>
             <separator/>
-            <action id="DBNavigator.Actions.SessionBrowser.KillSessionsImmediate" class="com.dci.intellij.dbn.editor.session.action.KillSessionsImmediateAction" text="Session Browser - Kill Sessions Immediate"/>
-            <action id="DBNavigator.Actions.SessionBrowser.KillSessionsPostTransaction" class="com.dci.intellij.dbn.editor.session.action.KillSessionsPostTransactionAction" text="Session Browser - Kill Sessions Post Transaction"/>
+            <action id="DBNavigator.Actions.SessionBrowser.DisconnectSessions" class="com.dci.intellij.dbn.editor.session.action.DisconnectSessionsAction" text="Session Browser - Disconnect Sessions"/>
+            <action id="DBNavigator.Actions.SessionBrowser.KillSessions" class="com.dci.intellij.dbn.editor.session.action.KillSessionsAction" text="Session Browser - Kill Sessions"/>
         </group>
         <group id="DBNavigator.ActionGroup.DataEditor" text="Data Editor Controls">
             <action id="DBNavigator.Actions.DataEditor.SwitchEditableStatus" class="com.dci.intellij.dbn.editor.data.action.LockUnlockDataEditing" text="Data Editor - Lock / Unlock Editing"/>

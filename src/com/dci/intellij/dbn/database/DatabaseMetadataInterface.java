@@ -637,9 +637,11 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
     void disableConstraint(String ownerName, String tableName, String constraintName, Connection connection) throws SQLException;
 
-    ResultSet loadUserSessions(Connection connection) throws SQLException;
+    ResultSet loadSessions(Connection connection) throws SQLException;
 
-    void killUserSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException;
+    void killSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException;
+
+    void disconnectSession(Object sessionId, Object serialNumber, boolean postTransaction, boolean immediate, Connection connection) throws SQLException;
 
     ResultSet loadExplainPlan(Connection connection) throws SQLException;
 

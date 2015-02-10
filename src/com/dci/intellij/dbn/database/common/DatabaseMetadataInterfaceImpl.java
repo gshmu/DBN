@@ -371,13 +371,22 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
-    public ResultSet loadUserSessions(Connection connection) throws SQLException {
-        return executeQuery(connection, "user-sessions");
+    public ResultSet loadSessions(Connection connection) throws SQLException {
+        return executeQuery(connection, "sessions");
     }
 
     @Override
-    public void killUserSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException {
-        executeUpdate(connection, immediate ? "kill-session-immediate" : "kill-session-post-transaction", sessionId, serialNumber);
+    public void killSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException {
+        String loaderId = immediate ? "kill-session-immediate" : "kill-session";
+        executeStatement(connection, loaderId, sessionId, serialNumber);
+    }
+
+    @Override
+    public void disconnectSession(Object sessionId, Object serialNumber, boolean postTransaction, boolean immediate, Connection connection) throws SQLException {
+        String loaderId =
+                postTransaction ? "disconnect-session-post-transaction" :
+                immediate ? "disconnect-session-immediate" : "disconnect-session";
+        executeStatement(connection, loaderId, sessionId, serialNumber);
     }
 
     @Override

@@ -51,4 +51,8 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return "str_to_date('" + dateString + "', '%Y-%m-%d %T')";
     }
 
+    @Override
+    public void killSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException {
+        executeStatement(connection, "kill-session", sessionId);
+    }
 }

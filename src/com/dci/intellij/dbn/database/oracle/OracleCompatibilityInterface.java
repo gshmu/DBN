@@ -29,8 +29,9 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
             case EXPLAIN_PLAN: return true;
             case DATABASE_LOGGING: return true;
             case SESSION_BROWSING: return true;
-            case SESSION_KILL_IMMEDIATE: return true;
-            case SESSION_KILL_POST_TRANSACTION: return true;
+            case SESSION_DISCONNECT_TIMING: return true;
+            case SESSION_DISCONNECT: return true;
+            case SESSION_KILL: return true;
             default: return false;
         }
     }
