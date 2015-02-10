@@ -2,7 +2,12 @@ package com.dci.intellij.dbn.editor.session.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
+import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -56,6 +61,39 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     protected SessionBrowserModelRow createRow(int resultSetRowIndex) throws SQLException {
         return new SessionBrowserModelRow(this, resultSet);
     }
+
+    public List<String> getDistinctUsers(String selectedValue) {
+        return getDistinctValues("USER", selectedValue);
+    }
+
+    public List<String> getDistinctHosts(String selectedValue) {
+        return getDistinctValues("HOST", selectedValue);
+    }
+
+    public List<String> getDistinctStatuses(String selectedValue) {
+        return getDistinctValues("STATUS", selectedValue);
+    }
+
+    public List<String> getDistinctValues(String columnName, String selectedValue) {
+        ArrayList<String> values = new ArrayList<>();
+        List<SessionBrowserModelRow> rows = getRows();
+        if (rows instanceof FiltrableList) {
+            FiltrableList<SessionBrowserModelRow> filtrableList = (FiltrableList<SessionBrowserModelRow>) rows;
+            rows  = filtrableList.getFullList();
+        }
+        for (SessionBrowserModelRow row : rows) {
+            String value = (String) row.getCellValue(columnName);
+            if (value != null && !values.contains(value)) {
+                values.add(value);
+            }
+        }
+        if (StringUtils.isNotEmpty(selectedValue) && !values.contains(selectedValue)) {
+            values.add(selectedValue);
+        }
+        Collections.sort(values);
+        return values;
+    }
+
 
     /*********************************************************
      *                      DataModel                       *

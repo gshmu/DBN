@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSortingSettings;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -65,6 +66,10 @@ public class SortableDataModel<T extends SortableDataModelRow> extends BasicData
     }
 
     protected void sort(List<T> rows) {
+        if (rows instanceof FiltrableList) {
+            FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
+            rows = filtrableList.getFullList();
+        }
         if (getSortingState().isValid()) {
             boolean nullsFirst = DataGridSettings.getInstance(getProject()).getSortingSettings().isNullsFirst();
             setSortingNullsFirst(nullsFirst);

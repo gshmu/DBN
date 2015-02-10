@@ -341,6 +341,9 @@
         </group>
         <group id="DBNavigator.ActionGroup.SessionBrowser" text="Session Browser Controls">
             <action id="DBNavigator.Actions.SessionBrowser.Reload" class="com.dci.intellij.dbn.editor.session.action.ReloadSessionsAction" text="Session Browser - Reload"/>
+            <action id="DBNavigator.Actions.SessionBrowser.FilterUsers" class="com.dci.intellij.dbn.editor.session.action.FilterUsersComboBoxAction" text="Session Browser - Filter Users"/>
+            <action id="DBNavigator.Actions.SessionBrowser.FilterHosts" class="com.dci.intellij.dbn.editor.session.action.FilterHostsComboBoxAction" text="Session Browser - Filter Hosts"/>
+            <action id="DBNavigator.Actions.SessionBrowser.FilterStatuses" class="com.dci.intellij.dbn.editor.session.action.FilterStatusesComboBoxAction" text="Session Browser - Filter Statuses"/>
         </group>
         <group id="DBNavigator.ActionGroup.DataEditor" text="Data Editor Controls">
             <action id="DBNavigator.Actions.DataEditor.SwitchEditableStatus" class="com.dci.intellij.dbn.editor.data.action.LockUnlockDataEditing" text="Data Editor - Lock / Unlock Editing"/>

@@ -26,4 +26,18 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
     public ResultSet getResultSet() {
         return getModel().getResultSet();
     }
+
+    public String getUser() {
+        return (String) getCellValue("USER");
+    }
+
+    public String getHost() {
+        return (String) getCellValue("HOST");
+    }
+
+    public String getStatus() {
+        return (String) getCellValue("STATUS");
+    }
+
+
 }

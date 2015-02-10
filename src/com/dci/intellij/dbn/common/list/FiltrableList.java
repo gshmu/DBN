@@ -243,4 +243,8 @@ public class FiltrableList<T> implements List<T> {
     public ListIterator<T> listIterator(int index)      {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
     @NotNull
     public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable list");}
+
+    public Filter<T> getFilter() {
+        return filter;
+    }
 }

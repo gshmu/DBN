@@ -31,6 +31,28 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
         return cells;
     }
 
+
+    @Override
+    public final T getCell(String columnName) {
+        for (T cell : getCells()) {
+            if (cell.getColumnInfo().getName().equals(columnName)) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public final Object getCellValue(String columnName) {
+        T cell = getCell(columnName);
+        if (cell != null) {
+            return cell.getUserValue();
+        }
+        return null;
+    }
+
+
+
     public T getCellAtIndex(int index) {
         return cells.get(index);
     }
