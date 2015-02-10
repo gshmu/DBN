@@ -71,6 +71,16 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
+    public void refreshTable() {
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null) {
+            editorTable.revalidate();
+            editorTable.repaint();
+            editorTable.accommodateColumnsSize();
+        }
+    }
+
+
     public DBSessionBrowserVirtualFile getDatabaseFile() {
         return sessionBrowserFile;
     }
@@ -207,6 +217,4 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             editorForm = null;
         }
     }
-
-
 }

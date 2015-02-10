@@ -95,7 +95,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @Override
     public int getColumnWidthSpan() {
-        return 0;
+        return 10;
     }
 
     public SessionBrowser getSessionBrowser() {

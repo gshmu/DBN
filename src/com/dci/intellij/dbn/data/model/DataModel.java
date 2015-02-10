@@ -4,6 +4,7 @@ import javax.swing.ListModel;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.intellij.openapi.project.Project;
@@ -12,6 +13,8 @@ public interface DataModel<T extends DataModelRow> extends DBNTableModel, ListMo
     boolean isReadonly();
 
     Project getProject();
+
+    void setFilter(Filter<T> filter);
 
     List<T> getRows();
 
