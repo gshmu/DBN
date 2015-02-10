@@ -736,7 +736,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="user-sessions" is-prepared-statement="true">
+    <statement-execution-processor id="sessions" is-prepared-statement="true">
         <statement>
             select
                 pid "SESSION_ID",
@@ -756,7 +756,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="kill-session-immediate" is-prepared-statement="true">
+    <statement-execution-processor id="kill-session" is-prepared-statement="true">
         <statement>
             select pg_terminate_backend({0})
         </statement>

@@ -18,8 +18,9 @@ public enum DatabaseFeature {
     EXPLAIN_PLAN("Statement explain plan"),
     DATABASE_LOGGING("Database logging"),
     SESSION_BROWSING("Session browsing"),
-    SESSION_KILL_POST_TRANSACTION("Kill session post transaction"),
-    SESSION_KILL_IMMEDIATE("Kill session immediate"),
+    SESSION_KILL("Kill session"),
+    SESSION_DISCONNECT("Disconnect session"),
+    SESSION_DISCONNECT_TIMING("Session disconnect timing"),
     ;
 
     private String description;

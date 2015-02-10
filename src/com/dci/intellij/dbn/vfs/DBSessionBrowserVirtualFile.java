@@ -57,13 +57,15 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
         try {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
-                DisposerUtil.dispose(model);
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                 Connection connection = connectionHandler.getStandaloneConnection();
-                ResultSet resultSet = metadataInterface.loadUserSessions(connection);
-                model = new SessionBrowserModel(connectionHandler, resultSet);
-                model.setFilter(modelFilter);
+                ResultSet resultSet = metadataInterface.loadSessions(connection);
+                SessionBrowserModel newModel = new SessionBrowserModel(connectionHandler, resultSet);
+                newModel.setFilter(modelFilter);
                 modelError = null;
+                SessionBrowserModel oldModel = model;
+                model = newModel;
+                DisposerUtil.dispose(oldModel);
             }
         } catch (SQLException e) {
             modelError = "Error loading sessions: " + e.getMessage();

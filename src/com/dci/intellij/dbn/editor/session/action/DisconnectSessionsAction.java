@@ -10,34 +10,30 @@ import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 
-public class KillSessionsImmediateAction extends AbstractSessionBrowserAction {
+public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
 
-    public KillSessionsImmediateAction() {
-        super("Kill Sessions", Icons.ACTION_KILL_SESSION_IMMEDIATE);
+    public DisconnectSessionsAction() {
+        super("Disconnect Sessions", Icons.ACTION_DISCONNECT_SESSION);
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
-            sessionBrowser.killSelectedSessions(true);
+            sessionBrowser.disconnectSelectedSessions();
         }
     }
 
     public void update(AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         boolean visible = false;
-        String text = "Kill Sessions";
         if (sessionBrowser != null) {
             ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-            boolean canKillImmediate = compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_KILL_IMMEDIATE);
-            boolean canKillPostTransaction = compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_KILL_POST_TRANSACTION);
-            visible = canKillImmediate;
-            if (canKillPostTransaction) text = "Kill Sessions Immediate";
+            visible = compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT);
         }
 
         Presentation presentation = e.getPresentation();
-        presentation.setText(text);
+        presentation.setText("Disconnect Sessions");
         presentation.setVisible(visible);
     }
 }

@@ -96,7 +96,15 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
-    public void killSelectedSessions(boolean immediate) {
+    public void disconnectSelectedSessions() {
+        doDisconnectSessions(false);
+    }
+
+    public void killSelectedSessions() {
+        doDisconnectSessions(true);
+    }
+
+    private void doDisconnectSessions(boolean kill) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
         SessionBrowserTable editorTable = getEditorTable();
         if (editorTable != null) {
@@ -109,7 +117,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 sessionIds.put(sessionId, serialNumber);
             }
 
-            sessionBrowserManager.killSessions(this, sessionIds, immediate);
+            sessionBrowserManager.disconnectSessions(this, sessionIds, kill);
         }
     }
 

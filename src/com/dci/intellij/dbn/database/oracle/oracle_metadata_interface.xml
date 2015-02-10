@@ -1833,7 +1833,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="user-sessions" is-prepared-statement="true">
+    <statement-execution-processor id="sessions" is-prepared-statement="true">
         <statement>
             SELECT *
             FROM (WITH vs AS (SELECT
@@ -1971,9 +1971,27 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="kill-session-post-transaction" is-prepared-statement="true" timeout="10">
+    <statement-execution-processor id="disconnect-session" is-prepared-statement="true" timeout="10">
         <statement>
-            ALTER SYSTEM KILL SESSION '{0},{1}' POST_TRANSACTION
+            ALTER SYSTEM DISCONNECT SESSION '{0},{1}'
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="disconnect-session-immediate" is-prepared-statement="true" timeout="10">
+        <statement>
+            ALTER SYSTEM DISCONNECT SESSION '{0},{1}' IMMEDIATE
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="disconnect-session-post-transaction" is-prepared-statement="true" timeout="30">
+        <statement>
+            ALTER SYSTEM DISCONNECT SESSION '{0},{1}' POST_TRANSACTION
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="kill-session" is-prepared-statement="true" timeout="10">
+        <statement>
+            ALTER SYSTEM KILL SESSION '{0},{1}'
         </statement>
     </statement-execution-processor>
 

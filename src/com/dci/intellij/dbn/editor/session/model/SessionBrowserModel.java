@@ -47,7 +47,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) {
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadUserSessions(connectionHandler.getStandaloneConnection());
+            return metadataInterface.loadSessions(connectionHandler.getStandaloneConnection());
         }
         return null;
     }
