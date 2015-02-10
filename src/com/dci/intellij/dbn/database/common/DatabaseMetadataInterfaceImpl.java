@@ -376,6 +376,11 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
+    public void killUserSession(Object sessionId, Object serialNumber, boolean immediate, Connection connection) throws SQLException {
+        executeUpdate(connection, immediate ? "kill-session-immediate" : "kill-session-post-transaction", sessionId, serialNumber);
+    }
+
+    @Override
     public ResultSet loadExplainPlan(Connection connection) throws SQLException {
         return executeQuery(connection, "explain-plan-result");
     }

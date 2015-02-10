@@ -102,7 +102,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
         private String filterValue;
 
         public SelectFilterValueAction(String filterValue) {
-            super(filterValue == null ? "No Filter" : filterValue, null, icon);
+            super(filterValue == null ? "No Filter" : filterValue, null, filterValue == null ? null : icon);
             this.filterValue = filterValue;
         }
 

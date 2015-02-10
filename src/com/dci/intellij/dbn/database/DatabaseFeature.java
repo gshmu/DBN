@@ -17,6 +17,9 @@ public enum DatabaseFeature {
     DEBUGGING("Program execution debugging"),
     EXPLAIN_PLAN("Statement explain plan"),
     DATABASE_LOGGING("Database logging"),
+    SESSION_BROWSING("Session browsing"),
+    SESSION_KILL_POST_TRANSACTION("Kill session post transaction"),
+    SESSION_KILL_IMMEDIATE("Kill session immediate"),
     ;
 
     private String description;
