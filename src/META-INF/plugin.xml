@@ -30,7 +30,8 @@
             <li><b>3.0.NEXT</b>
             <ul>
                 - Support for Oracle GRANT SQL-statement</br>
-                - Session Browser / Session kill operations (all databases)</br>
+                - Database Sessions Browser (all databases)</br>
+                - Session disconnect / kill actions</br>
                 - Minor bug fixes<br>
             </ul>
             <li><b>3.0.3821</b>
