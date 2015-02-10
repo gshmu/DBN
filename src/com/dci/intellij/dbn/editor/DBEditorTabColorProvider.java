@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor;
 
 import java.awt.Color;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -22,7 +23,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
     public static final Color DEFAULT_COLOR = new Color(218, 234, 255);
 
     @Override
-    public Color getEditorTabColor(Project project, VirtualFile file) {
+    public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile file) {
         if (file.getFileType() instanceof DBLanguageFileType) {
             ConnectionHandler connectionHandler = getConnectionHandler(file, project);
             if (connectionHandler == null) {

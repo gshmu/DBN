@@ -6,7 +6,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -21,6 +20,7 @@ import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
@@ -40,10 +40,10 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
 
     private SessionBrowser sessionBrowser;
 
-    public SessionBrowserForm(SessionBrowser sessionBrowser, ResultSet resultSet) {
+    public SessionBrowserForm(SessionBrowser sessionBrowser, SessionBrowserModel sessionBrowserModel) {
         this.sessionBrowser = sessionBrowser;
         try {
-            editorTable = new SessionBrowserTable(sessionBrowser, resultSet);
+            editorTable = new SessionBrowserTable(sessionBrowser, sessionBrowserModel);
             editorTableScrollPane.setViewportView(editorTable);
             editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
             editorTable.initTableGutter();
@@ -53,7 +53,7 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
             panel.setBorder(UIUtil.getTableHeaderCellBorder());
             editorTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SessionEditor");
+            ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SessionBrowser");
             actionToolbar.setTargetComponent(actionsPanel);
 
             actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);

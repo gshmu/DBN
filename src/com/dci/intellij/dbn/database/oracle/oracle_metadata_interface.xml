@@ -1857,7 +1857,7 @@
                               FROM gv$session)
                   SELECT
                       vs.sid SESSION_ID,
-                      vs.username DB_USER,
+                      vs.username "USER",
                       vs.osuser OS_USER,
                       vs.machine HOST,
                       vs.module MODULE,

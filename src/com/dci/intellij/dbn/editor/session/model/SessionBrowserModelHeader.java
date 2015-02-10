@@ -8,11 +8,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
-import com.dci.intellij.dbn.editor.session.SessionBrowser;
 
 public class SessionBrowserModelHeader extends ResultSetDataModelHeader implements DataModelHeader {
-    public SessionBrowserModelHeader(SessionBrowser sessionBrowser, ResultSet resultSet) throws SQLException {
-        super(sessionBrowser.getConnectionHandler(), resultSet);
+    public SessionBrowserModelHeader(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+        super(connectionHandler, resultSet);
     }
 
     @NotNull

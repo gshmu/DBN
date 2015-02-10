@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import javax.swing.table.TableCellRenderer;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EventObject;
 
@@ -21,8 +20,8 @@ import com.intellij.openapi.project.Project;
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private SessionBrowser sessionBrowser;
 
-    public SessionBrowserTable(SessionBrowser sessionBrowser, ResultSet resultSet) throws SQLException {
-        super(createModel(sessionBrowser, resultSet), false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
+    public SessionBrowserTable(SessionBrowser sessionBrowser, SessionBrowserModel model) throws SQLException {
+        super(model, false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         this.sessionBrowser = sessionBrowser;
 
@@ -41,10 +40,6 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         return sessionBrowser.getProject();
     }
 
-
-    private static SessionBrowserModel createModel(SessionBrowser sessionBrowser, ResultSet resultSet) throws SQLException {
-        return new SessionBrowserModel(sessionBrowser, resultSet);
-    }
 
     public String getName() {
         return sessionBrowser == null ? "Disposed" : sessionBrowser.getConnectionHandler().getName();
@@ -100,7 +95,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @Override
     public int getColumnWidthSpan() {
-        return 30;
+        return 0;
     }
 
     public SessionBrowser getSessionBrowser() {

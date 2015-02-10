@@ -8,11 +8,9 @@ import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
 
 public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowserModelCell> {
-    private int resultSetRowIndex;
 
-    public SessionBrowserModelRow(SessionBrowserModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
+    public SessionBrowserModelRow(SessionBrowserModel model, ResultSet resultSet) throws SQLException {
         super(model, resultSet);
-        this.resultSetRowIndex = resultSetRowIndex;
     }
 
     @Override
