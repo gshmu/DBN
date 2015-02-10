@@ -738,7 +738,21 @@
 
     <statement-execution-processor id="user-sessions" is-prepared-statement="true">
         <statement>
-            select * from pg_stat_activity
+            select
+                pid "SESSION_ID",
+                usename "DB_USER",
+                upper(state) "STATUS",
+                waiting "WAITING",
+                application_name "MODULE",
+                client_addr "IP_ADDRESS",
+                client_hostname "HOST",
+                client_port "PORT",
+                backend_start "SESSION_START",
+                query_start "QUERY_START",
+                state_change "STATE_CHANGE",
+                query "QUERY"
+            from
+            pg_stat_activity
         </statement>
     </statement-execution-processor>
 

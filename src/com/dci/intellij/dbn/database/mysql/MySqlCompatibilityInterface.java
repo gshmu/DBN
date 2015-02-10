@@ -72,4 +72,17 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     public String getExplainPlanStatementPrefix() {
         return null;
     }
+
+    @Override
+    public String getSessionBrowserColumnName(String columnName) {
+        if (columnName.equalsIgnoreCase("id")) return "SESSION_ID";
+        if (columnName.equalsIgnoreCase("user")) return "DB_USER";
+        if (columnName.equalsIgnoreCase("host")) return "HOST";
+        if (columnName.equalsIgnoreCase("db")) return "DATABASE";
+        if (columnName.equalsIgnoreCase("command")) return "COMMAND";
+        if (columnName.equalsIgnoreCase("time")) return "TIME";
+        if (columnName.equalsIgnoreCase("state")) return "STATUS";
+        if (columnName.equalsIgnoreCase("info")) return "CLIENT_INFO";
+        return super.getSessionBrowserColumnName(columnName);
+    }
 }

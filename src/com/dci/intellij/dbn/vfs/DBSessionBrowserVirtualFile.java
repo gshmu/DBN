@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -24,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.LocalTimeCounter;
 
-public class DBSessionBrowserVirtualFile extends VirtualFile implements Disposable, Comparable<DBSessionBrowserVirtualFile> {
+public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtualFile, Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private ConnectionHandlerRef connectionHandlerRef;
@@ -42,7 +41,7 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements Disposab
     public void setName(String name) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         this.name = name;
-        path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION_BROWSER - " + name;
+        path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION BROWSER - " + name;
         url = DatabaseFileSystem.createUrl(connectionHandler) + "/session_browser#" + name;
     }
 

@@ -13,7 +13,7 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
     public ResultSetColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
         this(columnIndex);
         ResultSetMetaData metaData = resultSet.getMetaData();
-        name = metaData.getColumnName(resultSetColumnIndex);
+        name = translateName(metaData.getColumnName(resultSetColumnIndex), connectionHandler);
 
         String dataTypeName = metaData.getColumnTypeName(resultSetColumnIndex);
         int precision = getPrecision(metaData);
@@ -44,5 +44,9 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
 
     public int getResultSetColumnIndex() {
         return resultSetColumnIndex;
+    }
+
+    public String translateName(String name, ConnectionHandler connectionHandler) {
+        return name;
     }
 }
