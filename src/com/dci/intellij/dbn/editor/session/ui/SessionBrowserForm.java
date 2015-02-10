@@ -45,6 +45,7 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
         try {
             editorTable = new SessionBrowserTable(sessionBrowser, resultSet);
             editorTableScrollPane.setViewportView(editorTable);
+            editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
             editorTable.initTableGutter();
 
 

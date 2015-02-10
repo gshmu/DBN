@@ -40,5 +40,9 @@ public abstract class DatabaseCompatibilityInterface {
         return columnName + " " + sortDirection.getSqlToken() + " nulls " + (nullsFirst ? " first" : " last");
     }
 
+    public String getSessionBrowserColumnName(String columnName) {
+        return columnName;
+    }
+
     public abstract String getExplainPlanStatementPrefix();
 }

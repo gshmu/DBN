@@ -11,6 +11,8 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.fileEditor.impl.EditorTabColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,7 +31,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
                 EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(connectionHandler.getProject()).getEnvironmentSettings();
                 EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
                 EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                if (file instanceof DBConsoleVirtualFile || file instanceof DBObjectVirtualFile) {
+                if (file instanceof DBVirtualFile) {
                     if (visibilitySettings.getObjectEditorTabs().value()) {
                         return environmentType == null ? null : environmentType.getColor();
                     }
@@ -48,8 +50,12 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
         if (file instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleFile = (DBConsoleVirtualFile) file;
             return consoleFile.getConnectionHandler();
+        }
 
-        } 
+        if (file instanceof DBSessionBrowserVirtualFile) {
+            DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
+            return sessionBrowserFile.getConnectionHandler();
+        }
         
         if (file instanceof DBObjectVirtualFile) {
             DBObjectVirtualFile objectFile = (DBObjectVirtualFile) file;
