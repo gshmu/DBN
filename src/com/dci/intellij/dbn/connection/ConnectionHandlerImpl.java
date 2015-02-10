@@ -416,6 +416,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             DisposerUtil.dispose(consoleBundle);
             DisposerUtil.dispose(psiCache);
             DisposerUtil.dispose(loadMonitor);
+            DisposerUtil.dispose(sessionBrowserFile);
             connectionPool = null;
             changesBundle = null;
         }

@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
-import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 
 public class SessionBrowserModelCell extends ResultSetDataModelCell implements ChangeListener {
 
@@ -26,17 +25,8 @@ public class SessionBrowserModelCell extends ResultSetDataModelCell implements C
         return getRow().getModel().getConnectionHandler();
     }
 
-    private SessionBrowserTable getEditorTable() {
-        return getRow().getModel().getEditorTable();
-    }
-
     public SessionBrowserModelRow getRow() {
         return (SessionBrowserModelRow) super.getRow();
-    }
-
-    public void scrollToVisible() {
-        SessionBrowserTable table = getEditorTable();
-        table.scrollRectToVisible(table.getCellRect(getRow().getIndex(), getIndex(), true));
     }
 
     /*********************************************************

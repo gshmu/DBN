@@ -1,13 +1,11 @@
 package com.dci.intellij.dbn.editor.session;
 
-import java.sql.SQLException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -38,12 +36,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         Project project = connectionHandler.getProject();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
-        try {
-            sessionBrowserFile.read();
-            fileEditorManager.openFile(sessionBrowserFile, true);
-        } catch (SQLException e) {
-            MessageUtil.showErrorDialog(project, "Session Browser could not open for connection \"" + connectionHandler.getName() + "\".", e);
-        }
+        fileEditorManager.openFile(sessionBrowserFile, true);
     }
 
 

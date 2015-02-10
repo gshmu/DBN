@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +32,7 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
-        ResultSet resultSet = null;
-        try {
-            resultSet = sessionBrowserFile.read();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return new SessionBrowser(sessionBrowserFile, resultSet);
+        return new SessionBrowser(sessionBrowserFile);
     }
 
     public void disposeEditor(@NotNull final FileEditor editor) {

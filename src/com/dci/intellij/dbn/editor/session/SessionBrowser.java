@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.editor.session;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,25 +29,15 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 
 public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider {
-    private DBSessionBrowserVirtualFile sessionsFile;
+    private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
-    private ConnectionHandler connectionHandler;
-    private Project project;
     private boolean isLoading;
 
     private DatasetEditorState editorState = new DatasetEditorState();
 
-    public SessionBrowser(DBSessionBrowserVirtualFile sessionsFile, ResultSet resultSet) {
-        this.project = sessionsFile.getProject();
-        this.sessionsFile = sessionsFile;
-
-        connectionHandler = sessionsFile.getConnectionHandler();
-        editorForm = new SessionBrowserForm(this, resultSet);
-        try {
-            editorForm.getEditorTable().getModel().load();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
+        this.sessionBrowserFile = sessionBrowserFile;
+        editorForm = new SessionBrowserForm(this, sessionBrowserFile.getModel());
         Disposer.register(this, editorForm);
     }
 
@@ -72,14 +60,23 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return browserTable == null ? null : browserTable.getModel();
     }
 
-
+    public void reload() {
+        SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null) {
+            if (sessionBrowserModel != null) {
+                editorTable.setModel(sessionBrowserModel);
+                editorTable.accommodateColumnsSize();
+            }
+        }
+    }
 
     public DBSessionBrowserVirtualFile getDatabaseFile() {
-        return sessionsFile;
+        return sessionBrowserFile;
     }
 
     public Project getProject() {
-        return project;
+        return sessionBrowserFile.getProject();
     }
 
     @NotNull
@@ -166,7 +163,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return sessionBrowserFile.getConnectionHandler();
     }
 
     /*******************************************************
@@ -184,7 +181,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 return SessionBrowser.this;
             }
             if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return project;
+                return getProject();
             }
             return null;
         }

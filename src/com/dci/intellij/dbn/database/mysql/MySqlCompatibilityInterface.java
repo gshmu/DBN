@@ -76,7 +76,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     @Override
     public String getSessionBrowserColumnName(String columnName) {
         if (columnName.equalsIgnoreCase("id")) return "SESSION_ID";
-        if (columnName.equalsIgnoreCase("user")) return "DB_USER";
+        if (columnName.equalsIgnoreCase("user")) return "USER";
         if (columnName.equalsIgnoreCase("host")) return "HOST";
         if (columnName.equalsIgnoreCase("db")) return "DATABASE";
         if (columnName.equalsIgnoreCase("command")) return "COMMAND";

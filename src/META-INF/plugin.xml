@@ -339,8 +339,8 @@
             <separator/>
             <action id="DBNavigator.Actions.CodeEditor.OpenSettings" class="com.dci.intellij.dbn.editor.code.action.OpenSettingsAction" text="Code Editor - Settings"/>
         </group>
-        <group id="DBNavigator.ActionGroup.SessionEditor" text="Data Editor Controls">
-
+        <group id="DBNavigator.ActionGroup.SessionBrowser" text="Session Browser Controls">
+            <action id="DBNavigator.Actions.SessionBrowser.Reload" class="com.dci.intellij.dbn.editor.session.action.ReloadSessionsAction" text="Session Browser - Reload"/>
         </group>
         <group id="DBNavigator.ActionGroup.DataEditor" text="Data Editor Controls">
             <action id="DBNavigator.Actions.DataEditor.SwitchEditableStatus" class="com.dci.intellij.dbn.editor.data.action.LockUnlockDataEditing" text="Data Editor - Lock / Unlock Editing"/>
@@ -423,10 +423,10 @@
             <action id="DBNavigator.Actions.Browser.AutoscrollFromEditor" class="com.dci.intellij.dbn.browser.action.AutoscrollFromEditorAction" text="Browser - Autoscroll from editor"/>
             <action id="DBNavigator.Actions.Browser.ExpandTree" class="com.dci.intellij.dbn.browser.action.ExpandTreeAction" text="Browser - Expand all"/>
             <action id="DBNavigator.Actions.Browser.CollapseTree" class="com.dci.intellij.dbn.browser.action.CollapseTreeAction" text="Browser - Collapse all"/>
+            <action id="DBNavigator.Actions.Browser.ShowObjectProperties" class="com.dci.intellij.dbn.browser.action.ShowObjectPropertiesAction" text="Browser - Show object properties"/>
             <separator/>
             <action id="DBNavigator.Actions.Browser.OpenSQLConsole" class="com.dci.intellij.dbn.browser.action.OpenSQLConsoleAction" text="Browser - SQL Console" icon="/img/file/SQLConsole.png"/>
             <action id="DBNavigator.Actions.Browser.OpenSessionBrowser" class="com.dci.intellij.dbn.browser.action.OpenSessionBrowserAction" text="Browser - Session Browser" icon="/img/file/SessionBrowser.png"/>
-            <action id="DBNavigator.Actions.Browser.ShowObjectProperties" class="com.dci.intellij.dbn.browser.action.ShowObjectPropertiesAction" text="Browser - Show object properties"/>
             <separator/>
             <action id="DBNavigator.Actions.Browser.OpenSettings" class="com.dci.intellij.dbn.browser.action.OpenSettingsAction" text="Browser - Settings"/>
         </group>

@@ -5,6 +5,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.MouseInfo;
@@ -12,6 +13,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -125,6 +127,11 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
             tableGutter.setFixedCellHeight(rowHeight);
             tableGutter.setFixedCellWidth(getModel().getSize() == 0 ? 10 : -1);
         }
+    }
+
+    @Override
+    public void setModel(@NotNull TableModel dataModel) {
+        super.setModel(dataModel);
     }
 
     public DataModelCell getCellAtLocation(Point point) {

@@ -740,7 +740,7 @@
         <statement>
             select
                 pid "SESSION_ID",
-                usename "DB_USER",
+                usename "USER",
                 upper(state) "STATUS",
                 waiting "WAITING",
                 application_name "MODULE",

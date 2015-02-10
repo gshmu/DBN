@@ -7,15 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -30,6 +33,8 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
     protected String name;
     protected String path;
     protected String url;
+    private SessionBrowserModel model;
+    private String modelError;
 
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
@@ -46,13 +51,33 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
     }
 
     @Nullable
-    public ResultSet read() throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadUserSessions(connectionHandler.getStandaloneConnection());
+    public SessionBrowserModel load() {
+        try {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler != null) {
+                DisposerUtil.dispose(model);
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                Connection connection = connectionHandler.getStandaloneConnection();
+                ResultSet resultSet = metadataInterface.loadUserSessions(connection);
+                model = new SessionBrowserModel(connectionHandler, resultSet);
+                modelError = null;
+            }
+        } catch (SQLException e) {
+            modelError = "Error loading sessions: " + e.getMessage();
         }
-        return null;
+        return model;
+    }
+
+    @Nullable
+    public SessionBrowserModel getModel() {
+        if (model == null || model.isDisposed()) {
+            load();
+        }
+        return model;
+    }
+
+    public String getModelError() {
+        return modelError;
     }
 
     public Icon getIcon() {
@@ -190,5 +215,6 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
 
     @Override
     public void dispose() {
+        DisposerUtil.dispose(model);
     }
 }
