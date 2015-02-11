@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common;
 
-import javax.swing.Icon;
-import java.util.Map;
-
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
+
+import javax.swing.Icon;
+import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -164,6 +164,7 @@ public class Icons {
     public static final Icon DATA_COLUMNS =    load("/img/action/ColumnSetup.png");
 
     public static final Icon DATASET_FILTER =    load("/img/filter/DatasetFilter.png");
+    public static final Icon DATASET_FILTER_CLEAR =    load("/img/filter/DatasetFilterClear.png");
     public static final Icon DATASET_FILTER_NEW =    load("/img/filter/DatasetFilterNew.png");
     public static final Icon DATASET_FILTER_EDIT =    load("/img/filter/DatasetFilterEdit.png");
     public static final Icon DATASET_FILTER_BASIC =    load("/img/filter/DatasetFilterBasic.png");

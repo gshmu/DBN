@@ -1,14 +1,6 @@
 package com.dci.intellij.dbn.editor.session;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
-import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -19,6 +11,9 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class SessionBrowserEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
     /*********************************************************
@@ -41,22 +36,17 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
 
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
-            DBSchemaObject object = editableObjectFile.getObject();
-            if (object instanceof DBDataset) {
-                DatasetEditorState editorState = new DatasetEditorState();
-                editorState.readState(sourceElement);
-                return editorState;
-
-            }
+        if (virtualFile instanceof DBSessionBrowserVirtualFile) {
+            SessionBrowserState sessionBrowserState = new SessionBrowserState();
+            sessionBrowserState.readState(sourceElement);
+            return sessionBrowserState;
         }
-        return new DatasetEditorState();
+        return new SessionBrowserState();
     }
 
     public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
-        if (state instanceof DatasetEditorState) {
-            DatasetEditorState editorState = (DatasetEditorState) state;
+        if (state instanceof SessionBrowserState) {
+            SessionBrowserState editorState = (SessionBrowserState) state;
             editorState.writeState(targetElement);
         }
     }

@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.editor.session.action;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
-import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelFilter;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class FilterHostsComboBoxAction extends AbstractFilterComboBoxAction {
 
@@ -13,17 +14,17 @@ public class FilterHostsComboBoxAction extends AbstractFilterComboBoxAction {
     }
 
     @Override
-    String getFilterValue(SessionBrowserModelFilter modelFilter) {
+    String getFilterValue(@NotNull SessionBrowserFilterState modelFilter) {
         return modelFilter.getHost();
     }
 
     @Override
-    void setFilterValue(SessionBrowserModelFilter modelFilter, String filterValue) {
+    void setFilterValue(SessionBrowserFilterState modelFilter, String filterValue) {
         modelFilter.setHost(filterValue);
     }
 
     @Override
-    List<String> getDistinctValues(SessionBrowserModel model, SessionBrowserModelFilter modelFilter) {
+    List<String> getDistinctValues(SessionBrowserModel model, SessionBrowserFilterState modelFilter) {
         return model.getDistinctHosts(modelFilter.getHost());
     }
 }

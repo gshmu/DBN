@@ -1,10 +1,10 @@
-package com.dci.intellij.dbn.editor.session.model;
-
-import org.apache.commons.lang.StringUtils;
+package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
+import org.apache.commons.lang.StringUtils;
 
-public class SessionBrowserModelFilter extends Filter<SessionBrowserModelRow>{
+public class SessionBrowserFilterState extends Filter<SessionBrowserModelRow>{
     private String user;
     private String host;
     private String status;
@@ -39,5 +39,11 @@ public class SessionBrowserModelFilter extends Filter<SessionBrowserModelRow>{
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void clear() {
+        user = null;
+        host = null;
+        status = null;
     }
 }

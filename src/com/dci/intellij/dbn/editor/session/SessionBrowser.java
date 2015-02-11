@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -32,6 +23,15 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
@@ -84,6 +84,18 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             }
         }.start();
     }
+
+    public void clearFilter() {
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null) {
+            SessionBrowserFilterState filter = editorTable.getModel().getFilter();
+            if (filter != null) {
+                filter.clear();
+                refreshTable();
+            }
+        }
+    }
+
 
     public void refreshTable() {
         SessionBrowserTable editorTable = getEditorTable();

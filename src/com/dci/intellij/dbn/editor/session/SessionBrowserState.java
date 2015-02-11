@@ -1,23 +1,19 @@
 package com.dci.intellij.dbn.editor.session;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import gnu.trove.THashMap;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class SessionBrowserState extends SortableDataModelState implements FileEditorState {
     public static final SessionBrowserState VOID = new SessionBrowserState();
-    private String userFilter;
-    private String hostFilter;
-    private String statusFilter;
-
+    private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
 
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
-        return false;
+        return fileEditorState instanceof SessionBrowserState;
     }
 
     public void readState(@NotNull Element element) {
@@ -26,46 +22,22 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
 
         Element filterElement = element.getChild("filter");
         if (filterElement != null) {
-            userFilter = SettingsUtil.getString(filterElement, "user", null);
-            hostFilter = SettingsUtil.getString(filterElement, "host", null);
-            statusFilter = SettingsUtil.getString(filterElement, "status", null);
+            filterState.setUser(SettingsUtil.getString(filterElement, "user", null));
+            filterState.setHost(SettingsUtil.getString(filterElement, "host", null));
+            filterState.setStatus(SettingsUtil.getString(filterElement, "status", null));
         }
     }
 
-    public void writeState(Element targetElement) {
+    public void writeState(Element element) {
         Element sortingElement = new Element("sorting");
-        targetElement.addContent(sortingElement);
+        element.addContent(sortingElement);
         sortingState.writeState(sortingElement);
 
         Element filterElement = new Element("filter");
-        targetElement.addContent(filterElement);
-        SettingsUtil.setString(filterElement, "user", userFilter);
-        SettingsUtil.setString(filterElement, "host", hostFilter);
-        SettingsUtil.setString(filterElement, "status", statusFilter);
-    }
-
-    public String getUserFilter() {
-        return userFilter;
-    }
-
-    public void setUserFilter(String userFilter) {
-        this.userFilter = userFilter;
-    }
-
-    public String getHostFilter() {
-        return hostFilter;
-    }
-
-    public void setHostFilter(String hostFilter) {
-        this.hostFilter = hostFilter;
-    }
-
-    public String getStatusFilter() {
-        return statusFilter;
-    }
-
-    public void setStatusFilter(String statusFilter) {
-        this.statusFilter = statusFilter;
+        element.addContent(filterElement);
+        SettingsUtil.setString(filterElement, "user", filterState.getUser());
+        SettingsUtil.setString(filterElement, "host", filterState.getHost());
+        SettingsUtil.setString(filterElement, "status", filterState.getStatus());
     }
 
     public SessionBrowserState clone() {
@@ -80,5 +52,7 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         return clone;
     }
 
-
+    public SessionBrowserFilterState getFilterState() {
+        return filterState;
+    }
 }

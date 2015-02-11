@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -25,6 +14,17 @@ import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private DataModelHeader header;
@@ -32,8 +32,9 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
     private Set<ListDataListener> listDataListeners = new HashSet<ListDataListener>();
     private Set<DataModelListener> dataModelListeners = new HashSet<DataModelListener>();
-    private List<T> rows = new ArrayList<T>();
+    private List<T> rows = new ArrayList<>();
     private Project project;
+    private Filter<T> filter;
 
     private DataSearchResult searchResult;
 
@@ -73,24 +74,29 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     @Override
     public void setFilter(Filter<T> filter) {
-        FiltrableList<T> filtrableList;
-        if (rows instanceof FiltrableList) {
-            filtrableList = (FiltrableList<T>) rows;
-        } else {
-            filtrableList = new FiltrableList<T>(rows);
-            rows = filtrableList;
+        if (filter == null) {
+            if (rows instanceof FiltrableList) {
+                FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
+                rows = filtrableList.getFullList();
+            }
         }
-        filtrableList.setFilter(filter);
+        else {
+            FiltrableList<T> filtrableList;
+            if (rows instanceof FiltrableList) {
+                filtrableList = (FiltrableList<T>) rows;
+            } else {
+                filtrableList = new FiltrableList<T>(rows);
+                rows = filtrableList;
+            }
+            filtrableList.setFilter(filter);
+        }
+        this.filter = filter;
     }
 
     @Nullable
     @Override
     public Filter<T> getFilter() {
-        if (rows instanceof FiltrableList) {
-            FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
-            return filtrableList.getFilter();
-        }
-        return null;
+        return filter;
     }
 
     protected DataModelState createState() {
@@ -103,9 +109,8 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     }
 
     public void setRows(List<T> rows) {
-        if (rows instanceof FiltrableList) {
-            FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
-            this.rows = new FiltrableList<T>(filtrableList.getFilter());
+        if (filter != null) {
+            this.rows = new FiltrableList<T>(rows, filter);
         } else {
             this.rows = rows;
         }

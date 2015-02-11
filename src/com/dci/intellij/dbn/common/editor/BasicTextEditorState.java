@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.editor;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
@@ -19,6 +16,8 @@ import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicTextEditorState implements FileEditorState {
     private int line;
@@ -29,7 +28,7 @@ public class BasicTextEditorState implements FileEditorState {
     private CodeFoldingState foldingState;
 
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
-        return false;
+        return fileEditorState instanceof BasicTextEditorState;
     }
 
     public CodeFoldingState getFoldingState() {
