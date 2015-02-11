@@ -1,23 +1,40 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-public enum CompileDependenciesOption {
-    YES("Yes"),
-    NO("No"),
-    ASK("Ask");
+import javax.swing.Icon;
 
-    private String displayName;
+import com.dci.intellij.dbn.common.option.InteractiveOption;
 
-    CompileDependenciesOption(String displayName) {
-        this.displayName = displayName;
+public enum CompileDependenciesOption implements InteractiveOption {
+    YES("Yes", true),
+    NO("No", true),
+    ASK("Ask", false);
+
+    private String name;
+    private boolean persistable;
+
+    CompileDependenciesOption(String name, boolean persistable) {
+        this.name = name;
+        this.persistable = persistable;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
+
+    @Override
+    public Icon getIcon() {
+        return null;
+    }
+
+    @Override
+    public boolean isPersistable() {
+        return persistable;
+    }
+
 
     public static CompileDependenciesOption get(String name) {
         for (CompileDependenciesOption compileDependenciesOption : CompileDependenciesOption.values()) {
-            if (compileDependenciesOption.getDisplayName().equals(name) || compileDependenciesOption.name().equals(name)) {
+            if (compileDependenciesOption.getName().equals(name) || compileDependenciesOption.name().equals(name)) {
                 return compileDependenciesOption;
             }
         }

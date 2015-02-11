@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -42,6 +43,7 @@ public class ProjectSettings
     private CodeCompletionSettings codeCompletionSettings;
     private ProjectCodeStyleSettings codeStyleSettings;
     private ExecutionEngineSettings executionEngineSettings;
+    private OperationSettings operationSettings;
     private DDLFileSettings ddlFileSettings;
     private ConnectionBundleSettings connectionSettings;
 
@@ -57,6 +59,7 @@ public class ProjectSettings
         dataEditorSettings = new DataEditorSettings(project);
         codeCompletionSettings = new CodeCompletionSettings(project);
         executionEngineSettings = new ExecutionEngineSettings(project);
+        operationSettings = new OperationSettings(project);
         ddlFileSettings = new DDLFileSettings(project);
         connectionSettings = new ConnectionBundleSettings(project);
 
@@ -133,6 +136,10 @@ public class ProjectSettings
         return executionEngineSettings;
     }
 
+    public OperationSettings getOperationSettings() {
+        return operationSettings;
+    }
+
     public DDLFileSettings getDdlFileSettings() {
         return ddlFileSettings;
     }
@@ -181,6 +188,7 @@ public class ProjectSettings
                 codeEditorSettings,
                 codeCompletionSettings,
                 executionEngineSettings,
+                operationSettings,
                 ddlFileSettings,
                 generalSettings};
     }

@@ -57,12 +57,10 @@ public class EventManager implements ApplicationComponent{
         messageBusConnection.subscribe(topic, handler);
     }
 
-    public static <T> T notify(Project project, Topic<T> topic) {
-        if (project != null) {
-            MessageBus messageBus = project.getMessageBus();
-            return messageBus.syncPublisher(topic);
-        }
-        return null;
+    @NotNull
+    public static <T> T notify(@NotNull Project project, Topic<T> topic) {
+        MessageBus messageBus = project.getMessageBus();
+        return messageBus.syncPublisher(topic);
     }
 
     public static void unsubscribe(Object ... handlers) {

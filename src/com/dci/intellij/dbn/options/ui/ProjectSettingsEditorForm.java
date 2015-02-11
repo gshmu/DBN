@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -68,6 +69,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         DataGridSettings dataGridSettings = globalSettings.getDataGridSettings();
         DataEditorSettings dataEditorSettings = globalSettings.getDataEditorSettings();
         ExecutionEngineSettings executionEngineSettings = globalSettings.getExecutionEngineSettings();
+        OperationSettings operationSettings = globalSettings.getOperationSettings();
         DDLFileSettings ddlFileSettings = globalSettings.getDdlFileSettings();
         final GeneralProjectSettings generalSettings = globalSettings.getGeneralSettings();
 
@@ -79,6 +81,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         addSettingsPanel(dataGridSettings);
         addSettingsPanel(dataEditorSettings);
         addSettingsPanel(executionEngineSettings);
+        addSettingsPanel(operationSettings);
         addSettingsPanel(ddlFileSettings);
         addSettingsPanel(generalSettings);
         tabsPanel.setFocusable(false);

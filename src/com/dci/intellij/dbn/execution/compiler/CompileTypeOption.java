@@ -1,34 +1,44 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.Icons;
-
 import javax.swing.Icon;
 
-public enum CompileTypeOption {
-    NORMAL("Normal", Icons.OBEJCT_COMPILE),
-    DEBUG("Debug", Icons.OBEJCT_COMPILE_DEBUG),
-    KEEP("Keep existing", null/*Icons.OBEJCT_COMPILE_KEEP*/),
-    ASK("Ask", null/*Icons.OBEJCT_COMPILE_ASK*/);
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.option.InteractiveOption;
 
-    private String displayName;
+public enum CompileTypeOption implements InteractiveOption {
+    NORMAL("Normal", Icons.OBEJCT_COMPILE, true),
+    DEBUG("Debug", Icons.OBEJCT_COMPILE_DEBUG, true),
+    KEEP("Keep existing", null/*Icons.OBEJCT_COMPILE_KEEP*/, true),
+    ASK("Ask", null/*Icons.OBEJCT_COMPILE_ASK*/, false);
+
+    private String name;
     private Icon icon;
+    private boolean persistable;
 
-    CompileTypeOption(String displayName, Icon icon) {
-        this.displayName = displayName;
+    CompileTypeOption(String name, Icon icon, boolean persistable) {
+        this.name = name;
         this.icon = icon;
+        this.persistable = persistable;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    @Override
+    public String getName() {
+        return name;
     }
 
+    @Override
     public Icon getIcon() {
         return icon;
     }
 
+    @Override
+    public boolean isPersistable() {
+        return persistable;
+    }
+
     public static CompileTypeOption get(String name) {
         for (CompileTypeOption compileType : CompileTypeOption.values()) {
-            if (compileType.getDisplayName().equals(name) || compileType.name().equals(name)) {
+            if (compileType.getName().equals(name) || compileType.name().equals(name)) {
                 return compileType;
             }
         }

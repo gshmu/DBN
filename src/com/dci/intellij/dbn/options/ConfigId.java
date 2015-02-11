@@ -11,5 +11,6 @@ public enum ConfigId {
     EXECUTION_ENGINE,
     DDL_FILES,
     CONNECTIONS,
+    OPERATIONS,
     GENERAL
 }

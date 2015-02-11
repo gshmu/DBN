@@ -1,21 +1,21 @@
-package com.dci.intellij.dbn.editor.code.options;
+package com.dci.intellij.dbn.connection.transaction.options;
 
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
+import com.dci.intellij.dbn.connection.transaction.options.ui.TransactionManagerSettingsForm;
 
-public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSettingsForm> {
+public class TransactionManagerSettings extends Configuration<TransactionManagerSettingsForm> {
     private boolean showObjectsNavigationGutter = false;
     private boolean showSpecDeclarationNavigationGutter = true;
 
     public String getDisplayName() {
-        return "Code editor general settings";
+        return "Transaction manager settings";
     }
 
     public String getHelpTopic() {
-        return "codeEditor";
+        return "transactionManager";
     }
 
     /*********************************************************
@@ -41,13 +41,13 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
-    public CodeEditorGeneralSettingsForm createConfigurationEditor() {
-        return new CodeEditorGeneralSettingsForm(this);
+    public TransactionManagerSettingsForm createConfigurationEditor() {
+        return new TransactionManagerSettingsForm(this);
     }
 
     @Override
     public String getConfigElementName() {
-        return "general";
+        return "transactions";
     }
 
     public void readConfiguration(Element element) {

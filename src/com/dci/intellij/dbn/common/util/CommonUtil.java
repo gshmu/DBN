@@ -131,4 +131,11 @@ public class CommonUtil {
         }
         return false;
     }
+
+    public static <T> int indexOf(T[] objects, T object){
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i] == object) return i;
+        }
+        return -1;
+    }
 }
