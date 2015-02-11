@@ -13,13 +13,15 @@ import com.intellij.openapi.ui.Messages;
 public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
     private String title;
     private String message;
+    private InteractiveOption defaultOption;
     private InteractiveOption selectedOption;
     private InteractiveOption[] options;
 
-    public InteractiveOptionHandler(String title, String message, InteractiveOption... options) {
+    public InteractiveOptionHandler(String title, String message, @NotNull InteractiveOption defaultOption, InteractiveOption... options) {
         this.title = title;
         this.message = message;
         this.options = options;
+        this.defaultOption = defaultOption;
     }
 
     @Override
@@ -30,11 +32,29 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
     @Override
     public void setToBeShown(boolean keepAsking, int selectedIndex) {
         InteractiveOption selectedOption = options[selectedIndex];
-        if (keepAsking || !selectedOption.isPersistable()) {
+        if (keepAsking || selectedOption == null || selectedOption.isAsk() || selectedOption.isCancel()) {
             this.selectedOption = null;
         } else {
             this.selectedOption = selectedOption;
         }
+    }
+
+    public void setSelectedOption(InteractiveOption selectedOption) {
+        if (selectedOption.isAsk() || selectedOption.isCancel()) {
+            this.selectedOption = null;
+        } else {
+            this.selectedOption = selectedOption;
+        }
+    }
+
+    @NotNull
+    public InteractiveOption getSelectedOption() {
+        return CommonUtil.nvl(selectedOption, defaultOption);
+    }
+
+    @NotNull
+    public InteractiveOption getDefaultOption() {
+        return defaultOption;
     }
 
     @Override

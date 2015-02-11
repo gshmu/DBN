@@ -32,9 +32,15 @@ public enum CompileTypeOption implements InteractiveOption {
     }
 
     @Override
-    public boolean isPersistable() {
-        return persistable;
+    public boolean isCancel() {
+        return false;
     }
+
+    @Override
+    public boolean isAsk() {
+        return this == ASK;
+    }
+
 
     public static CompileTypeOption get(String name) {
         for (CompileTypeOption compileType : CompileTypeOption.values()) {

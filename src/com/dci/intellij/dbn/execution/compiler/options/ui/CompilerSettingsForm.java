@@ -1,22 +1,21 @@
 package com.dci.intellij.dbn.execution.compiler.options.ui;
 
 import javax.swing.JComboBox;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.dci.intellij.dbn.common.option.InteractiveOption;
+import com.dci.intellij.dbn.common.option.ui.InteractiveOptionComboBoxRenderer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
 
 public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettings> {
     private JPanel mainPanel;
-    private JComboBox compileTypeComboBox;
-    private JComboBox compileDependenciesComboBox;
+    private JComboBox<InteractiveOption> compileTypeComboBox;
+    private JComboBox<InteractiveOption> compileDependenciesComboBox;
     private JRadioButton showAlwaysRadioButton;
     private JRadioButton showWhenInvalidRadioButton;
 
@@ -33,20 +32,8 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
 
 
         updateBorderTitleForeground(mainPanel);
-        compileTypeComboBox.setRenderer(new ColoredListCellRenderer() {
-            protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-                CompileTypeOption compileType = (CompileTypeOption) value;
-                setIcon(compileType.getIcon());
-                append(compileType.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            }
-        });
-
-        compileDependenciesComboBox.setRenderer(new ColoredListCellRenderer() {
-            protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-                CompileDependenciesOption compileDependenciesOption = (CompileDependenciesOption) value;
-                append(compileDependenciesOption.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            }
-        });
+        compileTypeComboBox.setRenderer(InteractiveOptionComboBoxRenderer.INSTANCE);
+        compileDependenciesComboBox.setRenderer(InteractiveOptionComboBoxRenderer.INSTANCE);
 
         resetFormChanges();
 

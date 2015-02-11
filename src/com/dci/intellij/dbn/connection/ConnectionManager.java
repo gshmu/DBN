@@ -33,7 +33,7 @@ import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
-import com.dci.intellij.dbn.connection.transaction.TransactionOption;
+import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
@@ -56,16 +56,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private final ConnectionSettingsListener connectionSettingsListener;
     private Timer idleConnectionCleaner;
-
-    private InteractiveOptionHandler closeProjectOptionHandler =
-            new InteractiveOptionHandler(
-                    "Uncommitted changes",
-                    "You have uncommitted changes on one or more connections for project \"{0}\". \n" +
-                    "Please specify whether to commit or rollback these changes before closing the project",
-                    TransactionOption.COMMIT,
-                    TransactionOption.ROLLBACK,
-                    TransactionOption.REVIEW_CHANGES,
-                    TransactionOption.CANCEL);
 
     public static ConnectionManager getInstance(Project project) {
         return project.getComponent(ConnectionManager.class);
@@ -322,6 +312,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     @Override
     public boolean canCloseProject(Project project) {
         if (project == getProject() && hasUncommittedChanges()) {
+            TransactionManagerSettings transactionManagerSettings = DatabaseTransactionManager.getInstance(project).getTransactionManagerSettings();
+            InteractiveOptionHandler closeProjectOptionHandler = transactionManagerSettings.getCloseProjectOptionHandler();
+
             int result = closeProjectOptionHandler.resolve(project.getName());
             switch (result) {
                 case 0: commitAll(); return true;
