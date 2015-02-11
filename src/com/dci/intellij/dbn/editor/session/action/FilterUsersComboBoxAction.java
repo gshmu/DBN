@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelFilter;
 public class FilterUsersComboBoxAction extends AbstractFilterComboBoxAction {
 
     public FilterUsersComboBoxAction() {
-        super("User", Icons.DBO_USER);
+        super("User", Icons.SB_FILTER_USER);
     }
 
     @Override

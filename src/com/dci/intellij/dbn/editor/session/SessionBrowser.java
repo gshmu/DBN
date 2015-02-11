@@ -70,6 +70,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         new BackgroundTask(getProject(), "Reloading sessions", false) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                progressIndicator.setIndeterminate(true);
                 final SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
                 if (sessionBrowserModel != null) {
                     new SimpleLaterInvocator() {
