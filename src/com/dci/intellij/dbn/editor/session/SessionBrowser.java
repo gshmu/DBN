@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
-import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
@@ -38,8 +37,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean isLoading;
-
-    private DatasetEditorState editorState = new DatasetEditorState();
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
@@ -149,12 +146,21 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-        return editorState;
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null) {
+            SessionBrowserModel model = editorTable.getModel();
+            return model.getState();
+        }
+        return SessionBrowserState.VOID;
     }
 
     public void setState(@NotNull FileEditorState fileEditorState) {
-        if (fileEditorState instanceof DatasetEditorState) {
-            editorState = (DatasetEditorState) fileEditorState;
+        if (fileEditorState instanceof SessionBrowserState) {
+            SessionBrowserTable editorTable = getEditorTable();
+            if (editorTable != null) {
+                SessionBrowserModel model = editorTable.getModel();
+                model.setState((SessionBrowserState) fileEditorState);
+            }
         }
     }
 

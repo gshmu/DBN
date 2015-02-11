@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
+import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 
@@ -26,14 +27,20 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
     public void update(AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         boolean visible = false;
+        boolean enabled = false;
         if (sessionBrowser != null) {
             ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             visible = compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT);
+            SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
+            if (editorTable != null) {
+                enabled = editorTable.getSelectedRows().length > 0;
+            }
         }
 
         Presentation presentation = e.getPresentation();
         presentation.setText("Disconnect Sessions");
         presentation.setVisible(visible);
+        presentation.setEnabled(enabled);
     }
 }

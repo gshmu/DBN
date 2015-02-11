@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.model;
 import javax.swing.ListModel;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
@@ -15,6 +16,9 @@ public interface DataModel<T extends DataModelRow> extends DBNTableModel, ListMo
     Project getProject();
 
     void setFilter(Filter<T> filter);
+
+    @Nullable
+    Filter<T> getFilter();
 
     List<T> getRows();
 

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -80,6 +81,16 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             rows = filtrableList;
         }
         filtrableList.setFilter(filter);
+    }
+
+    @Nullable
+    @Override
+    public Filter<T> getFilter() {
+        if (rows instanceof FiltrableList) {
+            FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
+            return filtrableList.getFilter();
+        }
+        return null;
     }
 
     protected DataModelState createState() {
