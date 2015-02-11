@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 
 public class MessageUtil {
@@ -45,15 +46,19 @@ public class MessageUtil {
             message = message + "\n" + exception.getMessage().trim();
         }
         if (title == null) title = "Error";
-        showDialog(project, message, title, OPTIONS_OK, 0, Icons.DIALOG_ERROR, null);
+        showDialog(project, message, title, OPTIONS_OK, 0, Icons.DIALOG_ERROR, null, null);
     }
 
     public static void showErrorDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, SimpleTask callback) {
-        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_ERROR, callback);
+        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_ERROR, callback, null);
     }
 
     public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, SimpleTask callback) {
-        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_QUESTION, callback);
+        showQuestionDialog(project, title, message, options, defaultOptionIndex, callback, null);
+    }
+
+    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, SimpleTask callback, @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
+        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_QUESTION, callback, doNotAskOption);
     }
 
 
@@ -62,7 +67,7 @@ public class MessageUtil {
     }
 
     public static void showWarningDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, SimpleTask callback) {
-        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_WARNING, callback);
+        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_WARNING, callback, null);
     }
 
     public static void showInfoDialog(@Nullable Project project, String title, String message) {
@@ -70,7 +75,7 @@ public class MessageUtil {
     }
 
     public static void showInfoDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, SimpleTask callback) {
-        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_INFORMATION, callback);
+        showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_INFORMATION, callback, null);
     }
 
     private static void showDialog(
@@ -79,12 +84,13 @@ public class MessageUtil {
             final String[] options,
             final int defaultOptionIndex,
             final Icon icon,
-            final SimpleTask callback) {
+            final SimpleTask callback,
+            final @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
 
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon);
+                int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
                 if (callback != null) {
                     callback.setOption(option);
                     callback.start();

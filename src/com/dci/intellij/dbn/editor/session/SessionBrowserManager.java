@@ -27,6 +27,7 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 
 @State(
     name = "DBNavigator.Project.SessionEditorManager",
@@ -61,6 +62,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
             String message;
             String[] options;
             SimpleTask task;
+            DialogWrapper.DoNotAskOption doNotAskOption = null;
 
             if (kill) {
                 title = "Kill Sessions";
@@ -74,6 +76,33 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                             boolean immediate = option == 1;
                             doDisconnectSessions(sessionBrowser, sessionIds, true, immediate, false);
                         }
+                    }
+                };
+                doNotAskOption = new DialogWrapper.DoNotAskOption() {
+                    @Override
+                    public boolean isToBeShown() {
+                        return false;
+                    }
+
+                    @Override
+                    public void setToBeShown(boolean toBeShown, int exitCode) {
+
+                    }
+
+                    @Override
+                    public boolean canBeHidden() {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean shouldSaveOptionsOnCancel() {
+                        return false;
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getDoNotShowMessage() {
+                        return null;
                     }
                 };
             } else {
@@ -94,7 +123,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
             }
 
-            MessageUtil.showQuestionDialog(project, title, message, options, 0, task);
+            MessageUtil.showQuestionDialog(project, title, message, options, 0, task, doNotAskOption);
         } else {
             doDisconnectSessions(sessionBrowser, sessionIds, kill, false, false);
         }
@@ -114,6 +143,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                     connection = connectionHandler.getPoolConnection();
                     Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
                     final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                    progressIndicator.setIndeterminate(true);
+
                     for (Object sessionId : sessionIds.keySet()) {
                         Object serialNumber = sessionIds.get(sessionId);
                         if (progressIndicator.isCanceled()) return;
