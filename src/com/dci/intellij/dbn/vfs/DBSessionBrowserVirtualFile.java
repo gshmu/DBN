@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
-import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelFilter;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -35,7 +34,6 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
     protected String path;
     protected String url;
     private SessionBrowserModel model;
-    private SessionBrowserModelFilter modelFilter = new SessionBrowserModelFilter();
     private String modelError;
 
 
@@ -61,7 +59,6 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
                 Connection connection = connectionHandler.getStandaloneConnection();
                 ResultSet resultSet = metadataInterface.loadSessions(connection);
                 SessionBrowserModel newModel = new SessionBrowserModel(connectionHandler, resultSet);
-                newModel.setFilter(modelFilter);
                 modelError = null;
                 SessionBrowserModel oldModel = model;
                 model = newModel;
@@ -79,10 +76,6 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
             load();
         }
         return model;
-    }
-
-    public SessionBrowserModelFilter getModelFilter() {
-        return modelFilter;
     }
 
     public String getModelError() {

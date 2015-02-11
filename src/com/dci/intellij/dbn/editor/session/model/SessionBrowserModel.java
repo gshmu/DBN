@@ -6,18 +6,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
+import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.editor.session.SessionBrowserState;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
 
     public SessionBrowserModel(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler);
         setHeader(new SessionBrowserModelHeader(connectionHandler, resultSet));
+        setFilter(new SessionBrowserModelFilter());
         load();
     }
 
@@ -43,6 +48,12 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         }
     }
 
+    @Nullable
+    @Override
+    public SessionBrowserModelFilter getFilter() {
+        return (SessionBrowserModelFilter) super.getFilter();
+    }
+
     private ResultSet loadResultSet() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) {
@@ -50,6 +61,17 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
             return metadataInterface.loadSessions(connectionHandler.getStandaloneConnection());
         }
         return null;
+    }
+
+    @Override
+    protected SortableDataModelState createState() {
+        return new SessionBrowserState();
+    }
+
+    @NotNull
+    @Override
+    public SessionBrowserState getState() {
+        return (SessionBrowserState) super.getState();
     }
 
     @Override

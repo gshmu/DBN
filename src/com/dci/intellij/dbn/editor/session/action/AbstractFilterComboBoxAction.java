@@ -39,10 +39,13 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
         actionGroup.addSeparator();
         if (sessionBrowser != null) {
             DBSessionBrowserVirtualFile databaseFile = sessionBrowser.getDatabaseFile();
-            List<String> filterValues = getDistinctValues(databaseFile.getModel(), databaseFile.getModelFilter());
-            for (String filterValue : filterValues) {
-                SelectFilterValueAction action = new SelectFilterValueAction(filterValue);
-                actionGroup.add(action);
+            SessionBrowserModel model = databaseFile.getModel();
+            if (model != null) {
+                List<String> filterValues = getDistinctValues(model, model.getFilter());
+                for (String filterValue : filterValues) {
+                    SelectFilterValueAction action = new SelectFilterValueAction(filterValue);
+                    actionGroup.add(action);
+                }
             }
         }
         return actionGroup;
@@ -55,11 +58,14 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
 
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
-            SessionBrowserModelFilter modelFilter = sessionBrowser.getDatabaseFile().getModelFilter();
-            String filterValue = getFilterValue(modelFilter);
-            if (StringUtil.isNotEmpty(filterValue)) {
-                text = filterValue;
-                icon = this.icon;
+            SessionBrowserModel model = sessionBrowser.getDatabaseFile().getModel();
+            if (model != null) {
+                SessionBrowserModelFilter modelFilter = model.getFilter();
+                String filterValue = getFilterValue(modelFilter);
+                if (StringUtil.isNotEmpty(filterValue)) {
+                    text = filterValue;
+                    icon = this.icon;
+                }
             }
         }
 
@@ -111,11 +117,13 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
             SessionBrowser sessionBrowser = getSessionBrowser(e);
             if (sessionBrowser != null) {
                 DBSessionBrowserVirtualFile sessionBrowserFile = sessionBrowser.getDatabaseFile();
-                SessionBrowserModelFilter modelFilter = sessionBrowserFile.getModelFilter();
-                setFilterValue(modelFilter, filterValue);
-                sessionBrowser.refreshTable();
+                SessionBrowserModel model = sessionBrowserFile.getModel();
+                if (model !=  null) {
+                    SessionBrowserModelFilter modelFilter = model.getFilter();
+                    setFilterValue(modelFilter, filterValue);
+                    sessionBrowser.refreshTable();
+                }
             }
-
         }
     }
  }
