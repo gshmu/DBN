@@ -10,8 +10,8 @@ import com.dci.intellij.dbn.connection.transaction.options.ui.TransactionManager
 public class TransactionManagerSettings extends Configuration<TransactionManagerSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = "\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)";
 
-    private InteractiveOptionHandler closeProjectOptionHandler =
-            new InteractiveOptionHandler(
+    private InteractiveOptionHandler<TransactionOption> closeProjectOptionHandler =
+            new InteractiveOptionHandler<TransactionOption>(
                     "on-project-close",
                     "Uncommitted changes",
                     "You have uncommitted changes on one or more connections for project \"{0}\". \n" +
@@ -23,8 +23,8 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler toggleAutoCommitOptionHandler =
-            new InteractiveOptionHandler(
+    private InteractiveOptionHandler<TransactionOption> toggleAutoCommitOptionHandler =
+            new InteractiveOptionHandler<TransactionOption>(
                     "on-autocommit-toggle",
                     "Uncommitted changes",
                     "You have uncommitted changes on the connection \"{0}\". \n" +
@@ -36,39 +36,42 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler disconnectOptionHandler = new InteractiveOptionHandler(
-            "on-disconnect",
-            "Uncommitted changes",
-            "You have uncommitted changes on the connection \"{0}\". \n" +
-                    "Please specify whether to commit or rollback these changes before disconnecting" +
-                    REMEMBER_OPTION_HINT,
-            TransactionOption.ASK,
-            TransactionOption.COMMIT,
-            TransactionOption.ROLLBACK,
-            TransactionOption.REVIEW_CHANGES,
-            TransactionOption.CANCEL);
+    private InteractiveOptionHandler<TransactionOption> disconnectOptionHandler =
+            new InteractiveOptionHandler<TransactionOption>(
+                    "on-disconnect",
+                    "Uncommitted changes",
+                    "You have uncommitted changes on the connection \"{0}\". \n" +
+                            "Please specify whether to commit or rollback these changes before disconnecting" +
+                            REMEMBER_OPTION_HINT,
+                    TransactionOption.ASK,
+                    TransactionOption.COMMIT,
+                    TransactionOption.ROLLBACK,
+                    TransactionOption.REVIEW_CHANGES,
+                    TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler commitMultipleChangesOptionHandler = new InteractiveOptionHandler(
-            "on-commit",
-            "Commit multiple changes",
-            "This commit action will affect several other changes on the connection \"{0}\", " +
-                    "\nnot only the ones done in \"{1}\"" +
-                    REMEMBER_OPTION_HINT,
-            TransactionOption.ASK,
-            TransactionOption.COMMIT,
-            TransactionOption.REVIEW_CHANGES,
-            TransactionOption.CANCEL);
+    private InteractiveOptionHandler<TransactionOption> commitMultipleChangesOptionHandler =
+            new InteractiveOptionHandler<TransactionOption>(
+                    "on-commit",
+                    "Commit multiple changes",
+                    "This commit action will affect several other changes on the connection \"{0}\", " +
+                            "\nnot only the ones done in \"{1}\"" +
+                            REMEMBER_OPTION_HINT,
+                    TransactionOption.ASK,
+                    TransactionOption.COMMIT,
+                    TransactionOption.REVIEW_CHANGES,
+                    TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler rollbackMultipleChangesOptionHandler = new InteractiveOptionHandler(
-            "on-rollback",
-            "Rollback multiple changes",
-            "This rollback action will affect several other changes on the connection \"{0}\", " +
-                    "\nnot only the ones done in \"{1}\"." +
-                    REMEMBER_OPTION_HINT,
-            TransactionOption.ASK,
-            TransactionOption.ROLLBACK,
-            TransactionOption.REVIEW_CHANGES,
-            TransactionOption.CANCEL);
+    private InteractiveOptionHandler<TransactionOption> rollbackMultipleChangesOptionHandler =
+            new InteractiveOptionHandler<TransactionOption>(
+                    "on-rollback",
+                    "Rollback multiple changes",
+                    "This rollback action will affect several other changes on the connection \"{0}\", " +
+                            "\nnot only the ones done in \"{1}\"." +
+                            REMEMBER_OPTION_HINT,
+                    TransactionOption.ASK,
+                    TransactionOption.ROLLBACK,
+                    TransactionOption.REVIEW_CHANGES,
+                    TransactionOption.CANCEL);
 
     public String getDisplayName() {
         return "Transaction manager settings";
@@ -83,23 +86,23 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
      *                       Settings                        *
      *********************************************************/
 
-    public InteractiveOptionHandler getCloseProjectOptionHandler() {
+    public InteractiveOptionHandler<TransactionOption> getCloseProjectOptionHandler() {
         return closeProjectOptionHandler;
     }
 
-    public InteractiveOptionHandler getToggleAutoCommitOptionHandler() {
+    public InteractiveOptionHandler<TransactionOption> getToggleAutoCommitOptionHandler() {
         return toggleAutoCommitOptionHandler;
     }
 
-    public InteractiveOptionHandler getDisconnectOptionHandler() {
+    public InteractiveOptionHandler<TransactionOption> getDisconnectOptionHandler() {
         return disconnectOptionHandler;
     }
 
-    public InteractiveOptionHandler getCommitMultipleChangesOptionHandler() {
+    public InteractiveOptionHandler<TransactionOption> getCommitMultipleChangesOptionHandler() {
         return commitMultipleChangesOptionHandler;
     }
 
-    public InteractiveOptionHandler getRollbackMultipleChangesOptionHandler() {
+    public InteractiveOptionHandler<TransactionOption> getRollbackMultipleChangesOptionHandler() {
         return rollbackMultipleChangesOptionHandler;
     }
 

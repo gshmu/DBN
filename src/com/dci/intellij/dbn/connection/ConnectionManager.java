@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
+import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -313,14 +314,14 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public boolean canCloseProject(Project project) {
         if (project == getProject() && hasUncommittedChanges()) {
             TransactionManagerSettings transactionManagerSettings = DatabaseTransactionManager.getInstance(project).getTransactionManagerSettings();
-            InteractiveOptionHandler closeProjectOptionHandler = transactionManagerSettings.getCloseProjectOptionHandler();
+            InteractiveOptionHandler<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProjectOptionHandler();
 
-            int result = closeProjectOptionHandler.resolve(project.getName());
+            TransactionOption result = closeProjectOptionHandler.resolve(project.getName());
             switch (result) {
-                case 0: commitAll(); return true;
-                case 1: rollbackAll(); return true;
-                case 2: return DatabaseTransactionManager.getInstance(project).showUncommittedChangesOverviewDialog(null);
-                case 3: return false;
+                case COMMIT: commitAll(); return true;
+                case ROLLBACK: rollbackAll(); return true;
+                case REVIEW_CHANGES: return DatabaseTransactionManager.getInstance(project).showUncommittedChangesOverviewDialog(null);
+                case CANCEL: return false;
             }
         }
         return true;

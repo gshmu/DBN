@@ -10,14 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
+import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -27,7 +30,6 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 
 @State(
     name = "DBNavigator.Project.SessionEditorManager",
@@ -45,6 +47,12 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         return project.getComponent(SessionBrowserManager.class);
     }
 
+    public SessionBrowserSettings getSessionBrowserSettings() {
+        return ProjectSettingsManager.getInstance(getProject()).getOperationSettings().getSessionBrowserSettings();
+    }
+
+
+
     public void openSessionBrowser(ConnectionHandler connectionHandler) {
         Project project = connectionHandler.getProject();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -52,84 +60,30 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         fileEditorManager.openFile(sessionBrowserFile, true);
     }
 
-    public void disconnectSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final boolean kill) {
+    public void interruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
         final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
         if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT_TIMING)) {
             Project project = connectionHandler.getProject();
-            String title;
-            String message;
-            String[] options;
-            SimpleTask task;
-            DialogWrapper.DoNotAskOption doNotAskOption = null;
 
-            if (kill) {
-                title = "Kill Sessions";
-                message = "Please select kill option";
-                options = new String[] {"Kill", "Kill Immediate", "Cancel"};
-                task = new SimpleTask() {
-                    @Override
-                    protected void execute() {
-                        int option = getOption();
-                        if (option != 2) {
-                            boolean immediate = option == 1;
-                            doDisconnectSessions(sessionBrowser, sessionIds, true, immediate, false);
-                        }
-                    }
-                };
-                doNotAskOption = new DialogWrapper.DoNotAskOption() {
-                    @Override
-                    public boolean isToBeShown() {
-                        return false;
-                    }
+            SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
+            InteractiveOptionHandler<SessionInterruptionOption> disconnectOptionHandler =
+                    type == SessionInterruptionType.KILL ? sessionBrowserSettings.getKillSessionOptionHandler() :
+                    type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSessionOptionHandler() : null;
 
-                    @Override
-                    public void setToBeShown(boolean toBeShown, int exitCode) {
-
-                    }
-
-                    @Override
-                    public boolean canBeHidden() {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldSaveOptionsOnCancel() {
-                        return false;
-                    }
-
-                    @NotNull
-                    @Override
-                    public String getDoNotShowMessage() {
-                        return null;
-                    }
-                };
-            } else {
-                title = "Disconnect Sessions";
-                message = "Please select disconnect option";
-                options = new String[] {"Disconnect Immediate", "Disconnect Post Transaction", "Cancel"};
-                task = new SimpleTask() {
-                    @Override
-                    protected void execute() {
-                        int option = getOption();
-                        if (option != 2) {
-                            boolean immediate = option == 0;
-                            boolean postTransaction = option == 1;
-                            doDisconnectSessions(sessionBrowser, sessionIds, false, immediate, postTransaction);
-                        }
-                    }
-                };
-
+            if (disconnectOptionHandler != null) {
+                SessionInterruptionOption result = disconnectOptionHandler.resolve(connectionHandler.getName());
+                if (result != SessionInterruptionOption.CANCEL && result != SessionInterruptionOption.ASK) {
+                    doInterruptSessions(sessionBrowser, sessionIds, type, result);
+                }
             }
-
-            MessageUtil.showQuestionDialog(project, title, message, options, 0, task, doNotAskOption);
         } else {
-            doDisconnectSessions(sessionBrowser, sessionIds, kill, false, false);
+            doInterruptSessions(sessionBrowser, sessionIds, SessionInterruptionType.KILL, SessionInterruptionOption.NORMAL);
         }
     }
 
-    private void doDisconnectSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final boolean kill, final boolean immediate, final boolean postTransaction) {
+    private void doInterruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final SessionInterruptionType type, final SessionInterruptionOption option) {
         final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         new BackgroundTask(getProject(), "Killing Sessions", false, true) {
@@ -138,8 +92,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 Project project = connectionHandler.getProject();
                 Connection connection = null;
                 try {
-                    final String killedAction = kill ? "killed" : "disconnected";
-                    final String killingAction = kill ? "killing" : "disconnecting";
+                    final String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
+                    final String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
                     connection = connectionHandler.getPoolConnection();
                     Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
                     final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
@@ -149,9 +103,12 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                         Object serialNumber = sessionIds.get(sessionId);
                         if (progressIndicator.isCanceled()) return;
                         try {
-                            if (kill)
-                                metadataInterface.killSession(sessionId, serialNumber, immediate, connection); else
-                                metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, connection);
+                            boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
+                            boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;
+                            switch (type) {
+                                case DISCONNECT: metadataInterface.disconnectSession(sessionId, serialNumber, postTransaction, immediate, connection); break;
+                                case KILL: metadataInterface.killSession(sessionId, serialNumber, immediate, connection); break;
+                            }
                         } catch (SQLException e) {
                             errors.put(sessionId, e);
                         }
