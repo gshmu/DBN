@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.data.record.DatasetRecord;
-import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.data.record.DatasetRecord;
+import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 
 public class RecordViewerDialog extends DBNDialog {
     private RecordViewerForm editorForm;
@@ -33,7 +33,7 @@ public class RecordViewerDialog extends DBNDialog {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return editorForm.getPreferredFocusComponent();
+        return editorForm.getPreferredFocusedComponent();
     }
 
     @NotNull

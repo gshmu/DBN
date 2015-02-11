@@ -12,6 +12,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
 
     private InteractiveOptionHandler closeProjectOptionHandler =
             new InteractiveOptionHandler(
+                    "on-project-close",
                     "Uncommitted changes",
                     "You have uncommitted changes on one or more connections for project \"{0}\". \n" +
                             "Please specify whether to commit or rollback these changes before closing the project" +
@@ -22,18 +23,21 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler toggleAutoCommitOptionHandler = new InteractiveOptionHandler(
-            "Uncommitted changes",
-            "You have uncommitted changes on the connection \"{0}\". \n" +
-                    "Please specify whether to commit or rollback these changes before switching Auto-Commit ON." +
-                    REMEMBER_OPTION_HINT,
-            TransactionOption.ASK,
-            TransactionOption.COMMIT,
-            TransactionOption.ROLLBACK,
-            TransactionOption.REVIEW_CHANGES,
-            TransactionOption.CANCEL);
+    private InteractiveOptionHandler toggleAutoCommitOptionHandler =
+            new InteractiveOptionHandler(
+                    "on-autocommit-toggle",
+                    "Uncommitted changes",
+                    "You have uncommitted changes on the connection \"{0}\". \n" +
+                            "Please specify whether to commit or rollback these changes before switching Auto-Commit ON." +
+                            REMEMBER_OPTION_HINT,
+                    TransactionOption.ASK,
+                    TransactionOption.COMMIT,
+                    TransactionOption.ROLLBACK,
+                    TransactionOption.REVIEW_CHANGES,
+                    TransactionOption.CANCEL);
 
     private InteractiveOptionHandler disconnectOptionHandler = new InteractiveOptionHandler(
+            "on-disconnect",
             "Uncommitted changes",
             "You have uncommitted changes on the connection \"{0}\". \n" +
                     "Please specify whether to commit or rollback these changes before disconnecting" +
@@ -45,6 +49,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
             TransactionOption.CANCEL);
 
     private InteractiveOptionHandler commitMultipleChangesOptionHandler = new InteractiveOptionHandler(
+            "on-commit",
             "Commit multiple changes",
             "This commit action will affect several other changes on the connection \"{0}\", " +
                     "\nnot only the ones done in \"{1}\"" +
@@ -55,6 +60,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
             TransactionOption.CANCEL);
 
     private InteractiveOptionHandler rollbackMultipleChangesOptionHandler = new InteractiveOptionHandler(
+            "on-rollback",
             "Rollback multiple changes",
             "This rollback action will affect several other changes on the connection \"{0}\", " +
                     "\nnot only the ones done in \"{1}\"." +
@@ -110,8 +116,30 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
     }
 
     public void readConfiguration(Element element) {
+        Element uncommittedChangesElement = element.getChild("uncommitted-changes");
+        if (uncommittedChangesElement != null) {
+            closeProjectOptionHandler.readConfiguration(uncommittedChangesElement);
+            disconnectOptionHandler.readConfiguration(uncommittedChangesElement);
+            toggleAutoCommitOptionHandler.readConfiguration(uncommittedChangesElement);
+        }
+        Element multipleUncommittedChangesElement = element.getChild("multiple-uncommitted-changes");
+        if (multipleUncommittedChangesElement != null) {
+            commitMultipleChangesOptionHandler.readConfiguration(uncommittedChangesElement);
+            rollbackMultipleChangesOptionHandler.readConfiguration(uncommittedChangesElement);
+        }
     }
 
     public void writeConfiguration(Element element) {
+        Element uncommittedChangesElement = new Element("uncommitted-changes");
+        element.addContent(uncommittedChangesElement);
+        closeProjectOptionHandler.writeConfiguration(uncommittedChangesElement);
+        disconnectOptionHandler.writeConfiguration(uncommittedChangesElement);
+        toggleAutoCommitOptionHandler.writeConfiguration(uncommittedChangesElement);
+
+        Element multipleUncommittedChangesElement = new Element("multiple-uncommitted-changes");
+        element.addContent(multipleUncommittedChangesElement);
+        commitMultipleChangesOptionHandler.writeConfiguration(multipleUncommittedChangesElement);
+        rollbackMultipleChangesOptionHandler.writeConfiguration(multipleUncommittedChangesElement);
+
     }
 }

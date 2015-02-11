@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 
 public class DatasetRecordEditorDialog extends DBNDialog {
     private DatasetRecordEditorForm editorForm;
@@ -26,7 +26,7 @@ public class DatasetRecordEditorDialog extends DBNDialog {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return editorForm.getPreferredFocusComponent();
+        return editorForm.getPreferredFocusedComponent();
     }
 
     @NotNull
