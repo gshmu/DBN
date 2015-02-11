@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
+import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
@@ -61,7 +62,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     "Uncommitted changes",
                     "You have uncommitted changes on one or more connections for project \"{0}\". \n" +
                     "Please specify whether to commit or rollback these changes before closing the project",
-                    2, "Commit", "Rollback", "Review Changes", "Cancel");
+                    TransactionOption.COMMIT,
+                    TransactionOption.ROLLBACK,
+                    TransactionOption.REVIEW_CHANGES,
+                    TransactionOption.CANCEL);
 
     public static ConnectionManager getInstance(Project project) {
         return project.getComponent(ConnectionManager.class);

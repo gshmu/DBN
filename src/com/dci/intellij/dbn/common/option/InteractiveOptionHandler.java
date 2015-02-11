@@ -2,24 +2,24 @@ package com.dci.intellij.dbn.common.option;
 
 
 import java.text.MessageFormat;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 
 public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
     private String title;
     private String message;
-    private Integer selectedOption;
-    private String[] options;
-    private int maxPersistableOption;
+    private InteractiveOption selectedOption;
+    private InteractiveOption[] options;
 
-    public InteractiveOptionHandler(String title, String message, int maxPersistableOption, String... options) {
+    public InteractiveOptionHandler(String title, String message, InteractiveOption... options) {
         this.title = title;
         this.message = message;
         this.options = options;
-        this.maxPersistableOption = maxPersistableOption;
     }
 
     @Override
@@ -28,8 +28,9 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
     }
 
     @Override
-    public void setToBeShown(boolean keepAsking, int selectedOption) {
-        if (keepAsking || selectedOption > maxPersistableOption) {
+    public void setToBeShown(boolean keepAsking, int selectedIndex) {
+        InteractiveOption selectedOption = options[selectedIndex];
+        if (keepAsking || !selectedOption.isPersistable()) {
             this.selectedOption = null;
         } else {
             this.selectedOption = selectedOption;
@@ -46,6 +47,7 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
         return false;
     }
 
+    @NotNull
     @Override
     public String getDoNotShowMessage() {
         return "Remember option";
@@ -53,11 +55,21 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
 
     public int resolve(String ... messageArgs) {
         if (selectedOption != null) {
-            return selectedOption;
+            return CommonUtil.indexOf(options, selectedOption);
         } else {
             return Messages.showDialog(
                     MessageFormat.format(message, messageArgs),
-                    Constants.DBN_TITLE_PREFIX + title, options, 0, Icons.DIALOG_WARNING, this);
+                    Constants.DBN_TITLE_PREFIX + title,
+                    toStringOptions(options), 0, Icons.DIALOG_WARNING, this);
         }
     }
+
+    public static String[] toStringOptions(InteractiveOption[] options) {
+        String[] stringOptions = new String[options.length];
+        for (int i = 0; i < options.length; i++) {
+            stringOptions[i] = options[i].getName();
+        }
+        return stringOptions;
+    }
+
 }

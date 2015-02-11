@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
@@ -89,6 +90,10 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     public ProjectCodeStyleSettings getCodeStyleSettings() {
         return projectSettings.getCodeStyleSettings();
+    }
+
+    public OperationSettings getOperationSettings() {
+        return projectSettings.getOperationSettings();
     }
 
     public ExecutionEngineSettings getExecutionEngineSettings() {

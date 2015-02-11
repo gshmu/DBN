@@ -28,25 +28,35 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             "Uncommitted changes",
             "You have uncommitted changes on the connection \"{0}\". \n" +
             "Please specify whether to commit or rollback these changes before switching Auto-Commit ON.",
-            2, "Commit", "Rollback", "Review Changes", "Cancel");
+            TransactionOption.COMMIT,
+            TransactionOption.ROLLBACK,
+            TransactionOption.REVIEW_CHANGES,
+            TransactionOption.CANCEL);
 
     private InteractiveOptionHandler disconnectOptionHandler = new InteractiveOptionHandler(
             "Uncommitted changes",
             "You have uncommitted changes on the connection \"{0}\". \n" +
             "Please specify whether to commit or rollback these changes before disconnecting",
-            2, "Commit", "Rollback", "Review Changes", "Cancel");
+            TransactionOption.COMMIT,
+            TransactionOption.ROLLBACK,
+            TransactionOption.REVIEW_CHANGES,
+            TransactionOption.CANCEL);
 
     private InteractiveOptionHandler commitMultipleChangesOptionHandler = new InteractiveOptionHandler(
             "Commit multiple changes",
             "This commit action will affect several other changes on the connection \"{0}\", " +
                     "\nnot only the ones done in \"{1}\"",
-            1, "Commit", "Review Changes", "Cancel");
+            TransactionOption.COMMIT,
+            TransactionOption.REVIEW_CHANGES,
+            TransactionOption.CANCEL);
 
     private InteractiveOptionHandler rollbackMultipleChangesOptionHandler = new InteractiveOptionHandler(
             "Rollback multiple changes",
             "This rollback action will affect several other changes on the connection \"{0}\", " +
                     "\nnot only the ones done in \"{1}\"",
-            1, "Rollback", "Review Changes", "Cancel");
+            TransactionOption.ROLLBACK,
+            TransactionOption.REVIEW_CHANGES,
+            TransactionOption.CANCEL);
 
 
     private DatabaseTransactionManager(Project project) {
@@ -118,10 +128,12 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         if (fromEditor && connectionHandler.getUncommittedChanges().size() > 1) {
             Project project = connectionHandler.getProject();
             VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
-            int result = commitMultipleChangesOptionHandler.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
-            switch (result) {
-                case 0: execute(connectionHandler, background, TransactionAction.COMMIT); break;
-                case 1: showUncommittedChangesDialog(connectionHandler, null);
+            if (selectedFile != null) {
+                int result = commitMultipleChangesOptionHandler.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                switch (result) {
+                    case 0: execute(connectionHandler, background, TransactionAction.COMMIT); break;
+                    case 1: showUncommittedChangesDialog(connectionHandler, null);
+                }
             }
         } else {
             execute(connectionHandler, background, TransactionAction.COMMIT);
@@ -132,10 +144,12 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         if (fromEditor && connectionHandler.getUncommittedChanges().size() > 1) {
             Project project = connectionHandler.getProject();
             VirtualFile selectedFile = EditorUtil.getSelectedFile(project);
-            int result = rollbackMultipleChangesOptionHandler.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
-            switch (result) {
-                case 0: execute(connectionHandler, background, TransactionAction.ROLLBACK); break;
-                case 1: showUncommittedChangesDialog(connectionHandler, null);
+            if (selectedFile != null) {
+                int result = rollbackMultipleChangesOptionHandler.resolve(connectionHandler.getName(), selectedFile.getPresentableUrl());
+                switch (result) {
+                    case 0: execute(connectionHandler, background, TransactionAction.ROLLBACK); break;
+                    case 1: showUncommittedChangesDialog(connectionHandler, null);
+                }
             }
         } else {
             execute(connectionHandler, background, TransactionAction.ROLLBACK);
