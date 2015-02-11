@@ -1,28 +1,31 @@
 package com.dci.intellij.dbn.editor.session.model;
 
+import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.data.model.DataModelState;
+import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
+import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserState;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
-import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.editor.session.SessionBrowserState;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
 
-    public SessionBrowserModel(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    public SessionBrowserModel(ConnectionHandler connectionHandler, ResultSet resultSet, SessionBrowserState state) throws SQLException {
         super(connectionHandler);
         setHeader(new SessionBrowserModelHeader(connectionHandler, resultSet));
-        setFilter(new SessionBrowserModelFilter());
+        setState(state);
+        setFilter(getState().getFilterState());
         load();
     }
 
@@ -50,8 +53,8 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
     @Nullable
     @Override
-    public SessionBrowserModelFilter getFilter() {
-        return (SessionBrowserModelFilter) super.getFilter();
+    public SessionBrowserFilterState getFilter() {
+        return (SessionBrowserFilterState) super.getFilter();
     }
 
     private ResultSet loadResultSet() throws SQLException {
@@ -72,6 +75,15 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     @Override
     public SessionBrowserState getState() {
         return (SessionBrowserState) super.getState();
+    }
+
+    @Override
+    public void setState(DataModelState state) {
+        super.setState(state);
+        if (state instanceof SessionBrowserState) {
+            SessionBrowserState sessionBrowserState = (SessionBrowserState) state;
+            setFilter(sessionBrowserState.getFilterState());
+        }
     }
 
     @Override
