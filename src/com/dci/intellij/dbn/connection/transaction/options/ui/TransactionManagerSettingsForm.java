@@ -60,11 +60,11 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
 
     public void applyFormChanges() throws ConfigurationException {
         TransactionManagerSettings settings = getConfiguration();
-        settings.getCloseProjectOptionHandler().setSelectedOption((InteractiveOption) uncommittedChangesOnProjectCloseComboBox.getSelectedItem());
-        settings.getToggleAutoCommitOptionHandler().setSelectedOption((InteractiveOption) uncommittedChangesOnSwitchComboBox.getSelectedItem());
-        settings.getDisconnectOptionHandler().setSelectedOption((InteractiveOption) uncommittedChangesOnDisconnectComboBox.getSelectedItem());
-        settings.getCommitMultipleChangesOptionHandler().setSelectedOption((InteractiveOption) multipleChangesOnCommitComboBox.getSelectedItem());
-        settings.getRollbackMultipleChangesOptionHandler().setSelectedOption((InteractiveOption) multipleChangesOnRollbackComboBox.getSelectedItem());
+        settings.getCloseProjectOptionHandler().setSelectedOption((TransactionOption) uncommittedChangesOnProjectCloseComboBox.getSelectedItem());
+        settings.getToggleAutoCommitOptionHandler().setSelectedOption((TransactionOption) uncommittedChangesOnSwitchComboBox.getSelectedItem());
+        settings.getDisconnectOptionHandler().setSelectedOption((TransactionOption) uncommittedChangesOnDisconnectComboBox.getSelectedItem());
+        settings.getCommitMultipleChangesOptionHandler().setSelectedOption((TransactionOption) multipleChangesOnCommitComboBox.getSelectedItem());
+        settings.getRollbackMultipleChangesOptionHandler().setSelectedOption((TransactionOption) multipleChangesOnRollbackComboBox.getSelectedItem());
     }
 
     public void resetFormChanges() {

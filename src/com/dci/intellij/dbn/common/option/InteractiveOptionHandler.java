@@ -13,15 +13,15 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 
-public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
+public class InteractiveOptionHandler<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
     private String configName;
     private String title;
     private String message;
-    private InteractiveOption defaultOption;
-    private InteractiveOption selectedOption;
-    private InteractiveOption[] options;
+    private T defaultOption;
+    private T selectedOption;
+    private T[] options;
 
-    public InteractiveOptionHandler(String configName, String title, String message, @NotNull InteractiveOption defaultOption, InteractiveOption... options) {
+    public InteractiveOptionHandler(String configName, String title, String message, @NotNull T defaultOption, T... options) {
         this.configName = configName;
         this.title = title;
         this.message = message;
@@ -36,7 +36,7 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, P
 
     @Override
     public void setToBeShown(boolean keepAsking, int selectedIndex) {
-        InteractiveOption selectedOption = options[selectedIndex];
+        T selectedOption = options[selectedIndex];
         if (keepAsking || selectedOption == null || selectedOption.isAsk() || selectedOption.isCancel()) {
             this.selectedOption = null;
         } else {
@@ -44,7 +44,7 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, P
         }
     }
 
-    public void setSelectedOption(InteractiveOption selectedOption) {
+    public void setSelectedOption(T selectedOption) {
         if (selectedOption.isAsk() || selectedOption.isCancel()) {
             this.selectedOption = null;
         } else {
@@ -53,12 +53,12 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, P
     }
 
     @NotNull
-    public InteractiveOption getSelectedOption() {
+    public T getSelectedOption() {
         return CommonUtil.nvl(selectedOption, defaultOption);
     }
 
     @NotNull
-    public InteractiveOption getDefaultOption() {
+    public T getDefaultOption() {
         return defaultOption;
     }
 
@@ -78,14 +78,15 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, P
         return "Remember option";
     }
 
-    public int resolve(String ... messageArgs) {
+    public T resolve(String ... messageArgs) {
         if (selectedOption != null) {
-            return CommonUtil.indexOf(options, selectedOption);
+            return selectedOption;
         } else {
-            return Messages.showDialog(
+            int optionIndex = Messages.showDialog(
                     MessageFormat.format(message, messageArgs),
                     Constants.DBN_TITLE_PREFIX + title,
-                    toStringOptions(options), 0, Icons.DIALOG_WARNING, this);
+                    toStringOptions(options), 0, Icons.DIALOG_QUESTION, this);
+            return options[optionIndex];
         }
     }
 
@@ -103,7 +104,7 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, P
      *******************************************************/
     @Override
     public void readConfiguration(Element element) {
-        InteractiveOption option = (InteractiveOption) SettingsUtil.getEnum(element, configName, (Enum)defaultOption);
+        T option = (T) SettingsUtil.getEnum(element, configName, (Enum)defaultOption);
         setSelectedOption(option);
     }
 
