@@ -98,7 +98,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         EditorFactory.getInstance().releaseEditor(viewer);
     }
 
-    public JComponent getPreferredFocusComponent() {
+    public JComponent getPreferredFocusedComponent() {
         if (variableValueForms.size() > 0) {
             return variableValueForms.get(0).getEditorComponent();
         }

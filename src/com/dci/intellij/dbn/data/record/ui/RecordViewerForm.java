@@ -97,7 +97,7 @@ public class RecordViewerForm extends DBNFormImpl implements DBNForm {
         columnsPanelScrollPane.getVerticalScrollBar().setUnitIncrement(scrollUnitIncrement);
     }
 
-    public JComponent getPreferredFocusComponent() {
+    public JComponent getPreferredFocusedComponent() {
         return columnForms.get(0).getViewComponent();
     }
 

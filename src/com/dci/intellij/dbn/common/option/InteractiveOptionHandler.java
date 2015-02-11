@@ -2,22 +2,27 @@ package com.dci.intellij.dbn.common.option;
 
 
 import java.text.MessageFormat;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 
-public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
+public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
+    private String configName;
     private String title;
     private String message;
     private InteractiveOption defaultOption;
     private InteractiveOption selectedOption;
     private InteractiveOption[] options;
 
-    public InteractiveOptionHandler(String title, String message, @NotNull InteractiveOption defaultOption, InteractiveOption... options) {
+    public InteractiveOptionHandler(String configName, String title, String message, @NotNull InteractiveOption defaultOption, InteractiveOption... options) {
+        this.configName = configName;
         this.title = title;
         this.message = message;
         this.options = options;
@@ -92,4 +97,18 @@ public class InteractiveOptionHandler implements DialogWrapper.DoNotAskOption{
         return stringOptions;
     }
 
+
+    /*******************************************************
+     *              PersistentConfiguration                *
+     *******************************************************/
+    @Override
+    public void readConfiguration(Element element) {
+        InteractiveOption option = (InteractiveOption) SettingsUtil.getEnum(element, configName, (Enum)defaultOption);
+        setSelectedOption(option);
+    }
+
+    @Override
+    public void writeConfiguration(Element element) {
+        SettingsUtil.setEnum(element, configName, (Enum) getSelectedOption());
+    }
 }

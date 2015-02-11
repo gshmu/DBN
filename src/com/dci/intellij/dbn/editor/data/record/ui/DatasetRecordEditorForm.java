@@ -88,7 +88,8 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
         }
     }
 
-    public JComponent getPreferredFocusComponent() {
+    @Override
+    public JComponent getPreferredFocusedComponent() {
         return isDisposed() ? null : columnForms.get(0).getEditorComponent();
     }
 

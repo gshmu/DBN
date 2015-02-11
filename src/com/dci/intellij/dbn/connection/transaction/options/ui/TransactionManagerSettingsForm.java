@@ -20,6 +20,7 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
 
     public TransactionManagerSettingsForm(TransactionManagerSettings settings) {
         super(settings);
+
         updateBorderTitleForeground(mainPanel);
         uncommittedChangesOnProjectCloseComboBox.setRenderer(InteractiveOptionComboBoxRenderer.INSTANCE);
         uncommittedChangesOnProjectCloseComboBox.addItem(TransactionOption.ASK);

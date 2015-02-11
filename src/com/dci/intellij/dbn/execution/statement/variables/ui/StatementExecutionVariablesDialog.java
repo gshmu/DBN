@@ -33,7 +33,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return variablesForm.getPreferredFocusComponent();
+        return variablesForm.getPreferredFocusedComponent();
     }
 
     @NotNull

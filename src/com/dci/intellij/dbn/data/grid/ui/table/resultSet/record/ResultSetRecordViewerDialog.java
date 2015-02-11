@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,7 @@ public class ResultSetRecordViewerDialog extends DBNDialog {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return viewerForm.getPreferredFocusComponent();
+        return viewerForm.getPreferredFocusedComponent();
     }
 
     @NotNull
