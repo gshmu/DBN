@@ -364,7 +364,7 @@ public class Icons {
 
     public static final Icon SB_FILTER_SERVER                    = load("/img/filter/SessionFilterServer.png");
     public static final Icon SB_FILTER_STATUS                    = load("/img/filter/SessionFilterStatus.png");
-    public static final Icon SB_FILTER_USER                      = load("/img/filter/SessionFilterStatus.png");
+    public static final Icon SB_FILTER_USER                      = load("/img/filter/SessionFilterUser.png");
 
 
     public static final Icon DEBUG_INVALID_BREAKPOINT  = load("/img/InvalidBreakpoint.png");

@@ -7,5 +7,7 @@ public interface InteractiveOption {
 
     Icon getIcon();
 
-    boolean isPersistable();
+    boolean isCancel();
+
+    boolean isAsk();
 }

@@ -27,8 +27,13 @@ public enum CompileDependenciesOption implements InteractiveOption {
     }
 
     @Override
-    public boolean isPersistable() {
-        return persistable;
+    public boolean isCancel() {
+        return false;
+    }
+
+    @Override
+    public boolean isAsk() {
+        return this == ASK;
     }
 
 

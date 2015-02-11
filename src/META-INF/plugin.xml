@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
+                - Transaction Management options</br>
                 - Support for Oracle GRANT SQL-statement</br>
                 - Database Sessions Browser (all databases)</br>
                 - Session disconnect / kill actions</br>

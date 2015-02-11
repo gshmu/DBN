@@ -6,21 +6,18 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 
 public enum TransactionOption implements InteractiveOption{
-    ASK("Ask", null, true),
-    COMMIT("Commit", Icons.CONNECTION_COMMIT, true),
-    ROLLBACK("Rollback", Icons.CONNECTION_ROLLBACK, true),
-    REVIEW_CHANGES("Review changes", null, true),
-    CANCEL("Cancel", null, false)
-    ;
+    ASK("Ask", null),
+    COMMIT("Commit", Icons.CONNECTION_COMMIT),
+    ROLLBACK("Rollback", Icons.CONNECTION_ROLLBACK),
+    REVIEW_CHANGES("Review changes", null),
+    CANCEL("Cancel", null);
 
     private String name;
     private Icon icon;
-    private boolean persistable;
 
-    TransactionOption(String name, Icon icon, boolean persistable) {
+    TransactionOption(String name, Icon icon) {
         this.name = name;
         this.icon = icon;
-        this.persistable = persistable;
     }
 
     @Override
@@ -34,7 +31,12 @@ public enum TransactionOption implements InteractiveOption{
     }
 
     @Override
-    public boolean isPersistable() {
-        return persistable;
+    public boolean isCancel() {
+        return this == CANCEL;
+    }
+
+    @Override
+    public boolean isAsk() {
+        return this == ASK;
     }
 }
