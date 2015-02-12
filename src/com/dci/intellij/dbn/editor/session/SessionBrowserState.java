@@ -23,9 +23,9 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
 
         Element filterElement = element.getChild("filter");
         if (filterElement != null) {
-            filterState.setUser(SettingsUtil.getString(filterElement, "user", null));
-            filterState.setHost(SettingsUtil.getString(filterElement, "host", null));
-            filterState.setStatus(SettingsUtil.getString(filterElement, "status", null));
+            filterState.setFilterValue(SessionBrowserFilterType.USER, SettingsUtil.getString(filterElement, "user", null));
+            filterState.setFilterValue(SessionBrowserFilterType.HOST, SettingsUtil.getString(filterElement, "host", null));
+            filterState.setFilterValue(SessionBrowserFilterType.STATUS, SettingsUtil.getString(filterElement, "status", null));
         }
     }
 
@@ -36,9 +36,9 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
 
         Element filterElement = new Element("filter");
         element.addContent(filterElement);
-        SettingsUtil.setString(filterElement, "user", filterState.getUser());
-        SettingsUtil.setString(filterElement, "host", filterState.getHost());
-        SettingsUtil.setString(filterElement, "status", filterState.getStatus());
+        SettingsUtil.setString(filterElement, "user", filterState.getFilterValue(SessionBrowserFilterType.USER));
+        SettingsUtil.setString(filterElement, "host", filterState.getFilterValue(SessionBrowserFilterType.HOST));
+        SettingsUtil.setString(filterElement, "status", filterState.getFilterValue(SessionBrowserFilterType.STATUS));
     }
 
     public SessionBrowserState clone() {

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.session;
 import org.apache.commons.lang.StringUtils;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 
 public class SessionBrowserFilterState extends Filter<SessionBrowserModelRow>{
@@ -28,28 +29,27 @@ public class SessionBrowserFilterState extends Filter<SessionBrowserModelRow>{
         return true;
     }
 
-    public String getUser() {
-        return user;
+    public void setFilterValue(SessionBrowserFilterType filterType, String value) {
+        switch (filterType) {
+            case USER: user = value; break;
+            case HOST: host = value; break;
+            case STATUS: status = value; break;
+        }
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public boolean isEmpty() {
+        return StringUtil.isEmpty(getFilterValue(SessionBrowserFilterType.USER)) &&
+                StringUtil.isEmpty(getFilterValue(SessionBrowserFilterType.HOST)) &&
+                StringUtil.isEmpty(getFilterValue(SessionBrowserFilterType.STATUS));
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public String getFilterValue(SessionBrowserFilterType filterType) {
+        switch (filterType) {
+            case USER: return user;
+            case HOST: return host;
+            case STATUS: return status;
+            default: return null;
+        }
     }
 
     public void clear() {

@@ -134,6 +134,13 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         interruptSessions(SessionInterruptionType.KILL);
     }
 
+    public void interruptSession(Object sessionId, Object serialNumber, SessionInterruptionType type) {
+        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+        Map<Object, Object> sessionIds = new HashMap<Object, Object>();
+        sessionIds.put(sessionId, serialNumber);
+        sessionBrowserManager.interruptSessions(this, sessionIds, type);
+    }
+
     private void interruptSessions(SessionInterruptionType type) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
         SessionBrowserTable editorTable = getEditorTable();
@@ -142,8 +149,8 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             Map<Object, Object> sessionIds = new HashMap<Object, Object>();
             for (int selectedRow : selectedRows) {
                 SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
-                Object sessionId = row.getCellValue("SESSION_ID");
-                Object serialNumber = row.getCellValue("SERIAL_NUMBER");
+                Object sessionId = row.getSessionId();
+                Object serialNumber = row.getSerialNumber();
                 sessionIds.put(sessionId, serialNumber);
             }
 

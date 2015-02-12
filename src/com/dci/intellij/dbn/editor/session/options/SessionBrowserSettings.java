@@ -8,14 +8,14 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.session.options.ui.SessionBrowserSettingsForm;
 
 public class SessionBrowserSettings extends Configuration<SessionBrowserSettingsForm> {
-    public static final String REMEMBER_OPTION_HINT = "\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
+    public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
     private boolean reloadOnFilterChange = false;
     private InteractiveOptionHandler<SessionInterruptionOption> disconnectSessionOptionHandler =
             new InteractiveOptionHandler<SessionInterruptionOption>(
                     "disconnect-session",
                     "Disconnect Sessions",
-                    "Are you sure you want to disconnect the selected sessions?\nPlease select your disconnect option." +
+                    "Are you sure you want to disconnect the {0} from connection {1}?\nPlease select your disconnect option." +
                             REMEMBER_OPTION_HINT,
                     SessionInterruptionOption.ASK,
                     SessionInterruptionOption.IMMEDIATE,
@@ -26,7 +26,7 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
             new InteractiveOptionHandler<SessionInterruptionOption>(
                     "kill-session",
                     "Kill Sessions",
-                    "Are you sure you want to kill the selected sessions?\nPlease select your kill option." +
+                    "Are you sure you want to kill the {0} from connection {1}?\nPlease select your kill option." +
                             REMEMBER_OPTION_HINT,
                     SessionInterruptionOption.ASK,
                     SessionInterruptionOption.NORMAL,
