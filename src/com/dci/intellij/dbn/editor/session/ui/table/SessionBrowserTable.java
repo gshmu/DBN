@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
+import javax.swing.JPopupMenu;
 import javax.swing.table.TableCellRenderer;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 
@@ -13,7 +16,13 @@ import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTableHeaderRende
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
+import com.dci.intellij.dbn.editor.session.action.SessionBrowserTableActionGroup;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 
@@ -23,6 +32,8 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public SessionBrowserTable(SessionBrowser sessionBrowser, SessionBrowserModel model) throws SQLException {
         super(model, false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
+        getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
+        addMouseListener(new SessionBrowserTableMouseListener(this));
         this.sessionBrowser = sessionBrowser;
 
 
@@ -101,6 +112,20 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public SessionBrowser getSessionBrowser() {
         return sessionBrowser;
     }
+
+    /********************************************************
+     *                        Popup                         *
+     ********************************************************/
+    public void showPopupMenu(
+            final MouseEvent event,
+            final SessionBrowserModelCell cell,
+            final SessionBrowserColumnInfo columnInfo) {
+        ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);
+        ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+        JPopupMenu popupMenu = actionPopupMenu.getComponent();
+        popupMenu.show((Component) event.getSource(), event.getX(), event.getY());
+    }
+
 
     /********************************************************
      *                     Disposable                       *

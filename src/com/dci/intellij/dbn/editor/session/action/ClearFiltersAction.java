@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.session.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
@@ -44,10 +43,7 @@ public class ClearFiltersAction extends AbstractSessionBrowserAction {
             if (tableModel != null) {
                 SessionBrowserFilterState filter = tableModel.getFilter();
                 if (filter != null) {
-                    enabled =
-                            StringUtil.isNotEmpty(filter.getUser()) ||
-                            StringUtil.isNotEmptyOrSpaces(filter.getHost()) ||
-                            StringUtil.isNotEmptyOrSpaces(filter.getStatus());
+                    enabled = !filter.isEmpty();
                 }
             }
         }

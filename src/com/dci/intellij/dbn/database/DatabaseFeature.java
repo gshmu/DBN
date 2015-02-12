@@ -20,7 +20,7 @@ public enum DatabaseFeature {
     SESSION_BROWSING("Session browsing"),
     SESSION_KILL("Kill session"),
     SESSION_DISCONNECT("Disconnect session"),
-    SESSION_DISCONNECT_TIMING("Session disconnect timing"),
+    SESSION_INTERRUPTION_TIMING("Session interruption timing"),
     ;
 
     private String description;

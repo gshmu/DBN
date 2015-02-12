@@ -39,5 +39,11 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
         return (String) getCellValue("STATUS");
     }
 
+    public Object getSessionId() {
+        return getCellValue("SESSION_ID");
+    }
 
+    public Object getSerialNumber() {
+        return getCellValue("SERIAL_NUMBER");
+    }
 }

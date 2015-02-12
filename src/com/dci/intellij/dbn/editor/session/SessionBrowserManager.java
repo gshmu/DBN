@@ -77,7 +77,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
-        if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT_TIMING)) {
+        if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_INTERRUPTION_TIMING)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
             InteractiveOptionHandler<SessionInterruptionOption> disconnectOptionHandler =
@@ -85,7 +85,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                     type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSessionOptionHandler() : null;
 
             if (disconnectOptionHandler != null) {
-                SessionInterruptionOption result = disconnectOptionHandler.resolve(connectionHandler.getName());
+                String subject = sessionIds.size() > 1 ? "selected sessions" : "session with id \"" + sessionIds.keySet().iterator().next().toString() + "\"";
+                SessionInterruptionOption result = disconnectOptionHandler.resolve(subject, connectionHandler.getName());
                 if (result != SessionInterruptionOption.CANCEL && result != SessionInterruptionOption.ASK) {
                     doInterruptSessions(sessionBrowser, sessionIds, type, result);
                 }
@@ -96,16 +97,18 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     private void doInterruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final SessionInterruptionType type, final SessionInterruptionOption option) {
+        final String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
+        final String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
+        final String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? "Session" : "Sessions");
+
         final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-        new BackgroundTask(getProject(), "Killing Sessions", false, true) {
+        new BackgroundTask(getProject(), taskAction, false, true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 Project project = connectionHandler.getProject();
                 Connection connection = null;
                 try {
-                    final String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
-                    final String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
                     connection = connectionHandler.getPoolConnection();
                     Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
                     final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
@@ -129,10 +132,10 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                     if (sessionIds.size() == 1) {
                         Object sessionId = sessionIds.keySet().iterator().next();
                         if (errors.size() == 0) {
-                            MessageUtil.showInfoDialog(project, "Info", "Session with id \"" + sessionId + "\" " + killedAction +".");
+                            MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + killedAction +".");
                         } else {
                             SQLException exception = errors.get(sessionId);
-                            MessageUtil.showErrorDialog(project, "Error " + killingAction + " session with id \"" + sessionId + "\"." , exception);
+                            MessageUtil.showErrorDialog(project, "Error " + killingAction + " session " + sessionId + "." , exception);
                         }
                     } else {
                         if (errors.size() == 0) {

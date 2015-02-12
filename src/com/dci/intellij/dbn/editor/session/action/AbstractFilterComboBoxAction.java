@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
@@ -24,12 +25,10 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
-    private String type;
-    private Icon icon;
+    private SessionBrowserFilterType filterType;
 
-    public AbstractFilterComboBoxAction(String type, Icon icon) {
-        this.type = type;
-        this.icon = icon;
+    public AbstractFilterComboBoxAction(SessionBrowserFilterType filterType) {
+        this.filterType = filterType;
     }
 
     @NotNull
@@ -42,7 +41,9 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
             DBSessionBrowserVirtualFile databaseFile = sessionBrowser.getDatabaseFile();
             SessionBrowserModel model = databaseFile.getModel();
             if (model != null) {
-                List<String> filterValues = getDistinctValues(model, model.getFilter());
+                SessionBrowserFilterState filter = model.getFilter();
+                String selectedFilterValue = filter == null ? null : filter.getFilterValue(filterType);
+                List<String> filterValues = model.getDistinctValues(filterType, selectedFilterValue);
                 for (String filterValue : filterValues) {
                     SelectFilterValueAction action = new SelectFilterValueAction(filterValue);
                     actionGroup.add(action);
@@ -54,7 +55,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
 
     public synchronized void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
-        String text = type;
+        String text = filterType.getName();
         Icon icon = null;
 
         SessionBrowser sessionBrowser = getSessionBrowser(e);
@@ -63,10 +64,10 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
             if (model != null) {
                 SessionBrowserFilterState modelFilter = model.getFilter();
                 if (modelFilter != null) {
-                    String filterValue = getFilterValue(modelFilter);
+                    String filterValue = modelFilter.getFilterValue(filterType);
                     if (StringUtil.isNotEmpty(filterValue)) {
                         text = filterValue;
-                        icon = this.icon;
+                        icon = filterType.getIcon();
                     }
                 }
             }
@@ -75,12 +76,6 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
         presentation.setText(text);
         presentation.setIcon(icon);
     }
-
-    abstract String getFilterValue(@NotNull SessionBrowserFilterState modelFilter);
-
-    abstract void setFilterValue(SessionBrowserFilterState modelFilter, String filterValue);
-
-    abstract List<String> getDistinctValues(SessionBrowserModel model, SessionBrowserFilterState modelFilter);
 
     @Nullable
     public static SessionBrowser getSessionBrowser(JComponent component) {
@@ -111,7 +106,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
         private String filterValue;
 
         public SelectFilterValueAction(String filterValue) {
-            super(filterValue == null ? "No Filter" : filterValue, null, filterValue == null ? null : icon);
+            super(filterValue == null ? "No Filter" : filterValue, null, filterValue == null ? null : filterType.getIcon());
             this.filterValue = filterValue;
         }
 
@@ -123,12 +118,14 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
                 SessionBrowserModel model = sessionBrowserFile.getModel();
                 if (model !=  null) {
                     SessionBrowserFilterState modelFilter = model.getFilter();
-                    setFilterValue(modelFilter, filterValue);
-                    SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
-                    if (sessionBrowserSettings.isReloadOnFilterChange()) {
-                        sessionBrowser.reload();
-                    } else {
-                        sessionBrowser.refreshTable();
+                    if (modelFilter != null) {
+                        modelFilter.setFilterValue(filterType, filterValue);
+                        SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
+                        if (sessionBrowserSettings.isReloadOnFilterChange()) {
+                            sessionBrowser.reload();
+                        } else {
+                            sessionBrowser.refreshTable();
+                        }
                     }
                 }
             }

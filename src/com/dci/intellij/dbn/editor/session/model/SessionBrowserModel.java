@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.SessionBrowserState;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
@@ -107,19 +108,16 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         return new SessionBrowserModelRow(this, resultSet);
     }
 
-    public List<String> getDistinctUsers(String selectedValue) {
-        return getDistinctValues("USER", selectedValue);
+    public List<String> getDistinctValues(SessionBrowserFilterType filterType, String selectedValue) {
+        switch (filterType) {
+            case USER: return getDistinctValues("USER", selectedValue);
+            case HOST: return getDistinctValues("HOST", selectedValue);
+            case STATUS: return getDistinctValues("STATUS", selectedValue);
+        }
+        return null;
     }
 
-    public List<String> getDistinctHosts(String selectedValue) {
-        return getDistinctValues("HOST", selectedValue);
-    }
-
-    public List<String> getDistinctStatuses(String selectedValue) {
-        return getDistinctValues("STATUS", selectedValue);
-    }
-
-    public List<String> getDistinctValues(String columnName, String selectedValue) {
+    private List<String> getDistinctValues(String columnName, String selectedValue) {
         ArrayList<String> values = new ArrayList<>();
         List<SessionBrowserModelRow> rows = getRows();
         if (rows instanceof FiltrableList) {
