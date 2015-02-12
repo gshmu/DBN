@@ -261,7 +261,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public Object getValueAt(int rowIndex, int columnIndex) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
-        return rows.size() > rowIndex ? rows.get(rowIndex).getCellAtIndex(columnIndex) : null;
+        return rows.size() > rowIndex && columnIndex > -1 ? rows.get(rowIndex).getCellAtIndex(columnIndex) : null;
     }
 
     public void setValueAt(Object value, int rowIndex, int columnIndex) {}

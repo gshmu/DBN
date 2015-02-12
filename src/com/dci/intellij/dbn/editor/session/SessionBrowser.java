@@ -74,8 +74,8 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return OperationSettings.getInstance(getProject()).getSessionBrowserSettings();
     }
 
-    public void reload(boolean automatic) {
-        if (!isLoading() && !preventLoading) {
+    public void reload(boolean force) {
+        if (!isLoading() && (!preventLoading || force)) {
             setLoading(true);
             new BackgroundTask(getProject(), "Reloading sessions", true) {
                 @Override
@@ -315,7 +315,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     private class RefreshTask extends TimerTask {
         public void run() {
-            reload(true);
+            reload(false);
         }
     }
 
