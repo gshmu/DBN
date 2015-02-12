@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MultipleContentDependencyAdapter extends BasicDependencyAdapter implements ContentDependencyAdapter {
     private List<ContentDependency> dependencies;
@@ -13,7 +13,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     public MultipleContentDependencyAdapter(DynamicContent... sourceContents) {
         for (DynamicContent sourceContent : sourceContents) {
             if (sourceContent != null) {
-                if (dependencies == null) dependencies = new ArrayList<>();
+                if (dependencies == null) dependencies = new ArrayList<ContentDependency>();
                 dependencies.add(new BasicContentDependency(sourceContent));
             }
         }

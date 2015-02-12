@@ -32,7 +32,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
     private Set<ListDataListener> listDataListeners = new HashSet<ListDataListener>();
     private Set<DataModelListener> dataModelListeners = new HashSet<DataModelListener>();
-    private List<T> rows = new ArrayList<>();
+    private List<T> rows = new ArrayList<T>();
     private Project project;
     private Filter<T> filter;
 
