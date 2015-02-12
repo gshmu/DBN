@@ -306,9 +306,10 @@
             <action id="DBNavigator.Actions.OpenSettings" class="com.dci.intellij.dbn.language.editor.action.OpenSettingsAction" text="Script Editor - Settings"/>
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
-            <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method execution history" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory" icon="/img/MethodExecutionHistory.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenUncommittedChangesOverviewAction" text="Uncommitted changes" id="DBNavigator.Actions.MainMenu.OpenUncommittedChangesOverview"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenSessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory" icon="/img/MethodExecutionHistory.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenUncommittedChangesOverviewAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.OpenUncommittedChangesOverview"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
