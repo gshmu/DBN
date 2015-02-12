@@ -123,7 +123,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public void refreshLoadTimestamp() {
-        getEditorForm().refreshLoadTimestamp();
+        SessionBrowserForm editorForm = getEditorForm();
+        if (editorForm != null) {
+            editorForm.refreshLoadTimestamp();
+        }
     }
 
     public void disconnectSelectedSessions() {
