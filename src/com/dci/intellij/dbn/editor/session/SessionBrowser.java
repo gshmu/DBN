@@ -40,6 +40,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean isLoading;
+    private int refreshInterval;
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
@@ -262,6 +263,13 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return browserTable == null ? 0 : browserTable.getRowCount();
     }
 
+    public void setRefreshInterval(int refreshInterval) {
+        this.refreshInterval = refreshInterval;
+    }
+
+    public int getRefreshInterval() {
+        return refreshInterval;
+    }
 
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowserFile.getConnectionHandler();

@@ -345,6 +345,7 @@
         </group>
         <group id="DBNavigator.ActionGroup.SessionBrowser" text="Session Browser Controls">
             <action id="DBNavigator.Actions.SessionBrowser.Reload" class="com.dci.intellij.dbn.editor.session.action.ReloadSessionsAction" text="Session Browser - Reload"/>
+            <action id="DBNavigator.Actions.SessionBrowser.TimedReload" class="com.dci.intellij.dbn.editor.session.action.TimedReloadComboBoxAction" text="Session Browser - Automatic Reload"/>
             <separator/>
             <action id="DBNavigator.Actions.SessionBrowser.FilterUsers" class="com.dci.intellij.dbn.editor.session.action.FilterUsersComboBoxAction" text="Session Browser - Filter Users"/>
             <action id="DBNavigator.Actions.SessionBrowser.FilterHosts" class="com.dci.intellij.dbn.editor.session.action.FilterHostsComboBoxAction" text="Session Browser - Filter Hosts"/>
