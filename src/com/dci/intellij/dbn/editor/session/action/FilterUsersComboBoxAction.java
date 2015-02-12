@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.editor.session.action;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class FilterUsersComboBoxAction extends AbstractFilterComboBoxAction {
 
     public FilterUsersComboBoxAction() {
-        super("User", Icons.SB_FILTER_USER);
+        super("user", Icons.SB_FILTER_USER);
     }
 
     @Override

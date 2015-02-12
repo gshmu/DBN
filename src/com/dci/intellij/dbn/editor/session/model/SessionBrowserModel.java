@@ -89,6 +89,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
             SessionBrowserState sessionBrowserState = (SessionBrowserState) state;
             setFilter(sessionBrowserState.getFilterState());
         }
+        sort();
     }
 
     @Override
