@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
@@ -23,9 +21,9 @@ public class SessionBrowserFilterState extends Filter<SessionBrowserModelRow>{
 
     @Override
     public boolean accepts(SessionBrowserModelRow row) {
-        if (StringUtils.isNotEmpty(user) && !user.equals(row.getUser())) return false;
-        if (StringUtils.isNotEmpty(host) && !host.equals(row.getHost())) return false;
-        if (StringUtils.isNotEmpty(status) && !status.equals(row.getStatus())) return false;
+        if (StringUtil.isNotEmpty(user) && !user.equals(row.getUser())) return false;
+        if (StringUtil.isNotEmpty(host) && !host.equals(row.getHost())) return false;
+        if (StringUtil.isNotEmpty(status) && !status.equals(row.getStatus())) return false;
         return true;
     }
 
