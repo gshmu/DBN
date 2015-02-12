@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.DataModelState;
@@ -126,11 +126,11 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         }
         for (SessionBrowserModelRow row : rows) {
             String value = (String) row.getCellValue(columnName);
-            if (value != null && !values.contains(value)) {
+            if (StringUtil.isNotEmpty(value) && !values.contains(value)) {
                 values.add(value);
             }
         }
-        if (StringUtils.isNotEmpty(selectedValue) && !values.contains(selectedValue)) {
+        if (StringUtil.isNotEmpty(selectedValue) && !values.contains(selectedValue)) {
             values.add(selectedValue);
         }
         Collections.sort(values);
