@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.SessionBrowserState;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
+    private long timestamp = System.currentTimeMillis();
 
     public SessionBrowserModel(ConnectionHandler connectionHandler, ResultSet resultSet, SessionBrowserState state) throws SQLException {
         super(connectionHandler);
@@ -54,6 +55,10 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
             ConnectionUtil.closeResultSet(resultSet);
             resultSet = null;
         }
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     @Nullable
