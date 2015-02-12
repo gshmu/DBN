@@ -42,7 +42,7 @@
             <properties>
               <font style="1"/>
               <foreground swing-color="ArrowButton.arrowColor"/>
-              <text value="Loading data..."/>
+              <text value="Loading sessions..."/>
             </properties>
           </component>
           <grid id="97c40" binding="actionsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">

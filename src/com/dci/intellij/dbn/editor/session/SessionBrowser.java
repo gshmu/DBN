@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -37,11 +26,23 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
-    private boolean isLoading;
+    private boolean preventLoading = false;
+    private boolean loading;
     private Timer refreshTimer;
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
@@ -73,36 +74,40 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return OperationSettings.getInstance(getProject()).getSessionBrowserSettings();
     }
 
-    public void reload() {
-        new BackgroundTask(getProject(), "Reloading sessions", false) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                progressIndicator.setIndeterminate(true);
-                editorForm.showLoadingHint();
-                try {
-                    final SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
-                    updateModel(sessionBrowserModel);
-                } finally {
-                    editorForm.hideLoadingHint();
+    public void reload(boolean automatic) {
+        if (!isLoading() && !preventLoading) {
+            setLoading(true);
+            new BackgroundTask(getProject(), "Reloading sessions", true) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    progressIndicator.setIndeterminate(true);
+                    editorForm.showLoadingHint();
+                    try {
+                        final SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
+                        updateModel(sessionBrowserModel);
+                    } finally {
+                        setLoading(false);
+                        editorForm.hideLoadingHint();
+                    }
                 }
-            }
+            }.start();
+        }
+    }
 
-            private void updateModel(final SessionBrowserModel sessionBrowserModel) {
-                if (sessionBrowserModel != null) {
-                    new SimpleLaterInvocator() {
-                        @Override
-                        protected void execute() {
-                            SessionBrowserTable editorTable = getEditorTable();
-                            if (editorTable != null) {
-                                editorTable.setModel(sessionBrowserModel);
-                                refreshTable();
-                            }
-                            EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
-                        }
-                    }.start();
+    private void updateModel(final SessionBrowserModel sessionBrowserModel) {
+        if (sessionBrowserModel != null) {
+            new SimpleLaterInvocator() {
+                @Override
+                protected void execute() {
+                    SessionBrowserTable editorTable = getEditorTable();
+                    if (editorTable != null) {
+                        editorTable.setModel(sessionBrowserModel);
+                        refreshTable();
+                    }
+                    EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public void clearFilter() {
@@ -249,9 +254,17 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return null;
     }
 
+    public void setPreventLoading(boolean preventLoading) {
+        this.preventLoading = preventLoading;
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
     protected void setLoading(boolean loading) {
-        if (this.isLoading != loading) {
-            this.isLoading = loading;
+        if (this.loading != loading) {
+            this.loading = loading;
             SessionBrowserTable editorTable = getEditorTable();
             if (editorTable != null) {
                 editorTable.setLoading(loading);
@@ -302,7 +315,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     private class RefreshTask extends TimerTask {
         public void run() {
-            reload();
+            reload(true);
         }
     }
 

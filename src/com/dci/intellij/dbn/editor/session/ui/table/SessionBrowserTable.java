@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
-import javax.swing.JPopupMenu;
-import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.EventObject;
-
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -25,6 +18,15 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.PopupMenuListenerAdapter;
+
+import javax.swing.JPopupMenu;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.table.TableCellRenderer;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.EventObject;
 
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private SessionBrowser sessionBrowser;
@@ -123,6 +125,17 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);
         ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
         JPopupMenu popupMenu = actionPopupMenu.getComponent();
+        popupMenu.addPopupMenuListener(new PopupMenuListenerAdapter() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                sessionBrowser.setPreventLoading(true);
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+                sessionBrowser.setPreventLoading(false);
+            }
+        });
         popupMenu.show((Component) event.getSource(), event.getX(), event.getY());
     }
 
