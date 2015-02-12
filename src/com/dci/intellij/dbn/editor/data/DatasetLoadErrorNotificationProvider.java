@@ -36,6 +36,7 @@ public class DatasetLoadErrorNotificationProvider extends EditorNotifications.Pr
         }
     };
 
+    @NotNull
     @Override
     public Key<DatasetLoadErrorNotificationPanel> getKey() {
         return KEY;
@@ -43,7 +44,7 @@ public class DatasetLoadErrorNotificationProvider extends EditorNotifications.Pr
 
     @Nullable
     @Override
-    public DatasetLoadErrorNotificationPanel createNotificationPanel(VirtualFile virtualFile, FileEditor fileEditor) {
+    public DatasetLoadErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof DatasetEditor) {
                 DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;

@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,19 +26,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtualFile, Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -53,10 +53,10 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
 
     @Nullable
     public SessionBrowserModel load() {
-        try {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                SessionBrowserState state = model == null ? new SessionBrowserState() : model.getState();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if (connectionHandler != null) {
+            SessionBrowserState state = model == null ? new SessionBrowserState() : model.getState();
+            try {
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                 Connection connection = connectionHandler.getStandaloneConnection();
                 ResultSet resultSet = metadataInterface.loadSessions(connection);
@@ -65,9 +65,12 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
                 SessionBrowserModel oldModel = model;
                 model = newModel;
                 DisposerUtil.dispose(oldModel);
+            } catch (SQLException e) {
+                if (model == null) {
+                    model = new SessionBrowserModel(connectionHandler, state);
+                }
+                modelError = e.getMessage();
             }
-        } catch (SQLException e) {
-            modelError = "Error loading sessions: " + e.getMessage();
         }
         return model;
     }

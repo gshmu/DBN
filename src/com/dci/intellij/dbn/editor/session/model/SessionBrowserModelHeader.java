@@ -10,6 +10,9 @@ import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
 
 public class SessionBrowserModelHeader extends ResultSetDataModelHeader implements DataModelHeader {
+    public SessionBrowserModelHeader() {
+    }
+
     public SessionBrowserModelHeader(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super(connectionHandler, resultSet);
     }
