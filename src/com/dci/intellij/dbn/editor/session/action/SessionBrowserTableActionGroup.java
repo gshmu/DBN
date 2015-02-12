@@ -31,13 +31,14 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         isHeaderAction = cell == null;
         row = cell == null ? null : cell.getRow();
 
-        DatabaseCompatibilityInterface compatibilityInterface = sessionBrowser.getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
-        if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT)) {
-            add(new DisconnectSessionAction());
-        }
-        add(new KillSessionAction());
-        addSeparator();
         if (cell != null) {
+            DatabaseCompatibilityInterface compatibilityInterface = sessionBrowser.getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
+            if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT)) {
+                add(new DisconnectSessionAction());
+            }
+            add(new KillSessionAction());
+            addSeparator();
+
             Object userValue = cell.getUserValue();
             if (userValue instanceof String) {
                 SessionBrowserFilterType filterType = columnInfo.getFilterType();
@@ -46,6 +47,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
                 }
             }
         }
+
         SessionBrowserModel tableModel = sessionBrowser.getTableModel();
         if (tableModel != null && !tableModel.getState().getFilterState().isEmpty()) {
             add(new ClearFilterAction());
