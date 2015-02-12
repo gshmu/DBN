@@ -174,6 +174,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             if (editorTable != null) {
                 SessionBrowserModel model = editorTable.getModel();
                 model.setState((SessionBrowserState) fileEditorState);
+                refreshTable();
             }
         }
     }
