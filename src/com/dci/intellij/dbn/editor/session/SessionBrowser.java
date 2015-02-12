@@ -204,8 +204,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             SessionBrowserTable editorTable = getEditorTable();
             if (editorTable != null) {
                 SessionBrowserModel model = editorTable.getModel();
-                model.setState((SessionBrowserState) fileEditorState);
+                SessionBrowserState sessionBrowserState = (SessionBrowserState) fileEditorState;
+                model.setState(sessionBrowserState);
                 refreshTable();
+                startRefreshTimer((sessionBrowserState).getRefreshInterval());
             }
         }
     }
@@ -272,11 +274,16 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             if (state.getRefreshInterval() != refreshInterval) {
                 state.setRefreshInterval(refreshInterval);
                 stopRefreshTimer();
-                if (refreshInterval > 0) {
-                    refreshTimer = new Timer("DBN Session Browser refresher");
-                    refreshTimer.schedule(new RefreshTask(), 0, refreshInterval * 1000);
-                }
+                startRefreshTimer(refreshInterval);
             }
+        }
+    }
+
+    private void startRefreshTimer(int refreshInterval) {
+        if (refreshTimer == null && refreshInterval > 0) {
+            refreshTimer = new Timer("DBN Session Browser refresher");
+            int period = refreshInterval * 1000;
+            refreshTimer.schedule(new RefreshTask(), period, period);
         }
     }
 
