@@ -45,4 +45,25 @@ public class SortingInstruction {
     public SortingInstruction clone() {
         return new SortingInstruction(columnName, direction);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SortingInstruction that = (SortingInstruction) o;
+
+        if (index != that.index) return false;
+        if (!columnName.equals(that.columnName)) return false;
+        return direction == that.direction;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = index;
+        result = 31 * result + columnName.hashCode();
+        result = 31 * result + direction.hashCode();
+        return result;
+    }
 }

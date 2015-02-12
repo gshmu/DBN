@@ -163,7 +163,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-        return editorState;
+        return editorState.clone();
     }
 
     public void setState(@NotNull FileEditorState fileEditorState) {
