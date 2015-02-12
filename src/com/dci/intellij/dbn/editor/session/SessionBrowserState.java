@@ -14,7 +14,7 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
     private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
 
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
-        return fileEditorState instanceof SessionBrowserState && fileEditorStateLevel == FileEditorStateLevel.FULL;
+        return false;
     }
 
     public void readState(@NotNull Element element) {

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.common.editor;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
@@ -16,8 +21,7 @@ import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiDocumentManager;
 
 public class BasicTextEditorState implements FileEditorState {
     private int line;
@@ -39,17 +43,22 @@ public class BasicTextEditorState implements FileEditorState {
         this.foldingState = foldingState;
     }
 
-    public void readState(@NotNull Element sourceElement, Project project, VirtualFile virtualFile) {
+    public void readState(@NotNull Element sourceElement, final Project project, final VirtualFile virtualFile) {
         line = Integer.parseInt(sourceElement.getAttributeValue("line"));
         column = Integer.parseInt(sourceElement.getAttributeValue("column"));
         selectionStart = Integer.parseInt(sourceElement.getAttributeValue("selection-start"));
         selectionEnd = Integer.parseInt(sourceElement.getAttributeValue("selection-end"));
         verticalScrollProportion = Float.parseFloat(sourceElement.getAttributeValue("vertical-scroll-proportion"));
 
-        Element foldingElement = sourceElement.getChild("folding");
+        final Element foldingElement = sourceElement.getChild("folding");
         if (foldingElement != null) {
-            Document document = DocumentUtil.getDocument(virtualFile);
-            foldingState = CodeFoldingManager.getInstance(project).readFoldingState(foldingElement, document);
+            new ReadActionRunner<CodeFoldingState>() {
+                @Override
+                protected CodeFoldingState run() {
+                    Document document = DocumentUtil.getDocument(virtualFile);
+                    return CodeFoldingManager.getInstance(project).readFoldingState(foldingElement, document);
+                }
+            }.start();
         }
 
     }
@@ -82,11 +91,12 @@ public class BasicTextEditorState implements FileEditorState {
             selectionStart = selectionModel.getSelectionStart();
             selectionEnd = selectionModel.getSelectionEnd();
 
-/*            if(project != null){
+            Project project = textEditor.getEditor().getProject();
+            if(project != null){
                 PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                 CodeFoldingState foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
                 setFoldingState(foldingState);
-            }*/
+            }
         }
         verticalScrollProportion = level != FileEditorStateLevel.UNDO ? EditorUtil.calcVerticalScrollProportion(editor) : -1F;
     }
@@ -112,20 +122,48 @@ public class BasicTextEditorState implements FileEditorState {
         ((EditorEx) editor).stopOptimizedScrolling();
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
-
-/*
+        final Project project = editor.getProject();
         if (project != null && getFoldingState() != null) {
             PsiDocumentManager.getInstance(project).commitDocument(document);
             new SimpleLaterInvocator() {
                 @Override
-                public void run() {
+                protected void execute() {
                     CodeFoldingManager.getInstance(project).
                             restoreFoldingState(editor, getFoldingState());
                 }
             }.start();
             //editor.getFoldingModel().runBatchFoldingOperation(runnable);
         }
-*/
     }
 
+    /*****************************************************************
+     *                     equals / hashCode                         *
+     *****************************************************************/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BasicTextEditorState that = (BasicTextEditorState) o;
+
+        if (line != that.line) return false;
+        if (column != that.column) return false;
+        if (selectionStart != that.selectionStart) return false;
+        if (selectionEnd != that.selectionEnd) return false;
+        if (Float.compare(that.verticalScrollProportion, verticalScrollProportion) != 0) return false;
+        if (foldingState != null ? !foldingState.equals(that.foldingState) : that.foldingState != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = line;
+        result = 31 * result + column;
+        result = 31 * result + selectionStart;
+        result = 31 * result + selectionEnd;
+        result = 31 * result + (verticalScrollProportion != +0.0f ? Float.floatToIntBits(verticalScrollProportion) : 0);
+        result = 31 * result + (foldingState != null ? foldingState.hashCode() : 0);
+        return result;
+    }
 }

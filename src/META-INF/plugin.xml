@@ -33,6 +33,7 @@
                 - Support for Oracle GRANT SQL-statement</br>
                 - Database Sessions Browser (all databases)</br>
                 - Session disconnect / kill actions</br>
+                - Restore database editors state (folding, selection, cursor position)</br>
                 - Minor bug fixes<br>
             </ul>
             <li><b>3.0.3821</b>
