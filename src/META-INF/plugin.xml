@@ -29,10 +29,10 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
-                - Transaction Management options</br>
-                - Support for Oracle GRANT SQL-statement</br>
+                - Support for GRANT SQL-statement (Oracle)</br>
                 - Database Sessions Browser (all databases)</br>
                 - Session disconnect / kill actions</br>
+                - Transaction Management options</br>
                 - Restore database editors state (folding, selection, cursor position)</br>
                 - Minor bug fixes<br>
             </ul>
