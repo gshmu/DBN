@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.editor.session.action;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -19,6 +17,7 @@ import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.Nullable;
 
 public class SessionBrowserTableActionGroup extends DefaultActionGroup {
     boolean isHeaderAction;
@@ -115,7 +114,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
                     SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
                     if (sessionBrowserSettings.isReloadOnFilterChange()) {
-                        sessionBrowser.reload();
+                        sessionBrowser.reload(false);
                     } else {
                         sessionBrowser.refreshTable();
                     }

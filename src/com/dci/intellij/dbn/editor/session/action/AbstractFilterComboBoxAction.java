@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.editor.session.action;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -23,6 +17,12 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.util.List;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
     private SessionBrowserFilterType filterType;
@@ -122,7 +122,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
                         modelFilter.setFilterValue(filterType, filterValue);
                         SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
                         if (sessionBrowserSettings.isReloadOnFilterChange()) {
-                            sessionBrowser.reload();
+                            sessionBrowser.reload(false);
                         } else {
                             sessionBrowser.refreshTable();
                         }

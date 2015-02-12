@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
@@ -42,6 +29,19 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @State(
     name = "DBNavigator.Project.SessionEditorManager",
@@ -155,8 +155,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Error performing operation", e);
                 } finally {
-                    sessionBrowser.reload();
                     connectionHandler.freePoolConnection(connection);
+                    sessionBrowser.reload(true);
                 }
             }
         }.start();
