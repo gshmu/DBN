@@ -66,10 +66,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            if (row != null) {
-                sessionBrowser.reload(true);
-            }
-
+            sessionBrowser.reload(true);
         }
     }
 
@@ -110,9 +107,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         public void actionPerformed(AnActionEvent e) {
-            if (row != null) {
-                sessionBrowser.clearFilter();
-            }
+            sessionBrowser.clearFilter();
         }
     }
 

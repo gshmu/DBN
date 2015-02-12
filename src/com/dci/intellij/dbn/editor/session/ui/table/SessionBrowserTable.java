@@ -132,6 +132,11 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
             }
 
             @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                sessionBrowser.setPreventLoading(false);
+            }
+
+            @Override
             public void popupMenuCanceled(PopupMenuEvent e) {
                 sessionBrowser.setPreventLoading(false);
             }

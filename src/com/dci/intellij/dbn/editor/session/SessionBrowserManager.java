@@ -156,7 +156,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                     MessageUtil.showErrorDialog(project, "Error performing operation", e);
                 } finally {
                     connectionHandler.freePoolConnection(connection);
-                    sessionBrowser.reload(true);
+                    sessionBrowser.reload(false);
                 }
             }
         }.start();
