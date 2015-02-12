@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.editor.session;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import gnu.trove.THashMap;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
 public class SessionBrowserState extends SortableDataModelState implements FileEditorState {
     public static final SessionBrowserState VOID = new SessionBrowserState();
     private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
 
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
-        return fileEditorState instanceof SessionBrowserState;
+        return fileEditorState instanceof SessionBrowserState && fileEditorStateLevel == FileEditorStateLevel.FULL;
     }
 
     public void readState(@NotNull Element element) {
@@ -44,7 +45,8 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         SessionBrowserState clone = new SessionBrowserState();
         clone.setReadonly(isReadonly());
         clone.setRowCount(getRowCount());
-        clone.setSortingState(getSortingState());
+        clone.setSortingState(getSortingState().clone());
+        clone.setFilterState(getFilterState().clone());
         if (contentTypesMap != null) {
             clone.contentTypesMap = new THashMap<String, String>(contentTypesMap);
         }
@@ -52,7 +54,33 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         return clone;
     }
 
+    public void setFilterState(SessionBrowserFilterState filterState) {
+        this.filterState = filterState;
+    }
+
     public SessionBrowserFilterState getFilterState() {
         return filterState;
+    }
+
+    /*****************************************************************
+     *                     equals / hashCode                         *
+     *****************************************************************/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        SessionBrowserState that = (SessionBrowserState) o;
+
+        return filterState.equals(that.filterState);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + filterState.hashCode();
+        return result;
     }
 }

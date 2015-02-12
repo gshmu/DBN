@@ -14,4 +14,21 @@ public class SortableDataModelState extends DataModelState {
         this.sortingState = sortingState;
     }
 
+    /*****************************************************************
+     *                     equals / hashCode                         *
+     *****************************************************************/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SortableDataModelState that = (SortableDataModelState) o;
+        return sortingState.equals(that.sortingState);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return sortingState.hashCode();
+    }
 }

@@ -133,4 +133,20 @@ public class SortingState{
     public int size() {
         return sortingInstructions.size();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SortingState that = (SortingState) o;
+
+        return sortingInstructions.equals(that.sortingInstructions);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return sortingInstructions.hashCode();
+    }
 }

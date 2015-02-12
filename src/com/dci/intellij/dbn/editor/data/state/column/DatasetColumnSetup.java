@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBDataset;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.DBDataset;
 
 public class DatasetColumnSetup {
     private List<DatasetColumnState> columnStates = new ArrayList<DatasetColumnState>();
@@ -101,4 +101,23 @@ public class DatasetColumnSetup {
         return columnState == null || columnState.isVisible();
     }
 
+    /*****************************************************************
+     *                     equals / hashCode                         *
+     *****************************************************************/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DatasetColumnSetup that = (DatasetColumnSetup) o;
+
+        if (!columnStates.equals(that.columnStates)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return columnStates.hashCode();
+    }
 }

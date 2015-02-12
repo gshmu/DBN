@@ -36,4 +36,26 @@ public class DataModelState {
         this.rowCount = rowCount;
     }
 
+    /*****************************************************************
+     *                     equals / hashCode                         *
+     *****************************************************************/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataModelState that = (DataModelState) o;
+
+        if (isReadonly != that.isReadonly) return false;
+        if (rowCount != that.rowCount) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (isReadonly ? 1 : 0);
+        result = 31 * result + rowCount;
+        return result;
+    }
 }
