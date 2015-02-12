@@ -62,7 +62,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
     private class ReloadSessionsAction extends DumbAwareAction {
         private ReloadSessionsAction() {
-            super("Reload Sessions", null, Icons.ACTION_REFRESH);
+            super("Reload", null, Icons.ACTION_REFRESH);
         }
 
         public void actionPerformed(AnActionEvent e) {
