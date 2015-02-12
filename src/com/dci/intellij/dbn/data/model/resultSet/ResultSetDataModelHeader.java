@@ -12,6 +12,9 @@ import com.dci.intellij.dbn.data.model.basic.BasicDataModelHeader;
 
 public class ResultSetDataModelHeader extends BasicDataModelHeader implements DataModelHeader {
 
+    public ResultSetDataModelHeader() {
+    }
+
     public ResultSetDataModelHeader(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
         super();
         ResultSetMetaData metaData = resultSet.getMetaData();

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -78,6 +79,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                                 editorTable.setModel(sessionBrowserModel);
                                 refreshTable();
                             }
+                            EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                         }
                     }.start();
                 }

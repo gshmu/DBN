@@ -19,7 +19,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     protected boolean resultSetExhausted = false;
     protected final Object DISPOSE_LOCK = new Object();
 
-    public ResultSetDataModel(ConnectionHandler connectionHandler) throws SQLException {
+    public ResultSetDataModel(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());
         this.connectionHandler = connectionHandler;
     }

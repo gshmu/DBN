@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.session.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -9,15 +18,6 @@ import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.SessionBrowserState;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
 
@@ -25,8 +25,13 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         super(connectionHandler);
         setHeader(new SessionBrowserModelHeader(connectionHandler, resultSet));
         setState(state);
-        setFilter(getState().getFilterState());
         load();
+    }
+
+    public SessionBrowserModel(ConnectionHandler connectionHandler, SessionBrowserState state) {
+        super(connectionHandler);
+        setHeader(new SessionBrowserModelHeader());
+        setState(state);
     }
 
     public void load() throws SQLException {
