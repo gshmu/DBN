@@ -12,12 +12,15 @@ import gnu.trove.THashMap;
 public class SessionBrowserState extends SortableDataModelState implements FileEditorState {
     public static final SessionBrowserState VOID = new SessionBrowserState();
     private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
+    private int refreshInterval = 0;
 
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
         return false;
     }
 
     public void readState(@NotNull Element element) {
+        refreshInterval = SettingsUtil.getInteger(element, "refresh-interval", refreshInterval);
+
         Element sortingElement = element.getChild("sorting");
         sortingState.readState(sortingElement);
 
@@ -30,6 +33,8 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
     }
 
     public void writeState(Element element) {
+        SettingsUtil.setInteger(element, "refresh-interval", refreshInterval);
+
         Element sortingElement = new Element("sorting");
         element.addContent(sortingElement);
         sortingState.writeState(sortingElement);
@@ -41,8 +46,17 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         SettingsUtil.setString(filterElement, "status", filterState.getFilterValue(SessionBrowserFilterType.STATUS));
     }
 
+    public int getRefreshInterval() {
+        return refreshInterval;
+    }
+
+    public void setRefreshInterval(int refreshInterval) {
+        this.refreshInterval = refreshInterval;
+    }
+
     public SessionBrowserState clone() {
         SessionBrowserState clone = new SessionBrowserState();
+        clone.setRefreshInterval(getRefreshInterval());
         clone.setReadonly(isReadonly());
         clone.setRowCount(getRowCount());
         clone.setSortingState(getSortingState().clone());
@@ -70,9 +84,8 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-
         SessionBrowserState that = (SessionBrowserState) o;
-
+        if (this.refreshInterval != that.refreshInterval) return false;
         return filterState.equals(that.filterState);
 
     }

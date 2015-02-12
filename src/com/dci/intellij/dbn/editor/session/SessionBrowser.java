@@ -5,6 +5,8 @@ import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +42,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean isLoading;
-    private int refreshInterval;
+    private Timer refreshTimer;
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
@@ -264,11 +266,37 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public void setRefreshInterval(int refreshInterval) {
-        this.refreshInterval = refreshInterval;
+        SessionBrowserModel tableModel = getTableModel();
+        if (tableModel != null) {
+            SessionBrowserState state = tableModel.getState();
+            if (state.getRefreshInterval() != refreshInterval) {
+                state.setRefreshInterval(refreshInterval);
+                stopRefreshTimer();
+                if (refreshInterval > 0) {
+                    refreshTimer = new Timer("DBN Session Browser refresher");
+                    refreshTimer.schedule(new RefreshTask(), 0, refreshInterval * 1000);
+                }
+            }
+        }
+    }
+
+    private void stopRefreshTimer() {
+        if (refreshTimer != null) {
+            refreshTimer.cancel();
+            refreshTimer.purge();
+            refreshTimer = null;
+        }
     }
 
     public int getRefreshInterval() {
-        return refreshInterval;
+        SessionBrowserModel tableModel = getTableModel();
+        return tableModel == null ? 0 : tableModel.getState().getRefreshInterval();
+    }
+
+    private class RefreshTask extends TimerTask {
+        public void run() {
+            reload();
+        }
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -313,7 +341,9 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public void dispose() {
         if (!disposed) {
             disposed = true;
+            stopRefreshTimer();
             editorForm = null;
         }
     }
 }
+
