@@ -99,7 +99,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     private void doInterruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final SessionInterruptionType type, final SessionInterruptionOption option) {
         final String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
         final String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
-        final String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? "Session" : "Sessions");
+        final String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
 
         final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
