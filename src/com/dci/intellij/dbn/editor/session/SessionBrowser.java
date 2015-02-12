@@ -69,7 +69,16 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 progressIndicator.setIndeterminate(true);
-                final SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
+                editorForm.showLoadingHint();
+                try {
+                    final SessionBrowserModel sessionBrowserModel = sessionBrowserFile.load();
+                    updateModel(sessionBrowserModel);
+                } finally {
+                    editorForm.hideLoadingHint();
+                }
+            }
+
+            private void updateModel(final SessionBrowserModel sessionBrowserModel) {
                 if (sessionBrowserModel != null) {
                     new SimpleLaterInvocator() {
                         @Override
@@ -98,7 +107,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
-
     public void refreshTable() {
         SessionBrowserTable editorTable = getEditorTable();
         if (editorTable != null) {
@@ -106,6 +114,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             editorTable.repaint();
             editorTable.accommodateColumnsSize();
         }
+    }
+
+    public void refreshLoadTimestamp() {
+        getEditorForm().refreshLoadTimestamp();
     }
 
     public void disconnectSelectedSessions() {

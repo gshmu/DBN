@@ -8,6 +8,7 @@ import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -24,6 +25,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 
@@ -35,6 +37,7 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
     private JPanel loadingIconPanel;
     private JPanel searchPanel;
     private AutoCommitLabel autoCommitLabel;
+    private JLabel loadTimestampLabel;
     private SessionBrowserTable editorTable;
     private DataSearchComponent dataSearchComponent;
 
@@ -47,7 +50,8 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
             editorTableScrollPane.setViewportView(editorTable);
             editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
             editorTable.initTableGutter();
-
+            loadTimestampLabel.setForeground(Colors.HINT_COLOR);
+            refreshLoadTimestamp();
 
             JPanel panel = new JPanel();
             panel.setBorder(UIUtil.getTableHeaderCellBorder());
@@ -81,6 +85,8 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
             public void execute() {
                 loadingLabel.setVisible(true);
                 loadingIconPanel.setVisible(true);
+                loadTimestampLabel.setVisible(false);
+                refreshLoadTimestamp();
             }
         }.start();
     }
@@ -90,8 +96,26 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
             public void execute() {
                 loadingLabel.setVisible(false);
                 loadingIconPanel.setVisible(false);
+                refreshLoadTimestamp();
+
             }
         }.start();
+    }
+
+    public void refreshLoadTimestamp() {
+        boolean visible = !loadingLabel.isVisible();
+        if (visible) {
+            SessionBrowserModel model = getEditorTable().getModel();
+            long timestamp = model.getTimestamp();
+/*
+            RegionalSettings regionalSettings = RegionalSettings.getInstance(sessionBrowser.getProject());
+            String dateTime = regionalSettings.getFormatter().formatTime(new Date(timestamp));
+            loadTimestampLabel.setText("Updated: " + dateTime + " (" + DateFormatUtil.formatPrettyDateTime(timestamp)+ ")");
+*/
+
+            loadTimestampLabel.setText("Updated: " + DateFormatUtil.formatPrettyDateTime(timestamp));
+        }
+        loadTimestampLabel.setVisible(visible);
     }
 
 

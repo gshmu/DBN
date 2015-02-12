@@ -83,6 +83,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     public void projectClosed() {
         EventManager.unsubscribe(fileEditorManagerListener);
+        EventManager.unsubscribe(fileEditorManagerListenerBefore);
+        EventManager.unsubscribe(connectionSettingsListener);
     }
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
