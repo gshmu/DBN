@@ -17,11 +17,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
 
-public class SourceCodeLoadErrorNotificationProvider extends EditorNotifications.Provider<SourceCodeLoadErrorNotificationPanel> {
+public class SourceCodeEditorNotificationProvider extends EditorNotifications.Provider<SourceCodeLoadErrorNotificationPanel> {
     private static final Key<SourceCodeLoadErrorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeLoadErrorNotificationPanel");
     private Project project;
 
-    public SourceCodeLoadErrorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+    public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
         EventManager.subscribe(project, SourceCodeLoadListener.TOPIC, sourceCodeLoadListener);

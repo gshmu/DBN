@@ -519,9 +519,9 @@
         <defaultLiveTemplatesProvider implementation="com.dci.intellij.dbn.language.sql.template.SQLTemplateProvider"/>
         <defaultLiveTemplatesProvider implementation="com.dci.intellij.dbn.language.psql.template.PSQLTemplateProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.ddl.DDLMappedNotificationProvider"/>
-        <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.code.SourceCodeLoadErrorNotificationProvider"/>
-        <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.data.DatasetLoadErrorNotificationProvider"/>
-        <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserErrorNotificationProvider"/>
+        <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.code.SourceCodeEditorNotificationProvider"/>
+        <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.data.DatasetEditorNotificationProvider"/>
+        <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserNotificationProvider"/>
 
         <additionalTextAttributes scheme="Default" file="resources/DBNDefaultColors.xml" id="DBN-Default"/>
         <additionalTextAttributes scheme="Darcula" file="resources/DBNDarculaColors.xml" id="DBN-Darcula"/>

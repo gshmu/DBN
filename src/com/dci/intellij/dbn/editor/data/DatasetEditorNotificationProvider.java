@@ -15,11 +15,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
 
-public class DatasetLoadErrorNotificationProvider extends EditorNotifications.Provider<DatasetLoadErrorNotificationPanel> {
+public class DatasetEditorNotificationProvider extends EditorNotifications.Provider<DatasetLoadErrorNotificationPanel> {
     private static final Key<DatasetLoadErrorNotificationPanel> KEY = Key.create("DBNavigator.DatasetLoadErrorNotificationPanel");
     private Project project;
 
-    public DatasetLoadErrorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+    public DatasetEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
         EventManager.subscribe(project, DatasetLoadListener.TOPIC, datasetLoadListener);

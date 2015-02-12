@@ -15,11 +15,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
 
-public class SessionBrowserErrorNotificationProvider extends EditorNotifications.Provider<SessionBrowserErrorNotificationPanel> {
+public class SessionBrowserNotificationProvider extends EditorNotifications.Provider<SessionBrowserErrorNotificationPanel> {
     private static final Key<SessionBrowserErrorNotificationPanel> KEY = Key.create("DBNavigator.SessionBrowserErrorNotificationPanel");
     private Project project;
 
-    public SessionBrowserErrorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+    public SessionBrowserNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
         EventManager.subscribe(project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 
