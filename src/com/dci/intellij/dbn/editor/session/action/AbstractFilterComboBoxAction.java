@@ -1,11 +1,18 @@
 package com.dci.intellij.dbn.editor.session.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
+import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -15,12 +22,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.util.List;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
     private String type;
@@ -123,7 +124,12 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
                 if (model !=  null) {
                     SessionBrowserFilterState modelFilter = model.getFilter();
                     setFilterValue(modelFilter, filterValue);
-                    sessionBrowser.refreshTable();
+                    SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
+                    if (sessionBrowserSettings.isReloadOnFilterChange()) {
+                        sessionBrowser.reload();
+                    } else {
+                        sessionBrowser.refreshTable();
+                    }
                 }
             }
         }

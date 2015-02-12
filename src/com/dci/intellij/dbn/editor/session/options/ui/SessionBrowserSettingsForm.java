@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.options.ui;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
@@ -13,6 +14,7 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
     private JPanel mainPanel;
     private JComboBox<SessionInterruptionOption> disconnectSessionComboBox;
     private JComboBox<SessionInterruptionOption> killSessionComboBox;
+    private JCheckBox reloadOnFilterChangeCheckBox;
 
     public SessionBrowserSettingsForm(SessionBrowserSettings settings) {
         super(settings);
@@ -40,12 +42,13 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
         SessionBrowserSettings settings = getConfiguration();
         settings.getDisconnectSessionOptionHandler().setSelectedOption((SessionInterruptionOption) disconnectSessionComboBox.getSelectedItem());
         settings.getKillSessionOptionHandler().setSelectedOption((SessionInterruptionOption) killSessionComboBox.getSelectedItem());
+        settings.setReloadOnFilterChange(reloadOnFilterChangeCheckBox.isSelected());
     }
 
     public void resetFormChanges() {
         SessionBrowserSettings settings = getConfiguration();
         disconnectSessionComboBox.setSelectedItem(settings.getDisconnectSessionOptionHandler().getSelectedOption());
         killSessionComboBox.setSelectedItem(settings.getKillSessionOptionHandler().getSelectedOption());
-
+        reloadOnFilterChangeCheckBox.setSelected(settings.isReloadOnFilterChange());
     }
 }

@@ -16,8 +16,10 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
+import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
@@ -62,6 +64,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public SessionBrowserModel getTableModel() {
         SessionBrowserTable browserTable = getEditorTable();
         return browserTable == null ? null : browserTable.getModel();
+    }
+
+    public SessionBrowserSettings getSettings() {
+        return OperationSettings.getInstance(getProject()).getSessionBrowserSettings();
     }
 
     public void reload() {
