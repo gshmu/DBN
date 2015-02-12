@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -29,33 +30,52 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
         isHeaderAction = cell == null;
         row = cell == null ? null : cell.getRow();
+        SessionBrowserModel tableModel = sessionBrowser.getTableModel();
 
+        add(new ReloadSessionsAction());
         if (cell != null) {
+            addSeparator();
             DatabaseCompatibilityInterface compatibilityInterface = sessionBrowser.getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
             if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT)) {
                 add(new DisconnectSessionAction());
             }
             add(new KillSessionAction());
+
             addSeparator();
 
             Object userValue = cell.getUserValue();
             if (userValue instanceof String) {
                 SessionBrowserFilterType filterType = columnInfo.getFilterType();
-                if (filterType != null) {
-                    add(new FilterByAction(filterType, userValue.toString()));
+                if (filterType != null && tableModel != null) {
+                    SessionBrowserFilterState filter = tableModel.getFilter();
+                    if (filter == null || StringUtil.isEmpty(filter.getFilterValue(filterType))) {
+                        add(new FilterByAction(filterType, userValue.toString()));
+                    }
                 }
             }
         }
 
-        SessionBrowserModel tableModel = sessionBrowser.getTableModel();
         if (tableModel != null && !tableModel.getState().getFilterState().isEmpty()) {
             add(new ClearFilterAction());
         }
     }
 
+    private class ReloadSessionsAction extends DumbAwareAction {
+        private ReloadSessionsAction() {
+            super("Reload Sessions", null, Icons.ACTION_REFRESH);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            if (row != null) {
+                sessionBrowser.reload(true);
+            }
+
+        }
+    }
+
     private class KillSessionAction extends DumbAwareAction {
         private KillSessionAction() {
-            super("Kill session", null, Icons.ACTION_KILL_SESSION);
+            super("Kill Session", null, Icons.ACTION_KILL_SESSION);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -71,7 +91,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
     private class DisconnectSessionAction extends DumbAwareAction {
         private DisconnectSessionAction() {
-            super("Disconnect session", null, Icons.ACTION_DISCONNECT_SESSION);
+            super("Disconnect Session", null, Icons.ACTION_DISCONNECT_SESSION);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -86,7 +106,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
     private class ClearFilterAction extends DumbAwareAction {
         private ClearFilterAction() {
-            super("Clear filter", null, Icons.DATASET_FILTER_CLEAR);
+            super("Clear Filter", null, Icons.DATASET_FILTER_CLEAR);
         }
 
         public void actionPerformed(AnActionEvent e) {
