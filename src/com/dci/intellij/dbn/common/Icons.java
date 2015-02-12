@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common;
 
+import javax.swing.Icon;
+import java.util.Map;
+
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
-
-import javax.swing.Icon;
-import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -43,6 +43,8 @@ public class Icons {
     public static final Icon ACTION_CLOSE = ACTION_DELETE;
     public static final Icon ACTION_UP_DOWN = load("/img/action/UpDown.png");
     public static final Icon ACTION_REFRESH = load("/img/action/Synchronize.png");
+    public static final Icon ACTION_TIMED_REFRESH = load("/img/action/TimedSynchronize.png");
+    public static final Icon ACTION_TIMED_REFRESH_OFF = load("/img/action/TimedSynchronizeOff.png");
     public static final Icon ACTION_FIND = load("/img/action/Find.png");
     public static final Icon ACTION_WRAP_TEXT = load("/img/action/WrapText.png");
     public static final Icon ACTION_RERUN = load("/img/action/Rerun.png");
