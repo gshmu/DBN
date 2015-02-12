@@ -58,7 +58,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
 
             if (actionGroup.getChildrenCount() > 1) {
                 ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                        "Select console connection",
+                        "Select Console Connection",
                         actionGroup,
                         e.getDataContext(),
                         //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
