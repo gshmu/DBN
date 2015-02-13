@@ -43,10 +43,10 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
 
     private SessionBrowser sessionBrowser;
 
-    public SessionBrowserForm(SessionBrowser sessionBrowser, SessionBrowserModel sessionBrowserModel) {
+    public SessionBrowserForm(SessionBrowser sessionBrowser) {
         this.sessionBrowser = sessionBrowser;
         try {
-            editorTable = new SessionBrowserTable(sessionBrowser, sessionBrowserModel);
+            editorTable = new SessionBrowserTable(sessionBrowser);
             editorTableScrollPane.setViewportView(editorTable);
             editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
             editorTable.initTableGutter();

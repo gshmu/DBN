@@ -1,21 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.editor.session.SessionBrowserState;
-import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
-import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -23,9 +7,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.util.LocalTimeCounter;
 
 public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtualFile, Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -34,8 +26,6 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
     protected String name;
     protected String path;
     protected String url;
-    private SessionBrowserModel model;
-    private String modelError;
 
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
@@ -49,42 +39,6 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
         this.name = name;
         path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION BROWSER - " + name;
         url = DatabaseFileSystem.createUrl(connectionHandler) + "/session_browser#" + name;
-    }
-
-    @Nullable
-    public SessionBrowserModel load() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            SessionBrowserState state = model == null ? new SessionBrowserState() : model.getState();
-            try {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                Connection connection = connectionHandler.getStandaloneConnection();
-                ResultSet resultSet = metadataInterface.loadSessions(connection);
-                SessionBrowserModel newModel = new SessionBrowserModel(connectionHandler, resultSet, state);
-                modelError = null;
-                SessionBrowserModel oldModel = model;
-                model = newModel;
-                DisposerUtil.dispose(oldModel);
-            } catch (SQLException e) {
-                if (model == null || model.isDisposed()) {
-                    model = new SessionBrowserModel(connectionHandler, state);
-                }
-                modelError = e.getMessage();
-            }
-        }
-        return model;
-    }
-
-    @Nullable
-    public SessionBrowserModel getModel() {
-        if (model == null || model.isDisposed()) {
-            load();
-        }
-        return model;
-    }
-
-    public String getModelError() {
-        return modelError;
     }
 
     public Icon getIcon() {
@@ -222,6 +176,5 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
 
     @Override
     public void dispose() {
-        DisposerUtil.dispose(model);
     }
 }

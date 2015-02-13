@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.editor.session.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import org.jetbrains.annotations.NotNull;
 
 public class ReloadSessionsAction extends AbstractSessionBrowserAction {
 
@@ -18,7 +19,7 @@ public class ReloadSessionsAction extends AbstractSessionBrowserAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
-            sessionBrowser.reload(false);
+            sessionBrowser.loadSessions(false);
         }
     }
 
