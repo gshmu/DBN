@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import javax.swing.JPopupMenu;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Component;
@@ -36,6 +38,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
         addMouseListener(new SessionBrowserTableMouseListener(this));
+        getSelectionModel().addListSelectionListener(listSelectionListener);
         this.sessionBrowser = sessionBrowser;
 
 
@@ -114,6 +117,15 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public SessionBrowser getSessionBrowser() {
         return sessionBrowser;
     }
+
+    private final ListSelectionListener listSelectionListener = new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (sessionBrowser != null) {
+                sessionBrowser.updateDetails();
+            }
+        }
+    };
 
     /********************************************************
      *                        Popup                         *

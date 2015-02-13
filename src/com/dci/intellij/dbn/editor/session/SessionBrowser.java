@@ -63,6 +63,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return editorForm == null ? null : editorForm.getEditorTable();
     }
 
+    @Nullable
     public SessionBrowserForm getEditorForm() {
         return editorForm;
     }
@@ -360,6 +361,17 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private class RefreshTask extends TimerTask {
         public void run() {
             loadSessions(false);
+        }
+    }
+
+    public void updateDetails() {
+        SessionBrowserForm editorForm = getEditorForm();
+        if (editorForm != null) {
+            SessionBrowserTable editorTable = editorForm.getEditorTable();
+            if (editorTable.getSelectedRowCount() == 1) {
+                SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
+                editorForm.getDetailsForm().update(selectedRow);
+            }
         }
     }
 
