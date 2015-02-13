@@ -19,7 +19,7 @@ public class ReloadSessionsAction extends AbstractSessionBrowserAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
-            sessionBrowser.loadSessions(false);
+            sessionBrowser.loadSessions(true);
         }
     }
 

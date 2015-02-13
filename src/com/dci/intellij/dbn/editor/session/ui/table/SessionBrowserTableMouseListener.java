@@ -26,7 +26,26 @@ public class SessionBrowserTableMouseListener extends MouseAdapter implements Di
             if (cell != null) {
                 int rowIndex = table.rowAtPoint(mousePoint);
                 int columnIndex = table.columnAtPoint(mousePoint);
-                table.selectCell(rowIndex, columnIndex);
+                int[] selectedRows = table.getSelectedRows();
+                int[] selectedColumns = table.getSelectedColumns();
+
+                boolean selectCell = true;
+                for (int selectedRow : selectedRows) {
+                    if (selectedRow == rowIndex) {
+                        for (int selectedColumn : selectedColumns) {
+                            if (selectedColumn == columnIndex ) {
+                                selectCell = false;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+
+                if (selectCell) {
+                    table.selectCell(rowIndex, columnIndex);
+                }
                 SessionBrowserColumnInfo columnInfo = (SessionBrowserColumnInfo) table.getModel().getColumnInfo(columnIndex);
                 table.showPopupMenu(event, cell, columnInfo);
             }

@@ -34,16 +34,19 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         SessionBrowserModel tableModel = sessionBrowser.getTableModel();
 
         add(new ReloadSessionsAction());
-        if (cell != null) {
+        if (table != null && table.getSelectedRowCount() > 0) {
+            int rowCount = table.getSelectedRowCount();
             addSeparator();
             DatabaseCompatibilityInterface compatibilityInterface = sessionBrowser.getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
             if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT)) {
-                add(new DisconnectSessionAction());
+                add(new DisconnectSessionAction(rowCount > 1));
             }
-            add(new KillSessionAction());
+            add(new KillSessionAction(rowCount > 1));
+        }
 
-            addSeparator();
+        addSeparator();
 
+        if (cell != null) {
             Object userValue = cell.getUserValue();
             if (userValue instanceof String) {
                 SessionBrowserFilterType filterType = columnInfo.getFilterType();
@@ -72,8 +75,8 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
     }
 
     private class KillSessionAction extends DumbAwareAction {
-        private KillSessionAction() {
-            super("Kill Session", null, Icons.ACTION_KILL_SESSION);
+        private KillSessionAction(boolean multiple) {
+            super(multiple ? "Kill Sessions" : "Kill Session", null, Icons.ACTION_KILL_SESSION);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -88,8 +91,8 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
     }
 
     private class DisconnectSessionAction extends DumbAwareAction {
-        private DisconnectSessionAction() {
-            super("Disconnect Session", null, Icons.ACTION_DISCONNECT_SESSION);
+        private DisconnectSessionAction(boolean multiple) {
+            super(multiple ? "Disconnect Sessions" : "Disconnect Session", null, Icons.ACTION_DISCONNECT_SESSION);
         }
 
         public void actionPerformed(AnActionEvent e) {

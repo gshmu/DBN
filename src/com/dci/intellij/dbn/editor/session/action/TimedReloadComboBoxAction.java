@@ -40,7 +40,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction {
     public synchronized void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Icon icon = Icons.ACTION_TIMED_REFRESH_OFF;
-        String text = "No automatic refresh";
+        String text = "No refresh";
 
 
         SessionBrowser sessionBrowser = getSessionBrowser(e);
@@ -48,7 +48,12 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction {
             int refreshInterval = sessionBrowser.getRefreshInterval();
             if (refreshInterval > 0) {
                 text = refreshInterval + " seconds";
-                icon = Icons.ACTION_TIMED_REFRESH;
+                if (sessionBrowser.isPreventLoading(false)) {
+                    icon = Icons.ACTION_TIMED_REFRESH_INTERRUPTED;
+                } else {
+                    icon = Icons.ACTION_TIMED_REFRESH;
+                }
+
             }
         }
 
@@ -85,7 +90,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction {
         private int seconds;
 
         public SelectRefreshTimeAction(int seconds) {
-            super(seconds == 0 ? "No automatic refresh" : seconds + " seconds");
+            super(seconds == 0 ? "No refresh" : seconds + " seconds", null, seconds == 0 ? null : Icons.COMMON_TIMER);
             this.seconds = seconds;
         }
 

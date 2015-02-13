@@ -21,6 +21,7 @@ public class Icons {
     public static final Icon COMMON_RIGHT = load("/img/common/SplitRight.png");
     public static final Icon COMMON_UP = load("/img/common/SplitUp.png");
     public static final Icon COMMON_ARROW_DOWN = load("/img/ComboBoxArrow.png");
+    public static final Icon COMMON_TIMER = load("/img/Timer.png");
 
 
     public static final Icon ACTION_COPY = load("/img/action/Copy.png");
@@ -44,6 +45,7 @@ public class Icons {
     public static final Icon ACTION_UP_DOWN = load("/img/action/UpDown.png");
     public static final Icon ACTION_REFRESH = load("/img/action/Synchronize.png");
     public static final Icon ACTION_TIMED_REFRESH = load("/img/action/TimedSynchronize.png");
+    public static final Icon ACTION_TIMED_REFRESH_INTERRUPTED = load("/img/action/TimedSynchronizeInterrupted.png");
     public static final Icon ACTION_TIMED_REFRESH_OFF = load("/img/action/TimedSynchronizeOff.png");
     public static final Icon ACTION_FIND = load("/img/action/Find.png");
     public static final Icon ACTION_WRAP_TEXT = load("/img/action/WrapText.png");
