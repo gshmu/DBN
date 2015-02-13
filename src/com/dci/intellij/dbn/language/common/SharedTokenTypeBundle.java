@@ -18,6 +18,7 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
     private SimpleTokenType chrRightParenthesis;
 
     private SimpleTokenType chrDot;
+    private SimpleTokenType chrComma;
     private SimpleTokenType chrStar;
 
     private TokenSet whitespaceTokens;
@@ -40,6 +41,7 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
         chrLeftParenthesis = getTokenType("CHR_LEFT_PARENTHESIS");
         chrRightParenthesis = getTokenType("CHR_RIGHT_PARENTHESIS");
         chrDot = getTokenType("CHR_DOT");
+        chrComma = getTokenType("CHR_COMMA");
         chrStar = getTokenType("CHR_STAR");
 
         whitespaceTokens = getTokenSet("WHITE_SPACES");
@@ -110,6 +112,10 @@ public class SharedTokenTypeBundle extends DBLanguageTokenTypeBundle {
 
     public SimpleTokenType getChrDot() {
         return chrDot;
+    }
+
+    public SimpleTokenType getChrComma() {
+        return chrComma;
     }
 
     public SimpleTokenType getChrStar() {

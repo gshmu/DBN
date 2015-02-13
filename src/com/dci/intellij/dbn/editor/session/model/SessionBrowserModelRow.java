@@ -46,4 +46,8 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
     public Object getSerialNumber() {
         return getCellValue("SERIAL_NUMBER");
     }
+
+    public String getSchema() {
+        return (String) getCellValue("SCHEMA");
+    }
 }

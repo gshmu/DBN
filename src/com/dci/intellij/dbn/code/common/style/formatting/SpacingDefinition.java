@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.intellij.formatting.Spacing;
-import org.jdom.Element;
 
 public enum SpacingDefinition implements FormattingAttribute<Spacing>{
     NO_SPACE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_NO_SPACE;}}),
@@ -14,6 +15,7 @@ public enum SpacingDefinition implements FormattingAttribute<Spacing>{
 
     MIN_LINE_BREAK (new Loader(){Spacing load(){return CodeStylePreset.SPACING_MIN_LINE_BREAK;}}),
     MIN_ONE_LINE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_MIN_ONE_LINE;}}),
+    MIN_ONE_SPACE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_MIN_ONE_SPACE;}}),
     ;
 
     private Spacing value;

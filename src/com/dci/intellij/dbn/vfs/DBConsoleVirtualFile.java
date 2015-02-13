@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -29,7 +30,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
+public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private ConnectionHandlerRef connectionHandlerRef;
@@ -86,6 +87,11 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     public void setCurrentSchemaName(String currentSchemaName) {
         this.currentSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
+    }
+
+    @Override
+    public ConnectionHandler getActiveConnection() {
+        return getConnectionHandler();
     }
 
     public DBSchema getCurrentSchema() {

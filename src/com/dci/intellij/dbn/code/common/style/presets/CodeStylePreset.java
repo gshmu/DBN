@@ -20,6 +20,7 @@ public interface CodeStylePreset {
 
     Spacing SPACING_ONE_LINE = Spacing.createSpacing(0, Integer.MAX_VALUE, 2, true, 1);
     Spacing SPACING_MIN_ONE_LINE = Spacing.createSpacing(0, Integer.MAX_VALUE, 2, true, 4);
+    Spacing SPACING_MIN_ONE_SPACE = Spacing.createSpacing(1, Integer.MAX_VALUE, 0, true, 4);
 
 
     String getId();

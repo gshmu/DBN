@@ -756,6 +756,14 @@
         </statement>
     </statement-execution-processor>
 
+    <statement-execution-processor id="session-sql" is-prepared-statement="true" timeout="10">
+        <statement>
+            select query as SQL_STATEMENT
+            from pg_stat_activity
+            where pid = {0}
+        </statement>
+    </statement-execution-processor>
+
     <statement-execution-processor id="kill-session" is-prepared-statement="true">
         <statement>
             select pg_terminate_backend({0})

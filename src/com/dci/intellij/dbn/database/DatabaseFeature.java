@@ -17,6 +17,7 @@ public enum DatabaseFeature {
     DEBUGGING("Program execution debugging"),
     EXPLAIN_PLAN("Statement explain plan"),
     DATABASE_LOGGING("Database logging"),
+    SESSION_CURRENT_SQL("Session current SQL"),
     SESSION_BROWSING("Session browsing"),
     SESSION_KILL("Kill session"),
     SESSION_DISCONNECT("Disconnect session"),

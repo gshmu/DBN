@@ -13,9 +13,12 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
@@ -28,13 +31,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class SessionBrowserStatementVirtualFile extends VirtualFile implements DBParseableVirtualFile {
+public class SessionBrowserStatementVirtualFile extends VirtualFile implements DBParseableVirtualFile, FileConnectionMappingProvider {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     protected String name;
     protected String path;
     protected String url;
-    ConnectionHandlerRef connectionHandlerRef;
+    private ConnectionHandlerRef connectionHandlerRef;
+    private DBObjectRef<DBSchema> schemaRef;
 
 
     public SessionBrowserStatementVirtualFile(ConnectionHandler connectionHandler, String content) {
@@ -70,6 +74,20 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
+    }
+
+    @Override
+    public ConnectionHandler getActiveConnection() {
+        return getConnectionHandler();
+    }
+
+    @Override
+    public DBSchema getCurrentSchema() {
+        return DBObjectRef.get(schemaRef);
+    }
+
+    public void setCurrentSchema(DBSchema schema) {
+        this.schemaRef = DBObjectRef.from(schema);
     }
 
     @NotNull
