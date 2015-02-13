@@ -81,8 +81,17 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return OperationSettings.getInstance(getProject()).getSessionBrowserSettings();
     }
 
+    public boolean isPreventLoading(boolean force) {
+        if (force) return false;
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null && editorTable.getSelectedRowCount() > 1) {
+            return true;
+        }
+        return preventLoading;
+    }
+
     public void loadSessions(boolean force) {
-        if (!isLoading() && (!preventLoading || force)) {
+        if (!isLoading() && !isPreventLoading(force)) {
             final ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
                 setLoading(true);
