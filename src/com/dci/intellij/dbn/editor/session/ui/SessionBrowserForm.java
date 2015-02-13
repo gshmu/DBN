@@ -10,7 +10,6 @@ import java.sql.SQLException;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -25,6 +24,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.GuiUtils;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
@@ -36,12 +36,14 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
     private JLabel loadingLabel;
     private JPanel loadingIconPanel;
     private JPanel searchPanel;
-    private AutoCommitLabel autoCommitLabel;
     private JLabel loadTimestampLabel;
+    private JPanel detailsPanel;
+    private JPanel editorPanel;
     private SessionBrowserTable editorTable;
     private DataSearchComponent dataSearchComponent;
 
     private SessionBrowser sessionBrowser;
+    private SessionBrowserDetailsForm detailsForm;
 
     public SessionBrowserForm(SessionBrowser sessionBrowser) {
         this.sessionBrowser = sessionBrowser;
@@ -50,7 +52,12 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
             editorTableScrollPane.setViewportView(editorTable);
             editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
             editorTable.initTableGutter();
+            detailsForm = new SessionBrowserDetailsForm(sessionBrowser);
+            detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);
+
             loadTimestampLabel.setForeground(Colors.HINT_COLOR);
+            GuiUtils.replaceJSplitPaneWithIDEASplitter(editorPanel);
+
             refreshLoadTimestamp();
 
             JPanel panel = new JPanel();
@@ -66,8 +73,8 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
 
             ActionUtil.registerDataProvider(actionsPanel, sessionBrowser.getDataProvider(), true);
 
-            Disposer.register(this, autoCommitLabel);
             Disposer.register(this, editorTable);
+            Disposer.register(this, detailsForm);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
                     sessionBrowser.getProject(),
@@ -78,6 +85,10 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
 
     public JPanel getComponent() {
         return mainPanel;
+    }
+
+    public SessionBrowserDetailsForm getDetailsForm() {
+        return detailsForm;
     }
 
     public void showLoadingHint() {
