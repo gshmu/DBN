@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
+import javax.swing.JPopupMenu;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.table.TableCellRenderer;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.EventObject;
+
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -20,19 +28,11 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupMenuListenerAdapter;
 
-import javax.swing.JPopupMenu;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.EventObject;
-
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private SessionBrowser sessionBrowser;
 
-    public SessionBrowserTable(SessionBrowser sessionBrowser, SessionBrowserModel model) throws SQLException {
-        super(model, false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
+    public SessionBrowserTable(SessionBrowser sessionBrowser) throws SQLException {
+        super(new SessionBrowserModel(sessionBrowser.getConnectionHandler()), false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
         addMouseListener(new SessionBrowserTableMouseListener(this));

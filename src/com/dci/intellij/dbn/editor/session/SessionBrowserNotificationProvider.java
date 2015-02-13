@@ -46,9 +46,9 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
     public SessionBrowserErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
         if (virtualFile instanceof DBSessionBrowserVirtualFile) {
             if (fileEditor instanceof SessionBrowser) {
-                DBSessionBrowserVirtualFile sessionBrowserVirtualFile = (DBSessionBrowserVirtualFile) virtualFile;
-                ConnectionHandler connectionHandler = sessionBrowserVirtualFile.getConnectionHandler();
-                String sourceLoadError = sessionBrowserVirtualFile.getModelError();
+                SessionBrowser sessionBrowser = (SessionBrowser) fileEditor;
+                ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+                String sourceLoadError = sessionBrowser.getModelError();
                 if (StringUtil.isNotEmpty(sourceLoadError)) {
                     return createPanel(connectionHandler, sourceLoadError);
                 }

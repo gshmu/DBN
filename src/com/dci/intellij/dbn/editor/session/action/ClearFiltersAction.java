@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.session.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -8,7 +10,6 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import org.jetbrains.annotations.NotNull;
 
 public class ClearFiltersAction extends AbstractSessionBrowserAction {
 
@@ -24,7 +25,7 @@ public class ClearFiltersAction extends AbstractSessionBrowserAction {
             sessionBrowser.clearFilter();
             SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
             if (sessionBrowserSettings.isReloadOnFilterChange()) {
-                sessionBrowser.reload(false);
+                sessionBrowser.loadSessions(false);
             } else {
                 sessionBrowser.refreshTable();
             }
