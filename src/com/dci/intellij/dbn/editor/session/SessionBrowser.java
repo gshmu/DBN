@@ -139,7 +139,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                         refreshTable();
                         DisposerUtil.dispose(oldModel);
                     }
-                    EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                    Project project = getProject();
+                    if (project != null && !project.isDisposed()) {
+                        EventManager.notify(project, SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                    }
                 }
             }.start();
         }
