@@ -241,8 +241,10 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
     @Override
     public void disposeComponent() {
-        timestampUpdater.cancel();
-        timestampUpdater.purge();
+        if (timestampUpdater != null) {
+            timestampUpdater.cancel();
+            timestampUpdater.purge();
+        }
         openFiles.clear();
     }
 
