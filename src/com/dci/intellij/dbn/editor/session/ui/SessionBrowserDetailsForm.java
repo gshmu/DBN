@@ -36,6 +36,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.GuiUtils;
+import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;
 
 public class SessionBrowserDetailsForm extends DBNFormImpl{
@@ -53,6 +55,9 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         sessionDetailsTable = new SessionDetailsTable(sessionBrowser.getProject());
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
         sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
+        GuiUtils.replaceJSplitPaneWithIDEASplitter(mailPanel);
+        JBSplitter splitter = (JBSplitter) mailPanel.getComponent(0);
+        splitter.setProportion((float) 0.3);
 
         Disposer.register(this, sessionDetailsTable);
         createStatementViewer();

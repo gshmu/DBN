@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
+import com.intellij.ui.JBSplitter;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
@@ -57,6 +58,8 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
 
             loadTimestampLabel.setForeground(Colors.HINT_COLOR);
             GuiUtils.replaceJSplitPaneWithIDEASplitter(editorPanel);
+            JBSplitter splitter = (JBSplitter) editorPanel.getComponent(0);
+            splitter.setProportion((float) 0.6);
 
             refreshLoadTimestamp();
 
