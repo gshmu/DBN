@@ -9,11 +9,13 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTableHeaderRenderer;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
@@ -23,6 +25,7 @@ import com.dci.intellij.dbn.editor.session.action.SessionBrowserTableActionGroup
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
@@ -50,6 +53,12 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     @Override
     protected BasicTableCellRenderer createCellRenderer() {
         return new BasicTableCellRenderer();
+    }
+
+    @NotNull
+    @Override
+    public BasicTableSelectionRestorer createSelectionRestorer() {
+        return new SelectionRestorer();
     }
 
     public Project getProject() {
@@ -121,11 +130,52 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final ListSelectionListener listSelectionListener = new ListSelectionListener() {
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (sessionBrowser != null) {
-                sessionBrowser.updateDetails();
+            if (!e.getValueIsAdjusting()) {
+                snapshotSelection();
+                if (sessionBrowser != null) {
+                    sessionBrowser.updateDetails();
+                }
             }
         }
     };
+
+    private class SelectionRestorer extends BasicTableSelectionRestorer{
+        private Object sessionId;
+        private int columnIndex;
+
+        public void snapshot() {
+            if (!isRestoring()) {
+                int selectedRowCount = getSelectedRowCount();
+                int selectedColumnCount = getSelectedColumnCount();
+                if (selectedRowCount == 1 && selectedColumnCount == 1) {
+                    sessionId = getModel().getRowAtIndex(getSelectedRow()).getSessionId();
+                    columnIndex = getSelectedColumn();
+                } else if (selectedRowCount > 0 && selectedColumnCount > 0) {
+                    sessionId = null;
+                    columnIndex = -1;
+                }
+            }
+        }
+
+        public void restore() {
+            try {
+                setRestoring(true);
+                if (sessionId != null) {
+                    int rowIndex = 0;
+                    for (SessionBrowserModelRow row : getModel().getRows()) {
+                        if (sessionId.equals(row.getSessionId())) {
+                            selectCell(rowIndex, columnIndex);
+                            break;
+                        }
+                        rowIndex++;
+                    }
+                }
+            } finally {
+                setRestoring(false);
+            }
+        }
+    };
+
 
     /********************************************************
      *                        Popup                         *

@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -42,6 +43,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
     private boolean isLoading;
     private RegionalSettings regionalSettings;
     private DataGridSettings dataGridSettings;
+    private TableSelectionRestorer selectionRestorer = createSelectionRestorer();
 
     public BasicTable(Project project, T dataModel) {
         super(project, dataModel, true);
@@ -55,6 +57,23 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
         addMouseListener(lobValueMouseListener);
+    }
+
+    @NotNull
+    public BasicTableSelectionRestorer createSelectionRestorer() {
+        return new BasicTableSelectionRestorer();
+    }
+
+    public boolean isRestoringSelection() {
+        return selectionRestorer.isRestoring();
+    }
+
+    public void snapshotSelection() {
+        selectionRestorer.snapshot();
+    }
+
+    public void restoreSelection() {
+        selectionRestorer.restore();
     }
 
     protected BasicTableGutter createTableGutter() {
@@ -192,11 +211,11 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
             valuePopup.cancel();
             valuePopup = null;
         }
-        if (isLargeValuePopupActive()) {
+        if (isLargeValuePopupActive() && !isRestoringSelection()) {
             boolean isReadonly = getModel().isReadonly() || getModel().getState().isReadonly();
             if (isReadonly && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
-                int rowIndex = getSelectedRows()[0];
-                int columnIndex = getSelectedColumns()[0];
+                int rowIndex = getSelectedRow();
+                int columnIndex = getSelectedColumn();
                 if (!canDisplayCompleteValue(rowIndex, columnIndex)) {
                     Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
                     DataModelCell cell = (DataModelCell) getValueAt(rowIndex, columnIndex);

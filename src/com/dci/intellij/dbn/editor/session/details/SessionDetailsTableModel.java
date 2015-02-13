@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 public class SessionDetailsTableModel implements DBNTableModel {
     private String sessionId = "";
     private String user = "";
+    private String schema = "";
     private String host = "";
     private String status = "";
 
@@ -21,11 +22,13 @@ public class SessionDetailsTableModel implements DBNTableModel {
         if (row == null) {
             sessionId = "";
             user = "";
+            schema = "";
             host = "";
             status = "";
         } else {
             sessionId = row.getSessionId() + "";
             user = row.getUser();
+            schema = row.getSchema();
             host = row.getHost();
             status = row.getStatus();
         }
@@ -77,15 +80,17 @@ public class SessionDetailsTableModel implements DBNTableModel {
             switch (rowIndex) {
                 case 0: return "Session Id";
                 case 1: return "User";
-                case 2: return "Host";
-                case 3: return "Status";
+                case 2: return "Schema";
+                case 3: return "Host";
+                case 4: return "Status";
             }
         } else if (columnIndex == 1) {
             switch (rowIndex) {
                 case 0: return sessionId;
                 case 1: return user;
-                case 2: return host;
-                case 3: return status;
+                case 2: return schema;
+                case 3: return host;
+                case 4: return status;
             }
         }
         return null;

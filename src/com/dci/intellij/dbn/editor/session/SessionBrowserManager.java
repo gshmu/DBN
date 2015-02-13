@@ -91,7 +91,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 return "";
             }
         } catch (SQLException e) {
-            NotificationUtil.sendErrorNotification(connectionHandler.getProject(), "Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
+            NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
         }
         return "";
     }

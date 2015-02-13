@@ -27,7 +27,8 @@ public class SessionDetailsTable extends DBNTable {
             if (column == 1 && StringUtil.isNotEmpty(text)) {
                 switch (row) {
                     case 1: setIcon(Icons.SB_FILTER_USER); break;
-                    case 2: setIcon(Icons.SB_FILTER_SERVER); break;
+                    case 2: setIcon(Icons.DBO_SCHEMA); break;
+                    case 3: setIcon(Icons.SB_FILTER_SERVER); break;
                     default: setIcon(null);
                 }
             } else{

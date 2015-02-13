@@ -42,9 +42,9 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JPanel mailPanel;
     private JPanel statementViewerPanel;
     private JBScrollPane sessionDetailsTablePane;
-    private SessionBrowserStatementVirtualFile previewFile;
-    private Document statementDocument;
-    private EditorEx statementViewer;
+    private SessionBrowserStatementVirtualFile currentSqlFile;
+    private Document currentSqlDocument;
+    private EditorEx currentSqlViewer;
     private SessionBrowser sessionBrowser;
     private SessionDetailsTable sessionDetailsTable;
 
@@ -82,7 +82,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
                     SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
                     String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
                     if (sessionId.equals(sessionBrowser.getSelectedSessionId())) {
-                        previewFile.setCurrentSchema(schema);
+                        currentSqlFile.setCurrentSchema(schema);
                         setPreviewText(sql);
                     }
                 }
@@ -94,7 +94,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         new WriteActionRunner() {
             @Override
             public void run() {
-                statementDocument.setText(text);
+                currentSqlDocument.setText(text);
             }
         }.start();
     }
@@ -107,26 +107,26 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     private void createStatementViewer() {
         ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         Project project = sessionBrowser.getProject();
-        previewFile = new SessionBrowserStatementVirtualFile(connectionHandler, "");
-        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), previewFile, true);
-        PsiFile previewPsiFile = previewFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
+        currentSqlFile = new SessionBrowserStatementVirtualFile(connectionHandler, "");
+        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), currentSqlFile, true);
+        PsiFile previewPsiFile = currentSqlFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-        statementDocument = DocumentUtil.getDocument(previewPsiFile);
+        currentSqlDocument = DocumentUtil.getDocument(previewPsiFile);
 
 
-        statementViewer = (EditorEx) EditorFactory.getInstance().createViewer(statementDocument, project);
-        statementViewer.setEmbeddedIntoDialogWrapper(true);
-        JScrollPane viewerScrollPane = statementViewer.getScrollPane();
+        currentSqlViewer = (EditorEx) EditorFactory.getInstance().createViewer(currentSqlDocument, project);
+        currentSqlViewer.setEmbeddedIntoDialogWrapper(true);
+        JScrollPane viewerScrollPane = currentSqlViewer.getScrollPane();
         SyntaxHighlighter syntaxHighlighter = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
-        EditorColorsScheme colorsScheme = statementViewer.getColorsScheme();
-        statementViewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
+        EditorColorsScheme colorsScheme = currentSqlViewer.getColorsScheme();
+        currentSqlViewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
         //statementViewer.setBackgroundColor(colorsScheme.getColor(ColorKey.find("CARET_ROW_COLOR")));
         viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         //viewerScrollPane.setBorder(null);
-        viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(statementViewer), 4, false));
+        viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(currentSqlViewer), 4, false));
 
-        EditorSettings settings = statementViewer.getSettings();
+        EditorSettings settings = currentSqlViewer.getSettings();
         settings.setFoldingOutlineShown(false);
         settings.setLineMarkerAreaShown(false);
         settings.setLineNumbersShown(false);
@@ -134,17 +134,18 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         settings.setDndEnabled(false);
         settings.setAdditionalLinesCount(2);
         settings.setRightMarginShown(false);
-        statementViewer.getComponent().setFocusable(false);
-        statementViewerPanel.add(statementViewer.getComponent(), BorderLayout.CENTER);
+        currentSqlViewer.getComponent().setFocusable(false);
+        statementViewerPanel.add(currentSqlViewer.getComponent(), BorderLayout.CENTER);
     }
 
     @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            EditorFactory.getInstance().releaseEditor(statementViewer);
-            statementViewer = null;
-            statementDocument = null;
+            EditorFactory.getInstance().releaseEditor(currentSqlViewer);
+            currentSqlViewer = null;
+            currentSqlFile = null;
+            currentSqlDocument = null;
         }
 
 

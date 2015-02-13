@@ -162,6 +162,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             editorTable.revalidate();
             editorTable.repaint();
             editorTable.accommodateColumnsSize();
+            editorTable.restoreSelection();
         }
     }
 

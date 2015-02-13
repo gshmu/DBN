@@ -12,7 +12,7 @@ public class ChainElement<T extends ChainElement<T>> {
         }
     }
 
-    public int getIndex() {
+    public synchronized int getIndex() {
         if (index == -1) {
             T child = (T) this;
             while (child != null) {
