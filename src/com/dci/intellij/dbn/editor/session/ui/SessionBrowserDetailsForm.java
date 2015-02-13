@@ -5,19 +5,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import java.awt.BorderLayout;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
+import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
 import com.dci.intellij.dbn.editor.session.SessionBrowserStatementVirtualFile;
+import com.dci.intellij.dbn.editor.session.details.SessionDetailsTable;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
@@ -26,6 +31,7 @@ import com.intellij.openapi.editor.EditorSettings;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -36,15 +42,15 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JPanel mailPanel;
     private JPanel statementViewerPanel;
     private JBScrollPane sessionDetailsTablePane;
+    private SessionBrowserStatementVirtualFile previewFile;
     private Document statementDocument;
     private EditorEx statementViewer;
     private SessionBrowser sessionBrowser;
-    private DBNTable sessionDetailsTable;
+    private SessionDetailsTable sessionDetailsTable;
 
     public SessionBrowserDetailsForm(SessionBrowser sessionBrowser) {
         this.sessionBrowser = sessionBrowser;
-        SessionDetailsTableModel sessionDetailsTableModel = new SessionDetailsTableModel(null);
-        sessionDetailsTable = new DBNTable(sessionBrowser.getProject(), sessionDetailsTableModel, false);
+        sessionDetailsTable = new SessionDetailsTable(sessionBrowser.getProject());
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
         sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
 
@@ -53,9 +59,35 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     }
 
 
-    public void update(@Nullable SessionBrowserModelRow selectedRow) {
+    public void update(@Nullable final SessionBrowserModelRow selectedRow) {
         SessionDetailsTableModel model = new SessionDetailsTableModel(selectedRow);
         sessionDetailsTable.setModel(model);
+        sessionDetailsTable.accommodateColumnsSize();
+        if (selectedRow == null) {
+            setPreviewText("");
+        } else {
+            final Object sessionId = selectedRow.getSessionId();
+            final Project project = sessionBrowser.getProject();
+            new BackgroundTask(project, "Loading session current SQL", true) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+                    String schemaName = selectedRow.getSchema();
+                    DBSchema schema = null;
+                    if (StringUtil.isNotEmpty(schemaName)) {
+                        schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+                    }
+
+
+                    SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
+                    String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+                    if (sessionId.equals(sessionBrowser.getSelectedSessionId())) {
+                        previewFile.setCurrentSchema(schema);
+                        setPreviewText(sql);
+                    }
+                }
+            }.start();
+        }
     }
 
     private void setPreviewText(final String text) {
@@ -75,7 +107,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     private void createStatementViewer() {
         ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         Project project = sessionBrowser.getProject();
-        SessionBrowserStatementVirtualFile previewFile = new SessionBrowserStatementVirtualFile(connectionHandler, "select * from dual");
+        previewFile = new SessionBrowserStatementVirtualFile(connectionHandler, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), previewFile, true);
         PsiFile previewPsiFile = previewFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 

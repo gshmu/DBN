@@ -13,6 +13,10 @@ public class SessionDetailsTableModel implements DBNTableModel {
     private String host = "";
     private String status = "";
 
+    public SessionDetailsTableModel() {
+        this(null);
+    }
+
     public SessionDetailsTableModel(@Nullable SessionBrowserModelRow row) {
         if (row == null) {
             sessionId = "";

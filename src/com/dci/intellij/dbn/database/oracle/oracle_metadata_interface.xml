@@ -1842,6 +1842,7 @@
                                   serial#,
                                   status,
                                   username,
+                                  schemaname,
                                   last_call_et,
                                   command,
                                   machine,
@@ -1859,6 +1860,7 @@
                       vs.sid SESSION_ID,
                       vs.serial# SERIAL_NUMBER,
                       vs.username "USER",
+                      vs.schemaname "SCHEMA",
                       vs.osuser OS_USER,
                       vs.machine HOST,
                       vs.module MODULE,
@@ -1968,6 +1970,19 @@
                       vs.type != 'BACKGROUND'
                   ORDER BY 1) sub1
             ORDER BY 9 ASC
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="session-sql" is-prepared-statement="true" timeout="10">
+        <statement>
+            select replace (q.SQL_FULLTEXT, chr (0)) sql_statement
+            from
+                GV$SESSION s,
+                GV$SQL q
+            where
+                s.SQL_ADDRESS = q.ADDRESS and
+                s.SQL_HASH_VALUE = q.HASH_VALUE and
+                s.SID = {0}
         </statement>
     </statement-execution-processor>
 

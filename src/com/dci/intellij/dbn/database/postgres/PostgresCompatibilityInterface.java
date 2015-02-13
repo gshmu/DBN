@@ -34,6 +34,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
         switch (feature) {
             case SESSION_BROWSING: return true;
             case SESSION_KILL: return true;
+            case SESSION_CURRENT_SQL: return true;
             default: return false;
         }
     }

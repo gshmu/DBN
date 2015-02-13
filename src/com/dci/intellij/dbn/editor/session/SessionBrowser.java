@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
+import com.dci.intellij.dbn.editor.session.ui.SessionBrowserDetailsForm;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
@@ -358,6 +359,19 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return tableModel == null ? 0 : tableModel.getState().getRefreshInterval();
     }
 
+    @Nullable
+    public Object getSelectedSessionId() {
+        SessionBrowserTable editorTable = getEditorTable();
+        if (editorTable != null) {
+            if (editorTable.getSelectedRowCount() == 1) {
+                int rowIndex = editorTable.getSelectedRow();
+                SessionBrowserModelRow rowAtIndex = editorTable.getModel().getRowAtIndex(rowIndex);
+                return rowAtIndex.getSessionId();
+            }
+        }
+        return null;
+    }
+
     private class RefreshTask extends TimerTask {
         public void run() {
             loadSessions(false);
@@ -368,9 +382,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         SessionBrowserForm editorForm = getEditorForm();
         if (editorForm != null) {
             SessionBrowserTable editorTable = editorForm.getEditorTable();
+            SessionBrowserDetailsForm detailsForm = editorForm.getDetailsForm();
             if (editorTable.getSelectedRowCount() == 1) {
                 SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
-                editorForm.getDetailsForm().update(selectedRow);
+                detailsForm.update(selectedRow);
+            } else {
+                detailsForm.update(null);
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -71,6 +73,27 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
         fileEditorManager.openFile(sessionBrowserFile, true);
+    }
+
+    public String loadSessionCurrentSql(ConnectionHandler connectionHandler, Object sessionId) {
+        try {
+            DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
+            DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
+            if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_CURRENT_SQL)) {
+                DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+
+                Connection connection = connectionHandler.getStandaloneConnection();
+                ResultSet resultSet = metadataInterface.loadSessionCurrentSql(sessionId, connection);
+                if (resultSet.next()) {
+                    return resultSet.getString(1);
+                }
+            } else {
+                return "";
+            }
+        } catch (SQLException e) {
+            NotificationUtil.sendErrorNotification(connectionHandler.getProject(), "Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
+        }
+        return "";
     }
 
     public void interruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {

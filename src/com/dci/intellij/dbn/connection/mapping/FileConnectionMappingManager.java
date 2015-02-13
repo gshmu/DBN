@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterVirtualFile;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -32,8 +31,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
-import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -126,23 +123,9 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     public ConnectionHandler getActiveConnection(@NotNull VirtualFile virtualFile) {
         // if the file is a database content file then get the connection from the underlying database object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
-            if (virtualFile instanceof DBContentVirtualFile) {
-                DBContentVirtualFile contentFile = (DBContentVirtualFile) virtualFile;
-                return contentFile.getActiveConnection();
-            }
-            if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-                return databaseFile.getActiveConnection();
-            }
-
-            if (virtualFile instanceof DBConsoleVirtualFile) {
-                DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
-                return sqlConsoleFile.getConnectionHandler();
-            }
-
-            if (virtualFile instanceof DatasetFilterVirtualFile) {
-                DatasetFilterVirtualFile filterVirtualFile = (DatasetFilterVirtualFile) virtualFile;
-                return filterVirtualFile.getConnectionHandler();
+            if (virtualFile instanceof FileConnectionMappingProvider) {
+                FileConnectionMappingProvider connectionMappingProvider = (FileConnectionMappingProvider) virtualFile;
+                return connectionMappingProvider.getActiveConnection();
             }
         }
 
@@ -183,20 +166,9 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     public DBSchema getCurrentSchema(@NotNull VirtualFile virtualFile) {
         // if the file is a database content file then get the schema from the underlying schema object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
-            if (virtualFile instanceof DBContentVirtualFile) {
-                DBContentVirtualFile contentFile = (DBContentVirtualFile) virtualFile;
-                return contentFile.getCurrentSchema();
-            }
-
-            if (virtualFile instanceof DBConsoleVirtualFile) {
-                DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
-                return sqlConsoleFile.getCurrentSchema();
-            }
-
-
-            if (virtualFile instanceof DatasetFilterVirtualFile) {
-                DatasetFilterVirtualFile filterVirtualFile = (DatasetFilterVirtualFile) virtualFile;
-                return filterVirtualFile.getDataset().getSchema();
+            if (virtualFile instanceof FileConnectionMappingProvider) {
+                FileConnectionMappingProvider connectionMappingProvider = (FileConnectionMappingProvider) virtualFile;
+                return connectionMappingProvider.getCurrentSchema();
             }
         }
 

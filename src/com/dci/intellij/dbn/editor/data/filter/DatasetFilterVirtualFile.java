@@ -12,10 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -29,7 +31,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DatasetFilterVirtualFile extends VirtualFile implements DBParseableVirtualFile {
+public class DatasetFilterVirtualFile extends VirtualFile implements DBParseableVirtualFile, FileConnectionMappingProvider {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private DBObjectRef<DBDataset> datasetRef;
@@ -75,6 +77,17 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
 
     public ConnectionHandler getConnectionHandler() {
         return datasetRef.lookupConnectionHandler();
+    }
+
+    @Override
+    public ConnectionHandler getActiveConnection() {
+        return getConnectionHandler();
+    }
+
+    @Override
+    public DBSchema getCurrentSchema() {
+        DBDataset dataset = getDataset();
+        return dataset == null ? null : dataset.getSchema();
     }
 
     @NotNull

@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
+import com.dci.intellij.dbn.language.common.SimpleTokenType;
+import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -32,6 +34,7 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.impl.source.tree.TreeElement;
 
 public class FormattingBlock implements Block {
     private PsiElement psiElement;
@@ -197,6 +200,27 @@ public class FormattingBlock implements Block {
             return null;
         }
 
+        DBLanguage language = getLanguage();
+        if (language != null) {
+
+            // DOT, COMMA spacing
+            SharedTokenTypeBundle sharedTokenTypes = language.getSharedTokenTypes();
+            SimpleTokenType chrDot = sharedTokenTypes.getChrDot();
+            SimpleTokenType chrComma = sharedTokenTypes.getChrComma();
+            SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
+            SimpleTokenType rightParenthesis = sharedTokenTypes.getChrRightParenthesis();
+
+            if (is(leftPsiElement, chrDot)) return SpacingDefinition.NO_SPACE.getValue();
+            if (is(rightPsiElement, chrDot)) return SpacingDefinition.NO_SPACE.getValue();
+
+            if (is(leftPsiElement, chrComma)) return SpacingDefinition.MIN_ONE_SPACE.getValue();
+            if (is(rightPsiElement, chrComma)) return SpacingDefinition.NO_SPACE.getValue();
+
+            if (is(leftPsiElement, leftParenthesis)) return SpacingDefinition.NO_SPACE.getValue();
+            if (is(rightPsiElement, rightParenthesis)) return SpacingDefinition.NO_SPACE.getValue();
+
+        }
+
         Spacing spacingAfter = leftBlock.getSpacingAfterAttribute();
         if (spacingAfter != null) {
             return spacingAfter;
@@ -231,6 +255,28 @@ public class FormattingBlock implements Block {
             }
         }
         return SpacingDefinition.ONE_SPACE.getValue();
+    }
+
+    private boolean is(PsiElement psiElement, TokenType tokenType) {
+        if (psiElement instanceof TreeElement) {
+            TreeElement treeElement = (TreeElement) psiElement;
+            return treeElement.getElementType() == tokenType;
+        }
+        return false;
+    }
+
+    @Nullable
+    private DBLanguage getLanguage() {
+        if (psiElement instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiElement;
+            return databasePsiFile.getDBLanguage();
+        }
+
+        if (psiElement instanceof BasePsiElement) {
+            BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+            return basePsiElement.getLanguage();
+        }
+        return null;
     }
 
     private BasePsiElement getParentPsiElement(PsiElement psiElement) {
