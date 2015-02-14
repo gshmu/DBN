@@ -95,6 +95,7 @@ public enum DBObjectType implements DynamicContentType {
     LABEL(DatabaseObjectTypeId.LABEL, "label", "labels", null, null, false),
     WINDOW(DatabaseObjectTypeId.WINDOW, "window", "windows", null, null, false),
 
+    NON_EXISTENT(DatabaseObjectTypeId.NON_EXISTENT, "non-existent", null, null, null, true),
     UNKNOWN(DatabaseObjectTypeId.UNKNOWN, "unknown", null, null, null, true),
     NONE(DatabaseObjectTypeId.NONE, "none", null, null, null, true),
     ANY(DatabaseObjectTypeId.ANY, "any", "dependencies", null, null, true);

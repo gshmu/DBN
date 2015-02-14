@@ -79,6 +79,7 @@ public enum DatabaseObjectTypeId {
     EXCEPTION,
     WINDOW,
 
+    NON_EXISTENT,
     UNKNOWN,
     NONE,
     ANY
