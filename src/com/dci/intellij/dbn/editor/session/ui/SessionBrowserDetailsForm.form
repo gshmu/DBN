@@ -20,7 +20,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="e399" binding="statementViewerPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="e399" binding="sessionDetailsTabsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
               <splitpane position="right"/>
             </constraints>
