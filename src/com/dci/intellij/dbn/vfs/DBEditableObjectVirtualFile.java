@@ -96,7 +96,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                                     new SimpleTask() {
                                         @Override
                                         public void execute() {
-                                            if (getOption() == DialogWrapper.OK_EXIT_CODE) {
+                                            if (getResult() == DialogWrapper.OK_EXIT_CODE) {
                                                 fileAttachmentManager.createDDLFile(object);
                                             }
                                         }

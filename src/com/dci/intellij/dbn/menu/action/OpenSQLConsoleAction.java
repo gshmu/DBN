@@ -89,7 +89,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                             new SimpleTask() {
                                 @Override
                                 public void execute() {
-                                    if (getOption() == 0) {
+                                    if (getResult() == 0) {
                                         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
                                         settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
                                     }

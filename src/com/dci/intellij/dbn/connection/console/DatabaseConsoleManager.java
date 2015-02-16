@@ -79,7 +79,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         SimpleTask deleteTask = new SimpleTask() {
             @Override
             public void execute() {
-                if (getOption() == 0) {
+                if (getResult() == 0) {
                     FileEditorManager.getInstance(project).closeFile(consoleFile);
                     ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
                     String fileName = consoleFile.getName();

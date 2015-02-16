@@ -44,7 +44,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *                       Execution                       *
      *********************************************************/
 
-    public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask callback) {
+    public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask<ExplainPlanResult> callback) {
         BackgroundTask explainTask = new BackgroundTask(getProject(), "Extracting explain plan for " + executable.getElementType().getDescription(), false, true) {
             public void execute(@NotNull ProgressIndicator progressIndicator) {
                 initProgressIndicator(progressIndicator, true);
@@ -82,6 +82,9 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                     if (callback == null) {
                         ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
                         executionManager.addExplainPlanResult(explainPlanResult);
+                    } else {
+                        callback.setResult(explainPlanResult);
+                        callback.start();
                     }
                 }
             }

@@ -48,7 +48,7 @@ public abstract class ConnectionAction extends SimpleTask {
                         new SimpleTask() {
                             @Override
                             public void execute() {
-                                if (getOption() == 0) {
+                                if (getResult() == 0) {
                                     connectionHandler.setAllowConnection(true);
                                     ConnectionAction.this.execute();
                                 }

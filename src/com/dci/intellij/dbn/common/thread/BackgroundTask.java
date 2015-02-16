@@ -15,8 +15,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 
-public abstract class BackgroundTask extends Task.Backgroundable implements RunnableTask {
+public abstract class BackgroundTask<T> extends Task.Backgroundable implements RunnableTask<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+    private T result;
 
     private static PerformInBackgroundOption START_IN_BACKGROUND = new PerformInBackgroundOption() {
         public boolean shouldStartInBackground() { return true;}
@@ -34,6 +35,17 @@ public abstract class BackgroundTask extends Task.Backgroundable implements Runn
 
     public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground) {
         this(project, title, startInBackground, false);
+    }
+
+
+    @Override
+    public void setResult(T result) {
+        this.result = result;
+    }
+
+    @Override
+    public T getResult() {
+        return result;
     }
 
     @Override

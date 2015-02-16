@@ -63,7 +63,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                         @Override
                         public void execute() {
                             successCallback.start();
-                            if (getOption() == 1) {
+                            if (getResult() == 1) {
                                 try {
                                     Desktop.getDesktop().open(file);
                                 } catch (IOException e) {

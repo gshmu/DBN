@@ -149,7 +149,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                 new SimpleTask() {
                     @Override
                     public void execute() {
-                        if (getOption() == 0) {
+                        if (getResult() == 0) {
                             try {
                                 Element element = new Element("state");
                                 projectSettings.writeConfiguration(element);
@@ -180,7 +180,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     new SimpleTask() {
                         @Override
                         public void execute() {
-                            if (getOption() == 0) {
+                            if (getResult() == 0) {
                                 try {
                                     Element element = new Element("state");
                                     ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();

@@ -128,7 +128,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                 options, 0, new SimpleTask() {
                                     @Override
                                     public void execute() {
-                                        if (getOption() == 0) {
+                                        if (getResult() == 0) {
                                             databaseFile.saveChanges();
                                         }
                                     }
