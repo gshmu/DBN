@@ -119,7 +119,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                         new SimpleTask() {
                             @Override
                             public void execute() {
-                                if (getOption() == 0) {
+                                if (getResult() == 0) {
                                     performInitialize(
                                             executionInput,
                                             executor,

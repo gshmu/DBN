@@ -104,7 +104,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         ConnectionAction dropObjectAction = new ConnectionAction(object) {
             @Override
             public void execute() {
-                if (getOption() == 0) {
+                if (getResult() == 0) {
                     new BackgroundTask(object.getProject(), "Dropping " + object.getQualifiedNameWithType(), false) {
                         public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                             ConnectionHandler connectionHandler = getConnectionHandler();

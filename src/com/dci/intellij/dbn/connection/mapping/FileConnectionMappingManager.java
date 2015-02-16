@@ -297,7 +297,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             new SimpleTask() {
                                 @Override
                                 public void execute() {
-                                    if (getOption() == 0) {
+                                    if (getResult() == 0) {
                                         promptConnectionSelector(file, false, true,
                                                 new SimpleTask() {
                                                     @Override
@@ -322,7 +322,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             new SimpleTask() {
                                 @Override
                                 public void execute() {
-                                    if (getOption() == 0) {
+                                    if (getResult() == 0) {
                                         promptSchemaSelector(file, callback);
                                     }
                                 }

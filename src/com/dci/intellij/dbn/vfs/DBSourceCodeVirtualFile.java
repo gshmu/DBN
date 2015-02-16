@@ -111,7 +111,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                             new SimpleTask() {
                                 @Override
                                 public void execute() {
-                                    if (getOption() == 0) {
+                                    if (getResult() == 0) {
                                         reloadAndUpdateEditors(false);
                                     }
                                 }
