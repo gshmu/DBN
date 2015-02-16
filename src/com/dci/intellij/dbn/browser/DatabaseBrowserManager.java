@@ -31,8 +31,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -254,6 +254,13 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                     navigateToElement(databaseFile.getObject());
                 }
+                else  if (file instanceof DBVirtualFile) {
+                    DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
+                    ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
+                    if (connectionHandler!= null && !connectionHandler.isDisposed()) {
+                        navigateToElement(connectionHandler.getObjectBundle());
+                    }
+                }
             }
         }
 
@@ -267,14 +274,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
                         navigateToElement(databaseFile.getObject());
                     }
-
-                    if (newFile instanceof DBConsoleVirtualFile) {
-                        DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) newFile;
-                        ConnectionHandler connectionHandler = sqlConsoleFile.getConnectionHandler();
+                    else  if (newFile instanceof DBVirtualFile) {
+                        DBVirtualFile databaseVirtualFile = (DBVirtualFile) newFile;
+                        ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                         if (connectionHandler!= null && !connectionHandler.isDisposed()) {
                             navigateToElement(connectionHandler.getObjectBundle());
                         }
-
                     }
                 }
             }

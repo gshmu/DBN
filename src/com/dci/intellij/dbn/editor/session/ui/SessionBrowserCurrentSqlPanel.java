@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import java.awt.BorderLayout;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -32,13 +39,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private JPanel actionsPanel;
@@ -179,10 +179,12 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     @Override
     public void dispose() {
-        super.dispose();
-        EditorFactory.getInstance().releaseEditor(viewer);
-        viewer = null;
-        virtualFile = null;
-        document = null;
+        if (!isDisposed()) {
+            super.dispose();
+            EditorFactory.getInstance().releaseEditor(viewer);
+            viewer = null;
+            virtualFile = null;
+            document = null;
+        }
     }
 }
