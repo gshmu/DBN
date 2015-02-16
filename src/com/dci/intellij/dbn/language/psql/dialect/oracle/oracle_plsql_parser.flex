@@ -52,7 +52,7 @@ digit = [0-9]
 INTEGER = {digit}+("e"{sign}?{digit}+)?
 NUMBER = {INTEGER}?"."{digit}+(("e"{sign}?{digit}+)|(("f"|"d"){ws}))?
 
-VARIABLE = ":"({IDENTIFIER}|{INTEGER})
+VARIABLE = ":"{INTEGER}
 SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 %state PLSQL, WRAPPED
@@ -71,7 +71,7 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 "wrapped"            { yybegin(WRAPPED); return tt.getSharedTokenTypes().getBlockComment();}
 
-//{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
+{VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
 {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
 
 
