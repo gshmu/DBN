@@ -98,8 +98,9 @@ public class ConnectionUtil {
             if (!databaseSettings.isOsAuthentication()) {
                 properties.put("user", databaseSettings.getUser());
                 properties.put("password", databaseSettings.getPassword());
-
             }
+            properties.put("ApplicationName", "Database Navigator");
+            properties.put("v$session.program", "Database Navigator");
             if (connectionProperties != null) {
                 properties.putAll(connectionProperties);
             }
