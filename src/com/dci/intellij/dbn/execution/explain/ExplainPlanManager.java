@@ -6,9 +6,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -19,7 +21,6 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
@@ -43,7 +44,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *                       Execution                       *
      *********************************************************/
 
-    public void explainPlan(FileEditor fileEditor, final ExecutablePsiElement executable) {
+    public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask callback) {
         BackgroundTask explainTask = new BackgroundTask(getProject(), "Extracting explain plan for " + executable.getElementType().getDescription(), false, true) {
             public void execute(@NotNull ProgressIndicator progressIndicator) {
                 initProgressIndicator(progressIndicator, true);
@@ -78,8 +79,10 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                         connectionHandler.freePoolConnection(connection);
                     }
 
-                    ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-                    executionManager.addExplainPlanResult(explainPlanResult);
+                    if (callback == null) {
+                        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+                        executionManager.addExplainPlanResult(explainPlanResult);
+                    }
                 }
             }
         };

@@ -1,8 +1,16 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTable;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTableModel;
@@ -12,11 +20,6 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 
 public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JPanel mailPanel;
@@ -46,6 +49,17 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         currentSqlTabInfo.setIcon(Icons.FILE_SQL_CONSOLE);
         currentSqlTabInfo.setObject(currentSqlPanel);
         detailsTabbedPane.addTab(currentSqlTabInfo);
+
+        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        if (compatibilityInterface.supportsFeature(DatabaseFeature.EXPLAIN_PLAN)) {
+            TabInfo explainPlanTabInfo = new TabInfo(new JPanel());
+            explainPlanTabInfo.setText("Explain Plan");
+            explainPlanTabInfo.setIcon(Icons.EXPLAIN_PLAN_RESULT);
+            //explainPlanTabInfo.setObject(currentSqlPanel);
+            detailsTabbedPane.addTab(explainPlanTabInfo);
+
+        }
 
         Disposer.register(this, sessionDetailsTable);
         Disposer.register(this, currentSqlPanel);

@@ -52,7 +52,7 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
         FileEditor fileEditor = EditorUtil.getFileEditor(editor);
         if (executable != null && fileEditor != null) {
             ExplainPlanManager explainPlanManager = ExplainPlanManager.getInstance(project);
-            explainPlanManager.explainPlan(fileEditor, executable);
+            explainPlanManager.explainPlan(executable, null);
         }
     }
 
