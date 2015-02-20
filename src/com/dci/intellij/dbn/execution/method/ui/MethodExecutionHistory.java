@@ -3,18 +3,15 @@ package com.dci.intellij.dbn.execution.method.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
 
 public class MethodExecutionHistory implements PersistentStateElement<Element>, Disposable{
     private List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
@@ -105,7 +102,8 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
             Element configElement = (Element) object;
             MethodExecutionInput executionInput = new MethodExecutionInput();
             executionInput.readConfiguration(configElement);
-            if (executionInput.getMethodRef().getSchemaName() != null) {
+            DBMethodRef methodRef = executionInput.getMethodRef();
+            if (methodRef.lookupConnectionHandler() != null && methodRef.getSchemaName() != null) {
                 executionInputs.add(executionInput);
             }
         }

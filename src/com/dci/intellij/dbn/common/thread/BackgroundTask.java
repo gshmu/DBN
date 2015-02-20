@@ -59,12 +59,12 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         int priority = Thread.currentThread().getPriority();
         try {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            progressIndicator.setFraction(0.1);
             progressIndicator.setIndeterminate(true);
             execute(progressIndicator);
-        } catch (ProcessCanceledException e) {
+        } catch (ProcessCanceledException | InterruptedException e) {
             // no action required here
-        } catch (InterruptedException e) {
-            // no action required here
+            LOGGER.info(getTitle() + " interrupted");
         } catch (Exception e) {
             LOGGER.error("Error executing background operation.", e);
         } finally {

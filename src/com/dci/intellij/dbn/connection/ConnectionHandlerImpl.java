@@ -343,11 +343,14 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
             try {
                 interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
-                interfaceProvider.setProject(getProject());
             } catch (SQLException e) {
 
             }
         }
+        if (interfaceProvider != null) {
+            interfaceProvider.setProject(getProject());
+        }
+
         // do not initialize
         return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;
     }
