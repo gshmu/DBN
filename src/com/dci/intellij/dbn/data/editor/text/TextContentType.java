@@ -33,7 +33,8 @@ public class TextContentType implements Selectable<TextContentType> {
 
     public static TextContentType get(Project project, String contentTypeName) {
         DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(project).getQualifiedEditorSettings();
-        return qualifiedEditorSettings.getContentType(contentTypeName);
+        TextContentType contentType = qualifiedEditorSettings.getContentType(contentTypeName);
+        return contentType == null ? getPlainText(project) : contentType;
     }
 
     public static TextContentType getPlainText(Project project) {

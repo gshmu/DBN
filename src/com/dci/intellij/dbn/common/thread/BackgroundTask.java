@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -60,6 +61,8 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             progressIndicator.setIndeterminate(true);
             execute(progressIndicator);
+        } catch (ProcessCanceledException e) {
+            // no action required here
         } catch (InterruptedException e) {
             // no action required here
         } catch (Exception e) {
