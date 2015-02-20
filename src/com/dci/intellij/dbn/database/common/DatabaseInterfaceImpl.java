@@ -44,22 +44,35 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
 
     protected ResultSet executeQuery(Connection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
-        return executionProcessor.executeQuery(connection, forceExecution, arguments);
+        ResultSet result = executionProcessor.executeQuery(connection, forceExecution, arguments);
+        checkDisposed();
+        return result;
     }
 
     protected <T extends CallableStatementOutput> T executeCall(Connection connection, @Nullable T outputReader, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
-        return executionProcessor.executeCall(connection, outputReader, arguments);
+        T result = executionProcessor.executeCall(connection, outputReader, arguments);
+        checkDisposed();
+        return result;
     }
 
     protected boolean executeStatement(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
-        return executionProcessor.executeStatement(connection, arguments);
+        boolean result = executionProcessor.executeStatement(connection, arguments);
+        checkDisposed();
+        return result;
     }
 
     protected void executeUpdate(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
         executionProcessor.executeUpdate(connection, arguments);
+        checkDisposed();
+    }
+
+    private void checkDisposed() throws SQLException {
+        if (provider.getProject() == null || provider.getProject().isDisposed()) {
+            throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
+        }
     }
 
     public DatabaseInterfaceProvider getProvider() {

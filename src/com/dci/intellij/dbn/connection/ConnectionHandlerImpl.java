@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -325,7 +326,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     private void assertCanConnect() throws SQLException {
         if (!canConnect()) {
-            throw DBN_NOT_CONNECTED_EXCEPTION;
+            throw DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION;
         }
     }
 
@@ -342,12 +343,13 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
             try {
                 interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
+                interfaceProvider.setProject(getProject());
             } catch (SQLException e) {
-                // do not initialize 
-                return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;
+
             }
         }
-        return interfaceProvider;
+        // do not initialize
+        return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;
     }
 
     @Override

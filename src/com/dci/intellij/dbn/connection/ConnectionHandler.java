@@ -24,8 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public interface ConnectionHandler extends Disposable{
-    SQLException DBN_NOT_CONNECTED_EXCEPTION = new SQLException("DBN_NOT_CONNECTED_EXCEPTION");
-
     Project getProject();
     Connection getPoolConnection() throws SQLException;
     Connection getPoolConnection(DBSchema schema) throws SQLException;

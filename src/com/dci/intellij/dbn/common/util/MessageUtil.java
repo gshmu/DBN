@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -40,7 +41,15 @@ public class MessageUtil {
     }
 
     public static void showErrorDialog(@Nullable Project project, @Nullable String title, String message, @Nullable Exception exception) {
+        if (project != null && project.isDisposed()) {
+            return; // project is disposed
+        }
+
         if (exception != null) {
+            if (exception == DatabaseInterface.DBN_INTERRUPTED_EXCEPTION) {
+                return; // process was interrupted
+            }
+
             //String className = NamingUtil.getClassName(exception.getClass());
             //message = message + "\nCause: [" + className + "] " + exception.getMessage();
             message = message + "\n" + exception.getMessage().trim();

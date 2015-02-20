@@ -20,6 +20,7 @@ public class NamedPsiElement extends SequencePsiElement {
         super(astNode, elementType);
     }
 
+    @Nullable
     public String createSubjectList() {
         Set<IdentifierPsiElement> subjects = new THashSet<IdentifierPsiElement>();
         collectSubjectPsiElements(subjects);
