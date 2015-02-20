@@ -20,6 +20,7 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.TabsListener;
 
 public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JPanel mailPanel;
@@ -27,6 +28,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JBScrollPane sessionDetailsTablePane;
     private SessionDetailsTable sessionDetailsTable;
     private TabbedPane detailsTabbedPane;
+    private JPanel explainPlanPanel;
 
     private SessionBrowser sessionBrowser;
     private SessionBrowserCurrentSqlPanel currentSqlPanel;
@@ -53,19 +55,27 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsFeature(DatabaseFeature.EXPLAIN_PLAN)) {
+            explainPlanPanel = new JPanel(new BorderLayout());
             TabInfo explainPlanTabInfo = new TabInfo(new JPanel());
             explainPlanTabInfo.setText("Explain Plan");
             explainPlanTabInfo.setIcon(Icons.EXPLAIN_PLAN_RESULT);
             //explainPlanTabInfo.setObject(currentSqlPanel);
             detailsTabbedPane.addTab(explainPlanTabInfo);
-
         }
+
+        detailsTabbedPane.addListener(new TabsListener.Adapter(){
+            @Override
+            public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
+                if (newSelection.getText().equals("Explain Plan")) {
+
+                }
+            }
+        });
 
         Disposer.register(this, sessionDetailsTable);
         Disposer.register(this, currentSqlPanel);
         Disposer.register(this, detailsTabbedPane);
     }
-
 
     public void update(@Nullable final SessionBrowserModelRow selectedRow) {
         SessionDetailsTableModel model = new SessionDetailsTableModel(selectedRow);

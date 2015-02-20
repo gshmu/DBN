@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
 import com.dci.intellij.dbn.editor.session.SessionBrowserStatementVirtualFile;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
@@ -37,7 +38,6 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
@@ -47,6 +47,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
 
     private SessionBrowserStatementVirtualFile virtualFile;
+    private DBLanguagePsiFile psiFile;
     private Document document;
     private EditorEx viewer;
     private SessionBrowser sessionBrowser;
@@ -107,14 +108,18 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         }
     }
 
+    public DBLanguagePsiFile getPsiFile() {
+        return psiFile;
+    }
+
     private void createStatementViewer() {
         ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         Project project = sessionBrowser.getProject();
         virtualFile = new SessionBrowserStatementVirtualFile(connectionHandler, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
-        PsiFile previewPsiFile = virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
+        psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
-        document = DocumentUtil.getDocument(previewPsiFile);
+        document = DocumentUtil.getDocument(psiFile);
 
 
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
