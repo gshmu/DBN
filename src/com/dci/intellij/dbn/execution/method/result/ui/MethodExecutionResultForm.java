@@ -42,18 +42,18 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     private JTree argumentValuesTree;
     private JPanel argumentValuesPanel;
     private JPanel executionResultPanel;
-    private TabbedPane cursorOutputTabs;
+    private TabbedPane outputTabs;
 
 
     private MethodExecutionResult executionResult;
 
     public MethodExecutionResultForm(MethodExecutionResult executionResult) {
         this.executionResult = executionResult;
-        cursorOutputTabs = new TabbedPane(this);
+        outputTabs = new TabbedPane(this);
         createActionsPanel();
         updateCursorArgumentsPanel();
 
-        outputCursorsPanel.add(cursorOutputTabs, BorderLayout.CENTER);
+        outputCursorsPanel.add(outputTabs, BorderLayout.CENTER);
 
         argumentValuesPanel.setBorder(IdeBorderFactory.createBorder());
         updateStatusBarLabels();
@@ -61,7 +61,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
 
-        Disposer.register(this, cursorOutputTabs);
+        Disposer.register(this, outputTabs);
         Disposer.register(this, executionResult);
     }
 
@@ -105,7 +105,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     private void updateCursorArgumentsPanel() {
-        cursorOutputTabs.removeAllTabs();
+        outputTabs.removeAllTabs();
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";
         ConnectionHandler connectionHandler = getExecutionResult().getConnectionHandler();
@@ -124,7 +124,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             outputTabInfo.setText(outputConsole.getTitle());
             outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
             outputTabInfo.setObject(outputConsole);
-            cursorOutputTabs.addTab(outputTabInfo);
+            outputTabs.addTab(outputTabInfo);
 
             boolean isFirst = true;
             for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
@@ -138,9 +138,9 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     tabInfo.setText(argument.getName());
                     tabInfo.setIcon(argument.getIcon());
                     tabInfo.setObject(cursorResultForm);
-                    cursorOutputTabs.addTab(tabInfo);
+                    outputTabs.addTab(tabInfo);
                     if (isFirst) {
-                        cursorOutputTabs.select(tabInfo, false);
+                        outputTabs.select(tabInfo, false);
                         isFirst = false;
                     }
                 } else if (argumentValue.isLargeObject()) {
@@ -153,32 +153,32 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     tabInfo.setText(argument.getName());
                     tabInfo.setIcon(argument.getIcon());
                     tabInfo.setObject(largeValueResultForm);
-                    cursorOutputTabs.addTab(tabInfo);
+                    outputTabs.addTab(tabInfo);
                     if (isFirst) {
-                        cursorOutputTabs.select(tabInfo, false);
+                        outputTabs.select(tabInfo, false);
                         isFirst = false;
                     }
                 }
             }
 
-            cursorOutputTabs.revalidate();
-            cursorOutputTabs.repaint();
+            outputTabs.revalidate();
+            outputTabs.repaint();
         }
     }
 
     public void selectArgumentOutputTab(DBArgument argument) {
-        for (TabInfo tabInfo : cursorOutputTabs.getTabs()) {
+        for (TabInfo tabInfo : outputTabs.getTabs()) {
             Object object = tabInfo.getObject();
             if (object instanceof MethodExecutionCursorResultForm) {
                 MethodExecutionCursorResultForm cursorResultForm = (MethodExecutionCursorResultForm) object;
                 if (cursorResultForm.getArgument().equals(argument)) {
-                    cursorOutputTabs.select(tabInfo, true);
+                    outputTabs.select(tabInfo, true);
                     break;
                 }
             } else if (object instanceof MethodExecutionLargeValueResultForm) {
                 MethodExecutionLargeValueResultForm largeValueResultForm = (MethodExecutionLargeValueResultForm) object;
                 if (largeValueResultForm.getArgument().equals(argument)) {
-                    cursorOutputTabs.select(tabInfo, true);
+                    outputTabs.select(tabInfo, true);
                     break;
                 }
             }

@@ -23,6 +23,34 @@ public class TabbedPane extends JBTabsImpl {
 
     @NotNull
     @Override
+    public TabInfo addTab(TabInfo info, int index) {
+        registerDisposable(info);
+        return super.addTab(info, index);
+    }
+
+    @NotNull
+    @Override
+    public TabInfo addTab(TabInfo info) {
+        registerDisposable(info);
+        return super.addTab(info);
+    }
+
+    @Override
+    public TabInfo addTabSilently(TabInfo info, int index) {
+        registerDisposable(info);
+        return super.addTabSilently(info, index);
+    }
+
+    private void registerDisposable(TabInfo info) {
+        Object object = info.getObject();
+        if (object instanceof Disposable) {
+            Disposable disposable = (Disposable) object;
+            Disposer.register(this, disposable);
+        }
+    }
+
+    @NotNull
+    @Override
     public ActionCallback removeTab(TabInfo tabInfo) {
         Object object = tabInfo.getObject();
         ActionCallback actionCallback = super.removeTab(tabInfo);
@@ -34,16 +62,10 @@ public class TabbedPane extends JBTabsImpl {
         return actionCallback;
     }
 
+
+
     @Override
     public void dispose() {
-        for (TabInfo tabInfo : getTabs()) {
-            Object object = tabInfo.getObject();
-            if (object instanceof Disposable) {
-                Disposable disposable = (Disposable) object;
-                Disposer.dispose(disposable);
-                tabInfo.setObject(null);
-            }
-        }
         super.dispose();
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -17,6 +18,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 
 public class ConnectionPool implements Disposable {
 
@@ -51,7 +53,7 @@ public class ConnectionPool implements Disposable {
                 Connection connection = ConnectionUtil.connect(connectionHandler);
                 standaloneConnection = new ConnectionWrapper(connection);
                 NotificationUtil.sendInfoNotification(
-                        connectionHandler.getProject(),
+                        getProject(),
                         Constants.DBN_TITLE_PREFIX + "Connected",
                         "Connected to database \"{0}\"",
                         connectionHandler.getName());
@@ -65,9 +67,14 @@ public class ConnectionPool implements Disposable {
 
     private void notifyStatusChange() {
         if (!isDisposed) {
-            ConnectionStatusListener changeListener = EventManager.notify(connectionHandler.getProject(), ConnectionStatusListener.TOPIC);
+            ConnectionStatusListener changeListener = EventManager.notify(getProject(), ConnectionStatusListener.TOPIC);
             changeListener.statusChanged(connectionHandler.getId());
         }
+    }
+
+    @Nullable
+    private Project getProject() {
+        return connectionHandler == null ? null : connectionHandler.getProject();
     }
 
     public synchronized Connection allocateConnection() throws SQLException {

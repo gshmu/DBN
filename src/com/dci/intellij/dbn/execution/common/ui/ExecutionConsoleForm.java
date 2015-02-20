@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.util.List;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -34,10 +35,12 @@ import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -84,7 +87,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         public void configurationChanged() {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
+                ExecutionResult executionResult = getExecutionResult(tabInfo);
                 if (executionResult != null) {
                     ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
                     if (connectionHandler != null) {
@@ -110,11 +113,12 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
             for (TabInfo tabInfo : resultTabs.getTabs()) {
-                Object object = tabInfo.getObject();
-                if (object instanceof StatementExecutionResult) {
-                    StatementExecutionResult executionResult = (StatementExecutionResult) object;
-                    if (executionResult.getExecutionProcessor().getPsiFile().equals(file)) {
-                        Icon icon = executionResult.getExecutionProcessor().isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                ExecutionResult executionResult = getExecutionResult(tabInfo);
+                if (executionResult instanceof StatementExecutionResult) {
+                    StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                    StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
+                    if (executionProcessor.getPsiFile().equals(file)) {
+                        Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
                         tabInfo.setIcon(icon);
                     }
                 }
@@ -145,17 +149,14 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
             if (canScrollToSource) {
                 if (newSelection != null) {
-                    ExecutionResult executionResult = (ExecutionResult) newSelection.getObject();
-                    if (executionResult != null) {
-                        if (executionResult instanceof StatementExecutionResult) {
-                            StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                            statementExecutionResult.navigateToEditor(false);
-                        }
+                    ExecutionResult executionResult = getExecutionResult(newSelection);
+                    if (executionResult instanceof StatementExecutionResult) {
+                        StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                        statementExecutionResult.navigateToEditor(false);
                     }
-
                 }
             }
-            if (oldSelection != null && newSelection != null && newSelection.getObject() instanceof DatabaseLogOutput) {
+            if (oldSelection != null && newSelection != null && getExecutionResult(newSelection) instanceof DatabaseLogOutput) {
                 newSelection.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
             }
 
@@ -171,7 +172,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     public synchronized void removeTab(TabInfo tabInfo) {
-        ExecutionResult executionResult = (ExecutionResult) tabInfo.getObject();
+        ExecutionResult executionResult = getExecutionResult(tabInfo);
         if (executionResult == null) {
             removeMessagesTab();
         } else {
@@ -286,7 +287,13 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     
     public ExecutionResult getSelectedExecutionResult() {
         TabInfo selectedInfo = resultTabs.getSelectedInfo();
-        return selectedInfo == null ? null : (ExecutionResult) selectedInfo.getObject();
+        return selectedInfo == null ? null : getExecutionResult(selectedInfo);
+    }
+
+    @Nullable
+    private ExecutionResult getExecutionResult(TabInfo tabInfo) {
+        ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
+        return executionResultForm == null ? null : executionResultForm.getExecutionResult();
     }
 
     /*********************************************************
@@ -344,9 +351,9 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
      *********************************************************/
     public void displayLogOutput(ConnectionHandler connectionHandler, String output) {
         for (TabInfo tabInfo : resultTabs.getTabs()) {
-            Object object = tabInfo.getObject();
-            if (object instanceof DatabaseLogOutput) {
-                DatabaseLogOutput logOutput = (DatabaseLogOutput) object;
+            ExecutionResult executionResult = getExecutionResult(tabInfo);
+            if (executionResult instanceof DatabaseLogOutput) {
+                DatabaseLogOutput logOutput = (DatabaseLogOutput) executionResult;
                 if (logOutput.getConnectionHandler() == connectionHandler) {
                     logOutput.write(output);
                     tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
@@ -357,21 +364,24 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         boolean messagesTabVisible = isMessagesTabVisible();
 
         DatabaseLogOutput logOutput = new DatabaseLogOutput(connectionHandler);
-        JComponent component = logOutput.getForm().getComponent();
-        TabInfo tabInfo = new TabInfo(component);
-        tabInfo.setObject(logOutput);
-        tabInfo.setText(logOutput.getName());
-        tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
+        DatabaseLogOutputForm form = logOutput.getForm(true);
+        if (form != null) {
+            JComponent component = form.getComponent();
+            TabInfo tabInfo = new TabInfo(component);
+            tabInfo.setObject(logOutput);
+            tabInfo.setText(logOutput.getName());
+            tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
 
-        EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-        if (visibilitySettings.getExecutionResultTabs().value()){
-            tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
-        } else {
-            tabInfo.setTabColor(null);
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            if (visibilitySettings.getExecutionResultTabs().value()){
+                tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
+            } else {
+                tabInfo.setTabColor(null);
+            }
+
+            resultTabs.addTab(tabInfo, messagesTabVisible ? 1 : 0);
+            logOutput.write(output);
         }
-
-        resultTabs.addTab(tabInfo, messagesTabVisible ? 1 : 0);
-        logOutput.write(output);
     }
 
     /*********************************************************
@@ -390,61 +400,77 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     public void addResultTab(ExecutionResult executionResult) {
-        JComponent component = executionResult.getForm().getComponent();
-        TabInfo tabInfo = new TabInfo(component);
-        tabInfo.setObject(executionResult);
-        EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-        if (visibilitySettings.getExecutionResultTabs().value()){
-            tabInfo.setTabColor(executionResult.getConnectionHandler().getEnvironmentType().getColor());
-        } else {
-            tabInfo.setTabColor(null);
+        ExecutionResultForm resultForm = executionResult.getForm(true);
+        if (resultForm != null) {
+            JComponent component = resultForm.getComponent();
+            TabInfo tabInfo = new TabInfo(component);
+            tabInfo.setObject(resultForm);
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            if (visibilitySettings.getExecutionResultTabs().value()){
+                tabInfo.setTabColor(executionResult.getConnectionHandler().getEnvironmentType().getColor());
+            } else {
+                tabInfo.setTabColor(null);
+            }
+            tabInfo.setText(executionResult.getName());
+            tabInfo.setIcon(executionResult.getIcon());
+            resultTabs.addTab(tabInfo);
+            selectResultTab(tabInfo);
         }
-        tabInfo.setText(executionResult.getName());
-        tabInfo.setIcon(executionResult.getIcon());
-        resultTabs.addTab(tabInfo);
-        selectResultTab(tabInfo);
     }
 
     public boolean containsResultTab(ExecutionResult executionProcessor) {
-        Component component = executionProcessor.getForm().getComponent();
-        return containsResultTab(component);
+        ExecutionResultForm resultForm = executionProcessor.getForm(false);
+        if (resultForm != null) {
+            Component component = resultForm.getComponent();
+            return containsResultTab(component);
+        }
+        return false;
     }
 
     public void removeResultTab(ExecutionResult executionResult) {
         try {
             canScrollToSource = false;
-            ExecutionResultForm resultComponent = executionResult.getForm();
-            TabInfo tabInfo = resultTabs.findInfo(resultComponent.getComponent());
-            if (resultTabs.getTabs().contains(tabInfo)) {
-                resultTabs.removeTab(tabInfo);
-                if (executionResult instanceof StatementExecutionResult) {
-                    StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                    StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
-                    if (executionInput != null && !executionInput.isDisposed()) {
-                        DBLanguagePsiFile file = executionInput.getExecutionProcessor().getPsiFile();
-                        DocumentUtil.refreshEditorAnnotations(file);
+            ExecutionResultForm resultForm = executionResult.getForm(false);
+            if (resultForm != null) {
+                TabInfo tabInfo = resultTabs.findInfo(resultForm.getComponent());
+                if (resultTabs.getTabs().contains(tabInfo)) {
+                    resultTabs.removeTab(tabInfo);
+                    if (executionResult instanceof StatementExecutionResult) {
+                        StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                        StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
+                        if (executionInput != null && !executionInput.isDisposed()) {
+                            DBLanguagePsiFile file = executionInput.getExecutionProcessor().getPsiFile();
+                            DocumentUtil.refreshEditorAnnotations(file);
+                        }
                     }
                 }
-                Disposer.dispose(resultComponent);
+                if (getTabCount() == 0) {
+                    ExecutionManager.getInstance(project).hideExecutionConsole();
+                }
             }
-            if (getTabCount() == 0) {
-                ExecutionManager.getInstance(project).hideExecutionConsole();
-            }
-
         } finally {
             canScrollToSource = true;
         }
     }
 
-    public void selectResultTab(ExecutionResult executionResult) {
-        executionResult.getForm().setExecutionResult(executionResult);
-        JComponent component = executionResult.getForm().getComponent();
-        TabInfo tabInfo = resultTabs.findInfo(component);
-        if (tabInfo != null) {
-            tabInfo.setText(executionResult.getName());
-            tabInfo.setIcon(executionResult.getIcon());
-            selectResultTab(tabInfo);
+    public <T extends ExecutionResult> void selectResultTab(T executionResult) {
+        ExecutionResultForm resultForm = executionResult.getForm(false);
+        if (resultForm != null) {
+            resultForm.setExecutionResult(executionResult);
+            resultForm = executionResult.getForm(false);
+            if (resultForm != null) {
+                JComponent component = resultForm.getComponent();
+                TabInfo tabInfo = resultTabs.findInfo(component);
+                if (tabInfo != null) {
+                    tabInfo.setText(executionResult.getName());
+                    tabInfo.setIcon(executionResult.getIcon());
+                    selectResultTab(tabInfo);
+                }
+
+            }
         }
+
+
     }
 
     /*********************************************************

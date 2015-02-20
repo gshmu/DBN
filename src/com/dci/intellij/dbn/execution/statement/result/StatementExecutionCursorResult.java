@@ -91,7 +91,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         resultPanel.updateVisibleComponents();
     }
 
-    public StatementExecutionResultForm getForm() {
+    public StatementExecutionResultForm getForm(boolean create) {
         return resultPanel;
     }
 

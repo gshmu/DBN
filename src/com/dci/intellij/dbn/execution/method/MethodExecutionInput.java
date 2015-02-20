@@ -56,9 +56,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public void initExecutionResult(boolean debug) {
-        MethodExecutionResultForm resultPanel = executionResult == null || executionResult.isDisposed() ? null : executionResult.getResultPanelNoCreate();
-        if (resultPanel != null && resultPanel.isDisposed()) resultPanel = null;
-        executionResult = new MethodExecutionResult(this, resultPanel, debug);
+        MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
+        executionResult = new MethodExecutionResult(this, resultForm, debug);
     }
 
     @Nullable

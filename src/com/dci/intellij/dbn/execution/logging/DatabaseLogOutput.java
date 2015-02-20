@@ -26,7 +26,7 @@ public class DatabaseLogOutput implements ExecutionResult {
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
-    public DatabaseLogOutputForm getForm() {
+    public DatabaseLogOutputForm getForm(boolean create) {
         if (logOutputForm == null) {
             logOutputForm = new DatabaseLogOutputForm(this);
             Disposer.register(this, logOutputForm);

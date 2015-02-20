@@ -49,7 +49,7 @@ import com.intellij.openapi.vfs.VirtualFile;
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class DatasetEditorManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    public static final DatasetLoadInstructions INITIAL_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
+    public static final DatasetLoadInstructions INITIAL_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, false, true);
     public static final DatasetLoadInstructions RELOAD_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, false);
     private ColumnSortingType recordViewColumnSortingType = ColumnSortingType.BY_INDEX;
     private boolean valuePreviewTextWrapping = true;

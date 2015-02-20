@@ -93,15 +93,12 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return null;
     }
 
-    public MethodExecutionResultForm getForm() {
-        if (resultPanel == null) {
+    @Nullable
+    public MethodExecutionResultForm getForm(boolean create) {
+        if (resultPanel == null && create) {
             resultPanel = new MethodExecutionResultForm(this);
         }
-        return resultPanel;
-    }
-
-    public MethodExecutionResultForm getResultPanelNoCreate() {
-        return resultPanel;
+        return resultPanel == null || resultPanel.isDisposed() ? null : resultPanel;
     }
 
     @NotNull
