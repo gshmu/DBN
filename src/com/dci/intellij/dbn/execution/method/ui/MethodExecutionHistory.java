@@ -103,9 +103,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
             MethodExecutionInput executionInput = new MethodExecutionInput();
             executionInput.readConfiguration(configElement);
             DBMethodRef methodRef = executionInput.getMethodRef();
-            if (methodRef.lookupConnectionHandler() != null && methodRef.getSchemaName() != null) {
-                executionInputs.add(executionInput);
-            }
+            executionInputs.add(executionInput);
         }
         Collections.sort(executionInputs);
 
@@ -122,9 +120,11 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         Element configsElement = new Element("execution-inputs");
         element.addContent(configsElement);
         for (MethodExecutionInput executionInput : this.executionInputs) {
-            Element configElement = new Element("execution-input");
-            executionInput.writeConfiguration(configElement);
-            configsElement.addContent(configElement);
+            if (executionInput.getConnectionHandler() != null) {
+                Element configElement = new Element("execution-input");
+                executionInput.writeConfiguration(configElement);
+                configsElement.addContent(configElement);
+            }
         }
 
         if (selection != null) {

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -36,7 +36,7 @@ import com.intellij.ui.content.ContentFactoryImpl;
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
-public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
+public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
     private ExecutionConsoleForm executionConsoleForm;
 
@@ -74,17 +74,19 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(getProject());
         ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
         if (toolWindow == null) {
-            toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, this, true);
+            toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, getProject(), true);
             toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
             toolWindow.setToHideOnEmptyContent(true);
         }
 
         if (toolWindow.getContentManager().getContents().length == 0) {
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            ContentFactory contentFactory = new ContentFactoryImpl();
-            Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
-            toolWindow.getContentManager().addContent(content);
-            toolWindow.setAvailable(true, null);
+            if (executionConsoleForm != null) {
+                ContentFactory contentFactory = new ContentFactoryImpl();
+                Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
+                toolWindow.getContentManager().addContent(content);
+                toolWindow.setAvailable(true, null);
+            }
         }
         return toolWindow;
     }
@@ -93,7 +95,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         new ConditionalLaterInvocator() {
             public void execute() {
                 showExecutionConsole();
-                getExecutionConsoleForm().addResult(compilerResult);
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                if (executionConsoleForm != null) {
+                    executionConsoleForm.addResult(compilerResult);
+                }
             }
         }.start();
     }
@@ -102,7 +107,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         new ConditionalLaterInvocator() {
             public void execute() {
                 showExecutionConsole();
-                getExecutionConsoleForm().addResults(compilerResults);
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                if (executionConsoleForm != null) {
+                    executionConsoleForm.addResults(compilerResults);
+                }
             }
         }.start();
     }
@@ -111,7 +119,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         new ConditionalLaterInvocator() {
             public void execute() {
                 showExecutionConsole();
-                getExecutionConsoleForm().addResult(explainPlanResult);
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                if (executionConsoleForm != null) {
+                    executionConsoleForm.addResult(explainPlanResult);
+                }
             }
         }.start();
     }
@@ -121,13 +132,15 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             public void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionResult.isLoggingActive()) {
-                    executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), executionResult.getLoggingOutput());
-                }
+                if (executionConsoleForm != null) {
+                    if (executionResult.isLoggingActive()) {
+                        executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), executionResult.getLoggingOutput());
+                    }
 
-                executionConsoleForm.addResult(executionResult);
-                if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
-                    executionResult.navigateToEditor(true);
+                    executionConsoleForm.addResult(executionResult);
+                    if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
+                        executionResult.navigateToEditor(true);
+                    }
                 }
             }
         }.start();
@@ -146,7 +159,9 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             public void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.addResult(executionResult);
+                if (executionConsoleForm != null) {
+                    executionConsoleForm.addResult(executionResult);
+                }
             }
         }.start();
     }
@@ -155,8 +170,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         new ConditionalLaterInvocator() {
             public void execute() {
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.selectResult(executionResult);
-                showExecutionConsole();
+                if (executionConsoleForm != null) {
+                    executionConsoleForm.selectResult(executionResult);
+                    showExecutionConsole();
+                }
             }
         }.start();
 
@@ -164,22 +181,29 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void removeMessagesTab() {
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-        executionConsoleForm.removeMessagesTab();
+        if (executionConsoleForm != null) {
+            executionConsoleForm.removeMessagesTab();
+        }
     }
 
     public void removeResultTab(ExecutionResult executionResult) {
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-        executionConsoleForm.removeResultTab(executionResult);
+        if (executionConsoleForm != null) {
+            executionConsoleForm.removeResultTab(executionResult);
+        }
     }
 
     public void selectResultTab(ExecutionResult executionResult) {
         showExecutionConsole();
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-        executionConsoleForm.selectResultTab(executionResult);
+        if (executionConsoleForm != null) {
+            executionConsoleForm.selectResultTab(executionResult);
+        }
     }
 
+    @Nullable
     public ExecutionConsoleForm getExecutionConsoleForm() {
-        if (executionConsoleForm == null) {
+        if (executionConsoleForm == null && !isDisposed()) {
             executionConsoleForm = new ExecutionConsoleForm(getProject());
         }
         return executionConsoleForm;
@@ -191,13 +215,14 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return "DBNavigator.Project.ExecutionManager";
     }
 
-    public void dispose() {
-        if (executionConsoleForm != null) {
-            executionConsoleForm.dispose();
-            executionConsoleForm = null;
-        }
+    @Override
+    public void disposeComponent() {
+        super.disposeComponent();
+        DisposerUtil.dispose(executionConsoleForm);
+        executionConsoleForm = null;
     }
 
+    @Nullable
     public ExecutionResult getSelectedExecutionResult() {
         return executionConsoleForm == null ? null : executionConsoleForm.getSelectedExecutionResult();
     }

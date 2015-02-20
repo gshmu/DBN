@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
+import com.intellij.openapi.project.Project;
 
 public class DatabaseInterfaceImpl implements DatabaseInterface{
     private String fileName;
@@ -70,7 +71,8 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     }
 
     private void checkDisposed() throws SQLException {
-        if (provider.getProject() == null || provider.getProject().isDisposed()) {
+        Project project = provider.getProject();
+        if (project == null || project.isDisposed()) {
             throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
         }
     }

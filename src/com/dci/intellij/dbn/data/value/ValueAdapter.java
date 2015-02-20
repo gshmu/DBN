@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.value;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,36 +36,47 @@ public abstract class ValueAdapter<T> {
         return REGISTRY.containsKey(genericDataType);
     }
 
-    public static ValueAdapter create(GenericDataType genericDataType) {
+    public static ValueAdapter create(GenericDataType genericDataType) throws SQLException {
         try {
             Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
             return valueAdapterClass.newInstance();
-        } catch (Exception e) {
-            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
-            return null;
+        } catch (Throwable e) {
+            handleException(e, genericDataType);
         }
+        return null;
     }
 
-    public static ValueAdapter create(GenericDataType genericDataType, ResultSet resultSet, int columnIndex) {
+    public static ValueAdapter create(GenericDataType genericDataType, ResultSet resultSet, int columnIndex) throws SQLException {
         try {
             Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
             Constructor<? extends ValueAdapter> constructor = valueAdapterClass.getConstructor(ResultSet.class, int.class);
             return constructor.newInstance(resultSet, columnIndex);
-        } catch (Exception e) {
-            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
-            return null;
+        } catch (Throwable e) {
+            handleException(e, genericDataType);
         }
+        return null;
     }
 
-    public static ValueAdapter create(GenericDataType genericDataType, CallableStatement callableStatement, int parameterIndex) {
+    public static ValueAdapter create(GenericDataType genericDataType, CallableStatement callableStatement, int parameterIndex) throws SQLException {
         Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
         try {
             Constructor<? extends ValueAdapter> constructor = valueAdapterClass.getConstructor(CallableStatement.class, int.class);
             return constructor.newInstance(callableStatement, parameterIndex);
-        } catch (Exception e) {
-            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
+        } catch (Throwable e) {
+            handleException(e, genericDataType);
             return null;
         }
+    }
 
+    private static void handleException(Throwable e, GenericDataType genericDataType) throws SQLException {
+        if (e instanceof InvocationTargetException) {
+            InvocationTargetException invocationTargetException = (InvocationTargetException) e;
+            e = invocationTargetException.getTargetException();
+        }
+        if (e instanceof SQLException) {
+            throw (SQLException) e;
+        } else {
+            throw new SQLException("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
+        }
     }
 }

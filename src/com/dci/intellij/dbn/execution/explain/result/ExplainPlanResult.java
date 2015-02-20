@@ -107,7 +107,7 @@ public class ExplainPlanResult implements ExecutionResult {
     }
 
     @Override
-    public ExplainPlanResultForm getForm() {
+    public ExplainPlanResultForm getForm(boolean create) {
         if (resultForm == null) {
             resultForm = new ExplainPlanResultForm(this);
         }

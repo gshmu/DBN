@@ -53,4 +53,9 @@ public class DatabaseLogOutputConsole extends LogConsoleBase{
     public ActionGroup getOrCreateActions() {
         return super.getOrCreateActions();
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
 }

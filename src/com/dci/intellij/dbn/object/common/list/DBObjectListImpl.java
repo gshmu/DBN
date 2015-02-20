@@ -114,8 +114,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public void notifyChangeListeners() {
-        if (isTouched()) {
-            EventManager.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        Project project = getProject();
+        if (isTouched() && project != null && !project.isDisposed()) {
+            EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         }
     }
 

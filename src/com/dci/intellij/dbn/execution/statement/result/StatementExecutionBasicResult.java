@@ -112,7 +112,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return executionProcessor == null ? null : executionProcessor.getConnectionHandler();
     }
 
-    public ExecutionResultForm getForm() {
+    public ExecutionResultForm getForm(boolean create) {
         return null;
     }
 
