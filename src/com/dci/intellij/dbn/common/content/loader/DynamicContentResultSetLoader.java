@@ -15,8 +15,8 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
@@ -100,8 +100,8 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             postLoadContent(dynamicContent, debugInfo);
         } catch (Exception e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
-            if (e == DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION) throw new InterruptedException();
-            if (e == ConnectionHandlerImpl.DBN_NOT_CONNECTED_EXCEPTION) throw new InterruptedException();
+            if (e == DatabaseInterface.DBN_INTERRUPTED_EXCEPTION) throw new InterruptedException();
+            if (e == DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION) throw new InterruptedException();
 
             String message = StringUtil.trim(e.getMessage()).replace("\n", " ");
             LOGGER.warn("Error loading database content (" + dynamicContent.getContentDescription() + "): " + message);

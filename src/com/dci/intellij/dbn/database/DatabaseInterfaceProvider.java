@@ -6,9 +6,14 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.intellij.openapi.project.Project;
 
 public interface DatabaseInterfaceProvider {
     DatabaseType getDatabaseType();
+
+    Project getProject();
+
+    void setProject(Project project);
 
     @Nullable
     DBLanguageDialect getLanguageDialect(DBLanguage language);

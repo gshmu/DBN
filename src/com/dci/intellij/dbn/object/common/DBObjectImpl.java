@@ -25,7 +25,6 @@ import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -38,6 +37,7 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -160,7 +160,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     protected void checkConnection() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler == null) throw DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION;
+        if (connectionHandler == null) throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
     }
 
     public DBObjectProperties getProperties() {

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -67,7 +68,7 @@ public class ExplainPlanResult implements ExecutionResult {
         connectionHandlerRef = connectionHandler.getRef();
         currentSchemaRef = DBObjectRef.from(file.getCurrentSchema());
         virtualFile = file.getVirtualFile();
-        this.resultName = executablePsiElement.createSubjectList();
+        this.resultName = CommonUtil.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
         this.errorMessage = errorMessage;
         this.statementText = executablePsiElement.getText();
     }

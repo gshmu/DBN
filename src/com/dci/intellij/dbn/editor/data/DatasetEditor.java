@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
@@ -24,6 +23,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
@@ -288,7 +288,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                 }
                                 dataLoadError = null;
                             } catch (final SQLException e) {
-                                if (e != DynamicContentLoader.DBN_INTERRUPTED_EXCEPTION) {
+                                if (e != DatabaseInterface.DBN_INTERRUPTED_EXCEPTION) {
                                     dataLoadError = e.getMessage();
                                     handleLoadError(e, instructions);
                                 }
