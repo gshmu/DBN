@@ -368,7 +368,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         if (form != null) {
             JComponent component = form.getComponent();
             TabInfo tabInfo = new TabInfo(component);
-            tabInfo.setObject(logOutput);
+            tabInfo.setObject(form);
             tabInfo.setText(logOutput.getName());
             tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
 

@@ -25,6 +25,7 @@ public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResul
     private DatabaseLogOutputConsole console;
 
     public DatabaseLogOutputForm(DatabaseLogOutput databaseLogOutput) {
+        this.databaseLogOutput = databaseLogOutput;
         ConnectionHandler connectionHandler = databaseLogOutput.getConnectionHandler();
         console = new DatabaseLogOutputConsole(connectionHandler, databaseLogOutput.getName(), false);
         consolePanel.add(console.getComponent(), BorderLayout.CENTER);
@@ -58,13 +59,11 @@ public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResul
     }
 
     @Override
-    public void setExecutionResult(DatabaseLogOutput executionResult) {
-
-    }
+    public void setExecutionResult(DatabaseLogOutput executionResult) {}
 
     @Override
     public DatabaseLogOutput getExecutionResult() {
-        return null;
+        return databaseLogOutput;
     }
 
     @Override
