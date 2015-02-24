@@ -28,7 +28,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
@@ -156,7 +155,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     @NotNull
     @Override
     public DatasetEditorState getState() {
-        return datasetEditor == null ? DatasetEditorState.VOID : (DatasetEditorState) datasetEditor.getState(FileEditorStateLevel.FULL);
+        return datasetEditor == null ? DatasetEditorState.VOID : datasetEditor.getEditorState();
     }
 
     private boolean hasChanges() {

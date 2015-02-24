@@ -93,7 +93,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
         DataGridTrackingColumnSettings trackingColumnSettings = dataGridSettings.getTrackingColumnSettings();
 
         List<TableColumn> hiddenColumns = new ArrayList<TableColumn>();
-        for (DatasetColumnState columnState : datasetEditor.getState().getColumnSetup().getColumnStates()) {
+        for (DatasetColumnState columnState : datasetEditor.getColumnSetup().getColumnStates()) {
 
             if (!columnState.isVisible() || !trackingColumnSettings.isColumnVisible(columnState.getName())) {
                 int columnIndex = columnState.getPosition();

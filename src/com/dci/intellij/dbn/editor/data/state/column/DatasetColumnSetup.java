@@ -117,6 +117,16 @@ public class DatasetColumnSetup {
     }
 
     @Override
+    public DatasetColumnSetup clone() {
+        DatasetColumnSetup clone = new DatasetColumnSetup();
+        for (DatasetColumnState columnState : columnStates) {
+            clone.columnStates.add(columnState.clone());
+        }
+
+        return clone;
+    }
+
+    @Override
     public int hashCode() {
         return columnStates.hashCode();
     }

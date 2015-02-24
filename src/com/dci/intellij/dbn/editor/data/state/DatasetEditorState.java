@@ -83,6 +83,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         clone.setReadonly(isReadonly());
         clone.setRowCount(getRowCount());
         clone.setSortingState(getSortingState());
+        clone.columnSetup = columnSetup.clone();
         if (contentTypesMap != null) {
             clone.contentTypesMap = new THashMap<String, String>(contentTypesMap);
         }

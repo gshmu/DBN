@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -102,7 +103,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public Project getProject() {
-        return getParent().getProject();
+        GenericDatabaseElement parent = getParent();
+        Project project = parent == null ? null : parent.getProject();
+        return FailsafeUtil.get(project);
     }
 
     public GenericDatabaseElement getUndisposedElement() {

@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
+import java.util.List;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,8 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.record.ui.DatasetRecordEditorDialog;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorState;
+import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnSetup;
+import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.editor.data.structure.DatasetEditorStructureViewModel;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
@@ -157,10 +160,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return "Data";
     }
 
-    public DatasetEditorState getState() {
-        return (DatasetEditorState) getState(FileEditorStateLevel.FULL);
-    }
-
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
         return editorState.clone();
@@ -170,6 +169,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         if (fileEditorState instanceof DatasetEditorState) {
             editorState = (DatasetEditorState) fileEditorState;
         }
+    }
+
+    public DatasetEditorState getEditorState() {
+        return editorState;
     }
 
     public boolean isModified() {
@@ -471,11 +474,15 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isReadonly() {
-        return getState().isReadonly();
+        return editorState.isReadonly();
+    }
+
+    public DatasetColumnSetup getColumnSetup() {
+        return editorState.getColumnSetup();
     }
 
     public void setReadonly(boolean readonly) {
-        getState().setReadonly(readonly);
+        editorState.setReadonly(readonly);
     }
 
     public boolean isEditable() {
@@ -623,4 +630,13 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
 
+    public List<DatasetColumnState> initColumnStates() {
+        DatasetColumnSetup columnSetup = editorState.getColumnSetup();
+        List<DatasetColumnState> columnStates = columnSetup.getColumnStates();
+        DBDataset dataset = getDataset();
+        if (dataset != null && columnStates.size() != dataset.getColumns().size()) {
+            columnSetup.init(dataset);
+        }
+        return columnStates;
+    }
 }
