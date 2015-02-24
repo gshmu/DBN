@@ -51,7 +51,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         this.executionResult = executionResult;
         outputTabs = new TabbedPane(this);
         createActionsPanel();
-        updateCursorArgumentsPanel();
+        updateOutputTabs();
 
         outputCursorsPanel.add(outputTabs, BorderLayout.CENTER);
 
@@ -87,14 +87,14 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                updateArgumentValueTables();
-                updateCursorArgumentsPanel();
+                updateArgumentValueTree();
+                updateOutputTabs();
                 updateStatusBarLabels();
             }
         }.start();
     }
 
-    private void updateArgumentValueTables() {
+    private void updateArgumentValueTree() {
         List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
 
@@ -104,7 +104,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         TreeUtil.expand(argumentValuesTree, 2);
     }
 
-    private void updateCursorArgumentsPanel() {
+    private void updateOutputTabs() {
         outputTabs.removeAllTabs();
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";

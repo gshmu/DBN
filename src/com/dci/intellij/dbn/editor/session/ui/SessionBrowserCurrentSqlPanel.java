@@ -113,9 +113,9 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     }
 
     private void createStatementViewer() {
-        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         Project project = sessionBrowser.getProject();
-        virtualFile = new SessionBrowserStatementVirtualFile(connectionHandler, "");
+        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        virtualFile = new SessionBrowserStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
         psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
@@ -180,6 +180,10 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         public void actionPerformed(AnActionEvent anActionEvent) {
             loadCurrentStatement();
         }
+    }
+
+    public EditorEx getViewer() {
+        return viewer;
     }
 
     @Override
