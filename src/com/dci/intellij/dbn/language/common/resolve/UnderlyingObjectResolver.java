@@ -12,7 +12,7 @@ public abstract class UnderlyingObjectResolver {
         AliasObjectResolver.getInstance();
         AssignmentObjectResolver.getInstance();
         LocalDeclarationObjectResolver.getInstance();
-        SouroundingVirtualObjectResolver.getInstance();
+        SurroundingVirtualObjectResolver.getInstance();
     }
 
     private String id;
