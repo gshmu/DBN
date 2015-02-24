@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAda
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
 import com.dci.intellij.dbn.language.common.resolve.AliasObjectResolver;
-import com.dci.intellij.dbn.language.common.resolve.SouroundingVirtualObjectResolver;
+import com.dci.intellij.dbn.language.common.resolve.SurroundingVirtualObjectResolver;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
@@ -249,7 +249,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             return resolveActualObject(underlyingObject);
         }
 
-        DBObject underlyingObject = SouroundingVirtualObjectResolver.getInstance().resolve(this);
+        DBObject underlyingObject = SurroundingVirtualObjectResolver.getInstance().resolve(this);
         if (underlyingObject != null) {
             return underlyingObject;
         }

@@ -5,14 +5,14 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 
-public class SouroundingVirtualObjectResolver extends UnderlyingObjectResolver{
-    private static final SouroundingVirtualObjectResolver INSTANCE = new SouroundingVirtualObjectResolver();
+public class SurroundingVirtualObjectResolver extends UnderlyingObjectResolver{
+    private static final SurroundingVirtualObjectResolver INSTANCE = new SurroundingVirtualObjectResolver();
 
-    public static SouroundingVirtualObjectResolver getInstance() {
+    public static SurroundingVirtualObjectResolver getInstance() {
         return INSTANCE;
     }
 
-    private SouroundingVirtualObjectResolver() {
+    private SurroundingVirtualObjectResolver() {
         super("VIRTUAL_OBJECT_RESOLVER");
     }
 
