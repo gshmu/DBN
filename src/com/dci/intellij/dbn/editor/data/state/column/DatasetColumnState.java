@@ -12,6 +12,11 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>{
     private int position = -1;
     private boolean visible = true;
 
+    private DatasetColumnState(DatasetColumnState columnState) {
+        name = columnState.getName();
+        position = columnState.getPosition();
+        visible = columnState.isVisible();
+    }
     public DatasetColumnState(DBColumn column) {
         init(column);
     }
@@ -90,5 +95,15 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>{
         result = 31 * result + position;
         result = 31 * result + (visible ? 1 : 0);
         return result;
+    }
+
+    @Override
+    protected DatasetColumnState clone() {
+        return new DatasetColumnState(this);
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + position + (visible ? " visible" : " hidden");
     }
 }

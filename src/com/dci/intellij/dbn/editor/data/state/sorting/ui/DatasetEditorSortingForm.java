@@ -33,7 +33,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
 
     public DatasetEditorSortingForm(DatasetEditor datasetEditor) {
         DBDataset dataset = datasetEditor.getDataset();
-        sortingState = datasetEditor.getState().getSortingState();
+        sortingState = datasetEditor.getEditorState().getSortingState();
         this.datasetRef = DBObjectRef.from(dataset);
 
         BoxLayout sortingInstructionsPanelLayout = new BoxLayout(sortingInstructionsPanel, BoxLayout.Y_AXIS);
