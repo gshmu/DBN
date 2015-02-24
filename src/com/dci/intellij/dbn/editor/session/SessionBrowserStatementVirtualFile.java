@@ -10,9 +10,9 @@ import java.nio.charset.Charset;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
@@ -37,13 +38,14 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
     protected String name;
     protected String path;
     protected String url;
-    private ConnectionHandlerRef connectionHandlerRef;
+    private SessionBrowser sessionBrowser;
     private DBObjectRef<DBSchema> schemaRef;
 
 
-    public SessionBrowserStatementVirtualFile(ConnectionHandler connectionHandler, String content) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+    public SessionBrowserStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
+        this.sessionBrowser = sessionBrowser;
         this.content = content;
+        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
         name = connectionHandler.getName();
         path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION_BROWSER_STATEMENT";
         url = DatabaseFileSystem.createUrl(connectionHandler) + "#SESSION_BROWSER_STATEMENT";
@@ -68,12 +70,21 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
         return null;
     }
 
+    public SessionBrowser getSessionBrowser() {
+        return sessionBrowser;
+    }
+
+    public Project getProject() {
+        Project project = sessionBrowser == null ? null : sessionBrowser.getProject();
+        return FailsafeUtil.get(project);
+    }
+
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.get();
+        return sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
     }
 
     @Override
@@ -213,5 +224,6 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
     @Override
     public void dispose() {
         disposed = true;
+        sessionBrowser = null;
     }
 }

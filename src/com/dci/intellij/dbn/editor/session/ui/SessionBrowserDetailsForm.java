@@ -84,6 +84,10 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         currentSqlPanel.loadCurrentStatement();
     }
 
+    public SessionBrowserCurrentSqlPanel getCurrentSqlPanel() {
+        return currentSqlPanel;
+    }
+
     @Override
     public JComponent getComponent() {
         return mailPanel;

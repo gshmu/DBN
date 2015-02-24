@@ -14,6 +14,9 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
+import com.dci.intellij.dbn.editor.session.SessionBrowser;
+import com.dci.intellij.dbn.editor.session.SessionBrowserStatementVirtualFile;
+import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -37,6 +40,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -337,6 +341,22 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                             Editor editor = textEditor.getEditor();
                             descriptor.navigateIn(editor);
                             if (requestFocus) focusEditor(editor);
+                        }
+                        return;
+                    }
+
+                    if (virtualFile instanceof SessionBrowserStatementVirtualFile) {
+                        SessionBrowserStatementVirtualFile sessionBrowserStatementFile = (SessionBrowserStatementVirtualFile) virtualFile;
+                        SessionBrowser sessionBrowser = sessionBrowserStatementFile.getSessionBrowser();
+                        if (sessionBrowser != null) {
+                            SessionBrowserForm editorForm = sessionBrowser.getEditorForm();
+                            if (editorForm != null) {
+                                EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
+                                if (viewer != null) {
+                                    descriptor.navigateIn(viewer);
+                                    if (requestFocus) focusEditor(viewer);
+                                }
+                            }
                         }
                         return;
                     }
