@@ -191,24 +191,27 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 new ReadActionRunner() {
                     @Override
                     protected Object run() {
-                        final List<SessionBrowser> sessionBrowsers = new ArrayList<SessionBrowser>();
-                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                        FileEditor[] editors = fileEditorManager.getAllEditors();
-                        for (FileEditor editor : editors) {
-                            if (editor instanceof SessionBrowser) {
-                                SessionBrowser sessionBrowser = (SessionBrowser) editor;
-                                sessionBrowsers.add(sessionBrowser);
-                            }
-                        }
-
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                                    sessionBrowser.refreshLoadTimestamp();
+                        Project project = getProject();
+                        if (project != null && !project.isDisposed()) {
+                            final List<SessionBrowser> sessionBrowsers = new ArrayList<SessionBrowser>();
+                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                            FileEditor[] editors = fileEditorManager.getAllEditors();
+                            for (FileEditor editor : editors) {
+                                if (editor instanceof SessionBrowser) {
+                                    SessionBrowser sessionBrowser = (SessionBrowser) editor;
+                                    sessionBrowsers.add(sessionBrowser);
                                 }
                             }
-                        }.start();
+
+                            new SimpleLaterInvocator() {
+                                @Override
+                                protected void execute() {
+                                    for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                                        sessionBrowser.refreshLoadTimestamp();
+                                    }
+                                }
+                            }.start();
+                        }
                         return null;
                     }
                 }.start();
