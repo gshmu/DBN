@@ -57,7 +57,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         for (StatementExecutionVariable variable: executionProcessor.getExecutionVariables().getVariables()) {
-            StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(variable);
+            StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(executionProcessor, variable);
             variableValueForms.add(variableValueForm);
             variablesPanel.add(variableValueForm.getComponent());
             variableValueForm.addDocumentListener(new DocumentAdapter() {
