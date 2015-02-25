@@ -18,11 +18,14 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormImpl implements DBNForm {
@@ -32,10 +35,12 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
     private JPanel valueFieldPanel;
     private JLabel errorLabel;
 
+    private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariable variable;
-    private DataEditorComponent editorComponent;
+    private TextFieldWithPopup editorComponent;
 
-    public StatementExecutionVariableValueForm(StatementExecutionVariable variable) {
+    public StatementExecutionVariableValueForm(StatementExecutionProcessor executionProcessor, StatementExecutionVariable variable) {
+        this.executionProcessor = executionProcessor;
         this.variable = variable;
         errorLabel.setVisible(false);
         errorLabel.setIcon(Icons.STMT_EXECUTION_ERROR);
@@ -49,11 +54,10 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
         dataTypeComboBox.setRenderer(new DataTypeCellRenderer());
         dataTypeComboBox.setSelectedItem(variable.getDataType());
 
-        final TextFieldWithPopup textFieldWithPopup = new TextFieldWithPopup(variable.getProject());
-        textFieldWithPopup.createCalendarPopup(false);
-        textFieldWithPopup.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
-        valueFieldPanel.add(textFieldWithPopup, BorderLayout.CENTER);
-        editorComponent = textFieldWithPopup;
+        editorComponent = new TextFieldWithPopup(executionProcessor.getProject());
+        editorComponent.createCalendarPopup(false);
+        editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
+        valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
         final JTextField textField = editorComponent.getTextField();
         textField.setText(variable.getValue());
 
@@ -71,11 +75,13 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
 
         dataTypeComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                textFieldWithPopup.setPopupEnabled(TextFieldPopupType.CALENDAR, dataTypeComboBox.getSelectedItem() == GenericDataType.DATE_TIME);
+                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataTypeComboBox.getSelectedItem() == GenericDataType.DATE_TIME);
             }
         });
 
         textField.setToolTipText("<html>While editing variable value, press <b>Up/Down</b> keys to change data type");
+
+        Disposer.register(this, editorComponent);
     }
 
     public void showErrorLabel(String errorText) {
@@ -95,6 +101,9 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
     public void saveValue() {
         variable.setValue(editorComponent.getTextField().getText().trim());
         variable.setDataType((GenericDataType) dataTypeComboBox.getSelectedItem());
+        Project project = executionProcessor.getProject();
+        StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+        executionManager.cacheVariable(executionProcessor.getVirtualFile(), variable);
     }
 
     public void addDocumentListener(DocumentListener documentListener) {
@@ -132,6 +141,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
 
     public void dispose() {
         super.dispose();
+        executionProcessor = null;
         variable = null;
         editorComponent = null;
     }

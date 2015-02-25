@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,9 @@ import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionBasicProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
 import com.dci.intellij.dbn.execution.statement.variables.ui.StatementExecutionVariablesDialog;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement.MatchType;
@@ -35,6 +38,11 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -50,9 +58,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashSet;
 
-public class StatementExecutionManager extends AbstractProjectComponent {
+@State(
+        name = "DBNavigator.Project.StatementExecutionManager",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class StatementExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String[] OPTIONS_MULTIPLE_STATEMENT_EXEC = new String[]{"Execute All", "Execute All from Caret", "Cancel"};
     private final Map<FileEditor, List<StatementExecutionProcessor>> fileExecutionProcessors = new HashMap<FileEditor, List<StatementExecutionProcessor>>();
+    private final StatementExecutionVariablesCache variablesCache = new StatementExecutionVariablesCache();
 
     private static int sequence;
     public int getNextSequence() {
@@ -68,6 +83,10 @@ public class StatementExecutionManager extends AbstractProjectComponent {
 
     public static StatementExecutionManager getInstance(Project project) {
         return project.getComponent(StatementExecutionManager.class);
+    }
+
+    public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable variable) {
+        variablesCache.cacheVariable(virtualFile, variable);
     }
 
     private PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
@@ -378,5 +397,24 @@ public class StatementExecutionManager extends AbstractProjectComponent {
     @NonNls
     public String getComponentName() {
         return "DBNavigator.Project.StatementExecutionManager";
+    }
+
+
+    /*********************************************
+     *            PersistentStateComponent       *
+     *********************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        variablesCache.writeState(element);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        if (element != null) {
+            variablesCache.readState(element);
+        }
     }
 }

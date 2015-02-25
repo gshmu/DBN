@@ -1,25 +1,33 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
+import java.util.StringTokenizer;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.list.MostRecentStack;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.components.PersistentStateComponent;
 
-public class StatementExecutionVariable implements Comparable<StatementExecutionVariable>{
+public class StatementExecutionVariable implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
     private GenericDataType dataType;
     private String name;
-    private String value;
+    private MostRecentStack<String> valueHistory = new MostRecentStack<>();
     private TemporaryValueProvider previewValueProvider;
-    private transient Project project;
+
+    public StatementExecutionVariable(Element state) {
+        loadState(state);
+    }
+
+    public StatementExecutionVariable(StatementExecutionVariable source) {
+        dataType = source.getDataType();
+        name = source.getName();
+        valueHistory = new MostRecentStack<String>(source.getValueHistory());
+    }
 
     public StatementExecutionVariable(ExecVariablePsiElement variablePsiElement) {
         this.name = variablePsiElement.getText();
-        this.project = variablePsiElement.getProject();
-    }
-
-    public Project getProject() {
-        return project;
     }
 
     public String getName() {
@@ -35,11 +43,15 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
     }
 
     public String getValue() {
-        return value;
+        return valueHistory.get();
     }
 
     public void setValue(String value) {
-        this.value = value;
+        valueHistory.stack(value);
+    }
+
+    public Iterable<String> getValueHistory() {
+        return valueHistory;
     }
 
     public TemporaryValueProvider getPreviewValueProvider() {
@@ -68,6 +80,35 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
     @Override
     public int compareTo(@NotNull StatementExecutionVariable o) {
         return o.name.length()-name.length();
+    }
+
+    @Nullable
+    @Override
+    public Element getState() {
+        Element state = new Element("variable");
+        state.setAttribute("name", name);
+        state.setAttribute("dataType", dataType.name());
+        StringBuilder values = new StringBuilder();
+        for (String value : valueHistory) {
+            if (values.length() > 0) values.append(", ");
+            values.append(value);
+        }
+        state.setAttribute("values", values.toString());
+
+        return state;
+    }
+
+    @Override
+    public void loadState(Element state) {
+        name = state.getAttributeValue("name");
+        dataType = GenericDataType.valueOf(state.getAttributeValue("dataType"));
+        String variableValues = state.getAttributeValue("values");
+        StringTokenizer valuesTokenizer = new StringTokenizer(variableValues, ",");
+
+        while (valuesTokenizer.hasMoreTokens()) {
+            String value = valuesTokenizer.nextToken().trim();
+            valueHistory.add(value);
+        }
     }
 
     public interface TemporaryValueProvider {
