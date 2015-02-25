@@ -19,7 +19,7 @@ public interface TextFieldPopupProvider extends Disposable{
     @Nullable
     JLabel getButton();
 
-    boolean hasButton();
+    boolean isButtonVisible();
 
     boolean isEnabled();
 

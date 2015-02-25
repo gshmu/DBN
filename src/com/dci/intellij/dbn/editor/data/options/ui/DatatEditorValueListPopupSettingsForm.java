@@ -13,6 +13,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     private JTextField elementCountThresholdTextBox;
     private JTextField dataLengthThresholdTextBox;
     private JCheckBox activeForPrimaryKeysCheckBox;
+    private JCheckBox showPopupButtonCheckBox;
     private JPanel mainPanel;
 
     public DatatEditorValueListPopupSettingsForm(DataEditorValueListPopupSettings settings) {
@@ -29,6 +30,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         DataEditorValueListPopupSettings settings = getConfiguration();
         settings.setActiveForPrimaryKeyColumns(activeForPrimaryKeysCheckBox.isSelected());
+        settings.setShowPopupButton(showPopupButtonCheckBox.isSelected());
         settings.setElementCountThreshold(validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", 0, 10000, null));
         settings.setDataLengthThreshold(validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", 0, 1000, null));
     }
@@ -36,6 +38,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     public void resetFormChanges() {
         DataEditorValueListPopupSettings settings = getConfiguration();
         activeForPrimaryKeysCheckBox.setSelected(settings.isActiveForPrimaryKeyColumns());
+        showPopupButtonCheckBox.setSelected(settings.isShowPopupButton());
         elementCountThresholdTextBox.setText(Integer.toString(settings.getElementCountThreshold()));
         dataLengthThresholdTextBox.setText(Integer.toString(settings.getDataLengthThreshold()));
     }

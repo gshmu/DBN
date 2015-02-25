@@ -89,25 +89,30 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
                 valueTextField.addFocusListener(focusListener);
 
                 if (cell.getRow().getModel().isEditable()) {
-                    if (genericDataType == GenericDataType.DATE_TIME) {
-                        textFieldWithPopup.createCalendarPopup(false);
-                    } else if (genericDataType == GenericDataType.ARRAY) {
-                        textFieldWithPopup.createArrayEditorPopup(false);
-                    } else if (genericDataType == GenericDataType.LITERAL) {
-                        if (dataLength > 20 && !column.isPrimaryKey() && !column.isForeignKey())
-                            textFieldWithPopup.createTextEditorPopup(false);
-                        DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
+                    switch (genericDataType) {
+                        case DATE_TIME: textFieldWithPopup.createCalendarPopup(false); break;
+                        case ARRAY: textFieldWithPopup.createArrayEditorPopup(false); break;
+                        case LITERAL: {
+                            if (dataLength > 20 && !column.isPrimaryKey() && !column.isForeignKey()) {
+                                textFieldWithPopup.createTextEditorPopup(false);
+                            }
 
-                        if (column.isForeignKey() || (dataLength <= valueListPopupSettings.getDataLengthThreshold() &&
-                                (!column.isSinglePrimaryKey() || valueListPopupSettings.isActiveForPrimaryKeyColumns()))) {
-                            ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
-                                public List<String> getValues() {
-                                    return columnInfo.getPossibleValues();
-                                }
-                            };
-                            textFieldWithPopup.createValuesListPopup(valuesProvider, false);
+                            DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
+
+                            if (column.isForeignKey() || (dataLength <= valueListPopupSettings.getDataLengthThreshold() &&
+                                    (!column.isSinglePrimaryKey() || valueListPopupSettings.isActiveForPrimaryKeyColumns()))) {
+                                ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
+                                    public List<String> getValues() {
+                                        return columnInfo.getPossibleValues();
+                                    }
+                                };
+                                textFieldWithPopup.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton(), false);
+                            }
+
+                            break;
                         }
                     }
+
                 }
                 editorComponent = textFieldWithPopup;
             } else if (genericDataType.is(GenericDataType.BLOB, GenericDataType.CLOB)) {

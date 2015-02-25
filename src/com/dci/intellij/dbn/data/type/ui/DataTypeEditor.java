@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.data.type.ui;
 
+import javax.swing.JLabel;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DataTypeEditor extends TextFieldWithPopup {
     public DataTypeEditor(ConnectionHandler connectionHandler) {
@@ -23,12 +24,17 @@ public class DataTypeEditor extends TextFieldWithPopup {
             typeName = caseOption.changeCase(typeName);
             nativeDataTypeNames.add(typeName);
         }
-        createValuesListPopup(nativeDataTypeNames, false);
+        createValuesListPopup(nativeDataTypeNames, true, false);
     }
 
 
 
     public String getDataTypeRepresentation() {
         return getTextField().getText();
+    }
+
+    @Override
+    public void customizeButton(JLabel button) {
+        super.customizeButton(button);
     }
 }

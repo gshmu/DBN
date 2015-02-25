@@ -49,8 +49,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private ArrayEditorList list;
     private boolean changed;
 
-    public ArrayEditorPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
-        super(textField, isAutoPopup);
+    public ArrayEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+        super(textField, autoPopup, true);
 
         ActionToolbar leftActionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,

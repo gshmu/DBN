@@ -42,17 +42,17 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel mainPanel;
     private boolean useDynamicFiltering;
 
-    public ValuesListPopupProviderForm(TextFieldWithPopup textField, @NotNull ListPopupValuesProvider valuesProvider, boolean useDynamicFiltering) {
-        super(textField, false);
+    public ValuesListPopupProviderForm(TextFieldWithPopup textField, @NotNull ListPopupValuesProvider valuesProvider, boolean buttonVisible, boolean dynamicFiltering) {
+        super(textField, false, buttonVisible);
         this.valuesProvider = valuesProvider;
-        this.useDynamicFiltering = useDynamicFiltering;
+        this.useDynamicFiltering = dynamicFiltering;
         list.setBackground(BACKGROUND_COLOR);
     }
 
-    public ValuesListPopupProviderForm(TextFieldWithPopup textField, @NotNull List<String> valuesList, boolean useDynamicFiltering) {
-        super(textField, false);
+    public ValuesListPopupProviderForm(TextFieldWithPopup textField, @NotNull List<String> valuesList, boolean buttonVisible, boolean dynamicFiltering) {
+        super(textField, false, buttonVisible);
         this.valuesList = valuesList;
-        this.useDynamicFiltering = useDynamicFiltering;
+        this.useDynamicFiltering = dynamicFiltering;
         list.setBackground(BACKGROUND_COLOR);
     }
 

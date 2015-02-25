@@ -100,7 +100,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 new BackgroundTask(getProject(), "Loading sessions", true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        progressIndicator.setIndeterminate(true);
                         try {
                             if (isDisposed()) throw new InterruptedException("Process cancelled");
                             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();

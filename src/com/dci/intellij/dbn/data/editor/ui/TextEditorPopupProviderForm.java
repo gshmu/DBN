@@ -45,8 +45,8 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JScrollPane textEditorScrollPane;
     private boolean changed;
 
-    public TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
-        super(textField, isAutoPopup);
+    public TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+        super(textField, autoPopup, true);
         editorTextArea.setBorder(new EmptyBorder(4, 4, 4, 4));
         editorTextArea.addKeyListener(this);
         editorTextArea.setWrapStyleWord(true);
