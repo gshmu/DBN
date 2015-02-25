@@ -70,7 +70,11 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     }
 
     public void customizeTextField(JTextField textField) {}
-    public void customizeButton(JLabel button) {}
+    public void customizeButton(JLabel button) {
+        int width = (int) button.getPreferredSize().getWidth();
+        int height = (int) textField.getPreferredSize().getHeight();
+        button.setPreferredSize(new Dimension(width, height));
+    }
 
     public boolean isSelected() {
         Document document = textField.getDocument();
@@ -120,13 +124,13 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         //textField.addFocusListener();
     }
 
-    public void createValuesListPopup(List<String> valuesList, boolean useDynamicFiltering) {
-        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesList, useDynamicFiltering);
+    public void createValuesListPopup(List<String> valuesList, boolean buttonVisible, boolean dynamicFiltering) {
+        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesList, buttonVisible, dynamicFiltering);
         addPopupProvider(popupProviderForm);
     }
 
-    public void createValuesListPopup(ListPopupValuesProvider valuesProvider, boolean useDynamicFiltering) {
-        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesProvider, useDynamicFiltering);
+    public void createValuesListPopup(ListPopupValuesProvider valuesProvider, boolean buttonVisible, boolean dynamicFiltering) {
+        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesProvider, buttonVisible, dynamicFiltering);
         addPopupProvider(popupProviderForm);
     }
 
@@ -148,7 +152,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private void addPopupProvider(TextFieldPopupProvider popupProvider) {
         popupProviders.add(popupProvider);
 
-        if (popupProvider.hasButton()) {
+        if (popupProvider.isButtonVisible()) {
             Icon buttonIcon = popupProvider.getButtonIcon();
             JLabel button = new JLabel(buttonIcon);
             button.setBorder(BUTTON_BORDER);

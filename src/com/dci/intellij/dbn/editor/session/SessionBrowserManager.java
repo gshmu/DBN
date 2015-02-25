@@ -135,7 +135,6 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                     connection = connectionHandler.getPoolConnection();
                     Map<Object, SQLException> errors = new HashMap<Object, SQLException>();
                     final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
-                    progressIndicator.setIndeterminate(true);
 
                     for (Object sessionId : sessionIds.keySet()) {
                         Object serialNumber = sessionIds.get(sessionId);

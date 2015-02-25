@@ -60,17 +60,19 @@ public class DatasetTableCellEditorFactory implements Disposable {
 
                 final DatasetEditorColumnInfo dseColumnInfo = (DatasetEditorColumnInfo) columnInfo;
                 DBColumn column = dseColumnInfo.getColumn();
-                DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
+                if (column != null) {
+                    DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
-                if (column.isForeignKey() || (dataLength <= valueListPopupSettings.getDataLengthThreshold() &&
-                        (!column.isSinglePrimaryKey() || valueListPopupSettings.isActiveForPrimaryKeyColumns()))) {
+                    if (column.isForeignKey() || (dataLength <= valueListPopupSettings.getDataLengthThreshold() &&
+                            (!column.isSinglePrimaryKey() || valueListPopupSettings.isActiveForPrimaryKeyColumns()))) {
 
-                    ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
-                        public List<String> getValues() {
-                            return dseColumnInfo.getPossibleValues();
-                        }
-                    };
-                    tableCellEditor.getEditorComponent().createValuesListPopup(valuesProvider, true);
+                        ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
+                            public List<String> getValues() {
+                                return dseColumnInfo.getPossibleValues();
+                            }
+                        };
+                        tableCellEditor.getEditorComponent().createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton(), true);
+                    }
                 }
                 return tableCellEditor;
             } else {

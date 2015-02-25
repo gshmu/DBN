@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.editor.data.options;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.data.options.ui.DatatEditorValueListPopupSettingsForm;
-import org.jdom.Element;
 
 public class DataEditorValueListPopupSettings extends Configuration<DatatEditorValueListPopupSettingsForm> {
     private boolean activeForPrimaryKeyColumns = false;
+    private boolean showPopupButton = true;
     private int elementCountThreshold = 1000;
     private int dataLengthThreshold = 250;
 
@@ -28,6 +30,14 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
 
     public void setActiveForPrimaryKeyColumns(boolean activeForPrimaryKeyColumns) {
         this.activeForPrimaryKeyColumns = activeForPrimaryKeyColumns;
+    }
+
+    public boolean isShowPopupButton() {
+        return showPopupButton;
+    }
+
+    public void setShowPopupButton(boolean showPopupButton) {
+        this.showPopupButton = showPopupButton;
     }
 
     public int getElementCountThreshold() {
@@ -59,12 +69,14 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
     }
 
     public void readConfiguration(Element element) {
+        showPopupButton = SettingsUtil.getBoolean(element, "show-popup-button", showPopupButton);
         activeForPrimaryKeyColumns = SettingsUtil.getBoolean(element, "active-for-primary-keys", activeForPrimaryKeyColumns);
         elementCountThreshold = SettingsUtil.getInteger(element, "element-count-threshold", elementCountThreshold);
         dataLengthThreshold = SettingsUtil.getInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 
     public void writeConfiguration(Element element) {
+        SettingsUtil.setBoolean(element, "show-popup-button", showPopupButton);
         SettingsUtil.setBoolean(element, "active-for-primary-keys", activeForPrimaryKeyColumns);
         SettingsUtil.setInteger(element, "element-count-threshold", elementCountThreshold);
         SettingsUtil.setInteger(element, "data-length-threshold", dataLengthThreshold);

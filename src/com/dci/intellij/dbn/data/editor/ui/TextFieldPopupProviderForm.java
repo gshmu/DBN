@@ -35,15 +35,17 @@ import com.intellij.openapi.util.Disposer;
 
 public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm, TextFieldPopupProvider {
     protected TextFieldWithPopup editorComponent;
-    private boolean isAutoPopup;
-    private boolean isEnabled = true;
+    private boolean autoPopup;
+    private boolean enabled = true;
+    private boolean buttonVisible = true;
     private JBPopup popup;
     private JLabel button;
     private Set<AnAction> actions = new HashSet<AnAction>();
 
-    protected TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean isAutoPopup) {
+    protected TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean autoPopup, boolean buttonVisible) {
         this.editorComponent = editorComponent;
-        this.isAutoPopup = isAutoPopup;
+        this.autoPopup = autoPopup;
+        this.buttonVisible = buttonVisible;
         EventManager.subscribe(editorComponent.getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
@@ -88,20 +90,20 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     }
 
     public boolean isAutoPopup() {
-        return isAutoPopup;
+        return autoPopup;
     }
 
     @Override
-    public boolean hasButton() {
-        return true;
+    public boolean isButtonVisible() {
+        return buttonVisible;
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+        this.enabled = enabled;
     }
 
     @Override
@@ -151,7 +153,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         if (isPreparingPopup) return;
 
         isPreparingPopup = true;
-        new BackgroundTask(getProject(), "Preparing " + getDescription(), false, true) {
+        new BackgroundTask(getProject(), "Loading " + getDescription(), false, true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 preparePopup();

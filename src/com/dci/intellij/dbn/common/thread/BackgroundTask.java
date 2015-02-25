@@ -59,9 +59,12 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         int priority = Thread.currentThread().getPriority();
         try {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-            progressIndicator.setFraction(0.1);
+            progressIndicator.pushState();
             progressIndicator.setIndeterminate(true);
+
             execute(progressIndicator);
+
+            progressIndicator.popState();
         } catch (ProcessCanceledException | InterruptedException e) {
             // no action required here
             LOGGER.info(getTitle() + " interrupted");

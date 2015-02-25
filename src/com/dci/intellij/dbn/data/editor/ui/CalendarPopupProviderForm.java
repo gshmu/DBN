@@ -69,8 +69,8 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private JPanel actionsPanelBottom;
     private JPanel headerSeparatorPanel;
 
-    protected CalendarPopupProviderForm(TextFieldWithPopup textField, boolean isAutoPopup) {
-        super(textField, isAutoPopup);
+    protected CalendarPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+        super(textField, autoPopup, true);
         calendarPanel.setBackground(weeksTable.getBackground());
         daysTable.addKeyListener(this);
         timeTextField.addKeyListener(this);
