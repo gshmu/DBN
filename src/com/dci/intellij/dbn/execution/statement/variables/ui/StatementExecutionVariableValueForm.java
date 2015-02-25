@@ -13,19 +13,27 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.UIUtil;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormImpl implements DBNForm {
@@ -39,7 +47,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
     private StatementExecutionVariable variable;
     private TextFieldWithPopup editorComponent;
 
-    public StatementExecutionVariableValueForm(StatementExecutionProcessor executionProcessor, StatementExecutionVariable variable) {
+    public StatementExecutionVariableValueForm(final StatementExecutionProcessor executionProcessor, final StatementExecutionVariable variable) {
         this.executionProcessor = executionProcessor;
         this.variable = variable;
         errorLabel.setVisible(false);
@@ -54,12 +62,43 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
         dataTypeComboBox.setRenderer(new DataTypeCellRenderer());
         dataTypeComboBox.setSelectedItem(variable.getDataType());
 
+        StatementExecutionManager executionManager = StatementExecutionManager.getInstance(executionProcessor.getProject());
+        final StatementExecutionVariablesCache variablesCache = executionManager.getVariablesCache();
+        final VirtualFile virtualFile = executionProcessor.getVirtualFile();
+
         editorComponent = new TextFieldWithPopup(executionProcessor.getProject());
         editorComponent.createCalendarPopup(false);
+        editorComponent.createValuesListPopup(new ListPopupValuesProvider() {
+            @Override
+            public List<String> getValues() {
+                List<String> values = new ArrayList<String>();
+                final Set<StatementExecutionVariable> variables = variablesCache.getVariables(virtualFile);
+                for (StatementExecutionVariable executionVariable : variables) {
+                    if (executionVariable.getName().equals(variable.getName())) {
+                        Iterable<String> valueHistory = executionVariable.getValueHistory();
+                        for (String value : valueHistory) {
+                            values.add(value);
+                        }
+                    }
+                }
+
+                return values;
+            }
+        }, true);
         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
         valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
         final JTextField textField = editorComponent.getTextField();
-        textField.setText(variable.getValue());
+        String value = variable.getValue();
+        if (StringUtil.isEmpty(value)) {
+            StatementExecutionVariable cachedVariable = variablesCache.getVariable(virtualFile, variable.getName());
+            if (cachedVariable != null) {
+                textField.setForeground(UIUtil.getLabelDisabledForeground());
+                textField.setText(cachedVariable.getValue());
+            }
+        } else {
+            textField.setText(value);
+        }
+
 
         textField.addKeyListener(ComboBoxSelectionKeyListener.create(dataTypeComboBox, false));
 
