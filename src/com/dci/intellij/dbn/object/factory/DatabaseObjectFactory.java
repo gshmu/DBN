@@ -111,7 +111,6 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                             if (connectionHandler != null) {
                                 Connection connection = null;
                                 try {
-                                    initProgressIndicator(progressIndicator, true);
                                     DBContentType contentType = object.getContentType();
                                     connection = connectionHandler.getPoolConnection();
 

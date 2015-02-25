@@ -84,7 +84,6 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
                 BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable elements", false) {
                     @Override
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        initProgressIndicator(progressIndicator, true);
                         final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
                         DBMethod currentMethod = configuration.getExecutionInput() == null ? null : configuration.getExecutionInput().getMethod();
                         if (currentMethod != null) {

@@ -80,7 +80,6 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
             new BackgroundTask(object.getProject(), "Rendering object properties", true) {
                 @Override
                 public void execute(@NotNull ProgressIndicator progressIndicator) {
-                    initProgressIndicator(progressIndicator, true);
                     final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                     Disposer.register(ObjectPropertiesForm.this, tableModel);
 

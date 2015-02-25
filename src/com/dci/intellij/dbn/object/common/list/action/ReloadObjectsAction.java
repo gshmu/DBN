@@ -26,7 +26,6 @@ public class ReloadObjectsAction extends AnAction {
                 new BackgroundTask(objectList.getProject(), "Reloading " + objectList.getContentDescription() + ".", false) {
                     @Override
                     public void execute(@NotNull final ProgressIndicator progressIndicator) throws InterruptedException {
-                        initProgressIndicator(progressIndicator, true);
                         objectList.reload();
                     }
                 }.start();

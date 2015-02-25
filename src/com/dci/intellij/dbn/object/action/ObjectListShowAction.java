@@ -52,7 +52,6 @@ public abstract class ObjectListShowAction extends AnAction {
 
                     @Override
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        initProgressIndicator(progressIndicator, true);
                         final List<DBObject> objects = getObjectList();
                         if (!progressIndicator.isCanceled()) {
                             new SimpleLaterInvocator() {

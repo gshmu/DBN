@@ -29,8 +29,6 @@ public class ShowDatabaseInformationAction extends DumbAwareAction {
                 new BackgroundTask(project, "Loading database information for " + connectionHandler.getName(), false) {
                     @Override
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        initProgressIndicator(progressIndicator, true);
-
                         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                         connectionManager.showConnectionInfoDialog(connectionHandler);
                     }

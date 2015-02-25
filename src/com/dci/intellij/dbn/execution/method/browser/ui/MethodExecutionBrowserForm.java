@@ -110,7 +110,6 @@ public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
         BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable components", false) {
             @Override
             public void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true);
                 final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
                 new SimpleLaterInvocator() {
                     public void execute() {

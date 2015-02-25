@@ -39,9 +39,13 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
 
     @Override
     public final void run(@NotNull ProgressIndicator progressIndicator) {
-        progressIndicator.pushState();
-        progressIndicator.setIndeterminate(true);
-        execute(progressIndicator);
+        try {
+            progressIndicator.pushState();
+            progressIndicator.setIndeterminate(true);
+            execute(progressIndicator);
+        } finally {
+            progressIndicator.popState();
+        }
     }
 
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator);

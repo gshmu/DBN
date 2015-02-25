@@ -100,7 +100,8 @@
                 left(col.IS_NULLABLE, 1) as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 case when pk.COLUMN_NAME is null then 'N' else 'Y' end as IS_PRIMARY_KEY,
-                case when fk.COLUMN_NAME is null then 'N' else 'Y' end as IS_FOREIGN_KEY
+                case when fk.COLUMN_NAME is null then 'N' else 'Y' end as IS_FOREIGN_KEY,
+                'N' as IS_UNIQUE_KEY
             from INFORMATION_SCHEMA.COLUMNS col
                     left join (select
                                    kcu.TABLE_SCHEMA,
@@ -153,7 +154,8 @@
                 left(col.IS_NULLABLE, 1) as IS_NULLABLE,
                 'N' as IS_HIDDEN,
                 case when pk.COLUMN_NAME is null then 'N' else 'Y' end as IS_PRIMARY_KEY,
-                case when fk.COLUMN_NAME is null then 'N' else 'Y' end as IS_FOREIGN_KEY
+                case when fk.COLUMN_NAME is null then 'N' else 'Y' end as IS_FOREIGN_KEY,
+                'N' as IS_UNIQUE_KEY,
             from INFORMATION_SCHEMA.COLUMNS col
                     left join (select
                                    kcu.TABLE_SCHEMA,
