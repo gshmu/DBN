@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.connection.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class ConnectAction extends DumbAwareAction {
     private ConnectionHandler connectionHandler;
@@ -25,7 +25,6 @@ public class ConnectAction extends DumbAwareAction {
         new BackgroundTask(project, "Trying to connect to " + connectionHandler.getName(), false) {
             @Override
             public void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true);
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 connectionManager.testConnection(connectionHandler, false, true);
             }

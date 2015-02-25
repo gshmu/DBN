@@ -47,7 +47,6 @@ public class ExplainPlanManager extends AbstractProjectComponent {
     public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask<ExplainPlanResult> callback) {
         BackgroundTask explainTask = new BackgroundTask(getProject(), "Extracting explain plan for " + executable.getElementType().getDescription(), false, true) {
             public void execute(@NotNull ProgressIndicator progressIndicator) {
-                initProgressIndicator(progressIndicator, true);
                 ConnectionHandler connectionHandler = executable.getFile().getActiveConnection();
                 DBSchema currentSchema = executable.getFile().getCurrentSchema();
                 if (connectionHandler != null) {

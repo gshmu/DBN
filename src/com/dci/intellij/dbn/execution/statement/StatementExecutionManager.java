@@ -217,7 +217,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 promptVariablesDialog(executionProcessor,
                         new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
                             public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                initProgressIndicator(progressIndicator, true);
                                 executionProcessor.execute(progressIndicator);
                             }
                         });

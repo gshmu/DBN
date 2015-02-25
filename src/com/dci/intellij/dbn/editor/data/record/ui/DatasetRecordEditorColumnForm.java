@@ -99,8 +99,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
 
                             DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
-                            if (column.isForeignKey() || (dataLength <= valueListPopupSettings.getDataLengthThreshold() &&
-                                    (!column.isSinglePrimaryKey() || valueListPopupSettings.isActiveForPrimaryKeyColumns()))) {
+                            if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
                                 ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
                                     public List<String> getValues() {
                                         return columnInfo.getPossibleValues();

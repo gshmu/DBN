@@ -41,6 +41,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
     private boolean isPrimaryKey;
     private boolean isForeignKey;
+    private boolean isUniqueKey;
     private boolean isNullable;
     private boolean isHidden;
     private int position;
@@ -56,6 +57,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         name = resultSet.getString("COLUMN_NAME");
         isPrimaryKey = "Y".equals(resultSet.getString("IS_PRIMARY_KEY"));
         isForeignKey = "Y".equals(resultSet.getString("IS_FOREIGN_KEY"));
+        isUniqueKey = "Y".equals(resultSet.getString("IS_UNIQUE_KEY"));
         isNullable = "Y".equals(resultSet.getString("IS_NULLABLE"));
         isHidden = "Y".equals(resultSet.getString("IS_HIDDEN"));
         position = resultSet.getInt("POSITION");
@@ -141,12 +143,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     }
 
     public boolean isUniqueKey() {
-        for (DBConstraint constraint : getConstraints()) {
-            if (constraint.isUniqueKey()) {
-                return true;
-            }
-        }
-        return false;
+        return isUniqueKey;
     }
 
     public boolean isSinglePrimaryKey() {

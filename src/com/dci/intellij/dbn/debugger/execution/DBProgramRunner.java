@@ -78,7 +78,6 @@ public class DBProgramRunner extends GenericProgramRunner {
                 if (allowed) {
                     new BackgroundTask(runProfile.getProject(), "Checking debug privileges", false, true) {
                         public void execute(@NotNull ProgressIndicator progressIndicator) {
-                            initProgressIndicator(progressIndicator, true);
                             performPrivilegeCheck(
                                     runProfile.getExecutionInput(),
                                     executor,
@@ -205,7 +204,6 @@ public class DBProgramRunner extends GenericProgramRunner {
                         new BackgroundTask(project, "Compiling dependencies", false, true){
                             @Override
                             public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                initProgressIndicator(progressIndicator, true);
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                                 for (DBSchemaObject schemaObject : selectedDependencies) {
                                     if (!progressIndicator.isCanceled()) {

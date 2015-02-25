@@ -36,7 +36,6 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
                 public void execute() {
                     new BackgroundTask(project, "Extracting select statement", false, true) {
                         protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            initProgressIndicator(progressIndicator, true);
                             StatementGeneratorResult result = generateStatement(project);
                             if (result.getMessages().hasErrors()) {
                                 MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());

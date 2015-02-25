@@ -315,7 +315,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                 new BackgroundTask(object.getProject(), "Opening editor", false, true) {
                     @Override
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        initProgressIndicator(progressIndicator, true);
                         if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                             DBObjectListContainer childObjects = object.getChildObjects();
                             if (childObjects != null) childObjects.load();

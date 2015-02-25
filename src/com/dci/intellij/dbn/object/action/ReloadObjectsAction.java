@@ -29,7 +29,6 @@ public class ReloadObjectsAction extends AnAction {
                     new BackgroundTask(project, "Reloading " + objectList.getObjectType().getListName(), false) {
                         @Override
                         public void execute(@NotNull ProgressIndicator progressIndicator) {
-                            initProgressIndicator(progressIndicator, false);
                             objectList.reload();
                         }
                     }.start();
