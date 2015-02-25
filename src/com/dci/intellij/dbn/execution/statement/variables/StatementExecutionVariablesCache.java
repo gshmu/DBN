@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +33,17 @@ public class StatementExecutionVariablesCache implements PersistentStateElement<
             }
         }
         variables.add(new StatementExecutionVariable(executionVariable));
+    }
+
+    @Nullable
+    public StatementExecutionVariable getVariable(VirtualFile virtualFile, String name) {
+        Set<StatementExecutionVariable> variables = getVariables(virtualFile);
+        for (StatementExecutionVariable variable : variables) {
+            if (variable.getName().equalsIgnoreCase(name)) {
+                return variable;
+            }
+        }
+        return null;
     }
 
     /*********************************************

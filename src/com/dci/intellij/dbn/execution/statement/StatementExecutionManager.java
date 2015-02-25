@@ -89,6 +89,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         variablesCache.cacheVariable(virtualFile, variable);
     }
 
+    public StatementExecutionVariablesCache getVariablesCache() {
+        return variablesCache;
+    }
+
     private PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
         @Override
         public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {}
