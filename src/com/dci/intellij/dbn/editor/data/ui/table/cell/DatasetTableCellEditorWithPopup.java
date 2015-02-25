@@ -1,20 +1,22 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupProviderForm;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
-import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
-import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupProvider;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
+import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.UIUtil;
 
 public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     public DatasetTableCellEditorWithPopup(DatasetEditorTable table) {
@@ -31,8 +33,8 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
         super.prepareEditor(cell);
 
         // show automatic popup
-        final TextFieldPopupProviderForm app = getEditorComponent().getAutoPopupProvider();
-        if (app != null && showAutoPopup()) {
+        final TextFieldPopupProvider popupProvider = getEditorComponent().getAutoPopupProvider();
+        if (popupProvider != null && showAutoPopup()) {
             Thread popupThread = new Thread() {
                    public void run() {
                        try {
@@ -42,7 +44,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
                        }
 
                        if (!cell.isDisposed() && cell.isEditing()) {
-                           app.showPopup();
+                           popupProvider.showPopup();
                        }
                    }
                };
@@ -58,11 +60,14 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
 
     private boolean showAutoPopup() {
         DataEditorPopupSettings settings = this.settings.getPopupSettings();
-        long dataLength = getCell().getColumnInfo().getDataType().getLength();
-        if (!isEditable()) return true;
-        if (settings.isActive() && (settings.getDataLengthThreshold() < dataLength || dataLength == 0)) {
-            if (settings.isActiveIfEmpty() || getTextField().getText().length() > 0) {
-                return true;
+        DBDataType dataType = getCell().getColumnInfo().getDataType();
+        if (dataType != null) {
+            long dataLength = dataType.getLength();
+            if (!isEditable()) return true;
+            if (settings.isActive() && (settings.getDataLengthThreshold() < dataLength || dataLength == 0)) {
+                if (settings.isActiveIfEmpty() || getTextField().getText().length() > 0) {
+                    return true;
+                }
             }
         }
         return false;
@@ -70,13 +75,13 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
 
     @Override
     protected void fireEditingCanceled() {
-        getEditorComponent().disposeActivePopup();
+        getEditorComponent().hideActivePopup();
         super.fireEditingCanceled();
     }
 
     @Override
     protected void fireEditingStopped() {
-        getEditorComponent().disposeActivePopup();
+        getEditorComponent().hideActivePopup();
         super.fireEditingStopped();
     }
 
@@ -85,14 +90,14 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
      ********************************************************/
     public void keyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isConsumed()) {
-            TextFieldPopupProviderForm popupProviderForm = getEditorComponent().getActivePopupProvider();
+            TextFieldPopupProvider popupProviderForm = getEditorComponent().getActivePopupProvider();
             if (popupProviderForm != null) {
                 popupProviderForm.handleKeyPressedEvent(keyEvent);
 
             } else {
                 popupProviderForm = getEditorComponent().getPopupProvider(keyEvent);
                 if (popupProviderForm != null) {
-                    getEditorComponent().disposeActivePopup();
+                    getEditorComponent().hideActivePopup();
                     popupProviderForm.showPopup();
                 } else {
                     super.keyPressed(keyEvent);
@@ -102,7 +107,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     }
 
     public void keyReleased(KeyEvent keyEvent) {
-        TextFieldPopupProviderForm popupProviderForm = getEditorComponent().getActivePopupProvider();
+        TextFieldPopupProvider popupProviderForm = getEditorComponent().getActivePopupProvider();
         if (popupProviderForm != null) {
             popupProviderForm.handleKeyReleasedEvent(keyEvent);
 
@@ -131,13 +136,14 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
             button.setBorder(BUTTON_BORDER);
             button.setBackground(UIUtil.getTableBackground());
             button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            button.setPreferredSize(new Dimension(20, 17));
+            button.getParent().setBackground(button.getBackground());
         }
 
         @Override
         public void setEditable(boolean editable) {
             super.setEditable(editable);
             setBackground(getTextField().getBackground());
-            getButton().setBackground(getTextField().getBackground());
         }
     }
 }

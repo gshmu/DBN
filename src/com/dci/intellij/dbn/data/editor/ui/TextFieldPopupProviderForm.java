@@ -1,17 +1,20 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Point;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -25,15 +28,17 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Disposer;
 
-public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm {
+public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm, TextFieldPopupProvider {
     protected TextFieldWithPopup editorComponent;
     private boolean isAutoPopup;
     private boolean isEnabled = true;
     private JBPopup popup;
+    private JLabel button;
     private Set<AnAction> actions = new HashSet<AnAction>();
 
     protected TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean isAutoPopup) {
@@ -72,19 +77,23 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
      */
     @Nullable
     public abstract JBPopup createPopup();
-    public abstract void handleKeyPressedEvent(KeyEvent e);
-    public abstract void handleKeyReleasedEvent(KeyEvent e);
-    public abstract void handleFocusLostEvent(FocusEvent e);
-    public abstract String getKeyShortcutName();
-    public abstract String getDescription();
-    public abstract TextFieldPopupType getPopupType();
-    public String getKeyShortcutDescription() {
+    public final String getKeyShortcutDescription() {
         Shortcut[] shortcuts = KeyUtil.getShortcuts(getKeyShortcutName());
         return KeymapUtil.getShortcutsText(shortcuts);
     }
 
+    @Override
+    public final Shortcut[] getShortcuts() {
+        return KeyUtil.getShortcuts(getKeyShortcutName());
+    }
+
     public boolean isAutoPopup() {
         return isAutoPopup;
+    }
+
+    @Override
+    public boolean hasButton() {
+        return true;
     }
 
     public boolean isEnabled() {
@@ -93,6 +102,17 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    @Override
+    public void setButton(@Nullable JLabel button) {
+        this.button = button;
+    }
+
+    @Nullable
+    @Override
+    public JLabel getButton() {
+        return button;
     }
 
     public void registerAction(AnAction action) {
@@ -123,32 +143,52 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return KeyUtil.match(shortcuts, keyEvent);
     }
 
+    @Override
+    public void preparePopup() {}
+
+    boolean isPreparingPopup = false;
     public void showPopup() {
-        new ConditionalLaterInvocator(){
-            public void execute() {
-                if (!isShowingPopup()) {
-                    popup = createPopup();
-                    if (popup != null) {
-                        Disposer.register(TextFieldPopupProviderForm.this, popup);
+        if (isPreparingPopup) return;
 
-                        JPanel panel = (JPanel) popup.getContent();
-                        panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+        isPreparingPopup = true;
+        new BackgroundTask(getProject(), "Preparing " + getDescription(), false, true) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                preparePopup();
+                if (progressIndicator.isCanceled()) return;
 
-                        editorComponent.clearSelection();
+                new SimpleLaterInvocator(){
+                    public void execute() {
+                        try {
+                            if (!isShowingPopup()) {
+                                popup = createPopup();
+                                if (popup != null) {
+                                    Disposer.register(TextFieldPopupProviderForm.this, popup);
 
-                        if (editorComponent.isShowing()) {
-                            Point location = editorComponent.getLocationOnScreen();
-                            location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
-                            popup.showInScreenCoordinates(editorComponent, location);
-                            //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
+                                    JPanel panel = (JPanel) popup.getContent();
+                                    panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+
+                                    editorComponent.clearSelection();
+
+                                    if (editorComponent.isShowing()) {
+                                        Point location = editorComponent.getLocationOnScreen();
+                                        location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
+                                        popup.showInScreenCoordinates(editorComponent, location);
+                                        //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
+                                    }
+                                }
+                            }
+                        } finally {
+                            isPreparingPopup = false;
                         }
                     }
-                }
+                }.start();
+
             }
         }.start();
     }
 
-    protected void hidePopup() {
+    public void hidePopup() {
         if (isShowingPopup()) {
             new ConditionalLaterInvocator() {
                 @Override
@@ -160,11 +200,9 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         }
     }
 
-    protected boolean isShowingPopup() {
+    public boolean isShowingPopup() {
         return popup != null && popup.isVisible();
     }
-
-
 
 
     /********************************************************
@@ -186,4 +224,5 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
             popup = null;
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,6 +16,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -122,6 +124,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     @Override
     public TextFieldPopupType getPopupType() {
         return TextFieldPopupType.TEXT_EDITOR;
+    }
+
+    @Nullable
+    @Override
+    public Icon getButtonIcon() {
+        return Icons.DATA_EDITOR_BROWSE;
     }
 
     public void keyPressed(KeyEvent e) {
