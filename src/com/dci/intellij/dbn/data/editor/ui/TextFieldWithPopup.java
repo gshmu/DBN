@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -7,6 +8,7 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,25 +20,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
 public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private JTextField textField;
-    private JLabel button;
+    private JPanel buttonsPanel;
+    //private JLabel button;
 
-    private List<TextFieldPopupProviderForm> popupProviders = new ArrayList<TextFieldPopupProviderForm>();
+    private List<TextFieldPopupProvider> popupProviders = new ArrayList<TextFieldPopupProvider>();
     private UserValueHolder userValueHolder;
-    private boolean showsButton;
     private Project project;
 
     public TextFieldWithPopup(Project project) {
@@ -50,21 +46,14 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         textField.setMargin(new Insets(0, 1, 0, 1));
         add(textField, BorderLayout.CENTER);
 
-        button = new JLabel(Icons.DATA_EDITOR_BROWSE);
-        button.setBorder(BUTTON_BORDER);
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.addMouseListener(mouseListener);
+        buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        add(buttonsPanel, BorderLayout.EAST);
 
-        Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
-        String shortcutText = KeymapUtil.getShortcutsText(shortcuts);
-        button.setToolTipText("Open editor (" + shortcutText + ")");
-        add(button, BorderLayout.EAST);
         textField.setPreferredSize(new Dimension(150, 24));
         textField.setMaximumSize(new Dimension(-1, 24));
         textField.addKeyListener(keyListener);
         textField.addFocusListener(focusListener);
 
-        customizeButton(button);
         customizeTextField(textField);
     }
 
@@ -78,18 +67,6 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
                                                                                   
     public void setUserValueHolder(UserValueHolder userValueHolder) {
         this.userValueHolder = userValueHolder;
-    }
-
-    private void updateButtonToolTip() {
-        if (popupProviders.size() == 1) {
-            TextFieldPopupProviderForm popupProvider = getDefaultPopupProvider();
-            String toolTipText = "Open " + popupProvider.getDescription();
-            String keyShortcutDescription = popupProvider.getKeyShortcutDescription();
-            if (keyShortcutDescription != null) {
-                toolTipText += " (" + keyShortcutDescription + ")";
-            }
-            button.setToolTipText(toolTipText);
-        }
     }
 
     public void customizeTextField(JTextField textField) {}
@@ -124,66 +101,80 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         textField.setText(text);
     }
 
-    public JLabel getButton() {
-        return button;
-    }
-
     @Override
     public void setEnabled(boolean enabled) {
         //textField.setEnabled(enabled);
         textField.setEditable(enabled);
-        button.setVisible(showsButton && enabled);
+        for (TextFieldPopupProvider popupProvider : popupProviders) {
+            JLabel button = popupProvider.getButton();
+            if (button != null) {
+                button.setVisible(enabled);
+            }
+        }
     }
 
     /******************************************************
      *                    PopupProviders                  *
      ******************************************************/
+    public void createValuesListPopup(ListPopupValuesProvider valuesProvider) {
+        //textField.addFocusListener();
+    }
+
     public void createValuesListPopup(List<String> valuesList, boolean useDynamicFiltering) {
         ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesList, useDynamicFiltering);
         addPopupProvider(popupProviderForm);
-        updateButtonToolTip();
     }
 
     public void createValuesListPopup(ListPopupValuesProvider valuesProvider, boolean useDynamicFiltering) {
         ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesProvider, useDynamicFiltering);
         addPopupProvider(popupProviderForm);
-        updateButtonToolTip();
     }
 
     public void createTextEditorPopup(boolean autoPopup) {
         TextEditorPopupProviderForm popupProviderForm = new TextEditorPopupProviderForm(this, autoPopup);
         addPopupProvider(popupProviderForm);
-        updateButtonToolTip();
-        showsButton = true;
-        button.setVisible(true);
     }
 
     public void createCalendarPopup(boolean autoPopup) {
         CalendarPopupProviderForm popupProviderForm = new CalendarPopupProviderForm(this, autoPopup);
         addPopupProvider(popupProviderForm);
-        updateButtonToolTip();
-        showsButton = true;
-        button.setVisible(true);
     }
 
     public void createArrayEditorPopup(boolean autoPopup) {
         ArrayEditorPopupProviderForm popupProviderForm = new ArrayEditorPopupProviderForm(this, autoPopup);
         addPopupProvider(popupProviderForm);
-        updateButtonToolTip();
-        showsButton = true;
-        button.setVisible(true);
     }
 
-    private void addPopupProvider(TextFieldPopupProviderForm popupProviderForm) {
-        popupProviders.add(popupProviderForm);
-        Disposer.register(this, popupProviderForm);
+    private void addPopupProvider(TextFieldPopupProvider popupProvider) {
+        popupProviders.add(popupProvider);
+
+        if (popupProvider.hasButton()) {
+            Icon buttonIcon = popupProvider.getButtonIcon();
+            JLabel button = new JLabel(buttonIcon);
+            button.setBorder(BUTTON_BORDER);
+            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            String toolTipText = "Open " + popupProvider.getDescription();
+            String keyShortcutDescription = popupProvider.getKeyShortcutDescription();
+            if (keyShortcutDescription != null) {
+                toolTipText += " (" + keyShortcutDescription + ")";
+            }
+            button.setToolTipText(toolTipText);
+
+            button.addMouseListener(new ButtonMouseListener(popupProvider));
+            buttonsPanel.add(button, buttonsPanel.getComponentCount());
+            customizeButton(button);
+            popupProvider.setButton(button);
+        }
+        Disposer.register(this, popupProvider);
     }
 
     public void setPopupEnabled(TextFieldPopupType popupType, boolean enabled) {
-        for (TextFieldPopupProviderForm popupProvider : popupProviders) {
+        for (TextFieldPopupProvider popupProvider : popupProviders) {
             if (popupProvider.getPopupType() == popupType) {
                 popupProvider.setEnabled(enabled);
-                if (popupProvider == getDefaultPopupProvider()) {
+                JLabel button = popupProvider.getButton();
+                if (button != null) {
                     button.setVisible(enabled);
                 }
                 break;
@@ -191,15 +182,15 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         }
     }
 
-    public void disposeActivePopup() {
-        TextFieldPopupProviderForm popupProvider = getActivePopupProvider();
+    public void hideActivePopup() {
+        TextFieldPopupProvider popupProvider = getActivePopupProvider();
         if ( popupProvider != null) {
              popupProvider.hidePopup();
         }
     }
 
-    public TextFieldPopupProviderForm getAutoPopupProvider() {
-        for (TextFieldPopupProviderForm popupProvider : popupProviders) {
+    public TextFieldPopupProvider getAutoPopupProvider() {
+        for (TextFieldPopupProvider popupProvider : popupProviders) {
             if (popupProvider.isAutoPopup()) {
                 return popupProvider;
             }
@@ -207,12 +198,12 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         return null;
     }
 
-    public TextFieldPopupProviderForm getDefaultPopupProvider() {
+    public TextFieldPopupProvider getDefaultPopupProvider() {
         return popupProviders.get(0);
     }
 
-    public TextFieldPopupProviderForm getActivePopupProvider() {
-        for (TextFieldPopupProviderForm popupProvider : popupProviders) {
+    public TextFieldPopupProvider getActivePopupProvider() {
+        for (TextFieldPopupProvider popupProvider : popupProviders) {
             if (popupProvider.isShowingPopup()) {
                 return popupProvider;
             }
@@ -220,8 +211,8 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
         return null;
     }
 
-    public TextFieldPopupProviderForm getPopupProvider(KeyEvent keyEvent) {
-        for (TextFieldPopupProviderForm popupProvider : popupProviders) {
+    public TextFieldPopupProvider getPopupProvider(KeyEvent keyEvent) {
+        for (TextFieldPopupProvider popupProvider : popupProviders) {
             if (popupProvider.matchesKeyEvent(keyEvent)) {
                 return popupProvider;
             }
@@ -235,7 +226,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private FocusListener focusListener = new FocusAdapter() {
         @Override
         public void focusLost(FocusEvent focusEvent) {
-            TextFieldPopupProviderForm popupProvider = getActivePopupProvider();
+            TextFieldPopupProvider popupProvider = getActivePopupProvider();
             if (popupProvider != null) {
                 popupProvider.handleFocusLostEvent(focusEvent);
             }
@@ -247,23 +238,23 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
      ********************************************************/
     private KeyListener keyListener = new KeyAdapter() {
         public void keyPressed(KeyEvent keyEvent) {
-            TextFieldPopupProviderForm popupProvider = getActivePopupProvider();
+            TextFieldPopupProvider popupProvider = getActivePopupProvider();
             if (popupProvider != null) {
                 popupProvider.handleKeyPressedEvent(keyEvent);
 
             } else {
                 popupProvider = getPopupProvider(keyEvent);
                 if (popupProvider != null && popupProvider.isEnabled()) {
-                    disposeActivePopup();
+                    hideActivePopup();
                     popupProvider.showPopup();
                 }
             }
         }
 
         public void keyReleased(KeyEvent keyEvent) {
-            TextFieldPopupProviderForm popupProviderForm = getActivePopupProvider();
-            if (popupProviderForm != null) {
-                popupProviderForm.handleKeyReleasedEvent(keyEvent);
+            TextFieldPopupProvider popupProvider = getActivePopupProvider();
+            if (popupProvider != null) {
+                popupProvider.handleKeyReleasedEvent(keyEvent);
 
             }
         }
@@ -273,24 +264,29 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
      ********************************************************/
     private ActionListener actionListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            TextFieldPopupProviderForm defaultPopupProvider = getDefaultPopupProvider();
-            TextFieldPopupProviderForm popupProvider = getActivePopupProvider();
+            TextFieldPopupProvider defaultPopupProvider = getDefaultPopupProvider();
+            TextFieldPopupProvider popupProvider = getActivePopupProvider();
             if (popupProvider == null || popupProvider != defaultPopupProvider) {
-                disposeActivePopup();
+                hideActivePopup();
                 defaultPopupProvider.showPopup();
             }
         }
     };
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private class ButtonMouseListener extends MouseAdapter {
+        TextFieldPopupProvider popupProvider;
+
+        public ButtonMouseListener(TextFieldPopupProvider popupProvider) {
+            this.popupProvider = popupProvider;
+        }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             getTextField().requestFocus();
-            TextFieldPopupProviderForm defaultPopupProvider = getDefaultPopupProvider();
-            TextFieldPopupProviderForm popupProvider = getActivePopupProvider();
-            if (popupProvider == null || popupProvider != defaultPopupProvider) {
-                disposeActivePopup();
-                defaultPopupProvider.showPopup();
+            TextFieldPopupProvider activePopupProvider = getActivePopupProvider();
+            if (activePopupProvider == null || activePopupProvider != popupProvider) {
+                hideActivePopup();
+                popupProvider.showPopup();
             }
         }
     };

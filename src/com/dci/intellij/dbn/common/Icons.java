@@ -157,8 +157,9 @@ public class Icons {
 
 
     public static final Icon DATA_EDITOR_RELOAD_DATA = load("/img/action/Refresh.png");
-    public static final Icon DATA_EDITOR_BROWSE =    load("/img/Browse.png");
-    public static final Icon DATA_EDITOR_CALENDAR =    load("/img/Calendar.png");
+    public static final Icon DATA_EDITOR_BROWSE =    load("/img/ButtonBrowse.png");
+    public static final Icon DATA_EDITOR_CALENDAR =    load("/img/ButtonCalendar.png");
+    public static final Icon DATA_EDITOR_LIST =    load("/img/ButtonList.png");
 
     public static final Icon DATA_EXPORT =    load("/img/action/DataExport.png");
     public static final Icon DATA_IMPORT =    load("/img/action/DataImport.png");

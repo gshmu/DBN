@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import javax.swing.AbstractListModel;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -17,7 +18,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -55,6 +58,12 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
 
     public JComponent getComponent() {
         return mainPanel;
+    }
+
+    @Override
+    public void preparePopup() {
+        // this may take long time so has to be executed in background
+        if (valuesProvider != null) valuesProvider.getValues();
     }
 
     public JBPopup createPopup() {
@@ -148,6 +157,12 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
 
     public String getDescription() {
         return "Possible Values List";
+    }
+
+    @Nullable
+    @Override
+    public Icon getButtonIcon() {
+        return Icons.DATA_EDITOR_LIST;
     }
 
     @Override

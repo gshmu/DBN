@@ -15,7 +15,7 @@ public abstract class DBNFormImpl extends GUIUtil implements DBNForm {
     }
 
     @Override
-    public boolean isDisposed() {
+    public final boolean isDisposed() {
         return disposed;
     }
 

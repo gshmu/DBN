@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -140,12 +142,18 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     public String getDescription() {
-        return "Text Editor";
+        return "Array Editor";
     }
 
     @Override
     public TextFieldPopupType getPopupType() {
         return TextFieldPopupType.TEXT_EDITOR;
+    }
+
+    @Nullable
+    @Override
+    public Icon getButtonIcon() {
+        return Icons.DATA_EDITOR_BROWSE;
     }
 
     public void keyPressed(KeyEvent e) {
