@@ -29,7 +29,7 @@ public class ConnectionUtil {
                 closeStatement(resultSet.getStatement());
                 resultSet.close();
             } catch (Throwable e) {
-                LOGGER.warn("Error closing result set", e);
+                LOGGER.warn("Error closing result set: " + e.getMessage());
             }
         }
     }
@@ -40,7 +40,7 @@ public class ConnectionUtil {
                 statement.close();
             }
         } catch (Throwable e) {
-            LOGGER.warn("Error closing statement", e);
+            LOGGER.warn("Error closing statement: " + e.getMessage());
         }
 
     }
@@ -53,7 +53,7 @@ public class ConnectionUtil {
                     try {
                         connection.close();
                     } catch (Throwable e) {
-                        LOGGER.warn("Error closing connection", e);
+                        LOGGER.warn("Error closing connection: " + e.getMessage());
                     }
                 }
             }.start();
