@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.editor.ui;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.intellij.ide.DataManager;
@@ -136,11 +136,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
                 true, null, 10);
 
         JComponent content = popup.getContent();
-        content.setBackground(ValuesListPopupProviderForm.BACKGROUND_COLOR);
-        Dimension preferredSize = content.getPreferredSize();
-        int width = Math.max((int) preferredSize.getWidth(), editorComponent.getTextField().getWidth());
-        int height = (int) Math.min(200, preferredSize.getHeight());
-        content.setPreferredSize(new Dimension(width, height));
+        GUIUtil.updatePreferredSize(content, editorComponent.getTextField().getWidth(), 200);
         popup.showUnderneathOf(editorComponent);
     }
 
