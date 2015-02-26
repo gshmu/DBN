@@ -24,7 +24,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
-import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesImpl;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -49,7 +49,7 @@ public class ExplainPlanTreeTable extends TreeTable{
     private static final int MAX_COLUMN_WIDTH = 250;
     private static final int MIN_COLUMN_WIDTH = 10;
 
-    DataGridTextAttributes textAttributes = new DataGridTextAttributes();
+    DataGridTextAttributesImpl textAttributes = new DataGridTextAttributesImpl();
     private SimpleTextAttributes operationAttributes;
     private JBPopup largeValuePopup;
 

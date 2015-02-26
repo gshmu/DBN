@@ -3,9 +3,12 @@ package com.dci.intellij.dbn.editor.session.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelRow;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.editor.session.SessionStatus;
 
 public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowserModelCell> {
 
@@ -50,4 +53,14 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
     public String getSchema() {
         return (String) getCellValue("SCHEMA");
     }
+
+    public SessionStatus getSessionStatus() {
+        ConnectionHandler connectionHandler = getModel().getConnectionHandler();
+        if (connectionHandler != null) {
+            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            return compatibilityInterface.getSessionStatus(getStatus());
+        }
+        return SessionStatus.INACTIVE;
+    }
+
 }

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
+import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.object.common.DBObject;
 
 public abstract class DatabaseCompatibilityInterface {
@@ -43,6 +44,8 @@ public abstract class DatabaseCompatibilityInterface {
     public String getSessionBrowserColumnName(String columnName) {
         return columnName;
     }
+
+    public abstract SessionStatus getSessionStatus(String statusName);
 
     public abstract String getExplainPlanStatementPrefix();
 }

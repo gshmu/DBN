@@ -52,7 +52,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @Override
     protected BasicTableCellRenderer createCellRenderer() {
-        return new BasicTableCellRenderer();
+        return new SessionBrowserTableCellRenderer();
     }
 
     @NotNull

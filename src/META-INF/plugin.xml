@@ -27,6 +27,13 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Remember statement execution variables<br>
+                - Session Browser colors configuration</br>
+                - Session Browser explain plan for current statement (Oracle)</br>
+                - Minor bug fixes<br>
+            </ul>
             <li><b>3.0.4012</b>
             <ul>
                 - Support for GRANT SQL-statement (Oracle)</br>
@@ -459,6 +466,7 @@
         <colorSettingsPage implementation="com.dci.intellij.dbn.code.sql.color.SQLColorSettingsPage"/>
         <colorSettingsPage implementation="com.dci.intellij.dbn.code.psql.color.PSQLColorSettingsPage"/>
         <colorSettingsPage implementation="com.dci.intellij.dbn.data.grid.color.DataGridColorSettingsPage"/>
+        <colorSettingsPage implementation="com.dci.intellij.dbn.editor.session.color.SessionBrowserColorSettingsPage"/>
 
         <syntaxHighlighter key="DBN-SQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>
         <syntaxHighlighter key="DBN-PSQL" factoryClass="com.dci.intellij.dbn.language.common.DBSyntaxHighlighterProvider"/>

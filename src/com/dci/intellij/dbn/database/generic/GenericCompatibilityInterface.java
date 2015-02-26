@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.database.generic;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.session.SessionStatus;
 
 public class GenericCompatibilityInterface extends DatabaseCompatibilityInterface {
 
@@ -58,6 +60,11 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
     @Override
     public String getDefaultAlternativeStatementDelimiter() {
         return null;
+    }
+
+    @Override
+    public SessionStatus getSessionStatus(String statusName) {
+        return StringUtil.isEmpty(statusName) ? SessionStatus.INACTIVE : SessionStatus.ACTIVE;
     }
 
     @Override
