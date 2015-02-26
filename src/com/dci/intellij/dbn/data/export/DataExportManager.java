@@ -51,7 +51,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             processor.export(exportModel, instructions, connectionHandler);
             DataExportInstructions.Destination destination = instructions.getDestination();
             if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                MessageUtil.showInfoDialog(project, "Export info", "Content exported to clipboard.");
+                MessageUtil.showInfoDialog(project, "Export info", "Content exported to clipboard.", new String[]{"OK"}, 0, successCallback);
 
             } else if (destination == DataExportInstructions.Destination.FILE) {
                 final File file = instructions.getFile();
@@ -84,7 +84,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                             new String[]{"OK", "Open File"}, 0,
                             openFileTask);
                 } else {
-                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath(), null, 0, successCallback);
+                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath(),  new String[]{"OK"}, 0, successCallback);
                 }
             }
         } catch (DataExportException e) {
