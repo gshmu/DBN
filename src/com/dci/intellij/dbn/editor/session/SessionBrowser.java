@@ -116,6 +116,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                                 replaceModel(model);
                             }
                         } finally {
+                            EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                             setLoading(false);
                         }
                     }
@@ -137,10 +138,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                         editorTable.setModel(newModel);
                         refreshTable();
                         DisposerUtil.dispose(oldModel);
-                    }
-                    Project project = getProject();
-                    if (project != null && !project.isDisposed()) {
-                        EventManager.notify(project, SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                     }
                 }
             }.start();
