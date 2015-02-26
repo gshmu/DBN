@@ -26,8 +26,8 @@ public interface DataGridTextAttributesKeys {
         Color DEFAULT_FOREGROUND   = HighlighterColors.TEXT.getDefaultAttributes().getForegroundColor();
         Color LIGHT_BACKGROUND     = new JBColor(new Color(0xf4f4f4), new Color(0x393939));
         Color LIGHT_FOREGROUND     = new JBColor(new Color(0x7f7f7f), new Color(0x999999));
-        Color ERROR_BACKGROUND     = HighlighterColors.BAD_CHARACTER.getDefaultAttributes().getBackgroundColor();
-        Color PK_FOREGROUND        = new JBColor(new Color(0x4569A7), new Color(0x95A8B4));
+        Color ERROR_BACKGROUND     = new JBColor(new Color(0x7f7f7f), new Color(0x999999));
+        Color PK_FOREGROUND        = new JBColor(new Color(0x8B4233), new Color(0x95A8B4));
         Color PK_BACKGROUND        = new JBColor(new Color(0xF7F7FF), new Color(0x2B3447));
         Color FK_FOREGROUND        = new JBColor(new Color(0x3F6B3F), new Color(0xA1A8A1));
         Color FK_BACKGROUND        = new JBColor(new Color(0xF7FFF7), new Color(0x2A3B2A));

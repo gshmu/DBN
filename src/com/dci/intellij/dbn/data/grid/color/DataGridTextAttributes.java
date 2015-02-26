@@ -4,13 +4,16 @@ import java.awt.Color;
 
 import com.intellij.ui.SimpleTextAttributes;
 
-/**
- * Created by CiocaDa on 26.02.2015.
- */
 public interface DataGridTextAttributes {
+    void load();
+
     SimpleTextAttributes getSelection();
 
     SimpleTextAttributes getSearchResult();
 
     Color getCaretRowBgColor();
+
+    SimpleTextAttributes getPlainData(boolean modified, boolean atCaretRow);
+
+    SimpleTextAttributes getLoadingData(boolean atCaretRow);
 }

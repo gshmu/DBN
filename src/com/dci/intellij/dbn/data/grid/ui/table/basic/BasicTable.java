@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
-import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesImpl;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -50,7 +50,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         regionalSettings = RegionalSettings.getInstance(project);
         dataGridSettings = DataGridSettings.getInstance(project);
         cellRenderer = createCellRenderer();
-        DataGridTextAttributesImpl displayAttributes = cellRenderer.getAttributes();
+        DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
         setSelectionForeground(displayAttributes.getSelection().getFgColor());
         setSelectionBackground(displayAttributes.getSelection().getBgColor());
         EditorColorsManager.getInstance().addEditorColorsListener(this);
@@ -103,7 +103,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
             new ConditionalLaterInvocator() {
                 @Override
                 public void execute() {
-                    DataGridTextAttributesImpl attributes = cellRenderer.getAttributes();
+                    DataGridTextAttributes attributes = cellRenderer.getAttributes();
                     Color background = readonly ?
                             attributes.getLoadingData(false).getBgColor() :
                             attributes.getPlainData(false, false).getBgColor();

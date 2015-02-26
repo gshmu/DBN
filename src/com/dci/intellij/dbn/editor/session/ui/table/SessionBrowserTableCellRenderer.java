@@ -5,6 +5,7 @@ import javax.swing.border.Border;
 import java.awt.Color;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.session.color.SessionBrowserTextAttributes;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
@@ -12,7 +13,16 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.intellij.ui.SimpleTextAttributes;
 
 public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
-    SessionBrowserTextAttributes attributes = new SessionBrowserTextAttributes();
+
+    @Override
+    protected DataGridTextAttributes createTextAttributes() {
+        return new SessionBrowserTextAttributes();
+    }
+
+    @Override
+    public SessionBrowserTextAttributes getAttributes() {
+        return (SessionBrowserTextAttributes) super.getAttributes();
+    }
 
     protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         acquireState(table, isSelected, false, rowIndex, columnIndex);
@@ -26,13 +36,14 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
             boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
             boolean isConnected = sessionBrowserTable.getSessionBrowser().getConnectionHandler().isConnected();
 
+            SessionBrowserTextAttributes attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getActiveSession(isCaretRow);
 
             if (isSelected) {
                 textAttributes = attributes.getSelection();
             } else {
                 if (isLoading || !isConnected) {
-                    textAttributes = attributes.getLoadingSessions(isCaretRow);
+                    textAttributes = attributes.getLoadingData(isCaretRow);
                 } else {
                     switch (row.getSessionStatus()) {
                         case ACTIVE: textAttributes = attributes.getActiveSession(isCaretRow); break;
