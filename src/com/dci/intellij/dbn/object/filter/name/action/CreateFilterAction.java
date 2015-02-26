@@ -52,7 +52,7 @@ public class CreateFilterAction extends ObjectNameFilterAction{
             }
         }
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                "Select object type",
+                "Select Object Type",
                 actionGroup,
                 e.getDataContext(),
                 JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,

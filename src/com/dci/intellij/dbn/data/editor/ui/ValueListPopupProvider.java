@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -28,7 +18,19 @@ import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ValueListPopupProvider implements TextFieldPopupProvider{
     private TextFieldWithPopup editorComponent;
@@ -122,22 +124,35 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     }
 
     private void doShowPopup() {
-        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        if (values.size() < 20)  {
+            String[] valuesArray = values.toArray(new String[values.size()]);
+            BaseListPopupStep<String> listPopupStep = new BaseListPopupStep<String>(null, valuesArray){
+                @Override
+                public PopupStep onChosen(String selectedValue, boolean finalChoice) {
+                    editorComponent.setText(selectedValue);
+                    return FINAL_CHOICE;
+                }
+            };
+            popup = JBPopupFactory.getInstance().createListPopup(listPopupStep);
+        } else {
+            DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-        for (int i = 0; i<values.size(); i++) {
-            actionGroup.add(new ValueSelectAction(i));
+            for (int i = 0; i<values.size(); i++) {
+                actionGroup.add(new ValueSelectAction(i));
+            }
+
+            popup = JBPopupFactory.getInstance().createActionGroupPopup(
+                    null,
+                    actionGroup,
+                    DataManager.getInstance().getDataContext(editorComponent),
+                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                    true, null, 10);
         }
 
-        popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                null,
-                actionGroup,
-                DataManager.getInstance().getDataContext(editorComponent),
-                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true, null, 10);
 
         JComponent content = popup.getContent();
-        GUIUtil.updatePreferredSize(content, editorComponent.getTextField().getWidth(), 200);
-        popup.showUnderneathOf(editorComponent);
+        GUIUtil.updatePreferredSize(content, editorComponent.getWidth(), 200);
+        GUIUtil.showUnderneathOf(popup, editorComponent, 4);
     }
 
     @Override
