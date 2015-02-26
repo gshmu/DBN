@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.database.postgres;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.session.SessionStatus;
 
 public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterface {
 
@@ -39,12 +41,12 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
         }
     }
 
-    public boolean supportsInvalidObjects() {
-        return false;
-    }
-
-    public boolean supportsReplacingObjects() {
-        return false;
+    @Override
+    public SessionStatus getSessionStatus(String statusName) {
+        if (StringUtil.isEmpty(statusName)) return SessionStatus.INACTIVE;
+        if (statusName.equalsIgnoreCase("active")) return SessionStatus.ACTIVE;
+        if (statusName.equalsIgnoreCase("idle")) return SessionStatus.INACTIVE;
+        return SessionStatus.SNIPED;
     }
 
     public char getIdentifierQuotes() {

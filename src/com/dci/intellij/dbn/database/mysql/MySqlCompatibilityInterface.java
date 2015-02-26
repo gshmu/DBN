@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.database.mysql;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.session.SessionStatus;
 
 public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface {
 
@@ -78,5 +80,11 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
         if (columnName.equalsIgnoreCase("state")) return "STATUS";
         if (columnName.equalsIgnoreCase("info")) return "CLIENT_INFO";
         return super.getSessionBrowserColumnName(columnName);
+    }
+
+    @Override
+    public SessionStatus getSessionStatus(String statusName) {
+        if (StringUtil.isEmpty(statusName)) return SessionStatus.INACTIVE;
+        else return SessionStatus.ACTIVE;
     }
 }

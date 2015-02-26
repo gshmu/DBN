@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.data.grid.color;
+package com.dci.intellij.dbn.editor.session.color;
 
 import javax.swing.Icon;
 import java.util.ArrayList;
@@ -16,27 +16,21 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 
-public class DataGridColorSettingsPage implements ColorSettingsPage {
+public class SessionBrowserColorSettingsPage implements ColorSettingsPage {
     protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
     protected final List<ColorDescriptor> colorDescriptors = new ArrayList<ColorDescriptor>();
 
-    public DataGridColorSettingsPage() {
-        attributeDescriptors.add(new AttributesDescriptor("Plain Data", DataGridTextAttributesKeys.PLAIN_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Tracking Data", DataGridTextAttributesKeys.TRACKING_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Modified Data", DataGridTextAttributesKeys.MODIFIED_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Deleted Data", DataGridTextAttributesKeys.DELETED_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Error Data", DataGridTextAttributesKeys.ERROR_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Readonly Data", DataGridTextAttributesKeys.READONLY_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Loading Data", DataGridTextAttributesKeys.LOADING_DATA));
-        attributeDescriptors.add(new AttributesDescriptor("Primary Key", DataGridTextAttributesKeys.PRIMARY_KEY));
-        attributeDescriptors.add(new AttributesDescriptor("Foreign Key", DataGridTextAttributesKeys.FOREIGN_KEY));
-        attributeDescriptors.add(new AttributesDescriptor("Selection", DataGridTextAttributesKeys.SELECTION));
-        colorDescriptors.add(new ColorDescriptor("Caret Row", DataGridTextAttributesKeys.CARET_ROW_BACKGROUND, ColorDescriptor.Kind.BACKGROUND));
+    public SessionBrowserColorSettingsPage() {
+        attributeDescriptors.add(new AttributesDescriptor("Active Session",   SessionBrowserTextAttributesKeys.ACTIVE_SESSION));
+        attributeDescriptors.add(new AttributesDescriptor("Inactive Session", SessionBrowserTextAttributesKeys.INACTIVE_SESSION));
+        attributeDescriptors.add(new AttributesDescriptor("Cached Session",   SessionBrowserTextAttributesKeys.CACHED_SESSION));
+        attributeDescriptors.add(new AttributesDescriptor("Sniped Session",   SessionBrowserTextAttributesKeys.SNIPED_SESSION));
+        attributeDescriptors.add(new AttributesDescriptor("Killed Session",   SessionBrowserTextAttributesKeys.KILLED_SESSION));
     }
 
     @Override
     public Icon getIcon() {
-        return Icons.DBO_TABLE;
+        return Icons.FILE_SESSION_BROWSER;
     }
 
     @NotNull
@@ -64,7 +58,7 @@ public class DataGridColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Data Grid (DBN)";
+        return "Session Browser (DBN)";
     }
 
     @Nullable

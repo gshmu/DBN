@@ -5,7 +5,7 @@ import javax.swing.border.Border;
 import java.awt.Color;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
+import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesImpl;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
@@ -33,7 +33,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             boolean isTrackingColumn = columnInfo.isTrackingColumn();
             boolean isConnected = datasetEditorTable.getDatasetEditor().getConnectionHandler().isConnected();
 
-            DataGridTextAttributes attributes = getAttributes();
+            DataGridTextAttributesImpl attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getPlainData(isModified, isCaretRow);
 
             if (isSelected) {

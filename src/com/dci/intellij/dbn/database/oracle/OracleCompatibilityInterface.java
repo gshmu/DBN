@@ -1,11 +1,15 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.session.SessionStatus;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public OracleCompatibilityInterface(DatabaseInterfaceProvider parent) {
         super(parent);
@@ -44,6 +48,16 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
     @Override
     public String getDefaultAlternativeStatementDelimiter() {
         return null;
+    }
+
+    @Override
+    public SessionStatus getSessionStatus(String statusName) {
+        try{
+            return SessionStatus.valueOf(statusName);
+        } catch (Exception e) {
+            LOGGER.error("Invalid session status " + statusName, e);
+            return SessionStatus.INACTIVE;
+        }
     }
 
     @Override

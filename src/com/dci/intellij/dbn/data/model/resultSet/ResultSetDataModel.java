@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -117,6 +118,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         ConnectionUtil.closeResultSet(resultSet);
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return connectionHandler;
     }
