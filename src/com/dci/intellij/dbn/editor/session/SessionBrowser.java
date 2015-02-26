@@ -185,6 +185,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         Map<Object, Object> sessionIds = new HashMap<Object, Object>();
         sessionIds.put(sessionId, serialNumber);
         sessionBrowserManager.interruptSessions(this, sessionIds, type);
+        loadSessions(true);
     }
 
     private void interruptSessions(SessionInterruptionType type) {
@@ -201,6 +202,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             }
 
             sessionBrowserManager.interruptSessions(this, sessionIds, type);
+            loadSessions(true);
         }
     }
 

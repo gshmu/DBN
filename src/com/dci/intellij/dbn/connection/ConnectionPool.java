@@ -42,10 +42,9 @@ public class ConnectionPool implements Disposable {
         if (connectionHandler == null || connectionHandler.isDisposed()) {
             throw new SQLException("Connection handler is disposed");
         }
-        if (standaloneConnection != null) {
-            if (recover && !standaloneConnection.isValid()) {
-                standaloneConnection = null;
-            }
+
+        if (standaloneConnection != null && recover && (standaloneConnection.isClosed() || !standaloneConnection.isValid())) {
+            standaloneConnection = null;
         }
 
         if (standaloneConnection == null) {
@@ -83,7 +82,7 @@ public class ConnectionPool implements Disposable {
         for (ConnectionWrapper connectionWrapper : poolConnections) {
             if (!connectionWrapper.isBusy()) {
                 connectionWrapper.setBusy(true);
-                if (connectionWrapper.isValid()) {
+                if (connectionWrapper.isValid() && !connectionWrapper.isClosed()) {
                     connectionStatus.setConnected(true);
                     connectionStatus.setValid(true);
                     return connectionWrapper.getConnection();
@@ -98,7 +97,7 @@ public class ConnectionPool implements Disposable {
         ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
         if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize()) {
             try {
-                Thread.currentThread().sleep(TimeUtil.ONE_SECOND);
+                Thread.sleep(TimeUtil.ONE_SECOND);
                 return allocateConnection();
             } catch (InterruptedException e) {
                 throw new SQLException("Could not allocate connection for '" + connectionName + "'. ");
