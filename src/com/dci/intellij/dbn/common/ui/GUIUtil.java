@@ -6,8 +6,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -17,7 +17,6 @@ import java.util.EventListener;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.intellij.openapi.ui.Splitter;
-import com.intellij.ui.JBColor;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();
@@ -147,6 +146,13 @@ public class GUIUtil{
                 }
             }
         }
+    }
+
+    public static void updatePreferredSize(JComponent component, int minWidth, int maxHeight) {
+        Dimension preferredSize = component.getPreferredSize();
+        int width = Math.max((int) preferredSize.getWidth(), minWidth);
+        int height = (int) Math.min(maxHeight, preferredSize.getHeight());
+        component.setPreferredSize(new Dimension(width, height));
     }
 
 }
