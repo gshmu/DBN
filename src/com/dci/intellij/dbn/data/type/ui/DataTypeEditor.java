@@ -7,6 +7,7 @@ import java.util.List;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.editor.ui.BasicListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 
@@ -24,7 +25,8 @@ public class DataTypeEditor extends TextFieldWithPopup {
             typeName = caseOption.format(typeName);
             nativeDataTypeNames.add(typeName);
         }
-        createValuesListPopup(nativeDataTypeNames, true, false);
+        BasicListPopupValuesProvider valuesProvider = new BasicListPopupValuesProvider(nativeDataTypeNames);
+        createValuesListPopup(valuesProvider, true);
     }
 
 

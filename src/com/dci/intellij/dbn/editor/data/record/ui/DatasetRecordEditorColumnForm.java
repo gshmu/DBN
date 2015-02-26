@@ -105,7 +105,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
                                         return columnInfo.getPossibleValues();
                                     }
                                 };
-                                textFieldWithPopup.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton(), false);
+                                textFieldWithPopup.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());
                             }
 
                             break;

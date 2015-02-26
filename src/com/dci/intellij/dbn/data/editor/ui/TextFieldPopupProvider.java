@@ -27,10 +27,6 @@ public interface TextFieldPopupProvider extends Disposable{
 
     boolean isShowingPopup();
 
-    boolean matchesKeyEvent(KeyEvent keyEvent);
-
-    void preparePopup();
-
     void showPopup();
 
     void hidePopup();
@@ -42,8 +38,6 @@ public interface TextFieldPopupProvider extends Disposable{
     void handleKeyReleasedEvent(KeyEvent keyEvent);
 
     String getDescription();
-
-    String getKeyShortcutName();
 
     String getKeyShortcutDescription();
 

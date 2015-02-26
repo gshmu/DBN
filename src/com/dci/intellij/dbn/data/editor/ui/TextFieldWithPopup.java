@@ -23,6 +23,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
@@ -120,23 +122,26 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     /******************************************************
      *                    PopupProviders                  *
      ******************************************************/
-    public void createValuesListPopup(ListPopupValuesProvider valuesProvider) {
-        //textField.addFocusListener();
+    public void createValuesListPopup(ListPopupValuesProvider valuesProvider, boolean buttonVisible) {
+        ValueListPopupProvider popupProvider = new ValueListPopupProvider(this, valuesProvider, false, buttonVisible);
+        addPopupProvider(popupProvider);
     }
 
+    @Deprecated
     public void createValuesListPopup(List<String> valuesList, boolean buttonVisible, boolean dynamicFiltering) {
-        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesList, buttonVisible, dynamicFiltering);
+        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, new BasicListPopupValuesProvider(valuesList), buttonVisible, dynamicFiltering);
         addPopupProvider(popupProviderForm);
     }
 
+    @Deprecated
     public void createValuesListPopup(ListPopupValuesProvider valuesProvider, boolean buttonVisible, boolean dynamicFiltering) {
         ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesProvider, buttonVisible, dynamicFiltering);
         addPopupProvider(popupProviderForm);
     }
 
     public void createTextEditorPopup(boolean autoPopup) {
-        TextEditorPopupProviderForm popupProviderForm = new TextEditorPopupProviderForm(this, autoPopup);
-        addPopupProvider(popupProviderForm);
+        TextEditorPopupProviderForm popupProvider = new TextEditorPopupProviderForm(this, autoPopup);
+        addPopupProvider(popupProvider);
     }
 
     public void createCalendarPopup(boolean autoPopup) {
@@ -217,7 +222,8 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
 
     public TextFieldPopupProvider getPopupProvider(KeyEvent keyEvent) {
         for (TextFieldPopupProvider popupProvider : popupProviders) {
-            if (popupProvider.matchesKeyEvent(keyEvent)) {
+            Shortcut[] shortcuts = popupProvider.getShortcuts();
+            if (KeyUtil.match(shortcuts, keyEvent)) {
                 return popupProvider;
             }
         }

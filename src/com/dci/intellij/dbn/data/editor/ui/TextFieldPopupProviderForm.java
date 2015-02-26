@@ -80,14 +80,15 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     @Nullable
     public abstract JBPopup createPopup();
     public final String getKeyShortcutDescription() {
-        Shortcut[] shortcuts = KeyUtil.getShortcuts(getKeyShortcutName());
-        return KeymapUtil.getShortcutsText(shortcuts);
+        return KeymapUtil.getShortcutsText(getShortcuts());
     }
 
     @Override
     public final Shortcut[] getShortcuts() {
         return KeyUtil.getShortcuts(getKeyShortcutName());
     }
+
+    protected abstract String getKeyShortcutName();
 
     public boolean isAutoPopup() {
         return autoPopup;
@@ -140,12 +141,6 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return actions;
     }
 
-    public boolean matchesKeyEvent(KeyEvent keyEvent) {
-        Shortcut[] shortcuts = KeyUtil.getShortcuts(getKeyShortcutName());
-        return KeyUtil.match(shortcuts, keyEvent);
-    }
-
-    @Override
     public void preparePopup() {}
 
     boolean isPreparingPopup = false;
@@ -157,7 +152,10 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 preparePopup();
-                if (progressIndicator.isCanceled()) return;
+                if (progressIndicator.isCanceled()) {
+                    isPreparingPopup = false;
+                    return;
+                }
 
                 new SimpleLaterInvocator(){
                     public void execute() {
