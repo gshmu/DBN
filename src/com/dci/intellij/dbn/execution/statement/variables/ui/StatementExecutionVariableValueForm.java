@@ -1,22 +1,5 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -33,7 +16,26 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 
 public class StatementExecutionVariableValueForm extends DBNFormImpl implements DBNForm {
@@ -94,6 +96,12 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
             if (cachedVariable != null) {
                 textField.setForeground(UIUtil.getLabelDisabledForeground());
                 textField.setText(cachedVariable.getValue());
+                textField.getDocument().addDocumentListener(new DocumentAdapter() {
+                    @Override
+                    protected void textChanged(DocumentEvent documentEvent) {
+                        textField.setForeground(UIUtil.getTextFieldForeground());
+                    }
+                });
             }
         } else {
             textField.setText(value);

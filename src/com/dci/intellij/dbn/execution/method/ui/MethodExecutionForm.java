@@ -1,23 +1,5 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
@@ -36,6 +18,24 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.DocumentAdapter;
+
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
@@ -134,7 +134,7 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
 
     private class SchemaSelector extends ValueSelector<DBSchema> {
         public SchemaSelector() {
-            super(Icons.DBO_SCHEMA, "Select schema...", executionInput.getExecutionSchema(), true);
+            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getExecutionSchema(), true);
         }
 
         @Override
