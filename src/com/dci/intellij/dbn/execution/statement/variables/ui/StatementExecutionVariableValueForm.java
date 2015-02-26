@@ -84,7 +84,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
 
                 return values;
             }
-        }, true, true);
+        }, true);
         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
         valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
         final JTextField textField = editorComponent.getTextField();

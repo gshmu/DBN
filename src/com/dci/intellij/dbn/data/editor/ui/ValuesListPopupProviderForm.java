@@ -31,12 +31,12 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
 import com.intellij.ui.JBColor;
 
+@Deprecated
 public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     public static final Color BACKGROUND_COLOR = new JBColor(
             new Color(0xEBF4FE),
             new Color(0x3c3f41));
     private ListPopupValuesProvider valuesProvider;
-    private List<String> valuesList;
     private ListModel listModel;
     private JList list;
     private JPanel mainPanel;
@@ -49,13 +49,6 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         list.setBackground(BACKGROUND_COLOR);
     }
 
-    public ValuesListPopupProviderForm(TextFieldWithPopup textField, @NotNull List<String> valuesList, boolean buttonVisible, boolean dynamicFiltering) {
-        super(textField, false, buttonVisible);
-        this.valuesList = valuesList;
-        this.useDynamicFiltering = dynamicFiltering;
-        list.setBackground(BACKGROUND_COLOR);
-    }
-
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -63,11 +56,11 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     @Override
     public void preparePopup() {
         // this may take long time so has to be executed in background
-        if (valuesProvider != null) valuesProvider.getValues();
+        valuesProvider.getValues();
     }
 
     public JBPopup createPopup() {
-        List<String> possibleValues = valuesProvider == null ? valuesList : valuesProvider.getValues();
+        List<String> possibleValues = valuesProvider.getValues();
         if (possibleValues.size() > 0) {
             Collections.sort(possibleValues);
             listModel = useDynamicFiltering ? new ListModel(new DynamicFilter(), possibleValues) : new ListModel(possibleValues);

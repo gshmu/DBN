@@ -135,7 +135,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         if (!e.isConsumed()) {
-            if (matchesKeyEvent(e)) {
+            if (KeyUtil.match(getShortcuts(), e)) {
                 editorTextArea.replaceSelection("\n");
             }
         }
