@@ -1,16 +1,9 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
@@ -19,6 +12,14 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.util.PlatformIcons;
+
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DatasetEditorSortingForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -69,6 +70,13 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
     private class ColumnSelector extends ValueSelector<DBColumn> {
         public ColumnSelector() {
             super(PlatformIcons.ADD_ICON, "Add Sorting Column...", null, false);
+            addListener(new ValueSelectorListener<DBColumn>() {
+                @Override
+                public void valueSelected(DBColumn column) {
+                    addSortingColumn(column);
+                    resetValues();
+                }
+            });
         }
 
         @Override
@@ -77,12 +85,6 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
             List<DBColumn> columns = new ArrayList<DBColumn>(dataset.getColumns());
             Collections.sort(columns);
             return columns;
-        }
-
-        @Override
-        public void valueSelected(DBColumn column) {
-            addSortingColumn(column);
-            resetValues();
         }
 
         @Override

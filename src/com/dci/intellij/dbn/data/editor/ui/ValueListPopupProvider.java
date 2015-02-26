@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -150,9 +149,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
         }
 
 
-        JComponent content = popup.getContent();
-        GUIUtil.updatePreferredSize(content, editorComponent.getWidth(), 200);
-        GUIUtil.showUnderneathOf(popup, editorComponent, 4);
+        GUIUtil.showUnderneathOf(popup, editorComponent, 4, 200);
     }
 
     @Override
