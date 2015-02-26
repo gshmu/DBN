@@ -21,7 +21,7 @@ public class DataTypeEditor extends TextFieldWithPopup {
         List<String> nativeDataTypeNames = new ArrayList<String>();
         for (DataTypeDefinition nativeDataType : nativeDataTypes) {
             String typeName = nativeDataType.getName();
-            typeName = caseOption.changeCase(typeName);
+            typeName = caseOption.format(typeName);
             nativeDataTypeNames.add(typeName);
         }
         createValuesListPopup(nativeDataTypeNames, true, false);

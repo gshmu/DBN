@@ -116,9 +116,9 @@ public class ExecutablePsiElement extends NamedPsiElement{
             CodeStyleCaseSettings caseSettings = getLanguage().getCodeStyleSettings(getProject()).getCaseSettings();
             CodeStyleCaseOption keywordCaseOption = caseSettings.getKeywordCaseOption();
             CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
-            action = keywordCaseOption.changeCase(action);
-            subjectType = keywordCaseOption.changeCase(subjectType);
-            subject = objectCaseOption.changeCase(subject);
+            action = keywordCaseOption.format(action);
+            subjectType = keywordCaseOption.format(subjectType);
+            subject = objectCaseOption.format(subject);
             return elementType.getDescription() + " (" + action + subjectType + subject + ")";
         } else {
             return elementType.getDescription();

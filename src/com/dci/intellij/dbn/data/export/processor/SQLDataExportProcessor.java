@@ -2,12 +2,17 @@ package com.dci.intellij.dbn.data.export.processor;
 
 import java.util.Date;
 
+import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 
 
@@ -43,10 +48,15 @@ public class SQLDataExportProcessor extends DataExportProcessor{
 
 
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+        Project project = connectionHandler.getProject();
+        CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);
+        CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
+        CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
+
         StringBuilder buffer = new StringBuilder();
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
-            buffer.append("insert into ");
-            buffer.append(model.getTableName());
+            buffer.append(kco.format("insert into "));
+            buffer.append(oco.format(model.getTableName()));
             buffer.append(" (");
 
             int realColumnIndex = 0;
@@ -56,11 +66,11 @@ public class SQLDataExportProcessor extends DataExportProcessor{
                         genericDataType == GenericDataType.NUMERIC ||
                         genericDataType == GenericDataType.DATE_TIME) {
                     if (realColumnIndex > 0) buffer.append(", ");
-                    buffer.append(model.getColumnName(columnIndex));
+                    buffer.append(oco.format(model.getColumnName(columnIndex)));
                     realColumnIndex++;
                 }
             }
-            buffer.append(") values (");
+            buffer.append(kco.format(") values ("));
 
             realColumnIndex = 0;
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
@@ -73,7 +83,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
                     Object object = model.getValue(rowIndex, columnIndex);
                     String value = object == null ? null : object.toString();
                     if (value == null) {
-                        buffer.append("null");
+                        buffer.append(kco.format("null"));
                     } else {
                         if (genericDataType == GenericDataType.LITERAL) {
                             buffer.append("'");

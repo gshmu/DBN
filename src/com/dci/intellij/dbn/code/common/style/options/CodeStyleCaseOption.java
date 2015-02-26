@@ -29,7 +29,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
         this.styleCase = styleCase;
     }
 
-    public String changeCase(String string) {
+    public String format(String string) {
         if (string != null) {
             switch (styleCase) {
                 case UPPER: return string.toUpperCase();

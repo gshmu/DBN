@@ -95,7 +95,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
 
                         if (caseOption != null) {
                             String text = child.getText();
-                            String newText = caseOption.changeCase(text);
+                            String newText = caseOption.format(text);
 
                             if (newText != null && !newText.equals(text))
                                 document.replaceString(textRange.getStartOffset(), textRange.getEndOffset(), newText);

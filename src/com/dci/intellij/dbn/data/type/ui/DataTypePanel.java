@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.data.type.ui;
 
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
-import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
-import com.dci.intellij.dbn.data.type.DataTypeDefinition;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JList;
@@ -17,6 +9,14 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.Insets;
 import java.util.List;
+
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.type.DataTypeDefinition;
+import com.intellij.ui.ColoredListCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.ui.UIUtil;
 
 /**
  * @deprecated use DataTypeEditor
@@ -34,7 +34,7 @@ public class DataTypePanel {
         CodeStyleCaseOption caseOption = codeStyleSettings.getCaseSettings().getDatatypeCaseOption();
         for (int i=0; i<nativeDataTypes.size(); i++) {
             String typeName = nativeDataTypes.get(i).getName();
-            typeName = caseOption.changeCase(typeName);
+            typeName = caseOption.format(typeName);
             nativeDataTypeNames[i] = typeName;
         }
 
