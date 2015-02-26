@@ -25,8 +25,8 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
     private SimpleTextAttributes snipedSessionAtCaretRow;
     private SimpleTextAttributes killedSessionAtCaretRow;
 
-    private SimpleTextAttributes loadingSessions;
-    private SimpleTextAttributes loadingSessionsAtCaretRow;
+    private SimpleTextAttributes loadingData;
+    private SimpleTextAttributes loadingDataAtCaretRow;
 
 
     private Color caretRowBgColor;
@@ -44,14 +44,14 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
         cachedSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.CACHED_SESSION);
         snipedSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.SNIPED_SESSION);
         killedSession = TextAttributesUtil.getSimpleTextAttributes(SessionBrowserTextAttributesKeys.KILLED_SESSION);
-        loadingSessions = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.LOADING_DATA);
+        loadingData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.LOADING_DATA);
 
         activeSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, activeSession.getFgColor(), null, activeSession.getStyle());
         inactiveSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, inactiveSession.getFgColor(), null, inactiveSession.getStyle());
         cachedSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, cachedSession.getFgColor(), null, cachedSession.getStyle());
         snipedSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, snipedSession.getFgColor(), null, snipedSession.getStyle());
         killedSessionAtCaretRow = new SimpleTextAttributes(caretRowBgColor, killedSession.getFgColor(), null, killedSession.getStyle());
-        loadingSessionsAtCaretRow = new SimpleTextAttributes(caretRowBgColor, loadingSessions.getFgColor(), null, loadingSessions.getFontStyle());
+        loadingDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, loadingData.getFgColor(), null, loadingData.getFontStyle());
 
         selection = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
         searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
@@ -77,8 +77,8 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
         return atCaretRow ? killedSessionAtCaretRow : killedSession;
     }
 
-    public SimpleTextAttributes getLoadingSessions(boolean atCaretRow) {
-        return atCaretRow ? loadingSessionsAtCaretRow : loadingSessions;
+    public SimpleTextAttributes getLoadingData(boolean atCaretRow) {
+        return atCaretRow ? loadingDataAtCaretRow : loadingData;
     }
 
     public SimpleTextAttributes getSelection() {
@@ -91,5 +91,10 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
 
     public Color getCaretRowBgColor() {
         return caretRowBgColor;
+    }
+
+    @Override
+    public SimpleTextAttributes getPlainData(boolean modified, boolean atCaretRow) {
+        return getActiveSession(atCaretRow);
     }
 }

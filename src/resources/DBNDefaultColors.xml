@@ -73,26 +73,26 @@
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.InactiveSession">
         <value>
-            <option name="BACKGROUND" value="FFFFFF"/>
             <option name="FOREGROUND" value="7F7F7F"/>
+            <option name="BACKGROUND" value="FFFFFF"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.CachedSession">
         <value>
-            <option name="FOREGROUND" value="4569A7"/>
-            <option name="BACKGROUND" value="F7F7FF"/>
+            <option name="FOREGROUND" value="3F6B3F"/>
+            <option name="BACKGROUND" value="FFFFFF"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.SnipedSession">
         <value>
+            <option name="FOREGROUND" value="4569A7"/>
             <option name="BACKGROUND" value="FFFFFF"/>
-            <option name="FOREGROUND" value="7F7F7F"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.KilledSession">
         <value>
-            <option name="FOREGROUND" value="000000"/>
-            <option name="BACKGROUND" value="FFCCCC"/>
+            <option name="FOREGROUND" value="A96458"/>
+            <option name="BACKGROUND" value="FFFFFF"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.Selection">

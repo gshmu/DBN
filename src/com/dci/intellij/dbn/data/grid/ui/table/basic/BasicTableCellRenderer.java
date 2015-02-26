@@ -11,8 +11,8 @@ import java.util.Map;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
+import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
-import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesImpl;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
@@ -34,9 +34,13 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
         return border;
     }
 
-    private DataGridTextAttributesImpl attributes = new DataGridTextAttributesImpl();
+    private DataGridTextAttributes attributes = createTextAttributes();
 
-    public DataGridTextAttributesImpl getAttributes() {
+    protected DataGridTextAttributes createTextAttributes() {
+        return new BasicTableTextAttributes();
+    }
+
+    public DataGridTextAttributes getAttributes() {
         return attributes;
     }
 
@@ -53,7 +57,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
         if (cell != null && !cell.isDisposed()) {
             boolean isLazyValue = cell.getUserValue() instanceof LargeObjectValue;
 
-            DataGridTextAttributesImpl attributes = getAttributes();
+            BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
             SimpleTextAttributes textAttributes = attributes.getPlainData(false, isCaretRow);
 
 

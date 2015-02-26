@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 
-public class DataGridTextAttributesImpl extends CommonUtil implements DataGridTextAttributes {
+public class BasicTableTextAttributes extends CommonUtil implements DataGridTextAttributes {
     private SimpleTextAttributes plainData;
     private SimpleTextAttributes plainDataModified;
     private SimpleTextAttributes plainDataAtCaretRow;
@@ -42,7 +42,7 @@ public class DataGridTextAttributesImpl extends CommonUtil implements DataGridTe
 
     private Color caretRowBgColor;
 
-    public DataGridTextAttributesImpl() {
+    public BasicTableTextAttributes() {
         load();
     }
 

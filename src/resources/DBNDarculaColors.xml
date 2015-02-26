@@ -7,8 +7,8 @@
     </option>
     <option name="DBNavigator.DefaultTextAttributes.DataEditor.TrackingData">
         <value>
-            <option name="BACKGROUND" value="2B2B2B"/>
             <option name="FOREGROUND" value="6A6A6A"/>
+            <option name="BACKGROUND" value="2B2B2B"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.DataEditor.ModifiedData">
@@ -73,26 +73,26 @@
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.InactiveSession">
         <value>
-            <option name="BACKGROUND" value="2B2B2B"/>
             <option name="FOREGROUND" value="858585"/>
+            <option name="BACKGROUND" value="2B2B2B"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.CachedSession">
         <value>
-            <option name="FOREGROUND" value="95A8B4"/>
-            <option name="BACKGROUND" value="2B3447"/>
+            <option name="FOREGROUND" value="A1A8A1"/>
+            <option name="BACKGROUND" value="2B2B2B"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.SnipedSession">
         <value>
+            <option name="FOREGROUND" value="95A8B4"/>
             <option name="BACKGROUND" value="2B2B2B"/>
-            <option name="FOREGROUND" value="858585"/>
         </value>
     </option>
     <option name="DBNavigator.DefaultTextAttributes.SessionBrowser.KilledSession">
         <value>
-            <option name="FOREGROUND" value="A9B7C6"/>
-            <option name="BACKGROUND" value="450505"/>
+            <option name="FOREGROUND" value="8B4233"/>
+            <option name="BACKGROUND" value="2B2B2B"/>
         </value>
     </option>
 
