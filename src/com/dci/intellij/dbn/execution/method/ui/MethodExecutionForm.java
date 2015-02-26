@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -135,17 +136,18 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     private class SchemaSelector extends ValueSelector<DBSchema> {
         public SchemaSelector() {
             super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getExecutionSchema(), true);
+            addListener(new ValueSelectorListener<DBSchema>() {
+                @Override
+                public void valueSelected(DBSchema schema) {
+                    executionInput.setExecutionSchema(schema);
+                    notifyChangeListeners();
+                }
+            });
         }
 
         @Override
         public List<DBSchema> loadValues() {
             return executionInput.getConnectionHandler().getObjectBundle().getSchemas();
-        }
-
-        @Override
-        public void valueSelected(DBSchema schema) {
-            executionInput.setExecutionSchema(schema);
-            notifyChangeListeners();
         }
     }
 

@@ -151,15 +151,14 @@ public class GUIUtil{
         }
     }
 
-    public static void updatePreferredSize(JComponent component, int minWidth, int maxHeight) {
-        Dimension preferredSize = component.getPreferredSize();
-        int width = Math.max((int) preferredSize.getWidth(), minWidth);
+    public static void showUnderneathOf(@NotNull JBPopup popup, @NotNull Component sourceComponent, int verticalShift, int maxHeight) {
+        JComponent popupContent = popup.getContent();
+        Dimension preferredSize = popupContent.getPreferredSize();
+        int width = Math.max((int) preferredSize.getWidth(), sourceComponent.getWidth());
         int height = (int) Math.min(maxHeight, preferredSize.getHeight());
-        component.setPreferredSize(new Dimension(width, height));
-    }
+        popupContent.setPreferredSize(new Dimension(width, height));
 
-    public static void showUnderneathOf(@NotNull JBPopup popup, @NotNull Component component, int verticalShift) {
-        popup.show(new RelativePoint(component, new Point(0, component.getHeight() + verticalShift)));
+        popup.show(new RelativePoint(sourceComponent, new Point(0, sourceComponent.getHeight() + verticalShift)));
     }
 
 }

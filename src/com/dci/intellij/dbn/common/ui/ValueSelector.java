@@ -1,5 +1,24 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.intellij.ide.DataManager;
+import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.ui.GraphicsConfig;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Condition;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.RoundedLineBorder;
+import com.intellij.util.IconUtil;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,7 +38,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -27,27 +45,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.intellij.ide.DataManager;
-import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.ui.GraphicsConfig;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
-import com.intellij.ui.Gray;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.RoundedLineBorder;
-import com.intellij.util.IconUtil;
-import com.intellij.util.ui.UIUtil;
+import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     public static Color COMBO_BOX_BACKGROUND = UIUtil.getTextFieldBackground();
+    private Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
     private T selectedValue;
     private JLabel label;
     private JPanel innerPanel;
@@ -66,12 +71,18 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private List<T> values;
 
 
-    public ValueSelector(String text, T preselectedValue, boolean isComboBox) {
-        this(null, text, preselectedValue, isComboBox);
+    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, boolean isComboBox) {
+        this(null, text, null, preselectedValue, isComboBox);
     }
 
-    public ValueSelector(Icon icon, String text, T preselectedValue, boolean isComboBox) {
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, boolean isComboBox) {
+        this(icon, text, null, preselectedValue, isComboBox);
+    }
+
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, boolean isComboBox) {
         super(new BorderLayout());
+        this.values = values;
+        text = CommonUtil.nvl(text, "");
         this.icon = icon;
         this.text = text;
         this.isComboBox = isComboBox;
@@ -169,7 +180,15 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             width = width + 16;
         }
         minWidth = Math.max(minWidth, width);
-        label.setPreferredSize(new Dimension(minWidth + 6, height));
+        label.setPreferredSize(new Dimension(minWidth + 10, height));
+    }
+
+    public void addListener(ValueSelectorListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(ValueSelectorListener<T> listener) {
+        listeners.remove(listener);
     }
 
     private Icon cropIcon(Icon icon) {
@@ -182,7 +201,6 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
-
         label.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR): Cursor.getDefaultCursor());
         innerPanel.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
@@ -268,11 +286,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     }
                 });
 
-        Point locationOnScreen = getLocationOnScreen();
-        Point location = new Point(
-                (int) (locationOnScreen.getX()),
-                (int) locationOnScreen.getY() + getHeight() + 1);
-        popup.showInScreenCoordinates(this, location);
+        GUIUtil.showUnderneathOf(popup, this, 0, 200);
         isActive = true;
     }
 
@@ -309,17 +323,28 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         return values;
     }
 
-    protected abstract List<T> loadValues();
+    protected List<T> loadValues() {
+        return new ArrayList<T>();
+    }
 
     protected List<T> getAllPossibleValues() {
         return getValues();
     }
 
-    public void resetValues() {
-        values = null;
+    public void setValues(List<T> values) {
+        this.values = values;
     }
 
-    public abstract void valueSelected(T value);
+    public void resetValues() {
+        this.values = null;
+    }
+
+    public final void valueSelected(T value) {
+        for (ValueSelectorListener<T> listener : listeners) {
+            listener.valueSelected(value);
+        }
+
+    }
 
     private void selectValue(T value) {
         if (isComboBox) {
