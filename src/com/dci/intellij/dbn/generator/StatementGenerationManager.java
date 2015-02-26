@@ -20,12 +20,12 @@ public class StatementGenerationManager extends AbstractProjectComponent {
 
     public StatementGeneratorResult generateSelectStatement(List<DBObject> objects, boolean enforceAliasUsage) {
         SelectStatementGenerator generator = new SelectStatementGenerator(objects, enforceAliasUsage);
-        return generator.generateStatement();
+        return generator.generateStatement(getProject());
     }
 
     public StatementGeneratorResult generateInsert(DBTable table) {
         InsertStatementGenerator generator = new InsertStatementGenerator(table);
-        return generator.generateStatement();
+        return generator.generateStatement(getProject());
     }
 
     @NotNull

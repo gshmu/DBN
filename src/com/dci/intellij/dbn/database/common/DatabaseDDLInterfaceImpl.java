@@ -79,7 +79,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(code);
             if (matcher.find()) {
-                String replacement = kco.changeCase(objectType) + " " + oco.changeCase(schemaName + "." + objectName);
+                String replacement = kco.format(objectType) + " " + oco.format(schemaName + "." + objectName);
                 matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement));
                 matcher.appendTail(buffer);
                 code = buffer.toString();
@@ -89,7 +89,7 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
             Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(code);
             if (matcher.find()) {
-                String replacement = kco.changeCase(objectType) + " " + oco.changeCase(objectName);
+                String replacement = kco.format(objectType) + " " + oco.format(objectName);
                 matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement));
                 matcher.appendTail(buffer);
                 code = buffer.toString();

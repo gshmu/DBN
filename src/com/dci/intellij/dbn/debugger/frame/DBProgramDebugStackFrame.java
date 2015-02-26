@@ -150,7 +150,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
 
             List<DBProgramDebugValue> values = new ArrayList<DBProgramDebugValue>();
             for (final BasePsiElement basePsiElement : variables) {
-                String variableName = objectCaseOption.changeCase(basePsiElement.getText());
+                String variableName = objectCaseOption.format(basePsiElement.getText());
                 //DBObject object = basePsiElement.resolveUnderlyingObject();
 
                 Set<String> childVariableNames = null;
@@ -160,7 +160,7 @@ public class DBProgramDebugStackFrame extends XStackFrame {
                     for (BasePsiElement qualifiedUsage : qualifiedUsages) {
                         if (childVariableNames == null) childVariableNames = new HashSet<String>();
 
-                        String childVariableName = objectCaseOption.changeCase(qualifiedUsage.getText());
+                        String childVariableName = objectCaseOption.format(qualifiedUsage.getText());
                         childVariableNames.add(childVariableName);
                     }
                 }

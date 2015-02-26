@@ -33,14 +33,14 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
 
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
-            return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.changeCase((useQualified ? schemaName + "." : "") + objectName) + kco.changeCase(" as\n") + code + "\n/";
+            return kco.format("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.format((useQualified ? schemaName + "." : "") + objectName) + kco.format(" as\n") + code + "\n/";
         } else {
             String objectType = objectTypeId.toString().toLowerCase();
             if (contentType == DBContentType.CODE_BODY) {
                 objectType = objectType + " body";
             }
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, styleCaseSettings);
-            return kco.changeCase("create" + (makeRerunnable ? " or replace" : "") + "\n") + code + "\n/";
+            return kco.format("create" + (makeRerunnable ? " or replace" : "") + "\n") + code + "\n/";
         }
     }
 
@@ -100,8 +100,8 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
 
         StringBuilder buffer = new StringBuilder();
         String methodType = method.isFunction() ? "function " : "procedure ";
-        buffer.append(kco.changeCase(methodType));
-        buffer.append(oco.changeCase(method.getObjectName()));
+        buffer.append(kco.format(methodType));
+        buffer.append(oco.format(method.getObjectName()));
         buffer.append("(");
         
         int maxArgNameLength = 0;
@@ -117,15 +117,15 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
 
         for (ArgumentFactoryInput argument : method.getArguments()) {
             buffer.append("\n    ");
-            buffer.append(oco.changeCase(argument.getObjectName()));
+            buffer.append(oco.format(argument.getObjectName()));
             buffer.append(StringUtil.repeatSymbol(' ', maxArgNameLength - argument.getObjectName().length() + 1));
             String direction =
-                    argument.isInput() && argument.isOutput() ? kco.changeCase("in out") :
-                    argument.isInput() ? kco.changeCase("in") :
-                    argument.isOutput() ? kco.changeCase("out") : "";
+                    argument.isInput() && argument.isOutput() ? kco.format("in out") :
+                    argument.isInput() ? kco.format("in") :
+                    argument.isOutput() ? kco.format("out") : "";
             buffer.append(direction);
             buffer.append(StringUtil.repeatSymbol(' ', maxArgDirectionLength - direction.length() + 1));
-            buffer.append(dco.changeCase(argument.getDataType()));
+            buffer.append(dco.format(argument.getDataType()));
             if (argument != method.getArguments().get(method.getArguments().size() -1)) {
                 buffer.append(",");
             }
@@ -133,12 +133,12 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
 
         buffer.append(")\n");
         if (method.isFunction()) {
-            buffer.append(kco.changeCase("return "));
-            buffer.append(dco.changeCase(method.getReturnArgument().getDataType()));
+            buffer.append(kco.format("return "));
+            buffer.append(dco.format(method.getReturnArgument().getDataType()));
             buffer.append("\n");
         }
-        buffer.append(kco.changeCase("is\nbegin\n\n"));
-        if (method.isFunction()) buffer.append(kco.changeCase("    return null;\n\n"));
+        buffer.append(kco.format("is\nbegin\n\n"));
+        if (method.isFunction()) buffer.append(kco.format("    return null;\n\n"));
         buffer.append("end;");
         createObject(buffer.toString(), connection);
     }

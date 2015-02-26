@@ -51,7 +51,7 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
                                         tokenType.isDataType() ? styleCaseSettings.getDatatypeCaseOption() : null;
 
         if (caseOption != null) {
-            text = caseOption.changeCase(text);
+            text = caseOption.format(text);
         }
 
         String userInput = completionContext.getUserInput();

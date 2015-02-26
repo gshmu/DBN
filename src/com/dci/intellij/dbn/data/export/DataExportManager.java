@@ -48,45 +48,48 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
         try {
             DataExportProcessor processor = DataExportProcessor.getExportProcessor(instructions.getFormat());
-            processor.export(exportModel, instructions, connectionHandler);
-            DataExportInstructions.Destination destination = instructions.getDestination();
-            if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                MessageUtil.showInfoDialog(project, "Export info", "Content exported to clipboard.", new String[]{"OK"}, 0, successCallback);
+            if (processor != null) {
+                processor.export(exportModel, instructions, connectionHandler);
+                DataExportInstructions.Destination destination = instructions.getDestination();
+                if (destination == DataExportInstructions.Destination.CLIPBOARD) {
+                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to clipboard.", new String[]{"OK"}, 0, successCallback);
 
-            } else if (destination == DataExportInstructions.Destination.FILE) {
-                final File file = instructions.getFile();
-                if (Desktop.isDesktopSupported()) {
-                    //FileSystemView view = FileSystemView.getFileSystemView();
-                    //Icon icon = view.getSystemIcon(file);
+                } else if (destination == DataExportInstructions.Destination.FILE) {
+                    final File file = instructions.getFile();
+                    if (Desktop.isDesktopSupported()) {
+                        //FileSystemView view = FileSystemView.getFileSystemView();
+                        //Icon icon = view.getSystemIcon(file);
 
-                    SimpleTask openFileTask = new SimpleTask() {
-                        @Override
-                        public void execute() {
-                            successCallback.start();
-                            if (getResult() == 1) {
-                                try {
-                                    Desktop.getDesktop().open(file);
-                                } catch (IOException e) {
-                                    MessageUtil.showErrorDialog(
-                                            project,
-                                            "Open file",
-                                            "Could not open file " + file.getPath() + ".\n" +
-                                                    "The file type is most probably not associated with any program."
-                                    );
+                        SimpleTask openFileTask = new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                successCallback.start();
+                                if (getResult() == 1) {
+                                    try {
+                                        Desktop.getDesktop().open(file);
+                                    } catch (IOException e) {
+                                        MessageUtil.showErrorDialog(
+                                                project,
+                                                "Open file",
+                                                "Could not open file " + file.getPath() + ".\n" +
+                                                        "The file type is most probably not associated with any program."
+                                        );
+                                    }
                                 }
                             }
-                        }
-                    };
-                    MessageUtil.showInfoDialog(
-                            project,
-                            "Export info",
-                            "Content exported to file " + file.getPath(),
-                            new String[]{"OK", "Open File"}, 0,
-                            openFileTask);
-                } else {
-                    MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath(),  new String[]{"OK"}, 0, successCallback);
+                        };
+                        MessageUtil.showInfoDialog(
+                                project,
+                                "Export info",
+                                "Content exported to file " + file.getPath(),
+                                new String[]{"OK", "Open File"}, 0,
+                                openFileTask);
+                    } else {
+                        MessageUtil.showInfoDialog(project, "Export info", "Content exported to file " + file.getPath(),  new String[]{"OK"}, 0, successCallback);
+                    }
                 }
             }
+
         } catch (DataExportException e) {
             MessageUtil.showErrorDialog(project, "Error performing data export.", e);
         } catch (InterruptedException e) {

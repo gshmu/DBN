@@ -8,10 +8,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.message.MessageBundle;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.openapi.project.Project;
 
 public class SelectStatementGenerator extends StatementGenerator {
     private AliasBundle aliases = new AliasBundle();
@@ -30,7 +35,7 @@ public class SelectStatementGenerator extends StatementGenerator {
     }
 
     @Override
-    public StatementGeneratorResult generateStatement() {
+    public StatementGeneratorResult generateStatement(Project project) {
         StatementGeneratorResult result = new StatementGeneratorResult();
         MessageBundle messages = result.getMessages();
 
@@ -64,16 +69,20 @@ public class SelectStatementGenerator extends StatementGenerator {
             }
         }
 
-        String statement = generateSelectStatement(datasets, columns, joinBundle, enforceAliasUsage);
+        String statement = generateSelectStatement(project, datasets, columns, joinBundle, enforceAliasUsage);
         result.setStatement(statement);
         return result;
     }
 
-    private String generateSelectStatement(Set<DBDataset> datasets, Set<DBColumn> columns, DatasetJoinBundle joinBundle, boolean enforceAliasUsage) {
+    private String generateSelectStatement(Project project, Set<DBDataset> datasets, Set<DBColumn> columns, DatasetJoinBundle joinBundle, boolean enforceAliasUsage) {
+        CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);
+        CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
+        CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
+
         boolean useAliases = datasets.size() > 1 || enforceAliasUsage;
 
         StringBuilder statement = new StringBuilder();
-        statement.append("select\n");
+        statement.append(kco.format("select\n"));
         Iterator<DBColumn> columnIterator = columns.iterator();
         while (columnIterator.hasNext()) {
             DBColumn column = columnIterator.next();
@@ -82,20 +91,20 @@ public class SelectStatementGenerator extends StatementGenerator {
                 statement.append(aliases.getAlias(column.getDataset()));
                 statement.append(".");
             }
-            statement.append(column.getName());
+            statement.append(oco.format(column.getName()));
             if (columnIterator.hasNext()) {
                 statement.append(",");
             }
             statement.append("\n");
         }
 
-        statement.append("from\n");
+        statement.append(kco.format("from\n"));
         Iterator<DBDataset> datasetIterator = datasets.iterator();
         while (datasetIterator.hasNext()) {
             DBDataset dataset = datasetIterator.next();
 
             statement.append("    ");
-            statement.append(dataset.getName());
+            statement.append(oco.format(dataset.getName()));
             if (useAliases) {
                 statement.append(" ");
                 statement.append(aliases.getAlias(dataset));
@@ -106,7 +115,7 @@ public class SelectStatementGenerator extends StatementGenerator {
         }
 
         if (joinBundle != null && !joinBundle.isEmpty()) {
-            statement.append("\nwhere\n");
+            statement.append(kco.format("\nwhere\n"));
 
             Iterator<DatasetJoin> joinIterator = joinBundle.getJoins().iterator();
             while (joinIterator.hasNext()) {
@@ -124,16 +133,16 @@ public class SelectStatementGenerator extends StatementGenerator {
                             statement.append(aliases.getAlias(column1.getDataset()));
                             statement.append(".");
                         }
-                        statement.append(column1.getName());
+                        statement.append(oco.format(column1.getName()));
                         statement.append(" = ");
 
                         if (useAliases) {
                             statement.append(aliases.getAlias(column2.getDataset()));
                             statement.append(".");
                         }
-                        statement.append(column2.getName());
+                        statement.append(oco.format(column2.getName()));
                         if (joinIterator.hasNext() || joinColumnIterator.hasNext()) {
-                            statement.append(" and\n");
+                            statement.append(kco.format(" and\n"));
                         }
                     }
                 }
