@@ -79,9 +79,9 @@ public class EditableStringListForm extends DBNFormImpl{
         }
 
         public void update(@NotNull AnActionEvent e) {
-            int selectedRow = editableStringList.getSelectedRow();
+            int selectedRowCount = editableStringList.getSelectedRowCount();
             Presentation presentation = e.getPresentation();
-            presentation.setEnabled(selectedRow == 1);
+            presentation.setEnabled(selectedRowCount == 1);
         }
     }
 }
