@@ -20,7 +20,7 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
     }
 
     @Override
-    public DBObject resolve(IdentifierPsiElement identifierPsiElement) {
+    protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
         BasePsiElement underlyingObjectCandidate = null;
 
         DBObjectType objectType = identifierPsiElement.getObjectType();

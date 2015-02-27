@@ -17,7 +17,7 @@ public class SurroundingVirtualObjectResolver extends UnderlyingObjectResolver{
     }
 
     @Override
-    public DBObject resolve(IdentifierPsiElement identifierPsiElement) {
+    protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
         DBObjectType objectType = identifierPsiElement.getObjectType();
         if (objectType != DBObjectType.DATASET) {
             BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
