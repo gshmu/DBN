@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -20,29 +19,28 @@ import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 
 public class RegionalSettingsEditorForm extends ConfigurationEditorForm<RegionalSettings> {
     private JPanel mainPanel;
-    private JComboBox localeComboBox;
+    private DBNComboBox<LocaleOption> localeComboBox;
     private JLabel numberPreviewLabel;
     private JLabel integerPreviewLabel;
     private JLabel datePreviewLabel;
     private JLabel timePreviewLabel;
     private JPanel previewPanel;
-    private JRadioButton shortRadioButton;
-    private JRadioButton mediumRadioButton;
-    private JRadioButton longRadioButton;
-    private JRadioButton groupedRadioButton;
-    private JRadioButton ungroupedRadioButton;
     private JTextField customNumberFormatTextField;
     private JTextField customDateFormatTextField;
     private JTextField customTimeFormatTextField;
     private JLabel errorLabel;
     private JRadioButton presetPatternsRadioButton;
     private JRadioButton customPatternsRadioButton;
+    private DBNComboBox<DBNumberFormat> numberFormatComboBox;
+    private DBNComboBox<DBDateFormat> dateFormatComboBox;
 
     boolean isUpdating = false;
 
@@ -56,6 +54,25 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         previewPanel.setBackground(UIUtil.getToolTipBackground());
         errorLabel.setVisible(false);
         updateBorderTitleForeground(mainPanel);
+        localeComboBox.setValues(LocaleOption.ALL);
+
+        numberFormatComboBox.setValues(
+                DBNumberFormat.UNGROUPED,
+                DBNumberFormat.GROUPED);
+
+        dateFormatComboBox.setValues(
+                DBDateFormat.SHORT,
+                DBDateFormat.MEDIUM,
+                DBDateFormat.LONG);
+
+        ValueSelectorListener previewListener = new ValueSelectorListener() {
+            @Override
+            public void valueSelected(Object value) {
+                updatePreview();
+            }
+        };
+        numberFormatComboBox.addListener(previewListener);
+        dateFormatComboBox.addListener(previewListener);
 
         resetFormChanges();
         updatePreview();
@@ -94,13 +111,13 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
     }
 
     public Locale getSelectedLocale() {
-        LocaleComboBox localeComboBox = (LocaleComboBox) this.localeComboBox;
-        return localeComboBox.getSelectedLocale();
+        LocaleOption localeOption = localeComboBox.getSelectedValue();
+        return localeOption == null ? null : localeOption.getLocale();
     }
 
     public void setSelectedLocale(Locale locale) {
-        LocaleComboBox localeComboBox = (LocaleComboBox) this.localeComboBox;
-        localeComboBox.setSelectedLocale(locale);
+        LocaleOption localeOption = LocaleOption.get(locale);
+        localeComboBox.setSelectedValue(localeOption);
     }
 
     private void updatePreview() {
@@ -108,8 +125,8 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         isUpdating = true;
         try {
             Locale locale = getSelectedLocale();
-            DBDateFormat dateFormat = getSelectedDateFormat();
-            DBNumberFormat numberFormat = getSelectedNumberFormat();
+            DBDateFormat dateFormat = dateFormatComboBox.getSelectedValue();
+            DBNumberFormat numberFormat = numberFormatComboBox.getSelectedValue();
             boolean customSettings = customPatternsRadioButton.isSelected();
             Formatter formatter = null;
             if (customSettings) {
@@ -139,11 +156,8 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
                 integerPreviewLabel.setText(formatter.formatInteger(previewNumber));
             }
 
-            shortRadioButton.setEnabled(!customSettings);
-            mediumRadioButton.setEnabled(!customSettings);
-            longRadioButton.setEnabled(!customSettings);
-            groupedRadioButton.setEnabled(!customSettings);
-            ungroupedRadioButton.setEnabled(!customSettings);
+            numberFormatComboBox.setEnabled(!customSettings);
+            dateFormatComboBox.setEnabled(!customSettings);
 
             customNumberFormatTextField.setEnabled(customSettings);
             customDateFormatTextField.setEnabled(customSettings);
@@ -152,20 +166,6 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
             isUpdating = false;
         }
     }
-
-    private DBDateFormat getSelectedDateFormat() {
-        return
-            shortRadioButton.isSelected() ? DBDateFormat.SHORT :
-            mediumRadioButton.isSelected() ? DBDateFormat.MEDIUM :
-            longRadioButton.isSelected() ? DBDateFormat.LONG : DBDateFormat.MEDIUM;
-    }
-
-    private DBNumberFormat getSelectedNumberFormat(){
-        return
-            groupedRadioButton.isSelected() ? DBNumberFormat.GROUPED :
-            ungroupedRadioButton.isSelected() ? DBNumberFormat.UNGROUPED : DBNumberFormat.UNGROUPED;
-    }
-
 
     public JPanel getComponent() {
         return mainPanel;
@@ -177,10 +177,10 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         Locale locale = getSelectedLocale();
         regionalSettings.setLocale(locale);
 
-        DBDateFormat dateFormat = getSelectedDateFormat();
+        DBDateFormat dateFormat = dateFormatComboBox.getSelectedValue();
         regionalSettings.setDateFormatOption(dateFormat);
 
-        DBNumberFormat numberFormat = getSelectedNumberFormat();
+        DBNumberFormat numberFormat = numberFormatComboBox.getSelectedValue();
         regionalSettings.setNumberFormatOption(numberFormat);
         
         regionalSettings.getUseCustomFormats().applyChanges(customPatternsRadioButton);
@@ -203,18 +203,9 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         }
 
         DBDateFormat dateFormat = regionalSettings.getDateFormatOption();
-        if (dateFormat == DBDateFormat.SHORT) shortRadioButton.setSelected(true); else
-        if (dateFormat == DBDateFormat.MEDIUM) mediumRadioButton.setSelected(true); else
-        if (dateFormat == DBDateFormat.LONG) longRadioButton.setSelected(true);
+        dateFormatComboBox.setSelectedValue(dateFormat);
 
         DBNumberFormat numberFormat = regionalSettings.getNumberFormatOption();
-        if (numberFormat == DBNumberFormat.GROUPED) groupedRadioButton.setSelected(true); else
-        if (numberFormat == DBNumberFormat.UNGROUPED) ungroupedRadioButton.setSelected(true);
-        
-        
-    }
-
-    private void createUIComponents() {
-        localeComboBox = new LocaleComboBox();
+        numberFormatComboBox.setSelectedValue(numberFormat);
     }
 }

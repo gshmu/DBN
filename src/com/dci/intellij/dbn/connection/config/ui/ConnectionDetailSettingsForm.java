@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dci.intellij.dbn.common.CharacterSet;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -36,7 +35,7 @@ import com.intellij.openapi.project.Project;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
-    private DBNComboBox<CharacterSet> encodingComboBox;
+    private DBNComboBox<CharsetOption> encodingComboBox;
     private JCheckBox autoCommitCheckBox;
     private JPanel propertiesPanel;
     private DBNComboBox<EnvironmentType> environmentTypesComboBox;
@@ -64,7 +63,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         propertiesEditorForm.setMoveButtonsVisible(false);
         propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
 
-        encodingComboBox.setValues(CharacterSet.ALL);
+        encodingComboBox.setValues(CharsetOption.ALL);
 
         List<EnvironmentType> environmentTypes = new ArrayList<EnvironmentType>(getEnvironmentTypes());
         environmentTypes.add(0, EnvironmentType.DEFAULT);
@@ -179,7 +178,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     @Override
     public void resetFormChanges() {
         ConnectionDetailSettings configuration = getConfiguration();
-        encodingComboBox.setSelectedValue(CharacterSet.get(configuration.getCharset()));
+        encodingComboBox.setSelectedValue(CharsetOption.get(configuration.getCharset()));
         propertiesEditorForm.setProperties(configuration.getProperties());
         autoCommitCheckBox.setSelected(configuration.isEnableAutoCommit());
         ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
