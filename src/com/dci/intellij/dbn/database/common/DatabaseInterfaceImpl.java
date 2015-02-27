@@ -9,14 +9,18 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 public class DatabaseInterfaceImpl implements DatabaseInterface{
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private String fileName;
     private DatabaseInterfaceProvider provider;
     protected Map<String, StatementExecutionProcessor> processors = new HashMap<String, StatementExecutionProcessor>();
@@ -45,6 +49,11 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
 
     protected ResultSet executeQuery(Connection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
+        if (executionProcessor == null) {
+            String message = "Feature [" + loaderId + "] not supported for " + provider.getDatabaseType() + " database";
+            LOGGER.error(message);
+            throw new SQLException(message);
+        }
         ResultSet result = executionProcessor.executeQuery(connection, forceExecution, arguments);
         checkDisposed();
         return result;
