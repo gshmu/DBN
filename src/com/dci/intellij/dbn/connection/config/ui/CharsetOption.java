@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common;
+package com.dci.intellij.dbn.connection.config.ui;
 
 import javax.swing.Icon;
 import java.nio.charset.Charset;
@@ -9,17 +9,16 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
 
-public class CharacterSet implements Presentable {
-    public static List<CharacterSet> ALL = new ArrayList<CharacterSet>();
+public class CharsetOption implements Presentable {
+    public static List<CharsetOption> ALL = new ArrayList<CharsetOption>();
     static {
         for (Charset charset : Charset.availableCharsets().values()){
-            ALL.add(new CharacterSet(charset));
+            ALL.add(new CharsetOption(charset));
         }
-
     }
 
     private Charset charset;
-    public CharacterSet(Charset charset) {
+    public CharsetOption(Charset charset) {
         this.charset = charset;
     }
 
@@ -35,10 +34,10 @@ public class CharacterSet implements Presentable {
         return null;
     }
 
-    public static CharacterSet get(Charset charset) {
-        for (CharacterSet characterSet : ALL) {
-            if (characterSet.charset.equals(charset)) {
-                return characterSet;
+    public static CharsetOption get(Charset charset) {
+        for (CharsetOption charsetOption : ALL) {
+            if (charsetOption.charset.equals(charset)) {
+                return charsetOption;
             }
         }
         return null;

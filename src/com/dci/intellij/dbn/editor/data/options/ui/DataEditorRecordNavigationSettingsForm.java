@@ -18,9 +18,9 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         super(configuration);
         updateBorderTitleForeground(mainPanel);
         navigationTargetComboBox.setValues(
-                RecordNavigationTarget.VIEWER,
                 RecordNavigationTarget.EDITOR,
-                RecordNavigationTarget.ASK);
+                RecordNavigationTarget.VIEWER,
+                RecordNavigationTarget.PROMPT);
 
         resetFormChanges();
         registerComponent(mainPanel);

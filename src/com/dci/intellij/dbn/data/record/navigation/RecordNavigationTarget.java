@@ -8,9 +8,9 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum RecordNavigationTarget implements Presentable{
-    VIEWER("Record Viewer", Icons.EXEC_RESULT_VIEW_RECORD),
+    VIEWER("Record Viewer", null),
     EDITOR("Table Editor", Icons.DBO_TABLE),
-    ASK("Ask", null);
+    PROMPT("Ask", null);
 
     private String name;
     private Icon icon;

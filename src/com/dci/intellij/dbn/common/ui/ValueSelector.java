@@ -324,11 +324,12 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         return true;
     }
 
+    @Nullable
     public T getSelectedValue() {
         return selectedValue;
     }
 
-    public void setSelectedValue(T value) {
+    public void setSelectedValue(@Nullable T value) {
         selectValue(value);
     }
 
