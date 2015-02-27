@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -21,10 +23,12 @@ public enum DatasetFilterType implements Presentable{
         this.errIcon = errIcon;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
 
+    @Nullable
     public Icon getIcon() {
         return icon;
     }

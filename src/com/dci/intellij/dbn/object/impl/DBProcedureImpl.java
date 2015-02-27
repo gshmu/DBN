@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -48,6 +49,7 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
         return DBObjectType.PROCEDURE;
     }
 
+    @Nullable
     public Icon getIcon() {
         if (getContentType() == DBContentType.CODE) {
             DBObjectStatusHolder objectStatus = getStatus();

@@ -26,6 +26,10 @@ public abstract class Setting<T, E> {
         return response;
     }
 
+    public T getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "[" + getClass().getSimpleName() + "] " + name + " = " + value;

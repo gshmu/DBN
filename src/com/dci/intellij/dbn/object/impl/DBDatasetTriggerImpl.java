@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
@@ -33,6 +34,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         return DBObjectType.DATASET_TRIGGER;
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         DBObjectStatusHolder status = getStatus();

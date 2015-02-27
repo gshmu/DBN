@@ -229,6 +229,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
                 getLanguageDialect(SQLLanguage.INSTANCE).isReservedWord(name);
     }
 
+    @Nullable
     public Icon getIcon() {
         return getObjectType().getIcon();
     }

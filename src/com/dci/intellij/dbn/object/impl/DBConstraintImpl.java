@@ -106,6 +106,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         properties.set(DBObjectProperty.DISABLEABLE);
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         boolean enabled = getStatus().is(DBObjectStatus.ENABLED);

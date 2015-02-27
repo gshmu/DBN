@@ -1,7 +1,34 @@
 package com.dci.intellij.dbn.data.record.navigation;
 
-public enum RecordNavigationTarget {
-    VIEWER,
-    EDITOR,
-    ASK
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.Presentable;
+
+public enum RecordNavigationTarget implements Presentable{
+    VIEWER("Record Viewer", Icons.EXEC_RESULT_VIEW_RECORD),
+    EDITOR("Table Editor", Icons.DBO_TABLE),
+    ASK("Ask", null);
+
+    private String name;
+    private Icon icon;
+
+    RecordNavigationTarget(String name, Icon icon) {
+        this.name = name;
+        this.icon = icon;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        return icon;
+    }
 }

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -104,6 +105,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         return DBObjectType.TYPE;
     }
 
+    @Nullable
     public Icon getIcon() {
         if (getStatus().is(DBObjectStatus.VALID)) {
             if (getStatus().is(DBObjectStatus.DEBUG))  {

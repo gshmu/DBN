@@ -46,6 +46,7 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     String getQualifiedNameWithType();
     String getNavigationTooltipText();
     String getTypeName();
+    @Nullable
     Icon getIcon();
     Icon getOriginalIcon();
 
