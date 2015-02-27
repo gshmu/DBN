@@ -19,10 +19,10 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         super(settings);
         updateBorderTitleForeground(mainPanel);
 
+        nullsPositionComboBox.setValues(NullSortingOption.values());
+
         resetFormChanges();
         registerComponent(mainPanel);
-
-        nullsPositionComboBox.setValues(NullSortingOption.values());
     }
 
     public JPanel getComponent() {
