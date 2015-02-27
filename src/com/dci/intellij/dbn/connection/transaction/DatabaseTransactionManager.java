@@ -84,12 +84,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                             ex.getMessage());
                     success = false;
                 } finally {
-                    // notify post-action
-                    transactionListener.afterAction(connectionHandler, action, success);
+                    if (!project.isDisposed()) {
+                        // notify post-action
+                        transactionListener.afterAction(connectionHandler, action, success);
 
-                    if (action.isStatusChange()) {
-                        ConnectionStatusListener statusListener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
-                        statusListener.statusChanged(connectionHandler.getId());
+                        if (action.isStatusChange()) {
+                            ConnectionStatusListener statusListener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
+                            statusListener.statusChanged(connectionHandler.getId());
+                        }
                     }
                 }
             }
