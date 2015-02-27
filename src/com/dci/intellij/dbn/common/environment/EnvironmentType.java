@@ -1,18 +1,22 @@
 package com.dci.intellij.dbn.common.environment;
 
+import javax.swing.Icon;
 import java.awt.Color;
 import java.util.UUID;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.UIUtil;
 
-public class EnvironmentType extends CommonUtil implements Cloneable, PersistentConfiguration {
+public class EnvironmentType extends CommonUtil implements Cloneable, PersistentConfiguration, Presentable {
 
     public static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
     public static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;
@@ -69,8 +73,16 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         return id;
     }
 
+    @NotNull
     public String getName() {
         return name;
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        JBColor color = getColor();
+        return color == null ? null : new ColorIcon(12, color);
     }
 
     public void setName(String name) {
