@@ -10,4 +10,5 @@ public class DBNComboBox<T extends Presentable> extends ValueSelector<T>{
     public DBNComboBox(List<T> values) {
         super(null, null, values, null, true);
     }
+
 }

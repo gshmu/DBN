@@ -16,7 +16,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
@@ -85,6 +87,15 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
                 AbstractButton abstractButton = (AbstractButton) component;
                 if (actionListener == null) actionListener = createActionListener();
                 abstractButton.addActionListener(actionListener);
+            }
+            else if (component instanceof DBNComboBox) {
+                DBNComboBox comboBox = (DBNComboBox) component;
+                comboBox.addListener(new ValueSelectorListener() {
+                    @Override
+                    public void valueSelected(Object value) {
+                        getConfiguration().setModified(true);
+                    }
+                });
             }
             else if (component instanceof CheckBoxList) {
                 CheckBoxList checkBoxList = (CheckBoxList) component;

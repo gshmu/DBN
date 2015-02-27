@@ -129,16 +129,15 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {
-                if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
-                    try {
+                try {
+                    if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
                         IS_RESETTING.set(true);
                         configurationEditorForm.resetFormChanges();
-                    } finally {
-                        isModified = false;
-                        IS_RESETTING.set(false);
                     }
+                } finally {
+                    isModified = false;
+                    IS_RESETTING.set(false);
                 }
-
             }
         }.start();
     }
