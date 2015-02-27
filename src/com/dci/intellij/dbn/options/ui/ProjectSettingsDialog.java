@@ -75,7 +75,7 @@ public class ProjectSettingsDialog extends DBNDialog {
     }
 
     public void doCancelAction() {
-        projectSettings.reset();
+        //projectSettings.reset();
         projectSettings.disposeUIResources();
         super.doCancelAction();
     }

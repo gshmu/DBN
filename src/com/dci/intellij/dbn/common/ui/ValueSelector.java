@@ -161,10 +161,10 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
         }
 
-        updateSize();
+        adjustSize();
     }
 
-    private void updateSize() {
+    private void adjustSize() {
         int minWidth = 0;
         FontMetrics fontMetrics = label.getFontMetrics(label.getFont());
         int height = fontMetrics.getHeight();
@@ -295,6 +295,12 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         GUIUtil.showUnderneathOf(popup, this, 3, 200);
     }
 
+    public void clearValues() {
+        selectValue(null);
+        values.clear();
+    }
+
+
     public class SelectValueAction extends AnAction {
         private T value;
 
@@ -347,7 +353,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     public void setValues(List<T> values) {
         this.values = values;
-        updateSize();
+        adjustSize();
     }
 
     public void resetValues() {
@@ -362,6 +368,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     private void selectValue(T value) {
+        value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
         if (isComboBox) {
             selectedValue = value;
             if (selectedValue == null) {

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.config.ui;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -15,13 +14,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Driver;
+import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -47,7 +51,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     private JTextField userTextField;
     private JTextField urlTextField;
     private TextFieldWithBrowseButton driverLibraryTextField;
-    private JComboBox driverComboBox;
+    private DBNComboBox<DriverOption> driverComboBox;
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox activeCheckBox;
@@ -63,7 +67,6 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         temporaryConfig = connectionConfig.clone();
         updateBorderTitleForeground(connectionParametersPanel);
         resetFormChanges();
-        updateLibraryTextField();
 
         registerComponent(mainPanel);
 
@@ -168,21 +171,62 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         boolean fileExists = fileExists(driverLibrary);
         if (fileExists) {
             List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
-            Object selected = driverComboBox.getSelectedItem();
-            driverComboBox.removeAllItems();
+            DriverOption selectedOption = driverComboBox.getSelectedValue();
+            driverComboBox.clearValues();
             //driverComboBox.addItem("");
             if (drivers != null) {
+                List<DriverOption> driverOptions = new ArrayList<DriverOption>();
                 for (Driver driver : drivers) {
-                    driverComboBox.addItem(driver.getClass().getName());
+                    DriverOption driverOption = new DriverOption(driver);
+                    driverOptions.add(driverOption);
+                    if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
+                        selectedOption = driverOption;
+                    }
                 }
-                if (selected == null && drivers.size() > 0) {
-                    selected = drivers.get(0).getClass().getName();
+
+                driverComboBox.setValues(driverOptions);
+
+                if (selectedOption == null && driverOptions.size() > 0) {
+                    selectedOption = driverOptions.get(0);
                 }
             }
-            driverComboBox.setSelectedItem(selected);
+            driverComboBox.setSelectedValue(selectedOption);
         } else {
-            driverComboBox.removeAllItems();
+            driverComboBox.clearValues();
             //driverComboBox.addItem("");
+        }
+    }
+
+    private static class DriverOption implements Presentable {
+        private Driver driver;
+
+        public DriverOption(Driver driver) {
+            this.driver = driver;
+        }
+
+        public Driver getDriver() {
+            return driver;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return driver.getClass().getName();
+        }
+
+        @Nullable
+        @Override
+        public Icon getIcon() {
+            return null;
+        }
+
+        public static DriverOption get(List<DriverOption> driverOptions, String name) {
+            for (DriverOption driverOption : driverOptions) {
+                if (driverOption.getName().equals(name)) {
+                    return driverOption;
+                }
+            }
+            return null;
         }
     }
 
@@ -211,7 +255,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         connectionConfig.setName(nameTextField.getText());
         connectionConfig.setDescription(descriptionTextField.getText());
         connectionConfig.setDriverLibrary(driverLibraryTextField.getText());
-        connectionConfig.setDriver(driverComboBox.getSelectedItem() == null ? null : driverComboBox.getSelectedItem().toString());
+        connectionConfig.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
         connectionConfig.setDatabaseUrl(urlTextField.getText());
         connectionConfig.setUser(userTextField.getText());
         connectionConfig.setPassword(new String(passwordField.getPassword()));
@@ -249,12 +293,13 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
-        driverComboBox.setSelectedItem(connectionConfig.getDriver());
         urlTextField.setText(connectionConfig.getDatabaseUrl());
         userTextField.setText(connectionConfig.getUser());
         passwordField.setText(connectionConfig.getPassword());
         osAuthenticationCheckBox.setSelected(connectionConfig.isOsAuthentication());
+
         populateDriverList(connectionConfig.getDriverLibrary());
+        driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
     }
 
     @Override
