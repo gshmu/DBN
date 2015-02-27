@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -75,6 +76,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         return isExpired;
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         return isExpired() ?

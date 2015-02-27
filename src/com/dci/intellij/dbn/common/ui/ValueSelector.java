@@ -270,13 +270,14 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 new Runnable() {
                     @Override
                     public void run() {
-                        isShowingPopup = false;
-                        innerPanel.requestFocus();
+
                         innerPanel.setBorder(defaultBorder);
                         innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
                         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+                        isShowingPopup = false;
+                        innerPanel.requestFocus();
                         revalidate();
                         repaint();
                     }

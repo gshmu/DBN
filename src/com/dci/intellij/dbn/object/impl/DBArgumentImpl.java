@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
@@ -137,6 +138,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         return null;
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         return isInput() && isOutput() ? Icons.DBO_ARGUMENT_IN_OUT :

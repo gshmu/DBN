@@ -72,6 +72,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         return getUnderlyingObject();
     }
 
+    @Nullable
     public Icon getIcon() {
         if (getStatus().is(DBObjectStatus.VALID)) {
             return Icons.DBO_SYNONYM;

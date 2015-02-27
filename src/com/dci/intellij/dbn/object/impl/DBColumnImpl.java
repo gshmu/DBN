@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
@@ -118,6 +119,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         super.buildToolTip(ttb);
     }
 
+    @Nullable
     public Icon getIcon() {
         return isPrimaryKey() ? isForeignKey() ? Icons.DBO_COLUMN_PFK : Icons.DBO_COLUMN_PK :
                isForeignKey() ? Icons.DBO_COLUMN_FK :

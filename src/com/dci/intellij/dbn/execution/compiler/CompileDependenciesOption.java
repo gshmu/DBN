@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.execution.compiler;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 
@@ -17,10 +19,12 @@ public enum CompileDependenciesOption implements InteractiveOption {
         this.persistable = persistable;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         return null;

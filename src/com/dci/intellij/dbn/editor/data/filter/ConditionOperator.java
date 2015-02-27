@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
-
 import javax.swing.Icon;
 import java.util.Date;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum ConditionOperator implements Presentable {
     EQUAL("=", false),
@@ -128,11 +130,13 @@ public enum ConditionOperator implements Presentable {
         return text;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return text;
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         return null;

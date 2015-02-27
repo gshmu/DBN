@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.editor.session.options;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 
@@ -19,11 +21,13 @@ public enum SessionInterruptionOption implements InteractiveOption{
         this.icon = icon;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return name;
     }
 
+    @Nullable
     @Override
     public Icon getIcon() {
         return icon;

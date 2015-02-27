@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -72,6 +73,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         return DBObjectType.TABLE;
     }
 
+    @Nullable
     public Icon getIcon() {
         return isTemporary() ?
                 Icons.DBO_TMP_TABLE :
