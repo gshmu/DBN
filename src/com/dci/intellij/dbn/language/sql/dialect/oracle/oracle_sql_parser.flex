@@ -94,18 +94,21 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 %%
 
 <PSQL_BLOCK> {
-    {BLOCK_COMMENT}  {}
-    {LINE_COMMENT}   {}
-    {STRING}         {}
+    {BLOCK_COMMENT}            {}
+    {LINE_COMMENT}             {}
+    {STRING}                   {}
 
     {PSQL_BLOCK_START_BEGIN}   { blockNesting++; }
     {PSQL_BLOCK_START_CREATE}  { blockNesting = 0; yypushback(yylength()); return endPsqlBlock(); }
     {PSQL_BLOCK_END_IGNORE}    {}
     {PSQL_BLOCK_END}           { blockNesting--; if (blockNesting == 0) return endPsqlBlock();}
 
-    {WHITE_SPACE}+   {}
-    \n|\r|.          {}
-    <<EOF>>   { return endPsqlBlock(); }
+    {IDENTIFIER}               {}
+    {INTEGER}                  {}
+    {NUMBER}                   {}
+    {WHITE_SPACE}+             {}
+    \n|\r|.                    {}
+    <<EOF>>                    { blockNesting = 0; return endPsqlBlock(); }
 }
 
 
@@ -325,7 +328,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     {PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
     {PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
     {PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_DECLARE}         { startPsqlBlock(true); }
+    {PSQL_BLOCK_START_DECLARE}         { startPsqlBlock(false); }
     {PSQL_BLOCK_START_BEGIN}           { startPsqlBlock(true); }
 
     {VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
