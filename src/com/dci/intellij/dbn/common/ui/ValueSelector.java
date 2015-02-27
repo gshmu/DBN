@@ -61,7 +61,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private String text;
     private boolean isComboBox;
     private boolean isEnabled = true;
-    private boolean isActive = false;
+    private boolean isFocused = false;
     private boolean isShowingPopup = false;
 
     private Border focusBorder;
@@ -129,20 +129,16 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             innerPanel.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
-                    isActive = true;
-
+                    isFocused = true;
                     revalidate();
                     repaint();
                 }
 
                 @Override
                 public void focusLost(FocusEvent e) {
-                    if (!isShowingPopup) {
-                        isActive = false;
-
-                        revalidate();
-                        repaint();
-                    }
+                    isFocused = false;
+                    revalidate();
+                    repaint();
                 }
             });
 
@@ -275,6 +271,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     @Override
                     public void run() {
                         isShowingPopup = false;
+                        innerPanel.requestFocus();
                         innerPanel.setBorder(defaultBorder);
                         innerPanel.setBackground(isComboBox ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
                         innerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -294,8 +291,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     }
                 });
 
-        GUIUtil.showUnderneathOf(popup, this, 0, 200);
-        isActive = true;
+        GUIUtil.showUnderneathOf(popup, this, 3, 200);
     }
 
     public class SelectValueAction extends AnAction {
@@ -425,7 +421,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             g.translate(x, y);
 
             if (UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF()) {
-                if (valueSelector.isActive) {
+                if (isFocused || isShowingPopup) {
                     DarculaUIUtil.paintFocusRing(g, 2, 2, width - 4, height - 4);
                 } else {
                     boolean editable = valueSelector.isEnabled;
