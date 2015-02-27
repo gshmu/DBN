@@ -4,12 +4,11 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum RecordNavigationTarget implements Presentable{
     VIEWER("Record Viewer", null),
-    EDITOR("Table Editor", Icons.DBO_TABLE),
+    EDITOR("Table Editor", null),
     PROMPT("Ask", null);
 
     private String name;

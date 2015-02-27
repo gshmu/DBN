@@ -25,14 +25,16 @@ public class NotificationUtil {
     }
 
     public static void sendNotification(Project project, NotificationType type, String title, String message, String ... args) {
-        final NotificationListener listener = new NotificationListener() {
-            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                notification.expire();
-            }
-        };
+        if (project != null && !project.isDisposed()) {
+            final NotificationListener listener = new NotificationListener() {
+                public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                    notification.expire();
+                }
+            };
 
-        message = MessageFormat.format(message, args);
-        Notification notification = new Notification("Database Navigator", title, message, type);
-        Notifications.Bus.notify(notification, project);
+            message = MessageFormat.format(message, args);
+            Notification notification = new Notification("Database Navigator", title, message, type);
+            Notifications.Bus.notify(notification, project);
+        }
     }
 }
