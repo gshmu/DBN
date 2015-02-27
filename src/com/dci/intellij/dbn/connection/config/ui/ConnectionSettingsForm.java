@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
+import com.intellij.util.ui.UIUtil;
 
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
     private JPanel mainPanel;
@@ -95,7 +96,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                     if (configuration != null && configuration.getConnectionId().equals(connectionId)) {
                         if (name != null) headerForm.setTitle(name);
                         if (icon != null) headerForm.setIcon(icon);
-                        if (color != null) headerForm.setBackground(color);
+                        if (color != null) headerForm.setBackground(color); else headerForm.setBackground(UIUtil.getPanelBackground());
                         //if (databaseType != null) databaseIconLabel.setIcon(databaseType.getLargeIcon());
                     }
                 }
