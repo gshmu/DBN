@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
+                - Error reporting improvements (attachments)<br>
                 - Remember statement execution variables<br>
                 - Session Browser colors configuration</br>
                 - Session Browser explain plan for current statement (Oracle)</br>

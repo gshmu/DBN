@@ -27,5 +27,9 @@ public abstract class UnderlyingObjectResolver {
         return RESOLVERS.get(id);
     }
 
-    public abstract DBObject resolve(IdentifierPsiElement identifierPsiElement);
+    public final DBObject resolve(IdentifierPsiElement identifierPsiElement) {
+        return resolve(identifierPsiElement, 0);
+    }
+
+    protected abstract DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck);
 }

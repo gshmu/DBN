@@ -20,7 +20,7 @@ public class AssignmentObjectResolver extends UnderlyingObjectResolver{
     }
 
     @Override
-    public DBObject resolve(IdentifierPsiElement identifierPsiElement) {
+    protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
         NamedPsiElement enclosingNamedPsiElement = identifierPsiElement.findEnclosingNamedPsiElement();
         PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(identifierPsiElement, DBObjectType.TYPE, null);
         BasePsiElement underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
