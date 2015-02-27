@@ -20,15 +20,15 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
     public CompilerSettingsForm(CompilerSettings settings) {
         super(settings);
         compileTypeComboBox.setValues(
-                CompileTypeOption.ASK,
-                CompileTypeOption.KEEP,
                 CompileTypeOption.NORMAL,
-                CompileTypeOption.DEBUG);
+                CompileTypeOption.DEBUG,
+                CompileTypeOption.KEEP,
+                CompileTypeOption.ASK);
 
         compileDependenciesComboBox.setValues(
-                CompileDependenciesOption.ASK,
                 CompileDependenciesOption.YES,
-                CompileDependenciesOption.NO);
+                CompileDependenciesOption.NO,
+                CompileDependenciesOption.ASK);
 
 
         updateBorderTitleForeground(mainPanel);
