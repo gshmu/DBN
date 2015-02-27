@@ -186,6 +186,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         minWidth = Math.max(minWidth, width);
         label.setPreferredSize(new Dimension(minWidth + 10, height));
         label.setMinimumSize(new Dimension(minWidth + 10, height));
+        innerPanel.setMaximumSize(new Dimension(-1, height + 2));
+        innerPanel.setPreferredSize(new Dimension((int) innerPanel.getPreferredSize().getWidth(), height + 2));
     }
 
     public void addListener(ValueSelectorListener<T> listener) {
@@ -210,6 +212,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         innerPanel.setCursor(isEnabled ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
 
         innerPanel.setBackground(isComboBox && isEnabled ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
+        innerPanel.setFocusable(isEnabled);
     }
 
     public void paintComponent(Graphics g) {
@@ -242,7 +245,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         @Override
         public void mousePressed(MouseEvent e) {
             if (isEnabled && !isShowingPopup) {
-                innerPanel.grabFocus();
+                innerPanel.requestFocus();
                 showPopup();
             }
         }
