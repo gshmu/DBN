@@ -198,8 +198,11 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         URLConnection issueConnection = issueUrl.openConnection();
         issueConnection.setDoOutput(true);
 
-        try (OutputStream outputStream = issueConnection.getOutputStream()) {
+        OutputStream outputStream = issueConnection.getOutputStream();
+        try {
             outputStream.write(output);
+        } finally {
+            outputStream.close();
         }
 
         BufferedReader responseReader = new BufferedReader(new InputStreamReader(issueConnection.getInputStream()));
