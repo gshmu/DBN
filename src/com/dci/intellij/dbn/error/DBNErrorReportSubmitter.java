@@ -1,30 +1,11 @@
 package com.dci.intellij.dbn.error;
 
-import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.diagnostic.AbstractMessage;
+import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.errorreport.bean.ErrorBean;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -42,6 +23,26 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.Component;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 
@@ -110,8 +111,8 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         description.append("\n\n").append(event.toString());
 
         Object eventData = event.getData();
-        if (eventData instanceof AbstractMessage) {
-            List<Attachment> attachments = ((AbstractMessage) eventData).getAttachments();
+        if (eventData instanceof LogMessageEx) {
+            List<Attachment> attachments = ((LogMessageEx) eventData).getAttachments();
             if (attachments.size() > 0) {
                 Set<String> attachmentTexts = new HashSet<String>();
                 for (Attachment attachment : attachments) {
@@ -174,8 +175,8 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
 
         ErrorBean errorBean = new ErrorBean(events[0].getThrowable(), IdeaLogger.ourLastActionId);
         Object eventData = events[0].getData();
-        if (eventData instanceof AbstractMessage) {
-            errorBean.setAttachments(((AbstractMessage)eventData).getAttachments());
+        if (eventData instanceof LogMessageEx) {
+            errorBean.setAttachments(((LogMessageEx)eventData).getAttachments());
         }
 
         Map<String, String> parameters = createParameters(summary, description, pluginVersion, errorBean);
