@@ -1,16 +1,6 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellEditor;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -18,16 +8,20 @@ import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChang
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
+
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.table.TableCellEditor;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 public class EnvironmentSettingsForm extends ConfigurationEditorForm<EnvironmentSettings> {
     private JPanel mainPanel;
-    private JButton addButton;
-    private JButton removeButton;
-    private JButton moveUpButton;
-    private JButton moveDownButton;
-    private JButton resetDefaultsButton;
-    private JScrollPane environmentTypesTableScrollPane;
     private JCheckBox connectionTabsCheckBox;
     private JCheckBox objectEditorTabsCheckBox;
     private JCheckBox scriptEditorTabsCheckBox;
@@ -35,13 +29,12 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
     private JCheckBox executionResultTabsCheckBox;
     private JPanel environmentTypesPanel;
     private JPanel environmentApplicabilityPanel;
+    private JPanel environmentTypesTablePanel;
     private EnvironmentTypesEditorTable environmentTypesTable;
 
     public EnvironmentSettingsForm(EnvironmentSettings settings) {
         super(settings);
         environmentTypesTable = new EnvironmentTypesEditorTable(settings.getProject(), settings.getEnvironmentTypes());
-        environmentTypesTableScrollPane.setViewportView(environmentTypesTable);
-        environmentTypesTableScrollPane.setPreferredSize(new Dimension(200, 80));
 
         updateBorderTitleForeground(environmentTypesPanel);
         updateBorderTitleForeground(environmentApplicabilityPanel);
@@ -53,74 +46,50 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         visibilitySettings.getDialogHeaders().resetChanges(dialogHeadersCheckBox);
         visibilitySettings.getExecutionResultTabs().resetChanges(executionResultTabsCheckBox);
 
-        environmentTypesTable.getSelectionModel().addListSelectionListener(selectionListener);
-        updateButtons();
-
-        addButton.addActionListener(actionListener);
-        removeButton.addActionListener(actionListener);
-        moveUpButton.addActionListener(actionListener);
-        moveDownButton.addActionListener(actionListener);
-        resetDefaultsButton.addActionListener(actionListener);
-
-        registerComponents(
-                addButton,
-                removeButton,
-                moveUpButton,
-                moveDownButton,
-                resetDefaultsButton,
-                connectionTabsCheckBox,
-                objectEditorTabsCheckBox,
-                scriptEditorTabsCheckBox,
-                dialogHeadersCheckBox,
-                executionResultTabsCheckBox,
-                environmentTypesTable);
-    }
-    
-    public JPanel getComponent() {
-        return mainPanel;
-    }
-    
-    private ListSelectionListener selectionListener = new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-            updateButtons();
-        }
-    };
-
-    private ActionListener actionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            Object source = e.getSource();
-            if (source == addButton) {
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(environmentTypesTable);
+        decorator.setAddAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
                 environmentTypesTable.insertRow();
-            } else if (source == removeButton) {
+            }
+        }).setRemoveAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
                 environmentTypesTable.removeRow();
-            }  else if (source == moveUpButton) {
+            }
+        }).setMoveUpAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
                 environmentTypesTable.moveRowUp();
-            } else if (source == moveDownButton) {
+            }
+        }).setMoveDownAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
                 environmentTypesTable.moveRowDown();
-            } else if (source == resetDefaultsButton) {
+            }
+        }).addExtraAction(new AnActionButton("Revert Changes", Icons.ACTION_REVERT_CHANGES) {
+
+
+            @Override
+            public void actionPerformed(AnActionEvent anActionEvent) {
                 TableCellEditor cellEditor = environmentTypesTable.getCellEditor();
                 if (cellEditor != null) {
                     cellEditor.cancelCellEditing();
                 }
                 environmentTypesTable.setEnvironmentTypes(EnvironmentTypeBundle.DEFAULT);
             }
-            updateButtons();
-        }
-    };
 
-    private void updateButtons() {
-        removeButton.setEnabled(
-                environmentTypesTable.getModel().getRowCount()  > 0 &&
-                environmentTypesTable.getSelectedRowCount() > 0);
-        moveUpButton.setEnabled(
-                environmentTypesTable.getSelectedRowCount() > 0 &&
-                environmentTypesTable.getSelectedRow() > 0);
-        moveDownButton.setEnabled(
-                environmentTypesTable.getSelectedRowCount() > 0 &&
-                environmentTypesTable.getSelectedRow() < environmentTypesTable.getModel().getRowCount() - 1);
+        });
+        decorator.setPreferredSize(new Dimension(-1, 300));
+        JPanel panel = decorator.createPanel();
+        environmentTypesTablePanel.add(panel, BorderLayout.CENTER);
+        registerComponents(mainPanel);
     }
-
-
+    
+    public JPanel getComponent() {
+        return mainPanel;
+    }
+    
     public void applyFormChanges() throws ConfigurationException {
         EnvironmentSettings settings = getConfiguration();
         EnvironmentTypesTableModel model = environmentTypesTable.getModel();
