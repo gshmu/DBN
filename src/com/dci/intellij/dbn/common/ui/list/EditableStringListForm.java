@@ -1,28 +1,23 @@
 package com.dci.intellij.dbn.common.ui.list;
 
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 
 public class EditableStringListForm extends DBNFormImpl{
     private JPanel component;
-    private JScrollPane listScrollPane;
-    private JPanel actionsPanel;
     private JLabel titleLabel;
+    private JPanel listPanel;
 
     private EditableStringList editableStringList;
 
@@ -32,17 +27,37 @@ public class EditableStringListForm extends DBNFormImpl{
 
     public EditableStringListForm(String title, List<String> elements, boolean sorted) {
         editableStringList = new EditableStringList(null, elements, sorted, false);
-        listScrollPane.setViewportView(editableStringList);
-        listScrollPane.getViewport().setBackground(editableStringList.getBackground());
+        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(editableStringList);
+        decorator.setAddAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
+                editableStringList.insertRow();
+            }
+        });
+        decorator.setRemoveAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
+                editableStringList.removeRow();
+            }
+        });
+        decorator.setMoveUpAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
+                editableStringList.moveRowUp();
+            }
+        });
+        decorator.setMoveDownAction(new AnActionButtonRunnable() {
+            @Override
+            public void run(AnActionButton anActionButton) {
+                editableStringList.moveRowDown();
+            }
+        });
         titleLabel.setText(title);
-
-
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
-                "", false,
-                new AddRowAction(),
-                new DeleteRowAction());
-        actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
-
+        //decorator.setPreferredSize(new Dimension(200, 300));
+        JPanel editableListPanel = decorator.createPanel();
+        Container parent = editableStringList.getParent();
+        parent.setBackground(editableStringList.getBackground());
+        this.listPanel.add(editableListPanel, BorderLayout.CENTER);
     }
 
     @Override
@@ -56,32 +71,5 @@ public class EditableStringListForm extends DBNFormImpl{
 
     public void setStringValues(Collection<String> stringValues) {
         editableStringList.setStringValues(stringValues);
-    }
-
-    public class AddRowAction extends AnAction {
-        public AddRowAction() {
-            super("Add Row", null, Icons.ACTION_ADD);
-        }
-
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            editableStringList.insertRow();
-        }
-    }
-
-    public class DeleteRowAction extends AnAction {
-
-        public DeleteRowAction() {
-            super("Delete Row", null, Icons.ACTION_REMOVE);
-        }
-
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            editableStringList.removeRow();
-        }
-
-        public void update(@NotNull AnActionEvent e) {
-            int selectedRowCount = editableStringList.getSelectedRowCount();
-            Presentation presentation = e.getPresentation();
-            presentation.setEnabled(selectedRowCount == 1);
-        }
     }
 }
