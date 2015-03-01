@@ -1,23 +1,36 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
-public enum CodeStyleCase {
+import com.dci.intellij.dbn.common.ui.Presentable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+
+public enum CodeStyleCase implements Presentable{
     PRESERVE ("Preserve case"),
     UPPER("Upper case"),
     LOWER("Lower case"),
     CAPITALIZED("Capitalized");
 
-    private String displayName;
+    private String name;
 
-    private CodeStyleCase(String displayName) {
-        this.displayName = displayName;
+    private CodeStyleCase(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return displayName;
+        return name;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    @NotNull
+    public String getName() {
+        return name;
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        return null;
     }
 }

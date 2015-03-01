@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.language.sql.structure;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -14,6 +8,12 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLStructureViewElement extends DBLanguageStructureViewElement<SQLStructureViewElement> {
 
@@ -33,7 +33,7 @@ public class SQLStructureViewElement extends DBLanguageStructureViewElement<SQLS
                 }
                 if (psiElement instanceof ChameleonPsiElement) {
                     ChameleonPsiElement chameleonPsiElement = (ChameleonPsiElement) psiElement;
-                    //return chameleonPsiElement.getLanguage().getDisplayName() + " block";
+                    //return chameleonPsiElement.getLanguage().getName() + " block";
                     // todo make this dynamic
                     return "PL/SQL block";
                 }
