@@ -68,7 +68,7 @@ public class BrowserToolWindowForm extends DBNFormImpl implements DBNForm {
 
         browserForm =
                 displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(project) :
-                displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(project) : null;
+                displayMode == BrowserDisplayMode.SINGLE ? new SimpleBrowserForm(project) : null;
 
 
         browserPanel.add(browserForm.getComponent(), BorderLayout.CENTER);

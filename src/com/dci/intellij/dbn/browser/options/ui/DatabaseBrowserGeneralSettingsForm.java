@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserGeneralSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
@@ -14,22 +8,31 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
     private JPanel mainPanel;
-    private JRadioButton simpleRadioButton;
-    private JRadioButton tabbedRadioButton;
     private JTextField navigationHistorySizeTextField;
     private JCheckBox showObjectDetailsCheckBox;
+    private DBNComboBox<BrowserDisplayMode> browserTypeComboBox;
 
 
     public DatabaseBrowserGeneralSettingsForm(DatabaseBrowserGeneralSettings configuration) {
         super(configuration);
         updateBorderTitleForeground(mainPanel);
-        resetFormChanges();
 
+        browserTypeComboBox.setValues(
+                BrowserDisplayMode.SINGLE,
+                BrowserDisplayMode.TABBED);
+
+        resetFormChanges();
         registerComponent(mainPanel);
     }
 
@@ -43,10 +46,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
 
         final boolean repaintTree = configuration.isModified();
         
-        final BrowserDisplayMode displayMode =
-                simpleRadioButton.isSelected() ? BrowserDisplayMode.SIMPLE :
-                tabbedRadioButton.isSelected() ? BrowserDisplayMode.TABBED :
-                BrowserDisplayMode.SIMPLE;
+        final BrowserDisplayMode displayMode = browserTypeComboBox.getSelectedValue();
         final boolean displayModeChanged = configuration.getDisplayMode() != displayMode;
         configuration.setDisplayMode(displayMode);
 
@@ -72,11 +72,10 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
 
     public void resetFormChanges() {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
-        BrowserDisplayMode displayMode = configuration.getDisplayMode();
-        if (displayMode == BrowserDisplayMode.SIMPLE) simpleRadioButton.setSelected(true); else
-        if (displayMode == BrowserDisplayMode.TABBED) tabbedRadioButton.setSelected(true);
+        browserTypeComboBox.setSelectedValue(configuration.getDisplayMode());
 
         configuration.getNavigationHistorySize().resetChanges(navigationHistorySizeTextField);
         configuration.getShowObjectDetails().resetChanges(showObjectDetailsCheckBox);
     }
+
 }
