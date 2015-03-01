@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.diagnostic.LogMessage;
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.errorreport.bean.ErrorBean;
 import com.intellij.ide.DataManager;
@@ -74,7 +75,19 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
         return "Submit Issue Report";
     }
 
-    @Override
+    public SubmittedReportInfo submit(IdeaLoggingEvent[] events, Component parentComponent) {
+        final SubmittedReportInfo[] reportInfo = new SubmittedReportInfo[1];
+        Consumer<SubmittedReportInfo> consumer = new Consumer<SubmittedReportInfo>() {
+            @Override
+            public void consume(SubmittedReportInfo submittedReportInfo) {
+                reportInfo[0] = submittedReportInfo;
+            }
+        };
+        String additionalInfo = ((LogMessage)events[0].getData()).getAdditionalInfo();
+        submit(events, additionalInfo, parentComponent, consumer);
+        return reportInfo[0];
+    }
+
     public boolean submit(@NotNull IdeaLoggingEvent[] events, String additionalInfo, @NotNull Component parentComponent, @NotNull Consumer<SubmittedReportInfo> consumer) {
         DataContext dataContext = DataManager.getInstance().getDataContext(parentComponent);
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
@@ -199,7 +212,7 @@ public class DBNErrorReportSubmitter extends ErrorReportSubmitter {
     }
 
     private static Map<String, String> createParameters(String summary, String description, String pluginVersion, ErrorBean error) {
-        Map<String, String> params = ContainerUtil.newLinkedHashMap(40);
+        Map<String, String> params = ContainerUtil.newLinkedHashMap();
 
         params.put("login", "autosubmit");
         params.put("password", "autosubmit");
