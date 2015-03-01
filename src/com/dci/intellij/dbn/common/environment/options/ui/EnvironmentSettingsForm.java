@@ -52,24 +52,26 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
             public void run(AnActionButton anActionButton) {
                 environmentTypesTable.insertRow();
             }
-        }).setRemoveAction(new AnActionButtonRunnable() {
+        });
+        decorator.setRemoveAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
                 environmentTypesTable.removeRow();
             }
-        }).setMoveUpAction(new AnActionButtonRunnable() {
+        });
+        decorator.setMoveUpAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
                 environmentTypesTable.moveRowUp();
             }
-        }).setMoveDownAction(new AnActionButtonRunnable() {
+        });
+        decorator.setMoveDownAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
                 environmentTypesTable.moveRowDown();
             }
-        }).addExtraAction(new AnActionButton("Revert Changes", Icons.ACTION_REVERT_CHANGES) {
-
-
+        });
+        decorator.addExtraAction(new AnActionButton("Revert Changes", Icons.ACTION_REVERT_CHANGES) {
             @Override
             public void actionPerformed(AnActionEvent anActionEvent) {
                 TableCellEditor cellEditor = environmentTypesTable.getCellEditor();
