@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.4012</version>
+    <version>3.0.4098</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,7 +27,7 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.NEXT</b>
+            <li><b>3.0.4098</b>
             <ul>
                 - Remember statement execution variables<br>
                 - Session Browser colors configuration</br>
