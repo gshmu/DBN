@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.common.environment;
 
-import javax.swing.Icon;
-import java.awt.Color;
-import java.util.UUID;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
@@ -15,6 +8,12 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.UIUtil;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.awt.Color;
+import java.util.UUID;
 
 public class EnvironmentType extends CommonUtil implements Cloneable, PersistentConfiguration, Presentable {
 
@@ -73,7 +72,6 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         return id;
     }
 
-    @NotNull
     public String getName() {
         return name;
     }
