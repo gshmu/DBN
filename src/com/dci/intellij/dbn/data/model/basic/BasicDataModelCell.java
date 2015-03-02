@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 
 public class BasicDataModelCell implements DataModelCell {
@@ -82,6 +83,16 @@ public class BasicDataModelCell implements DataModelCell {
 
     public String getName() {
         return getColumnInfo().getName();
+    }
+
+    @Override
+    public DBDataType getDataType() {
+        return getColumnInfo().getDataType();
+    }
+
+    @Override
+    public DBObjectType getObjectType() {
+        return DBObjectType.COLUMN;
     }
 
     public ColumnInfo getColumnInfo() {

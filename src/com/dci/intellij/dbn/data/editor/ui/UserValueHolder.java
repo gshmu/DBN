@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 
 public interface UserValueHolder<T> {
@@ -11,5 +13,7 @@ public interface UserValueHolder<T> {
     T getUserValue();
     String getFormattedUserValue();
     String getName();
+    DBDataType getDataType();
+    DBObjectType getObjectType();
     Project getProject();
 }
