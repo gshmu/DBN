@@ -125,27 +125,29 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
         if (getProject().isOpen() && targetSelection != null) {
             targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
             TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
-            for (Object object : treePath.getPath()) {
-                BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                if (treeNode == null || treeNode.isDisposed()) {
-                    targetSelection = null;
-                    return;
-                }
+            if (treePath != null) {
+                for (Object object : treePath.getPath()) {
+                    BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                    if (treeNode == null || treeNode.isDisposed()) {
+                        targetSelection = null;
+                        return;
+                    }
 
 
-                if (treeNode.equals(targetSelection)) {
-                    break;
+                    if (treeNode.equals(targetSelection)) {
+                        break;
+                    }
+
+                    if (!treeNode.isLeafTreeElement() && !treeNode.isTreeStructureLoaded()) {
+                        selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
+                        treeNode.getTreeChildren();
+                        return;
+                    }
                 }
 
-                if (!treeNode.isLeafTreeElement() && !treeNode.isTreeStructureLoaded()) {
-                    selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
-                    treeNode.getTreeChildren();
-                    return;
-                }
+                targetSelection = null;
+                selectPath(treePath);
             }
-
-            targetSelection = null;
-            selectPath(treePath);
         }
     }
 
@@ -210,10 +212,12 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
 
     public void selectPathSilently(TreePath treePath) {
-        listenersEnabled = false;
-        selectionModel.setSelectionPath(treePath);
-        TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true);
-        listenersEnabled = true;
+        if (treePath != null) {
+            listenersEnabled = false;
+            selectionModel.setSelectionPath(treePath);
+            TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true);
+            listenersEnabled = true;
+        }
     }
 
     private boolean listenersEnabled = true;

@@ -3,17 +3,24 @@ package com.dci.intellij.dbn.browser;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DatabaseBrowserUtils {
+    @Nullable
     public static TreePath createTreePath(BrowserTreeNode treeNode) {
         boolean isTabbedMode = DatabaseBrowserManager.getInstance(treeNode.getProject()).isTabbedMode();
 
         int treeDepth = treeNode.getTreeDepth();
-        BrowserTreeNode[] path = new BrowserTreeNode[isTabbedMode ? treeDepth -1 : treeDepth + 1];
+        int nodeIndex = isTabbedMode ? treeDepth - 1 : treeDepth + 1;
+        if (nodeIndex < 0) {
+            return null;
+        }
+
+        BrowserTreeNode[] path = new BrowserTreeNode[nodeIndex];
         while (treeNode != null) {
             treeDepth = treeNode.getTreeDepth();
             path[isTabbedMode ? treeDepth -2 : treeDepth] = treeNode;

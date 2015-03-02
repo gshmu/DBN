@@ -1,14 +1,16 @@
 package com.dci.intellij.dbn.code.common.style.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.options.ConfigurationException;
-
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
 
 public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyleCaseSettings> implements DBNForm {
     private JPanel mainPanel;
@@ -40,11 +42,29 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         datatypeCaseComboBox.setValues(KEYWORD_STYLE_CASES);
         objectCaseComboBox.setValues(OBJECT_STYLE_CASES);
         resetFormChanges();
+        enableDisableOptions();
 
         registerComponent(mainPanel);
+        enableCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableDisableOptions();
+            }
+        });
+
+
 
         //Shortcut[] basicShortcuts = KeyUtil.getShortcuts("ReformatCode");
         //enableCheckBox.setText("Use on reformat code (" + KeymapUtil.getShortcutsText(basicShortcuts) + ")");
+    }
+
+    private void enableDisableOptions() {
+        boolean enabled = enableCheckBox.isSelected();
+        keywordCaseComboBox.setEnabled(enabled);
+        functionCaseComboBox.setEnabled(enabled);
+        parameterCaseComboBox.setEnabled(enabled);
+        datatypeCaseComboBox.setEnabled(enabled);
+        objectCaseComboBox.setEnabled(enabled);
     }
 
     public JPanel getComponent() {
