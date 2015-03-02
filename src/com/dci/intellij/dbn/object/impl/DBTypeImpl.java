@@ -4,6 +4,8 @@ import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +46,8 @@ import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 
 public class DBTypeImpl extends DBProgramImpl implements DBType {
+    public static final List<DBTypeAttribute> EMPTY_ATTRIBUTE_LIST = Collections.unmodifiableList(new ArrayList<DBTypeAttribute>(0));
+
     protected DBObjectList<DBTypeAttribute> attributes;
     protected DBObjectList<DBType> subTypes;
 
@@ -123,7 +127,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     }
 
     public List<DBTypeAttribute> getAttributes() {
-        return attributes.getObjects();
+        return attributes == null ? EMPTY_ATTRIBUTE_LIST : attributes.getObjects();
     }
 
     public DBType getSuperType() {
@@ -290,8 +294,8 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
-            return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadObjectSourceCode(
-                   getSchema().getName(), getName(), "TYPE", connection);
+            DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "TYPE", connection);
         }
     }
 
@@ -301,8 +305,9 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
-            return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadObjectSourceCode(
-                   getSchema().getName(), getName(), "TYPE BODY", connection);
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "TYPE BODY", connection);
         }
     }
 

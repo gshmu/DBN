@@ -1,6 +1,17 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -24,16 +35,6 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -80,7 +81,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             @Override
             public void execute() {
                 Project project = getProject();
-                ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
                 if (connectionHandler.isValid(true)) {
                     DBMethod method = executionInput.getMethod();
                     if (method == null) {
@@ -142,7 +143,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getMethodObjectType().getName() + " \"" + methodRef.getSchemaName() + "." + methodRef.getQualifiedMethodName() + "\".");
         } else {
             final Project project = method.getProject();
-            DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
             new BackgroundTask(project, "Executing method", false) {
@@ -179,7 +181,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
-            DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
 
             executionInput.initExecutionResult(true);

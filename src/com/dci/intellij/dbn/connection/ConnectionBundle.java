@@ -248,6 +248,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return null;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return null;
     }

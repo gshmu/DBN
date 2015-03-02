@@ -54,7 +54,7 @@ public class RecordViewerForm extends DBNFormImpl implements DBNForm {
         Icon headerIcon = recordViewInfo.getIcon();
         Color headerBackground = UIUtil.getPanelBackground();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
-            headerBackground = dataset.getConnectionHandler().getEnvironmentType().getColor();
+            headerBackground = dataset.getEnvironmentType().getColor();
         }
         DBNHeaderForm headerForm = new DBNHeaderForm(
                 headerTitle,

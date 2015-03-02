@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -94,34 +95,32 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(boolean force) {
         if (!isLoading() && !isPreventLoading(force)) {
-            final ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                setLoading(true);
-                new BackgroundTask(getProject(), "Loading sessions", true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        try {
-                            if (isDisposed()) throw new InterruptedException("Process cancelled");
-                            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                            Connection connection = connectionHandler.getStandaloneConnection();
-                            ResultSet resultSet = metadataInterface.loadSessions(connection);
-                            SessionBrowserModel model = new SessionBrowserModel(connectionHandler, resultSet);
+            final ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+            setLoading(true);
+            new BackgroundTask(getProject(), "Loading sessions", true) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    try {
+                        if (isDisposed()) throw new InterruptedException("Process cancelled");
+                        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                        Connection connection = connectionHandler.getStandaloneConnection();
+                        ResultSet resultSet = metadataInterface.loadSessions(connection);
+                        SessionBrowserModel model = new SessionBrowserModel(connectionHandler, resultSet);
+                        replaceModel(model);
+                        modelError = null;
+                    } catch (SQLException e) {
+                        modelError = e.getMessage();
+                        SessionBrowserModel model = getTableModel();
+                        if (model == null || model.isDisposed()) {
+                            model = new SessionBrowserModel(connectionHandler);
                             replaceModel(model);
-                            modelError = null;
-                        } catch (SQLException e) {
-                            modelError = e.getMessage();
-                            SessionBrowserModel model = getTableModel();
-                            if (model == null || model.isDisposed()) {
-                                model = new SessionBrowserModel(connectionHandler);
-                                replaceModel(model);
-                            }
-                        } finally {
-                            EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
-                            setLoading(false);
                         }
+                    } finally {
+                        EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                        setLoading(false);
                     }
-                }.start();
-            }
+                }
+            }.start();
         }
     }
 
@@ -394,6 +393,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowserFile.getConnectionHandler();
     }

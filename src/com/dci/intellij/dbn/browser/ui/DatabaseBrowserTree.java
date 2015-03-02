@@ -284,8 +284,10 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
             } else if (lastPathEntity instanceof DBObjectBundle) {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
                 ConnectionHandler connectionHandler = objectBundle.getConnectionHandler();
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), deliberate);
+                if (connectionHandler != null && !connectionHandler.isDisposed()) {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
+                    fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), deliberate);
+                }
             }
         }
     }

@@ -167,14 +167,18 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     }
 
     private List<VirtualFile> lookupApplicableDDLFiles(DBSchemaObject object) {
-        Project project = object.getConnectionHandler().getProject();
         List<VirtualFile> fileList = new ArrayList<VirtualFile>();
 
-        for (DDLFileType ddlFileType : object.getDDLFileTypes()) {
-            for (String extension : ddlFileType.getExtensions()) {
-                String fileName = object.getName().toLowerCase() + "." + extension;
-                VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
-                fileList.addAll(Arrays.asList(files));
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        if (connectionHandler != null) {
+            Project project = connectionHandler.getProject();
+
+            for (DDLFileType ddlFileType : object.getDDLFileTypes()) {
+                for (String extension : ddlFileType.getExtensions()) {
+                    String fileName = object.getName().toLowerCase() + "." + extension;
+                    VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
+                    fileList.addAll(Arrays.asList(files));
+                }
             }
         }
         return fileList;

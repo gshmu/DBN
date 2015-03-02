@@ -8,6 +8,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -270,7 +271,8 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
                 DBObject object = (DBObject) value;
                 setIcon(object.getIcon());
                 append(object.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                append(" [" + object.getConnectionHandler().getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
+                ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+                append(" [" + connectionHandler.getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
                 if (object.getParentObject() != null) {
                     append(" - " + object.getParentObject().getQualifiedName(), SimpleTextAttributes.GRAY_ATTRIBUTES);
                 }

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
+import java.text.ParseException;
+import java.util.Date;
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -10,10 +15,6 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import org.jdom.Element;
-
-import java.text.ParseException;
-import java.util.Date;
 
 public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilterConditionForm> {
 
@@ -111,7 +112,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         else if (StringUtil.isNotEmptyOrSpaces(value)) {
             DBDataType dataType = column == null ? null : column.getDataType();
             if (dataType != null && dataType.isNative()) {
-                ConnectionHandler connectionHandler = dataset.getConnectionHandler();
+                ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
                 RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
                 GenericDataType genericDataType = dataType.getGenericDataType();
                 if (genericDataType == GenericDataType.LITERAL) {
@@ -132,12 +133,12 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
                         }
                     }
                 } else if (genericDataType == GenericDataType.NUMERIC) {
-                    /*try {
-                        regionalSettings.getFormatter().parseNumber(value);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                /*try {
+                    regionalSettings.getFormatter().parseNumber(value);
+                } catch (ParseException e) {
+                    e.printStackTrace();
 
-                    }*/
+                }*/
                 }
             }
         }

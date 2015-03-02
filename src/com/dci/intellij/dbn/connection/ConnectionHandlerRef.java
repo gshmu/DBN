@@ -13,7 +13,7 @@ public class ConnectionHandlerRef{
 
     public ConnectionHandler get() {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();
-        if (connectionHandler == null && connectionId != null) {
+        if ((connectionHandler == null || connectionHandler.isDisposed()) && connectionId != null) {
             connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             reference = new WeakReference<ConnectionHandler>(connectionHandler);
         }

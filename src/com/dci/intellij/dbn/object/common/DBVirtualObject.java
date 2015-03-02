@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -227,6 +228,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getName();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
         return file == null ? null : file.getActiveConnection();
@@ -243,7 +245,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public Project getProject() {
-        return FailsafeUtil.get(underlyingPsiElement.getProject());
+        return FailsafeUtil.nvl(underlyingPsiElement.getProject());
     }
 
     public DBObjectType getObjectType() {

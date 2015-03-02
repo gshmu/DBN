@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
@@ -43,26 +45,25 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
     public DatasetFilterVirtualFile(DBDataset dataset, String content) {
         this.datasetRef = dataset.getRef();
         this.content = content;
-        name = datasetRef.getName();
+        name = dataset.getName();
         path = DatabaseFileSystem.createPath(dataset) + " FILTER";
         url = DatabaseFileSystem.createUrl(dataset) + "#FILTER";
-        setCharset(getConnectionHandler().getSettings().getDetailSettings().getCharset());
+        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
 
-            if (languageDialect != null) {
-                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-                fileViewProvider.forceCachedPsi(file);
-                Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                document.putUserData(FILE_KEY, this);
-                PsiDocumentManagerImpl.cachePsi(document, file);
-                return file;
-            }
+        if (languageDialect != null) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
+            fileViewProvider.forceCachedPsi(file);
+            Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
+            document.putUserData(FILE_KEY, this);
+            PsiDocumentManagerImpl.cachePsi(document, file);
+            return file;
         }
         return null;
     }
@@ -75,15 +76,18 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
         return Icons.DBO_TABLE;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return datasetRef.lookupConnectionHandler();
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getActiveConnection() {
         return getConnectionHandler();
     }
 
+    @Nullable
     @Override
     public DBSchema getCurrentSchema() {
         DBDataset dataset = getDataset();

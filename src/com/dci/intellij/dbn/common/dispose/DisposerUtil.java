@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Disposer;
 
 public class DisposerUtil {
 
-
     public static void dispose(Disposable disposable) {
         if (disposable != null) {
             Disposer.dispose(disposable);

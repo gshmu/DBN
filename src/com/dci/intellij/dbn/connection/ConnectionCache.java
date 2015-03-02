@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.connection;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class ConnectionCache implements ApplicationComponent{
     private static Map<String, ConnectionHandler> CACHE = new THashMap<String, ConnectionHandler>();
@@ -22,13 +22,13 @@ public class ConnectionCache implements ApplicationComponent{
             for (Project project : projectManager.getOpenProjects()) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 connectionHandler = connectionManager.getConnectionHandler(connectionId);
-                if (connectionHandler != null) {
+                if (connectionHandler != null && !connectionHandler.isDisposed()) {
                     CACHE.put(connectionId, connectionHandler);
                     return connectionHandler;
                 }
             }
         }
-        return connectionHandler;
+        return connectionHandler == null || connectionHandler.isDisposed() ? null : connectionHandler;
     }
 
 

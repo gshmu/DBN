@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -64,7 +65,7 @@ public class ExplainPlanResult implements ExecutionResult {
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, String errorMessage) {
         DBLanguagePsiFile file = executablePsiElement.getFile();
-        ConnectionHandler connectionHandler = file.getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(file.getConnectionHandler());
         connectionHandlerRef = connectionHandler.getRef();
         currentSchemaRef = DBObjectRef.from(file.getCurrentSchema());
         virtualFile = file.getVirtualFile();

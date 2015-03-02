@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -51,7 +52,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         this.executionSchema = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            enableLogging = method.getConnectionHandler().isLoggingEnabled();
+            enableLogging = FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled();
         }
     }
 
@@ -69,6 +70,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return methodRef;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return methodRef.lookupConnectionHandler();
     }

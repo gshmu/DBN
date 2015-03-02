@@ -58,15 +58,17 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         if (method != null) {
             boolean usePoolConnection = executionInput.isUsePoolConnection();
             ConnectionHandler connectionHandler = method.getConnectionHandler();
-            DBSchema executionSchema = executionInput.getExecutionSchema();
-            Connection connection = usePoolConnection ?
-                    connectionHandler.getPoolConnection(executionSchema) :
-                    connectionHandler.getStandaloneConnection(executionSchema);
-            if (usePoolConnection) {
-                connection.setAutoCommit(false);
-            }
+            if (connectionHandler != null) {
+                DBSchema executionSchema = executionInput.getExecutionSchema();
+                Connection connection = usePoolConnection ?
+                        connectionHandler.getPoolConnection(executionSchema) :
+                        connectionHandler.getStandaloneConnection(executionSchema);
+                if (usePoolConnection) {
+                    connection.setAutoCommit(false);
+                }
 
-            execute(executionInput, connection, debug);
+                execute(executionInput, connection, debug);
+            }
         }
     }
 
@@ -83,38 +85,40 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             T method = getMethod();
             if (method != null) {
                 connectionHandler = method.getConnectionHandler();
-                usePoolConnection = executionInput.isUsePoolConnection();
-                loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
-                if (loggingEnabled) {
-                    loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
-                }
-
-                PreparedStatement preparedStatement = isQuery() ?
-                        connection.prepareStatement(command) :
-                        connection.prepareCall(command);
-
-                bindParameters(executionInput, preparedStatement);
-
-                MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-                int timeout = debug ?
-                        methodExecutionSettings.getDebugExecutionTimeout() :
-                        methodExecutionSettings.getExecutionTimeout();
-
-                preparedStatement.setQueryTimeout(timeout);
-                preparedStatement.execute();
-
-                MethodExecutionResult executionResult = executionInput.getExecutionResult();
-                if (executionResult != null) {
-                    loadValues(executionResult, preparedStatement);
-                    executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
-
+                if (connectionHandler != null) {
+                    usePoolConnection = executionInput.isUsePoolConnection();
+                    loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
                     if (loggingEnabled) {
-                        String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
-                        executionResult.setLogOutput(logOutput);
+                        loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
                     }
-                }
 
-                if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
+                    PreparedStatement preparedStatement = isQuery() ?
+                            connection.prepareStatement(command) :
+                            connection.prepareCall(command);
+
+                    bindParameters(executionInput, preparedStatement);
+
+                    MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
+                    int timeout = debug ?
+                            methodExecutionSettings.getDebugExecutionTimeout() :
+                            methodExecutionSettings.getExecutionTimeout();
+
+                    preparedStatement.setQueryTimeout(timeout);
+                    preparedStatement.execute();
+
+                    MethodExecutionResult executionResult = executionInput.getExecutionResult();
+                    if (executionResult != null) {
+                        loadValues(executionResult, preparedStatement);
+                        executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
+
+                        if (loggingEnabled) {
+                            String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
+                            executionResult.setLogOutput(logOutput);
+                        }
+                    }
+
+                    if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
+                }
             }
 
         } finally {

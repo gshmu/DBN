@@ -76,7 +76,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObject object = getObject();
         Project project = object == null ? null : object.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.nvl(project);
     }
 
     @NotNull
@@ -324,7 +324,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     public VirtualFile getVirtualFile() {
         DBObject object = getObject();
         DBObjectVirtualFile virtualFile = object == null ? null : object.getVirtualFile();
-        return FailsafeUtil.get(virtualFile);
+        return FailsafeUtil.nvl(virtualFile);
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {
