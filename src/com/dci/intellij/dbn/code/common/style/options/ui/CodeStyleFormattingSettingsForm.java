@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.code.common.style.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
@@ -9,14 +19,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Insets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<CodeStyleFormattingSettings> {
     private JPanel mainPanel;
@@ -51,7 +53,9 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
             mappings.put(option, comboBox);
         }
+
         resetFormChanges();
+        enableDisableOptions();
         
         settingsPanel.add(new Spacer(),
                 new GridConstraints(options.size(), 1, 1, 1,
@@ -60,8 +64,22 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
                         GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 
         registerComponent(mainPanel);
+        enableCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableDisableOptions();
+            }
+        });
+
         //Shortcut[] basicShortcuts = KeyUtil.getShortcuts("ReformatCode");
         //useOnReformatCheckBox.setText("Use on reformat code (" + KeymapUtil.getShortcutsText(basicShortcuts) + ")");
+    }
+
+    private void enableDisableOptions() {
+        boolean selected = enableCheckBox.isSelected();
+        for (DBNComboBox<CodeStylePreset> optionComboBox : mappings.values()) {
+            optionComboBox.setEnabled(selected);
+        }
     }
 
     public JPanel getComponent() {

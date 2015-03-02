@@ -580,7 +580,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             visibleTreeChildren = new ArrayList<BrowserTreeNode>();
             visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-            new SimpleBackgroundTask() {
+            new SimpleBackgroundTask("load database objects") {
                 public void execute() {
                     if (!isDisposed()) buildTreeChildren();
                 }

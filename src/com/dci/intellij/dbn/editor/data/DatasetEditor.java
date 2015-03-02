@@ -267,7 +267,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                 @Override
                 public void execute() {
                     setLoading(true);
-                    new SimpleBackgroundTask() {
+                    new SimpleBackgroundTask("load table data") {
                         public void execute() {
                             try {
                                 if (!isDisposed()) {
