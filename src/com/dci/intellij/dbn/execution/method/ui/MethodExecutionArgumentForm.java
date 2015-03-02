@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
@@ -48,7 +49,8 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     public MethodExecutionArgumentForm(DBArgument argument, MethodExecutionForm executionComponent) {
         this.argument = argument;
         this.executionComponent = executionComponent;
-        argumentLabel.setText(argument.getName());
+        String argumentName = argument.getName();
+        argumentLabel.setText(argumentName);
         argumentLabel.setIcon(argument.getIcon());
 
         DBDataType dataType = argument.getDataType();
@@ -95,7 +97,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                     contentType = TextContentType.getPlainText(project);
                 }
 
-                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+                userValueHolder = new UserValueHolderImpl<String>(argumentName, DBObjectType.ARGUMENT, dataType, project);
                 userValueHolder.setUserValue(value);
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
@@ -107,7 +109,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[CLOB]");
                 TextContentType contentType = TextContentType.getPlainText(project);
 
-                userValueHolder = new UserValueHolderImpl<String>("Value", project);
+                userValueHolder = new UserValueHolderImpl<String>(argumentName, DBObjectType.ARGUMENT, dataType, project);
                 userValueHolder.setUserValue(value);
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
