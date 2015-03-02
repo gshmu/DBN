@@ -204,7 +204,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     /***************************************
      *            ProjectComponent         *
      ***************************************/
-    public static ObjectNameFilterManager getInstance(Project project) {
+    public static ObjectNameFilterManager getInstance(@NotNull Project project) {
         return project.getComponent(ObjectNameFilterManager.class);
     }
 
