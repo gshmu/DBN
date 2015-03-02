@@ -18,7 +18,9 @@ public class CreateFilterForObjectTypeAction extends ObjectNameFilterAction{
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
-        ObjectNameFilterManager.getInstance(project).createFilter(objectType, settingsForm);
+        if (project != null) {
+            ObjectNameFilterManager.getInstance(project).createFilter(objectType, settingsForm);
+        }
     }
 
     @Override
