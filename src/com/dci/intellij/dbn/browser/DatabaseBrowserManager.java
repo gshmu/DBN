@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -124,7 +125,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return "DB Browser";
     }
 
-    public synchronized void navigateToElement(BrowserTreeNode treeNode, boolean requestFocus) {
+    public synchronized void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean requestFocus) {
         ToolWindow toolWindow = getBrowserToolWindow();
 
         toolWindow.show(null);
@@ -133,7 +134,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
     }
 
-    public synchronized void navigateToElement(BrowserTreeNode treeNode) {
+    public synchronized void navigateToElement(@Nullable BrowserTreeNode treeNode) {
         if (treeNode != null) {
             getToolWindowForm().getBrowserForm().selectElement(treeNode, false);
         }
@@ -256,10 +257,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 }
                 else  if (file instanceof DBVirtualFile) {
                     DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
-                    ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
-                    if (connectionHandler!= null && !connectionHandler.isDisposed()) {
-                        navigateToElement(connectionHandler.getObjectBundle());
-                    }
+                    ConnectionHandler connectionHandler = FailsafeUtil.get(databaseVirtualFile.getConnectionHandler());
+                    navigateToElement(connectionHandler.getObjectBundle());
                 }
             }
         }
@@ -276,10 +275,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     }
                     else  if (newFile instanceof DBVirtualFile) {
                         DBVirtualFile databaseVirtualFile = (DBVirtualFile) newFile;
-                        ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
-                        if (connectionHandler!= null && !connectionHandler.isDisposed()) {
-                            navigateToElement(connectionHandler.getObjectBundle());
-                        }
+                        ConnectionHandler connectionHandler = FailsafeUtil.get(databaseVirtualFile.getConnectionHandler());
+                        navigateToElement(connectionHandler.getObjectBundle());
                     }
                 }
             }

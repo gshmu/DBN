@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.generator.action;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGenerationManager;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
@@ -20,6 +22,7 @@ public class GenerateInsertStatementAction extends GenerateStatementAction {
         return statementGenerationManager.generateInsert(table);
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         return table.getConnectionHandler();

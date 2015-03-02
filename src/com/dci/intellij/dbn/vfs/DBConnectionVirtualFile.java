@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
@@ -28,6 +29,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }
@@ -35,7 +37,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
     public boolean equals(Object obj) {
         if (obj instanceof DBConnectionVirtualFile) {
             DBConnectionVirtualFile databaseFile = (DBConnectionVirtualFile) obj;
-            return databaseFile.getConnectionHandler().equals(getConnectionHandler());
+            return CommonUtil.safeEqual(databaseFile.getConnectionHandler(), getConnectionHandler());
         }
         return false;
     }

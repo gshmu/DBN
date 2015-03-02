@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -45,6 +46,7 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
         return Icons.FILE_SESSION_BROWSER;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }

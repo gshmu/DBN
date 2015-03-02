@@ -61,6 +61,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return parent;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return parent == null ? null : parent.getConnectionHandler();
     }

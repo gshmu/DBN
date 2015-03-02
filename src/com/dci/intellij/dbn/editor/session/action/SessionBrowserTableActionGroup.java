@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.editor.session.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -37,7 +40,8 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         if (table != null && table.getSelectedRowCount() > 0) {
             int rowCount = table.getSelectedRowCount();
             addSeparator();
-            DatabaseCompatibilityInterface compatibilityInterface = sessionBrowser.getConnectionHandler().getInterfaceProvider().getCompatibilityInterface();
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT)) {
                 add(new DisconnectSessionAction(rowCount > 1));
             }
@@ -62,6 +66,11 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         if (tableModel != null && !tableModel.getState().getFilterState().isEmpty()) {
             add(new ClearFilterAction());
         }
+    }
+
+    @NotNull
+    private ConnectionHandler getConnectionHandler() {
+        return FailsafeUtil.get(sessionBrowser.getConnectionHandler());
     }
 
     private class ReloadSessionsAction extends DumbAwareAction {

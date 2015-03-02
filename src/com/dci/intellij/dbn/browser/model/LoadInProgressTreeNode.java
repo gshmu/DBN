@@ -104,6 +104,7 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return null;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return parent.getConnectionHandler();
     }

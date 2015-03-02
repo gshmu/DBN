@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.session.action;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -29,7 +30,7 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
         boolean visible = false;
         boolean enabled = false;
         if (sessionBrowser != null) {
-            ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             visible = compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT);
             SessionBrowserTable editorTable = sessionBrowser.getEditorTable();

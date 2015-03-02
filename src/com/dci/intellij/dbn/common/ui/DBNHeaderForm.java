@@ -33,7 +33,10 @@ public class DBNHeaderForm extends DBNFormImpl{
 
     public DBNHeaderForm(DBObject object) {
         Project project = object.getProject();
-        objectLabel.setText("[" + object.getConnectionHandler().getName() + "] " + object.getQualifiedName());
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+
+        String connectionName = connectionHandler == null ? "unknown" : connectionHandler.getName();
+        objectLabel.setText("[" + connectionName + "] " + object.getQualifiedName());
         objectLabel.setIcon(object.getIcon());
         Color background = UIUtil.getPanelBackground();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {

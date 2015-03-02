@@ -38,6 +38,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
         return objectList;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return objectList.getConnectionHandler();
     }

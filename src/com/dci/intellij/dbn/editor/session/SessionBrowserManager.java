@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
@@ -97,7 +98,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void interruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
-        final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        final ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
         if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_INTERRUPTION_TIMING)) {
@@ -124,7 +125,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         final String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
         final String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
 
-        final ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        final ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         new BackgroundTask(getProject(), taskAction, false, true) {
             @Override

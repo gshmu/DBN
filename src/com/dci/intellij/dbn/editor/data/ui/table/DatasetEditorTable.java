@@ -17,8 +17,10 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -112,6 +114,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         isEditingEnabled = editingEnabled;
     }
 
+    @Nullable
     public DBDataset getDataset() {
         return getModel().getDataset();
     }
@@ -449,7 +452,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     private void startCellEditing(ListSelectionEvent e) {
-        if (!isLoading() && isEditingEnabled && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1 && !isEditing() && !e.getValueIsAdjusting() && getDataset().getConnectionHandler().isConnected()) {
+        DBDataset dataset = getDataset();
+        if (!isLoading() && isEditingEnabled && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1 && !isEditing() && !e.getValueIsAdjusting() && dataset != null && FailsafeUtil.get(dataset.getConnectionHandler()).isConnected()) {
             editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);
         }
     }

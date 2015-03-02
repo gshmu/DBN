@@ -73,7 +73,7 @@ public class DBProgramRunConfiguration extends RunConfigurationBase implements L
         }
 
         ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+        if (connectionHandler != null && !DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
             throw new RuntimeConfigurationError(
                     "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
         }

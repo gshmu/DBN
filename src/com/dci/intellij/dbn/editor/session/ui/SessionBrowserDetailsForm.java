@@ -3,9 +3,11 @@ package com.dci.intellij.dbn.editor.session.ui;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -52,7 +54,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         currentSqlTabInfo.setObject(currentSqlPanel);
         detailsTabbedPane.addTab(currentSqlTabInfo);
 
-        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
         if (compatibilityInterface.supportsFeature(DatabaseFeature.EXPLAIN_PLAN)) {
             explainPlanPanel = new JPanel(new BorderLayout());
@@ -75,6 +77,11 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         Disposer.register(this, sessionDetailsTable);
         Disposer.register(this, currentSqlPanel);
         Disposer.register(this, detailsTabbedPane);
+    }
+
+    @NotNull
+    private ConnectionHandler getConnectionHandler() {
+        return FailsafeUtil.get(sessionBrowser.getConnectionHandler());
     }
 
     public void update(@Nullable final SessionBrowserModelRow selectedRow) {

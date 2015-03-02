@@ -215,7 +215,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public String getQuotedName(boolean quoteAlways) {
         if (quoteAlways || needsNameQuoting()) {
-            char quoteChar = DatabaseCompatibilityInterface.getInstance(this).getIdentifierQuotes();
+            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
+            char quoteChar = compatibilityInterface == null ? '"' : compatibilityInterface.getIdentifierQuotes();
             return quoteChar + name + quoteChar;
         } else {
             return name;
@@ -275,17 +276,20 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public void buildToolTip(HtmlToolTipBuilder ttb) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         ttb.append(true, getQualifiedName(), false);
         ttb.append(true, "Connection: ", "-2", null, false );
-        ttb.append(false, getConnectionHandler().getPresentableText(), false);
+        ttb.append(false, connectionHandler == null ? "[unknown]" : connectionHandler.getPresentableText(), false);
     }
 
     public DBObjectAttribute[] getObjectAttributes(){return null;}
     public DBObjectAttribute getNameAttribute(){return null;}
 
+    @Nullable
     @Override
     public DBObjectBundle getObjectBundle() {
-        return getConnectionHandler().getObjectBundle();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? null : connectionHandler.getObjectBundle();
     }
 
     @Nullable
@@ -303,7 +307,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     @Override
     public EnvironmentType getEnvironmentType() {
-        return getConnectionHandler().getEnvironmentType();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? EnvironmentType.DEFAULT : connectionHandler.getEnvironmentType();
     }
 
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
@@ -709,7 +714,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public Project getProject() throws PsiInvalidElementAccessException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         Project project = connectionHandler == null ? null : connectionHandler.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.nvl(project);
     }
 
     public int compareTo(@NotNull Object o) {

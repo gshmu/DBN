@@ -5,6 +5,7 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.lookup.DBMethodRef;
@@ -47,8 +48,8 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
             DBMethodRef methodRef = executionInput.getMethodRef();
-            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-            if (connectionHandler != null && connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
+            ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+            if (connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
                 methodRef.getQualifiedMethodName().equalsIgnoreCase(methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {

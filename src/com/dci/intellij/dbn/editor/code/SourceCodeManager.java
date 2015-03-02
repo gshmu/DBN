@@ -144,49 +144,54 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
         String sourceCode = object.loadCodeFromDatabase(contentType);
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
-        DatabaseDDLInterface ddlInterface = object.getConnectionHandler().getInterfaceProvider().getDDLInterface();
-        ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        DatabaseDDLInterface ddlInterface = null;
+        if (connectionHandler != null) {
+            ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
+        }
         return sourceCodeContent;
     }
 
     private boolean isValidObjectTypeAndName(String text, DBSchemaObject object, DBContentType contentType) {
-        DatabaseDDLInterface ddlInterface = object.getConnectionHandler().getInterfaceProvider().getDDLInterface();
-        if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
-            int typeIndex = StringUtil.indexOfIgnoreCase(text, object.getTypeName(), 0);
-            if (typeIndex == -1 || !StringUtil.isEmptyOrSpaces(text.substring(0, typeIndex))) {
-                return false;
-            }
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        if (connectionHandler != null) {
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
+                int typeIndex = StringUtil.indexOfIgnoreCase(text, object.getTypeName(), 0);
+                if (typeIndex == -1 || !StringUtil.isEmptyOrSpaces(text.substring(0, typeIndex))) {
+                    return false;
+                }
 
-            int typeEndIndex = typeIndex + object.getTypeName().length();
-            if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
-
-            if (contentType.getObjectTypeSubname() != null) {
-                int subnameIndex = StringUtil.indexOfIgnoreCase(text, contentType.getObjectTypeSubname(), typeEndIndex);
-                typeEndIndex = subnameIndex + contentType.getObjectTypeSubname().length();
+                int typeEndIndex = typeIndex + object.getTypeName().length();
                 if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
+
+                if (contentType.getObjectTypeSubname() != null) {
+                    int subnameIndex = StringUtil.indexOfIgnoreCase(text, contentType.getObjectTypeSubname(), typeEndIndex);
+                    typeEndIndex = subnameIndex + contentType.getObjectTypeSubname().length();
+                    if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
+                }
+
+                char quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
+
+
+                String objectName = object.getName();
+                int nameIndex = StringUtil.indexOfIgnoreCase(text, objectName, typeEndIndex);
+                if (nameIndex == -1) return false;
+                int nameEndIndex = nameIndex + objectName.length();
+
+                if (text.charAt(nameIndex -1) == quotes) {
+                    if (text.charAt(nameEndIndex) != quotes) return false;
+                    nameIndex = nameIndex -1;
+                    nameEndIndex = nameEndIndex + 1;
+                }
+
+                String typeNameGap = text.substring(typeEndIndex, nameIndex);
+                typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ").replace(quotes, ' ');
+                if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
+                if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
             }
-
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
-            char quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
-
-
-            String objectName = object.getName();
-            int nameIndex = StringUtil.indexOfIgnoreCase(text, objectName, typeEndIndex);
-            if (nameIndex == -1) return false;
-            int nameEndIndex = nameIndex + objectName.length();
-
-            if (text.charAt(nameIndex -1) == quotes) {
-                if (text.charAt(nameEndIndex) != quotes) return false;
-                nameIndex = nameIndex -1;
-                nameEndIndex = nameEndIndex + 1;
-            }
-
-            String typeNameGap = text.substring(typeEndIndex, nameIndex);
-            typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ").replace(quotes, ' ');
-            if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
-            if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
         }
-
         return true;
     }
 
@@ -204,24 +209,26 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         ActionButtonPresentation.CANCEL_WITH_PROMPT);
                 mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
                 final DBSchemaObject object = virtualFile.getObject();
-                mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
+                if (object != null) {
+                    mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
 
-                DiffManager.getInstance().getDiffTool().show(mergeRequest);
+                    DiffManager.getInstance().getDiffTool().show(mergeRequest);
 
-                int result = mergeRequest.getResult();
-                if (result == 0) {
-                    doUpdateSourceToDatabase(object, virtualFile, fileEditor);
-                    //sourceCodeEditor.afterSave();
-                } else if (result == 1) {
-                    new WriteActionRunner() {
-                        public void run() {
-                            Editor editor = EditorUtil.getEditor(fileEditor);
-                            if (editor != null) {
-                                editor.getDocument().setText(virtualFile.getContent());
-                                object.getStatus().set(DBObjectStatus.SAVING, false);
+                    int result = mergeRequest.getResult();
+                    if (result == 0) {
+                        doUpdateSourceToDatabase(object, virtualFile, fileEditor);
+                        //sourceCodeEditor.afterSave();
+                    } else if (result == 1) {
+                        new WriteActionRunner() {
+                            public void run() {
+                                Editor editor = EditorUtil.getEditor(fileEditor);
+                                if (editor != null) {
+                                    editor.getDocument().setText(virtualFile.getContent());
+                                    object.getStatus().set(DBObjectStatus.SAVING, false);
+                                }
                             }
-                        }
-                    }.start();
+                        }.start();
+                    }
                 }
             }
         }.start();
@@ -241,17 +248,19 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         virtualFile.updateToDatabase();
 
                         ConnectionHandler connectionHandler = object.getConnectionHandler();
-                        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-                            connectionHandler.getObjectBundle().refreshObjectsStatus(object);
-                        }
+                        if (connectionHandler != null) {
+                            if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
+                                connectionHandler.getObjectBundle().refreshObjectsStatus(object);
+                            }
 
-                        if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
-                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                            DBContentType contentType = virtualFile.getContentType();
-                            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
-                            compilerManager.createCompilerResult(object, compilerAction);
+                            if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
+                                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                                DBContentType contentType = virtualFile.getContentType();
+                                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
+                                compilerManager.createCompilerResult(object, compilerAction);
+                            }
+                            object.reload();
                         }
-                        object.reload();
                     }
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);

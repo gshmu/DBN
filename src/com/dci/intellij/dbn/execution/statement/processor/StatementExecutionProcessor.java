@@ -22,6 +22,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     boolean isDirty();
 
+    @Nullable
     ConnectionHandler getConnectionHandler();
 
     DBSchema getCurrentSchema();

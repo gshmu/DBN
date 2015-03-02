@@ -49,10 +49,12 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         super(object);
     }
 
+    @Nullable
     public ConnectionHandler getActiveConnection() {
         return getConnectionHandler();
     }
 
+    @Nullable
     public DBSchema getCurrentSchema() {
         return getObject().getSchema();
     }

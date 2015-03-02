@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
@@ -185,8 +186,9 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return connectionConfigHash == connectionHandler.getSettings().getDatabaseSettings().hashCode();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return FailsafeUtil.get(connectionHandler);
     }
 
     public List<DBSchema> getSchemas() {

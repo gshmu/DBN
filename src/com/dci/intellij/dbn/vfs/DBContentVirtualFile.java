@@ -60,6 +60,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 
+    @Nullable
     public ConnectionHandler getActiveConnection() {
         DBSchemaObject object = getObject();
         return object == null ? null : object.getConnectionHandler();
@@ -70,6 +71,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         return false;
     }
 
+    @Nullable
     public DBSchema getCurrentSchema() {
         DBSchemaObject object = getObject();
         return object == null ? null : object.getSchema();
@@ -96,6 +98,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         return mainDatabaseFile == null ? null : mainDatabaseFile.getObject();
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         return mainDatabaseFile.getConnectionHandler();
