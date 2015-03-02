@@ -216,7 +216,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     public String getQuotedName(boolean quoteAlways) {
         if (quoteAlways || needsNameQuoting()) {
             DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
-            char quoteChar = compatibilityInterface == null ? '"' : compatibilityInterface.getIdentifierQuotes();
+            char quoteChar = compatibilityInterface.getIdentifierQuotes();
             return quoteChar + name + quoteChar;
         } else {
             return name;
