@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
         Object userObject = treeNode.getUserObject();
         if (userObject instanceof DBObjectRef) {
             DBObjectRef objectRef = (DBObjectRef) userObject;
-            append(objectRef.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            append(objectRef.getObjectName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
             DBObject object = DBObjectRef.get(objectRef);
             setIcon(object == null ? objectRef.getObjectType().getIcon() : object.getOriginalIcon());

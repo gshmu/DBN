@@ -94,9 +94,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                                     String type = token.substring(0, idx);
                                     String name = token.substring(idx + 1);
                                     DBObjectType objectType = DBObjectType.getObjectType(type);
+                                    // TODO overload not saved in url
                                     object = object.getChildObject(objectType, name, false);
                                 } else {
-                                    object = object.getChildObject(token, false);
+                                    object = object.getChildObject(token, 0, false);
                                 }
                             }
                         }

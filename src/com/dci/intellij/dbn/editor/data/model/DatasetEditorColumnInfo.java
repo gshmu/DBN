@@ -48,7 +48,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     }
 
     public String getName() {
-        return columnRef.getName();
+        return columnRef.getObjectName();
     }
 
     public int getColumnIndex() {

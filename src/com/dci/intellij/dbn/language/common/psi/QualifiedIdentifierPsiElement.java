@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementTy
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 
@@ -124,28 +123,6 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         }
         Collections.sort(parseVariants);
         return new ParseVariants(parseVariants, getElementsCount());
-    }
-
-    public boolean checkPaternitySequence(LeafElementType leafElementType, DBObjectType objectType, String objectName) {
-        for (QualifiedIdentifierVariant parseVariant : getParseVariants()) {
-            int index = parseVariant.getIndexOf(leafElementType);
-            if (index == 0) {
-                return true;
-            }
-            if (index > 0) {
-                LeafPsiElement previousPsiElement = getLeafAtIndex(index-1);
-                if (previousPsiElement != null) {
-                    IdentifierPsiElement parentPsiElement = (IdentifierPsiElement) previousPsiElement;
-                    DBObject parentObject = parentPsiElement.resolveUnderlyingObject();
-                    if (parentObject != null) {
-                        DBObject childObject = parentObject.getChildObject(objectType, objectName, false);
-                        return childObject != null;
-                    }
-                }
-
-            }
-        }
-        return false;
     }
 
     public LeafPsiElement lookupParentElementFor(LeafPsiElement element) {

@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.util.ui.UIUtil;
 
 public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBNForm {
@@ -29,7 +29,7 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
     private JComponent inputComponent;
     private JTextField inputTextField;
 
-    private DBArgumentRef argumentRef; // TODO replace with argument ref
+    private DBObjectRef<DBArgument> argumentRef; // TODO replace with argument ref
     private DBArgument argument;
     private DBTypeAttribute typeAttribute;
     private MethodExecutionForm executionComponent;

@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -32,7 +32,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
     private MethodExecutionResultForm resultPanel;
     private List<ArgumentValue> argumentValues = new ArrayList<ArgumentValue>();
-    private Map<DBArgumentRef, ResultSetDataModel> cursorModels;
+    private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels;
     private int executionDuration;
     private boolean debug;
     private String logOutput;
@@ -62,7 +62,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         if (value instanceof ResultSet) {
             ResultSet resultSet = (ResultSet) value;
             if (cursorModels == null) {
-                cursorModels = new HashMap<DBArgumentRef, ResultSetDataModel>();
+                cursorModels = new HashMap<DBObjectRef<DBArgument>, ResultSetDataModel>();
             }
 
             ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(argument.getProject());
@@ -84,7 +84,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return argumentValues;
     }
 
-    public ArgumentValue getArgumentValue(DBArgumentRef argumentRef) {
+    public ArgumentValue getArgumentValue(DBObjectRef<DBArgument> argumentRef) {
         for (ArgumentValue argumentValue : argumentValues) {
             if (argumentValue.getArgumentRef().equals(argumentRef)) {
                 return argumentValue;

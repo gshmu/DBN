@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> implements DBObjectRelation<S, T> {
 
@@ -64,6 +65,11 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
 
     public String getName() {
         return null;
+    }
+
+    @Override
+    public int getOverload() {
+        return 0;
     }
 
     public String getDescription() {

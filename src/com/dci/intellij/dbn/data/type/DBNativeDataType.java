@@ -33,6 +33,11 @@ public class DBNativeDataType implements DynamicContentElement{
         return dataTypeDefinition.getName();
     }
 
+    @Override
+    public int getOverload() {
+        return 0;
+    }
+
     public DataTypeDefinition getDataTypeDefinition() {
         return dataTypeDefinition;
     }

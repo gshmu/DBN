@@ -431,7 +431,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 if (parentPsiElement != null) {
                     DBObject object = parentPsiElement.resolveUnderlyingObject();
                     if (object != null) {
-                        PsiElement referencedElement = object.getChildObject(ref.getText().toString(), false);
+                        PsiElement referencedElement = object.getChildObject(ref.getText().toString(), 0, false);
                         if (isValidReference(referencedElement)) {
                             ref.setParent(parentPsiElement);
                             ref.setReferencedElement(referencedElement);
@@ -461,7 +461,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 }
 
                 DBObjectBundle objectBundle = activeConnection.getObjectBundle();
-                PsiElement referencedElement = objectBundle.getObject(objectType, ref.getText().toString());
+                PsiElement referencedElement = objectBundle.getObject(objectType, ref.getText().toString(), 0);
                 if (isValidReference(referencedElement)) {
                     ref.setParent(null);
                     ref.setReferencedElement(referencedElement);

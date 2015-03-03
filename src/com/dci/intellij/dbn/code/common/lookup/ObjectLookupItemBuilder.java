@@ -89,7 +89,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         Project project = context.getFile().getProject();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(language);
         CodeStyleCaseOption caseOption = styleCaseSettings.getObjectCaseOption();
-        String text = caseOption.format(objectRef.getName());
+        String text = caseOption.format(objectRef.getObjectName());
 
         if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
             return null;

@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.execution.method.result.action.CursorResultExportAct
 import com.dci.intellij.dbn.execution.method.result.action.CursorResultFetchNextRecordsAction;
 import com.dci.intellij.dbn.execution.method.result.action.CursorResultViewRecordAction;
 import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
@@ -26,7 +26,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNF
     private JScrollPane resultScrollPane;
     private JPanel mainPanel;
     private JPanel resultPanel;
-    private DBArgumentRef argumentRef;
+    private DBObjectRef<DBArgument> argumentRef;
 
     public MethodExecutionCursorResultForm(MethodExecutionResult executionResult, DBArgument argument) {
         this.argumentRef = argument.getRef();

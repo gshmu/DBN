@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -52,13 +59,6 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.FileConnectionMappingManager",
@@ -191,7 +191,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         if (StringUtil.isEmptyOrSpaces(schemaName)) {
                             DBSchema userSchema = connectionHandler.getUserSchema();
                             currentSchemaRef = userSchema == null ? null : userSchema.getRef();
-                            schemaName = currentSchemaRef == null ? null : currentSchemaRef.getName();
+                            schemaName = currentSchemaRef == null ? null : currentSchemaRef.getObjectName();
                         } else {
                             DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
                             currentSchemaRef = schema == null ? null : schema.getRef();

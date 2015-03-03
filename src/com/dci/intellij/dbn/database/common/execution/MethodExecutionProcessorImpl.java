@@ -21,16 +21,16 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private DBMethodRef<T> method;
+    private DBObjectRef<T> method;
 
     protected MethodExecutionProcessorImpl(T method) {
-        this.method = new DBMethodRef<T>(method);
+        this.method = new DBObjectRef<T>(method);
     }
 
     @Nullable

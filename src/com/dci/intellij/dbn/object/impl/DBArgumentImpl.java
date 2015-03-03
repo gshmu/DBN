@@ -20,8 +20,6 @@ import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
@@ -56,16 +54,6 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         if (getParentObject() instanceof DBFunction) {
             position++;
         }
-    }
-
-    @Override
-    protected DBObjectRef createRef() {
-        return new DBArgumentRef(this);
-    }
-
-    @Override
-    public DBArgumentRef getRef() {
-        return (DBArgumentRef) super.getRef();
     }
 
     public DBDataType getDataType() {

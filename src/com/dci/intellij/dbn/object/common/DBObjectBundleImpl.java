@@ -494,7 +494,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             DBObjectType objectType = objectIdentifier.getObjectTypes()[i];
             String objectName = objectIdentifier.getObjectNames()[i];
             if (object == null) {
-                object = getObject(objectType, objectName);
+                object = getObject(objectType, objectName, 0);
             } else {
                 object = object.getChildObject(objectType, objectName, true);
             }
@@ -503,7 +503,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return object;
     }
 
-    public DBObject getObject(DBObjectType objectType, String name) {
+    public DBObject getObject(DBObjectType objectType, String name, int overload) {
         if (objectType == DBObjectType.SCHEMA) return getSchema(name);
         if (objectType == DBObjectType.USER) return getUser(name);
         if (objectType == DBObjectType.ROLE) return getRole(name);
@@ -511,7 +511,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (objectType == DBObjectType.SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
         for (DBSchema schema : getSchemas()) {
             if (schema.isPublicSchema() && objectType.isSchemaObject()) {
-                DBObject childObject = schema.getChildObject(objectType, name, true);
+                DBObject childObject = schema.getChildObject(objectType, name, overload, true);
                 if (childObject != null) {
                     return childObject;
                 }

@@ -11,14 +11,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 public class MethodBrowserSettings implements PersistentConfiguration {
     private String connectionId;
     private String schemaName;
-    private DBMethodRef method;
+    private DBObjectRef<DBMethod> method;
     private Map<DBObjectType, Boolean> objectVisibility = new THashMap<DBObjectType, Boolean>();
 
     public MethodBrowserSettings() {
@@ -70,7 +70,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public void setMethod(DBMethod method) {
-        this.method = new DBMethodRef(method);
+        this.method = new DBObjectRef<DBMethod>(method);
     }
 
     public void readConfiguration(Element element) {
@@ -79,7 +79,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
 
         Element methodElement = element.getChild("selected-method");
         if (methodElement != null) {
-            method = new DBMethodRef();
+            method = new DBObjectRef<DBMethod>();
             method.readState(methodElement);
         }
     }

@@ -23,12 +23,11 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
-    private DBMethodRef<DBMethod> methodRef;
+    private DBObjectRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
     private Map<String, String> valuesMap = new HashMap<String, String>();
     private boolean usePoolConnection = true;
@@ -43,12 +42,12 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     private transient boolean executionCancelled;
 
     public MethodExecutionInput() {
-        methodRef = new DBMethodRef<DBMethod>();
+        methodRef = new DBObjectRef<DBMethod>();
         executionSchema = new DBObjectRef<DBSchema>();
     }
 
     public MethodExecutionInput(DBMethod method) {
-        this.methodRef = new DBMethodRef<DBMethod>(method);
+        this.methodRef = new DBObjectRef<>(method);
         this.executionSchema = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
@@ -66,7 +65,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return methodRef.get();
     }
 
-    public DBMethodRef getMethodRef() {
+    public DBObjectRef<DBMethod> getMethodRef() {
         return methodRef;
     }
 
@@ -236,8 +235,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public int compareTo(@NotNull MethodExecutionInput executionInput) {
-        DBMethodRef localMethod = getMethodRef();
-        DBMethodRef remoteMethod = executionInput.getMethodRef();
+        DBObjectRef<DBMethod> localMethod = getMethodRef();
+        DBObjectRef<DBMethod> remoteMethod = executionInput.getMethodRef();
         return localMethod.compareTo(remoteMethod);
     }
 
