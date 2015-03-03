@@ -1,7 +1,11 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -30,7 +34,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl implements DBNF
 
     private RegionalSettings regionalSettings;
 
-    public ResultSetRecordViewerColumnForm(ResultSetRecordViewerForm parentForm, ResultSetDataModelCell cell) {
+    public ResultSetRecordViewerColumnForm(ResultSetRecordViewerForm parentForm, ResultSetDataModelCell cell, boolean showDataType) {
         this.parentForm = parentForm;
         Project project = cell.getRow().getModel().getProject();
         ColumnInfo columnInfo = cell.getColumnInfo();
@@ -40,8 +44,12 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl implements DBNF
 
         columnLabel.setIcon(Icons.DBO_COLUMN);
         columnLabel.setText(columnInfo.getName());
-        dataTypeLabel.setText(dataType.getQualifiedName());
-        dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
+        if (showDataType) {
+            dataTypeLabel.setText(dataType.getQualifiedName());
+            dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
+        } else {
+            dataTypeLabel.setVisible(showDataType);
+        }
 
         valueTextField = new JTextField();
         valueTextField.setPreferredSize(new Dimension(200, -1));

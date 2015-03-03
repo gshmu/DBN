@@ -18,7 +18,11 @@ public class ResultSetTable<T extends ResultSetDataModel> extends SortableTable<
     }
 
     public void showRecordViewDialog() {
-        ResultSetRecordViewerDialog dialog = new ResultSetRecordViewerDialog(this);
+        ResultSetRecordViewerDialog dialog = new ResultSetRecordViewerDialog(this, showRecordViewDataTypes());
         dialog.show();
+    }
+
+    protected boolean showRecordViewDataTypes() {
+        return true;
     }
 }

@@ -139,6 +139,11 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         }
     };
 
+    @Override
+    protected boolean showRecordViewDataTypes() {
+        return false;
+    }
+
     private class SelectionRestorer extends BasicTableSelectionRestorer{
         private Object sessionId;
         private int columnIndex;
