@@ -26,6 +26,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     private WeakReference<T> reference;
     private int hashCode = -1;
 
+    public DBObjectRef(String connectionId, String identifier) {
+        deserialize(connectionId, identifier);
+    }
+
     public DBObjectRef(T object) {
         reference = new WeakReference<T>(object);
         objectType = object.getObjectType();
@@ -84,63 +88,79 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return null;
     }
 
-    public String getStatePrefix() {
-        return "";
-    }
-
     public void readState(Element element) {
         if (element != null) {
             String connectionId = element.getAttributeValue("connection-id");
             String objectIdentifier = element.getAttributeValue("object-ref");
-            int typeStartIndex = objectIdentifier.indexOf("[");
-            int typeEndIndex = objectIdentifier.indexOf("]", typeStartIndex);
-            StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(typeStartIndex + 1, typeEndIndex), ".");
+            deserialize(connectionId, objectIdentifier);
+        }
+    }
 
-            // TODO remove this backward compatibility
-            boolean isNewImpl = objectIdentifier.charAt(typeEndIndex + 1) == '[';
-            int objectStartIndex = isNewImpl ? typeEndIndex + 2 : typeEndIndex + 1;
-            int objectEndIndex = isNewImpl ? objectIdentifier.lastIndexOf("]") : objectIdentifier.length();
-            if (isNewImpl && objectIdentifier.length() > objectEndIndex + 1 && objectIdentifier.charAt(objectEndIndex + 1) == '#') {
-                this.overload = Integer.parseInt(objectIdentifier.substring(objectEndIndex + 3));
-            }
+    public void deserialize(String connectionId, String objectIdentifier) {
+        // TODO remove this backward compatibility
+        boolean isNewImpl = objectIdentifier.contains("/");
+        String tokenizerChar = isNewImpl ? "/" : ".";
 
-            StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), ".");
+        int typeEndIndex = objectIdentifier.indexOf("]");
+        StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(1, typeEndIndex), tokenizerChar);
 
-            DBObjectRef objectRef = null;
-            while (objectTypes.hasMoreTokens()) {
-                String objectTypeName = objectTypes.nextToken();
-                String objectName = objectNames.nextToken();
-                DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
-                if (objectTypes.hasMoreTokens()) {
-                    objectRef = objectRef == null ?
-                            new DBObjectRef(connectionId, objectType, objectName) :
-                            new DBObjectRef(objectRef, objectType, objectName);
-                } else {
-                    this.parent = objectRef;
-                    this.objectType = objectType;
-                    this.objectName = objectName;
+        // TODO remove this backward compatibility
+        int objectStartIndex = isNewImpl ? typeEndIndex + 2 : typeEndIndex + 1;
+        int objectEndIndex = isNewImpl ? objectIdentifier.lastIndexOf("]") : objectIdentifier.length();
+        if (isNewImpl && objectIdentifier.length() > objectEndIndex + 1 && objectIdentifier.charAt(objectEndIndex + 1) == '#') {
+
+        }
+
+        StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), tokenizerChar);
+
+        DBObjectRef objectRef = null;
+        while (objectTypes.hasMoreTokens()) {
+            String objectTypeName = objectTypes.nextToken();
+            String objectName = objectNames.nextToken();
+            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            if (objectTypes.hasMoreTokens()) {
+                objectRef = objectRef == null ?
+                        new DBObjectRef(connectionId, objectType, objectName) :
+                        new DBObjectRef(objectRef, objectType, objectName);
+            } else {
+                if (objectNames.hasMoreTokens()) {
+                    String overloadToken = objectNames.nextToken();
+                    this.overload = Integer.parseInt(overloadToken);
                 }
+                this.parent = objectRef;
+                this.objectType = objectType;
+                this.objectName = objectName;
             }
         }
     }
 
     public void writeState(Element element) {
+        String value = serialize();
+
         element.setAttribute("connection-id", getConnectionId());
+        element.setAttribute("object-ref", value);
+    }
+
+    @NotNull
+    public String serialize() {
         StringBuilder objectTypes = new StringBuilder(objectType.getName());
         StringBuilder objectNames = new StringBuilder(objectName);
 
         DBObjectRef parent = this.parent;
         while (parent != null) {
-            objectTypes.insert(0, ".");
+            objectTypes.insert(0, "/");
             objectTypes.insert(0, parent.objectType.getName());
-            objectNames.insert(0, ".");
+            objectNames.insert(0, "/");
             objectNames.insert(0, parent.objectName);
             parent = parent.parent;
         }
 
-        String value = getStatePrefix() + "[" + objectTypes + "]" + "[" + objectNames + "]";
-        if (overload > 0) value = value + "#" + overload;
-        element.setAttribute("object-ref", value);
+        if (overload > 0) {
+            objectNames.append("/");
+            objectNames.append(overload);
+        }
+
+        return "[" + objectTypes + "]" + "[" + objectNames + "]";
     }
 
     public String getPath() {
@@ -324,7 +344,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Override
     public int hashCode() {
         if (hashCode == -1) {
-            hashCode = (getConnectionId() + "#" + getTypePath() + "#" + getPath()).hashCode();
+            hashCode = (getConnectionId() + "#" + serialize()).hashCode();
         }
         return hashCode;
     }
