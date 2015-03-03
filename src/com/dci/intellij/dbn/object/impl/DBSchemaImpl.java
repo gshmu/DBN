@@ -410,7 +410,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return false;
     }
 
-    public synchronized void refreshObjectsStatus() {
+    public synchronized void refreshObjectsStatus() throws SQLException {
         final Set<BrowserTreeNode> refreshNodes = resetObjectsStatus();
         Connection connection = null;
         ResultSet resultSet = null;
@@ -465,8 +465,6 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                     }
                 }
 
-            } catch (SQLException e) {
-                getLogger().warn("Error loading data model. " + e.getMessage());
             } finally {
                 ConnectionUtil.closeResultSet(resultSet);
                 connectionHandler.freePoolConnection(connection);

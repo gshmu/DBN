@@ -17,7 +17,11 @@ import org.jdom.input.DOMBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
+
 public class CommonUtil {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public static boolean isPluginCall() {
         for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
@@ -89,11 +93,12 @@ public class CommonUtil {
         return properties;
     }
 
+    @Nullable
     public static Document createXMLDocument(InputStream inputStream) {
         try {
             return new DOMBuilder().build(new XML4JDOMAdapter().getDocument(inputStream, false));
         } catch (Exception e) {
-            e.printStackTrace();
+            //LOGGER.warn(e);
         }
         return null;
     }

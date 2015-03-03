@@ -1,5 +1,31 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xmlbeans.impl.common.ReaderInputStream;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -32,31 +58,6 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ListUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.xmlbeans.impl.common.ReaderInputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -367,34 +368,54 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                 String clipboardData = ClipboardUtil.getStringContent();
                 if (clipboardData != null) {
                     Document xmlDocument = CommonUtil.createXMLDocument(new ReaderInputStream(new StringReader(clipboardData), "UTF-8"));
-                    Element rootElement = xmlDocument.getRootElement();
-                    List<Element> configElements = rootElement.getChildren();
-                    ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-                    int selectedIndex = connectionsList.getSelectedIndex();
-                    List<Integer> selectedIndexes = new ArrayList<Integer>();
-                    ConnectionBundleSettings configuration = getConfiguration();
-                    for (Element configElement : configElements) {
-                        selectedIndex++;
-                        ConnectionSettings clone = new ConnectionSettings(configuration);
-                        clone.readConfiguration(configElement);
-                        clone.setNew(true);
-                        clone.generateNewId();
+                    if (xmlDocument != null) {
+                        Element rootElement = xmlDocument.getRootElement();
+                        List<Element> configElements = rootElement.getChildren();
+                        ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+                        int selectedIndex = connectionsList.getSelectedIndex();
+                        List<Integer> selectedIndexes = new ArrayList<Integer>();
+                        ConnectionBundleSettings configuration = getConfiguration();
+                        for (Element configElement : configElements) {
+                            selectedIndex++;
+                            ConnectionSettings clone = new ConnectionSettings(configuration);
+                            clone.readConfiguration(configElement);
+                            clone.setNew(true);
+                            clone.generateNewId();
 
-                        ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
-                        String name = databaseSettings.getName();
-                        while (model.getConnectionConfig(name) != null) {
-                            name = NamingUtil.getNextNumberedName(name, true);
+                            ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+                            String name = databaseSettings.getName();
+                            while (model.getConnectionConfig(name) != null) {
+                                name = NamingUtil.getNextNumberedName(name, true);
+                            }
+                            databaseSettings.setName(name);
+                            model.add(selectedIndex, clone);
+                            selectedIndexes.add(selectedIndex);
+                            configuration.setModified(true);
                         }
-                        databaseSettings.setName(name);
-                        model.add(selectedIndex, clone);
-                        selectedIndexes.add(selectedIndex);
-                        configuration.setModified(true);
-                    }
 
-                    connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
+                        connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
+
+                    }
                 }
             } catch (Exception ex) {
                 LOGGER.error("Could not paste database configuration from clipboard", ex);
+            }
+        }
+
+        @Override
+        public void updateButton(AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+            try {
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Object clipboardData = clipboard.getData(DataFlavor.stringFlavor);
+                if (clipboardData instanceof String) {
+                    String clipboardString = (String) clipboardData;
+                    presentation.setEnabled(clipboardString.contains("connection-configurations"));
+                } else {
+                    presentation.setEnabled(false);
+                }
+            } catch (Exception ex) {
+                presentation.setEnabled(false);
             }
         }
     };
