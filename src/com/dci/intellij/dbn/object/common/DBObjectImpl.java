@@ -60,7 +60,6 @@ import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
@@ -95,8 +94,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             throw new DBOperationNotSupportedException(operationType);
         }
     };
-
-    protected Logger getLogger() {return Logger.getInstance(getClass().getName());}
 
     public DBObjectImpl(DBObject parentObject, ResultSet resultSet) throws SQLException {
         this.parentObject = DBObjectRef.from(parentObject);
