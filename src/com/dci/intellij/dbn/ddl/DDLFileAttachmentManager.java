@@ -175,7 +175,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
             for (DDLFileType ddlFileType : object.getDDLFileTypes()) {
                 for (String extension : ddlFileType.getExtensions()) {
-                    String fileName = object.getName().toLowerCase() + "." + extension;
+                    String fileName = object.getRef().getFileName().toLowerCase() + "." + extension;
                     VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
                     fileList.addAll(Arrays.asList(files));
                 }

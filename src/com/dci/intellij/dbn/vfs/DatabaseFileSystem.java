@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -82,7 +81,16 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     return connectionHandler.getConsoleBundle().getConsole(consoleName);
                 } else if (objectPath.startsWith("session_browser#")) {
                     return connectionHandler.getSessionBrowserFile();
+                } else if (objectPath.startsWith("object#")) {
+                    String identifier = objectPath.substring(7);
+                    DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
+                    DBObject object = objectRef.get();
+
+                    if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                        return findDatabaseFile((DBSchemaObject) object);
+                    }
                 } else {
+                    // TODO remove this backward compatibility
                     StringTokenizer path = new StringTokenizer(objectPath, ".");
                     DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());
                     if (object != null) {
@@ -183,8 +191,13 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public static String createUrl(DBObject object) {
         if (object == null) {
             return PROTOCOL + "://" + UUID.randomUUID() + "/null";
+        } else {
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            String connectionId = connectionHandler == null ? "null" : connectionHandler.getId();
+            return PROTOCOL + "://" + connectionId + "/object#" + object.getRef().serialize()/* + "." + getDefaultExtension(object)*/;
         }
 
+/*
         StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
         DBObjectType objectType = object.getObjectType();
         buffer.insert(0, "#");
@@ -209,6 +222,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         buffer.insert(0, "://");
         buffer.insert(0, PROTOCOL);
         return buffer.toString();
+*/
     }
 
     public static String createPath(ConnectionHandler connectionHandler) {
