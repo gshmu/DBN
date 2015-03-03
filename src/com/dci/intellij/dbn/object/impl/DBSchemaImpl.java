@@ -188,11 +188,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return getOwner();
     }
 
-    public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
+    public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
         if (objectType.isSchemaObject()) {
-            DBObject object = super.getChildObject(objectType, name, lookupHidden);
+            DBObject object = super.getChildObject(objectType, name, overload, lookupHidden);
             if (object == null) {
-                DBSynonym synonym = (DBSynonym) super.getChildObject(DBObjectType.SYNONYM, name, lookupHidden);
+                DBSynonym synonym = (DBSynonym) super.getChildObject(DBObjectType.SYNONYM, name, overload, lookupHidden);
                 if (synonym != null) {
                     DBObject underlyingObject = synonym.getUnderlyingObject();
                     if (underlyingObject != null && underlyingObject.isOfType(objectType)) {
@@ -339,15 +339,15 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     @Nullable
-    private DBSchemaObject getObjectFallbackOnSynonym(DBObjectList<? extends DBSchemaObject> objects, String name) {
-        DBSchemaObject object = objects.getObject(name);
+    private <T extends DBSchemaObject> T getObjectFallbackOnSynonym(DBObjectList<T> objects, String name) {
+        T object = objects.getObject(name);
         if (object == null && DatabaseCompatibilityInterface.getInstance(this).supportsObjectType(DBObjectType.SYNONYM.getTypeId())) {
             DBSynonym synonym = synonyms.getObject(name);
             if (synonym != null) {
                 DBObject underlyingObject = synonym.getUnderlyingObject();
                 if (underlyingObject != null) {
                     if (underlyingObject.getObjectType() == objects.getObjectType()) {
-                        return (DBSchemaObject) underlyingObject;
+                        return (T) underlyingObject;
                     }
                 }
             }
@@ -358,35 +358,23 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     }
 
     public DBType getType(String name) {
-        return (DBType) getObjectFallbackOnSynonym(types, name);
+        return getObjectFallbackOnSynonym(types, name);
     }
 
     public DBPackage getPackage(String name) {
-        return (DBPackage) getObjectFallbackOnSynonym(packages, name);
+        return getObjectFallbackOnSynonym(packages, name);
     }
 
     public DBProcedure getProcedure(String name, int overload) {
-        if (overload > 0) {
-            List<DBProcedure> procedures = this.procedures.getObjects(name);
-            if (procedures != null) {
-                for (DBProcedure procedure : procedures) {
-                    if (procedure.getOverload() == overload) return procedure;
-                }
-            }
-        }
-        return (DBProcedure) getObjectFallbackOnSynonym(procedures, name);
+        return overload > 0 ?
+                procedures.getObject(name, overload) :
+                getObjectFallbackOnSynonym(procedures, name);
     }
 
     public DBFunction getFunction(String name, int overload) {
-        if (overload > 0) {
-            List<DBFunction> functions = this.functions.getObjects(name);
-            if (functions != null) {
-                for (DBFunction function : functions) {
-                    if (function.getOverload() == overload) return function;
-                }
-            }
-        }
-        return (DBFunction) getObjectFallbackOnSynonym(functions, name);
+        return overload > 0 ?
+                functions.getObject(name, overload) :
+                getObjectFallbackOnSynonym(functions, name);
     }
 
     public DBProgram getProgram(String name) {

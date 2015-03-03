@@ -61,7 +61,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
      *********************************************************/
     @NotNull
     public String getName() {
-        return objectRef.getName();
+        return objectRef.getObjectName();
     }
 
     public ItemPresentation getPresentation() {

@@ -21,6 +21,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected DBObjectType objectType;
     protected String objectName;
     protected String connectionId;
+    protected int overload;
 
     private WeakReference<T> reference;
     private int hashCode = -1;
@@ -29,6 +30,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         reference = new WeakReference<T>(object);
         objectType = object.getObjectType();
         objectName = object.getName();
+        overload = object.getOverload();
         DBObject parentObj = object.getParentObject();
         if (parentObj != null) {
             parent = parentObj.getRef();
@@ -73,7 +75,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public static DBObjectRef from(Element element) {
-        if (StringUtil.isNotEmpty(element.getAttributeValue("object-ref"))) {
+        String objectRefDefinition = element.getAttributeValue("object-ref");
+        if (StringUtil.isNotEmpty(objectRefDefinition)) {
             DBObjectRef objectRef = new DBObjectRef();
             objectRef.readState(element);
             return objectRef;
@@ -81,13 +84,27 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return null;
     }
 
+    public String getStatePrefix() {
+        return "";
+    }
+
     public void readState(Element element) {
         if (element != null) {
             String connectionId = element.getAttributeValue("connection-id");
-            String databaseObject = element.getAttributeValue("object-ref");
-            int typeEndIndex = databaseObject.lastIndexOf("]");
-            StringTokenizer objectTypes = new StringTokenizer(databaseObject.substring(1, typeEndIndex), ".");
-            StringTokenizer objectNames = new StringTokenizer(databaseObject.substring(typeEndIndex + 1), ".");
+            String objectIdentifier = element.getAttributeValue("object-ref");
+            int typeStartIndex = objectIdentifier.indexOf("[");
+            int typeEndIndex = objectIdentifier.indexOf("]", typeStartIndex);
+            StringTokenizer objectTypes = new StringTokenizer(objectIdentifier.substring(typeStartIndex + 1, typeEndIndex), ".");
+
+            // TODO remove this backward compatibility
+            boolean isNewImpl = objectIdentifier.charAt(typeEndIndex + 1) == '[';
+            int objectStartIndex = isNewImpl ? typeEndIndex + 2 : typeEndIndex + 1;
+            int objectEndIndex = isNewImpl ? objectIdentifier.lastIndexOf("]") : objectIdentifier.length();
+            if (isNewImpl && objectIdentifier.length() > objectEndIndex + 1 && objectIdentifier.charAt(objectEndIndex + 1) == '#') {
+                this.overload = Integer.parseInt(objectIdentifier.substring(objectEndIndex + 3));
+            }
+
+            StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), ".");
 
             DBObjectRef objectRef = null;
             while (objectTypes.hasMoreTokens()) {
@@ -109,19 +126,21 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     public void writeState(Element element) {
         element.setAttribute("connection-id", getConnectionId());
-        StringBuilder objectTypes = new StringBuilder(objectType.name());
+        StringBuilder objectTypes = new StringBuilder(objectType.getName());
         StringBuilder objectNames = new StringBuilder(objectName);
 
         DBObjectRef parent = this.parent;
         while (parent != null) {
             objectTypes.insert(0, ".");
-            objectTypes.insert(0, parent.objectType.name());
+            objectTypes.insert(0, parent.objectType.getName());
             objectNames.insert(0, ".");
             objectNames.insert(0, parent.objectName);
             parent = parent.parent;
         }
 
-        element.setAttribute("object-ref", "[" + objectTypes.toString() + "]" + objectNames);
+        String value = getStatePrefix() + "[" + objectTypes + "]" + "[" + objectNames + "]";
+        if (overload > 0) value = value + "#" + overload;
+        element.setAttribute("object-ref", value);
     }
 
     public String getPath() {
@@ -138,6 +157,27 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             return buffer.toString();
         }
     }
+
+    public String getQualifiedName() {
+        return getPath();
+    }
+
+    /**
+     * qualified object name without schema (e.g. PROGRAM.METHOD)
+     */
+    public String getQualifiedObjectName() {
+        DBObjectRef parent = this.parent;
+        if (parent == null || parent.getObjectType() == DBObjectType.SCHEMA) {
+            return objectName;
+        } else {
+            StringBuilder buffer = new StringBuilder(objectName);
+            while(parent != null && parent.getObjectType() != DBObjectType.SCHEMA) {
+                buffer.insert(0, ".");
+                buffer.insert(0, parent.objectName);
+                parent = parent.parent;
+            }
+            return buffer.toString();
+        }    }
 
     public String getQualifiedNameWithType() {
         return objectType.getName() + " " + getPath();
@@ -214,11 +254,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected T lookup(@NotNull ConnectionHandler connectionHandler) {
         DBObject object = null;
         if (parent == null) {
-            object = connectionHandler.getObjectBundle().getObject(objectType, objectName);
+            object = connectionHandler.getObjectBundle().getObject(objectType, objectName, overload);
         } else {
             DBObject parentObject = parent.get();
             if (parentObject != null) {
-                object = parentObject.getChildObject(objectType, objectName, true);
+                object = parentObject.getChildObject(objectType, objectName, overload, true);
             }
         }
         return (T) object;
@@ -240,7 +280,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                     result = this.objectType.compareTo(that.objectType);
                     if (result != 0) return result;
 
-                    return this.objectName.compareTo(that.objectName);
+                    int nameCompare = this.objectName.compareTo(that.objectName);
+                    return nameCompare == 0 ? this.overload - that.overload : nameCompare;
                 } else {
                     return this.parent.compareTo(that.parent);
                 }
@@ -267,6 +308,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return schemaRef == null ? null : schemaRef.objectName;
     }
 
+    public int getOverload() {
+        return overload;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -284,12 +329,16 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return hashCode;
     }
 
-    public String getName() {
+    public String getObjectName() {
         return objectName;
     }
 
     public String getFileName() {
-        return getName();
+        if (overload == 0) {
+            return objectName;
+        } else {
+            return objectName + "#" + overload;
+        }
     }
 
     public DBObjectType getObjectType() {

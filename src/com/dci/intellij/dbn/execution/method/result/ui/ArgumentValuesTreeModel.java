@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import com.dci.intellij.dbn.execution.method.ArgumentValue;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
-
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -12,6 +7,12 @@ import javax.swing.tree.TreePath;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.dci.intellij.dbn.execution.method.ArgumentValue;
+import com.dci.intellij.dbn.object.DBArgument;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBTypeAttribute;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class ArgumentValuesTreeModel implements TreeModel {
     private ArgumentValuesTreeNode root;
@@ -25,9 +26,9 @@ public class ArgumentValuesTreeModel implements TreeModel {
     }
 
     private void createArgumentValueNodes(ArgumentValuesTreeNode parentNode, List<ArgumentValue> inputArgumentValues) {
-        Map<DBArgumentRef, ArgumentValuesTreeNode> nodeMap = new HashMap<DBArgumentRef, ArgumentValuesTreeNode>();
+        Map<DBObjectRef<DBArgument>, ArgumentValuesTreeNode> nodeMap = new HashMap<DBObjectRef<DBArgument>, ArgumentValuesTreeNode>();
         for (ArgumentValue argumentValue : inputArgumentValues) {
-            DBArgumentRef argumentRef = argumentValue.getArgumentRef();
+            DBObjectRef<DBArgument> argumentRef = argumentValue.getArgumentRef();
             DBTypeAttribute attribute = argumentValue.getAttribute();
 
             if (attribute == null) {

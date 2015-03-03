@@ -63,7 +63,10 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);
 
     DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
-    DBObject getChildObject(String name, boolean lookupHidden);
+    DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden);
+
+
+    DBObject getChildObject(String name, int overload, boolean lookupHidden);
 
     List<DBObjectNavigationList> getNavigationLists();
 

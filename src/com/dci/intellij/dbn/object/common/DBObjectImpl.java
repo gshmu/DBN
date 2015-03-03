@@ -119,7 +119,9 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         initStatus(resultSet);
         initProperties();
         initLists();
-        objectRef = createRef();
+
+        checkConnection();
+        objectRef = new DBObjectRef(this);
     }
 
     protected abstract void initObject(ResultSet resultSet) throws SQLException;
@@ -151,11 +153,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public boolean isParentOf(DBObject object) {
         return this.equals(object.getParentObject());
-    }
-
-    protected DBObjectRef createRef() throws SQLException {
-        checkConnection();
-        return new DBObjectRef(this);
     }
 
     protected void checkConnection() throws SQLException {
@@ -353,24 +350,32 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
+        return getChildObject(objectType, name, 0, lookupHidden);
+    }
+
+    public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
         if (childObjects == null) {
             return null;
         } else {
-            DBObject object = childObjects.getObject(objectType, name);
+            DBObject object = childObjects.getObject(objectType, name, overload);
             if (object == null && lookupHidden) {
-                object = childObjects.getHiddenObject(objectType, name);
+                object = childObjects.getHiddenObject(objectType, name, overload);
             }
             return object;
         }
     }
 
-    public DBObject getChildObject(String name, boolean lookupHidden) {
+    public DBObject getChildObject(String name, int overload, boolean lookupHidden) {
         return childObjects == null ? null :
-                childObjects.getObjectForParentType(this.getObjectType(), name, lookupHidden);
+                childObjects.getObjectForParentType(this.getObjectType(), name, overload, lookupHidden);
     }
 
     public DBObject getChildObjectNoLoad(String name) {
-        return childObjects == null ? null : childObjects.getObjectNoLoad(name);
+        return getChildObjectNoLoad(name, 0);
+    }
+
+    public DBObject getChildObjectNoLoad(String name, int overload) {
+        return childObjects == null ? null : childObjects.getObjectNoLoad(name, overload);
     }
 
     @NotNull

@@ -269,7 +269,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         }
     }
 
-    public T getElement(String name) {
+    public T getElement(String name, int overload) {
         if (name != null) {
             List<T> elements = getElements();
             if (indexed && index != null) {
@@ -277,7 +277,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             } else {
                 for (T element : elements) {
                     if (element.getName().equalsIgnoreCase(name)) {
-                        return element;
+                        if (overload == 0 || overload == element.getOverload()) {
+                            return element;
+                        }
                     }
                 }
             }

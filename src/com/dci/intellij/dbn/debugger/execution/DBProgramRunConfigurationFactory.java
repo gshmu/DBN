@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -25,7 +25,7 @@ public class DBProgramRunConfigurationFactory extends ConfigurationFactory {
         if (executionInput == null) {
             return super.getIcon();
         } else {
-            DBMethodRef methodRef = executionInput.getMethodRef();
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             DBMethod method = methodRef.get();
             return method == null ? methodRef.getObjectType().getIcon() : method.getIcon();
         }

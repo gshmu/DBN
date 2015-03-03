@@ -5,10 +5,10 @@ import java.sql.ResultSet;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class ArgumentValue {
-    private DBArgumentRef argumentRef;
+    private DBObjectRef<DBArgument> argumentRef;
     private DBTypeAttribute attribute;
     private Object value;
 
@@ -23,7 +23,7 @@ public class ArgumentValue {
         this.value = value;
     }
 
-    public DBArgumentRef getArgumentRef() {
+    public DBObjectRef<DBArgument> getArgumentRef() {
         return argumentRef;
     }
 
@@ -38,8 +38,8 @@ public class ArgumentValue {
     public String getName() {
         return
             attribute == null ?
-                    argumentRef.getName() :
-                    argumentRef.getName() + "." + attribute.getName();
+                    argumentRef.getObjectName() :
+                    argumentRef.getObjectName() + "." + attribute.getName();
     }
 
     public Object getValue() {
@@ -64,6 +64,6 @@ public class ArgumentValue {
     }
 
     public String toString() {
-        return argumentRef.getName() + " = " + value;
+        return argumentRef.getObjectName() + " = " + value;
     }
 }

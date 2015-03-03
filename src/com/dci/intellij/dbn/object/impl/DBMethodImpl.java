@@ -27,8 +27,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
@@ -72,11 +70,6 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         super.initLists();
         DBObjectListContainer container = initChildObjects();
         arguments = container.createSubcontentObjectList(DBObjectType.ARGUMENT, this, ARGUMENTS_LOADER, getSchema(), true);
-    }
-
-    @Override
-    protected DBObjectRef createRef() {
-        return new DBMethodRef(this);
     }
 
     @NotNull

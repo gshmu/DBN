@@ -65,7 +65,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public T getObject(String name) {
-        return getElement(name);
+        return getElement(name, 0);
+    }
+
+    public T getObject(String name, int overload) {
+        return getElement(name, overload);
     }
 
     public T getObject(String name, String parentName) {

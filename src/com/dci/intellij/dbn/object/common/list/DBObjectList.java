@@ -15,5 +15,6 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     List<T> getObjects();
     List<T> getObjects(String name);
     T getObject(String name);
+    T getObject(String name, int overload);
     T getObject(String name, String parentName);
 }

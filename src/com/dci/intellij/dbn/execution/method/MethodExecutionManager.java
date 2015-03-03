@@ -26,7 +26,7 @@ import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDi
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -66,7 +66,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return executionHistory.getExecutionInput(method);
     }
 
-    public MethodExecutionInput getExecutionInput(DBMethodRef methodRef) {
+    public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
         return executionHistory.getExecutionInput(methodRef);
     }
 
@@ -139,8 +139,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         executionInput.setExecuting(true);
         final DBMethod method = executionInput.getMethod();
         if (method == null) {
-            DBMethodRef methodRef = executionInput.getMethodRef();
-            MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getMethodObjectType().getName() + " \"" + methodRef.getSchemaName() + "." + methodRef.getQualifiedMethodName() + "\".");
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
         } else {
             final Project project = method.getProject();
             ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
@@ -260,7 +260,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
             Element selectionElement = element.getChild("history-selection");
             if (selectionElement != null) {
-                DBMethodRef selection = new DBMethodRef();
+                DBObjectRef<DBMethod> selection = new DBObjectRef<DBMethod>();
                 selection.readState(selectionElement);
                 executionHistory.setSelection(selection);
             }

@@ -148,8 +148,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getChildObjectList(objectType).getObjects();
     }
 
-    public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
-        return getChildObjectList(objectType).getObject(name);
+    public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
+        return getChildObjectList(objectType).getObject(name, overload);
     }
 
     public synchronized DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {

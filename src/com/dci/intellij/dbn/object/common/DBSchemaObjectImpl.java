@@ -185,7 +185,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
                 loaderCache.setObject(objectOwner,  schema);
             }
 
-            return schema == null ? null : schema.getChildObject(objectName, true);
+            return schema == null ? null : schema.getChildObject(objectName, 0, true);
         }
     };
 
@@ -202,7 +202,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
             DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
             DBSchema schema = schemaObject.getConnectionHandler().getObjectBundle().getSchema(objectOwner);
-            return schema == null ? null : schema.getChildObject(objectName, true);
+            return schema == null ? null : schema.getChildObject(objectName, 0, true);
         }
     };
 }
