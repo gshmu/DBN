@@ -494,13 +494,17 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             DBObjectType objectType = objectIdentifier.getObjectTypes()[i];
             String objectName = objectIdentifier.getObjectNames()[i];
             if (object == null) {
-                object = getObject(objectType, objectName, 0);
+                object = getObject(objectType, objectName);
             } else {
                 object = object.getChildObject(objectType, objectName, true);
             }
             if (object == null) break;
         }
         return object;
+    }
+
+    public DBObject getObject(DBObjectType objectType, String name) {
+        return getObject(objectType, name, 0);
     }
 
     public DBObject getObject(DBObjectType objectType, String name, int overload) {
