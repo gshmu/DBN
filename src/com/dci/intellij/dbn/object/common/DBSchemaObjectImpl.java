@@ -180,9 +180,13 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
 
             DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
+
             if (schema == null) {
-                schema = schemaObject.getConnectionHandler().getObjectBundle().getSchema(objectOwner);
-                loaderCache.setObject(objectOwner,  schema);
+                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                if (connectionHandler != null) {
+                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                    loaderCache.setObject(objectOwner,  schema);
+                }
             }
 
             return schema == null ? null : schema.getChildObject(objectName, 0, true);

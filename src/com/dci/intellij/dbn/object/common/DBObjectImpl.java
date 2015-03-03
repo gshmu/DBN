@@ -365,6 +365,10 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         }
     }
 
+    public DBObject getChildObject(String name, boolean lookupHidden) {
+        return getChildObject(name, 0, lookupHidden);
+    }
+
     public DBObject getChildObject(String name, int overload, boolean lookupHidden) {
         return childObjects == null ? null :
                 childObjects.getObjectForParentType(this.getObjectType(), name, overload, lookupHidden);
