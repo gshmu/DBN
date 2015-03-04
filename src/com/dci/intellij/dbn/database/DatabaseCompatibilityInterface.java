@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.database;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
@@ -14,10 +16,10 @@ public abstract class DatabaseCompatibilityInterface {
         this.provider = parent;
     }
 
-    @Nullable
+    @NotNull
     public static DatabaseCompatibilityInterface getInstance(DBObject object) {
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
-        return connectionHandler == null ? null : getInstance(connectionHandler);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        return getInstance(connectionHandler);
     }
 
     public static DatabaseCompatibilityInterface getInstance(ConnectionHandler connectionHandler) {

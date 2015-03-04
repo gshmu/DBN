@@ -56,11 +56,11 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
 
     public SessionBrowserState clone() {
         SessionBrowserState clone = new SessionBrowserState();
-        clone.setRefreshInterval(getRefreshInterval());
+        clone.refreshInterval = refreshInterval;
         clone.setReadonly(isReadonly());
         clone.setRowCount(getRowCount());
         clone.setSortingState(getSortingState().clone());
-        clone.setFilterState(getFilterState().clone());
+        clone.filterState = filterState.clone();
         if (contentTypesMap != null) {
             clone.contentTypesMap = new THashMap<String, String>(contentTypesMap);
         }

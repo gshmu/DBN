@@ -46,7 +46,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
     private ResultSetTable table;
     private ResultSetDataModelRow row;
 
-    public ResultSetRecordViewerForm(ResultSetTable<? extends ResultSetDataModel> table) {
+    public ResultSetRecordViewerForm(ResultSetTable<? extends ResultSetDataModel> table, boolean showDataTypes) {
         this.table = table;
         ResultSetDataModel model = table.getModel();
         row = (ResultSetDataModelRow) model.getRowAtIndex(table.getSelectedRow());
@@ -80,7 +80,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
         columnsPanel.setLayout(new BoxLayout(columnsPanel, BoxLayout.Y_AXIS));
 
         for (Object cell: row.getCells()) {
-            ResultSetRecordViewerColumnForm columnForm = new ResultSetRecordViewerColumnForm(this, (ResultSetDataModelCell) cell);
+            ResultSetRecordViewerColumnForm columnForm = new ResultSetRecordViewerColumnForm(this, (ResultSetDataModelCell) cell, showDataTypes);
             columnForms.add(columnForm);
         }
         ColumnSortingType columnSortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();

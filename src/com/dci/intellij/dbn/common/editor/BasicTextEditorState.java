@@ -95,7 +95,7 @@ public class BasicTextEditorState implements FileEditorState {
             if(project != null){
                 PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                 CodeFoldingState foldingState = CodeFoldingManager.getInstance(project).saveFoldingState(editor);
-                setFoldingState(foldingState);
+                this.foldingState = foldingState;
             }
         }
         verticalScrollProportion = level != FileEditorStateLevel.UNDO ? EditorUtil.calcVerticalScrollProportion(editor) : -1F;
@@ -123,7 +123,7 @@ public class BasicTextEditorState implements FileEditorState {
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
         final Project project = editor.getProject();
-        if (project != null && getFoldingState() != null) {
+        if (project != null && foldingState != null) {
             PsiDocumentManager.getInstance(project).commitDocument(document);
             new SimpleLaterInvocator() {
                 @Override

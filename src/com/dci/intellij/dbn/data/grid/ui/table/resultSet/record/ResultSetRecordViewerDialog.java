@@ -11,11 +11,11 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 public class ResultSetRecordViewerDialog extends DBNDialog {
     private ResultSetRecordViewerForm viewerForm;
 
-    public ResultSetRecordViewerDialog(ResultSetTable table) {
+    public ResultSetRecordViewerDialog(ResultSetTable table, boolean showDataTypes) {
         super(table.getProject(), "View Record", true);
         setModal(true);
         setResizable(true);
-        viewerForm = new ResultSetRecordViewerForm(table);
+        viewerForm = new ResultSetRecordViewerForm(table, showDataTypes);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
     }

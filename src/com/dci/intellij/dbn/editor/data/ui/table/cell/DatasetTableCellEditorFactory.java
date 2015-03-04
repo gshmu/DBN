@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
+import javax.swing.table.TableCellEditor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -12,11 +17,6 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-
-import javax.swing.table.TableCellEditor;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DatasetTableCellEditorFactory implements Disposable {
     private Map<ColumnInfo, TableCellEditor> cache = new HashMap<ColumnInfo, TableCellEditor>();
@@ -33,7 +33,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
         return tableCellEditor;
     }
 
-    private TableCellEditor createEditorForNativeType(ColumnInfo columnInfo, DatasetEditorTable table) {
+    private static TableCellEditor createEditorForNativeType(ColumnInfo columnInfo, DatasetEditorTable table) {
         DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(table.getDatasetEditor().getProject());
         DBDataType dataType = columnInfo.getDataType();
         GenericDataType genericDataType = dataType.getGenericDataType();

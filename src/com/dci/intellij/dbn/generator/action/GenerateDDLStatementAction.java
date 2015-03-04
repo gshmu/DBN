@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.generator.action;
 
 import java.sql.SQLException;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -16,6 +17,7 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
 
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         return object.getConnectionHandler();

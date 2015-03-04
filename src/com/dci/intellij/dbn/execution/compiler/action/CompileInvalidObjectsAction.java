@@ -34,7 +34,7 @@ public class CompileInvalidObjectsAction extends AnAction {
         e.getPresentation().setText(text);
     }
 
-    private CompilerSettings getCompilerSettings(Project project) {
+    private static CompilerSettings getCompilerSettings(Project project) {
         return ExecutionEngineSettings.getInstance(project).getCompilerSettings();
     }
 }

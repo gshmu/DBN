@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.generator.action;
 
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGenerationManager;
@@ -22,6 +23,7 @@ public class GenerateSelectStatementAction extends GenerateStatementAction {
         return statementGenerationManager.generateSelectStatement(selectedObjects, true);
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         if (selectedObjects.size() > 0) {

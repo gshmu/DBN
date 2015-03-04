@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -19,9 +18,7 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.FileStatus;
 
 public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
@@ -93,10 +90,6 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return false;
     }
 
-    public String getHelpTopic() {
-        return "connectionBundle";
-    }
-
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -151,20 +144,11 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return false;
     }
 
-    public FileStatus getFileStatus() {
-        return FileStatus.NOT_CHANGED;
-    }
-
-
     /*********************************************************
     *                  ItemPresentation                      *
     *********************************************************/
     public String getName() {
         return getPresentableText();
-    }
-
-    public TextAttributesKey getTextAttributesKey() {
-        return SQLTextAttributesKeys.IDENTIFIER;
     }
 
     public String getLocationString() {
@@ -193,7 +177,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public BrowserTreeNode getTreeParent() {
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
         return browserManager.isTabbedMode() ? null : activeBrowserTree == null ? null : activeBrowserTree.getModel().getRoot();
     }
@@ -203,32 +187,32 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public void refreshTreeChildren(@Nullable DBObjectType objectType) {
-        for (ConnectionHandler connectionHandler : getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : connectionHandlers) {
             connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
         }
     }
 
     public void rebuildTreeChildren() {
-        for (ConnectionHandler connectionHandler : getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : connectionHandlers) {
             connectionHandler.getObjectBundle().rebuildTreeChildren();
         }
     }
 
     public BrowserTreeNode getTreeChild(int index) {
-        return getConnectionHandlers().get(index).getObjectBundle();
+        return connectionHandlers.get(index).getObjectBundle();
     }
 
     public int getTreeChildCount() {
-        return getConnectionHandlers().size();
+        return connectionHandlers.size();
     }
 
     public boolean isLeafTreeElement() {
-        return getConnectionHandlers().size() == 0;
+        return connectionHandlers.size() == 0;
     }
 
     public int getIndexOfTreeChild(BrowserTreeNode child) {
         DBObjectBundle objectBundle = (DBObjectBundle) child;
-        return getConnectionHandlers().indexOf(objectBundle.getConnectionHandler());
+        return connectionHandlers.indexOf(objectBundle.getConnectionHandler());
     }
 
     public int getTreeDepth() {
@@ -240,14 +224,15 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     }
 
     public String getPresentableTextDetails() {
-        int size = getConnectionHandlers().size();
-        return size == 0 ? "(no connections)" : "(" + size + ")";
+        int size = connectionHandlers.size();
+        return size == 0 ? "(no connections)" : "(" + size + ')';
     }
 
     public String getPresentableTextConditionalDetails() {
         return null;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return null;
     }

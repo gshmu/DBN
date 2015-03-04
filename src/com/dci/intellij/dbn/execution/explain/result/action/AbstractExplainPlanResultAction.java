@@ -13,7 +13,7 @@ public abstract class AbstractExplainPlanResultAction extends DumbAwareAction {
         super(text, null, icon);
     }
 
-    public ExplainPlanResult getExplainPlanResult(AnActionEvent e) {
+    public static ExplainPlanResult getExplainPlanResult(AnActionEvent e) {
         return e.getData(DBNDataKeys.EXPLAIN_PLAN_RESULT);
     }
 

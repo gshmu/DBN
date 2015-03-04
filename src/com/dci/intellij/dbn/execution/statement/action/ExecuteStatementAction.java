@@ -39,7 +39,7 @@ public class ExecuteStatementAction extends AnAction {
         presentation.setText("Execute Statement");
     }
 
-    private boolean isEnabled(AnActionEvent e) {
+    private static boolean isEnabled(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
         if (project == null || editor == null) {

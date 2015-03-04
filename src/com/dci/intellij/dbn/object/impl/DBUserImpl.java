@@ -79,9 +79,9 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     @Nullable
     @Override
     public Icon getIcon() {
-        return isExpired() ?
-               (isLocked() ? Icons.DBO_USER_EXPIRED_LOCKED : Icons.DBO_USER_EXPIRED) :
-               (isLocked() ? Icons.DBO_USER_LOCKED : Icons.DBO_USER);
+        return isExpired ?
+               (isLocked ? Icons.DBO_USER_EXPIRED_LOCKED : Icons.DBO_USER_EXPIRED) :
+               (isLocked ? Icons.DBO_USER_LOCKED : Icons.DBO_USER);
     }
 
     @Override
@@ -129,10 +129,10 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
 
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
-        if (isLocked() || isExpired()) {
-            if (isLocked() && isExpired())
+        if (isLocked || isExpired) {
+            if (isLocked && isExpired)
                 ttb.append(false, " - expired & locked" , true);
-            else if (isLocked())
+            else if (isLocked)
                 ttb.append(false, " - locked" , true); else
                 ttb.append(false, " - expired" , true);
 

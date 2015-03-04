@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.IdentifierLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
@@ -321,7 +322,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return resolveActualObject(underlyingObject);
     }
 
-    private DBObject resolveActualObject(DBObject object) {
+    private static DBObject resolveActualObject(DBObject object) {
         while (object != null && object instanceof DBSynonym) {
             DBSynonym synonym = (DBSynonym) object;
             object = synonym.getUnderlyingObject();
@@ -350,7 +351,8 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     private Object[] buildAliasRefVariants() {
         SequencePsiElement statement = (SequencePsiElement) findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
         BasePsiElement sourceScope = getEnclosingScopePsiElement();
-        PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, getObjectType(), null);
+        DBObjectType objectType = getObjectType();
+        PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
         Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInScope(statement, null);
         return aliasDefinitions == null ? new Object[0] : aliasDefinitions.toArray();
     }
@@ -431,7 +433,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 if (parentPsiElement != null) {
                     DBObject object = parentPsiElement.resolveUnderlyingObject();
                     if (object != null) {
-                        PsiElement referencedElement = object.getChildObject(ref.getText().toString(), false);
+                        PsiElement referencedElement = object.getChildObject(ref.getText().toString(), 0, false);
                         if (isValidReference(referencedElement)) {
                             ref.setParent(parentPsiElement);
                             ref.setReferencedElement(referencedElement);
@@ -461,7 +463,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                 }
 
                 DBObjectBundle objectBundle = activeConnection.getObjectBundle();
-                PsiElement referencedElement = objectBundle.getObject(objectType, ref.getText().toString());
+                PsiElement referencedElement = objectBundle.getObject(objectType, ref.getText().toString(), 0);
                 if (isValidReference(referencedElement)) {
                     ref.setParent(null);
                     ref.setReferencedElement(referencedElement);

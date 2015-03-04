@@ -65,7 +65,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         }
     }
 
-    private Boolean isResetting() {
+    private static Boolean isResetting() {
         return IS_RESETTING.get();
     }
 

@@ -1,6 +1,15 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -20,14 +29,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
@@ -57,7 +58,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, object);
             if (selectedCompileType != null) {
                 doCompileObject(object, selectedCompileType, compilerAction);
-                if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
+                if (DatabaseFileSystem.isFileOpened(object)) {
                     DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                     DBContentType contentType = compilerAction.getContentType();
                     if (contentType.isBundle()) {
@@ -87,7 +88,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         new BackgroundTask(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
                             public void execute(@NotNull ProgressIndicator progressIndicator) {
                                 doCompileObject(object, selectedCompileType, compilerAction);
-                                if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
+                                if (DatabaseFileSystem.isFileOpened(object)) {
                                     DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                                     DBContentType contentType = compilerAction.getContentType();
                                     DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
@@ -106,7 +107,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         object.getStatus().set(contentType, DBObjectStatus.COMPILING, true);
         Connection connection = null;
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(getProject());
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
         boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
         try {
             connection = connectionHandler.getPoolConnection();
@@ -164,7 +165,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             @Override
             public void execute() {
                 final Project project = schema.getProject();
-                final ConnectionHandler connectionHandler = schema.getConnectionHandler();
+                final ConnectionHandler connectionHandler = FailsafeUtil.get(schema.getConnectionHandler());
                 boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(connectionHandler);
                 if (allowed) {
                     final CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, null);

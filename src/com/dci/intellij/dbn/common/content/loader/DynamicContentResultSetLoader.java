@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -79,7 +80,9 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
                 T element = null;
                 try {
                     element = createElement(dynamicContent, resultSet, loaderCache);
-                } catch (RuntimeException e){
+                } catch (ProcessCanceledException e){
+                    return;
+                } catch (RuntimeException e) {
                     System.out.println("RuntimeException: " + e.getMessage());
                 }
 

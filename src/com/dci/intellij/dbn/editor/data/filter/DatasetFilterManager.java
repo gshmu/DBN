@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
@@ -140,7 +142,8 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     public DatasetFilterGroup getFilterGroup(DBDataset dataset) {
-        String connectionId = dataset.getConnectionHandler().getId();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
+        String connectionId = connectionHandler.getId();
         String datasetName = dataset.getQualifiedName();
         return getFilterGroup(connectionId, datasetName);
     }

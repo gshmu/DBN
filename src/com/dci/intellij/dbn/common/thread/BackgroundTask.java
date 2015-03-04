@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.application.Application;
@@ -12,8 +15,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class BackgroundTask<T> extends Task.Backgroundable implements RunnableTask<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -30,7 +31,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     };
 
     public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground, boolean canBeCancelled) {
-        super(project, Constants.DBN_TITLE_PREFIX + "" + title, canBeCancelled, startInBackground ? START_IN_BACKGROUND : DO_NOT_START_IN_BACKGROUND);
+        super(project, Constants.DBN_TITLE_PREFIX + title, canBeCancelled, startInBackground ? START_IN_BACKGROUND : DO_NOT_START_IN_BACKGROUND);
     }
 
     public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground) {
@@ -98,11 +99,11 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         }
     }
 
-    public void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {
+    public static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate) {
         initProgressIndicator(progressIndicator, indeterminate, null);
     }
 
-    public void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
+    public static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
         new ConditionalLaterInvocator() {
             @Override
             public void execute() {

@@ -23,8 +23,11 @@ public class RemoveConditionAction extends ObjectNameFilterAction{
             FilterCondition filterCondition = (FilterCondition) selection;
 
             Project project = ActionUtil.getProject(e);
-            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-            filterManager.removeFilterCondition(filterCondition, settingsForm);
+            ObjectNameFilterManager filterManager = null;
+            if (project != null) {
+                filterManager = ObjectNameFilterManager.getInstance(project);
+                filterManager.removeFilterCondition(filterCondition, settingsForm);
+            }
         }
     }
 

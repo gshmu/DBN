@@ -129,7 +129,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
 
             // register all possible tokens
             if (leaf instanceof IdentifierElementType) {
-                SharedTokenTypeBundle sharedTokenTypes = getElementType().getLanguage().getSharedTokenTypes();
+                SharedTokenTypeBundle sharedTokenTypes = elementType.getLanguage().getSharedTokenTypes();
                 allPossibleTokens.add(sharedTokenTypes.getIdentifier());
                 allPossibleTokens.add(sharedTokenTypes.getQuotedIdentifier());
             } else {
@@ -146,18 +146,18 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     abstract boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source);
     abstract boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source);
     private boolean initAllElements(LeafElementType leafElementType) {
-        return leafElementType != getElementType() && !allPossibleLeafs.contains(leafElementType);
+        return leafElementType != elementType && !allPossibleLeafs.contains(leafElementType);
     }
 
     protected void registerLeafInParent(LeafElementType leaf) {
-        ElementType parent = getElementType().getParent();
+        ElementType parent = elementType.getParent();
         if (parent != null) {
-            parent.getLookupCache().registerLeaf(leaf, getElementType());
+            parent.getLookupCache().registerLeaf(leaf, elementType);
         }
     }
 
     public synchronized boolean containsLandmarkToken(TokenType tokenType) {
-        if (getElementType().isLeaf()) return containsToken(tokenType);
+        if (elementType.isLeaf()) return containsToken(tokenType);
 
         Boolean value = landmarkTokens.get(tokenType);
         if (value == null) {
@@ -189,7 +189,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     public synchronized Set<TokenType> getNextPossibleTokens() {
         if (nextPossibleTokens == null) {
             nextPossibleTokens = new THashSet<TokenType>();
-            ElementType elementType = getElementType();
+            ElementType elementType = this.elementType;
             ElementType parentElementType = elementType.getParent();
             while (parentElementType != null) {
                 if (parentElementType instanceof SequenceElementType) {
@@ -227,7 +227,7 @@ public abstract class AbstractElementTypeLookupCache<T extends ElementType> impl
     }
 
     protected boolean isWrapperBeginLeaf(LeafElementType leaf) {
-        WrappingDefinition wrapping = getElementType().getWrapping();
+        WrappingDefinition wrapping = elementType.getWrapping();
         if (wrapping != null) {
             if (wrapping.getBeginElementType() == leaf) {
                 return true;

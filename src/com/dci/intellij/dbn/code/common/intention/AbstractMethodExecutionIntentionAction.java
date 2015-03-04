@@ -27,7 +27,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
             DBObjectType objectType = method.getObjectType();
             if (objectType.matches(DBObjectType.PROCEDURE)) objectType = DBObjectType.PROCEDURE;
             if (objectType.matches(DBObjectType.FUNCTION)) objectType = DBObjectType.FUNCTION;
-            return getActionName() + " " + objectType.getName() + " " + method.getName();
+            return getActionName() + ' ' + objectType.getName() + ' ' + method.getName();
         }
         return getActionName() + " method";
     }

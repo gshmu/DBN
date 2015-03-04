@@ -29,7 +29,7 @@ public enum TokenPairTemplate {
 
     public static TokenPairTemplate get(String tokenTypeId) {
         for (TokenPairTemplate tokenPairTemplate : values()) {
-            if (tokenPairTemplate.getBeginToken().equals(tokenTypeId) || tokenPairTemplate.getEndToken().equals(tokenTypeId)) {
+            if (tokenPairTemplate.beginToken.equals(tokenTypeId) || tokenPairTemplate.endToken.equals(tokenTypeId)) {
                 return tokenPairTemplate;
             }
         }

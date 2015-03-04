@@ -56,7 +56,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
         Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
         String shortcutText = KeymapUtil.getShortcutsText(shortcuts);
 
-        button.setToolTipText("Open editor (" + shortcutText + ")");
+        button.setToolTipText("Open editor (" + shortcutText + ')');
         add(button, BorderLayout.EAST);
         if (StringUtil.isNotEmpty(displayValue)) {
             textField.setText(displayValue);
@@ -184,7 +184,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!isDisposed) {
             isDisposed = true;
             userValueHolder = null;
             project = null;

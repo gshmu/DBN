@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -10,7 +10,9 @@ import java.util.List;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
     protected List<MethodExecutionInput> executionInputs;
@@ -95,7 +97,9 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
         }
 
         ProgramTreeNode getProgramNode(MethodExecutionInput executionInput) {
-            String programName = executionInput.getMethodRef().getProgramName();
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
+            String programName = programRef.getObjectName();
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     if (node instanceof ProgramTreeNode) {
@@ -126,13 +130,13 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
     protected class ProgramTreeNode extends MethodExecutionHistoryTreeNode {
         ProgramTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent,
-                    getNodeType(executionInput.getMethodRef().getProgramObjectType()),
-                    executionInput.getMethodRef().getProgramName());
+                    getNodeType(MethodRefUtil.getProgramObjectType(executionInput.getMethodRef())),
+                    MethodRefUtil.getProgramName(executionInput.getMethodRef()));
         }
 
         MethodTreeNode getMethodNode(MethodExecutionInput executionInput) {
-            DBMethodRef methodRef = executionInput.getMethodRef();
-            String methodName = methodRef.getMethodName();
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            String methodName = methodRef.getObjectName();
             int overload = methodRef.getOverload();
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
@@ -150,7 +154,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel {
 
         MethodTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent,
-                    getNodeType(executionInput.getMethodRef().getMethodObjectType()),
+                    getNodeType(executionInput.getMethodRef().getObjectType()),
                     getMethodName(executionInput));
             this.executionInput = executionInput;
         }

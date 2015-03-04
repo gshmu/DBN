@@ -78,7 +78,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     }
 
 
-    public BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
+    public static BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
         PsiElement psiElement = file.findElementAt(offset);
         while (psiElement != null) {
             if (psiElement instanceof BasePsiElement) {

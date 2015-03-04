@@ -10,13 +10,13 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 
 public class MethodExecutionHistory implements PersistentStateElement<Element>, Disposable{
     private List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
     private boolean groupEntries = true;
-    private DBMethodRef selection;
+    private DBObjectRef<DBMethod> selection;
 
     public List<MethodExecutionInput> getExecutionInputs() {
         return executionInputs;
@@ -34,11 +34,11 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         this.groupEntries = groupEntries;
     }
 
-    public DBMethodRef getSelection() {
+    public DBObjectRef<DBMethod> getSelection() {
         return selection;
     }
 
-    public void setSelection(DBMethodRef selection) {
+    public void setSelection(DBObjectRef<DBMethod> selection) {
         this.selection = selection;
     }
 
@@ -51,11 +51,11 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         MethodExecutionInput executionInput = new MethodExecutionInput(method);
         executionInputs.add(executionInput);
         Collections.sort(executionInputs);
-        selection = (DBMethodRef) method.getRef();
+        selection = method.getRef();
         return executionInput;
     }
 
-    public MethodExecutionInput getExecutionInput(DBMethodRef methodRef) {
+    public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
         for (MethodExecutionInput executionInput : executionInputs) {
             if (executionInput.getMethodRef().equals(methodRef)) {
                 return executionInput;
@@ -102,14 +102,14 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
             Element configElement = (Element) object;
             MethodExecutionInput executionInput = new MethodExecutionInput();
             executionInput.readConfiguration(configElement);
-            DBMethodRef methodRef = executionInput.getMethodRef();
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             executionInputs.add(executionInput);
         }
         Collections.sort(executionInputs);
 
         Element selectionElement = element.getChild("selection");
         if (selectionElement != null) {
-            selection = new DBMethodRef();
+            selection = new DBObjectRef<DBMethod>();
             selection.readState(selectionElement);
         }
     }

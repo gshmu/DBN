@@ -88,7 +88,7 @@ public class ObjectTreeModel extends DefaultTreeModel {
         return elements;
     }
 
-    private void collect(TreeNode node, List<TreeNode> bucket) {
+    private static void collect(TreeNode node, List<TreeNode> bucket) {
         bucket.add(node);
         for (int i=0; i<node.getChildCount(); i++) {
             TreeNode childNode = node.getChildAt(i);

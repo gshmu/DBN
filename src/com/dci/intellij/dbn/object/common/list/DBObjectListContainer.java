@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.common.list;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,6 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.Disposable;
-import gnu.trove.THashMap;
 
 public class DBObjectListContainer implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
@@ -70,16 +70,16 @@ public class DBObjectListContainer implements Disposable {
     }
 
 
-    public DBObject getObject(DBObjectType objectType, String name) {
+    public DBObject getObject(DBObjectType objectType, String name, int overload) {
         DBObjectList objectList = getObjectList(objectType);
         if (objectList != null) {
-            return objectList.getObject(name);
+            return objectList.getObject(name, overload);
         }
 
         if (objectType.getInheritingTypes().size() > 0) {
             Set<DBObjectType> objectTypes = objectType.getInheritingTypes();
             for (DBObjectType objType : objectTypes) {
-                DBObject object = getObject(objType, name);
+                DBObject object = getObject(objType, name, overload);
                 if (object != null) {
                     return object;
                 }
@@ -89,13 +89,13 @@ public class DBObjectListContainer implements Disposable {
         return null;
     }
 
-    public <T extends DBObject> T getHiddenObject(DBObjectType objectType, String name) {
+    public <T extends DBObject> T getHiddenObject(DBObjectType objectType, String name, int overload) {
         if (objectType.isGeneric()) {
             Set<DBObjectType> objectTypes = objectType.getInheritingTypes();
             for (DBObjectType objType : objectTypes) {
                 DBObjectList<T> objectList = getHiddenObjectList(objType);
                 if (objectList != null) {
-                    T object = objectList.getObject(name);
+                    T object = objectList.getObject(name, overload);
                     if (object != null) {
                         return object;
                     }
@@ -104,15 +104,15 @@ public class DBObjectListContainer implements Disposable {
         } else {
             DBObjectList<T> objectList = getHiddenObjectList(objectType);
             if (objectList != null) {
-                return objectList.getObject(name);
+                return objectList.getObject(name, overload);
             }
         }
         return null;
     }
 
-    public DBObject getObject(String name) {
+    public DBObject getObject(String name, int overload) {
         for (DBObjectList objectList : objectLists.values()) {
-            DBObject object = objectList.getObject(name);
+            DBObject object = objectList.getObject(name, overload);
             if (object != null) {
                 return object;
             }
@@ -120,22 +120,11 @@ public class DBObjectListContainer implements Disposable {
         return null;
     }
 
-    public DBObject getHiddenObject(String name) {
-        for (DBObjectList objectList : hiddenObjectLists.values()) {
-            DBObject object = objectList.getObject(name);
-            if (object != null) {
-                return object;
-            }
-        }
-        return null;
-    }
-
-
-    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, boolean lookupHidden) {
+    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, int overload, boolean lookupHidden) {
         for (DBObjectList objectList : objectLists.values()) {
             DBObjectType objectType = objectList.getObjectType();
             if (objectType.getParents().contains(parentObjectType)) {
-                DBObject object = objectList.getObject(name);
+                DBObject object = objectList.getObject(name, overload);
                 if (object != null) {
                     return object;
                 }
@@ -146,7 +135,7 @@ public class DBObjectListContainer implements Disposable {
             for (DBObjectList objectList : hiddenObjectLists.values()) {
                 DBObjectType objectType = objectList.getObjectType();
                 if (objectType.getParents().contains(parentObjectType)) {
-                    DBObject object = objectList.getObject(name);
+                    DBObject object = objectList.getObject(name, overload);
                     if (object != null) {
                         return object;
                     }
@@ -162,10 +151,10 @@ public class DBObjectListContainer implements Disposable {
                 DatabaseCompatibilityInterface.getInstance(connectionHandler).supportsObjectType(objectType.getTypeId());
     }
 
-    public DBObject getObjectNoLoad(String name) {
+    public DBObject getObjectNoLoad(String name, int overload) {
         for (DBObjectList objectList : objectLists.values()) {
             if (objectList.isLoaded() && !objectList.isDirty()) {
-                DBObject object = objectList.getObject(name);
+                DBObject object = objectList.getObject(name, overload);
                 if (object != null) {
                     if (owner instanceof DBObject) {
                         DBObject ownerObject = (DBObject) owner;
@@ -262,10 +251,10 @@ public class DBObjectListContainer implements Disposable {
         if (objectList != null) {
             DBObjectType objectType = objectList.getObjectType();
             if (hidden) {
-                if (hiddenObjectLists == null) hiddenObjectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
+                if (hiddenObjectLists == null) hiddenObjectLists = new EnumMap<DBObjectType, DBObjectList<DBObject>>(DBObjectType.class);
                 hiddenObjectLists.put(objectType, objectList);
             } else {
-                if (objectLists == null) objectLists =  new THashMap<DBObjectType, DBObjectList<DBObject>>();
+                if (objectLists == null) objectLists = new EnumMap<DBObjectType, DBObjectList<DBObject>>(DBObjectType.class);
                 objectLists.put(objectType, objectList);
             }
         }

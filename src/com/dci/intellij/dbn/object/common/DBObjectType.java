@@ -1,20 +1,20 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.editor.DBContentType;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-
 import javax.swing.Icon;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.editor.DBContentType;
+import gnu.trove.THashSet;
 
 public enum DBObjectType implements DynamicContentType {
     
@@ -142,7 +142,7 @@ public enum DBObjectType implements DynamicContentType {
 
     public void addIcon(DBContentType contentType, Icon icon) {
         if (icons == null) {
-            icons = new THashMap<DBContentType, Icon>();
+            icons = new EnumMap<DBContentType, Icon>(DBContentType.class);
         }
         icons.put(contentType, icon);
     }
@@ -235,7 +235,7 @@ public enum DBObjectType implements DynamicContentType {
     }
 
     public boolean isInheriting(DBObjectType objectType) {
-        return objectType.getInheritingTypes().contains(this);
+        return objectType.inheritingTypes.contains(this);
     }
 
     public void addParent(DBObjectType parent) {
@@ -252,19 +252,19 @@ public enum DBObjectType implements DynamicContentType {
     }
 
     public String toString() {
-        return getName();
+        return name;
     }
 
     public boolean isParentOf(DBObjectType objectType) {
-        return objectType.getParents().contains(this) || objectType.getGenericParents().contains(this);
+        return objectType.parents.contains(this) || objectType.genericParents.contains(this);
     }
 
     public boolean isChildOf(DBObjectType objectType) {
-        return objectType.getChildren().contains(this);
+        return objectType.children.contains(this);
     }
 
     public boolean hasChild(DBObjectType objectType) {
-        for (DBObjectType childObjectType : getChildren()) {
+        for (DBObjectType childObjectType : children) {
             if (childObjectType.matches(objectType)) {
                 return true;
             }
@@ -275,7 +275,7 @@ public enum DBObjectType implements DynamicContentType {
 
     public static DBObjectType getObjectType(DatabaseObjectTypeId typeId) {
         for (DBObjectType objectType: values()) {
-            if (objectType.getTypeId() == typeId) {
+            if (objectType.typeId == typeId) {
                 return objectType;
             }
         }
@@ -298,7 +298,7 @@ public enum DBObjectType implements DynamicContentType {
         } catch (IllegalArgumentException e) {
             typeName = typeName.replace('_', ' ');
             for (DBObjectType objectType: values()) {
-                if (objectType.getName().equalsIgnoreCase(typeName)) {
+                if (objectType.name.equalsIgnoreCase(typeName)) {
                     return objectType;
                 }
             }
@@ -311,7 +311,7 @@ public enum DBObjectType implements DynamicContentType {
         StringBuilder buffer = new StringBuilder();
         for (DBObjectType objectType : objectTypes) {
             if (buffer.length() != 0) buffer.append(", ");
-            buffer.append(objectType.getName());
+            buffer.append(objectType.name);
         }
         return buffer.toString();
     }

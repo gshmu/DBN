@@ -131,7 +131,7 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
         return buffer.toString();
     }
 
-    private StringBuilder appendVariableName(StringBuilder buffer, DBArgument argument) {
+    private static StringBuilder appendVariableName(StringBuilder buffer, DBArgument argument) {
         return buffer.append("var_").append(argument.getPosition());
     }
 
@@ -280,7 +280,7 @@ public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl
         }
     }
 
-    private boolean isBoolean(DBDataType dataType) {
+    private static boolean isBoolean(DBDataType dataType) {
         return dataType.getGenericDataType() == GenericDataType.BOOLEAN;
     }
 

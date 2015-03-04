@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.codeInsight.template.impl.TemplateColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -179,7 +180,7 @@ public class ExplainPlanTreeTable extends TreeTable{
                 Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
 
                 TableColumn column = getColumnModel().getColumn(columnIndex);
-                UserValueHolder userValueHolder = new UserValueHolderImpl(tableModel.getColumnName(columnIndex), tableModel.getProject());
+                UserValueHolder userValueHolder = new UserValueHolderImpl(tableModel.getColumnName(columnIndex), DBObjectType.COLUMN, null, tableModel.getProject());
                 userValueHolder.setUserValue(value);
 
                 int preferredWidth = column.getWidth();

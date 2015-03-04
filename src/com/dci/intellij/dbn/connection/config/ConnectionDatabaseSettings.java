@@ -152,7 +152,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     public void readConfiguration(Element element) {
         String connectionId = getString(element, "id", null);
         if (connectionId != null) {
-            getParent().setConnectionId(connectionId);
+            parent.setConnectionId(connectionId);
         }
 
         name             = getString(element, "name", name);
@@ -177,7 +177,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         setString(element, "password", encodePassword(password));
     }
 
-    private String encodePassword(String password) {
+    private static String encodePassword(String password) {
         try {
             password = StringUtil.isEmpty(password) ? "" : Base64Converter.encode(nvl(password));
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         return password;
     }
 
-    private String decodePassword(String password) {
+    private static String decodePassword(String password) {
         try {
             password = StringUtil.isEmpty(password) ? "" : Base64Converter.decode(nvl(password));
         } catch (Exception e) {

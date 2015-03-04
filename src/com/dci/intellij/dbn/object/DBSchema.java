@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -43,7 +44,7 @@ public interface DBSchema extends DBObject {
     DBCluster getCluster(String name);
     DBDatabaseLink getDatabaseLink(String name);
 
-    void refreshObjectsStatus();
+    void refreshObjectsStatus() throws SQLException;
 
     @Override
     DBObjectRef<DBSchema> getRef();

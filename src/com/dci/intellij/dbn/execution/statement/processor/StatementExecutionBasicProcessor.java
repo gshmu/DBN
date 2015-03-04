@@ -352,7 +352,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public StatementExecutionResult createErrorExecutionResult(String cause) {
         StatementExecutionResult executionResult = new StatementExecutionBasicResult(this, getResultName(), 0);
-        executionResult.updateExecutionMessage(MessageType.ERROR, "Could not execute " + getStatementName() + ".", cause);
+        executionResult.updateExecutionMessage(MessageType.ERROR, "Could not execute " + getStatementName() + '.', cause);
         executionResult.setExecutionStatus(StatementExecutionStatus.ERROR);
         return executionResult;
     }
@@ -401,7 +401,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public boolean canExecute() {
-        return !isDisposed();
+        return !disposed;
     }
 
     public void navigateToResult() {
@@ -498,7 +498,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             cachedExecutable = null;
             psiFileRef = null;

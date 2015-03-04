@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -21,7 +22,7 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
-import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
@@ -76,7 +77,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         this.objectType = objectType;
 
         if (objectType == DBObjectType.COLUMN) {
-            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType);
+            PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
             BasePsiElement relevantPsiElement = lookupAdapter.findInElement(psiElement);
 
             if (relevantPsiElement == null) {
@@ -117,7 +118,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 name.append(tableName);
             }
 
-            this.name = "subquery " + name.toString() + "";
+            this.name = "subquery " + name;
         }
         objectRef = new DBObjectRef(this);
     }
@@ -133,7 +134,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         if (name.equalsIgnoreCase(relevantPsiElement.getText())) {
             if (relevantPsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-                if (identifierPsiElement.getObjectType() != getObjectType()) {
+                if (identifierPsiElement.getObjectType() != objectType) {
                     return false;
                 }
             }
@@ -147,8 +148,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getChildObjectList(objectType).getObjects();
     }
 
-    public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
-        return getChildObjectList(objectType).getObject(name);
+    public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
+        return getChildObjectList(objectType).getObject(name, overload);
     }
 
     public synchronized DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
@@ -227,6 +228,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getName();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
         return file == null ? null : file.getActiveConnection();
@@ -243,7 +245,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public Project getProject() {
-        return FailsafeUtil.get(underlyingPsiElement.getProject());
+        return FailsafeUtil.nvl(underlyingPsiElement.getProject());
     }
 
     public DBObjectType getObjectType() {

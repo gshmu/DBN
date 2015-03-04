@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,7 +65,10 @@ public class AttachDDLFileDialog extends DBNDialog {
         public void actionPerformed(ActionEvent e) {
             fileForm.selectNone();
             if (showLookupOption && fileForm.isDoNotPromptSelected()) {
-                object.getConnectionHandler().getSettings().getDetailSettings().setEnableDdlFileBinding(false);
+                ConnectionHandler connectionHandler = object.getConnectionHandler();
+                if (connectionHandler != null) {
+                    connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
+                }
             }
             close(2);
         }
@@ -78,7 +82,10 @@ public class AttachDDLFileDialog extends DBNDialog {
             fileAttachmentManager.bindDDLFile(object, virtualFile);
         }
         if (showLookupOption && fileForm.isDoNotPromptSelected()) {
-            object.getConnectionHandler().getSettings().getDetailSettings().setEnableDdlFileBinding(false);
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            if (connectionHandler != null) {
+                connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
+            }
         }
 
         super.doOKAction();

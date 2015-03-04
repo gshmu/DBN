@@ -154,13 +154,13 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
     }
 
     public String getObjectName() {
-        return compilerResult.getObjectRef().getName();
+        return compilerResult.getObjectRef().getObjectName();
     }
 
     @Override
     public int compareTo(CompilerMessage that) {
         if (this.getType() == that.getType()) {
-            return this.getLine() - that.getLine();
+            return line - that.line;
         }
         return that.getType().compareTo(this.getType());
     }

@@ -82,7 +82,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
 
     @Nullable
-    public BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
+    public static BasePsiElement lookupHandlerElement(PsiFile file, int offset) {
         PsiElement psiElement = file.findElementAt(offset);
         while (psiElement != null) {
             if (psiElement instanceof BasePsiElement) {
@@ -102,7 +102,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     }
 
     @Nullable
-    public BasePsiElement lookupProviderElement(@Nullable BasePsiElement handlerPsiElement) {
+    public static BasePsiElement lookupProviderElement(@Nullable BasePsiElement handlerPsiElement) {
         if (handlerPsiElement != null) {
             BasePsiElement statementPsiElement = handlerPsiElement.findEnclosingPsiElement(ElementTypeAttribute.STATEMENT);
             if (statementPsiElement != null) {
@@ -175,7 +175,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         }
     }
 
-    public BasePsiElement getWrappedPsiElement(UpdateParameterInfoContext context) {
+    public static BasePsiElement getWrappedPsiElement(UpdateParameterInfoContext context) {
         BasePsiElement basePsiElement = lookupHandlerElement(context.getFile(), context.getOffset());
         if (basePsiElement != null) {
             return basePsiElement.findFirstPsiElement(IterationElementType.class);

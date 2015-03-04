@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -73,6 +74,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         return Icons.FILE_SQL_CONSOLE;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }
@@ -89,11 +91,13 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         this.currentSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getActiveConnection() {
         return getConnectionHandler();
     }
 
+    @Nullable
     public DBSchema getCurrentSchema() {
         return DBObjectRef.get(currentSchemaRef);
     }
@@ -212,7 +216,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     @Override
     public int compareTo(DBConsoleVirtualFile o) {
-        return getName().compareTo(o.getName());
+        return name.compareTo(o.name);
     }
 
     /********************************************************

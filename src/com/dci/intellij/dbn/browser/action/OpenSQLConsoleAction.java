@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
@@ -24,7 +25,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         super("Open SQL Console", "SQL Console", Icons.FILE_SQL_CONSOLE);
     }
 
-    private ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
+    private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -76,7 +77,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
             } else {
-                ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
+                ConnectionHandler connectionHandler = FailsafeUtil.get(consoleVirtualFile.getConnectionHandler());
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
                 fileEditorManager.openFile(consoleVirtualFile, true);
             }

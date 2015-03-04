@@ -60,7 +60,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
      *********************************************************/
     @NotNull
     public String getName() {
-        return objectRef.getName();
+        return objectRef.getObjectName();
     }
 
     public ItemPresentation getPresentation() {
@@ -75,7 +75,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObject object = getObject();
         Project project = object == null ? null : object.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.nvl(project);
     }
 
     @NotNull
@@ -339,7 +339,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     public VirtualFile getVirtualFile() {
         DBObject object = getObject();
         DBObjectVirtualFile virtualFile = object == null ? null : object.getVirtualFile();
-        return FailsafeUtil.get(virtualFile);
+        return FailsafeUtil.nvl(virtualFile);
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
@@ -50,9 +51,9 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     protected ResultSet executeQuery(Connection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
         if (executionProcessor == null) {
-            String message = "Feature [" + loaderId + "] not supported for " + provider.getDatabaseType() + " database";
-            LOGGER.error(message);
-            throw new SQLException(message);
+            DatabaseType databaseType = provider.getDatabaseType();
+            String databaseTypeName = databaseType == DatabaseType.UNKNOWN ? "this" : databaseType.getName();
+            throw new SQLException("Feature [" + loaderId + "] not implemented / supported for " + databaseTypeName + " database type");
         }
         ResultSet result = executionProcessor.executeQuery(connection, forceExecution, arguments);
         checkDisposed();

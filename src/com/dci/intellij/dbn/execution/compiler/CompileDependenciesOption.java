@@ -43,7 +43,7 @@ public enum CompileDependenciesOption implements InteractiveOption {
 
     public static CompileDependenciesOption get(String name) {
         for (CompileDependenciesOption compileDependenciesOption : CompileDependenciesOption.values()) {
-            if (compileDependenciesOption.getName().equals(name) || compileDependenciesOption.name().equals(name)) {
+            if (compileDependenciesOption.name.equals(name) || compileDependenciesOption.name().equals(name)) {
                 return compileDependenciesOption;
             }
         }

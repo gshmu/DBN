@@ -24,7 +24,7 @@ public abstract class DBMethodNameComparator<T extends DBMethod> extends DBObjec
         }
     }
 
-    private int compareByName(DBMethod method1, DBMethod method2) {
+    private static int compareByName(DBMethod method1, DBMethod method2) {
         int overload1 = method1.getOverload();
         int overload2 = method2.getOverload();
         int nameComparison = method1.getName().compareTo(method2.getName());

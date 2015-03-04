@@ -72,7 +72,7 @@ public class SortableDataModel<T extends SortableDataModelRow> extends BasicData
         }
         if (getSortingState().isValid()) {
             boolean nullsFirst = DataGridSettings.getInstance(getProject()).getSortingSettings().isNullsFirst();
-            setSortingNullsFirst(nullsFirst);
+            this.sortingNullsFirst = nullsFirst;
             Collections.sort(rows);
         }
         updateRowIndexes(rows, 0);

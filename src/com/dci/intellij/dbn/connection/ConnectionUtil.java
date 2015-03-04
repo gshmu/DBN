@@ -47,7 +47,7 @@ public class ConnectionUtil {
 
     public static void closeConnection(final Connection connection) {
         if (connection != null) {
-            new SimpleBackgroundTask() {
+            new SimpleBackgroundTask("close connection") {
                 @Override
                 public void execute() {
                     try {

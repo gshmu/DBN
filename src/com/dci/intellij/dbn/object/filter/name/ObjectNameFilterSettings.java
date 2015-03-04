@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.object.filter.name;
 
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -8,19 +21,11 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelation;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.project.Project;
-import gnu.trove.THashMap;
-import org.jdom.Element;
-
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import java.util.*;
 
 public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFilterSettingsForm> implements TreeModel {
     private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
-    private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new THashMap<DBObjectType, Filter<DBObject>>();
-    private Map<DBObjectRelationType, Filter<DBObjectRelation>> objectRelationFilterMap = new THashMap<DBObjectRelationType, Filter<DBObjectRelation>>();
+    private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<DBObjectType, Filter<DBObject>>(DBObjectType.class);
+    private Map<DBObjectRelationType, Filter<DBObjectRelation>> objectRelationFilterMap = new EnumMap<DBObjectRelationType, Filter<DBObjectRelation>>(DBObjectRelationType.class);
     public ObjectNameFilterSettings(Project project) {
         super(project);
     }
@@ -163,7 +168,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     private List getChildren(Object parent) {
         if (parent instanceof ObjectNameFilterSettings) {
             ObjectNameFilterSettings filterSettings = (ObjectNameFilterSettings) parent;
-            return filterSettings.getFilters();
+            return filterSettings.filters;
         }
 
         if (parent instanceof CompoundFilterCondition) {
@@ -204,7 +209,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         if (listeners.size() > 0) {
             if (condition instanceof ObjectNameFilter) {
                 ObjectNameFilter filter = (ObjectNameFilter) condition;
-                int index = filter.getSettings().getFilters().indexOf(filter);
+                int index = filter.getSettings().filters.indexOf(filter);
                 TreeModelEvent event = createTreeModelEvent(index, condition);
                 for (TreeModelListener listener: listeners) {
                     listener.treeNodesChanged(event);

@@ -49,10 +49,12 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         super(object);
     }
 
+    @Nullable
     public ConnectionHandler getActiveConnection() {
         return getConnectionHandler();
     }
 
+    @Nullable
     public DBSchema getCurrentSchema() {
         return getObject().getSchema();
     }
@@ -86,7 +88,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                         final DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
                         List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(object);
                         if (virtualFiles.size() > 0) {
-                            int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
+                            int exitCode = DDLFileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
                             return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
                         } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
                             MessageUtil.showQuestionDialog(

@@ -39,7 +39,7 @@ public enum DatasetFilterType implements Presentable{
 
     public static DatasetFilterType get(String name) {
         for (DatasetFilterType datasetFilterType : DatasetFilterType.values()) {
-            if (datasetFilterType.getName().equals(name) || datasetFilterType.name().equals(name)) {
+            if (datasetFilterType.name.equals(name) || datasetFilterType.name().equals(name)) {
                 return datasetFilterType;
             }
         }

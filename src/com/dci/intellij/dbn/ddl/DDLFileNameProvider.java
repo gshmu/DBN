@@ -26,6 +26,6 @@ public class DDLFileNameProvider {
     }
 
     public String getFileName() {
-        return object.getName().toLowerCase() + "." + extension;
+        return object.getRef().getFileName().toLowerCase() + '.' + extension;
     }
 }

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -19,11 +20,10 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public interface ConnectionHandler extends Disposable{
+public interface ConnectionHandler extends Disposable {
     Project getProject();
     Connection getPoolConnection() throws SQLException;
     Connection getPoolConnection(DBSchema schema) throws SQLException;
@@ -85,7 +85,6 @@ public interface ConnectionHandler extends Disposable{
     EnvironmentType getEnvironmentType();
     UncommittedChangeBundle getUncommittedChanges();
     boolean isConnected();
-    boolean isDisposed();
     int getIdleMinutes();
 
     ConnectionHandlerRef getRef();

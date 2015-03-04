@@ -175,9 +175,9 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
         for (CodeCompletionFilterOption option: rootFilterOptions.getOptions()) {
             rootNode.add(option.createCheckedTreeNode());
         }
-        rootNode.add(getUserSchemaOptions().createCheckedTreeNode());
-        rootNode.add(getPublicSchemaOptions().createCheckedTreeNode());
-        rootNode.add(getAnySchemaOptions().createCheckedTreeNode());
+        rootNode.add(userSchemaOptions.createCheckedTreeNode());
+        rootNode.add(publicSchemaOptions.createCheckedTreeNode());
+        rootNode.add(anySchemaOptions.createCheckedTreeNode());
         rootNode.updateCheckedStatusFromChildren();
         return rootNode;
     }

@@ -125,27 +125,29 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
         if (getProject().isOpen() && targetSelection != null) {
             targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
             TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
-            for (Object object : treePath.getPath()) {
-                BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                if (treeNode == null || treeNode.isDisposed()) {
-                    targetSelection = null;
-                    return;
-                }
+            if (treePath != null) {
+                for (Object object : treePath.getPath()) {
+                    BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                    if (treeNode == null || treeNode.isDisposed()) {
+                        targetSelection = null;
+                        return;
+                    }
 
 
-                if (treeNode.equals(targetSelection)) {
-                    break;
+                    if (treeNode.equals(targetSelection)) {
+                        break;
+                    }
+
+                    if (!treeNode.isLeafTreeElement() && !treeNode.isTreeStructureLoaded()) {
+                        selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
+                        treeNode.getTreeChildren();
+                        return;
+                    }
                 }
 
-                if (!treeNode.isLeafTreeElement() && !treeNode.isTreeStructureLoaded()) {
-                    selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
-                    treeNode.getTreeChildren();
-                    return;
-                }
+                targetSelection = null;
+                selectPath(treePath);
             }
-
-            targetSelection = null;
-            selectPath(treePath);
         }
     }
 
@@ -210,10 +212,12 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
 
     public void selectPathSilently(TreePath treePath) {
-        listenersEnabled = false;
-        selectionModel.setSelectionPath(treePath);
-        TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true);
-        listenersEnabled = true;
+        if (treePath != null) {
+            listenersEnabled = false;
+            selectionModel.setSelectionPath(treePath);
+            TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true);
+            listenersEnabled = true;
+        }
     }
 
     private boolean listenersEnabled = true;
@@ -280,8 +284,10 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
             } else if (lastPathEntity instanceof DBObjectBundle) {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
                 ConnectionHandler connectionHandler = objectBundle.getConnectionHandler();
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), deliberate);
+                if (connectionHandler != null && !connectionHandler.isDisposed()) {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
+                    fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), deliberate);
+                }
             }
         }
     }
@@ -401,7 +407,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     private boolean disposed;
 
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             targetSelection = null;
             setModel(EMPTY_TREE_MODEL);
@@ -412,6 +418,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
             treeModelListener = null;
         }
     }
+
 
     @Override
     public boolean isDisposed() {

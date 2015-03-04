@@ -1,13 +1,15 @@
 package com.dci.intellij.dbn.browser.options;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum BrowserDisplayMode implements Presentable{
-    SINGLE("Single tree"),
+
+    @Deprecated SINGLE("Single tree"),
+    SIMPLE("Single tree"),
     TABBED("Multiple connection tabs");
 
     private String name;

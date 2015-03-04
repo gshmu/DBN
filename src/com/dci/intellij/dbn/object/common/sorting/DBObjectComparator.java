@@ -24,7 +24,7 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
     @Nullable
     public static DBObjectComparator get(DBObjectType objectType, SortingType sortingType) {
         for (DBObjectComparator comparator : REGISTRY) {
-            if (comparator.getObjectType() == objectType && comparator.getSortingType() == sortingType) {
+            if (comparator.objectType == objectType && comparator.sortingType == sortingType) {
                 return comparator;
             }
         }
@@ -34,8 +34,8 @@ public abstract class DBObjectComparator<T extends DBObject> implements Comparat
     public static List<SortingType> getSortingTypes(DBObjectType objectType) {
         List<SortingType> sortingTypes = new ArrayList<SortingType>();
         for (DBObjectComparator comparator : REGISTRY) {
-            if (comparator.getObjectType() == objectType) {
-                sortingTypes.add(comparator.getSortingType());
+            if (comparator.objectType == objectType) {
+                sortingTypes.add(comparator.sortingType);
             }
         }
         return sortingTypes;

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -112,7 +113,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
     }
 
     private void updatePreview() {
-        ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
         DBSchema currentSchema = executionProcessor.getCurrentSchema();
         Project project = connectionHandler.getProject();
 

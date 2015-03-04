@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
-import com.dci.intellij.dbn.common.list.MostRecentStack;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
-import com.intellij.openapi.components.PersistentStateComponent;
+import java.util.StringTokenizer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.StringTokenizer;
+import com.dci.intellij.dbn.common.list.MostRecentStack;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
+import com.intellij.openapi.components.PersistentStateComponent;
 
 public class StatementExecutionVariable implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
     private GenericDataType dataType;
@@ -21,8 +21,8 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
     }
 
     public StatementExecutionVariable(StatementExecutionVariable source) {
-        dataType = source.getDataType();
-        name = source.getName();
+        dataType = source.dataType;
+        name = source.name;
         valueHistory = new MostRecentStack<String>(source.getValueHistory());
     }
 

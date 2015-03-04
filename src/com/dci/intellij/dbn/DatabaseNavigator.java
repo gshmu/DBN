@@ -68,7 +68,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         updateChecker.schedule(new PluginUpdateChecker(), TimeUtil.ONE_SECOND, TimeUtil.ONE_HOUR);
     }
 
-    private boolean sqlPluginActive() {
+    private static boolean sqlPluginActive() {
         for (IdeaPluginDescriptor pluginDescriptor : PluginManager.getPlugins()) {
             if (pluginDescriptor.getPluginId().getIdString().equals(SQL_PLUGIN_ID)) {
                 return !PluginManager.getDisabledPlugins().contains(SQL_PLUGIN_ID);

@@ -91,7 +91,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
     }
 
     public void writeConfiguration(Element element) {
-        for (DDLFileType fileType : getDDLFileTypes()) {
+        for (DDLFileType fileType : fileTypes) {
             Element fileTypeElement = new Element("mapping");
             fileTypeElement.setAttribute("file-type-id", fileType.getId());
             String extensions = StringUtil.concatenate(fileType.getExtensions(), ",");

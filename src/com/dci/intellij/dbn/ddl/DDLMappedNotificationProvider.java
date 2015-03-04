@@ -117,7 +117,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
                     DBSchemaObject editableObject = attachmentManager.getEditableObject(virtualFile);
                     if (editableObject != null) {
                         DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                        if (databaseFileSystem.isFileOpened(editableObject))
+                        if (DatabaseFileSystem.isFileOpened(editableObject))
                             return createPanel(virtualFile, editableObject);
                     }
                 }

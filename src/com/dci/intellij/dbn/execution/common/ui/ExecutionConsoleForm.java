@@ -10,7 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -291,7 +290,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     @Nullable
-    private ExecutionResult getExecutionResult(TabInfo tabInfo) {
+    private static ExecutionResult getExecutionResult(TabInfo tabInfo) {
         ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
         return executionResultForm == null ? null : executionResultForm.getExecutionResult();
     }
@@ -493,12 +492,6 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
         } finally {
             canScrollToSource = true;
         }
-    }
-
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.ExecutionConsolePanel";
     }
 
     public void dispose() {
