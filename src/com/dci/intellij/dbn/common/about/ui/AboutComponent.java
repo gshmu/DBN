@@ -80,7 +80,7 @@ public class AboutComponent extends DBNFormImpl{
         });
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
         String version = ideaPluginDescriptor.getVersion();
-        buildLabel.setText("Build: " + version.substring(version.lastIndexOf(".") + 1));
+        buildLabel.setText("Build: " + version.substring(version.lastIndexOf('.') + 1));
     }
 
     @Override

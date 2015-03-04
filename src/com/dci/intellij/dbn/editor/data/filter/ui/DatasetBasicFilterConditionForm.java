@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
@@ -21,18 +33,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<DatasetBasicFilterCondition> {
 
@@ -249,7 +249,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         condition.setColumnName(column == null ? "" : column.getName());
         condition.setOperator(operator == null ? "" : operator.toString());
         condition.setValue(value == null ? "" : value);
-        condition.setActive(isActive());
+        condition.setActive(active);
     }
 
     private void updateValueTextField() {

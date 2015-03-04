@@ -407,7 +407,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     private boolean disposed;
 
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             targetSelection = null;
             setModel(EMPTY_TREE_MODEL);
@@ -418,6 +418,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
             treeModelListener = null;
         }
     }
+
 
     @Override
     public boolean isDisposed() {

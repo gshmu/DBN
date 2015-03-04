@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -75,10 +74,8 @@ import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.FileStatus;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -436,7 +433,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();
                 append(true, "Pool size: ", "-2", null, false);
-                append(false, "" + connectionPool.getSize(), false);
+                append(false, String.valueOf(connectionPool.getSize()), false);
                 append(false, " (", false);
                 append(false, "peak&nbsp;" + connectionPool.getPeakPoolSize(), false);
                 append(false, ")", false);
@@ -464,10 +461,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return this;
     }
 
-    public FileStatus getFileStatus() {
-        return FileStatus.NOT_CHANGED;
-    }
-
     /*********************************************************
      *                   NavigationItem                      *
      *********************************************************/
@@ -477,10 +470,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     public Icon getIcon(boolean open) {
         return getIcon(0);
-    }
-
-    public TextAttributesKey getTextAttributesKey() {
-        return SQLTextAttributesKeys.IDENTIFIER;
     }
 
     /*********************************************************

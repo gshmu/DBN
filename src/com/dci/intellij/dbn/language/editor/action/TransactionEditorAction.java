@@ -30,7 +30,7 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         e.getPresentation().setEnabled(enabled);
     }
 
-    protected void showErrorDialog(final Project project, final String message) {
+    protected static void showErrorDialog(final Project project, final String message) {
         new SimpleLaterInvocator() {
             public void execute() {
                 MessageUtil.showErrorDialog(project, message);
@@ -38,7 +38,7 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         }.start();
     }
 
-    protected ConnectionHandler getConnectionHandler(Project project, VirtualFile virtualFile) {
+    protected static ConnectionHandler getConnectionHandler(Project project, VirtualFile virtualFile) {
         if (project != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getActiveConnection(virtualFile);

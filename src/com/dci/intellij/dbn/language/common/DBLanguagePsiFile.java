@@ -144,7 +144,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             return contentFile.getLanguageDialect();
         }
         
-        Language language = getLanguage();
         if (language instanceof DBLanguage) {
             DBLanguage dbLanguage = (DBLanguage) language;
             ConnectionHandler connectionHandler = getActiveConnection();
@@ -329,7 +328,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
         }
     }

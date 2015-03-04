@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
-import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -93,8 +92,12 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public String getId() {return id;}
     @Override public String getName() {return name;}
-    @Override public String getPresentableText() {return getName();}
-    @Override public String getQualifiedName() {return getName();}
+    @Override public String getPresentableText() {
+        return name;
+    }
+    @Override public String getQualifiedName() {
+        return name;
+    }
     @Override public String getDescription() {return "Virtual database connection"; }
     @Override public Icon getIcon() { return Icons.CONNECTION_VIRTUAL; }
     @Override public boolean isVirtual() {return true;}
@@ -147,7 +150,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     public ConnectionBundle getConnectionBundle() {return null;}
-    public ConnectionInfo getConnectionInfo() throws SQLException {return null;}
     public ConnectionPool getConnectionPool() {return null;}
 
     @Override

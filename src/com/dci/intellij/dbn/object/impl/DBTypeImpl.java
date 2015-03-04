@@ -90,7 +90,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
     protected void initLists() {
         super.initLists();
-        if (!isCollection()) {
+        if (!isCollection) {
             DBObjectListContainer container = initChildObjects();
             DBSchema schema = getSchema();
             attributes = container.createSubcontentObjectList(DBObjectType.TYPE_ATTRIBUTE, this, ATTRIBUTES_LOADER, schema, true);
@@ -115,15 +115,15 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
             if (getStatus().is(DBObjectStatus.DEBUG))  {
                 return Icons.DBO_TYPE_DEBUG;
             } else {
-                return isCollection() ? Icons.DBO_TYPE_COLLECTION : Icons.DBO_TYPE;
+                return isCollection ? Icons.DBO_TYPE_COLLECTION : Icons.DBO_TYPE;
             }
         } else {
-            return isCollection() ? Icons.DBO_TYPE_COLLECTION_ERR : Icons.DBO_TYPE_ERR;
+            return isCollection ? Icons.DBO_TYPE_COLLECTION_ERR : Icons.DBO_TYPE_ERR;
         }
     }
 
     public Icon getOriginalIcon() {
-        return isCollection() ? Icons.DBO_TYPE_COLLECTION : Icons.DBO_TYPE;
+        return isCollection ? Icons.DBO_TYPE_COLLECTION : Icons.DBO_TYPE;
     }
 
     public List<DBTypeAttribute> getAttributes() {
@@ -151,7 +151,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     }
 
     public DBObject getDefaultNavigationObject() {
-        if (isCollection()) {
+        if (isCollection) {
             DBDataType dataType = getCollectionElementType();
             if (dataType != null && dataType.isDeclared()) {
                 return dataType.getDeclaredType();
@@ -194,7 +194,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
      *********************************************************/
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return isCollection() ?
+        return isCollection ?
                 EMPTY_TREE_NODE_LIST :
                 DatabaseBrowserUtils.createList(attributes, procedures, functions);
     }
@@ -353,8 +353,8 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         if (o instanceof DBType) {
             DBType type = (DBType) o;
             if (getParentObject().equals(type.getParentObject())) {
-                if ((type.isCollection() && this.isCollection()) ||
-                        (!type.isCollection() && !this.isCollection())) return super.compareTo(o); else
+                if ((type.isCollection() && isCollection) ||
+                        (!type.isCollection() && !isCollection)) return super.compareTo(o); else
                 return type.isCollection() ? -1 : 1;
             }
         }
@@ -372,7 +372,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         if (subTypes != null && subTypes.size() > 0) {
             objectNavigationLists.add(new DBObjectNavigationListImpl<DBType>("Sub Types", subTypes.getObjects()));
         }
-        if (isCollection()) {
+        if (isCollection) {
             DBDataType dataType = getCollectionElementType();
             if (dataType != null && dataType.isDeclared()) {
                 DBType collectionElementType = dataType.getDeclaredType();

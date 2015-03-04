@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -7,13 +14,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
-
-import javax.swing.JTree;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> implements Disposable {
     private static final Object[] EMPTY_ARRAY = new Object[0];
@@ -55,7 +55,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         return elements;
     }
 
-    private void loadElements(List<BrowserTreeNode> nodes, BrowserTreeNode browserTreeNode) {
+    private static void loadElements(List<BrowserTreeNode> nodes, BrowserTreeNode browserTreeNode) {
         if (browserTreeNode.isTreeStructureLoaded()) {
             if (browserTreeNode instanceof ConnectionBundle) {
                 ConnectionBundle connectionBundle = (ConnectionBundle) browserTreeNode;

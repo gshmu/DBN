@@ -29,14 +29,14 @@ public class FileListCellRenderer extends ColoredListCellRenderer {
             VirtualFile parent = contentRoot.getParent();
             int relativePathIndex = parent == null ? 0 : parent.getPath().length();
             String relativePath = virtualFile.getPath().substring(relativePathIndex);
-            append("[" + module.getName() + "]", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            append('[' + module.getName() + ']', SimpleTextAttributes.REGULAR_ATTRIBUTES);
             append(relativePath, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
 
         setIcon(VirtualFileUtil.getIcon(virtualFile));
     }
 
-    private VirtualFile getModuleContentRoot(Module module, VirtualFile virtualFile) {
+    private static VirtualFile getModuleContentRoot(Module module, VirtualFile virtualFile) {
         ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
         VirtualFile[] contentRoots = rootManager.getContentRoots();
 

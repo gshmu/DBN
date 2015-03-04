@@ -49,7 +49,7 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
         presentation.setText("Run Method");
     }
 
-    private CompilerSettings getCompilerSettings(Project project) {
+    private static CompilerSettings getCompilerSettings(Project project) {
         return ExecutionEngineSettings.getInstance(project).getCompilerSettings();
     }
 }

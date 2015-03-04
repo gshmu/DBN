@@ -57,7 +57,7 @@ public class ElementLookupContext {
     }
 
     @Nullable
-    private NamedElementType getNamedElement(@NotNull ASTNode astNode) {
+    private static NamedElementType getNamedElement(@NotNull ASTNode astNode) {
         astNode = astNode.getTreeParent();
         while (astNode != null) {
             IElementType elementType = astNode.getElementType();
@@ -70,7 +70,7 @@ public class ElementLookupContext {
     }
 
     @Nullable
-    private NamedElementType getNamedElement(@NotNull PathNode pathNode) {
+    private static NamedElementType getNamedElement(@NotNull PathNode pathNode) {
         pathNode = pathNode.getParent();
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();

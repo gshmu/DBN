@@ -190,7 +190,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             ConnectionUtil.closeConnection(connection);
             MessageDialog.showInfoDialog(
                     project,
-                    "Database details for connection \"" + databaseSettings.getName() + "\"",
+                    "Database details for connection \"" + databaseSettings.getName() + '"',
                     connectionInfo.toString(),
                     false);
             return connectionInfo;

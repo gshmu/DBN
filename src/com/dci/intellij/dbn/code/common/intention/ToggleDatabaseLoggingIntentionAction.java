@@ -24,7 +24,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
             if (StringUtil.isEmpty(databaseLogName)) {
                 return connectionHandler.isLoggingEnabled() ? "Disable database logging" : "Enable database logging";
             } else {
-                return (connectionHandler.isLoggingEnabled() ? "Disable logging (" : "Enable logging (") + databaseLogName + ")";
+                return (connectionHandler.isLoggingEnabled() ? "Disable logging (" : "Enable logging (") + databaseLogName + ')';
             }
         }
 
@@ -61,7 +61,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return supportsLogging(connectionHandler);
     }
 
-    private boolean supportsLogging(ConnectionHandler connectionHandler) {
+    private static boolean supportsLogging(ConnectionHandler connectionHandler) {
         return connectionHandler != null &&
                 !connectionHandler.isDisposed() &&
                 !connectionHandler.isVirtual() &&

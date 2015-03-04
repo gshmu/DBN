@@ -25,7 +25,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         super("Open SQL Console", "SQL Console", Icons.FILE_SQL_CONSOLE);
     }
 
-    private ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
+    private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);

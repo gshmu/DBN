@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -212,19 +211,4 @@ public class ProjectSettings
     public Runnable enableSearch(String option) {
         return null;
     }
-
-    /****************************************
-    *             ProjectComponent          *
-    *****************************************/
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "DBNavigator.Project.Settings";
-    }
-
-    public void projectOpened() {}
-    public void projectClosed() {}
-    public void initComponent() {}
-    public void disposeComponent() {}
-
 }

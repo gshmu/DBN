@@ -29,7 +29,7 @@ public class DatabaseLoggingToggleAction extends ToggleAction implements DumbAwa
     }
 
     @Nullable
-    private ConnectionHandler getActiveConnection(AnActionEvent e) {
+    private static ConnectionHandler getActiveConnection(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (project != null && virtualFile != null) {

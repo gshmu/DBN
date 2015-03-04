@@ -36,14 +36,14 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                         String statement = ddlFileManager.createDDLStatement(virtualFile, contentType);
                         if (statement.trim().length() > 0) {
                             buffer.append(statement);
-                            buffer.append("\n");
+                            buffer.append('\n');
                         }
-                        if (contentType != contentTypes[contentTypes.length - 1]) buffer.append("\n");
+                        if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
                     }
                 } else {
                     DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
                     buffer.append(ddlFileManager.createDDLStatement(virtualFile, fileContentType));
-                    buffer.append("\n");
+                    buffer.append('\n');
                 }
                 Document document = DocumentUtil.getDocument(ddlFile);
                 document.setText(buffer.toString());

@@ -96,7 +96,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
             writeConfiguration(connectionElement);
             ConnectionSettings clone = new ConnectionSettings(parent);
             clone.readConfiguration(connectionElement);
-            clone.getDatabaseSettings().setConnectivityStatus(databaseSettings.getConnectivityStatus());
+            clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
             clone.generateNewId();
             return clone;
         } catch (Exception e) {

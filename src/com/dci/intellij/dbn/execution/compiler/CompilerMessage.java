@@ -160,7 +160,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
     @Override
     public int compareTo(CompilerMessage that) {
         if (this.getType() == that.getType()) {
-            return this.getLine() - that.getLine();
+            return line - that.line;
         }
         return that.getType().compareTo(this.getType());
     }

@@ -196,11 +196,12 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public String toString() {
+        //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
         return hasErrors() ?
                 "[INVALID] " + elementType.getDebugName() :
                 elementType.getDebugName() +
-                        (isScopeDemarcation() ? " SCOPE_DEMARCATION" : "") +
-                        (isScopeIsolation() ? " SCOPE_ISOLATION" : "");
+                        (isScopeDemarcation ? " SCOPE_DEMARCATION" : "") +
+                        (isScopeIsolation ? " SCOPE_ISOLATION" : "");
     }
 
     public void acceptChildren(@NotNull PsiElementVisitor visitor) {
@@ -393,7 +394,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
 
-    private void focusEditor(@NotNull Editor editor) {
+    private static void focusEditor(@NotNull Editor editor) {
         Project project = editor.getProject();
         IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
     }
@@ -524,7 +525,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (element != null) {
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.isScopeIsolation()) {
+                if (basePsiElement.isScopeIsolation) {
                     return basePsiElement;
                 }
             }
@@ -540,7 +541,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (element != null) {
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.isScopeDemarcation()) {
+                //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
+                if (basePsiElement.isScopeDemarcation) {
                     return basePsiElement;
                 }
             }
@@ -641,7 +643,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
     
     public boolean isScopeBoundary() {
-        return isScopeDemarcation() || isScopeIsolation();
+        //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
+        return isScopeDemarcation || isScopeIsolation;
     }
 
 

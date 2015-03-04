@@ -104,7 +104,7 @@ public class SortingState{
     }
 
     public void writeState(Element element) {
-        for (SortingInstruction sortingInstruction : getSortingInstructions()) {
+        for (SortingInstruction sortingInstruction : sortingInstructions) {
             String columnName = sortingInstruction.getColumnName();
             SortDirection sortDirection = sortingInstruction.getDirection();
             if (columnName != null && !sortDirection.isIndefinite()) {

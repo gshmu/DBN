@@ -235,8 +235,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public int compareTo(@NotNull MethodExecutionInput executionInput) {
-        DBObjectRef<DBMethod> localMethod = getMethodRef();
-        DBObjectRef<DBMethod> remoteMethod = executionInput.getMethodRef();
+        DBObjectRef<DBMethod> localMethod = methodRef;
+        DBObjectRef<DBMethod> remoteMethod = executionInput.methodRef;
         return localMethod.compareTo(remoteMethod);
     }
 
@@ -244,7 +244,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     public boolean equals(Object obj) {
         if (obj instanceof MethodExecutionInput) {
             MethodExecutionInput executionInput = (MethodExecutionInput) obj;
-            return methodRef.equals(executionInput.getMethodRef());
+            return methodRef.equals(executionInput.methodRef);
         }
         return false;
     }

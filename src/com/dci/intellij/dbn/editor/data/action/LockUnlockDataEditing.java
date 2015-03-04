@@ -42,9 +42,8 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
         }
     }
 
-    private DatasetEditor getDatasetEditor(AnActionEvent e) {
+    private static DatasetEditor getDatasetEditor(AnActionEvent e) {
         FileEditor fileEditor = e.getData(PlatformDataKeys.FILE_EDITOR);
-
         return fileEditor instanceof DatasetEditor ? (DatasetEditor) fileEditor : null;
     }
 }

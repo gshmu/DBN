@@ -94,7 +94,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public void loadSessions(boolean force) {
-        if (!isLoading() && !isPreventLoading(force)) {
+        if (!loading && !isPreventLoading(force)) {
             final ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
             setLoading(true);
             new BackgroundTask(getProject(), "Loading sessions", true) {
@@ -165,7 +165,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public void refreshLoadTimestamp() {
-        SessionBrowserForm editorForm = getEditorForm();
         if (editorForm != null) {
             editorForm.refreshLoadTimestamp();
         }
@@ -216,7 +215,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     @NotNull
     public JComponent getComponent() {
-        return isDisposed() ? new JPanel() : editorForm.getComponent();
+        return disposed ? new JPanel() : editorForm.getComponent();
     }
 
     @Nullable
@@ -380,7 +379,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public void updateDetails() {
-        SessionBrowserForm editorForm = getEditorForm();
         if (editorForm != null) {
             SessionBrowserTable editorTable = editorForm.getEditorTable();
             SessionBrowserDetailsForm detailsForm = editorForm.getDetailsForm();

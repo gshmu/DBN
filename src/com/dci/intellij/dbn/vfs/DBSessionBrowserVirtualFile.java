@@ -163,7 +163,7 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
 
     @Override
     public int compareTo(DBSessionBrowserVirtualFile o) {
-        return getName().compareTo(o.getName());
+        return name.compareTo(o.name);
     }
 
     /********************************************************

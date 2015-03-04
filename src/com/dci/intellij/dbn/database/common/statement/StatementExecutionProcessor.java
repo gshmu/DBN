@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.database.common.statement;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.intellij.openapi.diagnostic.Logger;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +9,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.intellij.openapi.diagnostic.Logger;
 
 public class StatementExecutionProcessor {
     private DatabaseInterfaceProvider interfaceProvider;
@@ -121,12 +121,12 @@ public class StatementExecutionProcessor {
             } catch (SQLException exception) {
                 executionSuccessful = false;
 
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\n" + "Cause: " + exception.getMessage());
+                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
                 if (interfaceProvider.getMessageParserInterface().isModelException(exception)) {
                     statementDefinition.setDisabled(true);
-                    lastException = new SQLException("Model exception received while executing query '" + getId() +"'. " + exception.getMessage());
+                    lastException = new SQLException("Model exception received while executing query '" + id +"'. " + exception.getMessage());
                 } else {
-                    lastException = new SQLException("Too many failed attempts of executing query '" + getId() +"'. " + exception.getMessage());
+                    lastException = new SQLException("Too many failed attempts of executing query '" + id +"'. " + exception.getMessage());
                 }
                 ConnectionUtil.closeStatement(statement);
                 throw exception;
@@ -135,7 +135,7 @@ public class StatementExecutionProcessor {
             }
         } else {
             if (lastException == null) {
-                throw new SQLException("Too many failed attempts of executing query '" + getId() + "'.");
+                throw new SQLException("Too many failed attempts of executing query '" + id + "'.");
             }
             throw lastException;
         }

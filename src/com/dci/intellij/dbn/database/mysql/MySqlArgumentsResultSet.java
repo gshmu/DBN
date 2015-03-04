@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.WordTokenizer;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -27,6 +24,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.WordTokenizer;
 
 public class MySqlArgumentsResultSet implements ResultSet {
     private class Argument {
@@ -154,11 +154,11 @@ public class MySqlArgumentsResultSet implements ResultSet {
         arguments = argumentList.iterator();
     }
 
-    private void throwParseException(String argumentsString, String token) throws SQLException {
+    private static void throwParseException(String argumentsString, String token) throws SQLException {
         throw new SQLException("Could not parse argument list \"" + argumentsString + "\". Unexpected token \"" + token + "\" found.");
     }
 
-    private void throwParseException(String argumentsString, String token, String customMessage) throws SQLException {
+    private static void throwParseException(String argumentsString, String token, String customMessage) throws SQLException {
         throw new SQLException("Could not parse argument list \"" + argumentsString + "\". Unexpected token \"" + token + "\" found. " + customMessage);
     }
 

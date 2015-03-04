@@ -44,7 +44,7 @@ public class DDLFileAction extends GroupPopupAction {
         return new AnAction[0];
     }
 
-    protected DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
+    protected static DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }

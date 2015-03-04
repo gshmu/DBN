@@ -7,13 +7,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EnumMap;
 import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.intellij.openapi.diagnostic.Logger;
-import gnu.trove.THashMap;
 
 public abstract class ValueAdapter<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -24,7 +24,7 @@ public abstract class ValueAdapter<T> {
     public abstract void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable T value) throws SQLException;
     public abstract String getDisplayValue();
 
-    public static final Map<GenericDataType, Class<? extends ValueAdapter>> REGISTRY = new THashMap<GenericDataType, Class<? extends ValueAdapter>>();
+    public static final Map<GenericDataType, Class<? extends ValueAdapter>> REGISTRY = new EnumMap<GenericDataType, Class<? extends ValueAdapter>>(GenericDataType.class);
     static {
         REGISTRY.put(GenericDataType.ARRAY, ArrayValue.class);
         REGISTRY.put(GenericDataType.BLOB, BlobValue.class);
@@ -76,7 +76,7 @@ public abstract class ValueAdapter<T> {
         if (e instanceof SQLException) {
             throw (SQLException) e;
         } else {
-            throw new SQLException("Error creating value adapter for generic type " + genericDataType.name() + ".", e);
+            throw new SQLException("Error creating value adapter for generic type " + genericDataType.name() + '.', e);
         }
     }
 }

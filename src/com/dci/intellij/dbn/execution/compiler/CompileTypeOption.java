@@ -48,7 +48,7 @@ public enum CompileTypeOption implements InteractiveOption {
 
     public static CompileTypeOption get(String name) {
         for (CompileTypeOption compileType : CompileTypeOption.values()) {
-            if (compileType.getName().equals(name) || compileType.name().equals(name)) {
+            if (compileType.name.equals(name) || compileType.name().equals(name)) {
                 return compileType;
             }
         }

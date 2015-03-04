@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
-import org.jdom.Element;
 
 public class FormattingDefinition {
     public static final FormattingDefinition LINE_BREAK_BEFORE = new FormattingDefinition(null, null, SpacingDefinition.MIN_LINE_BREAK, null);
@@ -71,10 +72,10 @@ public class FormattingDefinition {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("");
-        if (wrap != null) result.append("wrap=").append(wrap).append(" ");
-        if (indent != null) result.append("indent=").append(indent).append(" ");
-        if (spacingBefore != null) result.append("spacingBefore=").append(spacingBefore).append(" ");
-        if (spacingAfter != null) result.append("spacingAfter=").append(spacingAfter).append(" ");
+        if (wrap != null) result.append("wrap=").append(wrap).append(' ');
+        if (indent != null) result.append("indent=").append(indent).append(' ');
+        if (spacingBefore != null) result.append("spacingBefore=").append(spacingBefore).append(' ');
+        if (spacingAfter != null) result.append("spacingAfter=").append(spacingAfter).append(' ');
 
         return result.toString();
     }

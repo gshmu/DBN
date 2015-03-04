@@ -60,7 +60,7 @@ public class BasicPathNode implements PathNode {
     public boolean isRecursive() {
         PathNode node = this.getParent();
         while (node != null) {
-            if (node.getElementType() == getElementType()) {
+            if (node.getElementType() == elementType) {
                 return true;
             }
             node = node.getParent();
@@ -69,7 +69,7 @@ public class BasicPathNode implements PathNode {
     }
 
     public boolean isRecursive(ElementType elementType) {
-        if (getElementType() == elementType) {
+        if (this.elementType == elementType) {
             return true;
         }
         PathNode node = this.getParent();
@@ -84,7 +84,7 @@ public class BasicPathNode implements PathNode {
 
     @Override
     public int getIndexInParent() {
-        return getElementType().getIndexInParent(this);
+        return elementType.getIndexInParent(this);
     }
 
     public String toString() {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +21,7 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
     private IFileElementType fileElementType;
     private Set<ChameleonTokenType> chameleonTokens;
     private ChameleonElementType chameleonElementType;
-    private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new HashMap<DBLanguageDialectIdentifier, DBLanguageDialect>();
+    private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<DBLanguageDialectIdentifier, DBLanguageDialect>(DBLanguageDialectIdentifier.class);
 
     public DBLanguageDialect(@NonNls @NotNull DBLanguageDialectIdentifier identifier, @NotNull DBLanguage baseLanguage) {
         super(identifier.getValue(), baseLanguage);
@@ -94,7 +94,7 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
             if (chameleonTokens == null) chameleonTokens = new HashSet<ChameleonTokenType>();
         }
         for (ChameleonTokenType chameleonToken : chameleonTokens) {
-            if (chameleonToken.getInjectedLanguage().getIdentifier() == dialectIdentifier) {
+            if (chameleonToken.getInjectedLanguage().identifier == dialectIdentifier) {
                 return chameleonToken;
             }
         }
@@ -109,7 +109,7 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
     }
 
     public Map<TokenPairTemplate,TokenPairRangeMonitor> createTokenPairRangeMonitors(PsiBuilder builder){
-        Map<TokenPairTemplate,TokenPairRangeMonitor> tokenPairRangeMonitors = new HashMap<TokenPairTemplate,TokenPairRangeMonitor>();
+        Map<TokenPairTemplate,TokenPairRangeMonitor> tokenPairRangeMonitors = new EnumMap<TokenPairTemplate, TokenPairRangeMonitor>(TokenPairTemplate.class);
         tokenPairRangeMonitors.put(TokenPairTemplate.PARENTHESES, new TokenPairRangeMonitor(builder, this, TokenPairTemplate.PARENTHESES));
         return tokenPairRangeMonitors;
     }

@@ -118,7 +118,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         }
     }
 
-    private boolean isValidDDLFile(VirtualFile virtualFile, DBSchemaObject object) {
+    private static boolean isValidDDLFile(VirtualFile virtualFile, DBSchemaObject object) {
         for (DDLFileType ddlFileType : object.getDDLFileTypes()) {
             if (ddlFileType.getExtensions().contains(virtualFile.getExtension())) {
                 return true;
@@ -127,13 +127,13 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         return false;
     }
 
-    public int showFileAttachDialog(DBSchemaObject object, List<VirtualFile> virtualFiles, boolean showLookupOption) {
+    public static int showFileAttachDialog(DBSchemaObject object, List<VirtualFile> virtualFiles, boolean showLookupOption) {
         AttachDDLFileDialog dialog = new AttachDDLFileDialog(virtualFiles, object, showLookupOption);
         dialog.show();
         return dialog.getExitCode();
     }
 
-    public int showFileDetachDialog(DBSchemaObject object, List<VirtualFile> virtualFiles) {
+    public static int showFileDetachDialog(DBSchemaObject object, List<VirtualFile> virtualFiles) {
         DetachDDLFileDialog dialog = new DetachDDLFileDialog(virtualFiles, object);
         dialog.show();
         return dialog.getExitCode();
@@ -166,7 +166,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         EventManager.notify(getProject(), DDLMappingListener.TOPIC).ddlFileDetached(virtualFile);
     }
 
-    private List<VirtualFile> lookupApplicableDDLFiles(DBSchemaObject object) {
+    private static List<VirtualFile> lookupApplicableDDLFiles(DBSchemaObject object) {
         List<VirtualFile> fileList = new ArrayList<VirtualFile>();
 
         ConnectionHandler connectionHandler = object.getConnectionHandler();
@@ -175,7 +175,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
             for (DDLFileType ddlFileType : object.getDDLFileTypes()) {
                 for (String extension : ddlFileType.getExtensions()) {
-                    String fileName = object.getRef().getFileName().toLowerCase() + "." + extension;
+                    String fileName = object.getRef().getFileName().toLowerCase() + '.' + extension;
                     VirtualFile[] files = VirtualFileUtil.lookupFilesForName(project, fileName);
                     fileList.addAll(Arrays.asList(files));
                 }
@@ -257,9 +257,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             if (attachedFiles.size() > 0) {
                 message.append("\n\nFollowing files are already attached to ");
                 message.append(object.getQualifiedNameWithType());
-                message.append(":");
+                message.append(':');
                 for (String attachedFile : attachedFiles) {
-                    message.append("\n");
+                    message.append('\n');
                     message.append(attachedFile);
                 }
             }
@@ -292,7 +292,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         }
     }
 
-    private DDLFileNameProvider getDDLFileNameProvider(DBSchemaObject object) {
+    private static DDLFileNameProvider getDDLFileNameProvider(DBSchemaObject object) {
         DDLFileType[] ddlFileTypes = object.getDDLFileTypes();
         if (ddlFileTypes.length == 1 && ddlFileTypes[0].getExtensions().size() == 1) {
             DDLFileType ddlFileType = ddlFileTypes[0];

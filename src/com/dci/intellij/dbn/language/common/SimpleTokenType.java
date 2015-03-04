@@ -31,13 +31,13 @@ public class SimpleTokenType extends IElementType implements TokenType {
 
     public SimpleTokenType(SimpleTokenType source, Language language) {
         super(source.toString(), language);
-        this.id = source.getId();
+        this.id = source.id;
         this.value = source.getValue();
-        this.description = source.getDescription();
+        this.description = source.description;
         isSuppressibleReservedWord = source.isSuppressibleReservedWord();
-        this.category = source.getCategory();
-        this.objectType = source.getObjectType();
-        this.idx = source.getIdx();
+        this.category = source.category;
+        this.objectType = source.objectType;
+        this.idx = source.idx;
 
         formatting = FormattingDefinitionFactory.cloneDefinition(source.getFormatting());
         tokenPairTemplate = TokenPairTemplate.get(id);
@@ -208,7 +208,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         if (obj instanceof SimpleTokenType) {
             SimpleTokenType simpleTokenType = (SimpleTokenType) obj;
             return simpleTokenType.getLanguage().equals(getLanguage()) &&
-                    simpleTokenType.getId().equals(getId());
+                    simpleTokenType.id.equals(id);
         }
         return false;
     }

@@ -68,7 +68,7 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
     }
 
-    private boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {
+    private static boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {
         ParsePathNode parent = node.getParent();
         while (parent != null && parent.getCursorPosition() == 0) {
             WrappingDefinition parentWrapping = parent.getElementType().getWrapping();

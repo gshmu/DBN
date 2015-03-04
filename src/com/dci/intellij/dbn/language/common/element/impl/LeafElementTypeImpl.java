@@ -67,7 +67,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return true;
     }
 
-    public ElementType getPreviousElement(PathNode pathNode) {
+    public static ElementType getPreviousElement(PathNode pathNode) {
         int position = 0;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();
@@ -248,7 +248,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
      * Only applicable if the given astNode is corresponding to an ElementType within a SequenceElementType
      * For all the other cases it returns 0.
      */
-    private int getElementTypeIndex(ASTNode astNode){
+    private static int getElementTypeIndex(ASTNode astNode){
         ASTNode parentAstNode = astNode.getTreeParent();
         if (parentAstNode.getElementType() instanceof SequenceElementType) {
             SequenceElementType sequenceElementType = (SequenceElementType) parentAstNode.getElementType();

@@ -32,7 +32,9 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     }
 
     private ElementTypeLogger getLogger() {
-        if (logger == null) logger = new ElementTypeLogger(getElementType());
+        if (logger == null) {
+            logger = new ElementTypeLogger(elementType);
+        }
         return logger;
     }
 
@@ -66,7 +68,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
                 ParseBuilderErrorHandler.updateBuilderError(elementType.getLookupCache().getNextPossibleTokens(), context);
             }
             ParserBuilder builder = context.getBuilder();
-            T elementType = getElementType();
             if (resultType == ParseResultType.NO_MATCH) {
                 builder.markerRollbackTo(marker, node);
             } else {
@@ -116,7 +117,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
             }
 
             if (tokenType.isFunction() && builder.lookAhead(1) != leftParenthesis) {
-                T elementType = getElementType();
                 if (elementType instanceof LeafElementType) {
                     LeafElementType leafElementType = (LeafElementType) elementType;
                     return !leafElementType.isNextRequiredToken(leftParenthesis, node, context);
@@ -155,6 +155,6 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
 
     @Override
     public String toString() {
-        return getElementType().toString();
+        return elementType.toString();
     }
 }

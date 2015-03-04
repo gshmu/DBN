@@ -119,7 +119,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
     @Override
     public String getPresentableTextDetails() {
-        return getOverload() > 0 ? " #" + getOverload() : "";
+        return overload > 0 ? " #" + overload : "";
     }
 
     public boolean isProgramMethod() {
@@ -136,7 +136,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         int result = super.compareTo(o);
         if (result == 0) {
             DBMethod method = (DBMethod) o;
-            return getOverload() - method.getOverload();
+            return overload - method.getOverload();
         }
         return result;
     }
@@ -146,7 +146,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         if (this == obj) return true;
         if (super.equals(obj)) {
             DBMethod method = (DBMethod) obj;
-            return method.getOverload() == getOverload();
+            return method.getOverload() == overload;
         }
         return false;
     }

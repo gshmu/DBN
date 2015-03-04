@@ -36,7 +36,7 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
                 super.startsWithIdentifier(createRecursionCheckPathNode(node));
     }
 
-    private boolean isRecursive(PathNode node) {
+    private static boolean isRecursive(PathNode node) {
         return node != null && node.isRecursive();
     }
 

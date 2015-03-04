@@ -13,9 +13,9 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>{
     private boolean visible = true;
 
     private DatasetColumnState(DatasetColumnState columnState) {
-        name = columnState.getName();
-        position = columnState.getPosition();
-        visible = columnState.isVisible();
+        name = columnState.name;
+        position = columnState.position;
+        visible = columnState.visible;
     }
     public DatasetColumnState(DBColumn column) {
         init(column);
@@ -104,6 +104,6 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>{
 
     @Override
     public String toString() {
-        return name + " " + position + (visible ? " visible" : " hidden");
+        return name + ' ' + position + (visible ? " visible" : " hidden");
     }
 }

@@ -29,7 +29,7 @@ public enum TokenTypeCategory {
 
     public static TokenTypeCategory getCategory(String categoryName) {
         for (TokenTypeCategory identifier : TokenTypeCategory.values()) {
-            if (identifier.getName().equals(categoryName)) return identifier;
+            if (identifier.name.equals(categoryName)) return identifier;
         }
         return UNKNOWN;
     }

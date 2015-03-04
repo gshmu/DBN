@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.environment;
 
+import javax.swing.Icon;
+import java.awt.Color;
+import java.util.UUID;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
@@ -8,12 +14,6 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.UIUtil;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.awt.Color;
-import java.util.UUID;
 
 public class EnvironmentType extends CommonUtil implements Cloneable, PersistentConfiguration, Presentable {
 
@@ -49,7 +49,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
 
     public static EnvironmentType forName(String name) {
         for (EnvironmentType environmentType : DEFAULT_ENVIRONMENT_TYPES){
-            if (environmentType.getName().equals(name)) {
+            if (environmentType.name.equals(name)) {
                 return environmentType;
             }
         }
@@ -165,7 +165,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
 
         String value = element.getAttributeValue("color");
         if (StringUtil.isNotEmpty(value)) {
-            int index = value.indexOf("/");
+            int index = value.indexOf('/');
             if (index > -1) {
                 String regularRgb = value.substring(0, index);
                 String darkRgb = value.substring(index + 1);
@@ -175,8 +175,8 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         }
 
         EnvironmentType defaultEnvironmentType = forName(name);
-        if (defaultEnvironmentType != null) {
-            if (id == null) id = defaultEnvironmentType.getId();
+        if (id == null && defaultEnvironmentType != null) {
+            id = defaultEnvironmentType.id;
         }
         if (id == null) id = name.toLowerCase();
     }

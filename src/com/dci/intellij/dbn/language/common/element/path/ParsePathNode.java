@@ -15,7 +15,7 @@ public class ParsePathNode extends BasicPathNode {
         this.startOffset = startOffset;
         this.currentOffset = startOffset;
         this.cursorPosition = cursorPosition;
-        this.depth = parent == null ? 0 : parent.getDepth() + 1;
+        this.depth = parent == null ? 0 : parent.depth + 1;
     }
 
     public ParsePathNode getParent() {
@@ -46,7 +46,7 @@ public class ParsePathNode extends BasicPathNode {
         ParsePathNode parseNode = this.getParent();
         while (parseNode != null) {
             if (parseNode.getElementType() == getElementType() &&
-                parseNode.getStartOffset() == getStartOffset()) {
+                parseNode.startOffset == startOffset) {
                 return true;
             }
             parseNode = parseNode.getParent();
@@ -57,8 +57,8 @@ public class ParsePathNode extends BasicPathNode {
     public boolean isRecursive(int currentOffset) {
         ParsePathNode parseNode = this.getParent();
         while (parseNode != null) {
-                if (parseNode.getElementType() == getElementType() &&
-                        parseNode.getCurrentOffset() == currentOffset) {
+            if (parseNode.getElementType() == getElementType() &&
+                        parseNode.currentOffset == currentOffset) {
                     return true;
                 }
             parseNode = parseNode.getParent();
@@ -68,7 +68,7 @@ public class ParsePathNode extends BasicPathNode {
 
     public int incrementIndex(int builderOffset) {
         cursorPosition++;
-        setCurrentOffset(builderOffset);
+        this.currentOffset = builderOffset;
         return cursorPosition;
     }
 

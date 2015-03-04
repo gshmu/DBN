@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.common.list;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,6 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.Disposable;
-import gnu.trove.THashMap;
 
 public class DBObjectListContainer implements Disposable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
@@ -251,10 +251,10 @@ public class DBObjectListContainer implements Disposable {
         if (objectList != null) {
             DBObjectType objectType = objectList.getObjectType();
             if (hidden) {
-                if (hiddenObjectLists == null) hiddenObjectLists = new THashMap<DBObjectType, DBObjectList<DBObject>>();
+                if (hiddenObjectLists == null) hiddenObjectLists = new EnumMap<DBObjectType, DBObjectList<DBObject>>(DBObjectType.class);
                 hiddenObjectLists.put(objectType, objectList);
             } else {
-                if (objectLists == null) objectLists =  new THashMap<DBObjectType, DBObjectList<DBObject>>();
+                if (objectLists == null) objectLists = new EnumMap<DBObjectType, DBObjectList<DBObject>>(DBObjectType.class);
                 objectLists.put(objectType, objectList);
             }
         }

@@ -45,11 +45,11 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     public void updateStatusFromRow(DatasetEditorModelRow oldRow) {
         if (oldRow != null) {
-            isNew = oldRow.isNew();
-            isDeleted = oldRow.isDeleted();
-            isModified = oldRow.isModified();
+            isNew = oldRow.isNew;
+            isDeleted = oldRow.isDeleted;
+            isModified = oldRow.isModified;
             setIndex(oldRow.getIndex());
-            if (oldRow.isModified()) {
+            if (oldRow.isModified) {
                 for (int i=1; i<getCells().size(); i++) {
                     DatasetEditorModelCell oldCell = oldRow.getCellAtIndex(i);
                     DatasetEditorModelCell newCell = getCellAtIndex(i);
@@ -82,7 +82,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
             isModified = false;
             isNew = false;
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog(getProject(), "Could not delete row at index " + getIndex() + ".", e);
+            MessageUtil.showErrorDialog(getProject(), "Could not delete row at index " + getIndex() + '.', e);
         }
     }
 
@@ -148,7 +148,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
     }
 
     public void revertChanges() {
-        if (isModified()) {
+        if (isModified) {
             for (DatasetEditorModelCell cell : getCells()) {
                 cell.revertChanges();
             }

@@ -19,7 +19,7 @@ public class OpenSessionBrowserAction extends AnAction {
         super("Open Session Browser", "", Icons.FILE_SESSION_BROWSER);
     }
 
-    private ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
+    private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);

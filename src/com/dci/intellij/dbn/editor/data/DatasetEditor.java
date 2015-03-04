@@ -145,7 +145,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @NotNull
     public JComponent getComponent() {
-        return isDisposed() ? new JPanel() : editorForm.getComponent();
+        return disposed ? new JPanel() : editorForm.getComponent();
     }
 
     @Nullable
@@ -256,7 +256,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             MessageUtil.showErrorDialog(message, e);
 */
         } finally {
-            EventManager.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+            EventManager.notify(project, DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
         }
     }
 
@@ -544,7 +544,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                             try {
                                 model.postInsertRecord(true, false, true);
                             } catch (SQLException e1) {
-                                MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                                MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                                 model.cancelInsert(true);
                             }
                         }

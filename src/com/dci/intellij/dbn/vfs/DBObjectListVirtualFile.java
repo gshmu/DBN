@@ -50,7 +50,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
     public boolean equals(Object obj) {
         if (obj instanceof DBObjectListVirtualFile) {
             DBObjectListVirtualFile objectListFile = (DBObjectListVirtualFile) obj;
-            return objectListFile.getObjectList().equals(getObjectList());
+            return objectListFile.objectList.equals(objectList);
         }
         return false;
     }
@@ -60,13 +60,13 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
         GenericDatabaseElement parent = objectList.getParent();
         if (parent instanceof DBObject) {
             DBObject object = (DBObject) parent;
-            String qualifiedName = object.getQualifiedNameWithType() + "." + getName();
+            String qualifiedName = object.getQualifiedNameWithType() + '.' + name;
             return qualifiedName.hashCode();
         }
 
         if (parent instanceof DBObjectBundle) {
             DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            String qualifiedName = objectBundle.getConnectionHandler().getName() + "." + getName();
+            String qualifiedName = objectBundle.getConnectionHandler().getName() + '.' + name;
             return qualifiedName.hashCode();
         }
 

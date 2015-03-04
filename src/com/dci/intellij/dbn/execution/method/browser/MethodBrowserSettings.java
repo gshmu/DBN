@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 import org.jdom.Element;
@@ -12,14 +14,12 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 
 public class MethodBrowserSettings implements PersistentConfiguration {
     private String connectionId;
     private String schemaName;
     private DBObjectRef<DBMethod> method;
-    private Map<DBObjectType, Boolean> objectVisibility = new THashMap<DBObjectType, Boolean>();
+    private Map<DBObjectType, Boolean> objectVisibility = new EnumMap<DBObjectType, Boolean>(DBObjectType.class);
 
     public MethodBrowserSettings() {
         objectVisibility.put(DBObjectType.FUNCTION, true);
@@ -39,7 +39,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public Set<DBObjectType> getVisibleObjectTypes() {
-        Set<DBObjectType> objectTypes = new THashSet<DBObjectType>();
+        Set<DBObjectType> objectTypes = EnumSet.noneOf(DBObjectType.class);
         for (DBObjectType objectType : objectVisibility.keySet()) {
             if (objectVisibility.get(objectType)) {
                 objectTypes.add(objectType);

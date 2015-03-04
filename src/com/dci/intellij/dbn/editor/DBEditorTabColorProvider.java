@@ -68,7 +68,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
         return FileConnectionMappingManager.getInstance(project).getActiveConnection(file);
     }
 
-    private Color getColor(ConnectionHandler connectionHandler) {
+    private static Color getColor(ConnectionHandler connectionHandler) {
         EnvironmentType environmentType = connectionHandler.getEnvironmentType();
         if (environmentType != null) {
             return environmentType.getColor();

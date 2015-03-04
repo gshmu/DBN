@@ -45,14 +45,6 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
         }
     }
 
-    public boolean supportsInvalidObjects() {
-        return false;
-    }
-
-    public boolean supportsReplacingObjects() {
-        return false;
-    }
-
     public char getIdentifierQuotes() {
         return '`';
     }

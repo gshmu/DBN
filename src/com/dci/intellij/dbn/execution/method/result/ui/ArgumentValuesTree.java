@@ -87,7 +87,7 @@ public class ArgumentValuesTree extends DBNTree{
                 DBArgument argument = argumentValue.getArgument();
                 DBTypeAttribute attribute = argumentValue.getAttribute();
                 Object originalValue = argumentValue.getValue();
-                String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() ? "" : "" + originalValue;
+                String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() ? "" : String.valueOf(originalValue);
 
                 if (attribute == null) {
                     if (argument == null) {

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common.property;
 
-import gnu.trove.THashSet;
-
+import java.util.EnumSet;
 import java.util.Set;
 
 public class DBObjectProperties {
@@ -13,7 +12,7 @@ public class DBObjectProperties {
 
     public void set(DBObjectProperty property) {
         if (properties == null) {
-            properties = new THashSet<DBObjectProperty>();
+            properties = EnumSet.noneOf(DBObjectProperty.class);
         }
         properties.add(property);
     }

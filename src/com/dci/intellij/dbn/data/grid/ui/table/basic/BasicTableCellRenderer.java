@@ -139,7 +139,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
          }
      }
 
-    protected boolean match(int[] indexes, int index) {
+    protected static boolean match(int[] indexes, int index) {
         for (int idx : indexes) {
             if (idx == index) return true;
         }

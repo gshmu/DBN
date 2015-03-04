@@ -60,7 +60,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
     public CheckedTreeNode createCheckedTreeNode() {
         CodeCompletionFilterTreeNode node = new CodeCompletionFilterTreeNode(this, false);
         //node.setChecked(true);
-        for (CodeCompletionFilterOption option : getOptions()) {
+        for (CodeCompletionFilterOption option : options) {
             //if (!option.isSelected()) node.setChecked(false);
             node.add(option.createCheckedTreeNode());
         }
