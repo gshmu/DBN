@@ -30,9 +30,8 @@ import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.ObjectDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
-import com.dci.intellij.dbn.language.common.psi.lookup.VariableDefinitionLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -73,7 +72,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
     }
 
-    private void doAddCompletions(CompletionParameters parameters, CompletionResultSet result) {
+    private static void doAddCompletions(CompletionParameters parameters, CompletionResultSet result) {
         PsiFile originalFile = parameters.getOriginalFile();
         if (originalFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) originalFile;
@@ -104,7 +103,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         }
     }
 
-    private void addFileRootCompletions(CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+    private static void addFileRootCompletions(CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
         CodeCompletionContext context = consumer.getContext();
         DBLanguagePsiFile file = context.getFile();
 
@@ -120,7 +119,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         }
     }
 
-    private String getLeafUniqueKey(LeafElementType leaf) {
+    private static String getLeafUniqueKey(LeafElementType leaf) {
         if (leaf instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) leaf;
             return tokenElementType.getTokenType().getId();
@@ -131,7 +130,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         return null;
     }
 
-    private void buildElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+    private static void buildElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
 
         CodeCompletionContext context = consumer.getContext();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
@@ -215,7 +214,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 if (identifierElementType.isReference()) {
                     DBObjectType objectType = identifierElementType.getObjectType();
                     if (identifierElementType.isObject()) {
-                        PsiLookupAdapter lookupAdapter = new ObjectDefinitionLookupAdapter(null, objectType,  null);
+                        PsiLookupAdapter lookupAdapter = LookupAdapterCache.OBJECT_DEFINITION.get(objectType);
                         Set<BasePsiElement> objectDefinitions = lookupAdapter.collectInParentScopeOf(element);
                         if (objectDefinitions != null && parentIdentifierPsiElement == null) {
                             for (BasePsiElement psiElement : objectDefinitions) {
@@ -238,11 +237,11 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                         }
                     } else if (parentIdentifierPsiElement == null) {
                         if (identifierElementType.isAlias()) {
-                            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType,  null);
+                            PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
                             Set<BasePsiElement> aliasPsiElements = lookupAdapter.collectInParentScopeOf(element);
                             consumer.consume(aliasPsiElements);
                         } else if (identifierElementType.isVariable()) {
-                            PsiLookupAdapter lookupAdapter = new VariableDefinitionLookupAdapter(null, objectType, null);
+                            PsiLookupAdapter lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(objectType);
                             Set<BasePsiElement> variablePsiElements = lookupAdapter.collectInParentScopeOf(element);
                             consumer.consume(variablePsiElements);
                         }
@@ -263,7 +262,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     @Nullable
-    private ElementLookupContext computeParseBranches(ASTNode astNode, double databaseVersion) {
+    private static ElementLookupContext computeParseBranches(ASTNode astNode, double databaseVersion) {
         ElementLookupContext lookupContext = new ElementLookupContext(databaseVersion);
         while (astNode != null && !(astNode instanceof FileElement)) {
             IElementType elementType = astNode.getElementType();
@@ -283,7 +282,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         return lookupContext;
     }
 
-    public String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {
+    public static String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {
         IdentifierPsiElement aliasedObject = PsiUtil.lookupObjectPriorTo(aliasElement, DBObjectType.ANY);
         if (aliasedObject != null && aliasedObject.isObject()) {
             String[] aliasNames = NamingUtil.createAliasNames(aliasedObject.getUnquotedText());
@@ -307,7 +306,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         return new String[0];
     }
 
-    private void collectObjectMatchingScope(
+    private static void collectObjectMatchingScope(
             LookupConsumer consumer,
             IdentifierElementType identifierElementType,
             ObjectTypeFilter filter,

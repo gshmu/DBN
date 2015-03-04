@@ -65,7 +65,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
 
     @NotNull List<T> getElements();
     @Nullable List<T> getElements(String name);
-    T getElement(String name);
+    T getElement(String name, int overload);
     void setElements(@Nullable List<T> elements);
     int size();
 

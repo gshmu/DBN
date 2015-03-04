@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -22,12 +23,11 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
-    private DBMethodRef<DBMethod> methodRef;
+    private DBObjectRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
     private Map<String, String> valuesMap = new HashMap<String, String>();
     private boolean usePoolConnection = true;
@@ -42,16 +42,16 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     private transient boolean executionCancelled;
 
     public MethodExecutionInput() {
-        methodRef = new DBMethodRef<DBMethod>();
+        methodRef = new DBObjectRef<DBMethod>();
         executionSchema = new DBObjectRef<DBSchema>();
     }
 
     public MethodExecutionInput(DBMethod method) {
-        this.methodRef = new DBMethodRef<DBMethod>(method);
+        this.methodRef = new DBObjectRef<>(method);
         this.executionSchema = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            enableLogging = method.getConnectionHandler().isLoggingEnabled();
+            enableLogging = FailsafeUtil.get(method.getConnectionHandler()).isLoggingEnabled();
         }
     }
 
@@ -65,10 +65,11 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return methodRef.get();
     }
 
-    public DBMethodRef getMethodRef() {
+    public DBObjectRef<DBMethod> getMethodRef() {
         return methodRef;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return methodRef.lookupConnectionHandler();
     }
@@ -234,8 +235,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public int compareTo(@NotNull MethodExecutionInput executionInput) {
-        DBMethodRef localMethod = getMethodRef();
-        DBMethodRef remoteMethod = executionInput.getMethodRef();
+        DBObjectRef<DBMethod> localMethod = methodRef;
+        DBObjectRef<DBMethod> remoteMethod = executionInput.methodRef;
         return localMethod.compareTo(remoteMethod);
     }
 
@@ -243,7 +244,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     public boolean equals(Object obj) {
         if (obj instanceof MethodExecutionInput) {
             MethodExecutionInput executionInput = (MethodExecutionInput) obj;
-            return methodRef.equals(executionInput.getMethodRef());
+            return methodRef.equals(executionInput.methodRef);
         }
         return false;
     }

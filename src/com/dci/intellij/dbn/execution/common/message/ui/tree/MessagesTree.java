@@ -258,7 +258,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     }
 
-    private void navigateInEditor(Editor editor, CompilerMessage compilerMessage, int lineShifting) {
+    private static void navigateInEditor(Editor editor, CompilerMessage compilerMessage, int lineShifting) {
         Document document = editor.getDocument();
         if (document.getLineCount() > compilerMessage.getLine() + lineShifting) {
             int lineStartOffset = document.getLineStartOffset(compilerMessage.getLine() + lineShifting);

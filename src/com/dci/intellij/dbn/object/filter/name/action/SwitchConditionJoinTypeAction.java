@@ -19,10 +19,13 @@ public class SwitchConditionJoinTypeAction extends ObjectNameFilterAction{
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         Object selection = getSelection();
-        ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-        if (selection instanceof CompoundFilterCondition) {
-            CompoundFilterCondition condition = (CompoundFilterCondition) selection;
-            filterManager.switchConditionJoinType(condition, settingsForm);
+        ObjectNameFilterManager filterManager = null;
+        if (project != null) {
+            filterManager = ObjectNameFilterManager.getInstance(project);
+            if (selection instanceof CompoundFilterCondition) {
+                CompoundFilterCondition condition = (CompoundFilterCondition) selection;
+                filterManager.switchConditionJoinType(condition, settingsForm);
+            }
         }
     }
 

@@ -1,6 +1,17 @@
 package com.dci.intellij.dbn.execution.method;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -15,7 +26,7 @@ import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDi
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -24,16 +35,6 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -65,7 +66,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return executionHistory.getExecutionInput(method);
     }
 
-    public MethodExecutionInput getExecutionInput(DBMethodRef methodRef) {
+    public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
         return executionHistory.getExecutionInput(methodRef);
     }
 
@@ -80,7 +81,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             @Override
             public void execute() {
                 Project project = getProject();
-                ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
                 if (connectionHandler.isValid(true)) {
                     DBMethod method = executionInput.getMethod();
                     if (method == null) {
@@ -138,11 +139,12 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         executionInput.setExecuting(true);
         final DBMethod method = executionInput.getMethod();
         if (method == null) {
-            DBMethodRef methodRef = executionInput.getMethodRef();
-            MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getMethodObjectType().getName() + " \"" + methodRef.getSchemaName() + "." + methodRef.getQualifiedMethodName() + "\".");
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
         } else {
             final Project project = method.getProject();
-            DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
             new BackgroundTask(project, "Executing method", false) {
@@ -179,7 +181,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
-            DatabaseExecutionInterface executionInterface = method.getConnectionHandler().getInterfaceProvider().getDatabaseExecutionInterface();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
 
             executionInput.initExecutionResult(true);
@@ -257,7 +260,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
             Element selectionElement = element.getChild("history-selection");
             if (selectionElement != null) {
-                DBMethodRef selection = new DBMethodRef();
+                DBObjectRef<DBMethod> selection = new DBObjectRef<DBMethod>();
                 selection.readState(selectionElement);
                 executionHistory.setSelection(selection);
             }

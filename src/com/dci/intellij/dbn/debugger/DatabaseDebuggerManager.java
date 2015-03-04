@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.RunnerRegistry;
@@ -133,7 +134,12 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBProgramRunner.RUNNER_ID);
         if (programRunner != null) {
             try {
-                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(DefaultDebugExecutor.getDebugExecutorInstance(), programRunner, runConfigurationSetting, getProject());
+                Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
+                if (executorInstance == null) {
+                    throw new ExecutionException("Could not resolve debug executor");
+                }
+
+                ExecutionEnvironment executionEnvironment = new ExecutionEnvironment(executorInstance, programRunner, runConfigurationSetting, getProject());
                 programRunner.execute(executionEnvironment);
             } catch (ExecutionException e) {
                 MessageUtil.showErrorDialog(

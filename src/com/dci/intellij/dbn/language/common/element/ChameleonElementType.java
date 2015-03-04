@@ -137,20 +137,12 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return false;
     }
 
-    public boolean isVirtualObjectInsideLookup() {
-        return false;
-    }
-
     public DBObjectType getVirtualObjectType() {
         return null;
     }
 
     public PsiElement createPsiElement(ASTNode astNode) {
         return new ChameleonPsiElement(astNode, this);
-    }
-
-    public String getResolveScopeId() {
-        return null;
     }
 
     public ElementTypeBundle getElementBundle() {
@@ -160,10 +152,6 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     public DBLanguageDialect getParentLanguage() {
         return parentLanguage;
     }
-
-    public void registerVirtualObject(DBObjectType objectType) {
-    }
-
 
     public int getIdx() {
         return 0;

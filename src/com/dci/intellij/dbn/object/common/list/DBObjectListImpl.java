@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
-import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -28,9 +27,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.FileStatus;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
@@ -65,7 +62,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     public T getObject(String name) {
-        return getElement(name);
+        return getElement(name, 0);
+    }
+
+    public T getObject(String name, int overload) {
+        return getElement(name, overload);
     }
 
     public T getObject(String name, String parentName) {
@@ -85,7 +86,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public void sortElements(List<T> elements) {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
-        DBObjectType objectType = getObjectType();
         DBObjectComparator comparator = objectType == DBObjectType.ANY ? null : sortingSettings.getComparator(objectType);
         if (comparator != null) {
             Collections.sort(elements, comparator);
@@ -105,7 +105,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public Project getProject() {
         GenericDatabaseElement parent = getParent();
         Project project = parent == null ? null : parent.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.nvl(project);
     }
 
     public GenericDatabaseElement getUndisposedElement() {
@@ -184,7 +184,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public void refreshTreeChildren(@Nullable DBObjectType objectType) {
         if (isLoaded()) {
-            if (objectType == null || getObjectType() == objectType) {
+            if (objectType == null || this.objectType == objectType) {
                 getElements();
             }
 
@@ -263,10 +263,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return this;
     }
 
-    public FileStatus getFileStatus() {
-        return FileStatus.NOT_CHANGED;
-    }
-
     /*********************************************************
      *                 ItemPresentation                      *
      *********************************************************/
@@ -276,10 +272,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public Icon getIcon(boolean open) {
         return getIcon(0);
-    }
-
-    public TextAttributesKey getTextAttributesKey() {
-        return SQLTextAttributesKeys.IDENTIFIER;
     }
 
     public String toString() {
@@ -292,6 +284,6 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public int compareTo(@NotNull DBObjectList objectList) {
-        return getObjectType().compareTo(objectList.getObjectType());
+        return objectType.compareTo(objectList.getObjectType());
     }
 }

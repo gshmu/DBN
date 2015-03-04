@@ -23,10 +23,12 @@ public class MoveConditionDownAction extends ObjectNameFilterAction{
     public void actionPerformed(AnActionEvent e) {
         Object selection = getSelection();
         if (selection instanceof FilterCondition) {
-            FilterCondition condition = (FilterCondition) selection;
             Project project = ActionUtil.getProject(e);
-            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-            filterManager.moveFilterConditionDown(condition, settingsForm);
+            if (project != null) {
+                FilterCondition condition = (FilterCondition) selection;
+                ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+                filterManager.moveFilterConditionDown(condition, settingsForm);
+            }
         }
     }
 

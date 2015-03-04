@@ -119,7 +119,7 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
     public void refreshLoadTimestamp() {
         boolean visible = !loadingLabel.isVisible();
         if (visible) {
-            SessionBrowserModel model = getEditorTable().getModel();
+            SessionBrowserModel model = editorTable.getModel();
             long timestamp = model.getTimestamp();
 /*
             RegionalSettings regionalSettings = RegionalSettings.getInstance(sessionBrowser.getProject());

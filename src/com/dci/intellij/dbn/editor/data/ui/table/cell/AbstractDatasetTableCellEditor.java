@@ -187,7 +187,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             EventManager.unsubscribe(cellValueListener);
             editorComponent = null;

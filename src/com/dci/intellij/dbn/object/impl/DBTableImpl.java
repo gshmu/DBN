@@ -75,7 +75,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
     @Nullable
     public Icon getIcon() {
-        return isTemporary() ?
+        return isTemporary ?
                 Icons.DBO_TMP_TABLE :
                 Icons.DBO_TABLE;
     }
@@ -207,7 +207,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     @Override
     public List<PresentableProperty> getPresentableProperties() {
         List<PresentableProperty> properties = super.getPresentableProperties();
-        if (isTemporary()) {
+        if (isTemporary) {
             properties.add(0, new SimplePresentableProperty("Attributes", "temporary"));
         }
         return properties;

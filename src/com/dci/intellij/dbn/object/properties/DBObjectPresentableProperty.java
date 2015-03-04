@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.properties;
 
+import javax.swing.Icon;
+
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.pom.Navigatable;
-
-import javax.swing.Icon;
 
 public class DBObjectPresentableProperty extends PresentableProperty{
     private DBObjectRef objectRef;
@@ -33,7 +33,7 @@ public class DBObjectPresentableProperty extends PresentableProperty{
     }
 
     public String getValue() {
-        return qualified ? objectRef.getPath() : objectRef.getName();
+        return qualified ? objectRef.getPath() : objectRef.getObjectName();
     }
 
     public Icon getIcon() {

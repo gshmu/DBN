@@ -185,11 +185,11 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         return latestPredefinedText;
     }
 
-    private boolean isValidPredefinedText(String predefinedText) {
+    private static boolean isValidPredefinedText(String predefinedText) {
         return predefinedText != null && !predefinedText.contains("\n") && predefinedText.trim().length() < 50;
     }
 
-    private void removeActionLock() {
+    private static void removeActionLock() {
         if (GoToDatabaseObjectAction.class.equals(myInAction)) {
             myInAction = null;
         }

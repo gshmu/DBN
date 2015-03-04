@@ -105,7 +105,7 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
-    public DynamicContentElement getElement(String name) {
+    public DynamicContentElement getElement(String name, int overload) {
         return null;
     }
 

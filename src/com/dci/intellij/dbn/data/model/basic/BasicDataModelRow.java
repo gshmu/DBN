@@ -33,7 +33,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
 
     @Override
     public final T getCell(String columnName) {
-        List<T> cells = getCells();
+        List<T> cells = this.cells;
         if (cells != null) {
             for (T cell : cells) {
                 if (cell.getColumnInfo().getName().equals(columnName)) {

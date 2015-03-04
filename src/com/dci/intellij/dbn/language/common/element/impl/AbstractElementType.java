@@ -73,7 +73,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         this.bundle = bundle;
         this.parent = parent;
         if (StringUtil.isNotEmpty(def.getAttributeValue("exit")) && !(parent instanceof SequenceElementType)) {
-            LOGGER.warn("[" + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + getId() + "). Attribute is only allowed for direct child of sequence element");
+            LOGGER.warn('[' + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + this.id + "). Attribute is only allowed for direct child of sequence element");
         }
         loadDefinition(def);
     }
@@ -148,15 +148,15 @@ public abstract class AbstractElementType extends IElementType implements Elemen
             String endTokenId = def.getAttributeValue("wrapping-end-token");
 
             if (StringUtil.isNotEmpty(beginTokenId) && StringUtil.isNotEmpty(endTokenId)) {
-                beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, getId());
-                endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, getId());
+                beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, id);
+                endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, id);
             }
         } else {
             TokenPairTemplate template = TokenPairTemplate.valueOf(templateId);
             String beginTokenId = template.getBeginToken();
             String endTokenId = template.getEndToken();
-            beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, getId());
-            endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, getId());
+            beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, id);
+            endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, id);
 
             if (template.isBlock()) {
                 beginTokenElement.setDefaultFormatting(FormattingDefinition.LINE_BREAK_AFTER);
@@ -236,12 +236,12 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     public String toString() {
-        return getId();
+        return id;
     }
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return id.hashCode();
     }
 
     @Override

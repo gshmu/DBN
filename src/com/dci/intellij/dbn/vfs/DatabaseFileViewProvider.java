@@ -58,7 +58,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
         return super.getPsiInner(language);
     }
 
-    private DBParseableVirtualFile getParseableFile(VirtualFile virtualFile) {
+    private static DBParseableVirtualFile getParseableFile(VirtualFile virtualFile) {
         if (virtualFile instanceof DBParseableVirtualFile) {
             return (DBParseableVirtualFile) virtualFile;
         }

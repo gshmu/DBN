@@ -303,7 +303,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         }
 
         String getCurrentYear() {
-            return activeMonth.get(Calendar.YEAR) + "";
+            return String.valueOf(activeMonth.get(Calendar.YEAR));
         }
 
         String getMonthName(int month) {

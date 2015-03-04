@@ -40,30 +40,32 @@ public class PasteConnectionAction extends DumbAwareAction {
             String clipboardData = ClipboardUtil.getStringContent();
             if (clipboardData != null) {
                 Document xmlDocument = CommonUtil.createXMLDocument(new ReaderInputStream(new StringReader(clipboardData), "UTF-8"));
-                Element rootElement = xmlDocument.getRootElement();
-                List<Element> configElements = rootElement.getChildren();
-                ConnectionListModel model = (ConnectionListModel) list.getModel();
-                int selectedIndex = list.getSelectedIndex();
-                List<Integer> selectedIndexes = new ArrayList<Integer>();
-                for (Element configElement : configElements) {
-                    selectedIndex++;
-                    ConnectionSettings clone = new ConnectionSettings(connectionBundleSettings);
-                    clone.readConfiguration(configElement);
-                    clone.setNew(true);
-                    clone.generateNewId();
+                if (xmlDocument != null) {
+                    Element rootElement = xmlDocument.getRootElement();
+                    List<Element> configElements = rootElement.getChildren();
+                    ConnectionListModel model = (ConnectionListModel) list.getModel();
+                    int selectedIndex = list.getSelectedIndex();
+                    List<Integer> selectedIndexes = new ArrayList<Integer>();
+                    for (Element configElement : configElements) {
+                        selectedIndex++;
+                        ConnectionSettings clone = new ConnectionSettings(connectionBundleSettings);
+                        clone.readConfiguration(configElement);
+                        clone.setNew(true);
+                        clone.generateNewId();
 
-                    ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
-                    String name = databaseSettings.getName();
-                    while (model.getConnectionConfig(name) != null) {
-                        name = NamingUtil.getNextNumberedName(name, true);
+                        ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+                        String name = databaseSettings.getName();
+                        while (model.getConnectionConfig(name) != null) {
+                            name = NamingUtil.getNextNumberedName(name, true);
+                        }
+                        databaseSettings.setName(name);
+                        model.add(selectedIndex, clone);
+                        selectedIndexes.add(selectedIndex);
+                        connectionBundleSettings.setModified(true);
                     }
-                    databaseSettings.setName(name);
-                    model.add(selectedIndex, clone);
-                    selectedIndexes.add(selectedIndex);
-                    connectionBundleSettings.setModified(true);
-                }
 
-                list.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
+                    list.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
+                }
             }
         } catch (Exception ex) {
 

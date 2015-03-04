@@ -62,7 +62,7 @@ public class CompileObjectAction extends AnAction {
         presentation.setText(text);
     }
 
-    private CompilerSettings getCompilerSettings(Project project) {
+    private static CompilerSettings getCompilerSettings(Project project) {
         return ExecutionEngineSettings.getInstance(project).getCompilerSettings();
     }
 }

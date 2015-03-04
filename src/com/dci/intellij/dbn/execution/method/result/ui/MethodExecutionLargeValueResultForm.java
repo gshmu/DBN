@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -39,7 +39,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl implements 
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JPanel largeValuePanel;
-    private DBArgumentRef argumentRef;
+    private DBObjectRef<DBArgument> argumentRef;
 
     private EditorEx editor;
     private TextContentType contentType;

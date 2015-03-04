@@ -51,7 +51,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
                 DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
                 DBSchemaObject editableObject = fileAttachmentManager.getEditableObject(virtualFile);
                 if (editableObject != null) {
-                    boolean isOpened = DatabaseFileSystem.getInstance().isFileOpened(editableObject);
+                    boolean isOpened = DatabaseFileSystem.isFileOpened(editableObject);
                     presentation.setEnabled(!isOpened);
                 }
             }

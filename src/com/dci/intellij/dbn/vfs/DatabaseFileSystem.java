@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -68,7 +67,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             startIndex = PROTOCOL_PREFIX.length();
         }
 
-        int index = url.indexOf("/", startIndex);
+        int index = url.indexOf('/', startIndex);
 
         if (index > -1) {
             String connectionId = url.substring(startIndex, index);
@@ -82,21 +81,30 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     return connectionHandler.getConsoleBundle().getConsole(consoleName);
                 } else if (objectPath.startsWith("session_browser#")) {
                     return connectionHandler.getSessionBrowserFile();
+                } else if (objectPath.startsWith("object#")) {
+                    String identifier = objectPath.substring(7);
+                    DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
+                    DBObject object = objectRef.get();
+
+                    if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                        return findDatabaseFile((DBSchemaObject) object);
+                    }
                 } else {
+                    // TODO remove this backward compatibility
                     StringTokenizer path = new StringTokenizer(objectPath, ".");
                     DBObject object = connectionHandler.getObjectBundle().getSchema(path.nextToken());
                     if (object != null) {
                         while (path.hasMoreElements() && object != null) {
                             String token = path.nextToken();
                             if (path.hasMoreTokens()) {
-                                int idx = token.indexOf("#");
+                                int idx = token.indexOf('#');
                                 if (idx > -1) {
                                     String type = token.substring(0, idx);
                                     String name = token.substring(idx + 1);
                                     DBObjectType objectType = DBObjectType.getObjectType(type);
-                                    object = object.getChildObject(objectType, name, false);
+                                    object = object.getChildObject(objectType, name, 0, false);
                                 } else {
-                                    object = object.getChildObject(token, false);
+                                    object = object.getChildObject(token, 0, false);
                                 }
                             }
                         }
@@ -111,7 +119,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         return null;
     }
 
-    private DBEditableObjectVirtualFile createDatabaseFile(final DBSchemaObject object) {
+    private static DBEditableObjectVirtualFile createDatabaseFile(final DBSchemaObject object) {
         return new ReadActionRunner<DBEditableObjectVirtualFile>() {
             @Override
             protected DBEditableObjectVirtualFile run() {
@@ -132,7 +140,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         return databaseFile;
     }
 
-    public boolean isFileOpened(DBSchemaObject object) {
+    public static boolean isFileOpened(DBSchemaObject object) {
         Project project = object.getProject();
         return DatabaseFileManager.getInstance(project).isFileOpened(object);
     }
@@ -141,7 +149,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
         DBObject parent = object.getParentObject();
         while (parent != null) {
-            buffer.insert(0, ".");
+            buffer.insert(0, '.');
             buffer.insert(0, parent.getName());
             parent = parent.getParentObject();
         }
@@ -157,7 +165,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         buffer.insert(0, object.getTypeName().toUpperCase());
         buffer.insert(0, "] ");
         buffer.insert(0, object.getConnectionHandler().getName());
-        buffer.insert(0, "[");
+        buffer.insert(0, '[');
 
         return buffer.toString();
     }
@@ -166,7 +174,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
         DBObject parent = object.getParentObject();
         while (parent != null) {
-            buffer.insert(0, ".");
+            buffer.insert(0, '.');
             buffer.insert(0, parent.getName());
             parent = parent.getParentObject();
         }
@@ -174,7 +182,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         buffer.insert(0, object.getTypeName().toUpperCase());
         buffer.insert(0, "] ");
         buffer.insert(0, object.getConnectionHandler().getName());
-        buffer.insert(0, "[");
+        buffer.insert(0, '[');
 
         return buffer.toString();
     }
@@ -182,8 +190,13 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public static String createUrl(DBObject object) {
         if (object == null) {
             return PROTOCOL + "://" + UUID.randomUUID() + "/null";
+        } else {
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            String connectionId = connectionHandler == null ? "null" : connectionHandler.getId();
+            return PROTOCOL + "://" + connectionId + "/object#" + object.getRef().serialize()/* + "." + getDefaultExtension(object)*/;
         }
 
+/*
         StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
         DBObjectType objectType = object.getObjectType();
         buffer.insert(0, "#");
@@ -208,10 +221,11 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         buffer.insert(0, "://");
         buffer.insert(0, PROTOCOL);
         return buffer.toString();
+*/
     }
 
     public static String createPath(ConnectionHandler connectionHandler) {
-        return "["+ connectionHandler.getName() + "]";
+        return '[' + connectionHandler.getName() + ']';
 
     }
 

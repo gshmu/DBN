@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
@@ -18,13 +20,22 @@ public class TextEditorDialog extends DBNDialog implements DocumentListener {
     private TextEditorForm mainForm;
 
     private TextEditorDialog(Project project, TextEditorAdapter textEditorAdapter) throws SQLException {
-        super(project, "Edit LOB content (column " + textEditorAdapter.getUserValueHolder().getName() + ")", true);
+        super(project, getTitle(textEditorAdapter), true);
         UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
         mainForm = new TextEditorForm(this, userValueHolder, textEditorAdapter);
         getCancelAction().putValue(Action.NAME, "Close");
         getOKAction().setEnabled(false);
         setModal(true);
         init();
+    }
+
+    @NotNull
+    private static String getTitle(TextEditorAdapter textEditorAdapter) {
+        UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
+        DBDataType dataType = userValueHolder.getDataType();
+        String dataTypeName = dataType == null ? "OBJECT" : dataType.getName();
+        DBObjectType objectType = userValueHolder.getObjectType();
+        return "Edit " + dataTypeName.toUpperCase() + " content (" +objectType.getName().toLowerCase() + " " + userValueHolder.getName().toUpperCase() + ")";
     }
 
     protected String getDimensionServiceKey() {

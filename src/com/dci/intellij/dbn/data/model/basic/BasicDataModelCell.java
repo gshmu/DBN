@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 
 public class BasicDataModelCell implements DataModelCell {
@@ -64,10 +65,10 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public boolean isLobValue() {
-        return getUserValue() instanceof LargeObjectValue;
+        return userValue instanceof LargeObjectValue;
     }
     public boolean isArrayValue() {
-        return getUserValue() instanceof ArrayValue;
+        return userValue instanceof ArrayValue;
     }
 
     @Override
@@ -82,6 +83,16 @@ public class BasicDataModelCell implements DataModelCell {
 
     public String getName() {
         return getColumnInfo().getName();
+    }
+
+    @Override
+    public DBDataType getDataType() {
+        return getColumnInfo().getDataType();
+    }
+
+    @Override
+    public DBObjectType getObjectType() {
+        return DBObjectType.COLUMN;
     }
 
     public ColumnInfo getColumnInfo() {
@@ -105,9 +116,9 @@ public class BasicDataModelCell implements DataModelCell {
 
     @Override
     public boolean equals(Object obj) {
-        if (!isDisposed() && obj instanceof BasicDataModelCell) {
+        if (!isDisposed && obj instanceof BasicDataModelCell) {
             BasicDataModelCell cell = (BasicDataModelCell) obj;
-            return cell.getIndex() == getIndex() &&
+            return cell.index == index &&
                     cell.getRow().getIndex() == getRow().getIndex() &&
                     cell.getRow().getModel() == getRow().getModel();
         }

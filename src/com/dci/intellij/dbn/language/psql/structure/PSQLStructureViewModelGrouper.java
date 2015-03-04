@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.psql.structure;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +17,6 @@ import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import gnu.trove.THashMap;
 
 public class PSQLStructureViewModelGrouper implements Grouper {
     private ActionPresentation actionPresentation = new ActionPresentationData("Group by Object Type", "", Icons.ACTION_GROUP);
@@ -41,7 +41,7 @@ public class PSQLStructureViewModelGrouper implements Grouper {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
                                     DBObjectType objectType = identifierPsiElement.getObjectType();
 
-                                    if (groups == null) groups = new THashMap<DBObjectType, Group>();
+                                    if (groups == null) groups = new EnumMap<DBObjectType, Group>(DBObjectType.class);
                                     PSQLStructureViewModelGroup group = (PSQLStructureViewModelGroup) groups.get(objectType);
                                     if (group == null) {
                                         group = new PSQLStructureViewModelGroup(objectType);

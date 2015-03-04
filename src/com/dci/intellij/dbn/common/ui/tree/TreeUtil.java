@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -51,9 +52,11 @@ public class TreeUtil {
         while (true);
     }
 
-    public static void notifyTreeModelListeners(Object source, Set<TreeModelListener> treeModelListeners, TreePath path, TreeEventType eventType) {
-        TreeModelEvent event = new TreeModelEvent(source, path);
-        notifyTreeModelListeners(treeModelListeners, eventType, event);
+    public static void notifyTreeModelListeners(Object source, Set<TreeModelListener> treeModelListeners, @Nullable TreePath path, TreeEventType eventType) {
+        if (path != null) {
+            TreeModelEvent event = new TreeModelEvent(source, path);
+            notifyTreeModelListeners(treeModelListeners, eventType, event);
+        }
     }
 
     private static void notifyTreeModelListeners(final Set<TreeModelListener> treeModelListeners, final TreeEventType eventType, final TreeModelEvent event) {

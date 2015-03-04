@@ -4,6 +4,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import java.awt.Color;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -34,7 +35,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
             boolean isLoading = sessionBrowserTable.isLoading();
 
             boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
-            boolean isConnected = sessionBrowserTable.getSessionBrowser().getConnectionHandler().isConnected();
+            boolean isConnected = FailsafeUtil.get(sessionBrowserTable.getSessionBrowser().getConnectionHandler()).isConnected();
 
             SessionBrowserTextAttributes attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getActiveSession(isCaretRow);

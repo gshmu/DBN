@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import gnu.trove.THashSet;
-
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -19,7 +18,7 @@ public class ElementTypeAttributesBundle {
             for (ElementTypeAttribute attribute : ElementTypeAttribute.values()) {
                 if (attribute.getName().equals(attributeName)) {
                     if (attributes == ElementTypeAttribute.EMPTY_LIST)
-                        attributes = new THashSet<ElementTypeAttribute>();
+                        attributes = EnumSet.noneOf(ElementTypeAttribute.class);
                     attributes.add(attribute);
                     found = true;
                     break;

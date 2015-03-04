@@ -27,8 +27,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
@@ -72,11 +70,6 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         super.initLists();
         DBObjectListContainer container = initChildObjects();
         arguments = container.createSubcontentObjectList(DBObjectType.ARGUMENT, this, ARGUMENTS_LOADER, getSchema(), true);
-    }
-
-    @Override
-    protected DBObjectRef createRef() {
-        return new DBMethodRef(this);
     }
 
     @NotNull
@@ -126,7 +119,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
     @Override
     public String getPresentableTextDetails() {
-        return getOverload() > 0 ? " #" + getOverload() : "";
+        return overload > 0 ? " #" + overload : "";
     }
 
     public boolean isProgramMethod() {
@@ -143,7 +136,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         int result = super.compareTo(o);
         if (result == 0) {
             DBMethod method = (DBMethod) o;
-            return getOverload() - method.getOverload();
+            return overload - method.getOverload();
         }
         return result;
     }
@@ -153,7 +146,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         if (this == obj) return true;
         if (super.equals(obj)) {
             DBMethod method = (DBMethod) obj;
-            return method.getOverload() == getOverload();
+            return method.getOverload() == overload;
         }
         return false;
     }

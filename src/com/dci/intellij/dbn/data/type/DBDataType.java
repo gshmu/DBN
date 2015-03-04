@@ -143,7 +143,7 @@ public class DBDataType {
         if (nativeDataType != null) {
             return nativeDataType.getValueFromResultSet(resultSet, columnIndex);
         } else {
-            return declaredType == null ? "[UNKNOWN]" : "[" + declaredType.getName() + "]";
+            return declaredType == null ? "[UNKNOWN]" : '[' + declaredType.getName() + ']';
         }
     }
 
@@ -164,18 +164,18 @@ public class DBDataType {
             StringBuilder buffer = new StringBuilder();
             String name = getName();
             buffer.append(name == null ? "" : name.toLowerCase());
-            if (getPrecision() > 0) {
+            if (precision > 0) {
                 buffer.append(" (");
-                buffer.append(getPrecision());
-                if (getScale() > 0) {
+                buffer.append(precision);
+                if (scale > 0) {
                     buffer.append(", ");
-                    buffer.append(getScale());
+                    buffer.append(scale);
                 }
-                buffer.append(")");
-            } else if (getLength() > 0) {
+                buffer.append(')');
+            } else if (length > 0) {
                 buffer.append(" (");
-                buffer.append(getLength());
-                buffer.append(")");
+                buffer.append(length);
+                buffer.append(')');
             }
             qualifiedName = buffer.toString();
         }

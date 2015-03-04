@@ -13,7 +13,7 @@ public abstract class AbstractDatabaseLogOutputAction extends DumbAwareAction {
         super(text, null, icon);
     }
 
-    public DatabaseLogOutput getDatabaseLogOutput(AnActionEvent e) {
+    public static DatabaseLogOutput getDatabaseLogOutput(AnActionEvent e) {
         return e.getData(DBNDataKeys.DATABASE_LOG_OUTPUT);
     }
 

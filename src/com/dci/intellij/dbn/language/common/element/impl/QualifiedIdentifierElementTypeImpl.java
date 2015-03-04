@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
@@ -13,17 +19,11 @@ import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
-import org.jdom.Element;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class QualifiedIdentifierElementTypeImpl extends AbstractElementType implements QualifiedIdentifierElementType {
     protected TokenElementType separatorToken;
     private final List<LeafElementType[]> variants = new ArrayList<LeafElementType[]>();
-    private Set<DBObjectType> objectTypeCache = new THashSet<DBObjectType>();
+    private Set<DBObjectType> objectTypeCache = EnumSet.noneOf(DBObjectType.class);
     public int maxLength;
 
     public QualifiedIdentifierElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {

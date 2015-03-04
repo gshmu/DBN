@@ -21,7 +21,7 @@ public class TestAction extends AnAction {
             public void run() {
                 if (object instanceof DBTable) {
                     DBTable table = (DBTable) object;
-                    DBTable target = (DBTable) table.getSchema().getChildObject(DBObjectType.TABLE, "ALLOCATIONS", false);
+                    DBTable target = (DBTable) table.getSchema().getChildObject(DBObjectType.TABLE, "ALLOCATIONS", 0, false);
                     DataDependencyPath[] shortestPath = new DataDependencyPath[1];
                     DataDependencyPathBuilder.buildDependencyPath(null, table.getColumns().get(0), target.getColumns().get(0), shortestPath);
                     System.out.println();

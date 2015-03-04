@@ -41,7 +41,7 @@ public enum DatabaseType {
 
     public static DatabaseType get(String name) {
         for (DatabaseType databaseType : values()) {
-            if (name.equalsIgnoreCase(databaseType.getName())) return databaseType;
+            if (name.equalsIgnoreCase(databaseType.name)) return databaseType;
         }
         return null;
     }

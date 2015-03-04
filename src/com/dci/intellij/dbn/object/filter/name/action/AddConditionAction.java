@@ -19,14 +19,16 @@ public class AddConditionAction extends ObjectNameFilterAction{
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
-        Object selection = getSelection();
-        ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-        if (selection instanceof CompoundFilterCondition) {
-            CompoundFilterCondition condition = (CompoundFilterCondition) selection;
-            filterManager.createFilterCondition(condition, settingsForm);
-        } else if (selection instanceof SimpleFilterCondition) {
-            SimpleFilterCondition condition = (SimpleFilterCondition) selection;
-            filterManager.joinFilterCondition(condition, settingsForm);
+        if (project != null) {
+            Object selection = getSelection();
+            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+            if (selection instanceof CompoundFilterCondition) {
+                CompoundFilterCondition condition = (CompoundFilterCondition) selection;
+                filterManager.createFilterCondition(condition, settingsForm);
+            } else if (selection instanceof SimpleFilterCondition) {
+                SimpleFilterCondition condition = (SimpleFilterCondition) selection;
+                filterManager.joinFilterCondition(condition, settingsForm);
+            }
         }
     }
 

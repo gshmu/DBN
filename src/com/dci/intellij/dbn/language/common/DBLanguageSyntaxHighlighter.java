@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.language.common;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.jdom.Document;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import org.jdom.Document;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase {
     protected Map colors = new HashMap();
@@ -36,7 +36,7 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
         return pack(getAttributeKeys(tokenType, backgrounds), getAttributeKeys(tokenType, colors));
     }
 
-    private TextAttributesKey getAttributeKeys(IElementType tokenType, Map map) {
+    private static TextAttributesKey getAttributeKeys(IElementType tokenType, Map map) {
         return (TextAttributesKey) map.get(tokenType);
     }
 

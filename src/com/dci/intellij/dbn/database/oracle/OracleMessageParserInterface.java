@@ -61,8 +61,8 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
     }
 
     private DatabaseObjectIdentifier identifyTrigger(String message) {
-        int startOffset = message.indexOf("'");
-        int endOffset = message.lastIndexOf("'");
+        int startOffset = message.indexOf('\'');
+        int endOffset = message.lastIndexOf('\'');
         StringTokenizer tokenizer = new StringTokenizer(message.substring(startOffset + 1, endOffset), ".");
         DBObjectType[] objectType = new DBObjectType[]{DBObjectType.SCHEMA, DBObjectType.TRIGGER};
         String[] objectName = new String[objectType.length];

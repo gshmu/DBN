@@ -101,7 +101,7 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     {PSQL_BLOCK_START_BEGIN}   { blockNesting++; }
     {PSQL_BLOCK_START_CREATE}  { blockNesting = 0; yypushback(yylength()); return endPsqlBlock(); }
     {PSQL_BLOCK_END_IGNORE}    {}
-    {PSQL_BLOCK_END}           { blockNesting--; if (blockNesting == 0) return endPsqlBlock();}
+    {PSQL_BLOCK_END}           { blockNesting--; if (blockNesting < 0) { blockNesting = 0; return endPsqlBlock();}}
 
     {IDENTIFIER}               {}
     {INTEGER}                  {}

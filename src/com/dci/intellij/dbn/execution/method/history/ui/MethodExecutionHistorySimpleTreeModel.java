@@ -5,9 +5,11 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistoryTreeModel {
     public MethodExecutionHistorySimpleTreeModel(List<MethodExecutionInput> executionInputs) {
@@ -46,11 +48,11 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
             SchemaTreeNode schemaNode,
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
-            DBMethodRef methodRef = executionInput.getMethodRef();
-            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-            if (connectionHandler != null && connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+            if (connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
-                methodRef.getQualifiedMethodName().equalsIgnoreCase(methodNode.getName()) &&
+                methodRef.getQualifiedObjectName().equalsIgnoreCase(methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {
 
                 return executionInput;
@@ -60,7 +62,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
     }
 
     protected String getMethodName(MethodExecutionInput executionInput) {
-        return executionInput.getMethodRef().getQualifiedMethodName();
+        return executionInput.getMethodRef().getQualifiedObjectName();
     }
 
     @Override

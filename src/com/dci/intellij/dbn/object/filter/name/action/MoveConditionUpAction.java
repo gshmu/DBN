@@ -25,8 +25,11 @@ public class MoveConditionUpAction extends ObjectNameFilterAction{
         if (selection instanceof FilterCondition) {
             FilterCondition condition = (FilterCondition) selection;
             Project project = ActionUtil.getProject(e);
-            ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
-            filterManager.moveFilterConditionUp(condition, settingsForm);
+            ObjectNameFilterManager filterManager = null;
+            if (project != null) {
+                filterManager = ObjectNameFilterManager.getInstance(project);
+                filterManager.moveFilterConditionUp(condition, settingsForm);
+            }
         }
     }
 

@@ -1,12 +1,17 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public class ObjectHierarchyPanel2 extends JPanel {
     private DBObject object;
@@ -17,7 +22,7 @@ public class ObjectHierarchyPanel2 extends JPanel {
         this.setLayout(new BorderLayout());
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
         JLabel connectionLabel = new JLabel(
                 connectionHandler.getName(),
                 connectionHandler.getIcon(),

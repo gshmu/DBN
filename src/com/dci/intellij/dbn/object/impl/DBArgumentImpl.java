@@ -20,8 +20,6 @@ import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
@@ -56,16 +54,6 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         if (getParentObject() instanceof DBFunction) {
             position++;
         }
-    }
-
-    @Override
-    protected DBObjectRef createRef() {
-        return new DBArgumentRef(this);
-    }
-
-    @Override
-    public DBArgumentRef getRef() {
-        return (DBArgumentRef) super.getRef();
     }
 
     public DBDataType getDataType() {
@@ -117,7 +105,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
 
     @Override
     public String getPresentableTextConditionalDetails() {
-        return getDataType().getQualifiedName();
+        return dataType.getQualifiedName();
     }
 
     @Override
@@ -141,9 +129,9 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     @Nullable
     @Override
     public Icon getIcon() {
-        return isInput() && isOutput() ? Icons.DBO_ARGUMENT_IN_OUT :
-               isInput() ? Icons.DBO_ARGUMENT_IN :
-               isOutput() ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
+        return input && output ? Icons.DBO_ARGUMENT_IN_OUT :
+               input ? Icons.DBO_ARGUMENT_IN :
+               output ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
     }
 
     public DBObjectType getObjectType() {
@@ -156,7 +144,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
             DBMethod thisMethod = getMethod();
             DBMethod thatMethod = argument.getMethod();
             if (thisMethod.equals(thatMethod)) {
-                return getPosition() - argument.getPosition();
+                return position - argument.getPosition();
             } else {
                 return thisMethod.compareTo(thatMethod);
             }
@@ -168,8 +156,8 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             DBArgument argument = (DBArgument) obj;
-            return getOverload() == argument.getOverload() &&
-                    getPosition() == argument.getPosition();
+            return overload == argument.getOverload() &&
+                    position == argument.getPosition();
         }
         return false;
     }

@@ -27,7 +27,7 @@ public class PSQLFoldingBuilder implements FoldingBuilder, DumbAware {
         return foldingDescriptors.toArray(new FoldingDescriptor[foldingDescriptors.size()]);
     }
 
-    private void createFoldingDescriptors(PsiElement psiElement, Document document, List<FoldingDescriptor> foldingDescriptors, int nestingIndex) {
+    private static void createFoldingDescriptors(PsiElement psiElement, Document document, List<FoldingDescriptor> foldingDescriptors, int nestingIndex) {
         PsiElement child = psiElement.getFirstChild();
         while (child != null) {
             if (child instanceof PsiComment) {

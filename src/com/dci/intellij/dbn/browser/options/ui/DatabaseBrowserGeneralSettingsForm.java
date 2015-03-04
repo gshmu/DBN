@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserGeneralSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
@@ -11,11 +16,6 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
     private JPanel mainPanel;
@@ -29,7 +29,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         updateBorderTitleForeground(mainPanel);
 
         browserTypeComboBox.setValues(
-                BrowserDisplayMode.SINGLE,
+                BrowserDisplayMode.SIMPLE,
                 BrowserDisplayMode.TABBED);
 
         resetFormChanges();

@@ -25,7 +25,7 @@ import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserDi
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
-import com.dci.intellij.dbn.object.lookup.DBMethodRef;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -186,7 +186,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
 
         methodArgumentsPanel.removeAll();
         if (executionInput != null) {
-            DBMethodRef methodRef = executionInput.getMethodRef();
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             headerTitle = methodRef.getPath();
             headerIcon = methodRef.getObjectType().getIcon();
             DBMethod method = executionInput.getMethod();

@@ -41,7 +41,7 @@ public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupIte
 
     }
 
-    protected boolean shouldInsertCharacter(char chr) {
+    protected static boolean shouldInsertCharacter(char chr) {
         return chr != '\t' && chr != '\n' && chr!='\u0000';
     }
 }

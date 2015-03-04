@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.language.common;
 
 import java.util.ArrayList;
 import java.util.Set;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -100,6 +101,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return DBObjectRef.get(underlyingObjectRef);
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
         return getActiveConnection();
@@ -134,7 +136,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return parserDefinition;
     }
 
-    @NonNls
     @Nullable
     public DBLanguageDialect getLanguageDialect() {
         VirtualFile virtualFile = getVirtualFile();
@@ -143,7 +144,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             return contentFile.getLanguageDialect();
         }
         
-        Language language = getLanguage();
         if (language instanceof DBLanguage) {
             DBLanguage dbLanguage = (DBLanguage) language;
             ConnectionHandler connectionHandler = getActiveConnection();
@@ -165,7 +165,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     public VirtualFile getVirtualFile() {
         DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
-        return originalFile == null || originalFile == this ?
+        return originalFile == this ?
                 super.getVirtualFile() :
                 originalFile.getVirtualFile();
 
@@ -181,7 +181,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         if (file != null && !getProject().isDisposed()) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
                 DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
-                return originalFile == null || originalFile == this ? activeConnection : originalFile.getActiveConnection();
+                return originalFile == this ? activeConnection : originalFile.getActiveConnection();
             } else {
                 return getConnectionMappingManager().getActiveConnection(file);
             }
@@ -200,12 +200,13 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         }
     }
 
+    @Nullable
     public DBSchema getCurrentSchema() {
         VirtualFile file = getVirtualFile();
         if (file != null) {
             if (VirtualFileUtil.isVirtualFileSystem(file)) {
                 DBLanguagePsiFile originalFile = (DBLanguagePsiFile) getOriginalFile();
-                return originalFile == null || originalFile == this ? currentSchema : originalFile.getCurrentSchema();
+                return originalFile == this ? currentSchema : originalFile.getCurrentSchema();
             } else {
                 return getConnectionMappingManager().getCurrentSchema(file);
             }
@@ -261,7 +262,9 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public ElementTypeBundle getElementTypeBundle() {
-        return getLanguageDialect().getParserDefinition().getParser().getElementTypes();
+        DBLanguageDialect languageDialect = getLanguageDialect();
+        languageDialect = CommonUtil.nvl(languageDialect, SQLLanguage.INSTANCE.getMainLanguageDialect());
+        return languageDialect.getParserDefinition().getParser().getElementTypes();
     }
 
     @Override
@@ -325,7 +328,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
         }
     }

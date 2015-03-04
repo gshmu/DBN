@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
-import com.dci.intellij.dbn.execution.method.ArgumentValue;
-import com.intellij.openapi.project.Project;
-
 import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelListener;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.execution.method.ArgumentValue;
+import com.intellij.openapi.project.Project;
 
 @Deprecated
 public class ArgumentValuesTableModel implements DBNTableModel {
@@ -89,7 +89,7 @@ public class ArgumentValuesTableModel implements DBNTableModel {
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             project = null;
         }

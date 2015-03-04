@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBArgumentRef;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -76,11 +75,11 @@ public class ArgumentValuesTree extends DBNTree{
                         SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
             }
 
-            if (userValue instanceof DBArgumentRef) {
-                DBArgumentRef argumentRef = (DBArgumentRef) userValue;
+            if (userValue instanceof DBObjectRef) {
+                DBObjectRef<DBArgument> argumentRef = (DBObjectRef<DBArgument>) userValue;
                 DBArgument argument = DBObjectRef.get(argumentRef);
                 setIcon(argument == null ? Icons.DBO_ARGUMENT : argument.getIcon());
-                append(argumentRef.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                append(argumentRef.getObjectName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
 
             if (userValue instanceof ArgumentValue) {
@@ -88,7 +87,7 @@ public class ArgumentValuesTree extends DBNTree{
                 DBArgument argument = argumentValue.getArgument();
                 DBTypeAttribute attribute = argumentValue.getAttribute();
                 Object originalValue = argumentValue.getValue();
-                String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() ? "" : "" + originalValue;
+                String displayValue = originalValue instanceof ResultSet || argumentValue.isLargeObject() ? "" : String.valueOf(originalValue);
 
                 if (attribute == null) {
                     if (argument == null) {

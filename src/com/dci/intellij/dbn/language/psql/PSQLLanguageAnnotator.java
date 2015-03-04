@@ -69,7 +69,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         if (psiElement instanceof ExecutablePsiElement)  annotateExecutable(psiElement, holder);
     }
 
-    private void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
+    private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
         TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
         if (flavor != null) {
             Annotation annotation = holder.createInfoAnnotation(tokenPsiElement, null);
@@ -82,7 +82,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         }
     }
 
-     private void annotateIdentifier(final PsiElement psiElement, final AnnotationHolder holder) {
+     private static void annotateIdentifier(final PsiElement psiElement, final AnnotationHolder holder) {
         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
         if (identifierPsiElement.isReference()) {
             identifierPsiElement.resolve();
@@ -98,7 +98,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 */
     }
 
-    private void annotateAliasRef(IdentifierPsiElement aliasReference, AnnotationHolder holder) {
+    private static void annotateAliasRef(IdentifierPsiElement aliasReference, AnnotationHolder holder) {
         if (aliasReference.resolve() == null) {
             Annotation annotation = holder.createWarningAnnotation(aliasReference, "Unknown identifier");
             annotation.setTextAttributes(PSQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
@@ -119,7 +119,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         annotation.setTextAttributes(SQLTextAttributesKeys.DATA_TYPE);*/
     }
 
-    private void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
+    private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
         PsiElement reference = objectReference.resolve();
         /*ConnectionHandler connectionHandler = objectReference.getActiveConnection();
         if (reference == null && connectionHandler != null && connectionHandler.getConnectionStatus().isValid()) {
@@ -129,7 +129,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         }*/
     }
 
-    private void annotateSpecDeclarationNavigable(BasePsiElement basePsiElement, AnnotationHolder holder) {
+    private static void annotateSpecDeclarationNavigable(BasePsiElement basePsiElement, AnnotationHolder holder) {
         BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
         if (subjectPsiElement instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
@@ -198,7 +198,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         }
     }
 
-    private void annotateExecutable(PsiElement psiElement, AnnotationHolder holder) {
+    private static void annotateExecutable(PsiElement psiElement, AnnotationHolder holder) {
         ExecutablePsiElement executable = (ExecutablePsiElement) psiElement;
         if (!executable.isNestedExecutable()) {
             Annotation annotation = holder.createInfoAnnotation(psiElement, null);

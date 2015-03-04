@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -94,10 +95,6 @@ public class ColumnValueTextField extends JTextField {
         return DBObjectRef.get(columnRef);
     }
 
-    private JDialog getEnclosingDialog() {
-        return null;
-    }
-    
     MouseListener mouseListener = new MouseAdapter() {
         public void mouseClicked(MouseEvent event) {
             DBColumn column = getColumn();

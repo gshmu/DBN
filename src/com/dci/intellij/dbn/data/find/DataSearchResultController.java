@@ -48,7 +48,7 @@ public class DataSearchResultController implements Disposable{
         updateSelection(table, oldSelection, selection);
     }
 
-    private void updateSelection(BasicTable table, DataSearchResultMatch oldSelection, DataSearchResultMatch selection) {
+    private static void updateSelection(BasicTable table, DataSearchResultMatch oldSelection, DataSearchResultMatch selection) {
         if (oldSelection != null) {
             DataModelCell cell = oldSelection.getCell();
             Rectangle cellRectangle = table.getCellRect(cell);

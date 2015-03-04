@@ -70,7 +70,7 @@ public class StatementExecutionVariablesBundle implements Disposable{
         return errorMap != null && errorMap.size() > 0;
     }
 
-    private DBDataType lookupDataType(ExecVariablePsiElement variablePsiElement) {
+    private static DBDataType lookupDataType(ExecVariablePsiElement variablePsiElement) {
         BasePsiElement conditionPsiElement = variablePsiElement.findEnclosingPsiElement(ElementTypeAttribute.CONDITION);
 
         if (conditionPsiElement != null) {
@@ -115,7 +115,7 @@ public class StatementExecutionVariablesBundle implements Disposable{
 
                 if (genericDataType == GenericDataType.LITERAL) {
                     value = StringUtil.replace(value, "'", "''");
-                    value = "'" + value + "'" ;
+                    value = '\'' + value + '\'';
                 } else if (genericDataType == GenericDataType.DATE_TIME){
                     DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                     try {

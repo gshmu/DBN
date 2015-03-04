@@ -61,13 +61,13 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
         }.start();
     }
 
-    private void pasteToClipboard(StatementGeneratorResult result, Project project) {
+    private static void pasteToClipboard(StatementGeneratorResult result, Project project) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(result.getStatement()), null);
         MessageUtil.showInfoDialog(project, "Statement extracted", "SQL statement exported to clipboard.");
     }
 
-    private void pasteToEditor(final Editor editor, final StatementGeneratorResult generatorResult) {
+    private static void pasteToEditor(final Editor editor, final StatementGeneratorResult generatorResult) {
         new CommandWriteActionRunner(editor.getProject(), "Extract statement") {
             @Override
             public void run() {

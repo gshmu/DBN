@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -12,15 +13,15 @@ import com.dci.intellij.dbn.object.DBColumn;
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(DBColumn column) {
         List<String> list = new ArrayList<String>();
-        ConnectionHandler connectionHandler = column.getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(column.getConnectionHandler());
         Connection connection = null;
         ResultSet resultSet = null;
         try {
             connection = connectionHandler.getPoolConnection();
             resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().getDistinctValues(
-                column.getDataset().getSchema().getName(),
-                column.getDataset().getName(),
-                column.getName(), connection);
+                    column.getDataset().getSchema().getName(),
+                    column.getDataset().getName(),
+                    column.getName(), connection);
 
             while (resultSet.next()) {
                 String value = resultSet.getString(1);
@@ -33,6 +34,7 @@ public class DatasetEditorUtils {
             ConnectionUtil.closeResultSet(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
+
         return list;
     }
 }

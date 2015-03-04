@@ -19,13 +19,13 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
@@ -74,10 +74,8 @@ import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.FileStatus;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -185,8 +183,9 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return connectionConfigHash == connectionHandler.getSettings().getDatabaseSettings().hashCode();
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return FailsafeUtil.get(connectionHandler);
     }
 
     public List<DBSchema> getSchemas() {
@@ -434,7 +433,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();
                 append(true, "Pool size: ", "-2", null, false);
-                append(false, "" + connectionPool.getSize(), false);
+                append(false, String.valueOf(connectionPool.getSize()), false);
                 append(false, " (", false);
                 append(false, "peak&nbsp;" + connectionPool.getPeakPoolSize(), false);
                 append(false, ")", false);
@@ -462,10 +461,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return this;
     }
 
-    public FileStatus getFileStatus() {
-        return FileStatus.NOT_CHANGED;
-    }
-
     /*********************************************************
      *                   NavigationItem                      *
      *********************************************************/
@@ -475,10 +470,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     public Icon getIcon(boolean open) {
         return getIcon(0);
-    }
-
-    public TextAttributesKey getTextAttributesKey() {
-        return SQLTextAttributesKeys.IDENTIFIER;
     }
 
     /*********************************************************
@@ -502,6 +493,10 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     }
 
     public DBObject getObject(DBObjectType objectType, String name) {
+        return getObject(objectType, name, 0);
+    }
+
+    public DBObject getObject(DBObjectType objectType, String name, int overload) {
         if (objectType == DBObjectType.SCHEMA) return getSchema(name);
         if (objectType == DBObjectType.USER) return getUser(name);
         if (objectType == DBObjectType.ROLE) return getRole(name);
@@ -509,7 +504,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (objectType == DBObjectType.SYSTEM_PRIVILEGE) return getSystemPrivilege(name);
         for (DBSchema schema : getSchemas()) {
             if (schema.isPublicSchema() && objectType.isSchemaObject()) {
-                DBObject childObject = schema.getChildObject(objectType, name, true);
+                DBObject childObject = schema.getChildObject(objectType, name, overload, true);
                 if (childObject != null) {
                     return childObject;
                 }

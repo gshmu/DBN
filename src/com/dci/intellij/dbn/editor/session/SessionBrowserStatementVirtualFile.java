@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -45,27 +46,25 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
     public SessionBrowserStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
         this.sessionBrowser = sessionBrowser;
         this.content = content;
-        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
         name = connectionHandler.getName();
         path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION_BROWSER_STATEMENT";
         url = DatabaseFileSystem.createUrl(connectionHandler) + "#SESSION_BROWSER_STATEMENT";
-        setCharset(getConnectionHandler().getSettings().getDetailSettings().getCharset());
+        setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
 
-            if (languageDialect != null) {
-                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-                fileViewProvider.forceCachedPsi(file);
-                Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                document.putUserData(FILE_KEY, this);
-                PsiDocumentManagerImpl.cachePsi(document, file);
-                return file;
-            }
+        if (languageDialect != null) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
+            fileViewProvider.forceCachedPsi(file);
+            Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
+            document.putUserData(FILE_KEY, this);
+            PsiDocumentManagerImpl.cachePsi(document, file);
+            return file;
         }
         return null;
     }
@@ -76,22 +75,25 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
 
     public Project getProject() {
         Project project = sessionBrowser == null ? null : sessionBrowser.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.nvl(project);
     }
 
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
     }
 
+    @Nullable
     @Override
     public ConnectionHandler getActiveConnection() {
         return getConnectionHandler();
     }
 
+    @Nullable
     @Override
     public DBSchema getCurrentSchema() {
         return DBObjectRef.get(schemaRef);

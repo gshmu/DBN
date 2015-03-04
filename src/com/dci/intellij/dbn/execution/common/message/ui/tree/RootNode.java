@@ -29,7 +29,7 @@ public class RootNode extends BundleTreeNode {
         if (execMessagesNode == null) {
             execMessagesNode = new StatementExecutionMessagesNode(this);
             addChild(execMessagesNode);
-            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            messagesTreeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
         return execMessagesNode.addExecutionMessage(executionMessage);
@@ -46,7 +46,7 @@ public class RootNode extends BundleTreeNode {
         if (explainPlanMessagesNode == null) {
             explainPlanMessagesNode = new ExplainPlanMessagesNode(this);
             addChild(explainPlanMessagesNode);
-            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            messagesTreeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
         return explainPlanMessagesNode.addExplainPlanMessage(explainPlanMessage);
@@ -57,7 +57,7 @@ public class RootNode extends BundleTreeNode {
         if (compilerMessagesNode == null) {
             compilerMessagesNode = new CompilerMessagesNode(this);
             addChild(compilerMessagesNode);
-            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            messagesTreeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
         return compilerMessagesNode.addCompilerMessage(compilerMessage);
     }

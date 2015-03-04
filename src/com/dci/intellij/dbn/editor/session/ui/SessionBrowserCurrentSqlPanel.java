@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -89,7 +90,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
             new BackgroundTask(project, "Loading session current SQL", true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+                    ConnectionHandler connectionHandler = getConnectionHandler();
                     DBSchema schema = null;
                     if (StringUtil.isNotEmpty(schemaName)) {
                         schema = connectionHandler.getObjectBundle().getSchema(schemaName);
@@ -108,13 +109,18 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         }
     }
 
+    @NotNull
+    private ConnectionHandler getConnectionHandler() {
+        return FailsafeUtil.get(sessionBrowser.getConnectionHandler());
+    }
+
     public DBLanguagePsiFile getPsiFile() {
         return psiFile;
     }
 
     private void createStatementViewer() {
         Project project = sessionBrowser.getProject();
-        ConnectionHandler connectionHandler = sessionBrowser.getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         virtualFile = new SessionBrowserStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
         psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);

@@ -230,7 +230,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         }
     }
 
-    private boolean fileExists(String driverLibrary) {
+    private static boolean fileExists(String driverLibrary) {
         return driverLibrary != null && new File(driverLibrary).exists();
     }
 

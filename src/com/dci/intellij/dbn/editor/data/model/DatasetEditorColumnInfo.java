@@ -48,7 +48,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     }
 
     public String getName() {
-        return columnRef.getName();
+        return columnRef.getObjectName();
     }
 
     public int getColumnIndex() {
@@ -75,7 +75,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     public synchronized List<String> getPossibleValues() {
         if (possibleValues == null) {
-            setPossibleValues(EMPTY_LIST);
+            possibleValues = EMPTY_LIST;
             List<String> values;
             DBColumn column = getColumn();
             if (column != null) {

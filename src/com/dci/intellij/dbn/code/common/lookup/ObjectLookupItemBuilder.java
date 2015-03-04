@@ -36,10 +36,8 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
             if (object.needsNameQuoting()) {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
                 String lookupString = lookupItem.getLookupString();
-                if (compatibilityInterface != null) {
-                    char quoteChar = compatibilityInterface.getIdentifierQuotes();
-                    lookupString = quoteChar + lookupString + quoteChar;
-                }
+                char quoteChar = compatibilityInterface.getIdentifierQuotes();
+                lookupString = quoteChar + lookupString + quoteChar;
                 lookupItem.setLookupString(lookupString);
             }
 
@@ -68,15 +66,15 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
                 DBSynonym synonym = (DBSynonym) object;
                 DBObject underlyingObject = synonym.getUnderlyingObject();
                 if (underlyingObject != null) {
-                    typePrefix = underlyingObject.getTypeName() + " ";
+                    typePrefix = underlyingObject.getTypeName() + ' ';
                 }
             }
 
             return parentObject == null ?
                     typePrefix + object.getTypeName() :
                     typePrefix + object.getTypeName() + " (" +
-                       parentObject.getTypeName() + " " +
-                       parentObject.getName() + ")";
+                       parentObject.getTypeName() + ' ' +
+                       parentObject.getName() + ')';
         }
         return "";
     }
@@ -91,7 +89,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         Project project = context.getFile().getProject();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(language);
         CodeStyleCaseOption caseOption = styleCaseSettings.getObjectCaseOption();
-        String text = caseOption.format(objectRef.getName());
+        String text = caseOption.format(objectRef.getObjectName());
 
         if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
             return null;

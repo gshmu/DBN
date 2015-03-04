@@ -61,6 +61,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return parent;
     }
 
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
         return parent == null ? null : parent.getConnectionHandler();
     }
@@ -90,7 +91,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     @Override
     public boolean isSubContent() {
-        return getDependencyAdapter().isSubContent();
+        return dependencyAdapter.isSubContent();
     }
 
     public boolean isLoading() {
@@ -160,7 +161,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             if (!isLoadingInBackground && shouldLoad(force)) {
                 isLoadingInBackground = true;
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ")";
+                String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ')';
                 new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
                     public void execute(@NotNull ProgressIndicator progressIndicator) {
                         try {
@@ -184,7 +185,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             // mark first the dirty status since dirty dependencies may
             // become valid due to parallel background load
             isDirty = false;
-            getLoader().loadContent(this, false);
+            loader.loadContent(this, false);
         } catch (DynamicContentLoadException e) {
             isDirty = !e.isModelException();
         }
@@ -198,7 +199,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         checkDisposed();
         try {
             checkDisposed();
-            getLoader().reloadContent(this);
+            loader.reloadContent(this);
         } catch (DynamicContentLoadException e) {
             isDirty = !e.isModelException();
         }
@@ -268,7 +269,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         }
     }
 
-    public T getElement(String name) {
+    public T getElement(String name, int overload) {
         if (name != null) {
             List<T> elements = getElements();
             if (indexed && index != null) {
@@ -276,7 +277,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             } else {
                 for (T element : elements) {
                     if (element.getName().equalsIgnoreCase(name)) {
-                        return element;
+                        if (overload == 0 || overload == element.getOverload()) {
+                            return element;
+                        }
                     }
                 }
             }
