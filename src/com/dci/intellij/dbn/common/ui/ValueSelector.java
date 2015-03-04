@@ -1,24 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.intellij.ide.DataManager;
-import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.ui.GraphicsConfig;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
-import com.intellij.ui.Gray;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.RoundedLineBorder;
-import com.intellij.util.IconUtil;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,6 +31,25 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.intellij.ide.DataManager;
+import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.ui.GraphicsConfig;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Condition;
+import com.intellij.ui.Gray;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.RoundedLineBorder;
+import com.intellij.util.IconUtil;
+import com.intellij.util.ui.UIUtil;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     public static Color COMBO_BOX_BACKGROUND = UIUtil.getTextFieldBackground();
@@ -195,7 +195,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         listeners.remove(listener);
     }
 
-    private Icon cropIcon(Icon icon) {
+    private static Icon cropIcon(Icon icon) {
         return icon == null ? null : IconUtil.cropIcon(icon, 16, 16);
     }
 

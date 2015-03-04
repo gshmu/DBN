@@ -97,7 +97,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
     public abstract Icon getIcon();
 
-    private void updateEditorActions(BasicTextEditor fileEditor) {
+    private static void updateEditorActions(BasicTextEditor fileEditor) {
         Editor editor = fileEditor.getEditor();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SourceEditor");
         JComponent editorComponent = editor.getComponent();

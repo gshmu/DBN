@@ -26,7 +26,7 @@ public class SessionDetailsTableModel implements DBNTableModel {
             host = "";
             status = "";
         } else {
-            sessionId = row.getSessionId() + "";
+            sessionId = String.valueOf(row.getSessionId());
             user = row.getUser();
             schema = row.getSchema();
             host = row.getHost();
@@ -133,7 +133,7 @@ public class SessionDetailsTableModel implements DBNTableModel {
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
         }
     }

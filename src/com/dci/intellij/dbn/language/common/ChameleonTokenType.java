@@ -73,10 +73,6 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         return false;
     }
 
-    public boolean isVirtualObjectInsideLookup() {
-        return false;
-    }
-
     public DBObjectType getVirtualObjectType() {
         return null;
     }
@@ -85,16 +81,8 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         return new ASTWrapperPsiElement(astNode);
     }
 
-    public String getResolveScopeId() {
-        return null;
-    }
-
     public ElementTypeBundle getElementBundle() {
         return null;
-    }
-
-    public void registerVirtualObject(DBObjectType objectType) {
-
     }
 
     @Override

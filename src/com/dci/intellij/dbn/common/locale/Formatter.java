@@ -58,10 +58,10 @@ public class Formatter {
         if (StringUtil.isEmptyOrSpaces(numberFormatPattern)) throw new IllegalArgumentException("Number format pattern empty.");
         this.dateFormatPattern = dateFormatPattern;
         this.timeFormatPattern = timeFormatPattern;
-        this.datetimeFormatPattern = dateFormatPattern + " " + timeFormatPattern;
+        this.datetimeFormatPattern = dateFormatPattern + ' ' + timeFormatPattern;
         this.numberFormatPattern = numberFormatPattern;
 
-        int fractionIndex = numberFormatPattern.lastIndexOf(".");
+        int fractionIndex = numberFormatPattern.lastIndexOf('.');
         if (fractionIndex > -1) {
             this.integerFormatPattern = numberFormatPattern.substring(0, fractionIndex);
         } else {

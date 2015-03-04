@@ -58,7 +58,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, object);
             if (selectedCompileType != null) {
                 doCompileObject(object, selectedCompileType, compilerAction);
-                if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
+                if (DatabaseFileSystem.isFileOpened(object)) {
                     DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                     DBContentType contentType = compilerAction.getContentType();
                     if (contentType.isBundle()) {
@@ -88,7 +88,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         new BackgroundTask(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
                             public void execute(@NotNull ProgressIndicator progressIndicator) {
                                 doCompileObject(object, selectedCompileType, compilerAction);
-                                if (DatabaseFileSystem.getInstance().isFileOpened(object)) {
+                                if (DatabaseFileSystem.isFileOpened(object)) {
                                     DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                                     DBContentType contentType = compilerAction.getContentType();
                                     DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);

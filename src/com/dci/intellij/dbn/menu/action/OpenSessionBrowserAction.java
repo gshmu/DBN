@@ -83,7 +83,7 @@ public class OpenSessionBrowserAction extends DumbAwareAction {
         }
     }
 
-    private void openSessionBrowser(ConnectionHandler connectionHandler) {
+    private static void openSessionBrowser(ConnectionHandler connectionHandler) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(connectionHandler.getProject());
         sessionBrowserManager.openSessionBrowser(connectionHandler);
     }

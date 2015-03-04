@@ -252,8 +252,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             return getTypeName();
         } else {
             return getTypeName() + " (" +
-                    parentObject.getTypeName() + " " +
-                    parentObject.getName() + ")";
+                    parentObject.getTypeName() + ' ' +
+                    parentObject.getName() + ')';
         }
     }
 
@@ -455,7 +455,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
                 statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
                 statement.registerOutParameter(1, Types.CLOB);
                 statement.setString(2, getTypeName().toUpperCase());
-                statement.setString(3, getName());
+                statement.setString(3, name);
                 statement.setString(4, getParentObject().getName());
 
                 statement.execute();
@@ -536,7 +536,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public boolean canExpand() {
-        return !isLeafTreeElement() && isTreeStructureLoaded() && getTreeChild(0).isTreeStructureLoaded();
+        return !isLeafTreeElement() && treeChildrenLoaded && getTreeChild(0).isTreeStructureLoaded();
     }
 
     public Icon getIcon(int flags) {
@@ -544,7 +544,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public String getPresentableText() {
-        return getName();
+        return name;
     }
 
     public String getPresentableTextDetails() {
@@ -603,7 +603,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     private void buildTreeChildren() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed()) {
+        if (connectionHandler != null && !isDisposed) {
             Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
             List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
             List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
@@ -633,7 +633,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
 
             Project project = getProject();
-            if (!isDisposed() && !project.isDisposed()) {
+            if (!isDisposed && !project.isDisposed()) {
                 EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
                 new ConditionalLaterInvocator() {
                     public void execute() {
@@ -649,7 +649,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public void refreshTreeChildren(@Nullable DBObjectType objectType) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed()) {
+        if (connectionHandler != null && !isDisposed) {
             if (visibleTreeChildren != null) {
                 for (BrowserTreeNode treeNode : visibleTreeChildren) {
                     treeNode.refreshTreeChildren(objectType);
@@ -660,7 +660,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public void rebuildTreeChildren() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed()) {
+        if (connectionHandler != null && !isDisposed) {
             Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
             if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
                 buildTreeChildren();
@@ -678,7 +678,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public boolean isLeafTreeElement() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed()) {
+        if (connectionHandler != null && !isDisposed) {
             Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
             for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
                 if (treeNode != null && filter.accepts(treeNode)) {
@@ -732,7 +732,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public String toString() {
-        return getName();
+        return name;
     }
 
     public List<PresentableProperty> getPresentableProperties() {
@@ -748,7 +748,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public boolean isValid() {
-        return !isDisposed();
+        return !isDisposed;
     }
 
     /*********************************************************

@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -10,10 +14,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentImpl<T> implements DBObjectRelationList<T>{
     private DBObjectRelationType objectRelationType;
@@ -83,9 +83,9 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
    public String getContentDescription() {
         if (getParent() instanceof DBObject) {
             DBObject object = (DBObject) getParent();
-            return getName() + " of " + object.getQualifiedNameWithType();
+            return name + " of " + object.getQualifiedNameWithType();
         }
-        return getName() + " from " + getConnectionHandler().getName() ;
+       return name + " from " + getConnectionHandler().getName() ;
     }
 
     public void notifyChangeListeners() {}

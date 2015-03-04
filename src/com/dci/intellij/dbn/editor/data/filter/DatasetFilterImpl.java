@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.text.StringUtil;
+import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.UUID;
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.text.StringUtil;
 
 public abstract class DatasetFilterImpl extends Configuration implements DatasetFilter {
     private DatasetFilterGroup filterGroup;
@@ -102,8 +102,8 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
         if (this == obj) return true;
         if (obj instanceof DatasetFilter) {
             DatasetFilter remote = (DatasetFilter) obj;
-            return remote.getFilterGroup().equals(getFilterGroup()) &&
-                   remote.getId().equals(getId());
+            return remote.getFilterGroup().equals(filterGroup) &&
+                   remote.getId().equals(id);
         }
         return false;
     }

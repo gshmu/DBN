@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.diagnostic.Logger;
@@ -94,7 +93,7 @@ public class DBNativeDataType implements DynamicContentElement{
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
             Object object = resultSet.getObject(columnIndex);
-            LOGGER.error("Error resolving result set value for '" + object + "'. (data type definition " + dataTypeDefinition + ")", e);
+            LOGGER.error("Error resolving result set value for '" + object + "'. (data type definition " + dataTypeDefinition + ')', e);
             return object;
         }
     }
@@ -193,23 +192,9 @@ public class DBNativeDataType implements DynamicContentElement{
     /*********************************************************
      *                 DynamicContentElement                 *
      *********************************************************/
-    public boolean isValid() {
-        return true;
-    }
-
-    public void setValid(boolean valid) {
-
-    }
 
     public String getDescription() {
         return null;
-    }
-
-    public DynamicContent getOwnerContent() {
-        return null;
-    }
-
-    public void setOwnerContent(DynamicContent ownerContent) {
     }
 
     public void reload() {

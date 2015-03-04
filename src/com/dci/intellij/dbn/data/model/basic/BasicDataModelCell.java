@@ -65,10 +65,10 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public boolean isLobValue() {
-        return getUserValue() instanceof LargeObjectValue;
+        return userValue instanceof LargeObjectValue;
     }
     public boolean isArrayValue() {
-        return getUserValue() instanceof ArrayValue;
+        return userValue instanceof ArrayValue;
     }
 
     @Override
@@ -116,9 +116,9 @@ public class BasicDataModelCell implements DataModelCell {
 
     @Override
     public boolean equals(Object obj) {
-        if (!isDisposed() && obj instanceof BasicDataModelCell) {
+        if (!isDisposed && obj instanceof BasicDataModelCell) {
             BasicDataModelCell cell = (BasicDataModelCell) obj;
-            return cell.getIndex() == getIndex() &&
+            return cell.index == index &&
                     cell.getRow().getIndex() == getRow().getIndex() &&
                     cell.getRow().getModel() == getRow().getModel();
         }

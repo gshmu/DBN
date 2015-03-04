@@ -78,8 +78,8 @@ public class DatasetEditorError {
     public boolean equals(Object obj) {
         if(obj instanceof DatasetEditorError) {
             DatasetEditorError error = (DatasetEditorError) obj;
-            return CommonUtil.safeEqual(error.getMessage(), getMessage()) &&
-                   CommonUtil.safeEqual(error.getMessageObject(), getMessageObject());
+            return CommonUtil.safeEqual(error.message, message) &&
+                   CommonUtil.safeEqual(error.messageObject, messageObject);
         }
 
         return false;

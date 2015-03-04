@@ -280,7 +280,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             project = null;
             GUIUtil.removeListeners(this);

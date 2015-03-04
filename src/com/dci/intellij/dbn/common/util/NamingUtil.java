@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
-import com.dci.intellij.dbn.object.common.DBObject;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public class NamingUtil {
 
@@ -182,7 +182,7 @@ public class NamingUtil {
     }
 
     public static String getClassName(Class clazz) {
-        int index = clazz.getName().lastIndexOf(".");
+        int index = clazz.getName().lastIndexOf('.');
         return clazz.getName().substring(index + 1);
     }
 }

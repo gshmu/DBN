@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +36,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
 
         if (selectedExecutionInput != null) {
             showMethodExecutionPanel(selectedExecutionInput);
-            setSelectedExecutionInput(selectedExecutionInput);
+            this.selectedExecutionInput = selectedExecutionInput;
             mainComponent.setSelectedInput(selectedExecutionInput);
         }
         init();

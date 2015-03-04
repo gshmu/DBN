@@ -187,12 +187,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
      */
     public String getQualifiedObjectName() {
         DBObjectRef parent = this.parent;
-        if (parent == null || parent.getObjectType() == DBObjectType.SCHEMA) {
+        if (parent == null || parent.objectType == DBObjectType.SCHEMA) {
             return objectName;
         } else {
             StringBuilder buffer = new StringBuilder(objectName);
-            while(parent != null && parent.getObjectType() != DBObjectType.SCHEMA) {
-                buffer.insert(0, ".");
+            while(parent != null && parent.objectType != DBObjectType.SCHEMA) {
+                buffer.insert(0, '.');
                 buffer.insert(0, parent.objectName);
                 parent = parent.parent;
             }
@@ -200,7 +200,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         }    }
 
     public String getQualifiedNameWithType() {
-        return objectType.getName() + " " + getPath();
+        return objectType.getName() + ' ' + getPath();
     }
 
     public String getTypePath() {
@@ -210,7 +210,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         } else {
             StringBuilder buffer = new StringBuilder(objectType.getName());
             while(parent != null) {
-                buffer.insert(0, ".");
+                buffer.insert(0, '.');
                 buffer.insert(0, parent.objectType.getName());
                 parent = parent.parent;
             }
@@ -344,7 +344,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Override
     public int hashCode() {
         if (hashCode == -1) {
-            hashCode = (getConnectionId() + "#" + serialize()).hashCode();
+            hashCode = (getConnectionId() + '#' + serialize()).hashCode();
         }
         return hashCode;
     }
@@ -357,7 +357,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (overload == 0) {
             return objectName;
         } else {
-            return objectName + "#" + overload;
+            return objectName + '#' + overload;
         }
     }
 
@@ -366,6 +366,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public boolean isOfType(DBObjectType objectType) {
-        return getObjectType().matches(objectType);
+        return this.objectType.matches(objectType);
     }
 }

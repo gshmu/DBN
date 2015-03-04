@@ -193,8 +193,8 @@ public class FormattingBlock implements Block {
             return null;
         }
 
-        PsiElement leftPsiElement = leftBlock.getPsiElement();
-        PsiElement rightPsiElement = rightBlock.getPsiElement();
+        PsiElement leftPsiElement = leftBlock.psiElement;
+        PsiElement rightPsiElement = rightBlock.psiElement;
 
         if (leftPsiElement instanceof PsiComment || rightPsiElement instanceof PsiComment) {
             return null;
@@ -257,7 +257,7 @@ public class FormattingBlock implements Block {
         return SpacingDefinition.ONE_SPACE.getValue();
     }
 
-    private boolean is(PsiElement psiElement, TokenType tokenType) {
+    private static boolean is(PsiElement psiElement, TokenType tokenType) {
         if (psiElement instanceof TreeElement) {
             TreeElement treeElement = (TreeElement) psiElement;
             return treeElement.getElementType() == tokenType;
@@ -279,7 +279,7 @@ public class FormattingBlock implements Block {
         return null;
     }
 
-    private BasePsiElement getParentPsiElement(PsiElement psiElement) {
+    private static BasePsiElement getParentPsiElement(PsiElement psiElement) {
         PsiElement parentPsiElement = psiElement.getParent();
         if (parentPsiElement instanceof BasePsiElement) {
             return (BasePsiElement) parentPsiElement;
@@ -287,9 +287,9 @@ public class FormattingBlock implements Block {
         return null;
     }
 
-    private FormattingBlock getParentBlock(FormattingBlock block, ElementTypeAttribute typeAttribute) {
+    private static FormattingBlock getParentBlock(FormattingBlock block, ElementTypeAttribute typeAttribute) {
         if (block.parentBlock != null) {
-            PsiElement psiElement = block.parentBlock.getPsiElement();
+            PsiElement psiElement = block.parentBlock.psiElement;
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
                 if (basePsiElement.getElementType().is(typeAttribute)) {
@@ -302,7 +302,7 @@ public class FormattingBlock implements Block {
     }
 
 
-    private ElementType getParentElementType(PsiElement psiElement) {
+    private static ElementType getParentElementType(PsiElement psiElement) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
             return parentPsiElement.getElementType();

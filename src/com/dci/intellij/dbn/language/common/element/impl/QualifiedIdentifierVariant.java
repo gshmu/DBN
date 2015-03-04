@@ -79,8 +79,8 @@ public class QualifiedIdentifierVariant implements Comparable{
 
     public int compareTo(@NotNull Object o) {
         QualifiedIdentifierVariant variant = (QualifiedIdentifierVariant) o;
-        if (variant.isIncomplete() != this.isIncomplete()) {
-            return variant.isIncomplete() ? -1 : 1;
+        if (variant.incomplete != incomplete) {
+            return variant.incomplete ? -1 : 1;
         }
 
         if (variant.leafs.length == leafs.length) {

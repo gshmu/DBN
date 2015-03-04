@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
+import javax.swing.ListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -10,17 +21,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.ListModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 public class DatasetFilterGroup extends Configuration<DatasetFilterForm> implements ListModel {
     private Project project;
@@ -190,14 +190,14 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
     @Nullable
     public DBDataset lookupDataset() {
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(getConnectionId());
+        ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
         if (connectionHandler != null) {
-            int index = getDatasetName().lastIndexOf('.');
-            String schemaName = getDatasetName().substring(0, index);
+            int index = datasetName.lastIndexOf('.');
+            String schemaName = datasetName.substring(0, index);
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
             if (schema != null) {
-                String datasetName = getDatasetName().substring(index + 1);
-                return schema.getDataset(datasetName);
+                String name = datasetName.substring(index + 1);
+                return schema.getDataset(name);
             }
         }
         return null;
@@ -207,8 +207,8 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         if (this == obj) return true;
         if (obj instanceof DatasetFilterGroup) {
             DatasetFilterGroup remote = (DatasetFilterGroup) obj;
-            return remote.getConnectionId().equals(getConnectionId()) &&
-                    remote.getDatasetName().equals(getDatasetName());
+            return remote.connectionId.equals(connectionId) &&
+                    remote.datasetName.equals(datasetName);
         }
         return false;
     }

@@ -201,6 +201,6 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     public int getScrollUnitIncrement() {
         return (int) (typeAttributeForms.size() > 0 ?
                 typeAttributeForms.get(0).getComponent().getPreferredSize().getHeight() :
-                getComponent().getPreferredSize().getHeight());
+                mainPanel.getPreferredSize().getHeight());
     }
 }

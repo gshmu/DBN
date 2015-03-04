@@ -104,7 +104,7 @@ public class StatementDefinition {
         }
     }
 
-    private int createConnectionSignature(Connection connection) throws SQLException {
+    private static int createConnectionSignature(Connection connection) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();
         String driver = metaData.getDriverName();
         String url = metaData.getURL();

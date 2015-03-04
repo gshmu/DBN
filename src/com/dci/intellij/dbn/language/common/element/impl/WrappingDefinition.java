@@ -36,8 +36,8 @@ public class WrappingDefinition {
         if (obj instanceof WrappingDefinition) {
             WrappingDefinition definition = (WrappingDefinition) obj;
             return
-                this.beginElementType.getTokenType().equals(definition.getBeginElementType().getTokenType()) &&
-                this.endElementType.getTokenType().equals(definition.getEndElementType().getTokenType());
+                this.beginElementType.getTokenType().equals(definition.beginElementType.getTokenType()) &&
+                this.endElementType.getTokenType().equals(definition.endElementType.getTokenType());
         }
         return false;
     }

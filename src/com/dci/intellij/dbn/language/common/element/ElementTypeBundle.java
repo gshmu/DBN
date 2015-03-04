@@ -63,7 +63,7 @@ public class ElementTypeBundle {
                 if (!namedElementType.isDefinitionLoaded()) {
                     namedElementType.update(unknown);
                     //log.info("ERROR: element '" + namedElementType.getId() + "' not defined.");
-                    System.out.println("DEBUG - [" + getLanguageDialect().getID() + "] undefined element type: " + namedElementType.getId());
+                    System.out.println("DEBUG - [" + this.languageDialect.getID() + "] undefined element type: " + namedElementType.getId());
 /*
                     if (DatabaseNavigator.getInstance().isDebugModeEnabled()) {
                         System.out.println("WARNING - [" + getLanguageDialect().getID() + "] undefined element type: " + namedElementType.getId());
@@ -119,7 +119,7 @@ public class ElementTypeBundle {
 
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
         String id = determineMandatoryAttribute(def, "id", "Invalid definition of named element type.");
-        log.debug("Updating complex element definition '" + id + "'");
+        log.debug("Updating complex element definition '" + id + '\'');
         NamedElementType elementType = getNamedElementType(id, null);
         elementType.loadDefinition(def);
         if (elementType.is(ElementTypeAttribute.ROOT)) {
@@ -178,7 +178,7 @@ public class ElementTypeBundle {
         } else if (ElementTypeDefinition.EXEC_VARIABLE.is(type)) {
             result = new ExecVariableElementTypeImpl(this, parent, createId(), def);            
         }  else {
-            throw new ElementTypeDefinitionException("Could not resolve element definition '" + type + "'");
+            throw new ElementTypeDefinitionException("Could not resolve element definition '" + type + '\'');
         }
         if (result instanceof LeafElementType) {
             leafElementTypes.add((LeafElementType) result);
@@ -194,7 +194,7 @@ public class ElementTypeBundle {
     public static DBObjectType resolveObjectType(String name) throws ElementTypeDefinitionException {
         DBObjectType objectType = DBObjectType.getObjectType(name);
         if (objectType == null)
-            throw new ElementTypeDefinitionException("Invalid object type '" + name + "'");
+            throw new ElementTypeDefinitionException("Invalid object type '" + name + '\'');
         return objectType;
     }
 
@@ -214,7 +214,7 @@ public class ElementTypeBundle {
         if (elementType == null) {
             elementType = new NamedElementTypeImpl(this, id);
             namedElementTypes.put(id, elementType);
-            log.debug("Created named element type '" + id + "'");
+            log.debug("Created named element type '" + id + '\'');
         }
         if (parent != null) elementType.addParent(parent);
         return elementType;

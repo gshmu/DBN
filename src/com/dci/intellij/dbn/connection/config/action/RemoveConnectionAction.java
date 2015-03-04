@@ -33,7 +33,7 @@ public class RemoveConnectionAction extends DumbAwareAction {
         }
     }
 
-    public boolean confirmDelete(Object[] connections) {
+    public static boolean confirmDelete(Object[] connections) {
         /*SettingsBundle settings = manager.getSettingsBundle();
         boolean confirm = settings.getBoolean(SettingsBundle.KEY_CONFIRM_ACTION_DELETE, true);
         if (confirm) {

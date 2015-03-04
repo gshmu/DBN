@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.navigation.psi;
 
+import java.util.Map;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -7,8 +9,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
-
-import java.util.Map;
 
 public class NavigationPsiCache implements Disposable {
     private Map<DBObjectRef, DBObjectPsiFile> objectPsiFiles = new THashMap<DBObjectRef, DBObjectPsiFile>();
@@ -73,7 +73,7 @@ public class NavigationPsiCache implements Disposable {
     }
 
     public static DBConnectionPsiDirectory getPsiDirectory(ConnectionHandler connectionHandler) {
-        return connectionHandler.getPsiCache().getConnectionPsiDirectory();
+        return connectionHandler.getPsiCache().connectionPsiDirectory;
     }
 
     @Override

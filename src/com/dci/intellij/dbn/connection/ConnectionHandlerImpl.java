@@ -88,7 +88,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean canConnect() {
-        return !isDisposed() && (allowConnection || getSettings().getDetailSettings().isConnectAutomatically());
+        return !isDisposed && (allowConnection || connectionSettings.getDetailSettings().isConnectAutomatically());
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -130,7 +130,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
-        return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
+        return connectionSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public EnvironmentType getEnvironmentType() {
-        return getSettings().getDetailSettings().getEnvironmentType();
+        return connectionSettings.getDetailSettings().getEnvironmentType();
     }
 
     public boolean hasUncommittedChanges() {
@@ -262,7 +262,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             connectionPool.closeConnections();
             changesBundle = null;
         } finally {
-            getConnectionStatus().setConnected(false);
+            connectionStatus.setConnected(false);
         }
     }
 

@@ -25,7 +25,7 @@ public class ArgumentValuesTreeModel implements TreeModel {
         createArgumentValueNodes(outputNode, outputArgumentValues);
     }
 
-    private void createArgumentValueNodes(ArgumentValuesTreeNode parentNode, List<ArgumentValue> inputArgumentValues) {
+    private static void createArgumentValueNodes(ArgumentValuesTreeNode parentNode, List<ArgumentValue> inputArgumentValues) {
         Map<DBObjectRef<DBArgument>, ArgumentValuesTreeNode> nodeMap = new HashMap<DBObjectRef<DBArgument>, ArgumentValuesTreeNode>();
         for (ArgumentValue argumentValue : inputArgumentValues) {
             DBObjectRef<DBArgument> argumentRef = argumentValue.getArgumentRef();

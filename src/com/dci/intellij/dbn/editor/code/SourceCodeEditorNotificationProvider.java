@@ -67,7 +67,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         return null;
     }
 
-    private SourceCodeLoadErrorNotificationPanel createPanel(final DBSchemaObject editableObject, String sourceLoadError) {
+    private static SourceCodeLoadErrorNotificationPanel createPanel(final DBSchemaObject editableObject, String sourceLoadError) {
         SourceCodeLoadErrorNotificationPanel panel = new SourceCodeLoadErrorNotificationPanel();
         panel.setText("Could not load source for " + editableObject.getQualifiedNameWithType() + ". Error details: " + sourceLoadError.replace("\n", " "));
         return panel;

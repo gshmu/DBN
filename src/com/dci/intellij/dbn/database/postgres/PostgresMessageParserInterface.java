@@ -35,7 +35,7 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
         return StringUtil.isOneOfIgnoreCase(sqlState, "28P01");
     }
 
-    private String getSqlState(SQLException e) {
+    private static String getSqlState(SQLException e) {
         try {
             Method method = e.getClass().getMethod("getSQLState");
             return (String) method.invoke(e);

@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
-import com.dci.intellij.dbn.language.common.psi.lookup.AliasDefinitionLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
@@ -77,7 +77,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         this.objectType = objectType;
 
         if (objectType == DBObjectType.COLUMN) {
-            PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(null, objectType);
+            PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
             BasePsiElement relevantPsiElement = lookupAdapter.findInElement(psiElement);
 
             if (relevantPsiElement == null) {
@@ -118,7 +118,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 name.append(tableName);
             }
 
-            this.name = "subquery " + name.toString() + "";
+            this.name = "subquery " + name;
         }
         objectRef = new DBObjectRef(this);
     }
@@ -134,7 +134,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         if (name.equalsIgnoreCase(relevantPsiElement.getText())) {
             if (relevantPsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-                if (identifierPsiElement.getObjectType() != getObjectType()) {
+                if (identifierPsiElement.getObjectType() != objectType) {
                     return false;
                 }
             }

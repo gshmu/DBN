@@ -65,7 +65,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
 
     @Override
     public String getPresentableTextConditionalDetails() {
-        return getDataType().getQualifiedName();
+        return dataType.getQualifiedName();
     }
 
     protected List<DBObjectNavigationList> createNavigationLists() {
@@ -82,7 +82,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
         if (o instanceof DBTypeAttribute) {
             DBTypeAttribute typeAttribute = (DBTypeAttribute) o;
             if (getType().equals(typeAttribute.getType())) {
-                return getPosition() - typeAttribute.getPosition();
+                return position - typeAttribute.getPosition();
             }
         }
         return super.compareTo(o);

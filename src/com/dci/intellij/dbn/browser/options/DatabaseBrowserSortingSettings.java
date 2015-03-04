@@ -39,7 +39,7 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
         return null;
     }
 
-    private boolean contains(List<DBObjectComparator> comparators, DBObjectType objectType) {
+    private static boolean contains(List<DBObjectComparator> comparators, DBObjectType objectType) {
         for (DBObjectComparator comparator : comparators) {
             if (comparator.getObjectType() == objectType){
                 return true;

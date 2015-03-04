@@ -471,7 +471,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
     private void rollOutDebugger() {
         try {
             long millis = System.currentTimeMillis();
-            while (!getStatus().TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo!= null && !runtimeInfo.isTerminated()) {
+            while (!status.TARGET_EXECUTION_THREW_EXCEPTION && runtimeInfo!= null && !runtimeInfo.isTerminated()) {
                 runtimeInfo = getDebuggerInterface().stepOut(debugConnection);
                 // force closing the target connection
                 if (System.currentTimeMillis() - millis > 20000) {
@@ -534,7 +534,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         private Project project;
         private String operationName;
         protected DebugOperationThread(String operationName, Project project) {
-            super("DBN Debug operation (" + operationName + ")");
+            super("DBN Debug operation (" + operationName + ')');
             this.operationName = operationName;
         }
 

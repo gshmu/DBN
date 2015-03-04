@@ -38,7 +38,7 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
 
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
-        ttb.append(true, getHost(), false);
+        ttb.append(true, host, false);
         ttb.createEmptyRow();
         super.buildToolTip(ttb);
     }

@@ -26,7 +26,7 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     }
 
     public boolean check(Set<Branch> branches, double currentVersion) {
-        if (getVersion() > currentVersion) {
+        if (version > currentVersion) {
             return false;
         }
 
@@ -88,7 +88,7 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
 
         ElementTypeRef previous = getPrevious();
         while (previous != null) {
-            if (!previous.isOptional()) {
+            if (!previous.optional) {
                 return false;
             }
             previous = previous.getPrevious();
@@ -99,7 +99,7 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     public boolean isOptionalFromHere() {
         ElementTypeRef next = getNext();
         while (next != null) {
-            if (!next.isOptional()) {
+            if (!next.optional) {
                 return false;
             }
             next = next.getNext();
@@ -121,6 +121,6 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
 
     @Override
     public String toString() {
-        return getElementType().toString();
+        return elementType.toString();
     }
 }

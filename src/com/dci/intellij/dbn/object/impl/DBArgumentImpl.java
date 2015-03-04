@@ -105,7 +105,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
 
     @Override
     public String getPresentableTextConditionalDetails() {
-        return getDataType().getQualifiedName();
+        return dataType.getQualifiedName();
     }
 
     @Override
@@ -129,9 +129,9 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     @Nullable
     @Override
     public Icon getIcon() {
-        return isInput() && isOutput() ? Icons.DBO_ARGUMENT_IN_OUT :
-               isInput() ? Icons.DBO_ARGUMENT_IN :
-               isOutput() ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
+        return input && output ? Icons.DBO_ARGUMENT_IN_OUT :
+               input ? Icons.DBO_ARGUMENT_IN :
+               output ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
     }
 
     public DBObjectType getObjectType() {
@@ -144,7 +144,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
             DBMethod thisMethod = getMethod();
             DBMethod thatMethod = argument.getMethod();
             if (thisMethod.equals(thatMethod)) {
-                return getPosition() - argument.getPosition();
+                return position - argument.getPosition();
             } else {
                 return thisMethod.compareTo(thatMethod);
             }
@@ -156,8 +156,8 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
             DBArgument argument = (DBArgument) obj;
-            return getOverload() == argument.getOverload() &&
-                    getPosition() == argument.getPosition();
+            return overload == argument.getOverload() &&
+                    position == argument.getPosition();
         }
         return false;
     }

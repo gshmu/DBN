@@ -28,7 +28,7 @@ public class MessageBundle {
         addMessage(new Message(MessageType.ERROR, message));
     }
 
-    private List<Message> addMessage(Message message, List<Message> list) {
+    private static List<Message> addMessage(Message message, List<Message> list) {
         if (list == null) list = new ArrayList<Message>();
         if (!list.contains(message)) list.add(message);
         return list;

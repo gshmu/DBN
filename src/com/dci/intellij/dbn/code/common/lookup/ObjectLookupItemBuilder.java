@@ -66,15 +66,15 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
                 DBSynonym synonym = (DBSynonym) object;
                 DBObject underlyingObject = synonym.getUnderlyingObject();
                 if (underlyingObject != null) {
-                    typePrefix = underlyingObject.getTypeName() + " ";
+                    typePrefix = underlyingObject.getTypeName() + ' ';
                 }
             }
 
             return parentObject == null ?
                     typePrefix + object.getTypeName() :
                     typePrefix + object.getTypeName() + " (" +
-                       parentObject.getTypeName() + " " +
-                       parentObject.getName() + ")";
+                       parentObject.getTypeName() + ' ' +
+                       parentObject.getName() + ')';
         }
         return "";
     }

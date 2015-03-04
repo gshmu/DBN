@@ -161,7 +161,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
         }
     }
 
-    private int getNumberOfLines(String text) {
+    private static int getNumberOfLines(String text) {
         return StringUtil.countNewLines(text) + 1;
     }
 
@@ -364,7 +364,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl implements DBNForm {
         }
     }
 
-    private DatasetEditorManager getDataEditorManager(AnActionEvent e) {
+    private static DatasetEditorManager getDataEditorManager(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         return project == null ? null : DatasetEditorManager.getInstance(project);
     }

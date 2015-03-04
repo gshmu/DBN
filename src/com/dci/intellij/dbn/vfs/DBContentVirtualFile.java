@@ -44,16 +44,16 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         Project project = object.getProject();
         DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
 
-        hashCode = (databaseFileManager.getSessionId() + "#"+
-                    object.getConnectionHandler().getId() + "#" +
-                        object.getObjectType() + "#" +
-                        object.getQualifiedName() + "#" +
-                        object.getOverload() + "#" +
+        hashCode = (databaseFileManager.getSessionId() + '#' +
+                    object.getConnectionHandler().getId() + '#' +
+                        object.getObjectType() + '#' +
+                        object.getQualifiedName() + '#' +
+                        object.getOverload() + '#' +
                         contentType).hashCode();
 
 
         this.name = object.getName();
-        this.path = DatabaseFileSystem.createPath(object, getContentType());
+        this.path = DatabaseFileSystem.createPath(object, this.contentType);
         this.url = DatabaseFileSystem.createUrl(object);
 
         DDLFileType ddlFileType = object.getDDLFileType(contentType);

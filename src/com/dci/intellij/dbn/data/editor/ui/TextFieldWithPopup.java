@@ -166,7 +166,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
             String toolTipText = "Open " + popupProvider.getDescription();
             String keyShortcutDescription = popupProvider.getKeyShortcutDescription();
             if (keyShortcutDescription != null) {
-                toolTipText += " (" + keyShortcutDescription + ")";
+                toolTipText += " (" + keyShortcutDescription + ')';
             }
             button.setToolTipText(toolTipText);
 
@@ -317,7 +317,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
+        if (!disposed) {
             disposed = true;
             userValueHolder = null;
         }

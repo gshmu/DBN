@@ -183,7 +183,7 @@ public abstract class DBLanguageTokenTypeBundle {
                 String tokenId = tokenizer.nextToken().trim();
                 SimpleTokenType tokenType = tokenTypes.get(tokenId);
                 if (tokenType == null) {
-                    System.out.println("DEBUG - [" + getLanguage().getID() + "] undefined token type: " + tokenId);
+                    System.out.println("DEBUG - [" + language.getID() + "] undefined token type: " + tokenId);
                 } else {
                     tokenSetList.add(tokenType);
                 }
@@ -237,7 +237,7 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
 
-    private boolean isTokenType(String text, Map<String, SimpleTokenType> tokenTypesMap) {
+    private static boolean isTokenType(String text, Map<String, SimpleTokenType> tokenTypesMap) {
         return tokenTypesMap.containsKey(text.toLowerCase());
     }
 }

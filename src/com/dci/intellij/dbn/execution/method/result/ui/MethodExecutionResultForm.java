@@ -108,7 +108,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         outputTabs.removeAllTabs();
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";
-        ConnectionHandler connectionHandler = getExecutionResult().getConnectionHandler();
+        ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
         if (connectionHandler != null) {
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             String databaseLogName = compatibilityInterface.getDatabaseLogName();
