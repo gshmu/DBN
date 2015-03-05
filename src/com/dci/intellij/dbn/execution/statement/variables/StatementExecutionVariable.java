@@ -13,6 +13,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 public class StatementExecutionVariable implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
     private GenericDataType dataType;
     private String name;
+    private int offset;
     private MostRecentStack<String> valueHistory = new MostRecentStack<String>();
     private TemporaryValueProvider previewValueProvider;
 
@@ -28,6 +29,15 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
 
     public StatementExecutionVariable(ExecVariablePsiElement variablePsiElement) {
         this.name = variablePsiElement.getText();
+        this.offset = variablePsiElement.getTextOffset();
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public String getName() {
@@ -79,7 +89,7 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
 
     @Override
     public int compareTo(@NotNull StatementExecutionVariable o) {
-        return o.name.length()-name.length();
+        return name.compareTo(o.name);
     }
 
     @Nullable
