@@ -176,6 +176,10 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String objectOwner = resultSet.getString("OBJECT_OWNER");
             String objectName = resultSet.getString("OBJECT_NAME");
+            String objectTypeName = resultSet.getString("OBJECT_TYPE");
+            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
+            if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
 
             DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
 
@@ -189,7 +193,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
                 }
             }
 
-            return schema == null ? null : schema.getChildObject(objectName, 0, true);
+            return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
         }
     };
 
@@ -203,10 +207,14 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String objectOwner = resultSet.getString("OBJECT_OWNER");
             String objectName = resultSet.getString("OBJECT_NAME");
+            String objectTypeName = resultSet.getString("OBJECT_TYPE");
+            DBObjectType objectType = DBObjectType.getObjectType(objectTypeName);
+            if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
+            if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
 
             DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
             DBSchema schema = schemaObject.getConnectionHandler().getObjectBundle().getSchema(objectOwner);
-            return schema == null ? null : schema.getChildObject(objectName, 0, true);
+            return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
         }
     };
 }
