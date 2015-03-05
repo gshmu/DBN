@@ -342,12 +342,12 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     @Override
     public void compileObject(String ownerName, String objectName, String objectType, boolean debug, Connection connection) throws SQLException {
-        executeQuery(connection, "compile-object", ownerName, objectName, objectType, debug ? "DEBUG" : "");
+        executeStatement(connection, "compile-object", ownerName, objectName, objectType, debug ? "DEBUG" : "");
     }
 
     @Override
     public void compileObjectBody(String ownerName, String objectName, String objectType, boolean debug, Connection connection) throws SQLException {
-        executeQuery(connection, "compile-object-body", ownerName, objectName, objectType, debug ? "DEBUG" : "");
+        executeStatement(connection, "compile-object-body", ownerName, objectName, objectType, debug ? "DEBUG" : "");
     }
 
     @Override

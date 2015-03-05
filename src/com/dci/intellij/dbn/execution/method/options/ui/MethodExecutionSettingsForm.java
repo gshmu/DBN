@@ -12,6 +12,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
     private JPanel mainPanel;
     private JTextField executionTimeoutTextField;
     private JTextField debugExecutionTimeoutTextField;
+    private JTextField parameterHistorySizeTextField;
 
     public MethodExecutionSettingsForm(MethodExecutionSettings settings) {
         super(settings);
@@ -29,13 +30,16 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         MethodExecutionSettings settings = getConfiguration();
         int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", 0, 300, "\nUse value 0 for no timeout");
         int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", 0, 3000, "\nUse value 0 for no timeout");
+        int parameterHistorySize = ConfigurationEditorUtil.validateIntegerInputValue(parameterHistorySizeTextField, "Parameter history size", 0, 3000, null);
         settings.setExecutionTimeout(executionTimeout);
         settings.setDebugExecutionTimeout(debugExecutionTimeout);
+        settings.setParameterHistorySize(parameterHistorySize);
     }
 
     public void resetFormChanges() {
         MethodExecutionSettings settings = getConfiguration();
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));
         debugExecutionTimeoutTextField.setText(Integer.toString(settings.getDebugExecutionTimeout()));
+        parameterHistorySizeTextField.setText(Integer.toString(settings.getParameterHistorySize()));
     }
 }

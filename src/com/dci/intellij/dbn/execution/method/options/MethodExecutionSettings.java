@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsF
 public class MethodExecutionSettings extends Configuration{
     private int executionTimeout = 30;
     private int debugExecutionTimeout = 600;
+    private int parameterHistorySize = 10;
 
     public String getDisplayName() {
         return "Method execution settings";
@@ -39,6 +40,14 @@ public class MethodExecutionSettings extends Configuration{
         this.debugExecutionTimeout = debugExecutionTimeout;
     }
 
+    public int getParameterHistorySize() {
+        return parameterHistorySize;
+    }
+
+    public void setParameterHistorySize(int parameterHistorySize) {
+        this.parameterHistorySize = parameterHistorySize;
+    }
+
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
@@ -54,11 +63,13 @@ public class MethodExecutionSettings extends Configuration{
     public void readConfiguration(Element element) {
         executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
         debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        parameterHistorySize = SettingsUtil.getInteger(element, "parameter-history-size", parameterHistorySize);
 
     }
 
     public void writeConfiguration(Element element) {
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
         SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        SettingsUtil.setInteger(element, "parameter-history-size", parameterHistorySize);
     }
 }

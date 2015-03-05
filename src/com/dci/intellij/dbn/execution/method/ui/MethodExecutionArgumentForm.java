@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
@@ -23,10 +24,12 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
@@ -42,12 +45,12 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     private JTextField inputTextField;
     private UserValueHolderImpl<String> userValueHolder;
 
-    private DBArgument argument;
+    private DBObjectRef<DBArgument> argumentRef;
     private List<MethodExecutionTypeAttributeForm> typeAttributeForms = new ArrayList<MethodExecutionTypeAttributeForm>();
     private MethodExecutionForm executionComponent;
 
-    public MethodExecutionArgumentForm(DBArgument argument, MethodExecutionForm executionComponent) {
-        this.argument = argument;
+    public MethodExecutionArgumentForm(final DBArgument argument, final MethodExecutionForm executionComponent) {
+        this.argumentRef = DBObjectRef.from(argument);
         this.executionComponent = executionComponent;
         String argumentName = argument.getName();
         argumentLabel.setText(argumentName);
@@ -81,11 +84,18 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
             Project project = argument.getProject();
-            String value = executionComponent.getExecutionInput().getInputValue(argument);
+            final MethodExecutionInput executionInput = executionComponent.getExecutionInput();
+            String value = executionInput.getInputValue(argument);
             if (genericDataType == GenericDataType.DATE_TIME) {
                 TextFieldWithPopup inputField = new TextFieldWithPopup(project);
                 inputField.setPreferredSize(new Dimension(200, -1));
                 inputField.createCalendarPopup(false);
+                inputField.createValuesListPopup(new ListPopupValuesProvider() {
+                    @Override
+                    public List<String> getValues() {
+                        return executionInput.getInputValueHistory(getArgument());
+                    }
+                }, true);
                 inputComponent = inputField;
                 inputTextField = inputField.getTextField();
             }
@@ -118,9 +128,16 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 inputComponent = inputField;
                 inputTextField = inputField.getTextField();
             } else {
-                inputTextField = new JTextField();
-                inputTextField.setPreferredSize(new Dimension(200, -1));
-                inputComponent = inputTextField;
+                TextFieldWithPopup inputField = new TextFieldWithPopup(project);
+                inputField.setPreferredSize(new Dimension(200, -1));
+                inputField.createValuesListPopup(new ListPopupValuesProvider() {
+                    @Override
+                    public List<String> getValues() {
+                        return executionInput.getInputValueHistory(getArgument());
+                    }
+                }, true);
+                inputComponent = inputField;
+                inputTextField = inputField.getTextField();
             }
 
             if (!genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
@@ -134,17 +151,21 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     }
 
     private void addAttributePanel(DBTypeAttribute attribute) {
-        MethodExecutionTypeAttributeForm argumentComponent = new MethodExecutionTypeAttributeForm(argument, attribute, executionComponent);
+        MethodExecutionTypeAttributeForm argumentComponent = new MethodExecutionTypeAttributeForm(getArgument(), attribute, executionComponent);
         typeAttributesPanel.add(argumentComponent.getComponent());
         typeAttributeForms.add(argumentComponent);
     }
 
+    public DBArgument getArgument() {
+        return DBObjectRef.get(argumentRef);
+    }
 
     public JPanel getComponent() {
         return mainPanel;
     }
 
     public void updateExecutionInput() {
+        DBArgument argument = getArgument();
         if (typeAttributeForms.size() >0 ) {
             for (MethodExecutionTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                 typeAttributeComponent.updateExecutionInput();
@@ -193,7 +214,6 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     public void dispose() {
         super.dispose();
         DisposerUtil.dispose(typeAttributeForms);
-        argument = null;
         typeAttributeForms = null;
         executionComponent = null;
     }
