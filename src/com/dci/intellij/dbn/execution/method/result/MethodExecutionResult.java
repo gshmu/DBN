@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
-import com.dci.intellij.dbn.execution.method.ArgumentValueStore;
+import com.dci.intellij.dbn.execution.method.ArgumentValueHolder;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -58,7 +58,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     }
 
     public void addArgumentValue(DBArgument argument, Object value) throws SQLException {
-        ArgumentValueStore<Object> valueStore = ArgumentValue.createBasicStore(value);
+        ArgumentValueHolder<Object> valueStore = ArgumentValue.createBasicValueHolder(value);
         ArgumentValue argumentValue = new ArgumentValue(argument, valueStore);
         argumentValues.add(argumentValue);
         if (value instanceof ResultSet) {
@@ -77,7 +77,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     }
 
     public void addArgumentValue(DBArgument argument, DBTypeAttribute attribute, Object value) {
-        ArgumentValueStore<Object> valueStore = ArgumentValue.createBasicStore(value);
+        ArgumentValueHolder<Object> valueStore = ArgumentValue.createBasicValueHolder(value);
         ArgumentValue argumentValue = new ArgumentValue(argument, attribute, valueStore);
         argumentValues.add(argumentValue);
     }

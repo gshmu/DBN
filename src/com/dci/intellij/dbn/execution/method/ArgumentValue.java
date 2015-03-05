@@ -12,25 +12,25 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 public class ArgumentValue {
     private DBObjectRef<DBArgument> argumentRef;
     private DBObjectRef<DBTypeAttribute> attributeRef;
-    private ArgumentValueStore valueStore;
+    private ArgumentValueHolder valueHolder;
 
-    public ArgumentValue(@NotNull DBArgument argument, @Nullable DBTypeAttribute attributeRef, ArgumentValueStore valueStore) {
+    public ArgumentValue(@NotNull DBArgument argument, @Nullable DBTypeAttribute attributeRef, ArgumentValueHolder valueHolder) {
         this.argumentRef = DBObjectRef.from(argument);
         this.attributeRef = DBObjectRef.from(attributeRef);
-        this.valueStore = valueStore;
+        this.valueHolder = valueHolder;
     }
 
-    public ArgumentValue(@NotNull DBArgument argument, ArgumentValueStore valueStore) {
+    public ArgumentValue(@NotNull DBArgument argument, ArgumentValueHolder valueHolder) {
         this.argumentRef = DBObjectRef.from(argument);
-        this.valueStore = valueStore;
+        this.valueHolder = valueHolder;
     }
 
-    public ArgumentValueStore getValueStore() {
-        return valueStore;
+    public ArgumentValueHolder getValueHolder() {
+        return valueHolder;
     }
 
-    public void setValueStore(ArgumentValueStore valueStore) {
-        this.valueStore = valueStore;
+    public void setValueHolder(ArgumentValueHolder valueHolder) {
+        this.valueHolder = valueHolder;
     }
 
     public DBObjectRef<DBArgument> getArgumentRef() {
@@ -53,7 +53,7 @@ public class ArgumentValue {
     }
 
     public Object getValue() {
-        return valueStore.getValue();
+        return valueHolder.getValue();
     }
 
     public boolean isLargeObject() {
@@ -70,15 +70,15 @@ public class ArgumentValue {
     }
 
     public void setValue(Object value) {
-        valueStore.setValue(value);
+        valueHolder.setValue(value);
     }
 
     public String toString() {
         return argumentRef.getObjectName() + " = " + getValue();
     }
 
-    public static <T> ArgumentValueStore<T> createBasicStore(T value) {
-        ArgumentValueStore<T> valueStore = new ArgumentValueStore<T>() {
+    public static <T> ArgumentValueHolder<T> createBasicValueHolder(T value) {
+        ArgumentValueHolder<T> valueStore = new ArgumentValueHolder<T>() {
             private T value;
 
             @Override
