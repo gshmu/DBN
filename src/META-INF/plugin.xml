@@ -30,6 +30,7 @@
             <li><b>3.0.4098</b>
             <ul>
                 - Remember statement execution variables<br>
+                - Remember method execution parameter history<br>
                 - Session Browser colors configuration</br>
                 - Error reporting improvements (attachments)<br>
                 - Settings editor cosmetic updates<br>

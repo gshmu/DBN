@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ import com.intellij.openapi.project.Project;
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
     private DBObjectRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
-    private Map<String, String> valuesMap = new HashMap<String, String>();
+    private Map<String, MethodExecutionVariable> executionVariables = new HashMap<String, MethodExecutionVariable>();
     private boolean usePoolConnection = true;
     private boolean commitAfterExecution = true;
     private boolean enableLogging = false;
@@ -109,6 +110,16 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return (String) argumentValue.getValue();
     }
 
+    public List<String> getInputValueHistory(@NotNull DBArgument argument) {
+        ArgumentValue argumentValue = getArgumentValue(argument);
+        ArgumentValueStore valueStore = argumentValue.getValueStore();
+        if (valueStore instanceof MethodExecutionVariable) {
+            MethodExecutionVariable executionVariable = (MethodExecutionVariable) valueStore;
+            return executionVariable.getValueHistory();
+        }
+        return Collections.emptyList();
+    }
+
     public String getInputValue(DBArgument argument, DBTypeAttribute typeAttribute) {
         ArgumentValue argumentValue = getArgumentValue(argument, typeAttribute);
         return (String) argumentValue.getValue();
@@ -120,29 +131,39 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
 
     private ArgumentValue getArgumentValue(@NotNull DBArgument argument) {
         for (ArgumentValue argumentValue : argumentValues) {
-            if (argument.equals(argumentValue.getArgument())) {
+            if (CommonUtil.safeEqual(argument, argumentValue.getArgument())) {
                 return argumentValue;
             }
         }
         ArgumentValue argumentValue = new ArgumentValue(argument, null);
-        argumentValue.setValue(valuesMap.get(argumentValue.getName()));
+        argumentValue.setValueStore(getExecutionVariable(argumentValue.getName()));
         argumentValues.add(argumentValue);
         return argumentValue;
     }
 
     private ArgumentValue getArgumentValue(DBArgument argument, DBTypeAttribute attribute) {
         for (ArgumentValue argumentValue : argumentValues) {
-            if (argumentValue.getArgument().equals(argument) &&
-                    argumentValue.getAttribute().equals(attribute)) {
+            if (CommonUtil.safeEqual(argumentValue.getArgument(), argument) &&
+                    CommonUtil.safeEqual(argumentValue.getAttribute(), attribute)) {
                 return argumentValue;
             }
         }
 
         ArgumentValue argumentValue = new ArgumentValue(argument, attribute, null);
-        argumentValue.setValue(valuesMap.get(argumentValue.getName()));
+        argumentValue.setValueStore(getExecutionVariable(argumentValue.getName()));
         argumentValues.add(argumentValue);
         return argumentValue;
     }
+
+    private synchronized MethodExecutionVariable getExecutionVariable(String argumentName) {
+        MethodExecutionVariable executionVariable = executionVariables.get(argumentName);
+        if (executionVariable == null) {
+            executionVariable = new MethodExecutionVariable();
+            executionVariables.put(argumentName, executionVariable);
+        }
+        return executionVariable;
+    }
+
 
     public MethodExecutionResult getExecutionResult() {
         return executionResult;
@@ -202,8 +223,9 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         for (Object object : argumentsElement.getChildren()) {
             Element argumentElement = (Element) object;
             String name = argumentElement.getAttributeValue("name");
-            String value = CommonUtil.nullIfEmpty(argumentElement.getAttributeValue("value"));
-            valuesMap.put(name, value);
+
+            MethodExecutionVariable variable = new MethodExecutionVariable(argumentElement);
+            executionVariables.put(name, variable);
         }
     }
 
@@ -217,20 +239,12 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         Element argumentsElement = new Element("argument-list");
         element.addContent(argumentsElement);
 
-        if (argumentValues.size() > 0) {
-            for (ArgumentValue argumentValue : argumentValues) {
-                Element argumentElement = new Element("argument");
-                argumentElement.setAttribute("name", argumentValue.getName());
-                argumentElement.setAttribute("value", (String) CommonUtil.nvl(argumentValue.getValue(), ""));
-                argumentsElement.addContent(argumentElement);
-            }
-        } else {
-            for (String name : valuesMap.keySet()) {
-                Element argumentElement = new Element("argument");
-                argumentElement.setAttribute("name", name);
-                argumentElement.setAttribute("value", CommonUtil.nvl(valuesMap.get(name), ""));
-                argumentsElement.addContent(argumentElement);
-            }
+        for (String name : executionVariables.keySet()) {
+            Element argumentElement = new Element("argument");
+            argumentElement.setAttribute("name", name);
+            MethodExecutionVariable executionVariable = executionVariables.get(name);
+            executionVariable.writeState(argumentElement);
+            argumentsElement.addContent(argumentElement);
         }
     }
 
@@ -261,7 +275,11 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         executionInput.usePoolConnection = usePoolConnection;
         executionInput.commitAfterExecution = commitAfterExecution;
         executionInput.enableLogging = enableLogging;
-        executionInput.valuesMap = new HashMap<String, String>(valuesMap);
+        executionInput.executionVariables = new HashMap<String, MethodExecutionVariable>();
+        for (String name : executionVariables.keySet()) {
+            executionInput.executionVariables.put(name, executionVariables.get(name).clone());
+        }
+
         return executionInput;
     }
 
@@ -275,7 +293,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     public void dispose() {
         disposed = true;
         executionResult = null;
-        valuesMap.clear();
+        executionVariables.clear();
         argumentValues.clear();
     }
 
