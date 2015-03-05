@@ -12,18 +12,28 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
-public class MethodExecutionVariable implements PersistentStateElement<Element>, Cloneable, ArgumentValueStore<String> {
+public class MethodExecutionArgumentValue implements PersistentStateElement<Element>, Cloneable, ArgumentValueHolder<String> {
+    private String name;
     private MostRecentStack<String> valueHistory = new MostRecentStack<String>();
 
-    public MethodExecutionVariable() {
+    public MethodExecutionArgumentValue(String name) {
+        this.name = name;
     }
 
-    public MethodExecutionVariable(Element element) {
+    public MethodExecutionArgumentValue(Element element) {
         readState(element);
     }
 
-    public MethodExecutionVariable(MethodExecutionVariable source) {
+    public MethodExecutionArgumentValue(MethodExecutionArgumentValue source) {
         valueHistory.setValues(source.valueHistory.values());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<String> getValueHistory() {
@@ -40,6 +50,7 @@ public class MethodExecutionVariable implements PersistentStateElement<Element>,
 
     @Override
     public void readState(Element element) {
+        name = element.getAttributeValue("name");
         List<String> values = new ArrayList<String>();
         String value = CommonUtil.nullIfEmpty(element.getAttributeValue("value"));
         if (StringUtil.isNotEmpty(value)) {
@@ -48,12 +59,14 @@ public class MethodExecutionVariable implements PersistentStateElement<Element>,
 
         List<Element> valueElements = element.getChildren();
         for (Element valueElement : valueElements) {
-            Content content = valueElement.getContent(0);
-            if (content instanceof Text) {
-                Text cdata = (Text) content;
-                value = cdata.getText();
-                if (StringUtil.isNotEmpty(value)) {
-                    values.add(0, value);
+            if (valueElement.getContentSize() > 0) {
+                Content content = valueElement.getContent(0);
+                if (content instanceof Text) {
+                    Text cdata = (Text) content;
+                    value = cdata.getText();
+                    if (StringUtil.isNotEmpty(value)) {
+                        values.add(0, value);
+                    }
                 }
             }
         }
@@ -62,6 +75,7 @@ public class MethodExecutionVariable implements PersistentStateElement<Element>,
 
     @Override
     public void writeState(Element element) {
+        element.setAttribute("name", name);
         for (String value : valueHistory) {
             Element valueElement = new Element("value");
             element.addContent(valueElement);
@@ -72,7 +86,7 @@ public class MethodExecutionVariable implements PersistentStateElement<Element>,
     }
 
     @Override
-    protected MethodExecutionVariable clone() {
-        return new MethodExecutionVariable(this);
+    protected MethodExecutionArgumentValue clone() {
+        return new MethodExecutionArgumentValue(this);
     }
 }

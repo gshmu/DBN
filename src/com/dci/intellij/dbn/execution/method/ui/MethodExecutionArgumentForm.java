@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -90,12 +91,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 TextFieldWithPopup inputField = new TextFieldWithPopup(project);
                 inputField.setPreferredSize(new Dimension(200, -1));
                 inputField.createCalendarPopup(false);
-                inputField.createValuesListPopup(new ListPopupValuesProvider() {
-                    @Override
-                    public List<String> getValues() {
-                        return executionInput.getInputValueHistory(getArgument());
-                    }
-                }, true);
+                inputField.createValuesListPopup(createValuesProvider(), true);
                 inputComponent = inputField;
                 inputTextField = inputField.getTextField();
             }
@@ -130,12 +126,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             } else {
                 TextFieldWithPopup inputField = new TextFieldWithPopup(project);
                 inputField.setPreferredSize(new Dimension(200, -1));
-                inputField.createValuesListPopup(new ListPopupValuesProvider() {
-                    @Override
-                    public List<String> getValues() {
-                        return executionInput.getInputValueHistory(getArgument());
-                    }
-                }, true);
+                inputField.createValuesListPopup(createValuesProvider(), true);
                 inputComponent = inputField;
                 inputTextField = inputField.getTextField();
             }
@@ -148,6 +139,26 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
         } else {
             inputFieldPanel.setVisible(false);
         }
+    }
+
+    @NotNull
+    private ListPopupValuesProvider createValuesProvider() {
+        return new ListPopupValuesProvider() {
+            @Override
+            public String getDescription() {
+                return "History Values List";
+            }
+
+            @Override
+            public List<String> getValues() {
+                return executionComponent.getExecutionInput().getInputValueHistory(getArgument());
+            }
+
+            @Override
+            public boolean isLazyLoading() {
+                return false;
+            }
+        };
     }
 
     private void addAttributePanel(DBTypeAttribute attribute) {

@@ -97,8 +97,18 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
 
                             if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
                                 ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
+                                    @Override
+                                    public String getDescription() {
+                                        return "Possible Values List";
+                                    }
+
                                     public List<String> getValues() {
                                         return columnInfo.getPossibleValues();
+                                    }
+
+                                    @Override
+                                    public boolean isLazyLoading() {
+                                        return true;
                                     }
                                 };
                                 textFieldWithPopup.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());

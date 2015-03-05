@@ -94,27 +94,33 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
     /*****************************************
      *         PersistentStateElement        *
      *****************************************/
-    public void readState(Element element) {
-        groupEntries = SettingsUtil.getBoolean(element, "group-history-entries", groupEntries);
+    public void readState(Element parent) {
+        Element element = parent.getChild("execution-history");
+        if (element != null) {
+            groupEntries = SettingsUtil.getBoolean(element, "group-entries", groupEntries);
 
-        Element executionInputsElement = element.getChild("execution-inputs");
-        for (Object object : executionInputsElement.getChildren()) {
-            Element configElement = (Element) object;
-            MethodExecutionInput executionInput = new MethodExecutionInput();
-            executionInput.readConfiguration(configElement);
-            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            executionInputs.add(executionInput);
-        }
-        Collections.sort(executionInputs);
+            Element executionInputsElement = element.getChild("execution-inputs");
+            for (Object object : executionInputsElement.getChildren()) {
+                Element configElement = (Element) object;
+                MethodExecutionInput executionInput = new MethodExecutionInput();
+                executionInput.readConfiguration(configElement);
+                DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+                executionInputs.add(executionInput);
+            }
+            Collections.sort(executionInputs);
 
-        Element selectionElement = element.getChild("selection");
-        if (selectionElement != null) {
-            selection = new DBObjectRef<DBMethod>();
-            selection.readState(selectionElement);
+            Element selectionElement = element.getChild("selection");
+            if (selectionElement != null) {
+                selection = new DBObjectRef<DBMethod>();
+                selection.readState(selectionElement);
+            }
         }
     }
 
-    public void writeState(Element element) {
+    public void writeState(Element parent) {
+        Element element = new Element("execution-history");
+        parent.addContent(element);
+
         SettingsUtil.setBoolean(element, "group-entries", groupEntries);
 
         Element configsElement = new Element("execution-inputs");

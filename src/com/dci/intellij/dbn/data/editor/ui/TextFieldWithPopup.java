@@ -129,7 +129,7 @@ public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
 
     @Deprecated
     public void createValuesListPopup(List<String> valuesList, boolean buttonVisible, boolean dynamicFiltering) {
-        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, new BasicListPopupValuesProvider(valuesList), buttonVisible, dynamicFiltering);
+        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, new BasicListPopupValuesProvider("Possible Values List", valuesList), buttonVisible, dynamicFiltering);
         addPopupProvider(popupProviderForm);
     }
 
