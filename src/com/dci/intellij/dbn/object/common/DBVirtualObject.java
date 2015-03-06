@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -37,6 +36,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -128,17 +128,19 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public boolean isValid() {
-        if (objectType == DBObjectType.DATASET) {
-            return true;
-        }
-        if (name.equalsIgnoreCase(relevantPsiElement.getText())) {
-            if (relevantPsiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
-                if (identifierPsiElement.getObjectType() != objectType) {
-                    return false;
-                }
+        if (underlyingPsiElement.isValid()) {
+            if (objectType == DBObjectType.DATASET) {
+                return true;
             }
-            return true;
+            if (name.equalsIgnoreCase(relevantPsiElement.getText())) {
+                if (relevantPsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
+                    if (identifierPsiElement.getObjectType() != objectType) {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
         return false;
     }
@@ -245,7 +247,11 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public Project getProject() {
-        return FailsafeUtil.nvl(underlyingPsiElement.getProject());
+        if (underlyingPsiElement.isValid()) {
+            return underlyingPsiElement.getProject();
+        } else{
+            throw new ProcessCanceledException();
+        }
     }
 
     public DBObjectType getObjectType() {

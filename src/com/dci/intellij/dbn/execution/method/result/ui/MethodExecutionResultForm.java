@@ -95,7 +95,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     private void updateArgumentValueTree() {
-        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getArgumentValues();
+        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
 
         DBMethod method = executionResult.getMethod();
@@ -221,7 +221,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     private void createUIComponents() {
-        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getArgumentValues();
+        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
         argumentValuesTree = new ArgumentValuesTree(this, inputArgumentValues, outputArgumentValues);
     }

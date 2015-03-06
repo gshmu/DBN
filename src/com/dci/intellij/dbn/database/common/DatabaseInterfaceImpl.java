@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -49,35 +50,41 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     }
 
     protected ResultSet executeQuery(Connection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
-        StatementExecutionProcessor executionProcessor = processors.get(loaderId);
-        if (executionProcessor == null) {
-            DatabaseType databaseType = provider.getDatabaseType();
-            String databaseTypeName = databaseType == DatabaseType.UNKNOWN ? "this" : databaseType.getName();
-            throw new SQLException("Feature [" + loaderId + "] not implemented / supported for " + databaseTypeName + " database type");
-        }
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         ResultSet result = executionProcessor.executeQuery(connection, forceExecution, arguments);
         checkDisposed();
         return result;
     }
 
     protected <T extends CallableStatementOutput> T executeCall(Connection connection, @Nullable T outputReader, String loaderId, @Nullable Object... arguments) throws SQLException {
-        StatementExecutionProcessor executionProcessor = processors.get(loaderId);
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         T result = executionProcessor.executeCall(connection, outputReader, arguments);
         checkDisposed();
         return result;
     }
 
     protected boolean executeStatement(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
-        StatementExecutionProcessor executionProcessor = processors.get(loaderId);
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         boolean result = executionProcessor.executeStatement(connection, arguments);
         checkDisposed();
         return result;
     }
 
     protected void executeUpdate(Connection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
-        StatementExecutionProcessor executionProcessor = processors.get(loaderId);
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         executionProcessor.executeUpdate(connection, arguments);
         checkDisposed();
+    }
+
+    @NotNull
+    private StatementExecutionProcessor getExecutionProcessor(String loaderId) throws SQLException {
+        StatementExecutionProcessor executionProcessor = processors.get(loaderId);
+        if (executionProcessor == null) {
+            DatabaseType databaseType = provider.getDatabaseType();
+            String databaseTypeName = databaseType == DatabaseType.UNKNOWN ? "this" : databaseType.getName();
+            throw new SQLException("Feature [" + loaderId + "] not implemented / supported for " + databaseTypeName + " database type");
+        }
+        return executionProcessor;
     }
 
     private void checkDisposed() throws SQLException {

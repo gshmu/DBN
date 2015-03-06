@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.method;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -45,6 +44,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private MethodBrowserSettings browserSettings = new MethodBrowserSettings();
     private MethodExecutionHistory executionHistory = new MethodExecutionHistory();
+    private MethodExecutionArgumentValuesCache argumentValuesCache = new MethodExecutionArgumentValuesCache();
 
     private MethodExecutionManager(Project project) {
         super(project);
@@ -68,6 +68,10 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
         return executionHistory.getExecutionInput(methodRef);
+    }
+
+    public MethodExecutionArgumentValuesCache getArgumentValuesCache() {
+        return argumentValuesCache;
     }
 
     public boolean promptExecutionDialog(DBMethod method, boolean debug) {
@@ -135,6 +139,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public void execute(final MethodExecutionInput executionInput) {
+        cacheArgumentValues(executionInput);
         executionHistory.setSelection(executionInput.getMethodRef());
         executionInput.setExecuting(true);
         final DBMethod method = executionInput.getMethod();
@@ -175,6 +180,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     }
                 }
             }.start();
+        }
+    }
+
+    private void cacheArgumentValues(MethodExecutionInput executionInput) {
+        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        if (connectionHandler != null) {
+            Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
+            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
+                argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
+            }
         }
     }
 
@@ -227,9 +242,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         browserSettings.writeConfiguration(browserSettingsElement);
 
 
-        Element executionHistoryElement = new Element("execution-history");
-        element.addContent(executionHistoryElement);
-        executionHistory.writeState(executionHistoryElement);
+        executionHistory.writeState(element);
+        argumentValuesCache.writeState(element);
         return element;
     }
 
@@ -240,34 +254,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             browserSettings.readConfiguration(browserSettingsElement);
         }
 
-        Element executionHistoryElement = element.getChild("execution-history");
-        if (executionHistoryElement == null) {
-
-            // TODO backward compatibility (to remove)
-            executionHistory.setGroupEntries(SettingsUtil.getBoolean(element, "group-history-entries", true));
-
-            List<MethodExecutionInput> executionInputs = executionHistory.getExecutionInputs();
-            Element executionInputsElement = element.getChild("execution-inputs");
-            for (Object object : executionInputsElement.getChildren()) {
-                Element configElement = (Element) object;
-                MethodExecutionInput executionInput = new MethodExecutionInput();
-                executionInput.readConfiguration(configElement);
-                if (executionInput.getMethodRef().getSchemaName() != null) {
-                    executionInputs.add(executionInput);
-                }
-            }
-            Collections.sort(executionInputs);
-
-            Element selectionElement = element.getChild("history-selection");
-            if (selectionElement != null) {
-                DBObjectRef<DBMethod> selection = new DBObjectRef<DBMethod>();
-                selection.readState(selectionElement);
-                executionHistory.setSelection(selection);
-            }
-        } else {
-            executionHistory.readState(executionHistoryElement);
-        }
+        executionHistory.readState(element);
+        argumentValuesCache.readState(element);
     }
-
-
 }

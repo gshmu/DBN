@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
@@ -57,7 +58,10 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
-        for (StatementExecutionVariable variable: executionProcessor.getExecutionVariables().getVariables()) {
+        List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(executionProcessor.getExecutionVariables().getVariables());
+        Collections.sort(variables, StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
+
+        for (StatementExecutionVariable variable: variables) {
             StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(executionProcessor, variable);
             variableValueForms.add(variableValueForm);
             variablesPanel.add(variableValueForm.getComponent());

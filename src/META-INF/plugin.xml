@@ -6,7 +6,7 @@
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
-    <idea-version since-build="140.0001" until-build="140.9999"/>
+    <idea-version since-build="140.0001" until-build="141.9999"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This product adds extensive database development and maintenance capabilities to the IntelliJ IDEA development environment and related products.
@@ -30,6 +30,7 @@
             <li><b>3.0.4098</b>
             <ul>
                 - Remember statement execution variables<br>
+                - Remember method execution parameter history<br>
                 - Session Browser colors configuration</br>
                 - Error reporting improvements (attachments)<br>
                 - Settings editor cosmetic updates<br>

@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -21,15 +30,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ValueListPopupProvider implements TextFieldPopupProvider{
     private TextFieldWithPopup editorComponent;
@@ -94,32 +94,36 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     boolean isPreparingPopup = false;
     public void showPopup() {
-        if (isPreparingPopup) return;
+        if (valuesProvider.isLazyLoading()) {
+            if (isPreparingPopup) return;
 
-        isPreparingPopup = true;
-        new BackgroundTask(editorComponent.getProject(), "Loading " + getDescription(), false, true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                if (values.isEmpty()) values = valuesProvider.getValues();
-                if (progressIndicator.isCanceled()) {
-                    isPreparingPopup = false;
-                    return;
-                }
-
-                new SimpleLaterInvocator(){
-                    public void execute() {
-                        try {
-                            if (!isShowingPopup()) {
-                                doShowPopup();
-                            }
-                        } finally {
-                            isPreparingPopup = false;
-                        }
+            isPreparingPopup = true;
+            new BackgroundTask(editorComponent.getProject(), "Loading " + getDescription(), false, true) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    if (values.isEmpty()) values = valuesProvider.getValues();
+                    if (progressIndicator.isCanceled()) {
+                        isPreparingPopup = false;
+                        return;
                     }
-                }.start();
 
-            }
-        }.start();
+                    new SimpleLaterInvocator(){
+                        public void execute() {
+                            try {
+                                if (!isShowingPopup()) {
+                                    doShowPopup();
+                                }
+                            } finally {
+                                isPreparingPopup = false;
+                            }
+                        }
+                    }.start();
+
+                }
+            }.start();
+        } else {
+            doShowPopup();
+        }
     }
 
     private void doShowPopup() {
@@ -148,7 +152,6 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
                     true, null, 10);
         }
 
-
         GUIUtil.showUnderneathOf(popup, editorComponent, 4, 200);
     }
 
@@ -166,7 +169,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     @Override
     public String getDescription() {
-        return "Possible Values List";
+        return valuesProvider.getDescription();
     }
 
     @Override

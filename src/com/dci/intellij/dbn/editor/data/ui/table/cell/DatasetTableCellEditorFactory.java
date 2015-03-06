@@ -65,8 +65,18 @@ public class DatasetTableCellEditorFactory implements Disposable {
 
                     if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
                         ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
+                            @Override
+                            public String getDescription() {
+                                return "Possible Values List";
+                            }
+
                             public List<String> getValues() {
                                 return dseColumnInfo.getPossibleValues();
+                            }
+
+                            @Override
+                            public boolean isLazyLoading() {
+                                return true;
                             }
                         };
                         editorComponent.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());
