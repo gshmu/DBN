@@ -75,6 +75,7 @@ public enum DBObjectType implements DynamicContentType {
     DATASET_TRIGGER(DatabaseObjectTypeId.DATASET_TRIGGER, "trigger", "triggers", Icons.DBO_TRIGGER, Icons.DBO_TRIGGER_DISABLED, Icons.DBO_TRIGGERS, false),
     DATABASE_TRIGGER(DatabaseObjectTypeId.DATABASE_TRIGGER, "trigger", "triggers", Icons.DBO_DATABASE_TRIGGER, Icons.DBO_DATABASE_TRIGGER_DISABLED, Icons.DBO_DATABASE_TRIGGERS, false),
     TYPE(DatabaseObjectTypeId.TYPE, "type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
+    TYPE_BODY(DatabaseObjectTypeId.TYPE_BODY, "type body", "type bodies", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
     XMLTYPE(DatabaseObjectTypeId.XMLTYPE, "type", "types", Icons.DBO_TYPE, Icons.DBO_TYPES, false),
     TYPE_ATTRIBUTE(DatabaseObjectTypeId.TYPE_ATTRIBUTE, "type attribute", "attributes", Icons.DBO_ATTRIBUTE, Icons.DBO_ATTRIBUTES, false),
     TYPE_FUNCTION(DatabaseObjectTypeId.TYPE_FUNCTION, "type function", "functions", Icons.DBO_FUNCTION, Icons.DBO_FUNCTIONS, false),

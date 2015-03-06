@@ -35,6 +35,10 @@ public class MostRecentStack<T> implements Iterable<T>{
         return values;
     }
 
+    public void setValues(List<T> values) {
+        this.values = values;
+    }
+
     @Override
     public Iterator<T> iterator() {
         return values.iterator();

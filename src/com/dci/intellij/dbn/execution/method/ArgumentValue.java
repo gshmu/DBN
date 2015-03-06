@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.execution.method;
 
 import java.sql.ResultSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -9,18 +11,26 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class ArgumentValue {
     private DBObjectRef<DBArgument> argumentRef;
-    private DBTypeAttribute attribute;
-    private Object value;
+    private DBObjectRef<DBTypeAttribute> attributeRef;
+    private ArgumentValueHolder valueHolder;
 
-    public ArgumentValue(DBArgument argument, DBTypeAttribute attribute, Object value) {
-        this.argumentRef = argument.getRef();
-        this.attribute = attribute;
-        this.value = value;
+    public ArgumentValue(@NotNull DBArgument argument, @Nullable DBTypeAttribute attributeRef, ArgumentValueHolder valueHolder) {
+        this.argumentRef = DBObjectRef.from(argument);
+        this.attributeRef = DBObjectRef.from(attributeRef);
+        this.valueHolder = valueHolder;
     }
 
-    public ArgumentValue(DBArgument argument, Object value) {
-        this.argumentRef = argument.getRef();
-        this.value = value;
+    public ArgumentValue(@NotNull DBArgument argument, ArgumentValueHolder valueHolder) {
+        this.argumentRef = DBObjectRef.from(argument);
+        this.valueHolder = valueHolder;
+    }
+
+    public ArgumentValueHolder getValueHolder() {
+        return valueHolder;
+    }
+
+    public void setValueHolder(ArgumentValueHolder valueHolder) {
+        this.valueHolder = valueHolder;
     }
 
     public DBObjectRef<DBArgument> getArgumentRef() {
@@ -32,18 +42,18 @@ public class ArgumentValue {
     }
 
     public DBTypeAttribute getAttribute() {
-        return attribute;
+        return DBObjectRef.get(attributeRef);
     }
 
     public String getName() {
         return
-            attribute == null ?
+            attributeRef == null ?
                     argumentRef.getObjectName() :
-                    argumentRef.getObjectName() + "." + attribute.getName();
+                    argumentRef.getObjectName() + '.' + attributeRef.getObjectName();
     }
 
     public Object getValue() {
-        return value;
+        return valueHolder.getValue();
     }
 
     public boolean isLargeObject() {
@@ -56,14 +66,33 @@ public class ArgumentValue {
     }
 
     public boolean isCursor() {
-        return value instanceof ResultSet;
+        return getValue() instanceof ResultSet;
     }
 
     public void setValue(Object value) {
-        this.value = value;
+        valueHolder.setValue(value);
     }
 
     public String toString() {
-        return argumentRef.getObjectName() + " = " + value;
+        return argumentRef.getObjectName() + " = " + getValue();
+    }
+
+    public static <T> ArgumentValueHolder<T> createBasicValueHolder(T value) {
+        ArgumentValueHolder<T> valueStore = new ArgumentValueHolder<T>() {
+            private T value;
+
+            @Override
+            public T getValue() {
+                return value;
+            }
+
+            @Override
+            public void setValue(T value) {
+                this.value = value;
+            }
+        };
+
+        valueStore.setValue(value);
+        return valueStore;
     }
 }

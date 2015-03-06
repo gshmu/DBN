@@ -59,6 +59,7 @@ public enum DatabaseObjectTypeId {
     DATASET_TRIGGER,
     DATABASE_TRIGGER,
     TYPE,
+    TYPE_BODY,
     TYPE_ATTRIBUTE,
     TYPE_FUNCTION,
     TYPE_PROCEDURE,

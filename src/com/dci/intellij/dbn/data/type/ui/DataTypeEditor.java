@@ -25,7 +25,7 @@ public class DataTypeEditor extends TextFieldWithPopup {
             typeName = caseOption.format(typeName);
             nativeDataTypeNames.add(typeName);
         }
-        BasicListPopupValuesProvider valuesProvider = new BasicListPopupValuesProvider(nativeDataTypeNames);
+        BasicListPopupValuesProvider valuesProvider = new BasicListPopupValuesProvider("Native Data Types", nativeDataTypeNames);
         createValuesListPopup(valuesProvider, true);
     }
 

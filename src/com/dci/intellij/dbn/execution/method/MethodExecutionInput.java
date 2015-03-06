@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.method;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,11 +25,12 @@ import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import gnu.trove.THashSet;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
     private DBObjectRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
-    private Map<String, String> valuesMap = new HashMap<String, String>();
+    private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<MethodExecutionArgumentValue>();
     private boolean usePoolConnection = true;
     private boolean commitAfterExecution = true;
     private boolean enableLogging = false;
@@ -37,7 +38,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
 
 
     private transient MethodExecutionResult executionResult;
-    private transient List<ArgumentValue> argumentValues = new ArrayList<ArgumentValue>();
+    private transient List<ArgumentValue> inputArgumentValues = new ArrayList<ArgumentValue>();
 
     private transient boolean executionCancelled;
 
@@ -109,39 +110,64 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return (String) argumentValue.getValue();
     }
 
+    public List<String> getInputValueHistory(@NotNull DBArgument argument) {
+        ArgumentValue argumentValue = getArgumentValue(argument);
+        ArgumentValueHolder valueStore = argumentValue.getValueHolder();
+        if (valueStore instanceof MethodExecutionArgumentValue) {
+            MethodExecutionArgumentValue executionVariable = (MethodExecutionArgumentValue) valueStore;
+            return executionVariable.getValueHistory();
+        }
+        return Collections.emptyList();
+    }
+
     public String getInputValue(DBArgument argument, DBTypeAttribute typeAttribute) {
         ArgumentValue argumentValue = getArgumentValue(argument, typeAttribute);
         return (String) argumentValue.getValue();
     }
 
-    public List<ArgumentValue> getArgumentValues() {
-        return argumentValues;
+    public List<ArgumentValue> getInputArgumentValues() {
+        return inputArgumentValues;
     }
 
     private ArgumentValue getArgumentValue(@NotNull DBArgument argument) {
-        for (ArgumentValue argumentValue : argumentValues) {
-            if (argument.equals(argumentValue.getArgument())) {
+        for (ArgumentValue argumentValue : inputArgumentValues) {
+            if (CommonUtil.safeEqual(argument, argumentValue.getArgument())) {
                 return argumentValue;
             }
         }
         ArgumentValue argumentValue = new ArgumentValue(argument, null);
-        argumentValue.setValue(valuesMap.get(argumentValue.getName()));
-        argumentValues.add(argumentValue);
+        argumentValue.setValueHolder(getExecutionVariable(argumentValue.getName()));
+        inputArgumentValues.add(argumentValue);
         return argumentValue;
     }
 
     private ArgumentValue getArgumentValue(DBArgument argument, DBTypeAttribute attribute) {
-        for (ArgumentValue argumentValue : argumentValues) {
-            if (argumentValue.getArgument().equals(argument) &&
-                    argumentValue.getAttribute().equals(attribute)) {
+        for (ArgumentValue argumentValue : inputArgumentValues) {
+            if (CommonUtil.safeEqual(argumentValue.getArgument(), argument) &&
+                    CommonUtil.safeEqual(argumentValue.getAttribute(), attribute)) {
                 return argumentValue;
             }
         }
 
         ArgumentValue argumentValue = new ArgumentValue(argument, attribute, null);
-        argumentValue.setValue(valuesMap.get(argumentValue.getName()));
-        argumentValues.add(argumentValue);
+        argumentValue.setValueHolder(getExecutionVariable(argumentValue.getName()));
+        inputArgumentValues.add(argumentValue);
         return argumentValue;
+    }
+
+    private synchronized MethodExecutionArgumentValue getExecutionVariable(String name) {
+        for (MethodExecutionArgumentValue executionVariable : argumentValues) {
+            if (executionVariable.getName().equalsIgnoreCase(name)) {
+                return executionVariable;
+            }
+        }
+        MethodExecutionArgumentValue executionVariable = new MethodExecutionArgumentValue(name);
+        argumentValues.add(executionVariable);
+        return executionVariable;
+    }
+
+    public Set<MethodExecutionArgumentValue> getArgumentValues() {
+        return argumentValues;
     }
 
     public MethodExecutionResult getExecutionResult() {
@@ -201,9 +227,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         Element argumentsElement = element.getChild("argument-list");
         for (Object object : argumentsElement.getChildren()) {
             Element argumentElement = (Element) object;
-            String name = argumentElement.getAttributeValue("name");
-            String value = CommonUtil.nullIfEmpty(argumentElement.getAttributeValue("value"));
-            valuesMap.put(name, value);
+            MethodExecutionArgumentValue variable = new MethodExecutionArgumentValue(argumentElement);
+            argumentValues.add(variable);
         }
     }
 
@@ -217,20 +242,10 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         Element argumentsElement = new Element("argument-list");
         element.addContent(argumentsElement);
 
-        if (argumentValues.size() > 0) {
-            for (ArgumentValue argumentValue : argumentValues) {
-                Element argumentElement = new Element("argument");
-                argumentElement.setAttribute("name", argumentValue.getName());
-                argumentElement.setAttribute("value", (String) CommonUtil.nvl(argumentValue.getValue(), ""));
-                argumentsElement.addContent(argumentElement);
-            }
-        } else {
-            for (String name : valuesMap.keySet()) {
-                Element argumentElement = new Element("argument");
-                argumentElement.setAttribute("name", name);
-                argumentElement.setAttribute("value", CommonUtil.nvl(valuesMap.get(name), ""));
-                argumentsElement.addContent(argumentElement);
-            }
+        for (MethodExecutionArgumentValue executionVariable : argumentValues) {
+            Element argumentElement = new Element("argument");
+            executionVariable.writeState(argumentElement);
+            argumentsElement.addContent(argumentElement);
         }
     }
 
@@ -261,7 +276,10 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         executionInput.usePoolConnection = usePoolConnection;
         executionInput.commitAfterExecution = commitAfterExecution;
         executionInput.enableLogging = enableLogging;
-        executionInput.valuesMap = new HashMap<String, String>(valuesMap);
+        executionInput.argumentValues = new THashSet<MethodExecutionArgumentValue>();
+        for (MethodExecutionArgumentValue executionVariable : argumentValues) {
+            executionInput.argumentValues.add(executionVariable.clone());
+        }
         return executionInput;
     }
 
@@ -275,8 +293,8 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     public void dispose() {
         disposed = true;
         executionResult = null;
-        valuesMap.clear();
         argumentValues.clear();
+        inputArgumentValues.clear();
     }
 
 }

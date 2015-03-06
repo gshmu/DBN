@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement.variables;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,18 @@ import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
 public class StatementExecutionVariablesBundle implements Disposable{
+    public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = new Comparator<StatementExecutionVariable>() {
+        @Override
+        public int compare(StatementExecutionVariable o1, StatementExecutionVariable o2) {
+            return o2.getName().length() - o1.getName().length();
+        }
+    };
+    public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = new Comparator<StatementExecutionVariable>() {
+        @Override
+        public int compare(StatementExecutionVariable o1, StatementExecutionVariable o2) {
+            return o1.getOffset() - o2.getOffset();
+        }
+    };
     private Map<StatementExecutionVariable, String> errorMap;
     private Set<StatementExecutionVariable> variables = new THashSet<StatementExecutionVariable>();
 
@@ -42,6 +55,8 @@ public class StatementExecutionVariablesBundle implements Disposable{
             StatementExecutionVariable variable = getVariable(variablePsiElement.getText());
             if (variable == null) {
                 variable = new StatementExecutionVariable(variablePsiElement);
+            } else {
+                variable.setOffset(variablePsiElement.getTextOffset());
             }
 
             if (variable.getDataType() == null) {
@@ -105,7 +120,7 @@ public class StatementExecutionVariablesBundle implements Disposable{
     public String prepareStatementText(ConnectionHandler connectionHandler, String statementText, boolean forPreview) {
         errorMap = null;
         List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(this.variables);
-        Collections.sort(variables);
+        Collections.sort(variables, NAME_LENGTH_COMPARATOR);
         for (StatementExecutionVariable variable : variables) {
             String value = forPreview ? variable.getPreviewValueProvider().getValue() : variable.getValue();
             GenericDataType genericDataType = forPreview ? variable.getPreviewValueProvider().getDataType() : variable.getDataType();
