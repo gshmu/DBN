@@ -69,6 +69,7 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
         for (String connectionId : variablesMap.keySet()) {
             Set<MethodExecutionArgumentValue> executionVariables = variablesMap.get(connectionId);
             Element connectionElement = new Element("connection");
+            connectionElement.setAttribute("connection-id", connectionId);
             argumentValuesElement.addContent(connectionElement);
             for (MethodExecutionArgumentValue executionVariable : executionVariables) {
                 Element argumentElement = new Element("argument");

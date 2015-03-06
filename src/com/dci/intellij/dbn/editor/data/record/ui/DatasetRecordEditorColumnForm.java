@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -96,19 +97,10 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl implements DBNFor
                             DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
                             if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
-                                ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
+                                ListPopupValuesProvider valuesProvider = new ListPopupValuesProviderImpl("Possible Values List", true) {
                                     @Override
-                                    public String getDescription() {
-                                        return "Possible Values List";
-                                    }
-
                                     public List<String> getValues() {
                                         return columnInfo.getPossibleValues();
-                                    }
-
-                                    @Override
-                                    public boolean isLazyLoading() {
-                                        return true;
                                     }
                                 };
                                 textFieldWithPopup.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -41,8 +40,6 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     private JPanel typeAttributesPanel;
     private JPanel inputFieldPanel;
 
-
-    private JComponent inputComponent;
     private JTextField inputTextField;
     private UserValueHolderImpl<String> userValueHolder;
 
@@ -85,20 +82,16 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
             Project project = argument.getProject();
-            final MethodExecutionInput executionInput = executionComponent.getExecutionInput();
+            MethodExecutionInput executionInput = executionComponent.getExecutionInput();
             String value = executionInput.getInputValue(argument);
-            if (genericDataType == GenericDataType.DATE_TIME) {
-                TextFieldWithPopup inputField = new TextFieldWithPopup(project);
-                inputField.setPreferredSize(new Dimension(200, -1));
-                inputField.createCalendarPopup(false);
-                inputField.createValuesListPopup(createValuesProvider(), true);
-                inputComponent = inputField;
-                inputTextField = inputField.getTextField();
-            }
-            else if (genericDataType == GenericDataType.XMLTYPE) {
-                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[XMLTYPE]");
 
-                TextContentType contentType = TextContentType.get(project, "XML");
+            if (genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
+                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[" + genericDataType.name() + "]");
+
+                TextContentType contentType =
+                        genericDataType == GenericDataType.XMLTYPE ?
+                                TextContentType.get(project, "XML") :
+                                TextContentType.getPlainText(project);
                 if (contentType == null) {
                     contentType = TextContentType.getPlainText(project);
                 }
@@ -108,33 +101,22 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
 
-                inputField.setPreferredSize(new Dimension(200, -1));
-                inputComponent = inputField;
+                inputField.setPreferredSize(new Dimension(240, -1));
                 inputTextField = inputField.getTextField();
-            } else if (genericDataType == GenericDataType.CLOB) {
-                TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[CLOB]");
-                TextContentType contentType = TextContentType.getPlainText(project);
-
-                userValueHolder = new UserValueHolderImpl<String>(argumentName, DBObjectType.ARGUMENT, dataType, project);
-                userValueHolder.setUserValue(value);
-                userValueHolder.setContentType(contentType);
-                inputField.setUserValueHolder(userValueHolder);
-
-                inputField.setPreferredSize(new Dimension(200, -1));
-                inputComponent = inputField;
-                inputTextField = inputField.getTextField();
+                inputFieldPanel.add(inputField, BorderLayout.CENTER);
             } else {
                 TextFieldWithPopup inputField = new TextFieldWithPopup(project);
-                inputField.setPreferredSize(new Dimension(200, -1));
+                inputField.setPreferredSize(new Dimension(240, -1));
+                if (genericDataType == GenericDataType.DATE_TIME) {
+                    inputField.createCalendarPopup(false);
+                }
+
                 inputField.createValuesListPopup(createValuesProvider(), true);
-                inputComponent = inputField;
                 inputTextField = inputField.getTextField();
+                inputTextField.setText(value);
+                inputFieldPanel.add(inputField, BorderLayout.CENTER);
             }
 
-            if (!genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
-                inputTextField.setText(value);
-            }
-            inputFieldPanel.add(inputComponent, BorderLayout.CENTER);
             inputTextField.setDisabledTextColor(inputTextField.getForeground());
         } else {
             inputFieldPanel.setVisible(false);
@@ -151,11 +133,11 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
 
             @Override
             public List<String> getValues() {
-                return executionComponent.getExecutionInput().getInputValueHistory(getArgument());
+                return executionComponent.getExecutionInput().getInputValueHistory(getArgument(), null);
             }
 
             @Override
-            public boolean isLazyLoading() {
+            public boolean isLongLoading() {
                 return false;
             }
         };
@@ -177,16 +159,19 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
 
     public void updateExecutionInput() {
         DBArgument argument = getArgument();
-        if (typeAttributeForms.size() >0 ) {
-            for (MethodExecutionTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
-                typeAttributeComponent.updateExecutionInput();
+        if (argument != null) {
+            MethodExecutionInput executionInput = executionComponent.getExecutionInput();
+            if (typeAttributeForms.size() >0 ) {
+                for (MethodExecutionTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
+                    typeAttributeComponent.updateExecutionInput();
+                }
+            } else if (userValueHolder != null ) {
+                String value = userValueHolder.getUserValue();
+                executionInput.setInputValue(argument, value);
+            } else {
+                String value = CommonUtil.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
+                executionInput.setInputValue(argument, value);
             }
-        } else if (userValueHolder != null ) {
-            String value = userValueHolder.getUserValue();
-            executionComponent.getExecutionInput().setInputValue(argument, value);
-        } else {
-            String value = CommonUtil.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
-            executionComponent.getExecutionInput().setInputValue(argument, value);
         }
     }
 
