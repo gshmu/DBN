@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -143,14 +144,18 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
             for (String value : values) {
-                actionGroup.add(new ValueSelectAction(value));
+                if (StringUtil.isNotEmpty(value)) {
+                    actionGroup.add(new ValueSelectAction(value));
+                }
             }
             if (secondaryValues.size() > 0) {
                 if (values.size() > 0) {
                     actionGroup.add(ActionUtil.SEPARATOR);
                 }
                 for (String secondaryValue : secondaryValues) {
-                    actionGroup.add(new ValueSelectAction(secondaryValue));
+                    if (StringUtil.isNotEmpty(secondaryValue)) {
+                        actionGroup.add(new ValueSelectAction(secondaryValue));
+                    }
                 }
             }
 

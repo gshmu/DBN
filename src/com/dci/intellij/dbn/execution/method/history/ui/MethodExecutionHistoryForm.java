@@ -47,7 +47,6 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
         actionsPanel.add(actionToolbar.getComponent());
         methodExecutionForms = new HashMap<MethodExecutionInput, MethodExecutionForm>();
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-        GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
         JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
         splitter.setProportion((float) 0.32);
