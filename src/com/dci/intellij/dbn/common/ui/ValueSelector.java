@@ -41,6 +41,7 @@ import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.GraphicsConfig;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -302,7 +303,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
 
-    public class SelectValueAction extends AnAction {
+    public class SelectValueAction extends DumbAwareAction {
         private T value;
 
         public SelectValueAction(T value) {
