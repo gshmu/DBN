@@ -181,11 +181,10 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
             if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
 
-            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
-
             DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
 
             if (schema == null) {
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
                 if (connectionHandler != null) {
                     schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
@@ -212,8 +211,15 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             if (objectType == DBObjectType.PACKAGE_BODY) objectType = DBObjectType.PACKAGE;
             if (objectType == DBObjectType.TYPE_BODY) objectType = DBObjectType.TYPE;
 
-            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
-            DBSchema schema = schemaObject.getConnectionHandler().getObjectBundle().getSchema(objectOwner);
+            DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
+            if (schema == null) {
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
+                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                if (connectionHandler != null) {
+                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                    loaderCache.setObject(objectOwner,  schema);
+                }
+            }
             return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
         }
     };
