@@ -8,18 +8,25 @@ import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.history.action.DeleteHistoryEntryAction;
-import com.dci.intellij.dbn.execution.method.history.action.OpenSettingsAction;
-import com.dci.intellij.dbn.execution.method.history.action.ShowGroupedTreeAction;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
+import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 
@@ -38,10 +45,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
     public MethodExecutionHistoryForm(MethodExecutionHistoryDialog dialog, MethodExecutionHistory executionHistory) {
         this.dialog = dialog;
         this.executionHistory = executionHistory;
-        MethodExecutionHistoryTree tree = getTree();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
-                new ShowGroupedTreeAction(tree),
-                new DeleteHistoryEntryAction(tree),
+                new ShowGroupedTreeAction(),
+                new DeleteHistoryEntryAction(),
                 ActionUtil.SEPARATOR,
                 new OpenSettingsAction());
         actionsPanel.add(actionToolbar.getComponent());
@@ -112,5 +118,57 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
 
     public void setSelectedInput(MethodExecutionInput selectedExecutionInput) {
         getTree().setSelectedInput(selectedExecutionInput);
+    }
+
+    public class DeleteHistoryEntryAction extends DumbAwareAction {
+        public DeleteHistoryEntryAction() {
+            super("Delete", null, Icons.ACTION_REMOVE);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            getTree().removeSelectedEntries();
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(!getTree().isSelectionEmpty());
+            e.getPresentation().setVisible(dialog.isEditable());
+        }
+    }
+
+    public static class OpenSettingsAction extends DumbAwareAction {
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            Project project = ActionUtil.getProject(e);
+            if (project != null) {
+                ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
+            }
+        }
+
+        public void update(@NotNull AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+            presentation.setIcon(Icons.ACTION_SETTINGS);
+            presentation.setText("Settings");
+        }
+    }
+
+    public class ShowGroupedTreeAction extends ToggleAction {
+        public ShowGroupedTreeAction() {
+            super("Group by Program", "Show grouped by program", Icons.ACTION_GROUP);
+        }
+
+        @Override
+        public boolean isSelected(AnActionEvent e) {
+            return getTree().isGrouped();
+        }
+
+        @Override
+        public void setSelected(AnActionEvent e, boolean state) {
+            getTemplatePresentation().setText(state ? "Ungroup" : "Group by Program");
+            getTree().showGrouped(state);
+            Project project = ActionUtil.getProject(e);
+            MethodExecutionManager.getInstance(project).getExecutionHistory().setGroupEntries(state);
+
+        }
     }
 }
