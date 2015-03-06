@@ -15,6 +15,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -90,6 +91,11 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
                 }
 
                 return values;
+            }
+
+            @Override
+            public List<String> getSecondaryValues() {
+                return Collections.emptyList();
             }
 
             @Override

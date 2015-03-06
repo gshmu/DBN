@@ -44,7 +44,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
     }
 
     protected String getDimensionServiceKey() {
-        return null;//"DBNavigator.MethodExecutionHistory";
+        return "DBNavigator.MethodExecutionHistory";
     }
 
     @Nullable

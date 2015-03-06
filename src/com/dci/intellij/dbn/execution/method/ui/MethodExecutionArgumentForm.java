@@ -8,6 +8,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -24,7 +26,9 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValue;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
@@ -133,7 +137,30 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
 
             @Override
             public List<String> getValues() {
-                return executionComponent.getExecutionInput().getInputValueHistory(getArgument(), null);
+                DBArgument argument = getArgument();
+                if (argument != null) {
+                    return executionComponent.getExecutionInput().getInputValueHistory(argument, null);
+                }
+
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<String> getSecondaryValues() {
+                DBArgument argument = getArgument();
+                if (argument != null) {
+                    ConnectionHandler connectionHandler = argument.getConnectionHandler();
+                    if (connectionHandler != null) {
+                        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
+                        MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getId(), argument.getName(), false);
+                        if (argumentValue != null) {
+                            List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
+                            cachedValues.removeAll(getValues());
+                            return cachedValues;
+                        }
+                    }
+                }
+                return Collections.emptyList();
             }
 
             @Override

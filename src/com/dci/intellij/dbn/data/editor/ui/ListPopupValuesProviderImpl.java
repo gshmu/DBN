@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class ListPopupValuesProviderImpl implements ListPopupValuesProvider{
@@ -18,6 +19,11 @@ public abstract class ListPopupValuesProviderImpl implements ListPopupValuesProv
 
     @Override
     public abstract List<String> getValues();
+
+    @Override
+    public List<String> getSecondaryValues() {
+        return Collections.emptyList();
+    }
 
     @Override
     public final boolean isLongLoading() {

@@ -7,39 +7,42 @@ import java.util.Set;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import gnu.trove.THashMap;
 
 public class MethodExecutionArgumentValuesCache implements PersistentStateElement<Element> {
     private Map<String, Set<MethodExecutionArgumentValue>> variablesMap = new THashMap<String, Set<MethodExecutionArgumentValue>>();
 
-    public MethodExecutionArgumentValue getVariable(String connectionId, String name, boolean create) {
-        Set<MethodExecutionArgumentValue> executionVariables = variablesMap.get(connectionId);
+    public MethodExecutionArgumentValue getArgumentValue(String connectionId, String name, boolean create) {
+        Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);
 
-        if (executionVariables != null) {
-            for (MethodExecutionArgumentValue executionVariable : executionVariables) {
-                if (executionVariable.getName().equalsIgnoreCase(name)) {
-                    return executionVariable;
+        if (argumentValues != null) {
+            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
+                if (argumentValue.getName().equalsIgnoreCase(name)) {
+                    return argumentValue;
                 }
             }
         }
 
         if (create) {
-            if (executionVariables == null) {
-                executionVariables = new HashSet<MethodExecutionArgumentValue>();
-                variablesMap.put(connectionId, executionVariables);
+            if (argumentValues == null) {
+                argumentValues = new HashSet<MethodExecutionArgumentValue>();
+                variablesMap.put(connectionId, argumentValues);
             }
 
-            MethodExecutionArgumentValue executionVariable = new MethodExecutionArgumentValue(name);
-            executionVariables.add(executionVariable);
-            return executionVariable;
+            MethodExecutionArgumentValue argumentValue = new MethodExecutionArgumentValue(name);
+            argumentValues.add(argumentValue);
+            return argumentValue;
 
         }
         return null;
     }
 
     public void cacheVariable(String connectionId, String name, String value) {
-        MethodExecutionArgumentValue executionVariable = getVariable(connectionId, name, true);
-        executionVariable.setValue(value);
+        if (StringUtil.isNotEmpty(value)) {
+            MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
+            argumentValue.setValue(value);
+        }
     }
 
     /*********************************************
@@ -55,8 +58,8 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
                 List<Element> argumentElements = connectionElement.getChildren();
                 for (Element argumentElement : argumentElements) {
                     String name = argumentElement.getAttributeValue("name");
-                    MethodExecutionArgumentValue executionVariable = getVariable(connectionId, name, true);
-                    executionVariable.readState(argumentElement);
+                    MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
+                    argumentValue.readState(argumentElement);
                 }
             }
         }
@@ -67,14 +70,14 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
         parent.addContent(argumentValuesElement);
 
         for (String connectionId : variablesMap.keySet()) {
-            Set<MethodExecutionArgumentValue> executionVariables = variablesMap.get(connectionId);
+            Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);
             Element connectionElement = new Element("connection");
             connectionElement.setAttribute("connection-id", connectionId);
             argumentValuesElement.addContent(connectionElement);
-            for (MethodExecutionArgumentValue executionVariable : executionVariables) {
+            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
                 Element argumentElement = new Element("argument");
                 connectionElement.addContent(argumentElement);
-                executionVariable.writeState(argumentElement);
+                argumentValue.writeState(argumentElement);
             }
         }
     }

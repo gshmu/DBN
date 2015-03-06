@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -98,7 +99,9 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             new BackgroundTask(editorComponent.getProject(), "Loading " + getDescription(), false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    getValues(); // load the values
+                    // load the values
+                    getValues();
+                    getSecondaryValues();
                     if (progressIndicator.isCanceled()) {
                         isPreparingPopup = false;
                         return;
@@ -125,7 +128,8 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     private void doShowPopup() {
         List<String> values = getValues();
-        if (values.size() < 20)  {
+        List<String> secondaryValues = getSecondaryValues();
+        if (false && values.size() < 20)  {
             String[] valuesArray = values.toArray(new String[values.size()]);
             BaseListPopupStep<String> listPopupStep = new BaseListPopupStep<String>(null, valuesArray){
                 @Override
@@ -138,8 +142,16 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
         } else {
             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-            for (int i = 0; i<values.size(); i++) {
-                actionGroup.add(new ValueSelectAction(i));
+            for (String value : values) {
+                actionGroup.add(new ValueSelectAction(value));
+            }
+            if (secondaryValues.size() > 0) {
+                if (values.size() > 0) {
+                    actionGroup.add(ActionUtil.SEPARATOR);
+                }
+                for (String secondaryValue : secondaryValues) {
+                    actionGroup.add(new ValueSelectAction(secondaryValue));
+                }
             }
 
             popup = JBPopupFactory.getInstance().createActionGroupPopup(
@@ -155,6 +167,10 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     private List<String> getValues() {
         return valuesProvider.getValues();
+    }
+
+    private List<String> getSecondaryValues() {
+        return valuesProvider.getSecondaryValues();
     }
 
     @Override
@@ -196,20 +212,19 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     }
 
     private class ValueSelectAction extends AnAction {
-        private int index;
+        private String value;
 
-        public ValueSelectAction(int index) {
-            this.index = index;
+        public ValueSelectAction(String value) {
+            this.value = value;
         }
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-            editorComponent.setText(getValues().get(index));
+            editorComponent.setText(value);
         }
 
         @Override
         public void update(AnActionEvent e) {
-            String value = getValues().get(index);
             String text = NamingUtil.enhanceUnderscoresForDisplay(value);
             Presentation presentation = e.getPresentation();
             presentation.setText(text);
