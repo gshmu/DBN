@@ -21,12 +21,14 @@ import com.dci.intellij.dbn.execution.method.ui.MethodExecutionForm;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.GuiUtils;
+import com.intellij.ui.JBSplitter;
 
 public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
     private JPanel mainPanel;
     private JTree executionInputsTree;
     private JPanel actionsPanel;
     private JPanel argumentsPanel;
+    private JPanel contentPanel;
     private MethodExecutionHistory executionHistory;
     private MethodExecutionHistoryDialog dialog;
     private ChangeListener changeListener;
@@ -46,6 +48,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl implements DBNForm {
         methodExecutionForms = new HashMap<MethodExecutionInput, MethodExecutionForm>();
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
+        GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
+        JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
+        splitter.setProportion((float) 0.32);
     }
 
     public JPanel getComponent() {
