@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.4098</b>
             <ul>
+                - Zoom in/out support for data grids (Ctrl-MouseWheel)<br>
                 - Remember statement execution variables<br>
                 - Remember method execution parameter history<br>
                 - Session Browser colors configuration</br>

@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Font;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableColors;
@@ -49,6 +50,12 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
         add(imageLabel, BorderLayout.EAST);
         textLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
         textLabel.setCursor(HAND_CURSOR);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        if (textLabel != null) textLabel.setFont(font);
     }
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
