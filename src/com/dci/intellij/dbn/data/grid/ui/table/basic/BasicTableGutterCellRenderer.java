@@ -9,6 +9,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -34,6 +35,12 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         textLabel.setForeground(BasicTableColors.getLineNumberColor());
         textLabel.setFont(EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN));
         add(textLabel, BorderLayout.EAST);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        if (textLabel != null) textLabel.setFont(font);
     }
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {

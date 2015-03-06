@@ -1647,11 +1647,32 @@
     <statement-execution-processor id="referenced-objects" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select distinct
+                ro.OWNER OBJECT_OWNER,
+                ro.OBJECT_NAME OBJECT_NAME,
+                ro.OBJECT_TYPE OBJECT_TYPE
+            from
+                PUBLIC_DEPENDENCY pd,
+                [PREFIX]_OBJECTS o,
+                [PREFIX]_OBJECTS ro
+            where
+                ro.OBJECT_ID = pd.REFERENCED_OBJECT_ID and
+                o.OBJECT_ID = pd.OBJECT_ID and
+                o.OWNER = {0} and
+                o.OBJECT_NAME = {1} and
+                (o.OWNER != ro.OWNER or o.OBJECT_NAME != ro.OBJECT_NAME)
+            order by
+                ro.OWNER,
+                ro.OBJECT_TYPE,
+                ro.OBJECT_NAME
+        </statement>
+        <statement prefixes="DBA, ALL">
+            select distinct
                 REFERENCED_OWNER as OBJECT_OWNER,
                 REFERENCED_NAME as OBJECT_NAME,
-                REFERENCED_TYPE as OBJECT_TYPE
+                decode(REFERENCED_TYPE, 'PACKAGE BODY', 'PACKAGE', 'TYPE BODY', 'TYPE', REFERENCED_TYPE) as OBJECT_TYPE
             from [PREFIX]_DEPENDENCIES
             where
+               (OWNER != REFERENCED_OWNER or NAME != REFERENCED_NAME) and
                 OWNER = {0} and
                 NAME = {1}
             order by
@@ -1664,10 +1685,31 @@
     <statement-execution-processor id="referencing-objects" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select distinct
+                o.OWNER OBJECT_OWNER,
+                o.OBJECT_NAME OBJECT_NAME,
+                decode(o.OBJECT_TYPE, 'PACKAGE BODY', 'PACKAGE', 'TYPE BODY', 'TYPE', o.OBJECT_TYPE) as OBJECT_TYPE
+            from
+                PUBLIC_DEPENDENCY pd,
+                [PREFIX]_OBJECTS o,
+                [PREFIX]_OBJECTS ro
+            where
+                o.OBJECT_ID = pd.OBJECT_ID and
+                ro.OBJECT_ID = pd.REFERENCED_OBJECT_ID and
+                (o.OWNER != ro.OWNER or o.OBJECT_NAME != ro.OBJECT_NAME) and
+                ro.OWNER = {0} and
+                ro.OBJECT_NAME = {1}
+            order by
+                o.OWNER,
+                o.OBJECT_TYPE,
+                o.OBJECT_NAME
+        </statement>
+        <statement prefixes="DBA, ALL">
+            select distinct
                 OWNER as OBJECT_OWNER,
                 NAME as OBJECT_NAME,
-                TYPE as OBJECT_TYPE
+                decode(TYPE, 'PACKAGE BODY', 'PACKAGE', 'TYPE BODY', 'TYPE', TYPE) as OBJECT_TYPE
             from [PREFIX]_DEPENDENCIES where
+                (OWNER != REFERENCED_OWNER or NAME != REFERENCED_NAME) and
                 REFERENCED_OWNER = {0} and
                 REFERENCED_NAME = {1}
             order by

@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
@@ -221,5 +222,9 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
     @Override
     public BasicTable getTable() {
         return datasetEditorTable;
+    }
+
+    private void createUIComponents() {
+        datasetTableScrollPane = new BasicTableScrollPane();
     }
 }
