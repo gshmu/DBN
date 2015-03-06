@@ -75,9 +75,11 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
             connectionElement.setAttribute("connection-id", connectionId);
             argumentValuesElement.addContent(connectionElement);
             for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                Element argumentElement = new Element("argument");
-                connectionElement.addContent(argumentElement);
-                argumentValue.writeState(argumentElement);
+                if (argumentValue.getValueHistory().size() > 0) {
+                    Element argumentElement = new Element("argument");
+                    connectionElement.addContent(argumentElement);
+                    argumentValue.writeState(argumentElement);
+                }
             }
         }
     }
