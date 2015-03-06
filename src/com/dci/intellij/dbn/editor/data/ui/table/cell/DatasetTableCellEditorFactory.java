@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -64,19 +65,10 @@ public class DatasetTableCellEditorFactory implements Disposable {
                     DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
                     if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
-                        ListPopupValuesProvider valuesProvider = new ListPopupValuesProvider() {
+                        ListPopupValuesProvider valuesProvider = new ListPopupValuesProviderImpl("Possible Values List", true) {
                             @Override
-                            public String getDescription() {
-                                return "Possible Values List";
-                            }
-
                             public List<String> getValues() {
                                 return dseColumnInfo.getPossibleValues();
-                            }
-
-                            @Override
-                            public boolean isLazyLoading() {
-                                return true;
                             }
                         };
                         editorComponent.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());

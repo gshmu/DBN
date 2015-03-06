@@ -93,7 +93,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
             }
 
             @Override
-            public boolean isLazyLoading() {
+            public boolean isLongLoading() {
                 return false;
             }
         }, true);

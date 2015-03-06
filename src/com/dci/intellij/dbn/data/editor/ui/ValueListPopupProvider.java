@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +33,6 @@ import com.intellij.openapi.util.Disposer;
 public class ValueListPopupProvider implements TextFieldPopupProvider{
     private TextFieldWithPopup editorComponent;
     private ListPopupValuesProvider valuesProvider;
-    private List<String> values = new ArrayList<String>();
-
 
     private boolean autoPopup;
     private boolean enabled = true;
@@ -94,14 +91,14 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     boolean isPreparingPopup = false;
     public void showPopup() {
-        if (valuesProvider.isLazyLoading()) {
+        if (valuesProvider.isLongLoading()) {
             if (isPreparingPopup) return;
 
             isPreparingPopup = true;
             new BackgroundTask(editorComponent.getProject(), "Loading " + getDescription(), false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    if (values.isEmpty()) values = valuesProvider.getValues();
+                    getValues(); // load the values
                     if (progressIndicator.isCanceled()) {
                         isPreparingPopup = false;
                         return;
@@ -127,6 +124,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     }
 
     private void doShowPopup() {
+        List<String> values = getValues();
         if (values.size() < 20)  {
             String[] valuesArray = values.toArray(new String[values.size()]);
             BaseListPopupStep<String> listPopupStep = new BaseListPopupStep<String>(null, valuesArray){
@@ -153,6 +151,10 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
         }
 
         GUIUtil.showUnderneathOf(popup, editorComponent, 4, 200);
+    }
+
+    private List<String> getValues() {
+        return valuesProvider.getValues();
     }
 
     @Override
@@ -202,12 +204,12 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-            editorComponent.setText(values.get(index));
+            editorComponent.setText(getValues().get(index));
         }
 
         @Override
         public void update(AnActionEvent e) {
-            String value = values.get(index);
+            String value = getValues().get(index);
             String text = NamingUtil.enhanceUnderscoresForDisplay(value);
             Presentation presentation = e.getPresentation();
             presentation.setText(text);
