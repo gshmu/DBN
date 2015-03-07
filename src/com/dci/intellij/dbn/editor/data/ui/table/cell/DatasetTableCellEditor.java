@@ -1,5 +1,20 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
+ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+ import com.dci.intellij.dbn.common.ui.MouseUtil;
+ import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
+ import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+ import com.dci.intellij.dbn.data.model.ColumnInfo;
+ import com.dci.intellij.dbn.data.type.DBDataType;
+ import com.dci.intellij.dbn.data.type.GenericDataType;
+ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
+ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
+ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+ import com.dci.intellij.dbn.object.DBColumn;
+ import com.intellij.ui.JBColor;
+ import com.intellij.ui.SimpleTextAttributes;
+
  import javax.swing.JTextField;
  import javax.swing.border.Border;
  import javax.swing.border.CompoundBorder;
@@ -17,21 +32,6 @@
  import java.awt.event.MouseMotionAdapter;
  import java.awt.event.MouseMotionListener;
 
- import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
- import com.dci.intellij.dbn.common.ui.MouseUtil;
- import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
- import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
- import com.dci.intellij.dbn.data.model.ColumnInfo;
- import com.dci.intellij.dbn.data.type.DBDataType;
- import com.dci.intellij.dbn.data.type.GenericDataType;
- import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
- import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
- import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
- import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
- import com.dci.intellij.dbn.object.DBColumn;
- import com.intellij.ui.JBColor;
- import com.intellij.ui.SimpleTextAttributes;
-
  public class DatasetTableCellEditor extends AbstractDatasetTableCellEditor implements KeyListener{
     public static final Border EMPTY_BORDER = new EmptyBorder(0, 3, 0, 3);
     private static final Border ERROR_BORDER = new CompoundBorder(new LineBorder(JBColor.RED, 1), new EmptyBorder(0, 2, 0, 2));
@@ -41,8 +41,6 @@
     public static final int HIGHLIGHT_TYPE_POPUP = 1;
     public static final int HIGHLIGHT_TYPE_ERROR = 2;
 
-    private DatasetEditorTable table;
-
     public DatasetTableCellEditor(DatasetEditorTable table) {
         this(table, new BasicDataEditorComponent());
         SimpleTextAttributes selectionTextAttributes = table.getCellRenderer().getAttributes().getSelection();
@@ -50,11 +48,11 @@
         JTextField textField = getTextField();
         textField.setSelectionColor(selectionTextAttributes.getBgColor());
         textField.setSelectedTextColor(selectionTextAttributes.getFgColor());
+        textField.setFont(table.getFont());
     }
 
     public DatasetTableCellEditor(DatasetEditorTable table, DataEditorComponent editorComponent) {
-        super(editorComponent, table.getProject());
-        this.table = table;
+        super(table, editorComponent);
         JTextField textField = getTextField();
         textField.addKeyListener(this);
         textField.addMouseListener(mouseListener);
@@ -63,10 +61,7 @@
         SimpleTextAttributes selectionTextAttributes = table.getCellRenderer().getAttributes().getSelection();
         textField.setSelectionColor(selectionTextAttributes.getBgColor());
         textField.setSelectedTextColor(selectionTextAttributes.getFgColor());
-    }
-
-    public DatasetEditorTable getTable() {
-        return table;
+        textField.setFont(table.getFont());
     }
 
     public void prepareEditor(DatasetEditorModelCell cell) {
@@ -184,7 +179,7 @@
             }
             else if (e.getKeyCode() == 27 ) { // ESC
                 e.consume();
-                table.cancelEditing();
+                getTable().cancelEditing();
             }
         }
     }
@@ -218,7 +213,7 @@
             if (event.getButton() == MouseEvent.BUTTON3 ) {
                 DatasetEditorModelCell cell = getCell();
                 if (cell != null) {
-                    table.showPopupMenu(event, cell, cell.getColumnInfo());
+                    getTable().showPopupMenu(event, cell, cell.getColumnInfo());
                 }
             }
         }
@@ -227,6 +222,7 @@
             if (MouseUtil.isNavigationEvent(event)) {
                 DatasetEditorModelCell cell = getCell();
                 if (cell.isNavigable()) {
+                    DatasetEditorTable table = getTable();
                     DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
                     DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(table.getProject());
                     datasetEditorManager.navigateToRecord(filterInput, event);
@@ -243,7 +239,6 @@
      public void dispose() {
          if (!isDisposed()) {
              super.dispose();
-             table = null;
          }
      }
  }

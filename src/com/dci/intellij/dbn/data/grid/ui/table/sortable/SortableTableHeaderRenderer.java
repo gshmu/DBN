@@ -1,16 +1,22 @@
 package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
-
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 
-public class SortableTableHeaderRenderer implements TableCellRenderer {
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+
+public class SortableTableHeaderRenderer implements BasicTableHeaderRenderer {
     private JPanel mainPanel;
     private JLabel nameLabel;
     private JLabel sortingLabel;
@@ -45,10 +51,15 @@ public class SortableTableHeaderRenderer implements TableCellRenderer {
 
         FontMetrics fontMetrics = nameLabel.getFontMetrics(nameLabel.getFont());
         width += fontMetrics.stringWidth(columnName) + 24;
-        mainPanel.setPreferredSize(new Dimension(width, (int) mainPanel.getPreferredSize().getHeight()));
+        int height = fontMetrics.getHeight() + 2;
+        mainPanel.setPreferredSize(new Dimension(width, height));
 
         return mainPanel;
     }
 
 
+    @Override
+    public void setFont(Font font) {
+        nameLabel.setFont(font);
+    }
 }

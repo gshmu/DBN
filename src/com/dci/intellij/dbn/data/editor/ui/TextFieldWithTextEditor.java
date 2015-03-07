@@ -1,22 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -27,6 +10,24 @@ import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class TextFieldWithTextEditor extends JPanel implements DataEditorComponent, TextEditorAdapter {
     private JTextField textField;
@@ -72,6 +73,12 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
         customizeButton(button);
         customizeTextField(textField);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        if (textField != null) textField.setFont(font);
     }
 
     public void setEditable(boolean editable){
