@@ -1,13 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -34,8 +27,14 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
+import org.jetbrains.annotations.NotNull;
 
-public class MethodExecutionLargeValueResultForm extends DBNFormImpl implements DBNForm {
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+
+public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecutionResultForm> {
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JPanel largeValuePanel;
@@ -44,13 +43,14 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl implements 
     private EditorEx editor;
     private TextContentType contentType;
 
-    public MethodExecutionLargeValueResultForm(MethodExecutionResult executionResult, DBArgument argument) {
-        argumentRef = argument.getRef();
-        Project project = argument.getProject();
+    public MethodExecutionLargeValueResultForm(MethodExecutionResultForm parent, MethodExecutionResult executionResult, DBArgument argument) {
+        super(parent);
+        argumentRef = DBObjectRef.from(argument);
 
         ArgumentValue argumentValue = executionResult.getArgumentValue(argumentRef);
         LargeObjectValue value = (LargeObjectValue) argumentValue.getValue();
         String text = null;
+        Project project = getProject();
         try {
             text = value.read();
         } catch (SQLException e) {

@@ -1,5 +1,23 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
+import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
+import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
+import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -19,39 +37,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
-import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
-import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 
-
-public class StatementExecutionVariableValueForm extends DBNFormImpl implements DBNForm {
+public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementExecutionVariablesForm> {
     private JPanel mainPanel;
     private JLabel variableNameLabel;
     private JComboBox dataTypeComboBox;
     private JPanel valueFieldPanel;
     private JLabel errorLabel;
 
-    private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariable variable;
     private TextFieldWithPopup editorComponent;
 
-    public StatementExecutionVariableValueForm(final StatementExecutionProcessor executionProcessor, final StatementExecutionVariable variable) {
-        this.executionProcessor = executionProcessor;
+    public StatementExecutionVariableValueForm(StatementExecutionVariablesForm parentComponent, final StatementExecutionVariable variable) {
+        super(parentComponent);
         this.variable = variable;
         errorLabel.setVisible(false);
         errorLabel.setIcon(Icons.STMT_EXECUTION_ERROR);
@@ -65,6 +63,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
         dataTypeComboBox.setRenderer(new DataTypeCellRenderer());
         dataTypeComboBox.setSelectedItem(variable.getDataType());
 
+        StatementExecutionProcessor executionProcessor = parentComponent.getExecutionProcessor();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(executionProcessor.getProject());
         final StatementExecutionVariablesCache variablesCache = executionManager.getVariablesCache();
         final VirtualFile virtualFile = executionProcessor.getVirtualFile();
@@ -164,6 +163,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
     public void saveValue() {
         variable.setValue(editorComponent.getTextField().getText().trim());
         variable.setDataType((GenericDataType) dataTypeComboBox.getSelectedItem());
+        StatementExecutionProcessor executionProcessor = getParentComponent().getExecutionProcessor();
         Project project = executionProcessor.getProject();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
         executionManager.cacheVariable(executionProcessor.getVirtualFile(), variable);
@@ -204,7 +204,6 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
 
     public void dispose() {
         super.dispose();
-        executionProcessor = null;
         variable = null;
         editorComponent = null;
     }

@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
 
 public class StatementExecutionVariablesDialog extends DBNDialog {
     private StatementExecutionVariablesForm variablesForm;
@@ -23,7 +23,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
         this.executionProcessor = executionProcessor;
         setModal(true);
         setResizable(true);
-        variablesForm = new StatementExecutionVariablesForm(executionProcessor, statementText);
+        variablesForm = new StatementExecutionVariablesForm(this, executionProcessor, statementText);
         init();
     }
 

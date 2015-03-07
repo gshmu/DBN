@@ -1,19 +1,5 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -36,8 +22,20 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
-public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm {
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class MethodExecutionArgumentForm extends DBNFormImpl<MethodExecutionForm> {
     private JPanel mainPanel;
     private JLabel argumentLabel;
     private JLabel argumentTypeLabel;
@@ -49,11 +47,10 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
 
     private DBObjectRef<DBArgument> argumentRef;
     private List<MethodExecutionTypeAttributeForm> typeAttributeForms = new ArrayList<MethodExecutionTypeAttributeForm>();
-    private MethodExecutionForm executionComponent;
 
-    public MethodExecutionArgumentForm(final DBArgument argument, final MethodExecutionForm executionComponent) {
+    public MethodExecutionArgumentForm(MethodExecutionForm parentForm, final DBArgument argument) {
+        super(parentForm);
         this.argumentRef = DBObjectRef.from(argument);
-        this.executionComponent = executionComponent;
         String argumentName = argument.getName();
         argumentLabel.setText(argumentName);
         argumentLabel.setIcon(argument.getIcon());
@@ -86,7 +83,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
             Project project = argument.getProject();
-            MethodExecutionInput executionInput = executionComponent.getExecutionInput();
+            MethodExecutionInput executionInput = parentForm.getExecutionInput();
             String value = executionInput.getInputValue(argument);
 
             if (genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
@@ -139,7 +136,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
             public List<String> getValues() {
                 DBArgument argument = getArgument();
                 if (argument != null) {
-                    return executionComponent.getExecutionInput().getInputValueHistory(argument, null);
+                    return getParentComponent().getExecutionInput().getInputValueHistory(argument, null);
                 }
 
                 return Collections.emptyList();
@@ -171,7 +168,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     }
 
     private void addAttributePanel(DBTypeAttribute attribute) {
-        MethodExecutionTypeAttributeForm argumentComponent = new MethodExecutionTypeAttributeForm(getArgument(), attribute, executionComponent);
+        MethodExecutionTypeAttributeForm argumentComponent = new MethodExecutionTypeAttributeForm(this, getArgument(), attribute);
         typeAttributesPanel.add(argumentComponent.getComponent());
         typeAttributeForms.add(argumentComponent);
     }
@@ -187,7 +184,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
     public void updateExecutionInput() {
         DBArgument argument = getArgument();
         if (argument != null) {
-            MethodExecutionInput executionInput = executionComponent.getExecutionInput();
+            MethodExecutionInput executionInput = getParentComponent().getExecutionInput();
             if (typeAttributeForms.size() >0 ) {
                 for (MethodExecutionTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                     typeAttributeComponent.updateExecutionInput();
@@ -236,9 +233,7 @@ public class MethodExecutionArgumentForm extends DBNFormImpl implements DBNForm 
 
     public void dispose() {
         super.dispose();
-        DisposerUtil.dispose(typeAttributeForms);
         typeAttributeForms = null;
-        executionComponent = null;
     }
 
     public int getScrollUnitIncrement() {

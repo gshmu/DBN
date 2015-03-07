@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.connection.info.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -15,7 +8,14 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 
-public class ConnectionInfoForm extends DBNFormImpl{
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel setupPanel;
@@ -36,7 +36,8 @@ public class ConnectionInfoForm extends DBNFormImpl{
     private JLabel setupDatabaseTypeLabel;
     private JLabel infoDriverJdbcType;
 
-    public ConnectionInfoForm(ConnectionHandler connectionHandler, boolean showHeader) {
+    public ConnectionInfoForm(ConnectionInfoDialog parentComponent, ConnectionHandler connectionHandler, boolean showHeader) {
+        super(parentComponent);
         initHeaderPanel(connectionHandler, showHeader);
         initSetupPanel(connectionHandler);
         initInfoPanel(connectionHandler);

@@ -20,21 +20,20 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class RecordViewerColumnForm extends DBNFormImpl implements DBNForm {
+public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> implements DBNForm {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
     private JLabel dataTypeLabel;
     private JPanel mainPanel;
 
     private JTextField valueTextField;
-    private RecordViewerForm parentForm;
 
     private RegionalSettings regionalSettings;
     private DatasetRecord record;
     private DBColumn column;
 
     public RecordViewerColumnForm(RecordViewerForm parentForm, DatasetRecord record, DBColumn column) {
-        this.parentForm = parentForm;
+        super(parentForm);
         this.record = record;
         this.column = column;
         Project project = record.getDataset().getProject();
@@ -122,6 +121,7 @@ public class RecordViewerColumnForm extends DBNFormImpl implements DBNForm {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
+                RecordViewerForm parentForm = getParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(RecordViewerColumnForm.this);
                     e.consume();
@@ -137,7 +137,6 @@ public class RecordViewerColumnForm extends DBNFormImpl implements DBNForm {
     public void dispose() {
         super.dispose();
         regionalSettings = null;
-        parentForm = null;
         column = null;
     }
 

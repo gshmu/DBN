@@ -22,7 +22,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
         setModal(true);
         setResizable(false);
         //setVerticalStretch(0);
-        editorForm = new CompilerTypeSelectionForm(object);
+        editorForm = new CompilerTypeSelectionForm(this, object);
         init();
     }
 

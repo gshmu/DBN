@@ -1,25 +1,11 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -52,18 +38,30 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.List;
+
+public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
     private ExecutionMessagesPanel executionMessagesPanel;
 
     private boolean canScrollToSource;
-    private Project project;
 
     public ExecutionConsoleForm(Project project) {
-        this.project = project;
+        super(project);
         resultTabs = new TabbedPane(this);
         mainPanel.add(resultTabs, BorderLayout.CENTER);
         resultTabs.setFocusable(false);
@@ -84,7 +82,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     private EnvironmentChangeListener environmentChangeListener = new EnvironmentChangeListener() {
         @Override
         public void configurationChanged() {
-            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             for (TabInfo tabInfo : resultTabs.getTabs()) {
                 ExecutionResult executionResult = getExecutionResult(tabInfo);
                 if (executionResult != null) {
@@ -238,7 +236,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     }
 
     private boolean focusOnExecution() {
-        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
+        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(getProject());
         StatementExecutionSettings statementExecutionSettings = executionEngineSettings.getStatementExecutionSettings();
         return statementExecutionSettings.isFocusResult();
     }
@@ -300,7 +298,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
      *********************************************************/
     private ExecutionMessagesPanel getMessagesPanel() {
         if (executionMessagesPanel == null) {
-            executionMessagesPanel = new ExecutionMessagesPanel(project);
+            executionMessagesPanel = new ExecutionMessagesPanel(this);
             Disposer.register(this, executionMessagesPanel);
         }
         return executionMessagesPanel;
@@ -332,7 +330,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
 
         executionMessagesPanel.reset();
         if (getTabCount() == 0) {
-            ExecutionManager.getInstance(project).hideExecutionConsole();
+            ExecutionManager.getInstance(getProject()).hideExecutionConsole();
         }
     }
 
@@ -371,7 +369,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
             tabInfo.setText(logOutput.getName());
             tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
 
-            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             if (visibilitySettings.getExecutionResultTabs().value()){
                 tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());
             } else {
@@ -404,7 +402,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(resultForm);
-            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
+            EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             if (visibilitySettings.getExecutionResultTabs().value()){
                 tabInfo.setTabColor(executionResult.getConnectionHandler().getEnvironmentType().getColor());
             } else {
@@ -444,7 +442,7 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
                     }
                 }
                 if (getTabCount() == 0) {
-                    ExecutionManager.getInstance(project).hideExecutionConsole();
+                    ExecutionManager.getInstance(getProject()).hideExecutionConsole();
                 }
             }
         } finally {
@@ -497,6 +495,5 @@ public class ExecutionConsoleForm extends DBNFormImpl implements DBNForm {
     public void dispose() {
         EventManager.unsubscribe(environmentChangeListener);
         super.dispose();
-        project = null;
     }
 }

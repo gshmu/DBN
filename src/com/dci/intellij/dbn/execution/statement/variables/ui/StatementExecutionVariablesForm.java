@@ -1,23 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -40,7 +26,20 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
 
-public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNForm {
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecutionVariablesDialog> {
     private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<StatementExecutionVariableValueForm>();
     private StatementExecutionProcessor executionProcessor;
     private JPanel mainPanel;
@@ -51,7 +50,8 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionVariablesForm(StatementExecutionProcessor executionProcessor, String statementText) {
+    public StatementExecutionVariablesForm(StatementExecutionVariablesDialog parentComponent, StatementExecutionProcessor executionProcessor, String statementText) {
+        super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = statementText;
 
@@ -62,7 +62,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         Collections.sort(variables, StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
 
         for (StatementExecutionVariable variable: variables) {
-            StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(executionProcessor, variable);
+            StatementExecutionVariableValueForm variableValueForm = new StatementExecutionVariableValueForm(this, variable);
             variableValueForms.add(variableValueForm);
             variablesPanel.add(variableValueForm.getComponent());
             variableValueForm.addDocumentListener(new DocumentAdapter() {
@@ -87,6 +87,10 @@ public class StatementExecutionVariablesForm extends DBNFormImpl implements DBNF
         }
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
+    }
+
+    public StatementExecutionProcessor getExecutionProcessor() {
+        return executionProcessor;
     }
 
     public JComponent getComponent() {

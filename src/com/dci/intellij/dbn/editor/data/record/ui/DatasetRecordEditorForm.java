@@ -1,19 +1,7 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -29,7 +17,18 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 
-public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDialog> {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
@@ -40,10 +39,10 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
 
     private DatasetEditorModelRow row;
 
-    public DatasetRecordEditorForm(DatasetEditorModelRow row) {
+    public DatasetRecordEditorForm(DatasetRecordEditorDialog parentComponent, DatasetEditorModelRow row) {
+        super(parentComponent);
         this.row = row;
         DBDataset dataset = row.getModel().getDataset();
-        Project project = dataset.getProject();
 
         DBNHeaderForm headerForm = new DBNHeaderForm(dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
@@ -65,6 +64,8 @@ public class DatasetRecordEditorForm extends DBNFormImpl implements DBNForm {
             DatasetRecordEditorColumnForm columnForm = new DatasetRecordEditorColumnForm(this, cell);
             columnForms.add(columnForm);
         }
+
+        Project project = getProject();
         ColumnSortingType columnSortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
         sortColumns(columnSortingType);
 

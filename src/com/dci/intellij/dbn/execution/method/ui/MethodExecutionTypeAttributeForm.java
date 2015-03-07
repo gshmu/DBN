@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,6 +11,7 @@ import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValue;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
@@ -31,26 +19,35 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
-public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBNForm {
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class MethodExecutionTypeAttributeForm extends DBNFormImpl<MethodExecutionArgumentForm> {
     private JLabel attributeTypeLabel;
     private JLabel attributeLabel;
     private JPanel mainPanel;
     private JPanel attributePanel;
     private JPanel inputFieldPanel;
 
-    private JComponent inputComponent;
     private JTextField inputTextField;
     private UserValueHolderImpl<String> userValueHolder;
 
-    private DBObjectRef<DBArgument> argumentRef; // TODO replace with argument ref
+    private DBObjectRef<DBArgument> argumentRef;
     private DBObjectRef<DBTypeAttribute> typeAttributeRef;
-    private MethodExecutionForm executionComponent;
 
-    public MethodExecutionTypeAttributeForm(DBArgument argument, DBTypeAttribute typeAttribute, MethodExecutionForm executionComponent) {
+    public MethodExecutionTypeAttributeForm(MethodExecutionArgumentForm parentForm, DBArgument argument, DBTypeAttribute typeAttribute) {
+        super(parentForm);
         this.argumentRef = DBObjectRef.from(argument);
         this.typeAttributeRef = DBObjectRef.from(typeAttribute);
-        this.executionComponent = executionComponent;
         attributeLabel.setText(typeAttribute.getName());
         attributeLabel.setIcon(typeAttribute.getIcon());
         attributeTypeLabel.setForeground(UIUtil.getInactiveTextColor());
@@ -61,7 +58,7 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
 
         Project project = argument.getProject();
 
-        String value = executionComponent.getExecutionInput().getInputValue(argument, typeAttribute);
+        String value = getExecutionInput().getInputValue(argument, typeAttribute);
         if (genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
             TextFieldWithTextEditor inputField = new TextFieldWithTextEditor(project, "[" + genericDataType.name() + "]");
 
@@ -111,7 +108,7 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
                 DBArgument argument = getArgument();
                 DBTypeAttribute typeAttribute = getTypeAttribute();
                 if (argument != null && typeAttribute != null) {
-                    return executionComponent.getExecutionInput().getInputValueHistory(argument, typeAttribute);
+                    return getExecutionInput().getInputValueHistory(argument, typeAttribute);
                 }
                 return Collections.emptyList();
             }
@@ -163,14 +160,19 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
         DBArgument argument = getArgument();
         DBTypeAttribute typeAttribute = getTypeAttribute();
         if (argument != null && typeAttribute != null) {
+            MethodExecutionInput executionInput = getExecutionInput();
             if (userValueHolder != null ) {
                 String value = CommonUtil.nullIfEmpty(userValueHolder.getUserValue());
-                executionComponent.getExecutionInput().setInputValue(argument, typeAttribute, value);
+                executionInput.setInputValue(argument, typeAttribute, value);
             } else {
                 String value = CommonUtil.nullIfEmpty(inputTextField == null ? null : inputTextField.getText());
-                executionComponent.getExecutionInput().setInputValue(argument, typeAttribute, value);
+                executionInput.setInputValue(argument, typeAttribute, value);
             }
         }
+    }
+
+    private MethodExecutionInput getExecutionInput() {
+        return  getParentComponent().getParentComponent().getExecutionInput();
     }
 
     protected int[] getMetrics(int[] metrics) {
@@ -191,6 +193,5 @@ public class MethodExecutionTypeAttributeForm extends DBNFormImpl implements DBN
 
     public void dispose() {
         super.dispose();
-        executionComponent = null;
     }
 }

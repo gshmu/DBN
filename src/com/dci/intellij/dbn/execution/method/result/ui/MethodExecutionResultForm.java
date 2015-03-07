@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -26,11 +20,18 @@ import com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionA
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
+import java.util.List;
 
 public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
     private JPanel mainPanel;
@@ -47,7 +48,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     private MethodExecutionResult executionResult;
 
-    public MethodExecutionResultForm(MethodExecutionResult executionResult) {
+    public MethodExecutionResultForm(Project project, MethodExecutionResult executionResult) {
+        super(project);
         this.executionResult = executionResult;
         outputTabs = new TabbedPane(this);
         createActionsPanel();
@@ -132,7 +134,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     DBArgument argument = argumentValue.getArgument();
 
                     MethodExecutionCursorResultForm cursorResultForm =
-                            new MethodExecutionCursorResultForm(executionResult, argument);
+                            new MethodExecutionCursorResultForm(this, executionResult, argument);
 
                     TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
                     tabInfo.setText(argument.getName());
@@ -147,7 +149,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
                     DBArgument argument = argumentValue.getArgument();
 
                     MethodExecutionLargeValueResultForm largeValueResultForm =
-                            new MethodExecutionLargeValueResultForm(executionResult, argument);
+                            new MethodExecutionLargeValueResultForm(this, executionResult, argument);
 
                     TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
                     tabInfo.setText(argument.getName());

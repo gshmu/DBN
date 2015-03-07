@@ -1,16 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -28,19 +19,25 @@ import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
-public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+
+public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrowserDialog> {
 
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JTree methodsTree;
 
     private MethodBrowserSettings settings;
-    private Project project;
 
-    public MethodExecutionBrowserForm(Project project, MethodBrowserSettings settings, ObjectTreeModel model) {
-        this.project = project;
+    public MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, MethodBrowserSettings settings, ObjectTreeModel model) {
+        super(parentComponent);
         this.settings = settings;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new SelectConnectionComboBoxAction(this),
@@ -107,7 +104,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl implements DBNForm {
     }
 
     void updateTree() {
-        BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable components", false) {
+        BackgroundTask backgroundTask = new BackgroundTask(getProject(), "Loading executable components", false) {
             @Override
             public void execute(@NotNull ProgressIndicator progressIndicator) {
                 final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);

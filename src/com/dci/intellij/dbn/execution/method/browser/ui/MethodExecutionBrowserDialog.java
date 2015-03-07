@@ -25,7 +25,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog implements Disposabl
         super(project, "Method Browser", true);
         setModal(true);
         setResizable(true);
-        mainComponent = new MethodExecutionBrowserForm(project, settings, objectTreeModel);
+        mainComponent = new MethodExecutionBrowserForm(this, settings, objectTreeModel);
         mainComponent.addTreeSelectionListener(this);
         init();
     }

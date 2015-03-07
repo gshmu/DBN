@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.Dimension;
-
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
@@ -22,14 +16,20 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
 
-public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNForm {
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Dimension;
+
+public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecutionResultForm> {
     private JPanel actionsPanel;
     private JScrollPane resultScrollPane;
     private JPanel mainPanel;
     private JPanel resultPanel;
     private DBObjectRef<DBArgument> argumentRef;
 
-    public MethodExecutionCursorResultForm(MethodExecutionResult executionResult, DBArgument argument) {
+    public MethodExecutionCursorResultForm(MethodExecutionResultForm parentComponent, MethodExecutionResult executionResult, DBArgument argument) {
+        super(parentComponent);
         this.argumentRef = argument.getRef();
         ResultSetDataModel dataModel = executionResult.getTableModel(argument);
         RecordViewInfo recordViewInfo = new RecordViewInfo(

@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
+import javax.swing.Action;
+import javax.swing.JComponent;
 
 public class ResultSetRecordViewerDialog extends DBNDialog {
     private ResultSetRecordViewerForm viewerForm;
@@ -15,7 +15,7 @@ public class ResultSetRecordViewerDialog extends DBNDialog {
         super(table.getProject(), "View Record", true);
         setModal(true);
         setResizable(true);
-        viewerForm = new ResultSetRecordViewerForm(table, showDataTypes);
+        viewerForm = new ResultSetRecordViewerForm(this, table, showDataTypes);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
     }

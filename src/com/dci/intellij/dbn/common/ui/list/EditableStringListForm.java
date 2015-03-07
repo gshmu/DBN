@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.ui.list;
 
+import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
@@ -14,18 +16,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class EditableStringListForm extends DBNFormImpl{
+public class EditableStringListForm extends DBNFormImpl<DisposableProjectComponent>{
     private JPanel component;
     private JLabel titleLabel;
     private JPanel listPanel;
 
     private EditableStringList editableStringList;
 
-    public EditableStringListForm(String title, boolean sorted) {
-        this(title, new ArrayList<String>(), sorted);
+    public EditableStringListForm(DisposableProjectComponent parentComponent, String title, boolean sorted) {
+        this(parentComponent, title, new ArrayList<String>(), sorted);
     }
 
-    public EditableStringListForm(String title, List<String> elements, boolean sorted) {
+    public EditableStringListForm(DisposableProjectComponent parentComponent, String title, List<String> elements, boolean sorted) {
+        super(parentComponent);
         editableStringList = new EditableStringList(null, elements, sorted, false);
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(editableStringList);
         decorator.setAddAction(new AnActionButtonRunnable() {
@@ -58,6 +61,7 @@ public class EditableStringListForm extends DBNFormImpl{
         Container parent = editableStringList.getParent();
         parent.setBackground(editableStringList.getBackground());
         this.listPanel.add(editableListPanel, BorderLayout.CENTER);
+        Disposer.register(this, editableStringList);
     }
 
     @Override

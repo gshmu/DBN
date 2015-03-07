@@ -1,13 +1,8 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -16,7 +11,14 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-public abstract class ObjectListForm<T extends ObjectFactoryInput> {
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFormImpl<DisposableProjectComponent> {
     private JPanel mainPanel;
     private JPanel listPanel;
     private JPanel actionsPanel;
@@ -25,7 +27,8 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> {
 
     private List<ObjectFactoryInputForm<T>> inputForms = new ArrayList<ObjectFactoryInputForm<T>>();
 
-    public ObjectListForm(ConnectionHandler connectionHandler) {
+    public ObjectListForm(DisposableProjectComponent parentComponent, ConnectionHandler connectionHandler) {
+        super(parentComponent);
         this.connectionHandler = connectionHandler;
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 

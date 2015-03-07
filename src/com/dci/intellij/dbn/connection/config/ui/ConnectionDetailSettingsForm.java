@@ -59,7 +59,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         updateBorderTitleForeground(generalGroupPanel);
         updateBorderTitleForeground(propertiesGroupPanel);
 
-        propertiesEditorForm = new PropertiesEditorForm(properties, true);
+        propertiesEditorForm = new PropertiesEditorForm(this, properties, true);
         propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
 
         encodingComboBox.setValues(CharsetOption.ALL);

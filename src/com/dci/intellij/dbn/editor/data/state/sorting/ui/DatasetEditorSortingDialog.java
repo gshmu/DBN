@@ -1,24 +1,24 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import javax.swing.*;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.intellij.openapi.util.Disposer;
+import javax.swing.Action;
+import javax.swing.JComponent;
 
 public class DatasetEditorSortingDialog extends DBNDialog {
     private DatasetEditorSortingForm stateForm;
     private DatasetEditor datasetEditor;
 
-    public DatasetEditorSortingDialog(DatasetEditor datasetEditor) {
-        super(datasetEditor.getProject(), "Sorting", true);
+    public DatasetEditorSortingDialog(Project project, DatasetEditor datasetEditor) {
+        super(project, "Sorting", true);
         this.datasetEditor = datasetEditor;
         setModal(true);
         setResizable(true);
-        stateForm = new DatasetEditorSortingForm(datasetEditor);
-        Disposer.register(this, stateForm);
+        stateForm = new DatasetEditorSortingForm(this, datasetEditor);
         getCancelAction().putValue(Action.NAME, "Cancel");
         init();
     }

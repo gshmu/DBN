@@ -6,11 +6,12 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
+import com.intellij.openapi.project.Project;
 
 public class FunctionFactoryInputForm extends MethodFactoryInputForm {
 
-    public FunctionFactoryInputForm(DBSchema schema, DBObjectType objectType, int index) {
-        super(schema, objectType, index);
+    public FunctionFactoryInputForm(Project project, DBSchema schema, DBObjectType objectType, int index) {
+        super(project, schema, objectType, index);
     }
 
     public MethodFactoryInput createFactoryInput(ObjectFactoryInput parent) {

@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import javax.swing.JTree;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeSelectionModel;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -23,6 +13,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeSelectionModel;
+import java.util.List;
 
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private MethodExecutionHistoryDialog dialog;
@@ -133,7 +133,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                             new SimpleLaterInvocator() {
                                 @Override
                                 public void execute() {
-                                    if (dialog != null) {
+                                    if (dialog != null && !dialog.isDisposed()) {
                                         dialog.showMethodExecutionPanel(executionInput);
                                         dialog.setSelectedExecutionInput(executionInput);
                                         dialog.setMainButtonEnabled(method != null);

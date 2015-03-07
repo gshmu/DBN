@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DatasetEditorSortingForm extends DBNFormImpl{
+public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDialog>{
     private JPanel mainPanel;
     private JPanel sortingInstructionsPanel;
     private JPanel actionsPanel;
@@ -32,7 +32,8 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
     private SortingState sortingState;
 
 
-    public DatasetEditorSortingForm(DatasetEditor datasetEditor) {
+    public DatasetEditorSortingForm(DatasetEditorSortingDialog parentComponent, DatasetEditor datasetEditor) {
+        super(parentComponent);
         DBDataset dataset = datasetEditor.getDataset();
         sortingState = datasetEditor.getEditorState().getSortingState();
         this.datasetRef = DBObjectRef.from(dataset);

@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.data.grid.options.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collection;
-
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -15,6 +7,14 @@ import com.dci.intellij.dbn.common.ui.list.EditableStringListForm;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collection;
 
 public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<DataGridTrackingColumnSettings> {
     private JPanel mainPanel;
@@ -28,7 +28,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         super(settings);
         updateBorderTitleForeground(mainPanel);
 
-        editableStringListForm = new EditableStringListForm("Tracking column names", true);
+        editableStringListForm = new EditableStringListForm(this, "Tracking column names", true);
         JComponent listComponent = editableStringListForm.getComponent();
         columnNameListPanel.add(listComponent, BorderLayout.CENTER);
 

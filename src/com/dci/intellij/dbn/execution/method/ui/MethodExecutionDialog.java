@@ -1,27 +1,27 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
 
 public class MethodExecutionDialog extends DBNDialog {
     private MethodExecutionForm mainComponent;
     private boolean debug;
 
     public MethodExecutionDialog(MethodExecutionInput executionInput, boolean debug) {
-        super(executionInput.getMethod().getProject(), (debug ? "Debug" : "Execute") + " Method", true);
+        super(executionInput.getProject(), (debug ? "Debug" : "Execute") + " Method", true);
         this.debug = debug;
         setModal(true);
         setResizable(true);
-        mainComponent = new MethodExecutionForm(executionInput, true, debug);
+        mainComponent = new MethodExecutionForm(this, executionInput, true, debug);
         Disposer.register(this, mainComponent);
         init();
     }
