@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
@@ -179,5 +180,9 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     @Override
     public String getSelectedText() {
         return null;
+    }
+
+    private void createUIComponents() {
+        resultScrollPane = new BasicTableScrollPane();
     }
 }

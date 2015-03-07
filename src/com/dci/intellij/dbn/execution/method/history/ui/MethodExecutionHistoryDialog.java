@@ -21,12 +21,12 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
     private ExecuteAction executeAction;
     private SaveAction saveAction;
     private CloseAction closeAction;
-    private boolean select;
+    private boolean editable;
     private MethodExecutionInput selectedExecutionInput;
 
-    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, MethodExecutionInput selectedExecutionInput, boolean select) {
+    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, MethodExecutionInput selectedExecutionInput, boolean editable) {
         super(project, "Method Execution History", true);
-        this.select = select;
+        this.editable = editable;
         setModal(true);
         setResizable(true);
         mainComponent = new MethodExecutionHistoryForm(this, executionHistory);
@@ -44,7 +44,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
     }
 
     protected String getDimensionServiceKey() {
-        return null;//"DBNavigator.MethodExecutionHistory";
+        return "DBNavigator.MethodExecutionHistory";
     }
 
     @Nullable
@@ -54,7 +54,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
 
     @NotNull
     protected final Action[] createActions() {
-        if (select) {
+        if (editable) {
             executeAction = new ExecuteAction();
             executeAction.setEnabled(false);
             saveAction = new SaveAction();
@@ -68,6 +68,10 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
             closeAction.putValue(Action.NAME, "Cancel");
             return new Action[]{selectAction, closeAction};
         }
+    }
+
+    public boolean isEditable() {
+        return editable;
     }
 
     private void saveChanges() {

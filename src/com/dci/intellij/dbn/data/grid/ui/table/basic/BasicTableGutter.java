@@ -4,13 +4,17 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
-    public BasicTableGutter(T table) {
+    public BasicTableGutter(final T table) {
         super(table);
         addListSelectionListener(gutterSelectionListener);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -18,6 +22,22 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
             setFixedCellWidth(10);
         }
         table.getSelectionModel().addListSelectionListener(tableSelectionListener);
+        table.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                Object newProperty = e.getNewValue();
+                if (newProperty instanceof Font) {
+                    Font font = (Font) newProperty;
+                    setFont(font);
+                    setFixedCellHeight(table.getRowHeight());
+                    ListCellRenderer cellRenderer = getCellRenderer();
+                    if (cellRenderer instanceof Component) {
+                        Component component = (Component) cellRenderer;
+                        component.setFont(font);
+                    }
+                }
+            }
+        });
     }
 
     protected ListCellRenderer createCellRenderer() {

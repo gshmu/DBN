@@ -37,7 +37,7 @@
                 <border type="none"/>
                 <children/>
               </grid>
-              <scrollpane id="c023a" class="com.intellij.ui.components.JBScrollPane" binding="editorTableScrollPane">
+              <scrollpane id="c023a" class="com.intellij.ui.components.JBScrollPane" binding="editorTableScrollPane" custom-create="true">
                 <constraints>
                   <splitpane position="left"/>
                 </constraints>
