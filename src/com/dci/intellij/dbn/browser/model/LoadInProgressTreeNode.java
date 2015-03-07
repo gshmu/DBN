@@ -1,14 +1,9 @@
 package com.dci.intellij.dbn.browser.model;
 
-import javax.swing.Icon;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -17,18 +12,41 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vcs.FileStatus;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LoadInProgressTreeNode implements BrowserTreeNode {
     public static final LoadInProgressTreeNode LOOSE_INSTANCE = new LoadInProgressTreeNode(null);
-    static {
-        Timer updateChecker = new Timer("DBN Load in progress icon roller");
-        updateChecker.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                iconIndex++;
-                if (iconIndex == icons.length) iconIndex = 0;
+    private static long lastAccessTimestamp = System.currentTimeMillis();
+
+    private static Timer ICON_ROLLER;
+    private static class IconRollerTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            iconIndex++;
+            if (iconIndex == icons.length) iconIndex = 0;
+            if (ICON_ROLLER != null && TimeUtil.isOlderThan(lastAccessTimestamp, TimeUtil.TEN_SECONDS)) {
+                synchronized (IconRollerTimerTask.class) {
+                    Timer cachedIconRoller = ICON_ROLLER;
+                    ICON_ROLLER = null;
+                    cachedIconRoller.purge();
+                    cachedIconRoller.cancel();
+                }
             }
-        }, 50, 50);
+        }
+    };
+
+    private static void startRoller() {
+        synchronized (IconRollerTimerTask.class) {
+            if (ICON_ROLLER == null) {
+                ICON_ROLLER = new Timer("DBN Load in progress icon roller");
+                ICON_ROLLER.schedule(new IconRollerTimerTask(), 50, 50);
+            }
+        }
     }
 
     private BrowserTreeNode parent;
@@ -90,6 +108,8 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     }
 
     public Icon getIcon(int flags) {
+        startRoller();
+        lastAccessTimestamp = System.currentTimeMillis();
         return icons[iconIndex];
     }
     public String getPresentableText() {
