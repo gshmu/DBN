@@ -1,21 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import javax.swing.AbstractCellEditor;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.EventObject;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -27,14 +11,36 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCellValueListener;
 import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.AbstractCellEditor;
+import javax.swing.JComponent;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableCellEditor;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.EventObject;
 
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, Disposable {
     private DataEditorComponent editorComponent;
     private int clickCountToStart = 1;
     private DatasetEditorModelCell cell;
     protected DataEditorSettings settings;
+
+    private DatasetEditorTable table;
 
     private DatasetEditorModelCellValueListener cellValueListener = new DatasetEditorModelCellValueListener() {
         @Override
@@ -50,16 +56,36 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
         }
     };
 
-    public AbstractDatasetTableCellEditor(DataEditorComponent editorComponent, Project project) {
+    public AbstractDatasetTableCellEditor(DatasetEditorTable table, DataEditorComponent editorComponent) {
+        this.table = table;
         this.editorComponent = editorComponent;
+
+        Project project = table.getProject();
         this.settings = DataEditorSettings.getInstance(project);
 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
         EventManager.subscribe(project, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
 
+        table.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                Object newValue = evt.getNewValue();
+                if (newValue instanceof Font) {
+                    Font newFont = (Font) newValue;
+                    getEditorComponent().setFont(newFont);
+                }
+            }
+        });
+
         Disposer.register(this, editorComponent);
     }
+
+    public DatasetEditorTable getTable() {
+        return table;
+    }
+
+
 
     public JComponent getEditorComponent() {
         return (JComponent) editorComponent;
@@ -192,6 +218,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             EventManager.unsubscribe(cellValueListener);
             editorComponent = null;
             settings = null;
+            table = null;
             cell = null;
         }
     }

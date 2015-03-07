@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -18,11 +10,19 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+
 public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     public DatasetTableCellEditorWithPopup(DatasetEditorTable table) {
         super(table, new CustomTextFieldWithPopup(table.getProject()));
     }
-                                                                                                        
+
     public TextFieldWithPopup getEditorComponent() {
         return (TextFieldWithPopup) super.getEditorComponent();
     }
