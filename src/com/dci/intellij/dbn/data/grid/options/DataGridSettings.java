@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.data.grid.options;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridSettingsForm;
@@ -9,15 +7,18 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class DataGridSettings extends CompositeProjectConfiguration<DataGridSettingsForm> implements TopLevelConfig {
-    private DataGridTrackingColumnSettings trackingColumnSettings;
+    private DataGridGeneralSettings generalSettings;
     private DataGridSortingSettings sortingSettings;
+    private DataGridTrackingColumnSettings trackingColumnSettings;
 
     public DataGridSettings(Project project) {
         super(project);
-        trackingColumnSettings = new DataGridTrackingColumnSettings(project);
+        generalSettings = new DataGridGeneralSettings(project);
         sortingSettings = new DataGridSortingSettings(project);
+        trackingColumnSettings = new DataGridTrackingColumnSettings(project);
     }
 
     public static DataGridSettings getInstance(Project project) {
@@ -52,13 +53,16 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
      *                        Custom                         *
      *********************************************************/
 
-
-    public DataGridTrackingColumnSettings getTrackingColumnSettings() {
-       return trackingColumnSettings;
+    public DataGridGeneralSettings getGeneralSettings() {
+        return generalSettings;
     }
 
     public DataGridSortingSettings getSortingSettings() {
         return sortingSettings;
+    }
+
+    public DataGridTrackingColumnSettings getTrackingColumnSettings() {
+       return trackingColumnSettings;
     }
 
     /*********************************************************
@@ -75,7 +79,9 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
 
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
-                trackingColumnSettings,
-                sortingSettings};
+                generalSettings,
+                sortingSettings,
+                trackingColumnSettings
+        };
     }
 }
