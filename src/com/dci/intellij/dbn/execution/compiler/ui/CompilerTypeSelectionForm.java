@@ -1,25 +1,25 @@
 package com.dci.intellij.dbn.execution.compiler.ui;
 
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-
-public class CompilerTypeSelectionForm extends DBNFormImpl implements DBNForm {
+public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelectionDialog> {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JCheckBox rememberSelectionCheckBox;
     private JTextArea hintTextArea;
 
-    public CompilerTypeSelectionForm(@Nullable DBSchemaObject object) {
+    public CompilerTypeSelectionForm(CompilerTypeSelectionDialog parentComponent, @Nullable DBSchemaObject object) {
+        super(parentComponent);
         if (object == null) {
             headerPanel.setVisible(false);
         } else {

@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.debugger.execution.ui;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -34,6 +27,13 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements DBNForm {
     private JPanel headerPanel;
@@ -191,7 +191,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements 
             headerIcon = methodRef.getObjectType().getIcon();
             DBMethod method = executionInput.getMethod();
             if (method != null) {
-                methodExecutionForm = new MethodExecutionForm(executionInput, false, true);
+                methodExecutionForm = new MethodExecutionForm(this, executionInput, false, true);
                 methodArgumentsPanel.add(methodExecutionForm.getComponent(), BorderLayout.CENTER);
                 if (touchForm) methodExecutionForm.touch();
                 headerIcon = method.getOriginalIcon();

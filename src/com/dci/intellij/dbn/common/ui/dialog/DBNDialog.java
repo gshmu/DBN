@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
 import com.dci.intellij.dbn.common.Constants;
-import com.intellij.openapi.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 
-public abstract class DBNDialog extends DialogWrapper implements Disposable{
+public abstract class DBNDialog extends DialogWrapper implements DisposableProjectComponent{
     private Project project;
     private boolean disposed;
 

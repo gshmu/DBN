@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
@@ -19,7 +18,7 @@ import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class EditFilterConditionForm extends DBNFormImpl implements DBNForm {
+public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDialog> {
     private JPanel mainPanel;
     private JTextField textPatternTextField;
     private JLabel objectNameLabel;
@@ -32,7 +31,8 @@ public class EditFilterConditionForm extends DBNFormImpl implements DBNForm {
     private SimpleFilterCondition condition;
     public enum Operation {CREATE, EDIT, JOIN}
 
-    public EditFilterConditionForm(CompoundFilterCondition parentCondition, SimpleFilterCondition condition, DBObjectType objectType, Operation operation) {
+    public EditFilterConditionForm(EditFilterConditionDialog parentComponent, CompoundFilterCondition parentCondition, SimpleFilterCondition condition, DBObjectType objectType, Operation operation) {
+        super(parentComponent);
         this.condition = condition == null ? new SimpleFilterCondition(ConditionOperator.EQUAL, "") : condition;
         joinTypePanel.setVisible(false);
         if (operation == Operation.JOIN) {

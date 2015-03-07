@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -19,7 +10,15 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UncommittedChangesOverviewDialog extends DBNDialog {
     private UncommittedChangesOverviewForm mainComponent;
@@ -28,11 +27,10 @@ public class UncommittedChangesOverviewDialog extends DBNDialog {
     public UncommittedChangesOverviewDialog(Project project, TransactionAction additionalOperation) {
         super(project, "Uncommitted changes overview", true);
         this.additionalOperation = additionalOperation;
-        mainComponent = new UncommittedChangesOverviewForm(project);
+        mainComponent = new UncommittedChangesOverviewForm(this);
         setModal(false);
         setResizable(true);
         init();
-        Disposer.register(this, mainComponent);
         EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
     }
 

@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -25,8 +18,14 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
 
-public class TextEditorForm extends DBNFormImpl implements DBNForm {
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+
+public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private JPanel mainPanel;
     private JPanel editorPanel;
     private JPanel actionsPanel;
@@ -42,11 +41,12 @@ public class TextEditorForm extends DBNFormImpl implements DBNForm {
         return mainPanel;
     }
 
-    public TextEditorForm(DocumentListener documentListener, UserValueHolder userValueHolder, TextEditorAdapter textEditorAdapter) throws SQLException {
+    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder userValueHolder, TextEditorAdapter textEditorAdapter) throws SQLException {
+        super(parent);
         this.userValueHolder = userValueHolder;
         this.textEditorAdapter = textEditorAdapter;
-        Project project = userValueHolder.getProject();
 
+        Project project = getProject();
         if (userValueHolder.getContentType() == null) {
             userValueHolder.setContentType(TextContentType.getPlainText(project));
         }

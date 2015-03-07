@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.editor.data;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.beans.PropertyChangeListener;
-import java.sql.SQLException;
-import java.util.List;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -59,6 +50,15 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.beans.PropertyChangeListener;
+import java.sql.SQLException;
+import java.util.List;
 
 public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable, ConnectionProvider {
     public static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
@@ -440,7 +440,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             DatasetEditorModelRow row = model.getRowAtIndex(index);
             editorTable.stopCellEditing();
             editorTable.selectRow(row.getIndex());
-            DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(row);
+            DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
             editorDialog.show();
         }
     }
@@ -452,7 +452,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
             if (editorTable != null && model != null) {
                 DatasetEditorModelRow row = model.getRowAtIndex(index);
-                DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(row);
+                DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
                 editorDialog.show();
             }
         }

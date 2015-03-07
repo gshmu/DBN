@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -35,6 +24,17 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatasetEditorForm extends DBNFormImpl implements DBNForm, SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane datasetTableScrollPane;
@@ -49,6 +49,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
     private DatasetEditor datasetEditor;
 
     public DatasetEditorForm(DatasetEditor datasetEditor) {
+        super(datasetEditor.getProject());
         this.datasetEditor = datasetEditor;
         DBDataset dataset = getDataset();
         try {
@@ -74,7 +75,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
             Disposer.register(this, datasetEditorTable);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
-                    datasetEditor.getProject(),
+                    getProject(),
                     "Error",
                     "Error opening data editor for " + dataset.getQualifiedNameWithType(), e);
         }
@@ -90,7 +91,7 @@ public class DatasetEditorForm extends DBNFormImpl implements DBNForm, Searchabl
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
         Disposer.register(this, datasetEditorTable);
 
-        DataGridSettings dataGridSettings = DataGridSettings.getInstance(datasetEditorTable.getProject());
+        DataGridSettings dataGridSettings = DataGridSettings.getInstance(getProject());
         DataGridTrackingColumnSettings trackingColumnSettings = dataGridSettings.getTrackingColumnSettings();
 
         List<TableColumn> hiddenColumns = new ArrayList<TableColumn>();

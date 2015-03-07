@@ -39,7 +39,7 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider {
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         SQLConsoleEditor editor = new SQLConsoleEditor(project, (DBConsoleVirtualFile) file, "SQL Console", getEditorProviderId());
-        SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(editor);
+        SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(project, editor);
         editor.getComponent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
         return editor;
     }

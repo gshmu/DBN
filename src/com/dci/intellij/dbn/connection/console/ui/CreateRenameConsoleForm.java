@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection.console.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -19,8 +9,18 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class CreateRenameConsoleForm extends DBNFormImpl {
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.util.Set;
+
+public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDialog>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JTextField consoleNameTextField;
@@ -29,7 +29,8 @@ public class CreateRenameConsoleForm extends DBNFormImpl {
     private ConnectionHandler connectionHandler;
     private DBConsoleVirtualFile console;
 
-    public CreateRenameConsoleForm(final CreateRenameConsoleDialog createConsoleDialog, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsoleVirtualFile console) {
+    public CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsoleVirtualFile console) {
+        super(parentComponent);
         this.connectionHandler = connectionHandler;
         this.console = console;
         errorLabel.setForeground(JBColor.RED);
@@ -50,7 +51,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl {
         } else {
             name = console.getName();
             consoleNames.remove(name);
-            createConsoleDialog.getOKAction().setEnabled(false);
+            parentComponent.getOKAction().setEnabled(false);
         }
         consoleNameTextField.setText(name);
 
@@ -69,7 +70,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl {
 
 
                 errorLabel.setVisible(errorText != null);
-                createConsoleDialog.getOKAction().setEnabled(errorText == null && (console == null || !console.getName().equals(text)));
+                parentComponent.getOKAction().setEnabled(errorText == null && (console == null || !console.getName().equals(text)));
                 if (errorText != null) {
                     errorLabel.setText(errorText);
                 }

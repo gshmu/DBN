@@ -1,21 +1,7 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -31,7 +17,20 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
-public class RecordViewerForm extends DBNFormImpl implements DBNForm {
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
@@ -42,10 +41,10 @@ public class RecordViewerForm extends DBNFormImpl implements DBNForm {
 
     private DatasetRecord record;
 
-    public RecordViewerForm(DatasetRecord record) {
+    public RecordViewerForm(RecordViewerDialog parentComponent, DatasetRecord record) {
+        super(parentComponent);
         this.record = record;
         DBDataset dataset = record.getDataset();
-        Project project = dataset.getProject();
 
         RecordViewInfo recordViewInfo = new RecordViewInfo(dataset.getQualifiedName(), dataset.getIcon());
 
@@ -53,6 +52,7 @@ public class RecordViewerForm extends DBNFormImpl implements DBNForm {
         String headerTitle = recordViewInfo.getTitle();
         Icon headerIcon = recordViewInfo.getIcon();
         Color headerBackground = UIUtil.getPanelBackground();
+        Project project = getProject();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
             headerBackground = dataset.getEnvironmentType().getColor();
         }

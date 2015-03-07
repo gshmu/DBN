@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -11,7 +10,6 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
@@ -27,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNForm {
+public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChangesOverviewDialog> {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
@@ -35,10 +33,9 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
     private List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
 
     private Map<ConnectionHandler, UncommittedChangesForm> uncommittedChangeForms = new HashMap<ConnectionHandler, UncommittedChangesForm>();
-    private Project project;
 
-    public UncommittedChangesOverviewForm(Project project) {
-        this.project = project;
+    public UncommittedChangesOverviewForm(UncommittedChangesOverviewDialog parentComponent) {
+        super(parentComponent);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
@@ -53,12 +50,12 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl implements DBNFo
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
+        EventManager.subscribe(getProject(), TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {
         DefaultListModel model = new DefaultListModel();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {

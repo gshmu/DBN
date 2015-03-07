@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -23,13 +16,20 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.ArrayList;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
     private TabbedPane connectionTabs;
     private JPanel mainPanel;
 
-    public TabbedBrowserForm(Project project) {
-        super(project);
+    public TabbedBrowserForm(BrowserToolWindowForm parentComponent) {
+        super(parentComponent);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
@@ -49,7 +49,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             public void tabsMoved() {}
         });
 
-        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventManager.subscribe(getProject(), EnvironmentChangeListener.TOPIC, environmentChangeListener);
 
         Disposer.register(this, connectionTabs);
     }
@@ -62,7 +62,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler: connectionBundle.getConnectionHandlers()) {
-            SimpleBrowserForm browserForm = new SimpleBrowserForm(connectionHandler);
+            SimpleBrowserForm browserForm = new SimpleBrowserForm(this, connectionHandler);
             JComponent component = browserForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setText(CommonUtil.nvl(connectionHandler.getName(), "[unnamed connection]"));

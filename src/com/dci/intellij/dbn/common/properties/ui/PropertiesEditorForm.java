@@ -12,11 +12,12 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.util.Map;
 
-public class PropertiesEditorForm extends DBNFormImpl implements DBNForm {
+public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
     private PropertiesEditorTable propertiesTable;
 
-    public PropertiesEditorForm(Map<String, String> properties, boolean showMoveButtons) {
+    public PropertiesEditorForm(DBNForm parentForm, Map<String, String> properties, boolean showMoveButtons) {
+        super(parentForm);
         propertiesTable = new PropertiesEditorTable(properties);
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(propertiesTable);
         decorator.setAddAction(new AnActionButtonRunnable() {

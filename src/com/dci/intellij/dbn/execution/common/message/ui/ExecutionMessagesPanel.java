@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.tree.TreePath;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.CloseMessagesWindowAction;
@@ -14,15 +8,21 @@ import com.dci.intellij.dbn.execution.common.message.action.ExpandMessagesTreeAc
 import com.dci.intellij.dbn.execution.common.message.action.OpenSettingsAction;
 import com.dci.intellij.dbn.execution.common.message.action.ViewExecutedStatementAction;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
+import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
+import org.jetbrains.annotations.NotNull;
 
-public class ExecutionMessagesPanel extends DBNFormImpl{
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.tree.TreePath;
+
+public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
@@ -31,8 +31,9 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
 
     private MessagesTree messagesTree;
 
-    public ExecutionMessagesPanel(Project project) {
-        messagesTree = new MessagesTree(project);
+    public ExecutionMessagesPanel(ExecutionConsoleForm parentForm) {
+        super(parentForm);
+        messagesTree = new MessagesTree(getProject());
         messagesScrollPane.setViewportView(messagesTree);
         messagesPanel.setBorder(IdeBorderFactory.createBorder());
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(

@@ -11,7 +11,7 @@ public class OpenAboutPageAction extends DumbAwareAction {
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
-            AboutComponent aboutComponent = new AboutComponent();
+            AboutComponent aboutComponent = new AboutComponent(project);
             aboutComponent.showPopup(project);
         }
     }

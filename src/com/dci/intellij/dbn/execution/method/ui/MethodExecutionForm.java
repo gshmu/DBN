@@ -1,5 +1,26 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
+import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.ValueSelector;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.object.DBArgument;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.DocumentAdapter;
+
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -18,28 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
-import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.ui.ValueSelector;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.DocumentAdapter;
-
-public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
+public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent> {
     private JPanel mainPanel;
     private JPanel argumentsPanel;
     private JPanel headerPanel;
@@ -59,7 +59,8 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
     private boolean debug;
 
-    public MethodExecutionForm(MethodExecutionInput executionInput, boolean showHeader, boolean debug) {
+    public MethodExecutionForm(DisposableProjectComponent parentComponent, MethodExecutionInput executionInput, boolean showHeader, boolean debug) {
+        super(parentComponent);
         this.executionInput = executionInput;
         this.debug = debug;
         DBMethod method = executionInput.getMethod();
@@ -169,7 +170,7 @@ public class MethodExecutionForm extends DBNFormImpl implements DBNForm {
     }
 
     private int[] addArgumentPanel(DBArgument argument, int[] gridMetrics) {
-        MethodExecutionArgumentForm argumentComponent = new MethodExecutionArgumentForm(argument, this);
+        MethodExecutionArgumentForm argumentComponent = new MethodExecutionArgumentForm(this, argument);
         argumentsPanel.add(argumentComponent.getComponent());
         argumentForms.add(argumentComponent);
         return argumentComponent.getMetrics(gridMetrics);

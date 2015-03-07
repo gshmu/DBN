@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -14,7 +10,12 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Constraints;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResultForm<DatabaseLogOutput>{
     private JPanel mainPanel;
@@ -24,7 +25,8 @@ public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResul
     private DatabaseLogOutput databaseLogOutput;
     private DatabaseLogOutputConsole console;
 
-    public DatabaseLogOutputForm(DatabaseLogOutput databaseLogOutput) {
+    public DatabaseLogOutputForm(Project project, DatabaseLogOutput databaseLogOutput) {
+        super(project);
         this.databaseLogOutput = databaseLogOutput;
         ConnectionHandler connectionHandler = databaseLogOutput.getConnectionHandler();
         console = new DatabaseLogOutputConsole(connectionHandler, databaseLogOutput.getName(), false);

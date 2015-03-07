@@ -1,27 +1,28 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
 
 public class RecordViewerDialog extends DBNDialog {
     private RecordViewerForm editorForm;
     private DatasetRecord record;
 
-    public RecordViewerDialog(DatasetRecord record) {
-        super(record.getDataset().getProject(), "View Record", true);
+    public RecordViewerDialog(Project project, DatasetRecord record) {
+        super(project, "View Record", true);
         this.record = record; 
         setModal(false);
         setResizable(true);
-        editorForm = new RecordViewerForm(record);
+        editorForm = new RecordViewerForm(this, record);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
     }

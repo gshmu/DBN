@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.factory.ui;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -20,8 +12,17 @@ import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<MethodFactoryInput> {
     private JPanel mainPanel;
@@ -35,11 +36,11 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     private JPanel headerPanel;
     private JLabel nameLabel;
 
-    private ArgumentFactoryInputListPanel argumentListPanel;
+    private ArgumentFactoryInputListForm argumentListPanel;
     private DBObjectRef<DBSchema> schemaRef;
 
-    public MethodFactoryInputForm(DBSchema schema, DBObjectType objectType, int index) {
-        super(schema.getConnectionHandler(), objectType, index);
+    public MethodFactoryInputForm(Project project, DBSchema schema, DBObjectType objectType, int index) {
+        super(project, schema.getConnectionHandler(), objectType, index);
         this.schemaRef = DBObjectRef.from(schema);
         connectionLabel.setText(getConnectionHandler().getName());
         connectionLabel.setIcon(getConnectionHandler().getIcon());
@@ -99,7 +100,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     private void createUIComponents() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         boolean enforceInArguments = hasReturnArgument() && !DatabaseFeature.FUNCTION_OUT_ARGUMENTS.isSupported(connectionHandler);
-        argumentListPanel = new ArgumentFactoryInputListPanel(connectionHandler, enforceInArguments);
+        argumentListPanel = new ArgumentFactoryInputListForm(this, connectionHandler, enforceInArguments);
         argumentListComponent = argumentListPanel.getComponent();
         returnArgumentDataTypeEditor = new DataTypeEditor(getConnectionHandler());
     }

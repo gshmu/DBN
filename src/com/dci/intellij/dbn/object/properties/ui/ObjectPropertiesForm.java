@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.BrowserSelectionChangeListener;
@@ -21,10 +14,16 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
 
-public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
@@ -32,10 +31,9 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
     private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
     private DBObject object;
-    private Project project;
 
-    public ObjectPropertiesForm(Project project) {
-        this.project = project;
+    public ObjectPropertiesForm(DBNForm parentForm) {
+        super(parentForm);
         //ActionToolbar objectPropertiesActionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.Browser.ObjectProperties");
         //closeActionPanel.add(objectPropertiesActionToolbar.getComponent(), BorderLayout.CENTER);
         objectPropertiesTable.setRowHeight(objectPropertiesTable.getRowHeight() + 2);
@@ -45,7 +43,7 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventManager.subscribe(project, BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
+        EventManager.subscribe(getProject(), BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
     }
 
     public JComponent getComponent() {
@@ -55,7 +53,7 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
     private BrowserSelectionChangeListener browserSelectionChangeListener = new BrowserSelectionChangeListener() {
         @Override
         public void browserSelectionChanged() {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
             if (browserManager.getShowObjectProperties().value()) {
                 DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
                 if (activeBrowserTree != null) {
@@ -108,7 +106,6 @@ public class ObjectPropertiesForm extends DBNFormImpl implements DBNForm {
         EventManager.unsubscribe(browserSelectionChangeListener);
         super.dispose();
         object = null;
-        project = null;
     }
 
     private void createUIComponents() {

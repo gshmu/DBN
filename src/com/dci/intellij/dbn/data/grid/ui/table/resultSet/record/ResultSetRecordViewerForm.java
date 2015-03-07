@@ -1,21 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -34,7 +20,20 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
-public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewerDialog> {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
@@ -46,17 +45,18 @@ public class ResultSetRecordViewerForm extends DBNFormImpl implements DBNForm {
     private ResultSetTable table;
     private ResultSetDataModelRow row;
 
-    public ResultSetRecordViewerForm(ResultSetTable<? extends ResultSetDataModel> table, boolean showDataTypes) {
+    public ResultSetRecordViewerForm(ResultSetRecordViewerDialog parentComponent, ResultSetTable<? extends ResultSetDataModel> table, boolean showDataTypes) {
+        super(parentComponent);
         this.table = table;
         ResultSetDataModel model = table.getModel();
         row = (ResultSetDataModelRow) model.getRowAtIndex(table.getSelectedRow());
-        Project project = row.getModel().getProject();
         RecordViewInfo recordViewInfo = table.getRecordViewInfo();
 
         // HEADER
         String headerTitle = recordViewInfo.getTitle();
         Icon headerIcon = recordViewInfo.getIcon();
         Color headerBackground = UIUtil.getPanelBackground();
+        Project project = getProject();
         if (getEnvironmentSettings(project).getVisibilitySettings().getDialogHeaders().value()) {
             headerBackground = model.getConnectionHandler().getEnvironmentType().getColor();
         }

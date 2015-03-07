@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -16,6 +10,12 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProgressIndicator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
 
 public class ExportDataDialog extends DBNDialog {
     private ExportDataForm exportDataForm;
@@ -39,7 +39,7 @@ public class ExportDataDialog extends DBNDialog {
         DataExportInstructions instructions = exportManager.getExportInstructions();
         boolean hasSelection = table.getSelectedRowCount() > 1 || table.getSelectedColumnCount() > 1;
         instructions.setBaseName(table.getName());
-        exportDataForm = new ExportDataForm(instructions, hasSelection, connectionHandler, sourceObject);
+        exportDataForm = new ExportDataForm(this, instructions, hasSelection, connectionHandler, sourceObject);
         init();
     }
 

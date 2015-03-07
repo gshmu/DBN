@@ -1,21 +1,22 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
+import javax.swing.Action;
+import javax.swing.JComponent;
 
 public class DatasetRecordEditorDialog extends DBNDialog {
     private DatasetRecordEditorForm editorForm;
 
-    public DatasetRecordEditorDialog(DatasetEditorModelRow row) {
-        super(row.getModel().getDataset().getProject(), row.getModel().isEditable() ? "Edit Record" : "View Record", true);
+    public DatasetRecordEditorDialog(Project project, DatasetEditorModelRow row) {
+        super(project, row.getModel().isEditable() ? "Edit Record" : "View Record", true);
         setModal(true);
         setResizable(true);
-        editorForm = new DatasetRecordEditorForm(row);
+        editorForm = new DatasetRecordEditorForm(this, row);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
     }
