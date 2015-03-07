@@ -15,6 +15,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -93,7 +94,12 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl implements 
             }
 
             @Override
-            public boolean isLazyLoading() {
+            public List<String> getSecondaryValues() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public boolean isLongLoading() {
                 return false;
             }
         }, true);

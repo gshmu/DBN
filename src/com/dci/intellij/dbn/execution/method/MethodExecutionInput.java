@@ -110,8 +110,12 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return (String) argumentValue.getValue();
     }
 
-    public List<String> getInputValueHistory(@NotNull DBArgument argument) {
-        ArgumentValue argumentValue = getArgumentValue(argument);
+    public List<String> getInputValueHistory(@NotNull DBArgument argument, @Nullable DBTypeAttribute typeAttribute) {
+        ArgumentValue argumentValue =
+                typeAttribute == null ?
+                        getArgumentValue(argument) :
+                        getArgumentValue(argument, typeAttribute);
+
         ArgumentValueHolder valueStore = argumentValue.getValueHolder();
         if (valueStore instanceof MethodExecutionArgumentValue) {
             MethodExecutionArgumentValue executionVariable = (MethodExecutionArgumentValue) valueStore;

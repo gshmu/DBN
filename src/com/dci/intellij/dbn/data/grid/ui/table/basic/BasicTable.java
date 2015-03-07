@@ -8,11 +8,15 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
@@ -53,11 +57,27 @@ public class BasicTable<T extends BasicDataModel> extends DBNTable<T> implements
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
         setSelectionForeground(displayAttributes.getSelection().getFgColor());
         setSelectionBackground(displayAttributes.getSelection().getBgColor());
-        EditorColorsManager.getInstance().addEditorColorsListener(this);
+        EditorColorsManager.getInstance().addEditorColorsListener(this, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
         addMouseListener(lobValueMouseListener);
+
+        addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                Object newProperty = e.getNewValue();
+                if (newProperty instanceof Font) {
+                    Font font = (Font) newProperty;
+                    FontMetrics fontMetrics = getFontMetrics(font);
+                    setRowHeight(fontMetrics.getHeight() + 2);
+                    accommodateColumnsSize();
+                }
+
+            }
+        });
     }
+
+
 
     @NotNull
     public BasicTableSelectionRestorer createSelectionRestorer() {

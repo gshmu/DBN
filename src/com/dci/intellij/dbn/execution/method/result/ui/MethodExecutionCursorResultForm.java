@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
@@ -66,5 +67,9 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements DBNF
 
     public void dispose() {
         super.dispose();
+    }
+
+    private void createUIComponents() {
+        resultScrollPane = new BasicTableScrollPane();
     }
 }

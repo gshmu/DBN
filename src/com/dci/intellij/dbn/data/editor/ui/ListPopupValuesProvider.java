@@ -5,5 +5,6 @@ import java.util.List;
 public interface ListPopupValuesProvider {
     String getDescription();
     List<String> getValues();
-    boolean isLazyLoading();
+    List<String> getSecondaryValues();
+    boolean isLongLoading();
 }

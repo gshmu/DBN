@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
@@ -200,5 +201,9 @@ public class SessionBrowserForm extends DBNFormImpl implements DBNForm, Searchab
     @Override
     public BasicTable getTable() {
         return editorTable;
+    }
+
+    private void createUIComponents() {
+        editorTableScrollPane = new BasicTableScrollPane();
     }
 }

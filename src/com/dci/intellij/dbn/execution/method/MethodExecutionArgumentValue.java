@@ -26,6 +26,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement<Elem
 
     public MethodExecutionArgumentValue(MethodExecutionArgumentValue source) {
         valueHistory.setValues(source.valueHistory.values());
+        name = source.name;
     }
 
     public String getName() {
