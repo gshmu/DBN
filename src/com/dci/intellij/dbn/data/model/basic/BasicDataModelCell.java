@@ -74,7 +74,7 @@ public class BasicDataModelCell implements DataModelCell {
     @Override
     public String getFormattedUserValue() {
         if (userValue != null) {
-            RegionalSettings regionalSettings = RegionalSettings.getInstance(getProject());
+            RegionalSettings regionalSettings = getRow().getModel().getRegionalSettings();
             Formatter formatter = regionalSettings.getFormatter();
             return formatter.formatObject(userValue);
         }

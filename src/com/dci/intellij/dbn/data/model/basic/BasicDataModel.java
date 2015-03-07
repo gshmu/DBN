@@ -1,19 +1,9 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -25,6 +15,17 @@ import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private DataModelHeader header;
@@ -37,9 +38,16 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private Filter<T> filter;
 
     private DataSearchResult searchResult;
+    RegionalSettings regionalSettings;
 
     public BasicDataModel(Project project) {
         this.project = project;
+        this.regionalSettings = RegionalSettings.getInstance(project);
+    }
+
+
+    public RegionalSettings getRegionalSettings() {
+        return regionalSettings;
     }
 
     @Override
@@ -321,8 +329,8 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             tableModelListeners.clear();
             listDataListeners.clear();
             searchResult = null;
+            regionalSettings = null;
             project = null;
         }
     }
-
 }
