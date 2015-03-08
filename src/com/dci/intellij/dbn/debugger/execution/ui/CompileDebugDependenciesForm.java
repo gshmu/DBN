@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.debugger.execution.ui;
 
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
@@ -9,13 +14,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-
-public class CompileDebugDependenciesForm extends DBNFormImpl implements DBNForm {
+public class CompileDebugDependenciesForm extends DBNFormImpl {
     private JTextArea hintTextArea;
     private JList objectList;
     private JPanel mainPanel;

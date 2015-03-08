@@ -1,16 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
-
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
@@ -21,7 +11,16 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.JBColor;
 
-public class DatasetEditorErrorForm extends DBNFormImpl implements DBNForm, ChangeListener {
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListener {
     public static final Color BACKGROUND_COLOR = new JBColor(
             new Color(0xFFCCCC),
             new Color(0x743A3A));
