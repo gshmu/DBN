@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -35,7 +34,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 
-public class DBProgramRunConfigurationEditorForm extends DBNFormImpl implements DBNForm {
+public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;

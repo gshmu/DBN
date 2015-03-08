@@ -1,16 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -31,7 +22,15 @@ import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 
-public class SessionBrowserForm extends DBNFormImpl implements DBNForm, SearchableDataComponent {
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.table.TableCellEditor;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+
+public class SessionBrowserForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane editorTableScrollPane;
     private JPanel mainPanel;

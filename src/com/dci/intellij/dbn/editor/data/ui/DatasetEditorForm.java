@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
-import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -35,7 +34,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatasetEditorForm extends DBNFormImpl implements DBNForm, SearchableDataComponent {
+public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane datasetTableScrollPane;
     private JPanel mainPanel;

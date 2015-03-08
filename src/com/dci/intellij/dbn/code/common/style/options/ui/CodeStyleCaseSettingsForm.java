@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.code.common.style.options.ui;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.intellij.openapi.options.ConfigurationException;
+
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
-import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.intellij.openapi.options.ConfigurationException;
-
-public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyleCaseSettings> implements DBNForm {
+public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyleCaseSettings> {
     private JPanel mainPanel;
     private DBNComboBox<CodeStyleCase> keywordCaseComboBox;
     private DBNComboBox<CodeStyleCase> functionCaseComboBox;
