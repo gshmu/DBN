@@ -1,20 +1,18 @@
 package com.dci.intellij.dbn.data.record.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-
-public class RecordViewerDialog extends DBNDialog {
-    private RecordViewerForm editorForm;
+public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
     private DatasetRecord record;
 
     public RecordViewerDialog(Project project, DatasetRecord record) {
@@ -22,19 +20,14 @@ public class RecordViewerDialog extends DBNDialog {
         this.record = record; 
         setModal(false);
         setResizable(true);
-        editorForm = new RecordViewerForm(this, record);
+        component = new RecordViewerForm(this, record);
         getCancelAction().putValue(Action.NAME, "Close");
         init();
     }
 
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.DataRecordViewer";
-    }
-
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return editorForm.getPreferredFocusedComponent();
+        return component.getPreferredFocusedComponent();
     }
 
     @NotNull
@@ -51,11 +44,6 @@ public class RecordViewerDialog extends DBNDialog {
         super.doOKAction();
     }
 
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return editorForm.getComponent();
-    }
-
     private class OpenInEditorAction extends AbstractAction {
         public OpenInEditorAction() {
             super("Open In Editor", Icons.OBEJCT_EDIT_DATA);
@@ -70,10 +58,7 @@ public class RecordViewerDialog extends DBNDialog {
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            editorForm.dispose();
-            editorForm = null;
-        }
+        super.dispose();
+        record = null;
     }
 }

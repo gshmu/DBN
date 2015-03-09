@@ -49,10 +49,6 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         ping();
     }
 
-    protected String getDimensionServiceKey() {
-        return null;//"DBNavigator.IdleConnectionDialog";
-    }
-
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

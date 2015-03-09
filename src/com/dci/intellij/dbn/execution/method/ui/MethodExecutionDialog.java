@@ -1,19 +1,17 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MethodExecutionDialog extends DBNDialog {
-    private MethodExecutionForm mainComponent;
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+
+public class MethodExecutionDialog extends DBNDialog<MethodExecutionForm> {
     private boolean debug;
 
     public MethodExecutionDialog(MethodExecutionInput executionInput, boolean debug) {
@@ -21,13 +19,8 @@ public class MethodExecutionDialog extends DBNDialog {
         this.debug = debug;
         setModal(true);
         setResizable(true);
-        mainComponent = new MethodExecutionForm(this, executionInput, true, debug);
-        Disposer.register(this, mainComponent);
+        component = new MethodExecutionForm(this, executionInput, true, debug);
         init();
-    }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.MethodExecution";
     }
 
     @NotNull
@@ -42,7 +35,7 @@ public class MethodExecutionDialog extends DBNDialog {
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return mainComponent.getComponent();
+        return component.getComponent();
     }
 
     @Override
@@ -58,14 +51,8 @@ public class MethodExecutionDialog extends DBNDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            mainComponent.updateExecutionInput();
+            component.updateExecutionInput();
             doOKAction();
         }
     }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return mainComponent.getComponent();
-    }
-
 }

@@ -3,28 +3,26 @@ package com.dci.intellij.dbn.common.ui.dialog;
 import javax.swing.JComponent;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.project.Project;
 
-public abstract class DialogWithTimeout extends DBNDialog{
-    private DialogWithTimeoutForm form;
+public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>{
     private Timer timeoutTimer;
     private int secondsLeft;
 
     protected DialogWithTimeout(Project project, String title, boolean canBeParent, int timeoutSeconds) {
         super(project, title, canBeParent);
         secondsLeft = timeoutSeconds;
-        form = new DialogWithTimeoutForm(secondsLeft);
+        component = new DialogWithTimeoutForm(secondsLeft);
         timeoutTimer = new Timer("DBN Timeout dialog task [" + getProject().getName() + "]");
         timeoutTimer.schedule(new TimeoutTask(), TimeUtil.ONE_SECOND, TimeUtil.ONE_SECOND);
     }
 
     @Override
     protected void init() {
-        form.setContentComponent(createContentComponent());
+        component.setContentComponent(createContentComponent());
         super.init();
     }
 
@@ -32,7 +30,7 @@ public abstract class DialogWithTimeout extends DBNDialog{
         public void run() {
             if (secondsLeft > 0) {
                 secondsLeft = secondsLeft -1;
-                form.updateTimeLeft(secondsLeft);
+                component.updateTimeLeft(secondsLeft);
                 if (secondsLeft == 0) {
                     new SimpleLaterInvocator() {
                         @Override
@@ -46,12 +44,6 @@ public abstract class DialogWithTimeout extends DBNDialog{
         }
     }
 
-    @Nullable
-    @Override
-    protected final JComponent createCenterPanel() {
-        return form.getComponent();
-    }
-
     protected abstract JComponent createContentComponent();
 
     public abstract void doDefaultAction();
@@ -62,8 +54,6 @@ public abstract class DialogWithTimeout extends DBNDialog{
             super.dispose();
             timeoutTimer.cancel();
             timeoutTimer.purge();
-            form.dispose();
-            form = null;
         }
     }
 

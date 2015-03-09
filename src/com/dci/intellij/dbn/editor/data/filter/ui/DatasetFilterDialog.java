@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
@@ -11,18 +16,10 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-
-public class DatasetFilterDialog extends DBNDialog {
+public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
     private boolean isAutomaticPrompt;
     private DBObjectRef<DBDataset> datasetRef;
-    private DatasetFilterForm mainForm;
     private DatasetFilterGroup filterGroup;
 
     public DatasetFilterDialog(DBDataset dataset, boolean isAutomaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
@@ -33,7 +30,7 @@ public class DatasetFilterDialog extends DBNDialog {
                     defaultFilterType == DatasetFilterType.BASIC ? filterGroup.createBasicFilter(true) :
                     defaultFilterType == DatasetFilterType.CUSTOM ? filterGroup.createCustomFilter(true) : null;
 
-            mainForm.getFilterList().setSelectedValue(filter, true);
+            component.getFilterList().setSelectedValue(filter, true);
         }
         init();
     }
@@ -42,14 +39,10 @@ public class DatasetFilterDialog extends DBNDialog {
         return DBObjectRef.get(datasetRef);
     }
 
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.DatasetFilter";
-    }
-
     public DatasetFilterDialog(DBDataset dataset, DatasetBasicFilter basicFilter) {
         super(dataset.getProject(), "Data filters", true);
         construct(dataset, false);
-        mainForm.getFilterList().setSelectedValue(basicFilter, true);
+        component.getFilterList().setSelectedValue(basicFilter, true);
         init();
     }
 
@@ -60,7 +53,7 @@ public class DatasetFilterDialog extends DBNDialog {
         setResizable(true);
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
         filterGroup = filterManager.getFilterGroup(dataset);
-        mainForm = filterGroup.createConfigurationEditor();
+        component = filterGroup.createConfigurationEditor();
     }
 
     public DatasetFilterGroup getFilterGroup() {
@@ -96,18 +89,13 @@ public class DatasetFilterDialog extends DBNDialog {
         }
     }
 
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return mainForm.getComponent();
-    }
-
     public void doOKAction() {
         Project project = getProject();
         DBDataset dataset = getDataset();
         try {
-            mainForm.applyFormChanges();
+            component.applyFormChanges();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
-            DatasetFilter activeFilter = mainForm.getSelectedFilter();
+            DatasetFilter activeFilter = component.getSelectedFilter();
             if (activeFilter == null) {
                 activeFilter = DatasetFilterManager.EMPTY_FILTER;
             }
@@ -120,12 +108,12 @@ public class DatasetFilterDialog extends DBNDialog {
     }
 
     public void doCancelAction() {
-        mainForm.resetFormChanges();
+        component.resetFormChanges();
         super.doCancelAction();
     }
 
     public void doNoFilterAction() {
-        mainForm.resetFormChanges();
+        component.resetFormChanges();
         DBDataset dataset = getDataset();
         Project project = getProject();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
@@ -135,12 +123,5 @@ public class DatasetFilterDialog extends DBNDialog {
             filterManager.setActiveFilter(dataset, activeFilter);
         }
         close(OK_EXIT_CODE);
-    }
-
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-        }
     }
 }

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.options.ui;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +19,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Alarm;
 
-public class ProjectSettingsDialog extends DBNDialog {
+public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> {
     private JButton bApply;
     private ProjectSettings projectSettings;
 
@@ -31,19 +30,11 @@ public class ProjectSettingsDialog extends DBNDialog {
         //setHorizontalStretch(1.5f);
 
         projectSettings = getProjectSettings();
+        projectSettings.createCustomComponent();
+        component = projectSettings.getSettingsEditor();
+        if (component != null) component.setDialog(this);
+
         init();
-    }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.GlobalSettings";
-    }
-
-    protected JComponent createCenterPanel() {
-        ProjectSettings projectSettings = getProjectSettings();
-        JComponent component = projectSettings.createCustomComponent();
-        ProjectSettingsEditorForm settingsEditor = projectSettings.getSettingsEditor();
-        if (settingsEditor != null) settingsEditor.setDialog(this);
-        return component;
     }
 
     private ProjectSettings getProjectSettings() {

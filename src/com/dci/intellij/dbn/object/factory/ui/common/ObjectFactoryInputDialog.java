@@ -5,35 +5,21 @@ import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-
-public class ObjectFactoryInputDialog extends DBNDialog {
-    private ObjectFactoryInputForm inputForm;
-
+public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> {
     public ObjectFactoryInputDialog(Project project, ObjectFactoryInputForm inputForm) {
         super(project, "Create " + inputForm.getObjectType().getName(), true);
-        this.inputForm = inputForm;
+        this.component = inputForm;
         setModal(true);
         setResizable(true);
         Disposer.register(this, inputForm);
         init();
     }
 
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.ObjectFactoryInput";
-    }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return inputForm.getComponent();
-    }
-
     public void doOKAction() {
-        Project project = inputForm.getConnectionHandler().getProject();
+        Project project = component.getConnectionHandler().getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
-        ObjectFactoryInput factoryInput = inputForm.createFactoryInput(null);
+        ObjectFactoryInput factoryInput = component.createFactoryInput(null);
         if (factory.createObject(factoryInput)) {
             super.doOKAction();
         }
@@ -42,5 +28,4 @@ public class ObjectFactoryInputDialog extends DBNDialog {
     public void doCancelAction() {
         super.doCancelAction();
     }
-
 }

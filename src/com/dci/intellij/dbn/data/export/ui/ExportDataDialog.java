@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.data.export.ui;
 
+import javax.swing.Action;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -10,15 +15,8 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProgressIndicator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-
-public class ExportDataDialog extends DBNDialog {
-    private ExportDataForm exportDataForm;
+public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private ResultSetTable table;
     private ConnectionHandler connectionHandler;
 
@@ -39,19 +37,10 @@ public class ExportDataDialog extends DBNDialog {
         DataExportInstructions instructions = exportManager.getExportInstructions();
         boolean hasSelection = table.getSelectedRowCount() > 1 || table.getSelectedColumnCount() > 1;
         instructions.setBaseName(table.getName());
-        exportDataForm = new ExportDataForm(this, instructions, hasSelection, connectionHandler, sourceObject);
+        component = new ExportDataForm(this, instructions, hasSelection, connectionHandler, sourceObject);
         init();
     }
 
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.ExportData";
-    }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return exportDataForm.getComponent();
-    }
 
     @NotNull
     @Override
@@ -67,25 +56,31 @@ public class ExportDataDialog extends DBNDialog {
     }
 
     protected void doOKAction() {
-        exportDataForm.validateEntries(new ModalTask(getProject(), "Creating export file", true) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-                DataExportInstructions exportInstructions = exportDataForm.getExportInstructions();
-                exportManager.setExportInstructions(exportInstructions);
-                exportManager.exportSortableTableContent(
-                        table,
-                        exportInstructions,
-                        connectionHandler,
-                        new SimpleLaterInvocator() {
-                            @Override
-                            protected void execute() {
-                                ExportDataDialog.super.doOKAction();
-                            }
-                        });
-                    }
+        component.validateEntries(new ModalTask(getProject(), "Creating export file", true) {
+                                           @Override
+                                           protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                                               DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
+                                               DataExportInstructions exportInstructions = component.getExportInstructions();
+                                               exportManager.setExportInstructions(exportInstructions);
+                                               exportManager.exportSortableTableContent(
+                                                       table,
+                                                       exportInstructions,
+                                                       connectionHandler,
+                                                       new SimpleLaterInvocator() {
+                                                           @Override
+                                                           protected void execute() {
+                                                               ExportDataDialog.super.doOKAction();
+                                                           }
+                                                       });
+                                           }
 
-            }
+                                       }
         );
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        connectionHandler = null;
     }
 }
