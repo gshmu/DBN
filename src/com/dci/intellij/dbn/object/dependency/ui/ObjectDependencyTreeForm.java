@@ -28,7 +28,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         this.objectRef = DBObjectRef.from(schemaObject);
         DBNHeaderForm headerForm = new DBNHeaderForm(schemaObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        dependencyTree.setModel(new ObjectDependencyTreeModel(getProject(), schemaObject, ObjectDependencyType.INCOMING));
+        dependencyTree.setModel(new ObjectDependencyTreeModel(getProject(), schemaObject, ObjectDependencyType.OUTGOING));
         dependencyTree.setCellRenderer(new TreeCellRenderer());
     }
 
