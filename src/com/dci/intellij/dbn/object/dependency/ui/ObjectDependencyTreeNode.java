@@ -43,32 +43,34 @@ public class ObjectDependencyTreeNode implements Disposable{
 
     public synchronized List<ObjectDependencyTreeNode> getChildren() {
         final DBObject object = getObject();
-        System.out.println(object == null ? null : object.getQualifiedName());
         if (dependencies == null) {
             dependencies = new ArrayList<ObjectDependencyTreeNode>();
             if (!isRecursive(object)) {
                 dependencies.add(new ObjectDependencyTreeNode(this, null));
                 new SimpleBackgroundTask("load dependencies") {
-
                     @Override
                     protected void execute() {
-                        List<ObjectDependencyTreeNode> loadedDependenencies = new ArrayList<ObjectDependencyTreeNode>();
+                        System.out.println(object == null ? null : object.getQualifiedName());
+
+                        List<ObjectDependencyTreeNode> loadedDependencies = new ArrayList<ObjectDependencyTreeNode>();
                         if (object instanceof DBSchemaObject) {
                             DBSchemaObject schemaObject = (DBSchemaObject) object;
                             List<DBObject> dependentObjects = loadDependencies(schemaObject);
 
                             if (dependentObjects != null) {
                                 for (DBObject dependentObject : dependentObjects) {
+/*
                                     if (dependentObject instanceof DBSchemaObject) {
                                         loadDependencies((DBSchemaObject) dependentObject);
                                     }
+*/
                                     ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
-                                    loadedDependenencies.add(node);
+                                    loadedDependencies.add(node);
                                 }
                             }
                         }
 
-                        dependencies = loadedDependenencies;
+                        dependencies = loadedDependencies;
                         getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                     }
                 }.start();
