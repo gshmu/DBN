@@ -263,9 +263,12 @@
     </application-components>
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->
+        <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.ExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.statement.StatementExecutionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.execution.script.ScriptExecutionManager</implementation-class></component>
@@ -275,6 +278,7 @@
         <component><implementation-class>com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.completion.CodeCompletionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.data.export.DataExportManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.debugger.DatabaseDebuggerManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.ddl.DDLFileManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.ddl.DDLFileAttachmentManager</implementation-class></component>
@@ -282,17 +286,14 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.data.DatasetEditorManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.state.DatasetEditorStateManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.data.export.DataExportManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.session.SessionBrowserManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.generator.StatementGenerationManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.factory.DatabaseObjectFactory</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.generator.StatementGenerationManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.dependency.ObjectDependencyManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.editor.session.SessionBrowserManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
     </project-components>
     <module-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->

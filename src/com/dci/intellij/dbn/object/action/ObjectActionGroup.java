@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.dependency.action.DependenciesActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 
 public class ObjectActionGroup extends DefaultActionGroup {
