@@ -8,7 +8,7 @@ public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeFo
     public ObjectDependencyTreeDialog(Project project, DBSchemaObject schemaObject) {
         super(project, "Object Dependency Tree", true);
         this.component = new ObjectDependencyTreeForm(this, schemaObject);
-        setModal(true);
+        setModal(false);
         setResizable(true);
         init();
     }
