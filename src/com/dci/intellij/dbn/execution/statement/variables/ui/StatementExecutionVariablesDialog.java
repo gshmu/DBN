@@ -1,21 +1,19 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-
-public class StatementExecutionVariablesDialog extends DBNDialog {
-    private StatementExecutionVariablesForm variablesForm;
+public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecutionVariablesForm> {
     private StatementExecutionProcessor executionProcessor;
 
     public StatementExecutionVariablesDialog(StatementExecutionProcessor executionProcessor, String statementText) {
@@ -23,17 +21,13 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
         this.executionProcessor = executionProcessor;
         setModal(true);
         setResizable(true);
-        variablesForm = new StatementExecutionVariablesForm(this, executionProcessor, statementText);
+        component = new StatementExecutionVariablesForm(this, executionProcessor, statementText);
         init();
-    }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.ExecutionVariables";
     }
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return variablesForm.getPreferredFocusedComponent();
+        return component.getPreferredFocusedComponent();
     }
 
     @NotNull
@@ -52,7 +46,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            variablesForm.saveValues();
+            component.saveValues();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             Project project = getProject();
             if (executionVariables.isIncomplete()) {
@@ -75,17 +69,10 @@ public class StatementExecutionVariablesDialog extends DBNDialog {
         }
     }
 
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return variablesForm.getComponent();
-    }
-
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            variablesForm.dispose();
-        }
+        super.dispose();
+        executionProcessor = null;
     }
 
 

@@ -10,19 +10,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 
-public class CreateRenameConsoleDialog extends DBNDialog {
-    private CreateRenameConsoleForm createConsoleForm;
-
+public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm> {
     public CreateRenameConsoleDialog(ConnectionHandler connectionHandler, DBConsoleVirtualFile console) {
         super(connectionHandler.getProject(), console == null ? "Create SQL Console" : "Rename SQL Console", true);
-        createConsoleForm = new CreateRenameConsoleForm(this, connectionHandler, console);
+        component = new CreateRenameConsoleForm(this, connectionHandler, console);
         getOKAction().putValue(Action.NAME, console == null ? "Create" : "Rename");
         init();
     }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.CreateSQLConsole";
-    }      
 
     @NotNull
     protected final Action[] createActions() {
@@ -35,13 +29,13 @@ public class CreateRenameConsoleDialog extends DBNDialog {
     @Override
     protected void doOKAction() {
         DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(getProject());
-        DBConsoleVirtualFile console = createConsoleForm.getConsole();
+        DBConsoleVirtualFile console = component.getConsole();
         if (console == null) {
             databaseConsoleManager.createConsole(
-                    createConsoleForm.getConnectionHandler(),
-                    createConsoleForm.getConsoleName());
+                    component.getConnectionHandler(),
+                    component.getConsoleName());
         } else {
-            databaseConsoleManager.renameConsole(console, createConsoleForm.getConsoleName());
+            databaseConsoleManager.renameConsole(console, component.getConsoleName());
         }
         super.doOKAction();
     }
@@ -55,11 +49,6 @@ public class CreateRenameConsoleDialog extends DBNDialog {
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return createConsoleForm.getConsoleNameTextField();
-    }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return createConsoleForm.getComponent();
+        return component.getConsoleNameTextField();
     }
 }

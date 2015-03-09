@@ -1,21 +1,18 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-
-public class UncommittedChangesDialog extends DBNDialog {
-    private UncommittedChangesForm mainComponent;
+public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> {
     private ConnectionHandler connectionHandler;
     private TransactionAction additionalOperation;
 
@@ -23,14 +20,10 @@ public class UncommittedChangesDialog extends DBNDialog {
         super(connectionHandler.getProject(), "Uncommitted Changes", true);
         this.connectionHandler = connectionHandler;
         this.additionalOperation = additionalOperation;
-        mainComponent = new UncommittedChangesForm(connectionHandler, additionalOperation, showActions);
+        component = new UncommittedChangesForm(connectionHandler, additionalOperation, showActions);
         setModal(false);
         setResizable(true);
         init();
-    }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.UncommittedChanges";
     }
 
     @NotNull
@@ -80,18 +73,9 @@ public class UncommittedChangesDialog extends DBNDialog {
     }
 
 
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return mainComponent.getComponent();
-    }
-
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            mainComponent.dispose();
-            mainComponent = null;
-            connectionHandler = null;
-        }
+        super.dispose();
+        connectionHandler = null;
     }
 }

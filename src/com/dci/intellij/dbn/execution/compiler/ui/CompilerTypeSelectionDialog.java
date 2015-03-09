@@ -1,20 +1,18 @@
 package com.dci.intellij.dbn.execution.compiler.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import java.awt.event.ActionEvent;
-
-public class CompilerTypeSelectionDialog extends DBNDialog {
-    private CompilerTypeSelectionForm editorForm;
+public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelectionForm> {
     private CompileTypeOption selection;
 
     public CompilerTypeSelectionDialog(Project project, @Nullable DBSchemaObject object) {
@@ -22,16 +20,12 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
         setModal(true);
         setResizable(false);
         //setVerticalStretch(0);
-        editorForm = new CompilerTypeSelectionForm(this, object);
+        component = new CompilerTypeSelectionForm(this, object);
         init();
     }
 
-    protected String getDimensionServiceKey() {
-        return null;//"DBNavigator.CompileType";
-    }
-
     public boolean rememberSelection() {
-        return editorForm.rememberSelection();
+        return component.rememberSelection();
     }
 
     @NotNull
@@ -79,11 +73,6 @@ public class CompilerTypeSelectionDialog extends DBNDialog {
             selection = CompileTypeOption.DEBUG;
             doOKAction();
         }
-    }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return editorForm.getComponent();
     }
 
     public CompileTypeOption getSelection() {

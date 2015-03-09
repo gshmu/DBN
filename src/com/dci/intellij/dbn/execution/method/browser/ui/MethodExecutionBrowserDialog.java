@@ -1,47 +1,36 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import java.awt.event.ActionEvent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import java.awt.event.ActionEvent;
-
-public class MethodExecutionBrowserDialog extends DBNDialog implements Disposable, TreeSelectionListener {
-    private MethodExecutionBrowserForm mainComponent;
+public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrowserForm> implements Disposable, TreeSelectionListener {
     private SelectAction selectAction;
-    private DBMethod method;
+    private DBObjectRef<DBMethod> methodRef;
 
     public MethodExecutionBrowserDialog(Project project, MethodBrowserSettings settings, ObjectTreeModel objectTreeModel) {
         super(project, "Method Browser", true);
         setModal(true);
         setResizable(true);
-        mainComponent = new MethodExecutionBrowserForm(this, settings, objectTreeModel);
-        mainComponent.addTreeSelectionListener(this);
+        component = new MethodExecutionBrowserForm(this, settings, objectTreeModel);
+        component.addTreeSelectionListener(this);
         init();
-    }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.MethodBrowser";
     }
 
     @Override
     public void show() {
         super.show();
-    }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return mainComponent.getComponent();
     }
 
     @NotNull
@@ -58,16 +47,14 @@ public class MethodExecutionBrowserDialog extends DBNDialog implements Disposabl
 
     public void dispose() {
         super.dispose();
-        mainComponent.dispose();
-        mainComponent = null;
     }
 
     public void valueChanged(TreeSelectionEvent e) {
-        selectAction.setEnabled(mainComponent.getSelectedMethod() != null);
+        selectAction.setEnabled(component.getSelectedMethod() != null);
     }
 
     public DBMethod getSelectedMethod() {
-        return method;        
+        return DBObjectRef.get(methodRef);
     }
 
     /**********************************************************
@@ -80,7 +67,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog implements Disposabl
         }
 
         public void actionPerformed(ActionEvent e) {
-            method = mainComponent.getSelectedMethod();
+            methodRef = DBObjectRef.from(component.getSelectedMethod());
             close(OK_EXIT_CODE);
         }
 

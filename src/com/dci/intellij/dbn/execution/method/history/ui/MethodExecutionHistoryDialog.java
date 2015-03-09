@@ -2,21 +2,17 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 
-public class MethodExecutionHistoryDialog extends DBNDialog implements Disposable {
-    private MethodExecutionHistoryForm mainComponent;
+public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHistoryForm> {
     private SelectAction selectAction;
     private ExecuteAction executeAction;
     private SaveAction saveAction;
@@ -29,7 +25,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
         this.editable = editable;
         setModal(true);
         setResizable(true);
-        mainComponent = new MethodExecutionHistoryForm(this, executionHistory);
+        component = new MethodExecutionHistoryForm(this, executionHistory);
         if (selectedExecutionInput == null) {
             selectedExecutionInput = executionHistory.getLastSelection();
         }
@@ -37,19 +33,10 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
         if (selectedExecutionInput != null) {
             showMethodExecutionPanel(selectedExecutionInput);
             this.selectedExecutionInput = selectedExecutionInput;
-            mainComponent.setSelectedInput(selectedExecutionInput);
+            component.setSelectedInput(selectedExecutionInput);
         }
         init();
         setMainButtonEnabled(selectedExecutionInput != null);
-    }
-
-    protected String getDimensionServiceKey() {
-        return "DBNavigator.MethodExecutionHistory";
-    }
-
-    @Nullable
-    protected JComponent createCenterPanel() {
-        return mainComponent.getComponent();
     }
 
     @NotNull
@@ -75,15 +62,14 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
     }
 
     private void saveChanges() {
-        mainComponent.updateMethodExecutionInputs();
+        component.updateMethodExecutionInputs();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
-        methodExecutionManager.setExecutionInputs(mainComponent.getExecutionInputs());
+        methodExecutionManager.setExecutionInputs(component.getExecutionInputs());
     }
 
     public void dispose() {
         super.dispose();
-        mainComponent.dispose();
-        mainComponent = null;
+        selectedExecutionInput = null;
     }
 
     public void setSelectedExecutionInput(MethodExecutionInput selectedExecutionInput) {
@@ -115,7 +101,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
 
         public void actionPerformed(ActionEvent e) {
             saveChanges();
-            MethodExecutionInput executionInput = mainComponent.getTree().getSelectedExecutionInput();
+            MethodExecutionInput executionInput = component.getTree().getSelectedExecutionInput();
             if (executionInput != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(getProject());
                 close(OK_EXIT_CODE);
@@ -159,6 +145,6 @@ public class MethodExecutionHistoryDialog extends DBNDialog implements Disposabl
     }
 
     public void showMethodExecutionPanel(MethodExecutionInput executionInput){
-        mainComponent.showMethodExecutionPanel(executionInput);
+        component.showMethodExecutionPanel(executionInput);
     }
 }
