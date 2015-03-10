@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import java.awt.event.ActionEvent;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
 public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     public DetachDDLFileDialog(List<VirtualFile> virtualFiles, DBSchemaObject object) {
@@ -56,19 +56,11 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
     protected void doOKAction() {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
-        Object[] selectedPsiFiles = getSelection();
+        Object[] selectedPsiFiles = component.getSelection();
         for (Object selectedPsiFile : selectedPsiFiles) {
             VirtualFile virtualFile = (VirtualFile) selectedPsiFile;
             fileAttachmentManager.detachDDLFile(virtualFile);
         }
         super.doOKAction();
-    }
-
-    public Object[] getSelection() {
-        return component.getSelection();
-    }
-
-    public boolean hasSelection() {
-        return getSelection().length > 0;
     }
 }
