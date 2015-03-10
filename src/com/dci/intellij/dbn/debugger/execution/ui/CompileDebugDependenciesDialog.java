@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.execution.ui;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
     private DBProgramRunConfiguration runConfiguration;
+    private List<DBSchemaObject> selection = Collections.emptyList();
 
     public CompileDebugDependenciesDialog(DBProgramRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
         super(runConfiguration.getProject(), "Compile Object Dependencies", true);
@@ -69,6 +71,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
     @Override
     protected void doOKAction() {
+        selection = component.getSelection();
         runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doOKAction();
     }
@@ -80,6 +83,6 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
     }
 
     public List<DBSchemaObject> getSelection() {
-        return component.getSelection();
+        return selection;
     }
 }
