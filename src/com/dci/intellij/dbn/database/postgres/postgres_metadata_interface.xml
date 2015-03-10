@@ -591,6 +591,42 @@
                 prm.POSITION
         </statement>
     </statement-execution-processor>
+     <statement-execution-processor id="referenced-objects" is-query="true" is-prepared-statement="true">
+        <statement>
+            select distinct * from (
+                select
+                    REFERENCED_OWNER as OBJECT_OWNER,
+                    REFERENCED_NAME as OBJECT_NAME,
+                    decode(REFERENCED_TYPE, 'PACKAGE BODY', 'PACKAGE', 'TYPE BODY', 'TYPE', REFERENCED_TYPE) as OBJECT_TYPE
+                from [PREFIX]_DEPENDENCIES
+                where
+                   (OWNER != REFERENCED_OWNER or NAME != REFERENCED_NAME) and
+                    OWNER = {0} and
+                    NAME = {1})
+            order by
+                OBJECT_OWNER,
+                OBJECT_TYPE,
+                OBJECT_NAME asc
+        </statement>
+    </statement-execution-processor>
+
+    <statement-execution-processor id="referencing-objects" is-query="true" is-prepared-statement="true">
+        <statement>
+            select distinct * from (
+                select
+                    OWNER as OBJECT_OWNER,
+                    NAME as OBJECT_NAME,
+                    decode(TYPE, 'PACKAGE BODY', 'PACKAGE', 'TYPE BODY', 'TYPE', TYPE) as OBJECT_TYPE
+                from [PREFIX]_DEPENDENCIES where
+                    (OWNER != REFERENCED_OWNER or NAME != REFERENCED_NAME) and
+                    REFERENCED_OWNER = {0} and
+                    REFERENCED_NAME = {1})
+            order by
+                OBJECT_OWNER,
+                OBJECT_TYPE,
+                OBJECT_NAME asc
+        </statement>
+    </statement-execution-processor>
 
     <statement-execution-processor id="view-source-code" is-query="true" is-prepared-statement="true">
         <statement>

@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -28,6 +21,13 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
     private boolean isForEachRow;
@@ -86,6 +86,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
         DBObjectProperties properties = getProperties();
         properties.set(DBObjectProperty.EDITABLE);
         properties.set(DBObjectProperty.DISABLEABLE);
+        properties.set(DBObjectProperty.REFERENCEABLE);
         properties.set(DBObjectProperty.COMPILABLE);
         properties.set(DBObjectProperty.SCHEMA_OBJECT);
     }

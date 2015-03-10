@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.data.type;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.object.DBPackage;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -8,13 +15,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.object.DBPackage;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
     private DBNativeDataType nativeDataType;
@@ -143,7 +143,7 @@ public class DBDataType {
         if (nativeDataType != null) {
             return nativeDataType.getValueFromResultSet(resultSet, columnIndex);
         } else {
-            return declaredType == null ? "[UNKNOWN]" : '[' + declaredType.getName() + ']';
+            return declaredType == null ? "[" + name + "]" : '[' + declaredType.getName() + ']';
         }
     }
 
