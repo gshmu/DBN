@@ -24,10 +24,6 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         init();
     }
 
-    public boolean rememberSelection() {
-        return component.rememberSelection();
-    }
-
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

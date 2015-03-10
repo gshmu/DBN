@@ -21,7 +21,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
         DBMethod method = runConfiguration.getMethod();
         DBProgram program = method.getProgram();
         DBSchemaObject selectedObject = program == null ? method : program;
-        this.component = new CompileDebugDependenciesForm(compileList, selectedObject);
+        this.component = new CompileDebugDependenciesForm(this, compileList, selectedObject);
         init();
     }
 
@@ -69,13 +69,13 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
     @Override
     protected void doOKAction() {
-        runConfiguration.setCompileDependencies(!component.rememberSelection());
+        runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doOKAction();
     }
 
     @Override
     public void doCancelAction() {
-        runConfiguration.setCompileDependencies(!component.rememberSelection());
+        runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doCancelAction();
     }
 

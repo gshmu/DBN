@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
@@ -14,6 +17,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     protected C component;
     private Project project;
     private boolean disposed;
+    private boolean rememberSelection;
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
@@ -38,6 +42,19 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
 
     public Project getProject() {
         return project;
+    }
+
+    public boolean isRememberSelection() {
+        return rememberSelection;
+    }
+
+    public void registerRememberSelectionCheckBox(final JCheckBox rememberSelectionCheckBox) {
+        rememberSelectionCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rememberSelection = rememberSelectionCheckBox.isSelected();
+            }
+        });
     }
 
     @Override

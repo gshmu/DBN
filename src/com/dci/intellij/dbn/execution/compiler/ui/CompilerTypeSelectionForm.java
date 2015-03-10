@@ -5,8 +5,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -19,9 +17,8 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
     private JPanel headerPanel;
     private JCheckBox rememberSelectionCheckBox;
     private JTextArea hintTextArea;
-    private boolean rememberSelection;
 
-    public CompilerTypeSelectionForm(CompilerTypeSelectionDialog parentComponent, @Nullable DBSchemaObject object) {
+    public CompilerTypeSelectionForm(final CompilerTypeSelectionDialog parentComponent, @Nullable DBSchemaObject object) {
         super(parentComponent);
         if (object == null) {
             headerPanel.setVisible(false);
@@ -37,16 +34,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
                         "\"Keep current\" will carry over the existing compile type.\n\n" +
                         "Please select your compile option.", 80, ": ,."));
 
-        rememberSelectionCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                rememberSelection = rememberSelectionCheckBox.isSelected();
-            }
-        });
-    }
-
-    protected boolean rememberSelection() {
-        return rememberSelection;
+        parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
 
     public JComponent getComponent() {

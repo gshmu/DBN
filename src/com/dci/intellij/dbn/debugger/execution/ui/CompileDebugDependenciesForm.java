@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.debugger.execution.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
@@ -14,14 +9,20 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompileDebugDependenciesForm extends DBNFormImpl {
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+
+public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDependenciesDialog> {
     private JTextArea hintTextArea;
     private JList objectList;
     private JPanel mainPanel;
     private JCheckBox rememberSelectionCheckBox;
     private JPanel headerPanel;
 
-    public CompileDebugDependenciesForm(List<DBSchemaObject> compileList, DBSchemaObject selectedObject) {
+    public CompileDebugDependenciesForm(CompileDebugDependenciesDialog parentComponent, List<DBSchemaObject> compileList, DBSchemaObject selectedObject) {
+        super(parentComponent);
         hintTextArea.setText(StringUtil.wrap(
             "The program you are trying to debug or some of its dependencies are not compiled with debug information. " +
             "This may result in breakpoints being ignored during the debug execution, as well as missing information about execution stacks and variables.\n" +
@@ -42,10 +43,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl {
 
         DBNHeaderForm headerForm = new DBNHeaderForm(selectedObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-    }
-
-    protected boolean rememberSelection() {
-        return rememberSelectionCheckBox.isSelected();
+        parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
 
     public JPanel getComponent() {
