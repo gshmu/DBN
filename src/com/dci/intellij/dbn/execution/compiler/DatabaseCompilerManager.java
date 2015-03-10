@@ -244,7 +244,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             dialog.show();
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 compileType = dialog.getSelection();
-                if (dialog.rememberSelection()) {
+                if (dialog.isRememberSelection()) {
                     ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(getProject());
                     executionEngineSettings.getCompilerSettings().setCompileTypeOption(compileType);
                 }
