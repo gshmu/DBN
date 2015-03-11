@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import javax.swing.JTree;
-import javax.swing.border.LineBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -15,6 +9,12 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 public class ObjectDependencyTree extends JTree{
 
@@ -71,10 +71,9 @@ public class ObjectDependencyTree extends JTree{
                         SimpleTextAttributes.GRAY_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :
                         SimpleTextAttributes.GRAY_ATTRIBUTES;
 
-                setOpaque(true);
                 setIcon(object.getIcon());
-                setBackground(regularAttributes.getBgColor());
-                if (highlight) setBorder(new LineBorder(JBColor.red)); else setBorder(null);
+                setBackground(selected ? UIUtil.getTreeSelectionBackground() : regularAttributes.getBgColor());
+                //if (highlight) setBorder(new LineBorder(JBColor.red)); else setBorder(null);
                 ObjectDependencyTreeNode rootNode = (ObjectDependencyTreeNode) node.getModel().getRoot();
                 DBObject rootObject = rootNode.getObject();
                 if (rootObject == null || !CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
@@ -85,6 +84,11 @@ public class ObjectDependencyTree extends JTree{
             } else {
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             }
+        }
+
+        @Override
+        protected boolean shouldDrawBackground() {
+            return true;
         }
     }
 }
