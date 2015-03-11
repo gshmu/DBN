@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 public class ObjectDependencyTreeModel implements TreeModel, Disposable{
@@ -20,12 +21,18 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     private ObjectDependencyTreeNode root;
     private ObjectDependencyType dependencyType;
     private Project project;
+    private DBObjectRef<DBSchemaObject> objectRef;
 
 
-    public ObjectDependencyTreeModel(Project project, DBSchemaObject schemaObject, ObjectDependencyType dependencyType) {
+    public ObjectDependencyTreeModel(Project project, DBSchemaObject object, ObjectDependencyType dependencyType) {
         this.project = project;
-        this.root = new ObjectDependencyTreeNode(this, schemaObject);
+        this.objectRef = DBObjectRef.from(object);
+        this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
+    }
+
+    public DBSchemaObject getObject() {
+        return DBObjectRef.get(objectRef);
     }
 
     public Project getProject() {
