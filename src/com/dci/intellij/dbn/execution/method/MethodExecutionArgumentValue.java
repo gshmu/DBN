@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.dci.intellij.dbn.common.list.MostRecentStack;
+import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.CDATA;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
 
-import com.dci.intellij.dbn.common.list.MostRecentStack;
-import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodExecutionArgumentValue implements PersistentStateElement<Element>, Cloneable, ArgumentValueHolder<String> {
     private String name;
@@ -71,7 +71,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement<Elem
                 }
             }
         }
-        valueHistory = new MostRecentStack<>(values);
+        valueHistory = new MostRecentStack<String>(values);
     }
 
     @Override
