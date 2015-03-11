@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -10,11 +16,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.intellij.openapi.diagnostic.Logger;
 
 public class TreeUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -74,8 +75,10 @@ public class TreeUtil {
                             }
                         }
                     }
+                } catch (ProcessCanceledException e) {
+
                 } catch (Exception e) {
-                    LOGGER.error("Error notifying tree model listeners", e);
+                    LOGGER.warn("Error notifying tree model listeners", e);
                 }
             }
         }.start();
