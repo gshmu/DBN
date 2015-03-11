@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -122,8 +123,13 @@ public class DocumentUtil {
         return FileDocumentManager.getInstance().getFile(editor.getDocument());
     }
 
-    public static Document getDocument(VirtualFile virtualFile) {
-        return FileDocumentManager.getInstance().getDocument(virtualFile);
+    public static Document getDocument(final VirtualFile virtualFile) {
+        return new ConditionalReadActionRunner<Document>() {
+            @Override
+            protected Document run() {
+                return FileDocumentManager.getInstance().getDocument(virtualFile);
+            }
+        }.start();
     }
 
     public static PsiFile getPsiFile(Project project, VirtualFile virtualFile) {

@@ -50,7 +50,7 @@ public class ObjectDependencyTreeNode implements Disposable{
                 new SimpleBackgroundTask("load dependencies") {
                     @Override
                     protected void execute() {
-                        System.out.println(object == null ? null : object.getQualifiedName());
+                        //System.out.println(object == null ? null : object.getQualifiedName());
 
                         List<ObjectDependencyTreeNode> loadedDependencies = new ArrayList<ObjectDependencyTreeNode>();
                         if (object instanceof DBSchemaObject) {
