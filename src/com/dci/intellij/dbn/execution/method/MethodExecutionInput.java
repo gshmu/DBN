@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.execution.method;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
@@ -26,6 +18,14 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
     private DBObjectRef<DBMethod> methodRef;
@@ -48,7 +48,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     }
 
     public MethodExecutionInput(DBMethod method) {
-        this.methodRef = new DBObjectRef<>(method);
+        this.methodRef = new DBObjectRef<DBMethod>(method);
         this.executionSchema = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
