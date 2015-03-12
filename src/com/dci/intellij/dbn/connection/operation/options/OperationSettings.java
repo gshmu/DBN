@@ -20,7 +20,7 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
         super(project);
     }
 
-    public static OperationSettings getInstance(Project project) {
+    public static OperationSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getOperationSettings();
     }
 

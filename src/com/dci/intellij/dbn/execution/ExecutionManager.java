@@ -44,7 +44,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         super(project);
     }
 
-    public static ExecutionManager getInstance(Project project) {
+    public static ExecutionManager getInstance(@NotNull Project project) {
         return project.getComponent(ExecutionManager.class);
     }
 

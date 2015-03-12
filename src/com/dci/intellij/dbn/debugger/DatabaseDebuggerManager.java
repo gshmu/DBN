@@ -204,7 +204,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     /***************************************
      *            ProjectComponent         *
      ***************************************/
-    public static DatabaseDebuggerManager getInstance(Project project) {
+    public static DatabaseDebuggerManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseDebuggerManager.class);
     }
 

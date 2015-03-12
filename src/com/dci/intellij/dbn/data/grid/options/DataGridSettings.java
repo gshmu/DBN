@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.grid.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridSettingsForm;
@@ -7,7 +9,6 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 
 public class DataGridSettings extends CompositeProjectConfiguration<DataGridSettingsForm> implements TopLevelConfig {
     private DataGridGeneralSettings generalSettings;
@@ -21,7 +22,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
         trackingColumnSettings = new DataGridTrackingColumnSettings(project);
     }
 
-    public static DataGridSettings getInstance(Project project) {
+    public static DataGridSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getDataGridSettings();
     }
 

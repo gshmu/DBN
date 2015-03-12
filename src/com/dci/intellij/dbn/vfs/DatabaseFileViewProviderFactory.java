@@ -11,6 +11,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.LightVirtualFile;
 
 public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
+    @NotNull
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, Language language, @NotNull PsiManager manager, boolean eventSystemEnabled) {
 
         return file instanceof DBObjectVirtualFile ||

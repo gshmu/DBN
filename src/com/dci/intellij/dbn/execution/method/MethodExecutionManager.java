@@ -50,7 +50,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         super(project);
     }
 
-    public static MethodExecutionManager getInstance(Project project) {
+    public static MethodExecutionManager getInstance(@NotNull Project project) {
         return project.getComponent(MethodExecutionManager.class);
     }
 

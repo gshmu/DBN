@@ -27,7 +27,7 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return new DatabaseBrowserSettingsForm(this);
     }
 
-    public static DatabaseBrowserSettings getInstance(Project project) {
+    public static DatabaseBrowserSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getBrowserSettings();
     }
 

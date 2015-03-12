@@ -28,7 +28,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
         super(project);
     }
 
-    public static ObjectDependencyManager getInstance(Project project) {
+    public static ObjectDependencyManager getInstance(@NotNull Project project) {
         return project.getComponent(ObjectDependencyManager.class);
     }
 

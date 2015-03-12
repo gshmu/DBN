@@ -51,7 +51,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
     private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
         @Override
-        public void selectionChanged(FileEditorManagerEvent event) {
+        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             hidePopup();
         }
     };

@@ -18,7 +18,7 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
         objectsLookupSettings = new ObjectsLookupSettings(project);
     }
 
-    public static NavigationSettings getInstance(Project project) {
+    public static NavigationSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getNavigationSettings();
     }
 

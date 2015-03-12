@@ -60,7 +60,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         }.start();
     }
 
-    public static DDLFileManager getInstance(Project project) {
+    public static DDLFileManager getInstance(@NotNull Project project) {
         return project.getComponent(DDLFileManager.class);
     }
 
@@ -110,12 +110,12 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     private FileTypeListener fileTypeListener = new FileTypeListener() {
         @Override
-        public void beforeFileTypesChanged(FileTypeEvent event) {
+        public void beforeFileTypesChanged(@NotNull FileTypeEvent event) {
 
         }
 
         @Override
-        public void fileTypesChanged(FileTypeEvent event) {
+        public void fileTypesChanged(@NotNull FileTypeEvent event) {
             StringBuilder restoredAssociations = null;
             FileTypeManager fileTypeManager = FileTypeManager.getInstance();
             List<DDLFileType> ddlFileTypeList = getExtensionSettings().getDDLFileTypes();

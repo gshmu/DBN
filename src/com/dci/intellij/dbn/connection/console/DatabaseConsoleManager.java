@@ -25,7 +25,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         super(project);
     }
 
-    public static DatabaseConsoleManager getInstance(Project project) {
+    public static DatabaseConsoleManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseConsoleManager.class);
     }
 

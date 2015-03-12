@@ -57,7 +57,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         });
     }
 
-    public static DatabaseLoaderManager getInstance(Project project) {
+    public static DatabaseLoaderManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseLoaderManager.class);
     }
 

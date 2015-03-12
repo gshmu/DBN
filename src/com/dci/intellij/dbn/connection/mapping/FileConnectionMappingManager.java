@@ -506,7 +506,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         VirtualFileManager.getInstance().addVirtualFileListener(this);
     }
 
-    public static FileConnectionMappingManager getInstance(Project project) {
+    public static FileConnectionMappingManager getInstance(@NotNull Project project) {
         return project.getComponent(FileConnectionMappingManager.class);
     }
 

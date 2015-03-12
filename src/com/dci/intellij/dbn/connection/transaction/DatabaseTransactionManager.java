@@ -31,7 +31,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         super(project);
     }
 
-    public static DatabaseTransactionManager getInstance(Project project) {
+    public static DatabaseTransactionManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseTransactionManager.class);
     }
 

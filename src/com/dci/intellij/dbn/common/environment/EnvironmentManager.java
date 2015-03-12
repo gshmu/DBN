@@ -34,7 +34,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
 
     }
 
-    public static EnvironmentManager getInstance(Project project) {
+    public static EnvironmentManager getInstance(@NotNull Project project) {
         return project.getComponent(EnvironmentManager.class);
     }
     
