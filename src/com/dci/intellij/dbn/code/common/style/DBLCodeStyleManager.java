@@ -41,7 +41,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
         super(project);
     }
 
-    public static DBLCodeStyleManager getInstance(Project project) {
+    public static DBLCodeStyleManager getInstance(@NotNull Project project) {
         return project.getComponent(DBLCodeStyleManager.class);
     }
 

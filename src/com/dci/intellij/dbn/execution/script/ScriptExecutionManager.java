@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.execution.script;
 
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.intellij.openapi.project.Project;
 
 public class ScriptExecutionManager extends AbstractProjectComponent {
 
@@ -11,7 +12,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         super(project);
     }
 
-    public static ScriptExecutionManager getInstance(Project project) {
+    public static ScriptExecutionManager getInstance(@NotNull Project project) {
         return project.getComponent(ScriptExecutionManager.class);
     }
 

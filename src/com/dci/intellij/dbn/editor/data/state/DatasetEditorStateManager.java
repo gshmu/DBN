@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.editor.data.state;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.ui.DatasetColumnSetupDialog;
@@ -10,10 +15,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @State(
     name = "DBNavigator.Project.DatasetEditorStateManager",
@@ -27,7 +28,7 @@ public class DatasetEditorStateManager extends AbstractProjectComponent implemen
     }
 
 
-    public static DatasetEditorStateManager getInstance(Project project) {
+    public static DatasetEditorStateManager getInstance(@NotNull Project project) {
         return project.getComponent(DatasetEditorStateManager.class);
     }
 

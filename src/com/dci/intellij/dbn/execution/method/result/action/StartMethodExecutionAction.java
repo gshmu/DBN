@@ -16,10 +16,12 @@ public class StartMethodExecutionAction extends MethodExecutionResultAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
-        MethodExecutionResult executionResult = getExecutionResult();
-        if (executionResult != null) {
-            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            executionManager.execute(executionResult.getExecutionInput());
+        if (project != null) {
+            MethodExecutionResult executionResult = getExecutionResult();
+            if (executionResult != null) {
+                MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+                executionManager.execute(executionResult.getExecutionInput());
+            }
         }
     }
 

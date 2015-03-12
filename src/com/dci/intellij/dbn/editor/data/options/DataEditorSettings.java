@@ -22,7 +22,7 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
         super(project);
     }
 
-    public static DataEditorSettings getInstance(Project project) {
+    public static DataEditorSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getDataEditorSettings();
     }
 

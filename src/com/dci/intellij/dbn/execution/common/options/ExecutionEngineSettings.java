@@ -21,7 +21,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
         super(project);
     }
 
-    public static ExecutionEngineSettings getInstance(Project project) {
+    public static ExecutionEngineSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getExecutionEngineSettings();
     }
 

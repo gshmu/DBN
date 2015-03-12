@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.browser.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -23,11 +25,13 @@ public class ShowObjectPropertiesAction extends ToggleAction implements DumbAwar
     @Override
     public void setSelected(AnActionEvent e, boolean state) {
         Project project = ActionUtil.getProject(e);
-        DatabaseBrowserManager.getInstance(project).showObjectProperties(state);
+        if (project != null) {
+            DatabaseBrowserManager.getInstance(project).showObjectProperties(state);
+        }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         e.getPresentation().setText(isSelected(e) ? "Hide Object Properties" : "Show Object Properties");
     }

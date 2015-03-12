@@ -14,7 +14,7 @@ public class StatementGenerationManager extends AbstractProjectComponent {
         super(project);
     }
 
-    public static StatementGenerationManager getInstance(Project project) {
+    public static StatementGenerationManager getInstance(@NotNull Project project) {
         return project.getComponent(StatementGenerationManager.class);
     }
 

@@ -29,7 +29,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
         loadDefaults();
     }
 
-    public static CodeCompletionSettings getInstance(Project project) {
+    public static CodeCompletionSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getCodeCompletionSettings();
     }
 

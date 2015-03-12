@@ -173,9 +173,19 @@ public class ObjectDependencyTree extends JTree implements Disposable{
                 setIcon(object.getIcon());
                 setBackground(selected ? UIUtil.getTreeSelectionBackground() : regularAttributes.getBgColor());
                 //if (highlight) setBorder(new LineBorder(JBColor.red)); else setBorder(null);
-                ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
-                DBObject rootObject = rootNode.getObject();
-                if (rootObject == null || !CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
+                boolean appendSchema = true;
+
+                ObjectDependencyTreeNode parentNode = node.getParent();
+                if (parentNode == null) {
+                    appendSchema = false;
+                } else {
+                    DBObject parentObject = parentNode.getObject();
+                    if (parentObject == null || CommonUtil.safeEqual(parentObject.getSchema(), object.getSchema())) {
+                        appendSchema = false;
+                    }
+                }
+
+                if (appendSchema) {
                     append(object.getSchema().getName() + ".", grayAttributes);
                 }
 
