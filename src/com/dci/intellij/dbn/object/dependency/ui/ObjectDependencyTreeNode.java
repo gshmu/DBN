@@ -45,9 +45,9 @@ public class ObjectDependencyTreeNode implements Disposable{
         return parent;
     }
 
-    public synchronized List<ObjectDependencyTreeNode> getChildren() {
+    public synchronized List<ObjectDependencyTreeNode> getChildren(boolean load) {
         final DBObject object = getObject();
-        if (dependencies == null) {
+        if (dependencies == null && load) {
             dependencies = new ArrayList<ObjectDependencyTreeNode>();
             if (!isRecursive(object)) {
                 dependencies.add(new ObjectDependencyTreeNode(this, null));
