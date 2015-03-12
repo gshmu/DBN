@@ -73,7 +73,7 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
 
     private List<ObjectDependencyTreeNode> getChildren(Object parent) {
         ObjectDependencyTreeNode parentNode = (ObjectDependencyTreeNode) parent;
-        return parentNode.getChildren();
+        return parentNode.getChildren(true);
     }
 
     @Override

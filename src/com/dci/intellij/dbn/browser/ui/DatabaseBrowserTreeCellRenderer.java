@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JTree;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.Component;
+import java.awt.Font;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
@@ -13,13 +19,8 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JTree;
-import javax.swing.tree.TreeCellRenderer;
-import java.awt.Component;
-import java.awt.Font;
 
 public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
@@ -105,6 +106,8 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                 if (displayName == null) displayName = "displayName null!!";
 
                 append(displayName, textAttributes);
+
+                SpeedSearchUtil.applySpeedSearchHighlighting(tree, this, true, selected);
             }
             String displayDetails = treeNode.getPresentableTextDetails();
             if (!StringUtil.isEmptyOrSpaces(displayDetails)) {

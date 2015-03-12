@@ -14,12 +14,15 @@ import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
 
 public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDialog>{
@@ -38,7 +41,8 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
     public ObjectDependencyTreeForm(ObjectDependencyTreeDialog parentComponent, final DBSchemaObject schemaObject) {
         super(parentComponent);
-        dependencyTree = new ObjectDependencyTree(getProject(), schemaObject) {
+        Project project = getProject();
+        dependencyTree = new ObjectDependencyTree(project, schemaObject) {
             @Override
             public void setModel(TreeModel model) {
                 super.setModel(model);
@@ -53,9 +57,12 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             }
         };
         treeScrollPane.setViewportView(dependencyTree);
+        ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
+        ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
+
 
         dependencyTypeComboBox.setValues(ObjectDependencyType.values());
-        dependencyTypeComboBox.setSelectedValue(ObjectDependencyType.INCOMING);
+        dependencyTypeComboBox.setSelectedValue(dependencyType);
         dependencyTypeComboBox.addListener(new ValueSelectorListener<ObjectDependencyType>() {
             @Override
             public void valueSelected(ObjectDependencyType value) {
@@ -69,6 +76,8 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, /*new ExpandTreeAction(),*/ new CollapseTreeAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
+
+        Disposer.register(this, dependencyTree);
     }
 
 

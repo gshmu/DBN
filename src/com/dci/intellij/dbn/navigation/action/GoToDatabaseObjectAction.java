@@ -113,7 +113,6 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                             }
                         });
                     }*/
-
                     popupBuilder.showCenteredInCurrentWindow(project);
                 } else {
                     showLookupPopup(event, project, singleConnectionHandler, null);

@@ -6,14 +6,17 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.MouseEvent;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -27,13 +30,18 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.tree.TreeUtil;
 
-public class ObjectDependencyTree extends JTree{
-
+public class ObjectDependencyTree extends JTree implements Disposable{
+    private ObjectDependencyTreeSpeedSearch speedSearch;
     public ObjectDependencyTree(Project project, DBSchemaObject schemaObject) {
-        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, ObjectDependencyType.INCOMING);
+        ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
+        ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
+        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, dependencyType);
         setModel(model);
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setCellRenderer(new CellRenderer());
         addTreeSelectionListener(new TreeSelectionListener() {
             @Override
@@ -43,7 +51,27 @@ public class ObjectDependencyTree extends JTree{
             }
         });
 
+        speedSearch = new ObjectDependencyTreeSpeedSearch(this);
+        Disposer.register(this, speedSearch);
+        Disposer.register(this, model);
+
+
         addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
+                    final TreePath path = getPathForLocation(event.getX(), event.getY());
+                    if (path != null) {
+                        final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
+                        DBObject object = node.getObject();
+                        if (object != null) {
+                            event.consume();
+                            object.navigate(true);
+                        }
+                    }
+                }
+            }
+
             public void mouseReleased(final MouseEvent event) {
                 if (event.getButton() == MouseEvent.BUTTON3) {
                     final TreePath path = getPathForLocation(event.getX(), event.getY());
@@ -71,7 +99,10 @@ public class ObjectDependencyTree extends JTree{
         });
     }
 
-
+    public void selectElement(ObjectDependencyTreeNode treeNode) {
+        TreePath treePath = new TreePath(treeNode.getTreePath());
+        TreeUtil.selectPath(this, treePath);
+    }
 
     public class SelectObjectAction extends DumbAwareAction {
         private DBObjectRef<DBSchemaObject> objectRef;
@@ -99,6 +130,7 @@ public class ObjectDependencyTree extends JTree{
     }
 
     public void setDependencyType(ObjectDependencyType dependencyType) {
+        ObjectDependencyManager.getInstance(getModel().getProject()).setLastUserDependencyType(dependencyType);
         ObjectDependencyTreeModel oldModel = getModel();
         DBSchemaObject object = oldModel.getObject();
         Project project = oldModel.getProject();
@@ -148,6 +180,7 @@ public class ObjectDependencyTree extends JTree{
                 }
 
                 append(object.getName(), regularAttributes);
+                SpeedSearchUtil.applySpeedSearchHighlighting(tree, this, true, selected);
             } else {
                 setIcon(LoadIcon.INSTANCE);
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
@@ -159,4 +192,19 @@ public class ObjectDependencyTree extends JTree{
             return isFocused();
         }
     }
+
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public void dispose() {
+        disposed = true;
+        speedSearch = null;
+    }
+
+
 }
