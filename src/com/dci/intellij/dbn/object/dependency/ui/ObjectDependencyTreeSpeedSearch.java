@@ -4,7 +4,9 @@ import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
@@ -60,10 +62,22 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         return (ObjectDependencyTree) super.getComponent();
     }
 
+    @Nullable
     protected String getElementText(Object o) {
         ObjectDependencyTreeNode treeNode = (ObjectDependencyTreeNode) o;
         DBObject object = treeNode.getObject();
-        return object == null ? "" : object.getName();
+
+        ObjectDependencyTreeNode rootNode = treeNode.getModel().getRoot();
+        DBObject rootObject = rootNode.getObject();
+        if (rootObject != null && object != null) {
+            if (CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
+                return object.getName();
+            } else {
+                return object.getSchema().getName() + "." + object.getName();
+            }
+        }
+
+        return null;
     }
 
     protected void selectElement(Object o, String s) {
