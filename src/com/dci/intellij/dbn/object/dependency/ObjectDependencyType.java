@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum ObjectDependencyType implements Presentable{
-    OUTGOING("Outgoing references (objects depending on this)"),
-    INCOMING("Incoming references (objects this depends on)");
+    INCOMING("Incoming references (objects used by this)"),
+    OUTGOING("Outgoing references (objects using this)");
 
     private String name;
 

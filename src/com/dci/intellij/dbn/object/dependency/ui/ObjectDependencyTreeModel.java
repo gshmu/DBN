@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -7,15 +15,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     private Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
@@ -45,14 +45,14 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     }
 
     @Override
-    public Object getRoot() {
+    public ObjectDependencyTreeNode getRoot() {
         return root;
     }
 
     @Override
     public Object getChild(Object parent, int index) {
         List<ObjectDependencyTreeNode> children = getChildren(parent);
-        if (children.size() <= index) throw new ProcessCanceledException();
+        if (children.size() <= index) throw new AlreadyDisposedException();
         return children.get(index);
     }
 

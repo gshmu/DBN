@@ -1,25 +1,38 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.event.MouseEvent;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.load.LoadIcon;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPopupMenu;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 
 public class ObjectDependencyTree extends JTree{
 
     public ObjectDependencyTree(Project project, DBSchemaObject schemaObject) {
-        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, ObjectDependencyType.OUTGOING);
+        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, ObjectDependencyType.INCOMING);
         setModel(model);
         setCellRenderer(new CellRenderer());
         addTreeSelectionListener(new TreeSelectionListener() {
@@ -29,10 +42,64 @@ public class ObjectDependencyTree extends JTree{
                 repaint();
             }
         });
+
+        addMouseListener(new MouseInputAdapter() {
+            public void mouseReleased(final MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON3) {
+                    final TreePath path = getPathForLocation(event.getX(), event.getY());
+                    if (path != null) {
+                        final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
+                        DefaultActionGroup actionGroup = new DefaultActionGroup();
+                        if (node != null) {
+                            ObjectDependencyTreeNode rootNode = (ObjectDependencyTreeNode) node.getModel().getRoot();
+                            DBObject object = node.getObject();
+                            if (object instanceof DBSchemaObject && !CommonUtil.safeEqual(rootNode.getObject(), object)) {
+                                actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
+                            }
+                        }
+
+                        ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+                        final JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                        new SimpleLaterInvocator() {
+                            public void execute() {
+                                popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
+                            }
+                        }.start();
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    public class SelectObjectAction extends DumbAwareAction {
+        private DBObjectRef<DBSchemaObject> objectRef;
+        public SelectObjectAction(DBSchemaObject object) {
+            super("Select");
+            objectRef = DBObjectRef.from(object);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            DBSchemaObject schemaObject = DBObjectRef.get(objectRef);
+            if (schemaObject != null) {
+                setRootObject(schemaObject);
+            }
+        }
+
+        public void update(AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+            presentation.setText("Select");
+        }
+    }
+
+    @Override
+    public ObjectDependencyTreeModel getModel() {
+        return (ObjectDependencyTreeModel) super.getModel();
     }
 
     public void setDependencyType(ObjectDependencyType dependencyType) {
-        ObjectDependencyTreeModel oldModel = (ObjectDependencyTreeModel) getModel();
+        ObjectDependencyTreeModel oldModel = getModel();
         DBSchemaObject object = oldModel.getObject();
         Project project = oldModel.getProject();
         if (object != null && project != null && !project.isDisposed()) {
@@ -43,7 +110,7 @@ public class ObjectDependencyTree extends JTree{
     }
 
     public void setRootObject(DBSchemaObject object) {
-        ObjectDependencyTreeModel oldModel = (ObjectDependencyTreeModel) getModel();
+        ObjectDependencyTreeModel oldModel = getModel();
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
         Project project = oldModel.getProject();
         if (project != null && !project.isDisposed()) {
@@ -82,13 +149,14 @@ public class ObjectDependencyTree extends JTree{
 
                 append(object.getName(), regularAttributes);
             } else {
+                setIcon(LoadIcon.INSTANCE);
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             }
         }
 
         @Override
         protected boolean shouldDrawBackground() {
-            return true;
+            return isFocused();
         }
     }
 }

@@ -41,6 +41,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = project;
         this.selectedConnection = selectedConnection;
+        this.selectedSchema = DBObjectRef.from(selectedSchema);
         objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
@@ -48,7 +49,7 @@ public class GoToDatabaseObjectModel implements ChooseByNameModel {
         String connectionIdentifier = selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler ?
                 "All Connections" :
                 selectedConnection.getName();
-        return "Enter database object name (" + connectionIdentifier + ")";
+        return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.getObjectName()) + ")";
     }
 
     public String getNotInMessage() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -34,6 +35,9 @@ public class ObjectDependencyTreeNode implements Disposable{
     }
 
     public ObjectDependencyTreeModel getModel() {
+        if (model == null && parent == null) {
+            throw new AlreadyDisposedException();
+        }
         return model == null ? getParent().getModel() : model;
     }
 
@@ -52,7 +56,7 @@ public class ObjectDependencyTreeNode implements Disposable{
                     protected void execute() {
                         //System.out.println(object == null ? null : object.getQualifiedName());
 
-                        List<ObjectDependencyTreeNode> loadedDependencies = new ArrayList<ObjectDependencyTreeNode>();
+                        List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
                         if (object instanceof DBSchemaObject) {
                             DBSchemaObject schemaObject = (DBSchemaObject) object;
                             List<DBObject> dependentObjects = loadDependencies(schemaObject);
@@ -65,12 +69,15 @@ public class ObjectDependencyTreeNode implements Disposable{
                                     }
 */
                                     ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
-                                    loadedDependencies.add(node);
+                                    newDependencies.add(node);
                                 }
                             }
                         }
 
-                        dependencies = loadedDependencies;
+                        List<ObjectDependencyTreeNode> oldDependencies = dependencies;
+                        dependencies = newDependencies;
+                        DisposerUtil.dispose(oldDependencies);
+
                         getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                     }
                 }.start();
