@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
@@ -62,7 +62,7 @@ public class EventManager implements ApplicationComponent{
     @NotNull
     public static <T> T notify(@Nullable Project project, Topic<T> topic) {
         if (project == null || project.isDisposed()) {
-            throw new ProcessCanceledException();
+            throw new AlreadyDisposedException();
         }
         MessageBus messageBus = project.getMessageBus();
         return messageBus.syncPublisher(topic);

@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.navigation.action;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -16,8 +20,10 @@ import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
 import com.intellij.ide.util.gotoByName.ChooseByNamePopupComponent;
+import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ModalityState;
@@ -31,7 +37,8 @@ import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
 
 public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAware {
-    private ConnectionHandler latestSelection; // todo move to data context
+    private String latestConnectionId = "";
+    private String latestSchemaName = "";
     private String latestUsedText;
     private String latestPredefinedText;
     private String latestClipboardText;
@@ -63,19 +70,25 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                 if (actionGroup.getChildrenCount() > 1) {
                     removeActionLock();
                     ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                            "Select connection for lookup",
+                            "Select Connection / Schema for Lookup",
                             actionGroup,
                             event.getDataContext(),
                             //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                            true,
+                            false,
                             true,
                             true,
                             null,
                             actionGroup.getChildrenCount(),
                             new Condition<AnAction>() {
                                 public boolean value(AnAction action) {
-                                    SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
-                                    return latestSelection == selectConnectionAction.connectionHandler;
+                                    if (action instanceof SelectConnectionAction) {
+                                        SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
+                                        return latestConnectionId.equals(selectConnectionAction.connectionHandler.getId());
+                                    } else if (action instanceof SelectSchemaAction) {
+                                        SelectSchemaAction selectSchemaAction = (SelectSchemaAction) action;
+                                        return latestSchemaName.equals(selectSchemaAction.schema.getName());
+                                    }
+                                    return false;
                                 }
                             });
 
@@ -114,19 +127,55 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
 
-    private class SelectConnectionAction extends AnAction{
+    private class SelectConnectionAction extends ActionGroup {
         private ConnectionHandler connectionHandler;
 
         private SelectConnectionAction(ConnectionHandler connectionHandler) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon());
             this.connectionHandler = connectionHandler;
+            setPopup(true);
+        }
+
+        @Override
+        public boolean canBePerformed(DataContext context) {
+            return true;
         }
 
         @Override
         public void actionPerformed(AnActionEvent e) {
             Project project = connectionHandler.getProject();
             showLookupPopup(e, project, connectionHandler, null);
-            latestSelection = connectionHandler;
+            latestConnectionId = connectionHandler.getId();
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            super.update(e);
+        }
+
+        @NotNull
+        @Override
+        public AnAction[] getChildren(AnActionEvent e) {
+            List<SelectSchemaAction> schemaActions = new ArrayList<SelectSchemaAction>();
+            for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
+                schemaActions.add(new SelectSchemaAction(schema));
+            }
+            return schemaActions.toArray(new AnAction[schemaActions.size()]);
+        }
+    }
+
+    private class SelectSchemaAction extends AnAction {
+        private DBSchema schema;
+        private SelectSchemaAction(DBSchema schema) {
+            super(schema.getName(), null, schema.getIcon());
+            this.schema = schema;
+        }
+
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+            Project project = schema.getProject();
+            showLookupPopup(e, project, schema.getConnectionHandler(), schema);
+            latestSchemaName = schema.getName();
         }
 
         @Override
@@ -134,6 +183,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             super.update(e);
         }
     }
+
 
     private void showLookupPopup(AnActionEvent e, Project project, ConnectionHandler connectionHandler, DBSchema selectedSchema) {
         if (connectionHandler == null) {
