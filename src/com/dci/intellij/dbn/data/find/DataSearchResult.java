@@ -220,10 +220,9 @@ public class DataSearchResult implements Disposable {
     @Override
     public void dispose() {
         DisposerUtil.dispose(matches);
+        DisposerUtil.dispose(selectedMatch);
         listeners.clear();
-        matches = null;
-        listeners = null;
-
+        selectedMatch = null;
     }
 
     public void startUpdating(long updateTimestamp) {

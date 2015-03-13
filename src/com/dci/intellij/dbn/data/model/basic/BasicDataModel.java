@@ -37,6 +37,8 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private List<T> rows = new ArrayList<T>();
     private Project project;
     private Filter<T> filter;
+    private RegionalSettings regionalSettings;
+
     private LazyValue<BasicDataListModel<T>> listModel = new LazyValue<BasicDataListModel<T>>(this) {
         @Override
         protected BasicDataListModel<T> load() {
@@ -44,8 +46,12 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         }
     };
 
-    private DataSearchResult searchResult;
-    private RegionalSettings regionalSettings;
+    private LazyValue<DataSearchResult> searchResult = new LazyValue<DataSearchResult>(this) {
+        @Override
+        protected DataSearchResult load() {
+            return new DataSearchResult();
+        }
+    };
 
     public BasicDataModel(Project project) {
         this.project = project;
@@ -291,17 +297,12 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     @Override
     public DataSearchResult getSearchResult() {
-        if (searchResult == null) {
-            searchResult = new DataSearchResult();
-
-            Disposer.register(this, searchResult);
-        }
-        return searchResult;
+        return searchResult.get();
     }
     
     @Override
     public boolean hasSearchResult() {
-        return searchResult != null && !searchResult.isEmpty();
+        return searchResult.isLoaded() && !searchResult.get().isEmpty();
     }
 
     @Override
