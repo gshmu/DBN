@@ -8,10 +8,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.MouseEvent;
-import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -27,11 +25,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.speedSearch.SpeedSearchUtil;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 
 public class ObjectDependencyTree extends JTree implements Disposable{
@@ -42,7 +35,7 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, dependencyType);
         setModel(model);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        setCellRenderer(new CellRenderer());
+        setCellRenderer(new ObjectDependencyTreeCellRenderer());
         addTreeSelectionListener(new TreeSelectionListener() {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
@@ -149,57 +142,6 @@ public class ObjectDependencyTree extends JTree implements Disposable{
             ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, object, dependencyType);
             setModel(model);
             Disposer.dispose(oldModel);
-        }
-    }
-
-    private class CellRenderer extends ColoredTreeCellRenderer {
-
-        @Override
-        public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) value;
-            DBObject object = node.getObject();
-
-            if (object != null) {
-                ObjectDependencyTreeNode selectedNode = (ObjectDependencyTreeNode) tree.getLastSelectedPathComponent();
-                boolean highlight = selectedNode != null && selectedNode != node && CommonUtil.safeEqual(object, selectedNode.getObject());
-
-                SimpleTextAttributes regularAttributes = highlight ?
-                        SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :
-                        SimpleTextAttributes.REGULAR_ATTRIBUTES;
-                SimpleTextAttributes grayAttributes = highlight ?
-                        SimpleTextAttributes.GRAY_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :
-                        SimpleTextAttributes.GRAY_ATTRIBUTES;
-
-                setIcon(object.getIcon());
-                setBackground(selected ? UIUtil.getTreeSelectionBackground() : regularAttributes.getBgColor());
-                //if (highlight) setBorder(new LineBorder(JBColor.red)); else setBorder(null);
-                boolean appendSchema = true;
-
-                ObjectDependencyTreeNode parentNode = node.getParent();
-                if (parentNode == null) {
-                    appendSchema = false;
-                } else {
-                    DBObject parentObject = parentNode.getObject();
-                    if (parentObject == null || CommonUtil.safeEqual(parentObject.getSchema(), object.getSchema())) {
-                        appendSchema = false;
-                    }
-                }
-
-                if (appendSchema) {
-                    append(object.getSchema().getName() + ".", grayAttributes);
-                }
-
-                append(object.getName(), regularAttributes);
-                SpeedSearchUtil.applySpeedSearchHighlighting(tree, this, true, selected);
-            } else {
-                setIcon(LoadIcon.INSTANCE);
-                append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
-            }
-        }
-
-        @Override
-        protected boolean shouldDrawBackground() {
-            return isFocused();
         }
     }
 

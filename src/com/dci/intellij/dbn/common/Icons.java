@@ -370,6 +370,8 @@ public class Icons {
 
     public static final Icon DBO_OUTGOING_REF                    = load("/img/object/OutgoingReference.png");
     public static final Icon DBO_INCOMING_REF                    = load("/img/object/IncomingReference.png");
+    public static final Icon DBO_OUTGOING_REF_SOFT               = load("/img/object/OutgoingRefSoft.png");
+    public static final Icon DBO_INCOMING_REF_SOFT               = load("/img/object/IncomingRefSoft.png");
 
     public static final Icon SB_FILTER_SERVER                    = load("/img/filter/SessionFilterServer.png");
     public static final Icon SB_FILTER_STATUS                    = load("/img/filter/SessionFilterStatus.png");
