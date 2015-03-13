@@ -1,9 +1,21 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
@@ -23,17 +35,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane datasetTableScrollPane;
@@ -42,10 +43,19 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private JPanel loadingIconPanel;
     private JPanel searchPanel;
     private AutoCommitLabel autoCommitLabel;
-    private DatasetEditorTable datasetEditorTable;
-    private DataSearchComponent dataSearchComponent;
 
+    private DatasetEditorTable datasetEditorTable;
     private DatasetEditor datasetEditor;
+
+    private LazyValue<DataSearchComponent> dataSearchComponent = new LazyValue<DataSearchComponent>(this) {
+        @Override
+        protected DataSearchComponent load() {
+            DataSearchComponent dataSearchComponent = new DataSearchComponent(DatasetEditorForm.this);
+            searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
+            return dataSearchComponent;
+        }
+    };
+
 
     public DatasetEditorForm(DatasetEditor datasetEditor) {
         super(datasetEditor.getProject());
@@ -160,6 +170,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         if (!isDisposed()) {
             super.dispose();
             datasetEditor = null;
+            datasetEditorTable = null;
         }
     }
 
@@ -179,14 +190,9 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         datasetEditorTable.cancelEditing();
         datasetEditorTable.clearSelection();
 
-        if (dataSearchComponent == null) {
-            dataSearchComponent = new DataSearchComponent(this);
-            searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
+        DataSearchComponent dataSearchComponent = this.dataSearchComponent.get();
+        dataSearchComponent.initializeFindModel();
 
-            Disposer.register(this, dataSearchComponent);
-        } else {
-            dataSearchComponent.initializeFindModel();
-        }
         if (searchPanel.isVisible()) {
             dataSearchComponent.getSearchField().selectAll();
         } else {
@@ -197,7 +203,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     public void hideSearchHeader() {
-        dataSearchComponent.resetFindModel();
+        dataSearchComponent.get().resetFindModel();
         searchPanel.setVisible(false);
         datasetEditorTable.revalidate();
         datasetEditorTable.repaint();
