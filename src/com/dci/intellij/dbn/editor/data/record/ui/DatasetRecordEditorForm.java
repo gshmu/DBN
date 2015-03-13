@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -16,17 +27,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDialog> {
     private JPanel actionsPanel;
@@ -235,7 +235,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         }
 
         public void actionPerformed(AnActionEvent e) {
-            if (row.getIndex() < row.getModel().getSize() -1) {
+            if (row.getIndex() < row.getModel().getRowCount() -1) {
                 int index = row.getIndex() + 1;
                 DatasetEditorModelRow nextRow = row.getModel().getRowAtIndex(index);
                 setRow(nextRow);
@@ -245,7 +245,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getSize() -1);
+            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
         }
     }
 
@@ -255,7 +255,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         }
 
         public void actionPerformed(AnActionEvent e) {
-            int index = row.getModel().getSize() - 1 ;
+            int index = row.getModel().getRowCount() - 1 ;
             DatasetEditorModelRow lastRow = row.getModel().getRowAtIndex(index);
             setRow(lastRow);
             row.getModel().getEditorTable().selectRow(index);
@@ -263,7 +263,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getSize() -1);
+            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
         }
     }
 

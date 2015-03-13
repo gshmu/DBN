@@ -101,7 +101,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 int selectedRow = getSelectedRow();
                 int keyCode = e.getKeyCode();
                 if (keyCode == KeyEvent.VK_DOWN) {
-                    if (selectedRow == getModel().getSize() - 1) {
+                    if (selectedRow == getModel().getRowCount() - 1) {
                         e.consume();
                         insertRow();
                     }
@@ -207,16 +207,6 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 data.remove(rowIndex);
                 notifyListeners(rowIndex, data.size() + 1, -1);
             }
-        }
-
-        @Override
-        public int getSize() {
-            return data.size();
-        }
-
-        @Override
-        public Object getElementAt(int index) {
-            return getValueAt(index, 0);
         }
     }
 }

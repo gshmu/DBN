@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
-import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.Color;
@@ -117,11 +116,6 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
             }
         }
     }
-
-    @Override public int getSize() {return 0;}
-    @Override public Object getElementAt(int index) {return null;}
-    @Override public void addListDataListener(ListDataListener listener) {}
-    @Override public void removeListDataListener(ListDataListener listener) {}
 
     /********************************************************
      *                    Disposable                        *

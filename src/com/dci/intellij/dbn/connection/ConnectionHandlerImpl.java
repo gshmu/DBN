@@ -59,7 +59,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
 
-    private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>() {
+    private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>(this) {
         @Override
         protected NavigationPsiCache load() {
             return new NavigationPsiCache(ConnectionHandlerImpl.this);

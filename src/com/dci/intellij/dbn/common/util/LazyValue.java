@@ -8,6 +8,11 @@ public abstract class LazyValue<T> implements Disposable{
     private T value;
     private boolean loaded = false;
     private boolean disposed = false;
+
+    public LazyValue(Disposable parent) {
+        Disposer.register(parent, this);
+    }
+
     public final synchronized T get(){
         if (!loaded && !disposed) {
             value = load();
