@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.util.HashSet;
@@ -10,14 +9,13 @@ import java.util.Set;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
-import com.intellij.openapi.Disposable;
 
 public abstract class DBNEditableTableModel implements DBNTableWithGutterModel {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private LazyValue<GutterListModel> listModel = new LazyValue<GutterListModel>(this) {
+    private LazyValue<DBNTableGutterModel> listModel = new LazyValue<DBNTableGutterModel>(this) {
         @Override
-        protected GutterListModel load() {
-            return new GutterListModel();
+        protected DBNTableGutterModel load() {
+            return new DBNTableGutterModel(DBNEditableTableModel.this);
         }
     };
 
@@ -30,7 +28,7 @@ public abstract class DBNEditableTableModel implements DBNTableWithGutterModel {
     }
 
     @Override
-    public synchronized ListModel getListModel() {
+    public ListModel getListModel() {
         return listModel.get();
     }
 
@@ -46,44 +44,10 @@ public abstract class DBNEditableTableModel implements DBNTableWithGutterModel {
 
         if (listModel.isLoaded()) {
             ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, firstRowIndex, lastRowIndex);
-            for (ListDataListener listDataListener : listModel.get().listeners) {
-                listDataListener.contentsChanged(listDataEvent);
-            }
+            listModel.get().notifyListeners(listDataEvent);
         }
     }
 
-    private class GutterListModel implements ListModel, Disposable {
-        private Set<ListDataListener> listeners = new HashSet<ListDataListener>();
-        @Override
-        public int getSize() {
-            return getRowCount();
-        }
-
-        @Override
-        public Object getElementAt(int index) {
-            return index;
-        }
-
-        @Override
-        public void addListDataListener(ListDataListener l) {
-            listeners.add(l);
-        }
-
-        @Override
-        public void removeListDataListener(ListDataListener l) {
-            listeners.remove(l);
-        }
-
-        @Override
-        public void dispose() {
-            listeners.clear();
-        }
-
-        public Set<ListDataListener> getListeners() {
-            return listeners;
-        }
-    }
-    
     /********************************************************
      *                    Disposable                        *
      ********************************************************/

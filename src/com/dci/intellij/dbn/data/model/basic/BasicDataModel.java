@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.util.ArrayList;
@@ -39,10 +38,10 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private Filter<T> filter;
     private RegionalSettings regionalSettings;
 
-    private LazyValue<BasicDataListModel<T>> listModel = new LazyValue<BasicDataListModel<T>>(this) {
+    private LazyValue<BasicDataGutterModel> listModel = new LazyValue<BasicDataGutterModel>(this) {
         @Override
-        protected BasicDataListModel<T> load() {
-            return new BasicDataListModel<T>(BasicDataModel.this);
+        protected BasicDataGutterModel load() {
+            return new BasicDataGutterModel(BasicDataModel.this);
         }
     };
 
@@ -61,10 +60,6 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     @Override
     public synchronized ListModel getListModel() {
         return listModel.get();
-    }
-
-    public BasicDataListModel<T> createListModel() {
-        return new BasicDataListModel<T>(this);
     }
 
     public RegionalSettings getRegionalSettings() {
@@ -231,9 +226,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         new ConditionalLaterInvocator() {
             public void execute() {
                 if (listModel.isLoaded()) {
-                    for (ListDataListener listDataListener : listModel.get().getListeners()) {
-                        listDataListener.contentsChanged(listDataEvent);
-                    }
+                    listModel.get().notifyListeners(listDataEvent);
                 }
 
                 for (TableModelListener tableModelListener: tableModelListeners) {
