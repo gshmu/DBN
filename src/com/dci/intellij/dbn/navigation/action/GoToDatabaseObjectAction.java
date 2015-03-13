@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -130,7 +131,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         private ConnectionHandler connectionHandler;
 
         private SelectConnectionAction(ConnectionHandler connectionHandler) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon());
+            super(NamingUtil.enhanceUnderscoresForDisplay(connectionHandler.getName()), null, connectionHandler.getIcon());
             this.connectionHandler = connectionHandler;
             setPopup(true);
         }
@@ -166,7 +167,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     private class SelectSchemaAction extends AnAction {
         private DBSchema schema;
         private SelectSchemaAction(DBSchema schema) {
-            super(schema.getName(), null, schema.getIcon());
+            super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
             this.schema = schema;
         }
 
