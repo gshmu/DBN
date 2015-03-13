@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -19,19 +32,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewerDialog> {
     private JPanel actionsPanel;
@@ -252,7 +252,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         public void actionPerformed(AnActionEvent e) {
-            if (row.getIndex() < row.getModel().getSize() -1) {
+            if (row.getIndex() < row.getModel().getRowCount() -1) {
                 int index = row.getIndex() + 1;
                 ResultSetDataModelRow nextRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
                 setRow(nextRow);
@@ -262,7 +262,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getSize() -1);
+            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
         }
     }
 
@@ -272,7 +272,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         public void actionPerformed(AnActionEvent e) {
-            int index = row.getModel().getSize() - 1 ;
+            int index = row.getModel().getRowCount() - 1 ;
             ResultSetDataModelRow lastRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
             setRow(lastRow);
             table.selectRow(index);
@@ -280,7 +280,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getSize() -1);
+            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
         }
     }
 

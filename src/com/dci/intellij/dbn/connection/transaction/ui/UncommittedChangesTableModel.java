@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import javax.swing.event.TableModelListener;
+
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.project.Project;
-
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelListener;
 
 public class UncommittedChangesTableModel implements DBNTableModel {
     private ConnectionHandler connectionHandler;
@@ -50,10 +49,6 @@ public class UncommittedChangesTableModel implements DBNTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
     public void addTableModelListener(TableModelListener l) {}
     public void removeTableModelListener(TableModelListener l) {}
-    @Override public int getSize() {return 0;}
-    @Override public Object getElementAt(int index) {return null;}
-    @Override public void addListDataListener(ListDataListener l) {}
-    @Override public void removeListDataListener(ListDataListener l) {}
 
     /********************************************************
      *                    Disposable                        *

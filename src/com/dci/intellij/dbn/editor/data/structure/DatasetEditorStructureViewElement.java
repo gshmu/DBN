@@ -96,7 +96,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
             DatasetEditorTable table = datasetEditor.getEditorTable();
             table.cancelEditing();
             DatasetEditorModel model = table.getModel();
-            if (treeNode instanceof DBColumn &&  model.getSize() > 0) {
+            if (treeNode instanceof DBColumn &&  model.getRowCount() > 0) {
                 DBColumn column = (DBColumn) treeNode;
                 int modelColumnIndex = model.getHeader().indexOfColumn(column);
                 int tableColumnIndex = table.convertColumnIndexToView(modelColumnIndex);

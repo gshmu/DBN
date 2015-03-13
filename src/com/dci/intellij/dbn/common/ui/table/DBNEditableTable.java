@@ -18,7 +18,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
 
-public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTable<T> {
+public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
 
     public DBNEditableTable(Project project, T model, boolean showHeader) {
         super(project, model, showHeader);
