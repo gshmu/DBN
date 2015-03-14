@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.browser.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -33,7 +35,7 @@ public class AutoscrollFromEditorAction extends ToggleAction implements DumbAwar
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         e.getPresentation().setText("Autoscroll from Editor");
     }

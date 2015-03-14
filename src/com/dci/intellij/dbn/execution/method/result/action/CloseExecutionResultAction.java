@@ -19,7 +19,7 @@ public class CloseExecutionResultAction extends MethodExecutionResultAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         MethodExecutionResult executionResult = getExecutionResult();
-        if (executionResult != null) {
+        if (project != null && executionResult != null) {
             ExecutionManager.getInstance(project).removeResultTab(executionResult);
         }
     }

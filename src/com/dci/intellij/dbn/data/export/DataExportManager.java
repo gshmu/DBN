@@ -34,7 +34,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         super(project);
     }
 
-    public static DataExportManager getInstance(Project project) {
+    public static DataExportManager getInstance(@NotNull Project project) {
         return project.getComponent(DataExportManager.class);
     }
 

@@ -17,12 +17,14 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
-        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-        MethodExecutionResult executionResult = getExecutionResult();
-        if (executionResult != null) {
-            MethodExecutionInput executionInput = executionResult.getExecutionInput();
-            if (executionManager.promptExecutionDialog(executionInput, false)) {
-                executionManager.execute(executionInput);
+        if (project != null) {
+            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+            MethodExecutionResult executionResult = getExecutionResult();
+            if (executionResult != null) {
+                MethodExecutionInput executionInput = executionResult.getExecutionInput();
+                if (executionManager.promptExecutionDialog(executionInput, false)) {
+                    executionManager.execute(executionInput);
+                }
             }
         }
     }

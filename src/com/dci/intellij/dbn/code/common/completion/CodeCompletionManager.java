@@ -49,7 +49,7 @@ public class CodeCompletionManager extends AbstractProjectComponent implements P
         //intentionManager.addAction(new SetupCodeCompletionIntentionAction());
     }
 
-    public static CodeCompletionManager getInstance(Project project) {
+    public static CodeCompletionManager getInstance(@NotNull Project project) {
         return project.getComponent(CodeCompletionManager.class);
     }
 

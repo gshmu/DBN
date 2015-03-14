@@ -61,7 +61,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         super(project);
     }
 
-    public static SessionBrowserManager getInstance(Project project) {
+    public static SessionBrowserManager getInstance(@NotNull Project project) {
         return project.getComponent(SessionBrowserManager.class);
     }
 

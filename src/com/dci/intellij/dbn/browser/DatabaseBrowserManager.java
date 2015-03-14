@@ -156,7 +156,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     /***************************************
      *            ProjectComponent         *
      ***************************************/
-    public static DatabaseBrowserManager getInstance(Project project) {
+    public static DatabaseBrowserManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseBrowserManager.class);
     }
 

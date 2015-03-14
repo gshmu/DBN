@@ -81,7 +81,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-    public static StatementExecutionManager getInstance(Project project) {
+    public static StatementExecutionManager getInstance(@NotNull Project project) {
         return project.getComponent(StatementExecutionManager.class);
     }
 

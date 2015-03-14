@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -16,14 +15,14 @@ public class FailsafeUtil {
 
     public static @NotNull <T extends Disposable> T get(@Nullable T disposable) {
         if (disposable == null || disposable.isDisposed()) {
-            throw new ProcessCanceledException();
+            throw new AlreadyDisposedException();
         }
         return disposable;
     }
 
     public static @NotNull Project nvl(@Nullable Project project) {
         if (project == null) return DUMMY_PROJECT;
-        if (project.isDisposed()) throw new ProcessCanceledException();
+        if (project.isDisposed()) throw new AlreadyDisposedException();
         return project;
     }
 

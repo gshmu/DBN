@@ -17,7 +17,7 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
         super(project);
     }
 
-    public static CodeEditorSettings getInstance(Project project) {
+    public static CodeEditorSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getCodeEditorSettings();
     }
 

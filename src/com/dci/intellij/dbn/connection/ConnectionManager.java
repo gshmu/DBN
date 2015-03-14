@@ -58,7 +58,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private final ConnectionSettingsListener connectionSettingsListener;
     private Timer idleConnectionCleaner;
 
-    public static ConnectionManager getInstance(Project project) {
+    public static ConnectionManager getInstance(@NotNull Project project) {
         return project.getComponent(ConnectionManager.class);
     }
 

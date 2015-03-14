@@ -280,6 +280,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         throw new UnsupportedOperationException(ERR);
     }
 
+    @NotNull
     protected VirtualFile createChildFile(Object o, @NotNull VirtualFile virtualFile, @NotNull String s) throws IOException {
         throw new UnsupportedOperationException(ERR);
     }
@@ -289,6 +290,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         throw new UnsupportedOperationException(ERR);
     }
 
+    @NotNull
     protected VirtualFile copyFile(Object o, @NotNull VirtualFile virtualFile, @NotNull VirtualFile virtualFile1, @NotNull String s) throws IOException {
         throw new UnsupportedOperationException(ERR);
     }

@@ -44,7 +44,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         projectSettings = new ProjectSettings(project);
     }
 
-    public static ProjectSettingsManager getInstance(Project project) {
+    public static ProjectSettingsManager getInstance(@NotNull Project project) {
         return project.getComponent(ProjectSettingsManager.class);
     }
 

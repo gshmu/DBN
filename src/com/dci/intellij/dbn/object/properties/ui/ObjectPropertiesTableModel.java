@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +45,6 @@ public class ObjectPropertiesTableModel implements DBNTableModel {
     @Override public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
     @Override public void addTableModelListener(TableModelListener l) {}
     @Override public void removeTableModelListener(TableModelListener l) {}
-    @Override public int getSize() { return 0;}
-    @Override public Object getElementAt(int index) {return null;}
-    @Override public void addListDataListener(ListDataListener l) {}
-    @Override public void removeListDataListener(ListDataListener l) {}
 
     /********************************************************
      *                    Disposable                        *
@@ -64,6 +59,7 @@ public class ObjectPropertiesTableModel implements DBNTableModel {
     @Override
     public void dispose() {
         if (!disposed) {
+            disposed = true;
             presentableProperties.clear();
         }
     }

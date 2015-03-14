@@ -43,6 +43,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         }
     };
 
+    @NotNull
     @Override
     public Key<SourceCodeLoadErrorNotificationPanel> getKey() {
         return KEY;
@@ -50,7 +51,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
 
     @Nullable
     @Override
-    public SourceCodeLoadErrorNotificationPanel createNotificationPanel(VirtualFile virtualFile, FileEditor fileEditor) {
+    public SourceCodeLoadErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof SourceCodeEditor) {
                 DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;

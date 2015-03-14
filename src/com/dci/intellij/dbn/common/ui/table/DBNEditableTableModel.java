@@ -1,15 +1,23 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class DBNEditableTableModel implements DBNTableModel {
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
+
+public abstract class DBNEditableTableModel implements DBNTableWithGutterModel {
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private Set<ListDataListener> listDataListeners = new HashSet<ListDataListener>();
+    private LazyValue<DBNTableGutterModel> listModel = new LazyValue<DBNTableGutterModel>(this) {
+        @Override
+        protected DBNTableGutterModel load() {
+            return new DBNTableGutterModel(DBNEditableTableModel.this);
+        }
+    };
 
     public void addTableModelListener(TableModelListener listener) {
         tableModelListeners.add(listener);
@@ -20,13 +28,8 @@ public abstract class DBNEditableTableModel implements DBNTableModel {
     }
 
     @Override
-    public void addListDataListener(ListDataListener listener) {
-        listDataListeners.add(listener);
-    }
-
-    @Override
-    public void removeListDataListener(ListDataListener listener) {
-        listDataListeners.remove(listener);
+    public ListModel getListModel() {
+        return listModel.get();
     }
 
     public abstract void insertRow(int rowIndex);
@@ -39,12 +42,12 @@ public abstract class DBNEditableTableModel implements DBNTableModel {
             listener.tableChanged(modelEvent);
         }
 
-        ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, firstRowIndex, lastRowIndex);
-        for (ListDataListener listDataListener : listDataListeners) {
-            listDataListener.contentsChanged(listDataEvent);
+        if (listModel.isLoaded()) {
+            ListDataEvent listDataEvent = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, firstRowIndex, lastRowIndex);
+            listModel.get().notifyListeners(listDataEvent);
         }
     }
-    
+
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
@@ -58,6 +61,7 @@ public abstract class DBNEditableTableModel implements DBNTableModel {
     public void dispose() {
         if (!disposed) {
             disposed = true;
+            DisposerUtil.dispose(listModel);
             tableModelListeners.clear();
         }
     }

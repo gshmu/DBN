@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.browser;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.openapi.project.DumbAware;
@@ -12,7 +14,7 @@ import com.intellij.ui.content.ContentFactoryImpl;
 
 public class DatabaseBrowserToolWindowFactory implements ToolWindowFactory, DumbAware{
     @Override
-    public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         BrowserToolWindowForm toolWindowForm = DatabaseBrowserManager.getInstance(project).getToolWindowForm();
         ContentFactory contentFactory = new ContentFactoryImpl();
         Content content = contentFactory.createContent(toolWindowForm.getComponent(), null, false);
