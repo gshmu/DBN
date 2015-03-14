@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.Nullable;
 
-public class ObjectDependencyTreeNode implements Disposable{
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class ObjectDependencyTreeNode implements Disposable {
     private DBObjectRef<DBObject> objectRef;
     private List<ObjectDependencyTreeNode> dependencies;
     private ObjectDependencyTreeModel model;
@@ -46,42 +47,48 @@ public class ObjectDependencyTreeNode implements Disposable{
     }
 
     public synchronized List<ObjectDependencyTreeNode> getChildren(boolean load) {
-        final DBObject object = getObject();
+        if (objectRef == null)  {
+            return Collections.emptyList();
+        }
+
         if (dependencies == null && load) {
-            dependencies = new ArrayList<ObjectDependencyTreeNode>();
-            if (!isRecursive(object)) {
+            DBObject object = getObject();
+            if (isDisposed() || object == null || isRecursive(object)) {
+                dependencies = Collections.emptyList();
+            } else {
+                dependencies = new ArrayList<ObjectDependencyTreeNode>();
                 dependencies.add(new ObjectDependencyTreeNode(this, null));
                 new SimpleBackgroundTask("load dependencies") {
                     @Override
                     protected void execute() {
-                        //System.out.println(object == null ? null : object.getQualifiedName());
-
-                        List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
-                        if (object instanceof DBSchemaObject) {
+                        DBObject object = getObject();
+                        if (object != null && object instanceof DBSchemaObject) {
+                            List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
                             DBSchemaObject schemaObject = (DBSchemaObject) object;
                             List<DBObject> dependentObjects = loadDependencies(schemaObject);
 
                             if (dependentObjects != null) {
                                 for (DBObject dependentObject : dependentObjects) {
 /*
-                                    if (dependentObject instanceof DBSchemaObject) {
-                                        loadDependencies((DBSchemaObject) dependentObject);
-                                    }
+                                if (dependentObject instanceof DBSchemaObject) {
+                                    loadDependencies((DBSchemaObject) dependentObject);
+                                }
 */
                                     ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
                                     newDependencies.add(node);
                                 }
                             }
+
+                            List<ObjectDependencyTreeNode> oldDependencies = dependencies;
+                            dependencies = newDependencies;
+                            DisposerUtil.dispose(oldDependencies);
+
+                            getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
-
-                        List<ObjectDependencyTreeNode> oldDependencies = dependencies;
-                        dependencies = newDependencies;
-                        DisposerUtil.dispose(oldDependencies);
-
-                        getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                     }
                 }.start();
             }
+
         }
         return dependencies;
     }
@@ -95,12 +102,14 @@ public class ObjectDependencyTreeNode implements Disposable{
     }
 
     boolean isRecursive(DBObject object) {
-        ObjectDependencyTreeNode parent = getParent();
-        while (parent != null) {
-            if (object != null && object.equals(parent.getObject())) {
-                return true;
+        if (object != null) {
+            ObjectDependencyTreeNode parent = getParent();
+            while (parent != null) {
+                if (object.equals(parent.getObject())) {
+                    return true;
+                }
+                parent = parent.getParent();
             }
-            parent = parent.getParent();
         }
         return false;
     }
@@ -121,5 +130,10 @@ public class ObjectDependencyTreeNode implements Disposable{
         DisposerUtil.dispose(dependencies);
         model = null;
         parent = null;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return parent == null && model == null;
     }
 }
