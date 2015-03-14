@@ -8,15 +8,18 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.FileViewProviderFactory;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
 
 public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
+    @NotNull
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, Language language, @NotNull PsiManager manager, boolean eventSystemEnabled) {
 
         return file instanceof DBObjectVirtualFile ||
                 file instanceof DBConsoleVirtualFile ||
                 file instanceof DBSourceCodeVirtualFile ||
                 (file instanceof LightVirtualFile && file.getFileType() instanceof DBLanguageFileType) ?
-                new DatabaseFileViewProvider(manager, file, eventSystemEnabled, language) : null;
+                new DatabaseFileViewProvider(manager, file, eventSystemEnabled, language) :
+                new SingleRootFileViewProvider(manager, file);
     }
 }

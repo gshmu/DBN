@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -25,7 +27,7 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
         if (datasetEditor != null) datasetEditor.setReadonly(selected);
     }
 
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         DatasetEditor datasetEditor = getDatasetEditor(e);
         Presentation presentation = e.getPresentation();

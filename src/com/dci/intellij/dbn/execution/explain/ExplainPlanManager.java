@@ -30,7 +30,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
         //EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
-    public static ExplainPlanManager getInstance(Project project) {
+    public static ExplainPlanManager getInstance(@NotNull Project project) {
         return project.getComponent(ExplainPlanManager.class);
     }
 

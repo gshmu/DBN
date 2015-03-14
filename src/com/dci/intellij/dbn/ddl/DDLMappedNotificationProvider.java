@@ -92,6 +92,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
         }
     };
 
+    @NotNull
     @Override
     public Key<DDLMappedNotificationPanel> getKey() {
         return KEY;

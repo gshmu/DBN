@@ -35,7 +35,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         super(project);
     }
 
-    public static DatabaseCompilerManager getInstance(Project project) {
+    public static DatabaseCompilerManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseCompilerManager.class);
     }
 

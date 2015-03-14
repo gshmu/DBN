@@ -215,7 +215,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     }
 
     @Override
-    public int compareTo(DBConsoleVirtualFile o) {
+    public int compareTo(@NotNull DBConsoleVirtualFile o) {
         return name.compareTo(o.name);
     }
 

@@ -4,16 +4,21 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum ObjectDependencyType implements Presentable{
-    OUTGOING("Outgoing references (objects depending on this)"),
-    INCOMING("Incoming references (objects this depends on)");
+    INCOMING("Incoming references (objects used by this)", Icons.DBO_INCOMING_REF, Icons.DBO_INCOMING_REF_SOFT),
+    OUTGOING("Outgoing references (objects using this)", Icons.DBO_OUTGOING_REF, Icons.DBO_OUTGOING_REF_SOFT);
 
     private String name;
+    private Icon icon;
+    private Icon softIcon;
 
-    ObjectDependencyType(String name) {
+    ObjectDependencyType(String name, Icon icon, Icon softIcon) {
         this.name = name;
+        this.icon = icon;
+        this.softIcon = softIcon;
     }
 
     @NotNull
@@ -25,8 +30,10 @@ public enum ObjectDependencyType implements Presentable{
     @Nullable
     @Override
     public Icon getIcon() {
-        return null;
+        return icon;
     }
 
-
+    public Icon getSoftIcon() {
+        return softIcon;
+    }
 }

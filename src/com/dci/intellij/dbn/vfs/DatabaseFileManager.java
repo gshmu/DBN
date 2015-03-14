@@ -52,7 +52,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         super(project);
         sessionId = UUID.randomUUID().toString();
     }
-    public static DatabaseFileManager getInstance(Project project) {
+    public static DatabaseFileManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseFileManager.class);
     }
 

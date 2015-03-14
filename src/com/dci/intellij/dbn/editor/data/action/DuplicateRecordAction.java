@@ -36,7 +36,7 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
                 int[] selectedrows =
                         editorTable == null ? null :
                         editorTable.getSelectedRows();
-                presentation.setEnabled(selectedrows != null && selectedrows.length == 1 && selectedrows[0] < editorTable.getModel().getSize());
+                presentation.setEnabled(selectedrows != null && selectedrows.length == 1 && selectedrows[0] < editorTable.getModel().getRowCount());
             }
         }
     }

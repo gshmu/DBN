@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.object.action;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.action.CompileActionGroup;
@@ -16,8 +14,10 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
-import com.dci.intellij.dbn.object.dependency.action.DependenciesActionGroup;
+import com.dci.intellij.dbn.object.dependency.action.ObjectDependencyTreeAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+
+import java.util.List;
 
 public class ObjectActionGroup extends DefaultActionGroup {
 
@@ -71,7 +71,7 @@ public class ObjectActionGroup extends DefaultActionGroup {
 
             if(properties.is(DBObjectProperty.REFERENCEABLE) && DatabaseFeature.OBJECT_DEPENDENCIES.isSupported(object)) {
                 addSeparator();
-                add (new DependenciesActionGroup((DBSchemaObject) object));
+                add (new ObjectDependencyTreeAction((DBSchemaObject) object));
             }
         }
 

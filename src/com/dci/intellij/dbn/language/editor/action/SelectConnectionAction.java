@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -14,7 +16,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
 
 public class SelectConnectionAction extends DumbAwareAction {
     private final ConnectionHandler connectionHandler;
@@ -36,7 +37,6 @@ public class SelectConnectionAction extends DumbAwareAction {
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         boolean enabled = true;
-        Project project = ActionUtil.getProject(e);
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             enabled = false;

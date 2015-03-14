@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -18,7 +19,6 @@ import java.awt.Font;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableColors;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -60,8 +60,8 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         BasicTableGutter tableGutter = (BasicTableGutter) list;
-        DatasetEditorModel model = (DatasetEditorModel) list.getModel();
-        DatasetEditorModelRow row = model.getRowAtIndex(index);
+        ListModel model = list.getModel();
+        DatasetEditorModelRow row = (DatasetEditorModelRow) model.getElementAt(index);
         DatasetEditorTable table = (DatasetEditorTable) tableGutter.getTable();
         if (row != null) {
             Icon icon =

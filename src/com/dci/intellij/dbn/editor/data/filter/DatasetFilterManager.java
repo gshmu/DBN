@@ -169,7 +169,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         return filterGroup;
     }
 
-    public static DatasetFilterManager getInstance(Project project) {
+    public static DatasetFilterManager getInstance(@NotNull Project project) {
         return project.getComponent(DatasetFilterManager.class);
     }
 

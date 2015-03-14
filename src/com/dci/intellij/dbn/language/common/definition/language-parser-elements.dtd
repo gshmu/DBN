@@ -35,6 +35,7 @@
         version CDATA #IMPLIED
         optional (true | false) #IMPLIED
         exit (true | false) #IMPLIED
+        attributes CDATA #IMPLIED
         begin-token CDATA #IMPLIED
         end-token CDATA #IMPLIED
         template (PARENTHESES | BEGIN_END | BRACKETS) #IMPLIED
@@ -82,12 +83,13 @@
         exit (true | false) #IMPLIED
         wrapping-template (PARENTHESES) #IMPLIED
         elements-count CDATA #IMPLIED
+        min-iterations CDATA #IMPLIED
         formatting-wrap (NORMAL | ALWAYS | IF_LONG ) #IMPLIED
         formatting-indent (NORMAL | CONTINUE | NONE | ABSOLUTE_NONE) #IMPLIED
         formatting-spacing-before (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
         formatting-spacing-after (NO_SPACE | ONE_SPACE | ONE_LINE) #IMPLIED
         original-name CDATA #IMPLIED>
-<!ELEMENT one-of (token|element|sequence|iteration|wrapper|qualified-identifier|object-ref|alias-ref|alias-def|variable-ref|variable-def|exec-variable)*>
+<!ELEMENT one-of (token|element|sequence|iteration|wrapper|qualified-identifier|object-ref|object-def|alias-ref|alias-def|variable-ref|variable-def|exec-variable)*>
 <!ATTLIST one-of
         id ID #REQUIRED
         attributes CDATA #IMPLIED
@@ -115,7 +117,8 @@
         type CDATA #REQUIRED
         attributes CDATA #IMPLIED
         optional (true | false) #IMPLIED
-        original-name CDATA #IMPLIED>
+        original-name CDATA #IMPLIED
+        underlying-object-resolver CDATA #IMPLIED>
 <!ELEMENT object-ref (#PCDATA)>
 <!ATTLIST object-ref
         id ID #REQUIRED
@@ -153,7 +156,8 @@
         type CDATA #REQUIRED
         attributes CDATA #IMPLIED
         optional (true | false) #IMPLIED
-        original-name CDATA #IMPLIED>
+        original-name CDATA #IMPLIED
+        underlying-object-resolver CDATA #IMPLIED>
 <!ELEMENT block (element)*>
 <!ATTLIST block
         id ID #REQUIRED

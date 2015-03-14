@@ -114,7 +114,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             return null;
         }
         list.setStringValues(stringValues);
-        if (list.getModel().getSize() > 0) {
+        if (list.getModel().getRowCount() > 0) {
             list.selectCell(0,0);
         }
 

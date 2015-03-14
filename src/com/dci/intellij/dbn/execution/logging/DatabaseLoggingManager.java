@@ -25,7 +25,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         super(project);
     }
 
-    public static DatabaseLoggingManager getInstance(Project project) {
+    public static DatabaseLoggingManager getInstance(@NotNull Project project) {
         return project.getComponent(DatabaseLoggingManager.class);
     }
 

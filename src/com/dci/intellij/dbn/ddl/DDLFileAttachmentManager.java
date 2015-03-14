@@ -336,7 +336,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     /***************************************
      *            ProjectComponent         *
      ***************************************/
-    public static DDLFileAttachmentManager getInstance(Project project) {
+    public static DDLFileAttachmentManager getInstance(@NotNull Project project) {
         return project.getComponent(DDLFileAttachmentManager.class);
     }
 

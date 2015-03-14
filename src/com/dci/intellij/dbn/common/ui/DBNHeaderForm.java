@@ -32,6 +32,10 @@ public class DBNHeaderForm extends DBNFormImpl{
     }
 
     public DBNHeaderForm(DBObject object) {
+        update(object);
+    }
+
+    public void update(DBObject object) {
         Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
 

@@ -22,7 +22,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
         environmentSettings = new EnvironmentSettings(project);
     }
 
-    public static GeneralProjectSettings getInstance(Project project) {
+    public static GeneralProjectSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getGeneralSettings();
     }
 

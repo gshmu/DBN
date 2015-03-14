@@ -1,10 +1,22 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import javax.swing.ListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModel;
@@ -15,36 +27,40 @@ import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private DataModelHeader header;
     private DataModelState state;
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private Set<ListDataListener> listDataListeners = new HashSet<ListDataListener>();
     private Set<DataModelListener> dataModelListeners = new HashSet<DataModelListener>();
     private List<T> rows = new ArrayList<T>();
     private Project project;
     private Filter<T> filter;
+    private RegionalSettings regionalSettings;
 
-    private DataSearchResult searchResult;
-    RegionalSettings regionalSettings;
+    private LazyValue<BasicDataGutterModel> listModel = new LazyValue<BasicDataGutterModel>(this) {
+        @Override
+        protected BasicDataGutterModel load() {
+            return new BasicDataGutterModel(BasicDataModel.this);
+        }
+    };
+
+    private LazyValue<DataSearchResult> searchResult = new LazyValue<DataSearchResult>(this) {
+        @Override
+        protected DataSearchResult load() {
+            return new DataSearchResult();
+        }
+    };
 
     public BasicDataModel(Project project) {
         this.project = project;
         this.regionalSettings = RegionalSettings.getInstance(project);
     }
 
+    @Override
+    public synchronized ListModel getListModel() {
+        return listModel.get();
+    }
 
     public RegionalSettings getRegionalSettings() {
         return regionalSettings;
@@ -209,8 +225,8 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private void notifyListeners(final ListDataEvent listDataEvent, final TableModelEvent event) {
         new ConditionalLaterInvocator() {
             public void execute() {
-                for (ListDataListener listDataListener : listDataListeners) {
-                    listDataListener.contentsChanged(listDataEvent);
+                if (listModel.isLoaded()) {
+                    listModel.get().notifyListeners(listDataEvent);
                 }
 
                 for (TableModelListener tableModelListener: tableModelListeners) {
@@ -222,25 +238,6 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
                 }
             }
         }.start();
-    }
-
-    /*********************************************************
-     *                   ListModel (for gutter)              *
-     *********************************************************/
-    public int getSize() {
-        return getRowCount();
-    }
-
-    public Object getElementAt(int index) {
-        return getRowAtIndex(index);
-    }
-
-    public void addListDataListener(ListDataListener l) {
-        listDataListeners.add(l);
-    }
-
-    public void removeListDataListener(ListDataListener l) {
-        listDataListeners.remove(l);
     }
 
     /*********************************************************
@@ -293,17 +290,12 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     @Override
     public DataSearchResult getSearchResult() {
-        if (searchResult == null) {
-            searchResult = new DataSearchResult();
-
-            Disposer.register(this, searchResult);
-        }
-        return searchResult;
+        return searchResult.get();
     }
     
     @Override
     public boolean hasSearchResult() {
-        return searchResult != null && !searchResult.isEmpty();
+        return searchResult.isLoaded() && !searchResult.get().isEmpty();
     }
 
     @Override
@@ -327,7 +319,6 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             DisposerUtil.dispose(rows);
             header = null;
             tableModelListeners.clear();
-            listDataListeners.clear();
             searchResult = null;
             regionalSettings = null;
             project = null;

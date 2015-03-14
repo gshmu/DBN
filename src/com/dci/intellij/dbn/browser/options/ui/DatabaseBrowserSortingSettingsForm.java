@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.browser.options.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
@@ -13,15 +22,6 @@ import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<DatabaseBrowserSortingSettings> {
     private JPanel mainPanel;
@@ -169,17 +169,6 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         @Override
         public void removeRow(int rowIndex) {
             throw new UnsupportedOperationException("Row mutation not supported");
-        }
-
-
-        @Override
-        public int getSize() {
-            return comparators.size();
-        }
-
-        @Override
-        public Object getElementAt(int index) {
-            return comparators.get(index);
         }
     }
 }

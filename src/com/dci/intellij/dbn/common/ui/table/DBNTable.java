@@ -44,7 +44,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private Timer scrollTimer;
 
 
-    public DBNTable(Project project, DBNTableModel tableModel, boolean showHeader) {
+    public DBNTable(Project project, T tableModel, boolean showHeader) {
         super(tableModel);
         this.project = project;
         setGridColor(GRID_COLOR);

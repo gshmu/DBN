@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -79,7 +80,7 @@ public class Formatter {
         integerFormat.setMaximumFractionDigits(0);
     }
 
-    public static Formatter getInstance(Project project) {
+    public static Formatter getInstance(@NotNull Project project) {
         return RegionalSettings.getInstance(project).getFormatter();
     }
 

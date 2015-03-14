@@ -4,6 +4,7 @@ import javax.swing.Icon;
 import java.awt.Color;
 import java.util.UUID;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
@@ -72,6 +73,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         return id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }

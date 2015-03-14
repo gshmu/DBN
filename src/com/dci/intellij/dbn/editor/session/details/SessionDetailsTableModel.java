@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.session.details;
 
-import javax.swing.event.ListDataListener;
 import javax.swing.event.TableModelListener;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,17 +63,6 @@ public class SessionDetailsTableModel implements DBNTableModel {
     }
 
     @Override
-    public int getSize() {
-        return 0;
-    }
-
-    @Override
-    public Object getElementAt(int index) {
-        return null;
-    }
-
-
-    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
             switch (rowIndex) {
@@ -108,16 +96,6 @@ public class SessionDetailsTableModel implements DBNTableModel {
 
     @Override
     public void removeTableModelListener(TableModelListener l) {
-
-    }
-
-    @Override
-    public void addListDataListener(ListDataListener l) {
-
-    }
-
-    @Override
-    public void removeListDataListener(ListDataListener l) {
 
     }
 
