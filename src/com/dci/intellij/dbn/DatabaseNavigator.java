@@ -132,7 +132,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                     ProxySelector.setDefault(defaultProxy);
                 }
 
-                List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
+                List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadPluginsFromRepository(null);
                 if (descriptors != null) {
                     for (IdeaPluginDescriptor descriptor : descriptors) {
                         if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {

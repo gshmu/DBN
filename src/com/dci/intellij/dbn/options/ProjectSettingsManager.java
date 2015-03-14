@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -30,6 +26,10 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.SystemInfo;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @State(
         name = "DBNavigator.Project.Settings",
@@ -137,7 +137,9 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     @Override
     public void initComponent() {
-        importDefaultSettings(true);
+        if(!SystemInfo.isMac) {
+            importDefaultSettings(true);
+        }
     }
 
     public void exportToDefaultSettings() {
