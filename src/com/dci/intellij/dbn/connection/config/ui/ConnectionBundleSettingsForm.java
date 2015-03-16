@@ -167,7 +167,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                 if (listChanged.get()) {
                     Project project = connectionBundle.getProject();
                     ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                    if (listener != null) listener.settingsChanged();
+                    listener.settingsChanged();
                 }
             }
         };
@@ -274,6 +274,11 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             int selectedIndex = connectionsList.getSelectedIndex() + 1;
             model.add(selectedIndex, clone);
             connectionsList.setSelectedIndex(selectedIndex);
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return connectionsList.getSelectedIndices().length == 1;
         }
     };
 

@@ -189,7 +189,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                                     ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                     projectSettings.readConfiguration(element);
                                     ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                                    if (listener != null) listener.settingsChanged();
+                                    listener.settingsChanged();
                                     if (!isNewProject) {
                                         MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                                     }
