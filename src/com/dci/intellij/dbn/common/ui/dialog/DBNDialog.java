@@ -36,7 +36,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
     protected final String getDimensionServiceKey() {
-        return "DBNavigator." + getClass().getSimpleName();
+        return null;//"DBNavigator." + getClass().getSimpleName();
     }
 
 

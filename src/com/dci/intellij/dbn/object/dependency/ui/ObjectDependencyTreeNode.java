@@ -19,6 +19,8 @@ public class ObjectDependencyTreeNode implements Disposable {
     private List<ObjectDependencyTreeNode> dependencies;
     private ObjectDependencyTreeModel model;
     private ObjectDependencyTreeNode parent;
+    private boolean shouldLoad = true;
+    private static int loaderCount = 0;
 
     public ObjectDependencyTreeNode(ObjectDependencyTreeNode parent, DBObject object) {
         this.parent = parent;
@@ -46,7 +48,7 @@ public class ObjectDependencyTreeNode implements Disposable {
         return parent;
     }
 
-    public synchronized List<ObjectDependencyTreeNode> getChildren(boolean load) {
+    public synchronized List<ObjectDependencyTreeNode> getChildren(final boolean load) {
         if (objectRef == null)  {
             return Collections.emptyList();
         }
@@ -58,9 +60,16 @@ public class ObjectDependencyTreeNode implements Disposable {
             } else {
                 dependencies = new ArrayList<ObjectDependencyTreeNode>();
                 dependencies.add(new ObjectDependencyTreeNode(this, null));
-                new SimpleBackgroundTask("load dependencies") {
-                    @Override
-                    protected void execute() {
+            }
+        }
+
+        if (load && shouldLoad && loaderCount < 10) {
+            shouldLoad = false;
+            loaderCount++;
+            new SimpleBackgroundTask("load dependencies") {
+                @Override
+                protected void execute() {
+                    try {
                         DBObject object = getObject();
                         if (object != null && object instanceof DBSchemaObject) {
                             List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
@@ -69,9 +78,9 @@ public class ObjectDependencyTreeNode implements Disposable {
 
                             if (dependentObjects != null) {
                                 for (DBObject dependentObject : dependentObjects) {
-                                    /*if (dependentObject instanceof DBSchemaObject) {
-                                        loadDependencies((DBSchemaObject) dependentObject);
-                                    }*/
+                                        /*if (dependentObject instanceof DBSchemaObject) {
+                                            loadDependencies((DBSchemaObject) dependentObject);
+                                        }*/
                                     ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
                                     newDependencies.add(node);
                                 }
@@ -83,10 +92,11 @@ public class ObjectDependencyTreeNode implements Disposable {
 
                             getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
+                    } finally {
+                        loaderCount--;
                     }
-                }.start();
-            }
-
+                }
+            }.start();
         }
         return dependencies;
     }

@@ -10,12 +10,15 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Driver;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +27,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -56,8 +60,12 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox activeCheckBox;
     private JPanel connectionParametersPanel;
+    private JPanel propertiesGroupPanel;
+    private JPanel propertiesPanel;
 
     private GenericConnectionDatabaseSettings temporaryConfig;
+
+    private PropertiesEditorForm propertiesEditorForm;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
@@ -66,6 +74,16 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         Project project = connectionConfig.getProject();
         temporaryConfig = connectionConfig.clone();
         updateBorderTitleForeground(connectionParametersPanel);
+        updateBorderTitleForeground(propertiesGroupPanel);
+
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.putAll(connectionConfig.getProperties());
+
+        propertiesEditorForm = new PropertiesEditorForm(this, properties, true);
+        propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
+
+
+
         resetFormChanges();
 
         registerComponent(mainPanel);
@@ -140,7 +158,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                     applyChanges(temporaryConfig);
 
                     if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
-                    if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig, null);
+                    if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig);
                 }
                 else if (source == osAuthenticationCheckBox) {
                     userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
@@ -261,16 +279,20 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         connectionConfig.setPassword(new String(passwordField.getPassword()));
         connectionConfig.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
+        connectionConfig.setProperties(propertiesEditorForm.getProperties());
         connectionConfig.updateHashCode();
     }
 
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
         final GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
+
         final boolean settingsChanged =
+                !connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                        !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
-                        !CommonUtil.safeEqual(connectionConfig.getUser(), userTextField.getText());
+                !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
+                !CommonUtil.safeEqual(connectionConfig.getUser(), userTextField.getText());
+
 
         applyChanges(connectionConfig);
 
@@ -289,6 +311,8 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
     public void resetFormChanges() {
         GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
+        propertiesEditorForm.setProperties(connectionConfig.getProperties());
+
         activeCheckBox.setSelected(connectionConfig.isActive());
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());

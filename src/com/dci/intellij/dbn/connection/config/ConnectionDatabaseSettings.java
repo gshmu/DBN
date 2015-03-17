@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -26,6 +29,8 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     protected String user;
     protected String password;
     protected int hashCode;
+    private Map<String, String> properties = new HashMap<String, String>();
+
     private ConnectionSettings parent;
 
     public ConnectionDatabaseSettings(ConnectionSettings parent) {
@@ -117,6 +122,15 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         this.password = password;
     }
 
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
                "Description:\t" + description + "\n" +
@@ -163,6 +177,16 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         password         = decodePassword(getString(element, "password", password));
         active           = getBoolean(element, "active", active);
         osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
+
+        Element propertiesElement = element.getChild("properties");
+        if (propertiesElement != null) {
+            for (Object o : propertiesElement.getChildren()) {
+                Element propertyElement = (Element) o;
+                properties.put(
+                        propertyElement.getAttributeValue("key"),
+                        propertyElement.getAttributeValue("value"));
+            }
+        }
         updateHashCode();
     }
 
@@ -175,6 +199,18 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(user));
         setString(element, "password", encodePassword(password));
+
+        if (properties.size() > 0) {
+            Element propertiesElement = new Element("properties");
+            for (String propertyKey : properties.keySet()) {
+                Element propertyElement = new Element("property");
+                propertyElement.setAttribute("key", propertyKey);
+                propertyElement.setAttribute("value", CommonUtil.nvl(properties.get(propertyKey), ""));
+
+                propertiesElement.addContent(propertyElement);
+            }
+            element.addContent(propertiesElement);
+        }
     }
 
     private static String encodePassword(String password) {

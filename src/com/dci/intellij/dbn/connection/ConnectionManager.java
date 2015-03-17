@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.jdom.Element;
@@ -25,7 +24,6 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
@@ -141,7 +139,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
         Project project = databaseSettings.getProject();
         try {
-            Connection connection = ConnectionUtil.connect(databaseSettings, null, false, null, ConnectionType.TEST);
+            Connection connection = ConnectionUtil.connect(databaseSettings, false, null, ConnectionType.TEST);
             ConnectionUtil.closeConnection(connection);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             if (showMessageDialog) {
@@ -177,15 +175,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     public ConnectionInfo showConnectionInfo(ConnectionSettings connectionSettings) {
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
-        return showConnectionInfo(databaseSettings, detailSettings);
+        return showConnectionInfo(databaseSettings);
     }
 
-    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings, @Nullable ConnectionDetailSettings detailSettings) {
+    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
         Project project = databaseSettings.getProject();
         try {
-            Map<String, String> connectionProperties = detailSettings == null ? null : detailSettings.getProperties();
-            Connection connection = ConnectionUtil.connect(databaseSettings, connectionProperties, false, null, ConnectionType.TEST);
+            Connection connection = ConnectionUtil.connect(databaseSettings, false, null, ConnectionType.TEST);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             ConnectionUtil.closeConnection(connection);
             MessageDialog.showInfoDialog(

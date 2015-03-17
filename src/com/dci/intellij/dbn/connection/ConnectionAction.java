@@ -71,10 +71,16 @@ public abstract class ConnectionAction extends SimpleTask {
                             if (getResult() == 0) {
                                 connectionHandler.setAllowConnection(true);
                                 doExecute();
+                            } else {
+                                cancel();
                             }
                         }
                     });
         }
+    }
+
+    public void cancel() {
+
     }
 
     private void doExecute() {
