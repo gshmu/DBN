@@ -1,6 +1,18 @@
 package com.dci.intellij.dbn.execution.method.result;
 
+import javax.swing.Icon;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -15,19 +27,11 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MethodExecutionResult implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
@@ -70,7 +74,7 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
             ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(argument.getProject());
             int maxRecords = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
             ResultSetDataModel dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), maxRecords);
-            cursorModels.put(argument.getRef(), dataModel);
+            cursorModels.put(DBObjectRef.from(argument), dataModel);
 
             Disposer.register(this, dataModel);
         }
@@ -197,4 +201,24 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         argumentValues.clear();
     }
 
+    /********************************************************
+     *                    Data Provider                     *
+     ********************************************************/
+    public DataProvider dataProvider = new DataProvider() {
+        @Override
+        public Object getData(@NonNls String dataId) {
+            if (DBNDataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
+                return MethodExecutionResult.this;
+            }
+            if (PlatformDataKeys.PROJECT.is(dataId)) {
+                return getProject();
+            }
+            return null;
+        }
+    };
+
+    @Nullable
+    public DataProvider getDataProvider() {
+        return dataProvider;
+    }
 }

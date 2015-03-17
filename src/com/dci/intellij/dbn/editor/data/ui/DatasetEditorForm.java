@@ -78,7 +78,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
 
-            ActionUtil.registerDataProvider(actionsPanel, datasetEditor.getDataProvider(), true);
+            ActionUtil.registerDataProvider(mainPanel, datasetEditor);
 
             Disposer.register(this, autoCommitLabel);
             Disposer.register(this, datasetEditorTable);

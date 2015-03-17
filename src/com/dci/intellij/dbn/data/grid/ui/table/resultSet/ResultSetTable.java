@@ -25,4 +25,9 @@ public class ResultSetTable<T extends ResultSetDataModel> extends SortableTable<
     protected boolean showRecordViewDataTypes() {
         return true;
     }
+
+    @Override
+    public T getModel() {
+        return super.getModel();
+    }
 }

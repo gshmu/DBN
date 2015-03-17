@@ -155,7 +155,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     public DataProvider dataProvider = new DataProvider() {
         @Override
         public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.STATEMENT_EXECUTION_RESULT.is(dataId)) {
+            if (DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
                 return StatementExecutionCursorResult.this;
             }
             if (PlatformDataKeys.PROJECT.is(dataId)) {
@@ -165,6 +165,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         }
     };
 
+    @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
     }

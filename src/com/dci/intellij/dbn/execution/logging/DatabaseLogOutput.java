@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.execution.logging;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -13,10 +18,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class DatabaseLogOutput implements ExecutionResult {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -89,6 +90,7 @@ public class DatabaseLogOutput implements ExecutionResult {
         }
     };
 
+    @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
     }

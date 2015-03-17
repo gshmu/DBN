@@ -322,4 +322,9 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         Rectangle cellRectangle = getCellRect(cell);
         scrollRectToVisible(cellRectangle);
     }
+
+    @Override
+    public T getModel() {
+        return super.getModel();
+    }
 }
