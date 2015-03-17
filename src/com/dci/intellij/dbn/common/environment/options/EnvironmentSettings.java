@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.common.environment.options;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.ui.EnvironmentSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
 
 public class EnvironmentSettings extends ProjectConfiguration {
     private EnvironmentTypeBundle environmentTypes = new EnvironmentTypeBundle(EnvironmentTypeBundle.DEFAULT);
@@ -24,6 +26,7 @@ public class EnvironmentSettings extends ProjectConfiguration {
         return environmentTypes;
     }
 
+    @NotNull
     public EnvironmentType getEnvironmentType(String environmentTypeId) {
         return environmentTypes.getEnvironmentType(environmentTypeId);
     }

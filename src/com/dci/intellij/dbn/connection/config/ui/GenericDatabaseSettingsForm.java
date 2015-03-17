@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -133,7 +134,8 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
         ConnectionPresentationChangeListener listener = EventManager.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
-        listener.presentationChanged(name, icon, null, getConfiguration().getConnectionId(), configuration.getDatabaseType());
+        EnvironmentType environmentType = configuration.getParent().getDetailSettings().getEnvironmentType();
+        listener.presentationChanged(name, icon, environmentType.getColor(), getConfiguration().getConnectionId(), configuration.getDatabaseType());
 
     }
 
