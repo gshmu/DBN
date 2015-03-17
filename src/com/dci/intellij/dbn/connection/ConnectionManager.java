@@ -141,7 +141,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
         Project project = databaseSettings.getProject();
         try {
-            Connection connection = ConnectionUtil.connect(databaseSettings, null, false, null);
+            Connection connection = ConnectionUtil.connect(databaseSettings, null, false, null, ConnectionType.TEST);
             ConnectionUtil.closeConnection(connection);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             if (showMessageDialog) {
@@ -185,7 +185,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = databaseSettings.getProject();
         try {
             Map<String, String> connectionProperties = detailSettings == null ? null : detailSettings.getProperties();
-            Connection connection = ConnectionUtil.connect(databaseSettings, connectionProperties, false, null);
+            Connection connection = ConnectionUtil.connect(databaseSettings, connectionProperties, false, null, ConnectionType.TEST);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             ConnectionUtil.closeConnection(connection);
             MessageDialog.showInfoDialog(

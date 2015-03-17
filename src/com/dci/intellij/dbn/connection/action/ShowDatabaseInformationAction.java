@@ -2,12 +2,11 @@ package com.dci.intellij.dbn.connection.action;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
@@ -21,18 +20,13 @@ public class ShowDatabaseInformationAction extends DumbAwareAction {
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        new ConnectionAction(connectionHandler) {
-
+        TaskInstructions taskInstructions = new TaskInstructions("Loading database information for " + connectionHandler.getName(), false, false);
+        new ConnectionAction(connectionHandler, taskInstructions) {
             @Override
             public void execute() {
-                final Project project = connectionHandler.getProject();
-                new BackgroundTask(project, "Loading database information for " + connectionHandler.getName(), false) {
-                    @Override
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                        connectionManager.showConnectionInfoDialog(connectionHandler);
-                    }
-                }.start();
+                Project project = getProject();
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                connectionManager.showConnectionInfoDialog(connectionHandler);
             }
         }.start();
     }

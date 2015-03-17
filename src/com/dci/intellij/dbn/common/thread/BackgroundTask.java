@@ -30,6 +30,9 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         public void processSentToBackground() {}
     };
 
+    public BackgroundTask(@Nullable Project project, TaskInstructions instructions) {
+        this(project, instructions.getTitle(), instructions.isStartInBackground(), instructions.isCanBeCancelled());
+    }
     public BackgroundTask(@Nullable Project project, @NotNull String title, boolean startInBackground, boolean canBeCancelled) {
         super(project, Constants.DBN_TITLE_PREFIX + title, canBeCancelled, startInBackground ? START_IN_BACKGROUND : DO_NOT_START_IN_BACKGROUND);
     }

@@ -59,29 +59,35 @@ public class DatasetRecord implements Disposable {
 
         ConnectionHandler connectionHandler = dataset.getConnectionHandler();
         if (connectionHandler != null) {
-            Connection connection = connectionHandler.getPoolConnection();
-            PreparedStatement statement = connection.prepareStatement(selectStatement.toString());
+            Connection connection = null;
+            try {
+                connection = connectionHandler.getPoolConnection();
+                PreparedStatement statement = connection.prepareStatement(selectStatement.toString());
 
-            int index = 1;
-            iterator = filterInput.getColumns().iterator();
-            while (iterator.hasNext()) {
-                DBColumn column = iterator.next();
-                Object value = filterInput.getColumnValue(column);
-                column.getDataType().setValueToPreparedStatement(statement, index, value);
-                index++;
-            }
-
-            resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                index = 1;
-
-                for (DBColumn column : dataset.getColumns()) {
-                    Object value = column.getDataType().getValueFromResultSet(resultSet, index);
-                    values.put(column.getName(), value);
+                int index = 1;
+                iterator = filterInput.getColumns().iterator();
+                while (iterator.hasNext()) {
+                    DBColumn column = iterator.next();
+                    Object value = filterInput.getColumnValue(column);
+                    column.getDataType().setValueToPreparedStatement(statement, index, value);
                     index++;
                 }
+
+                resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    index = 1;
+
+                    for (DBColumn column : dataset.getColumns()) {
+                        Object value = column.getDataType().getValueFromResultSet(resultSet, index);
+                        values.put(column.getName(), value);
+                        index++;
+                    }
+                }
+            }  finally {
+                connectionHandler.freePoolConnection(connection);
             }
         }
+
     }
 
     public DBDataset getDataset() {

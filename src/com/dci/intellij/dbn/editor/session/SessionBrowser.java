@@ -3,9 +3,6 @@ package com.dci.intellij.dbn.editor.session;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -17,15 +14,14 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
@@ -41,7 +37,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -52,7 +47,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private boolean preventLoading = false;
     private boolean loading;
     private Timer refreshTimer;
-    private String modelError;
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
@@ -96,26 +90,14 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(boolean force) {
         if (!loading && !isPreventLoading(force)) {
-            final ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
-            setLoading(true);
-            new BackgroundTask(getProject(), "Loading sessions", true) {
+            new ConnectionAction(this, new TaskInstructions("Loading sessions", true, false)) {
                 @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                public void execute() {
                     try {
-                        if (isDisposed()) throw new InterruptedException("Process cancelled");
-                        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                        Connection connection = connectionHandler.getStandaloneConnection();
-                        ResultSet resultSet = metadataInterface.loadSessions(connection);
-                        SessionBrowserModel model = new SessionBrowserModel(connectionHandler, resultSet);
+                        setLoading(true);
+                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                        SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
                         replaceModel(model);
-                        modelError = null;
-                    } catch (SQLException e) {
-                        modelError = e.getMessage();
-                        SessionBrowserModel model = getTableModel();
-                        if (model == null || model.isDisposed()) {
-                            model = new SessionBrowserModel(connectionHandler);
-                            replaceModel(model);
-                        }
                     } finally {
                         EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                         setLoading(false);
@@ -352,7 +334,8 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public String getModelError() {
-        return modelError;
+        SessionBrowserModel tableModel = getTableModel();
+        return tableModel == null ? null : tableModel.getLoadError();
     }
 
     public int getRefreshInterval() {

@@ -50,15 +50,13 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
-            if (languageDialect != null) {
-                DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
-                fileViewProvider.forceCachedPsi(file);
-                Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                PsiDocumentManagerImpl.cachePsi(document, file);
-                return file;
-            }
+        DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
+        if (languageDialect != null) {
+            DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
+            fileViewProvider.forceCachedPsi(file);
+            Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
+            PsiDocumentManagerImpl.cachePsi(document, file);
+            return file;
         }
         return null;
     }
@@ -74,7 +72,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         return Icons.FILE_SQL_CONSOLE;
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }
@@ -231,5 +229,6 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     @Override
     public void dispose() {
+        disposed = true;
     }
 }

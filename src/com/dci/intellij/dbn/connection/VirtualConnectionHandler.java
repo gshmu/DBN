@@ -127,6 +127,12 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return interfaceProvider;
     }
 
+    @Nullable
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return this;
+    }
+
     public String getUser() {return "root";}
     public String getUserName() {return "root";}
 
@@ -185,4 +191,5 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void commit() throws SQLException {}
     public void rollback() throws SQLException {}
     public void dispose() {}
+
 }

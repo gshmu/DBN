@@ -3,12 +3,10 @@ package com.dci.intellij.dbn.generator.action;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -20,7 +18,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
 public abstract class GenerateStatementAction extends AnAction implements ConnectionProvider {
@@ -29,24 +26,19 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
     }
 
     public final void actionPerformed(AnActionEvent e) {
-        final Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            new ConnectionAction(this) {
-                @Override
-                public void execute() {
-                    new BackgroundTask(project, "Extracting select statement", false, true) {
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                            StatementGeneratorResult result = generateStatement(project);
-                            if (result.getMessages().hasErrors()) {
-                                MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
-                            } else {
-                                pasteStatement(result, project);
-                            }
-                        }
-                    }.start();
+        TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", false, true);
+        new ConnectionAction(this, taskInstructions) {
+            @Override
+            public void execute() {
+                Project project = getProject();
+                StatementGeneratorResult result = generateStatement(project);
+                if (result.getMessages().hasErrors()) {
+                    MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
+                } else {
+                    pasteStatement(result, project);
                 }
-            }.start();
-        }
+            }
+        }.start();
     }
 
     private void pasteStatement(final StatementGeneratorResult result, final Project project) {
