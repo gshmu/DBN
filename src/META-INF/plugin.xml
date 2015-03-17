@@ -27,9 +27,15 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Object dependency tree (preview)<br>
+                - Session Browser "quick Find Data" support<br>
+                - Method execution cursor result "Find Data" support<br>
+                - General bug fixes and performance improvements<br>
+            </ul>
             <li><b>3.0.4183</b>
             <ul>
-                - Object dependency tree (work in progress)<br>
                 - Zoom in/out support for data grids (Ctrl-MouseWheel)<br>
                 - Remember statement execution variables<br>
                 - Remember method execution parameter history<br>
