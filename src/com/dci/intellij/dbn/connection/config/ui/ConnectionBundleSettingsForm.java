@@ -261,19 +261,21 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private AnActionButton duplicateAction = new AnActionButton("Duplicate connection", Icons.ACTION_COPY) {
         @Override
         public void actionPerformed(AnActionEvent anActionEvent) {
-            getConfiguration().setModified(true);
             ConnectionSettings connectionSettings = (ConnectionSettings) connectionsList.getSelectedValue();
-            ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-            ConnectionSettings clone = connectionSettings.clone();
-            clone.setNew(true);
-            String name = clone.getDatabaseSettings().getName();
-            while (model.getConnectionConfig(name) != null) {
-                name = NamingUtil.getNextNumberedName(name, true);
+            if (connectionSettings != null) {
+                getConfiguration().setModified(true);
+                ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+                ConnectionSettings clone = connectionSettings.clone();
+                clone.setNew(true);
+                String name = clone.getDatabaseSettings().getName();
+                while (model.getConnectionConfig(name) != null) {
+                    name = NamingUtil.getNextNumberedName(name, true);
+                }
+                clone.getDatabaseSettings().setName(name);
+                int selectedIndex = connectionsList.getSelectedIndex() + 1;
+                model.add(selectedIndex, clone);
+                connectionsList.setSelectedIndex(selectedIndex);
             }
-            clone.getDatabaseSettings().setName(name);
-            int selectedIndex = connectionsList.getSelectedIndex() + 1;
-            model.add(selectedIndex, clone);
-            connectionsList.setSelectedIndex(selectedIndex);
         }
 
         @Override
