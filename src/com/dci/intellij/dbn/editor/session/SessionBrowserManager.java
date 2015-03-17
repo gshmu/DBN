@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -72,10 +73,16 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void openSessionBrowser(ConnectionHandler connectionHandler) {
-        Project project = connectionHandler.getProject();
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
-        fileEditorManager.openFile(sessionBrowserFile, true);
+        new ConnectionAction(connectionHandler) {
+            @Override
+            public void execute() {
+                Project project = getProject();
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
+                fileEditorManager.openFile(sessionBrowserFile, true);
+            }
+        }.start();
     }
 
     public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {

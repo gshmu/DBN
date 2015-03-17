@@ -105,7 +105,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public Project getProject() {
         GenericDatabaseElement parent = getParent();
         Project project = parent == null ? null : parent.getProject();
-        return FailsafeUtil.nvl(project);
+        return FailsafeUtil.get(project);
     }
 
     public GenericDatabaseElement getUndisposedElement() {

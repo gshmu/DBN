@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -191,8 +192,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getPresentableText();
     }
 
+    @NotNull
     public Project getProject() {
-        return connectionBundle.getProject();
+        return FailsafeUtil.get(connectionBundle.getProject());
     }
 
     public boolean isValid(boolean check) {
