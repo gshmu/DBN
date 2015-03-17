@@ -91,7 +91,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             }
             objectStatus.set(DBObjectStatus.SAVING, true);
             TaskInstructions taskInstructions = new TaskInstructions("Checking for third party changes on " + object.getQualifiedNameWithType(), false, false);
-            new ConnectionAction(object, taskInstructions) {
+            new ConnectionAction("updating the object to database", object, taskInstructions) {
                 @Override
                 public void execute() {
                     Project project = getProject();

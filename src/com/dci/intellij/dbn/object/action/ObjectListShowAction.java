@@ -45,7 +45,7 @@ public abstract class ObjectListShowAction extends AnAction {
 
     public final void actionPerformed(@NotNull final AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), false, true);
-        new ConnectionAction(sourceObject, taskInstructions) {
+        new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override
             public void execute() {
                 final List<DBObject> objects = getObjectList();

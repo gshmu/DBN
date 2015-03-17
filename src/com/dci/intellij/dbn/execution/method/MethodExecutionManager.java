@@ -81,7 +81,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public boolean promptExecutionDialog(final MethodExecutionInput executionInput, final boolean debug) {
         final AtomicBoolean result = new AtomicBoolean(false);
-        new ConnectionAction(executionInput) {
+        new ConnectionAction("the method execution", executionInput) {
             @Override
             public void execute() {
                 Project project = getProject();

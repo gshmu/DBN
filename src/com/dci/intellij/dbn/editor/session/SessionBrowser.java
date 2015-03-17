@@ -90,7 +90,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(boolean force) {
         if (!loading && !isPreventLoading(force)) {
-            new ConnectionAction(this, new TaskInstructions("Loading sessions", true, false)) {
+            new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", true, false)) {
                 @Override
                 public void execute() {
                     try {

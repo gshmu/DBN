@@ -77,7 +77,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     public void compileInBackground(final DBSchemaObject object, final CompileTypeOption compileType, final CompilerAction compilerAction) {
-        new ConnectionAction(object) {
+        new ConnectionAction("compiling the object", object) {
             @Override
             public void execute() {
                 Project project = object.getProject();
@@ -163,7 +163,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
     public void compileInvalidObjects(final DBSchema schema, final CompileTypeOption compileType) {
         TaskInstructions taskInstructions = new TaskInstructions("Compiling invalid objects", false, true);
-        new ConnectionAction(schema, taskInstructions) {
+        new ConnectionAction("compiling the invalid objects", schema, taskInstructions) {
             @Override
             public void execute() {
                 final Project project = schema.getProject();

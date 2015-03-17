@@ -214,7 +214,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
      *                       Execution                       *
      *********************************************************/
     public void executeStatement(final StatementExecutionProcessor executionProcessor) {
-        ConnectionAction executionAction = new ConnectionAction(executionProcessor) {
+        ConnectionAction executionAction = new ConnectionAction("the statement execution", executionProcessor) {
             @Override
             public void execute() {
                 executionProcessor.initExecutionInput(false);
@@ -244,7 +244,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 }
             };
             TaskInstructions taskInstructions = new TaskInstructions("Executing statements", false, true);
-            ConnectionAction executionTask = new ConnectionAction(connectionProvider, taskInstructions) {
+            ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider, taskInstructions) {
                 @Override
                 public void execute() {
                     boolean showIndeterminateProgress = executionProcessors.size() < 5;

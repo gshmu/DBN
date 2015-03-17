@@ -120,7 +120,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
             final MethodExecutionInput executionInput = getSelectedExecutionInput();
             if (executionInput != null) {
                 TaskInstructions taskInstructions = new TaskInstructions("Loading Method details", false, false);
-                new ConnectionAction(executionInput, taskInstructions) {
+                new ConnectionAction("loading the execution history", executionInput, taskInstructions) {
                     @Override
                     public void execute() {
                         final DBMethod method = executionInput.getMethod();
