@@ -69,7 +69,7 @@ public class DBProgramRunner extends GenericProgramRunner {
             final ExecutionEnvironment environment) throws ExecutionException {
 
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
-        new ConnectionAction(runProfile.getMethod(), new TaskInstructions("Checking debug privileges", false, true)) {
+        new ConnectionAction("the debug execution", runProfile.getMethod(), new TaskInstructions("Checking debug privileges", false, true)) {
             @Override
             public void execute() {
                 DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);

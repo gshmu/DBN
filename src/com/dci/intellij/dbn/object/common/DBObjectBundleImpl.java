@@ -183,7 +183,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return connectionConfigHash == connectionHandler.getSettings().getDatabaseSettings().hashCode();
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return FailsafeUtil.get(connectionHandler);
     }
@@ -310,7 +310,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             visibleTreeChildren = new ArrayList<BrowserTreeNode>();
             visibleTreeChildren.add(new LoadInProgressTreeNode(this));
             ConnectionHandler connectionHandler = getConnectionHandler();
-            String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ")";
+            String connectionString = " (" + connectionHandler.getName() + ")";
 
             new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
                 public void execute(@NotNull ProgressIndicator progressIndicator) {

@@ -16,14 +16,17 @@ import com.intellij.openapi.project.Project;
 public abstract class ConnectionAction extends SimpleTask {
     public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
 
+    private String name;
     private ConnectionProvider connectionProvider;
     private TaskInstructions taskInstructions;
 
-    public ConnectionAction(ConnectionProvider connectionProvider) {
+    public ConnectionAction(String name, ConnectionProvider connectionProvider) {
+        this.name = name;
         this.connectionProvider = connectionProvider;
     }
 
-    public ConnectionAction(ConnectionProvider connectionProvider, TaskInstructions taskInstructions) {
+    public ConnectionAction(String name, ConnectionProvider connectionProvider, TaskInstructions taskInstructions) {
+        this.name = name;
         this.connectionProvider = connectionProvider;
         this.taskInstructions = taskInstructions;
     }
@@ -60,7 +63,7 @@ public abstract class ConnectionAction extends SimpleTask {
                     connectionHandler.getProject(),
                     "Not Connected to Database",
                     "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
-                            "If you want to continue with this operation, you need to connect.",
+                            "If you want to continue with " + name + ", you need to connect.",
                     OPTIONS_CONNECT_CANCEL, 0,
                     new SimpleTask() {
                         @Override

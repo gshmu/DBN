@@ -20,7 +20,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
     public void actionPerformed(@NotNull final AnActionEvent e) {
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         TaskInstructions taskInstructions = new TaskInstructions("Loading database source code", false, true);
-        new ConnectionAction(sourcecodeFile, taskInstructions){
+        new ConnectionAction("reloading the source code", sourcecodeFile, taskInstructions){
             @Override
             public void execute() {
                 final Editor editor = getEditor(e);

@@ -19,7 +19,7 @@ public class RevertChangesAction extends AbstractSourceCodeEditorAction {
     public void actionPerformed(@NotNull final AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         TaskInstructions taskInstructions = new TaskInstructions("Reverting local changes", false, false);
-        new ConnectionAction(sourceCodeFile, taskInstructions) {
+        new ConnectionAction("reverting the changes", sourceCodeFile, taskInstructions) {
             @Override
             public void execute() {
                 final Editor editor = getEditor(e);

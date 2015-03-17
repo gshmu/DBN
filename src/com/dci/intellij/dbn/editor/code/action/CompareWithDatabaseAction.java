@@ -21,7 +21,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
 
     public void actionPerformed(@NotNull final AnActionEvent e) {
         final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
-        new ConnectionAction(sourcecodeFile, new TaskInstructions("Loading database source code", false, true)) {
+        new ConnectionAction("comparing changes", sourcecodeFile, new TaskInstructions("Loading database source code", false, true)) {
             @Override
             public void execute() {
                 Editor editor = getEditor(e);

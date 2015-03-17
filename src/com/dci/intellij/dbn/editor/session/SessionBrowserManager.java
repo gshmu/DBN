@@ -73,7 +73,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void openSessionBrowser(ConnectionHandler connectionHandler) {
-        new ConnectionAction(connectionHandler) {
+        new ConnectionAction("opening the session browser", connectionHandler) {
             @Override
             public void execute() {
                 Project project = getProject();

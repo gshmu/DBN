@@ -325,7 +325,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     public void openEditor(final DBObject object, @Nullable final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
-        new ConnectionAction(object, new TaskInstructions("Opening editor", false, true)) {
+        new ConnectionAction("opening the object editor", object, new TaskInstructions("Opening editor", false, true)) {
             @Override
             public void execute() {
                 if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {

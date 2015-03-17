@@ -21,7 +21,7 @@ public class ShowDatabaseInformationAction extends DumbAwareAction {
 
     public void actionPerformed(@NotNull AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Loading database information for " + connectionHandler.getName(), false, false);
-        new ConnectionAction(connectionHandler, taskInstructions) {
+        new ConnectionAction("showing database information", connectionHandler, taskInstructions) {
             @Override
             public void execute() {
                 Project project = getProject();

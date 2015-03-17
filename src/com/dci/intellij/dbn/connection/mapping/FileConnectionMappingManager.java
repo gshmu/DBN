@@ -419,7 +419,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
      *             Select schema popup                 *
      ***************************************************/
     public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        new ConnectionAction(psiFile) {
+        new ConnectionAction("selecting the curent schema", psiFile) {
             @Override
             public void execute() {
                 DefaultActionGroup actionGroup = new DefaultActionGroup();

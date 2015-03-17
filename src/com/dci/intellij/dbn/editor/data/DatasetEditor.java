@@ -264,7 +264,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     public void loadData(final DatasetLoadInstructions instructions) {
         if (!isLoading) {
-            new ConnectionAction(this) {
+            new ConnectionAction("loading table data", this) {
                 @Override
                 public void execute() {
                     setLoading(true);

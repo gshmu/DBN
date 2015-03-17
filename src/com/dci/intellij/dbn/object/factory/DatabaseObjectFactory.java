@@ -101,7 +101,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
     public void dropObject(final DBSchemaObject object) {
         TaskInstructions taskInstructions = new TaskInstructions("Dropping " + object.getQualifiedNameWithType(), false, false);
-        ConnectionAction dropObjectAction = new ConnectionAction(object, taskInstructions) {
+        ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object, taskInstructions) {
             @Override
             public void execute() {
                 if (getResult() == 0) {

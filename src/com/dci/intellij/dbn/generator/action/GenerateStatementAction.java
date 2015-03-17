@@ -27,7 +27,7 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
 
     public final void actionPerformed(AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", false, true);
-        new ConnectionAction(this, taskInstructions) {
+        new ConnectionAction("generating the statement", this, taskInstructions) {
             @Override
             public void execute() {
                 Project project = getProject();
