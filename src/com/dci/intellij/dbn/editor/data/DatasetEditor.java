@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -99,9 +100,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         EventManager.subscribe(project, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
     }
 
-    @Nullable
+    @NotNull
     public DBDataset getDataset() {
-        return datasetRef.get(project);
+        return FailsafeUtil.get(datasetRef.get(project));
     }
 
     public DataEditorSettings getSettings() {
@@ -129,15 +130,15 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return databaseFile;
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getActiveConnection() {
-        return connectionHandlerRef.get();
+        return getConnectionHandler();
     }
 
     @Nullable
     public DBSchema getCurrentSchema() {
         DBDataset dataset = getDataset();
-        return dataset == null ? null : dataset.getSchema();
+        return dataset.getSchema();
     }
 
     public Project getProject() {
@@ -315,64 +316,62 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         new SimpleLaterInvocator() {
             public void execute() {
                 final DBDataset dataset = getDataset();
-                if (!isDisposed() && dataset != null) {
+                if (!isDisposed()) {
                     focusEditor();
                     ConnectionHandler connectionHandler = getConnectionHandler();
-                    if (connectionHandler != null) {
-                        DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
-                        final DatasetFilterManager filterManager = DatasetFilterManager.getInstance(getProject());
+                    DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
+                    final DatasetFilterManager filterManager = DatasetFilterManager.getInstance(getProject());
 
-                        final DatasetFilter filter = filterManager.getActiveFilter(dataset);
-                        String datasetName = dataset.getQualifiedNameWithType();
-                        if (connectionHandler.isValid()) {
-                            if (filter == null || filter == DatasetFilterManager.EMPTY_FILTER || filter.getError() != null) {
-                                if (instr.isDeliberateAction()) {
-                                    String message =
-                                            "Error loading data for " + datasetName + ".\n" + (
-                                                    messageParserInterface.isTimeoutException(e) ?
-                                                            "The operation was timed out. Please check your timeout configuration in Data Editor settings." :
-                                                            "Database error message: " + e.getMessage());
-
-                                    MessageUtil.showErrorDialog(project, message);
-                                }
-                            } else {
+                    final DatasetFilter filter = filterManager.getActiveFilter(dataset);
+                    String datasetName = dataset.getQualifiedNameWithType();
+                    if (connectionHandler.isValid()) {
+                        if (filter == null || filter == DatasetFilterManager.EMPTY_FILTER || filter.getError() != null) {
+                            if (instr.isDeliberateAction()) {
                                 String message =
                                         "Error loading data for " + datasetName + ".\n" + (
                                                 messageParserInterface.isTimeoutException(e) ?
                                                         "The operation was timed out. Please check your timeout configuration in Data Editor settings." :
-                                                        "Filter \"" + filter.getName() + "\" may be invalid.\n" +
-                                                                "Database error message: " + e.getMessage());
-                                String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
+                                                        "Database error message: " + e.getMessage());
 
-                                MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
-                                    @Override
-                                    public void execute() {
-                                        int option = getResult();
-                                        DatasetLoadInstructions instructions = instr.clone();
-                                        instructions.setDeliberateAction(true);
-
-                                        if (option == 0) {
-                                            filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
-                                            instructions.setUseCurrentFilter(true);
-                                            loadData(instructions);
-                                        } else if (option == 1) {
-                                            filterManager.setActiveFilter(dataset, null);
-                                            instructions.setUseCurrentFilter(true);
-                                            loadData(instructions);
-                                        } else if (option == 2) {
-                                            filter.setError(e.getMessage());
-                                            instructions.setUseCurrentFilter(false);
-                                            loadData(instructions);
-                                        }
-                                    }
-                                });
+                                MessageUtil.showErrorDialog(project, message);
                             }
                         } else {
                             String message =
-                                    "Error loading data for " + datasetName + ". Could not connect to database.\n" +
-                                            "Database error message: " + e.getMessage();
-                            MessageUtil.showErrorDialog(project, message);
+                                    "Error loading data for " + datasetName + ".\n" + (
+                                            messageParserInterface.isTimeoutException(e) ?
+                                                    "The operation was timed out. Please check your timeout configuration in Data Editor settings." :
+                                                    "Filter \"" + filter.getName() + "\" may be invalid.\n" +
+                                                            "Database error message: " + e.getMessage());
+                            String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
+
+                            MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
+                                @Override
+                                public void execute() {
+                                    int option = getResult();
+                                    DatasetLoadInstructions instructions = instr.clone();
+                                    instructions.setDeliberateAction(true);
+
+                                    if (option == 0) {
+                                        filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
+                                        instructions.setUseCurrentFilter(true);
+                                        loadData(instructions);
+                                    } else if (option == 1) {
+                                        filterManager.setActiveFilter(dataset, null);
+                                        instructions.setUseCurrentFilter(true);
+                                        loadData(instructions);
+                                    } else if (option == 2) {
+                                        filter.setError(e.getMessage());
+                                        instructions.setUseCurrentFilter(false);
+                                        loadData(instructions);
+                                    }
+                                }
+                            });
                         }
+                    } else {
+                        String message =
+                                "Error loading data for " + datasetName + ". Could not connect to database.\n" +
+                                        "Database error message: " + e.getMessage();
+                        MessageUtil.showErrorDialog(project, message);
                     }
                 }
 
@@ -503,7 +502,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }
@@ -516,7 +515,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         public void statusChanged(String connectionId) {
             DatasetEditorTable editorTable = getEditorTable();
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (editorTable != null && connectionHandler != null && connectionHandler.getId().equals(connectionId)) {
+            if (editorTable != null && connectionHandler.getId().equals(connectionId)) {
                 editorTable.updateBackground(!connectionHandler.isConnected());
                 if (connectionHandler.isConnected()) {
                     loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);

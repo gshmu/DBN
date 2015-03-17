@@ -23,7 +23,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public interface ConnectionHandler extends Disposable {
+public interface ConnectionHandler extends Disposable, ConnectionProvider {
     Project getProject();
     Connection getPoolConnection() throws SQLException;
     Connection getPoolConnection(DBSchema schema) throws SQLException;

@@ -29,7 +29,7 @@ public class DBConnectionVirtualFile extends VirtualFile implements DBVirtualFil
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
     }

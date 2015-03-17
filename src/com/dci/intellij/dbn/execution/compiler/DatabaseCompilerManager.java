@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -161,7 +162,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     public void compileInvalidObjects(final DBSchema schema, final CompileTypeOption compileType) {
-        new ConnectionAction(schema) {
+        TaskInstructions taskInstructions = new TaskInstructions("Compiling invalid objects", false, true);
+        new ConnectionAction(schema, taskInstructions) {
             @Override
             public void execute() {
                 final Project project = schema.getProject();
@@ -170,26 +172,23 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 if (allowed) {
                     final CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, null);
                     if (selectedCompileType != null) {
-                        new BackgroundTask(project, "Compiling invalid objects", false, true) {
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, selectedCompileType);
-                                doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, selectedCompileType);
-                                doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, selectedCompileType);
-                                doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, selectedCompileType);
-                                connectionHandler.getObjectBundle().refreshObjectsStatus(null);
+                        ProgressIndicator progressIndicator = getProgressIndicator();
+                        doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, selectedCompileType);
+                        doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, selectedCompileType);
+                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, selectedCompileType);
+                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, selectedCompileType);
+                        connectionHandler.getObjectBundle().refreshObjectsStatus(null);
 
-                                if (!progressIndicator.isCanceled()) {
-                                    List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();
-                                    buildCompilationErrors(schema.getPackages(), compilerErrors);
-                                    buildCompilationErrors(schema.getFunctions(), compilerErrors);
-                                    buildCompilationErrors(schema.getProcedures(), compilerErrors);
-                                    buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
-                                    if (compilerErrors.size() > 0) {
-                                        ExecutionManager.getInstance(project).addExecutionResults(compilerErrors);
-                                    }
-                                }
+                        if (!progressIndicator.isCanceled()) {
+                            List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();
+                            buildCompilationErrors(schema.getPackages(), compilerErrors);
+                            buildCompilationErrors(schema.getFunctions(), compilerErrors);
+                            buildCompilationErrors(schema.getProcedures(), compilerErrors);
+                            buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
+                            if (compilerErrors.size() > 0) {
+                                ExecutionManager.getInstance(project).addExecutionResults(compilerErrors);
                             }
-                        }.start();
+                        }
                     }
                 }
             }

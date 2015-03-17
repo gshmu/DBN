@@ -60,7 +60,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionHandler connectionHandler) throws SQLException {
+    public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
@@ -77,7 +77,7 @@ public class ConnectionUtil {
         }
 
         try {
-            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isEnableAutoCommit(), connectionStatus);
+            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
@@ -92,15 +92,16 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Map<String, String> connectionProperties, boolean autoCommit, @Nullable ConnectionStatus connectionStatus) throws SQLException {
+    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Map<String, String> connectionProperties, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         try {
             Properties properties = new Properties();
             if (!databaseSettings.isOsAuthentication()) {
                 properties.put("user", databaseSettings.getUser());
                 properties.put("password", databaseSettings.getPassword());
             }
-            properties.put("ApplicationName", "Database Navigator");
-            properties.put("v$session.program", "Database Navigator");
+            String appName = "Database Navigator - " + connectionType.getName() + "";
+            properties.put("ApplicationName", appName);
+            properties.put("v$session.program", appName);
             if (connectionProperties != null) {
                 properties.putAll(connectionProperties);
             }

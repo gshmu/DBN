@@ -100,7 +100,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                     String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
                     if (sessionId.equals(sessionBrowser.getSelectedSessionId())) {
                         setCurrentSchema(schema);
-                        setPreviewText(sql);
+                        setPreviewText(sql.replace("\r\n", "\n"));
                     }
                 }
             }.start();

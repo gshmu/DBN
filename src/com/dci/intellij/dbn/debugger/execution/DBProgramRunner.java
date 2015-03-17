@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -68,26 +69,18 @@ public class DBProgramRunner extends GenericProgramRunner {
             final ExecutionEnvironment environment) throws ExecutionException {
 
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
-        new ConnectionAction(runProfile.getMethod()) {
+        new ConnectionAction(runProfile.getMethod(), new TaskInstructions("Checking debug privileges", false, true)) {
             @Override
             public void execute() {
-                final ConnectionHandler connectionHandler = runProfile.getMethod().getConnectionHandler();
-                if (connectionHandler != null) {
-                    DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
-                    boolean allowed = databaseDebuggerManager.checkForbiddenOperation(connectionHandler,
-                            "Another debug session is active on this connection. You can only run one debug session at the time.");
-                    if (allowed) {
-                        new BackgroundTask(runProfile.getProject(), "Checking debug privileges", false, true) {
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                performPrivilegeCheck(
-                                        runProfile.getExecutionInput(),
-                                        executor,
-                                        environment,
-                                        null);
-
-                            }
-                        }.start();
-                    }
+                DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
+                boolean allowed = databaseDebuggerManager.checkForbiddenOperation(getConnectionHandler(),
+                        "Another debug session is active on this connection. You can only run one debug session at the time.");
+                if (allowed) {
+                    performPrivilegeCheck(
+                            runProfile.getExecutionInput(),
+                            executor,
+                            environment,
+                            null);
                 }
             }
         }.start();

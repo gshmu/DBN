@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -408,6 +409,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionStatus.isConnected() ? Icons.CONNECTION_ACTIVE : 
                connectionStatus.isValid() ? Icons.CONNECTION_INACTIVE :
                         Icons.CONNECTION_INVALID;
+    }
+
+    @Nullable
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return this;
     }
 
    /*********************************************************

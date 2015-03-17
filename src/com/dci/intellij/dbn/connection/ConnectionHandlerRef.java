@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
 import java.lang.ref.WeakReference;
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public class ConnectionHandlerRef{
     private WeakReference<ConnectionHandler> reference;
@@ -11,11 +14,16 @@ public class ConnectionHandlerRef{
         connectionId = connectionHandler == null ? null : connectionHandler.getId();
     }
 
+    @NotNull
     public ConnectionHandler get() {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();
         if ((connectionHandler == null || connectionHandler.isDisposed()) && connectionId != null) {
             connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             reference = new WeakReference<ConnectionHandler>(connectionHandler);
+        }
+
+        if (connectionHandler == null || connectionHandler.isDisposed()) {
+            throw new ProcessCanceledException();
         }
         return connectionHandler;
     }

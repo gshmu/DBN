@@ -25,10 +25,12 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -76,15 +78,37 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         fileEditorManager.openFile(sessionBrowserFile, true);
     }
 
+    public SessionBrowserModel loadSessions(DBSessionBrowserVirtualFile sessionBrowserFile) {
+        ConnectionHandler connectionHandler = sessionBrowserFile.getConnectionHandler();
+        Connection connection = null;
+        ResultSet resultSet = null;
+        try {
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            connection = connectionHandler.getPoolConnection();
+            resultSet = metadataInterface.loadSessions(connection);
+            return new SessionBrowserModel(connectionHandler, resultSet);
+        } catch (SQLException e) {
+            SessionBrowserModel model = new SessionBrowserModel(connectionHandler);
+            model.setLoadError(e.getMessage());
+            return model;
+
+        } finally {
+            ConnectionUtil.closeResultSet(resultSet);
+            connectionHandler.freePoolConnection(connection);
+        }
+    }
+
     public String loadSessionCurrentSql(ConnectionHandler connectionHandler, Object sessionId) {
+        Connection connection = null;
+        ResultSet resultSet = null;
         try {
             DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
             DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
             if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_CURRENT_SQL)) {
                 DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
 
-                Connection connection = connectionHandler.getStandaloneConnection();
-                ResultSet resultSet = metadataInterface.loadSessionCurrentSql(sessionId, connection);
+                connection = connectionHandler.getPoolConnection();
+                resultSet = metadataInterface.loadSessionCurrentSql(sessionId, connection);
                 if (resultSet.next()) {
                     return resultSet.getString(1);
                 }
@@ -93,6 +117,9 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
             }
         } catch (SQLException e) {
             NotificationUtil.sendWarningNotification(connectionHandler.getProject(), "Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
+        } finally {
+            ConnectionUtil.closeResultSet(resultSet);
+            connectionHandler.freePoolConnection(connection);
         }
         return "";
     }

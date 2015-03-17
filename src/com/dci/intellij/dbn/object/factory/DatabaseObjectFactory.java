@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.object.factory.ui.ProcedureFactoryInputForm;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputDialog;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
@@ -101,49 +100,43 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     public void dropObject(final DBSchemaObject object) {
-        ConnectionAction dropObjectAction = new ConnectionAction(object) {
+        TaskInstructions taskInstructions = new TaskInstructions("Dropping " + object.getQualifiedNameWithType(), false, false);
+        ConnectionAction dropObjectAction = new ConnectionAction(object, taskInstructions) {
             @Override
             public void execute() {
                 if (getResult() == 0) {
-                    new BackgroundTask(object.getProject(), "Dropping " + object.getQualifiedNameWithType(), false) {
-                        public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                            ConnectionHandler connectionHandler = getConnectionHandler();
-                            if (connectionHandler != null) {
-                                Connection connection = null;
-                                try {
-                                    DBContentType contentType = object.getContentType();
-                                    connection = connectionHandler.getPoolConnection();
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    Connection connection = null;
+                    try {
+                        DBContentType contentType = object.getContentType();
+                        connection = connectionHandler.getPoolConnection();
 
-                                    String objectName = object.getQualifiedName();
-                                    String objectTypeName = object.getTypeName();
-                                    DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-                                    if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                                        DBObjectStatusHolder status = object.getStatus();
-                                        if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
-                                            ddlInterface.dropObject(objectTypeName, objectName, connection);
-                                        }
-                                        if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
-                                            ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
-                                        }
-
-                                    } else {
-                                        ddlInterface.dropObject(objectTypeName, objectName, connection);
-                                    }
-
-                                    DBObjectList objectList = (DBObjectList) object.getTreeParent();
-                                    objectList.reload();
-                                    notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
-                                } catch (SQLException e) {
-                                    String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
-                                    Project project = getProject();
-                                    MessageUtil.showErrorDialog(project, message, e);
-                                } finally {
-                                    connectionHandler.freePoolConnection(connection);
-                                }
-
+                        String objectName = object.getQualifiedName();
+                        String objectTypeName = object.getTypeName();
+                        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+                        if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                            DBObjectStatusHolder status = object.getStatus();
+                            if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
+                                ddlInterface.dropObject(objectTypeName, objectName, connection);
                             }
+                            if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                                ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
+                            }
+
+                        } else {
+                            ddlInterface.dropObject(objectTypeName, objectName, connection);
                         }
-                    }.start();
+
+                        DBObjectList objectList = (DBObjectList) object.getTreeParent();
+                        objectList.reload();
+                        notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
+                    } catch (SQLException e) {
+                        String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
+                        Project project = getProject();
+                        MessageUtil.showErrorDialog(project, message, e);
+                    } finally {
+                        connectionHandler.freePoolConnection(connection);
+                    }
                 }
             }
         };

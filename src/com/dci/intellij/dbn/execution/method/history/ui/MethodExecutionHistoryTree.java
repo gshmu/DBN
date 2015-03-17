@@ -1,21 +1,5 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.connection.ConnectionAction;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -23,6 +7,21 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
+import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
+import com.dci.intellij.dbn.object.DBMethod;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.ui.tree.TreeUtil;
 
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private MethodExecutionHistoryDialog dialog;
@@ -119,35 +118,32 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener(){
         public void valueChanged(TreeSelectionEvent e) {
             final MethodExecutionInput executionInput = getSelectedExecutionInput();
-            new ConnectionAction(executionInput) {
-                @Override
-                public void execute() {
-                    new BackgroundTask(getProject(), "Loading Method details", false, false) {
-                        @Override
-                        public void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                            final DBMethod method = executionInput.getMethod();
-                            if (method != null) {
-                                method.getArguments();
-                            }
+            if (executionInput != null) {
+                TaskInstructions taskInstructions = new TaskInstructions("Loading Method details", false, false);
+                new ConnectionAction(executionInput, taskInstructions) {
+                    @Override
+                    public void execute() {
+                        final DBMethod method = executionInput.getMethod();
+                        if (method != null) {
+                            method.getArguments();
+                        }
 
-                            new SimpleLaterInvocator() {
-                                @Override
-                                public void execute() {
-                                    if (dialog != null && !dialog.isDisposed()) {
-                                        dialog.showMethodExecutionPanel(executionInput);
-                                        dialog.setSelectedExecutionInput(executionInput);
-                                        dialog.setMainButtonEnabled(method != null);
-                                        if (method != null) {
-                                            executionHistory.setSelection(executionInput.getMethodRef());
-                                        }
+                        new SimpleLaterInvocator() {
+                            @Override
+                            public void execute() {
+                                if (dialog != null && !dialog.isDisposed()) {
+                                    dialog.showMethodExecutionPanel(executionInput);
+                                    dialog.setSelectedExecutionInput(executionInput);
+                                    dialog.setMainButtonEnabled(method != null);
+                                    if (method != null) {
+                                        executionHistory.setSelection(executionInput.getMethodRef());
                                     }
                                 }
-                            }.start();
-
-                        }
-                    }.start();
-                }
-            }.start();
+                            }
+                        }.start();
+                    }
+                }.start();
+            }
         }
     };
 
