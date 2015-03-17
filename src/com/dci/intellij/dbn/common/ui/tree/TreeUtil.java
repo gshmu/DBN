@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -16,6 +10,12 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public class TreeUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -40,17 +40,20 @@ public class TreeUtil {
     }
 
     public static void expandAll(JTree tree) {
-        tree.expandPath(new TreePath(tree.getModel().getRoot()));
-        int oldRowCount = 0;
-        do {
-            int rowCount = tree.getRowCount();
-            if (rowCount == oldRowCount) break;
-            oldRowCount = rowCount;
-            for (int i = 0; i < rowCount; i++) {
-                tree.expandRow(i);
+        Object root = tree.getModel().getRoot();
+        if (root != null) {
+            tree.expandPath(new TreePath(root));
+            int oldRowCount = 0;
+            do {
+                int rowCount = tree.getRowCount();
+                if (rowCount == oldRowCount) break;
+                oldRowCount = rowCount;
+                for (int i = 0; i < rowCount; i++) {
+                    tree.expandRow(i);
+                }
             }
+            while (true);
         }
-        while (true);
     }
 
     public static void notifyTreeModelListeners(Object source, Set<TreeModelListener> treeModelListeners, @Nullable TreePath path, TreeEventType eventType) {
