@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.table.TableCellEditor;
+import java.awt.BorderLayout;
+import java.sql.SQLException;
+
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -21,14 +29,6 @@ import com.intellij.ui.JBSplitter;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.table.TableCellEditor;
-import java.awt.BorderLayout;
-import java.sql.SQLException;
 
 public class SessionBrowserForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
@@ -74,7 +74,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
 
-            ActionUtil.registerDataProvider(actionsPanel, sessionBrowser.getDataProvider(), true);
+            ActionUtil.registerDataProvider(actionsPanel, sessionBrowser);
 
             Disposer.register(this, editorTable);
             Disposer.register(this, detailsForm);

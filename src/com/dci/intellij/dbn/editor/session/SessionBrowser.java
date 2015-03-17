@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -45,7 +46,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 
-public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider {
+public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider, DataProviderSupplier {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean preventLoading = false;
@@ -417,6 +418,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     };
 
+    @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
     }

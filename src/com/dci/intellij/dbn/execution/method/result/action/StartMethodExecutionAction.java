@@ -4,20 +4,20 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
-import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 
 public class StartMethodExecutionAction extends MethodExecutionResultAction {
-    public StartMethodExecutionAction(MethodExecutionResultForm executionResultFOrm) {
-        super(executionResultFOrm, "Execute again", Icons.METHOD_EXECUTION_RERUN);
+    public StartMethodExecutionAction() {
+        super("Execute Again", Icons.METHOD_EXECUTION_RERUN);
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
-            MethodExecutionResult executionResult = getExecutionResult();
+            MethodExecutionResult executionResult = getExecutionResult(e);
             if (executionResult != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
                 executionManager.execute(executionResult.getExecutionInput());
@@ -27,10 +27,12 @@ public class StartMethodExecutionAction extends MethodExecutionResultAction {
 
     @Override
     public void update(AnActionEvent e) {
-        MethodExecutionResult executionResult = getExecutionResult();
-        e.getPresentation().setEnabled(
+        MethodExecutionResult executionResult = getExecutionResult(e);
+        Presentation presentation = e.getPresentation();
+        presentation.setText("Execute Again");
+        presentation.setEnabled(
                 executionResult != null &&
-                !executionResult.isDebug() &&
-                !executionResult.getExecutionInput().isExecuting());
+                        !executionResult.isDebug() &&
+                        !executionResult.getExecutionInput().isExecuting());
     }
 }

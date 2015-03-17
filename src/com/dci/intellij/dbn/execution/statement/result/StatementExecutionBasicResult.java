@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -13,6 +14,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -170,5 +172,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         disposed = true;
         executionProcessor = null;
         executionMessage = null;
+    }
+
+    @Nullable
+    @Override
+    public DataProvider getDataProvider() {
+        return null;
     }
 }

@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.common.util;
 
+import javax.swing.JComponent;
+import java.awt.Component;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -12,10 +16,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import java.awt.Component;
 
 public class ActionUtil {
     public static final AnAction SEPARATOR = Separator.getInstance();
@@ -61,29 +61,10 @@ public class ActionUtil {
         return PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(component));
     }
     
-    public static void registerDataProvider(JComponent component, DataProvider dataProvider, boolean recursive) {
-        DataManager.registerDataProvider(component, dataProvider);
-        if (recursive) {
-            for (Component child : component.getComponents()) {
-                if (child instanceof JComponent) {
-                    JComponent childComponent = (JComponent) child;
-                    registerDataProvider(childComponent, dataProvider, recursive);
-                }
-            }
+    public static void registerDataProvider(JComponent component, DataProviderSupplier dataProviderSupplier) {
+        DataProvider dataProvider = dataProviderSupplier.getDataProvider();
+        if (dataProvider != null) {
+            DataManager.registerDataProvider(component, dataProvider);
         }
     }
-    
-    public static DataProvider getDataProvider(JComponent component) {
-        if (component != null) {
-            DataProvider dataProvider = DataManager.getDataProvider(component);
-            if (dataProvider == null) {
-                JComponent parent = (JComponent) component.getParent();
-                return getDataProvider(parent);
-            } else {
-                return dataProvider;
-            }
-        }
-        return null;
-    }
-
 }
