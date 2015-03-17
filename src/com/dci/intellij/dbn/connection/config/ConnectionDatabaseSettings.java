@@ -133,7 +133,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
-               "Description:\t" + description + "\n" +
+               "Description:\t" + CommonUtil.nvl(description, "") + "\n" +
                "User:\t"      + user;
     }
 
