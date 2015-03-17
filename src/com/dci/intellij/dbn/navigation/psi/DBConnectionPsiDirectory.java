@@ -88,7 +88,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return FailsafeUtil.nvl(virtualFile == null ? null : virtualFile.getProject());
+        return FailsafeUtil.get(virtualFile == null ? null : virtualFile.getProject());
     }
 
     @NotNull

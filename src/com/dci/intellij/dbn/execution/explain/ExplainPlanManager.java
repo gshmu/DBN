@@ -9,8 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -21,7 +22,6 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
 public class ExplainPlanManager extends AbstractProjectComponent {
@@ -45,8 +45,9 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *********************************************************/
 
     public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask<ExplainPlanResult> callback) {
-        BackgroundTask explainTask = new BackgroundTask(getProject(), "Extracting explain plan for " + executable.getElementType().getDescription(), false, true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+        TaskInstructions taskInstructions = new TaskInstructions("Extracting explain plan for " + executable.getElementType().getDescription(), false, true);
+        ConnectionAction explainAction = new ConnectionAction(executable.getFile(), taskInstructions) {
+            public void execute() {
                 ConnectionHandler connectionHandler = executable.getFile().getActiveConnection();
                 DBSchema currentSchema = executable.getFile().getCurrentSchema();
                 if (connectionHandler != null) {
@@ -90,7 +91,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
         };
 
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-        connectionMappingManager.selectConnectionAndSchema(executable.getFile(), explainTask);
+        connectionMappingManager.selectConnectionAndSchema(executable.getFile(), explainAction);
     }
 
     /*********************************************************

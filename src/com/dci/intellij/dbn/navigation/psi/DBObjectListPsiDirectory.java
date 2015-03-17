@@ -82,7 +82,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObjectList objectList = getObjectList();
         Project project = objectList == null ? null : objectList.getProject();
-        return FailsafeUtil.nvl(project);
+        return FailsafeUtil.get(project);
     }
 
     @NotNull

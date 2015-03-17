@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -84,6 +85,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return getInterfaceProvider().getLanguageDialect(language);
     }
 
+    @NotNull
     public Project getProject() {return project;}
 
     public boolean isActive() {

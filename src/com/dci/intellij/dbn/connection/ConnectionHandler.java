@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public interface ConnectionHandler extends Disposable, ConnectionProvider {
+    @NotNull
     Project getProject();
     Connection getPoolConnection() throws SQLException;
     Connection getPoolConnection(DBSchema schema) throws SQLException;

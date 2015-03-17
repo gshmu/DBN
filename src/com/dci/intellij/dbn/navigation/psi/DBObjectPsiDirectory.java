@@ -75,7 +75,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObject object = getObject();
         Project project = object == null ? null : object.getProject();
-        return FailsafeUtil.nvl(project);
+        return FailsafeUtil.get(project);
     }
 
     @NotNull

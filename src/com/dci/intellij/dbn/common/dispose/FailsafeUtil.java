@@ -20,9 +20,8 @@ public class FailsafeUtil {
         return disposable;
     }
 
-    public static @NotNull Project nvl(@Nullable Project project) {
-        if (project == null) return DUMMY_PROJECT;
-        if (project.isDisposed()) throw new AlreadyDisposedException();
+    public static @NotNull Project get(@Nullable Project project) {
+        if (project == null || project.isDisposed()) throw new AlreadyDisposedException();
         return project;
     }
 
