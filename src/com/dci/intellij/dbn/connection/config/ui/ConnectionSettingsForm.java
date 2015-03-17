@@ -89,7 +89,6 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         @Override
         public void presentationChanged(final String name, final Icon icon, final Color color, final String connectionId, DatabaseType databaseType) {
             new SimpleLaterInvocator() {
-
                 @Override
                 public void execute() {
                     ConnectionSettings configuration = getConfiguration();

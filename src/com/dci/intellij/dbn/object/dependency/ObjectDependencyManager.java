@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.options.ConfigurationUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ui.ObjectDependencyTreeDialog;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -40,9 +41,14 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
         this.lastUserDependencyType = lastUserDependencyType;
     }
 
-    public void openDependencyTree(DBSchemaObject schemaObject) {
-        ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
-        dependencyTreeDialog.show();
+    public void openDependencyTree(final DBSchemaObject schemaObject) {
+        new ConnectionAction("opening object dependency tree", schemaObject) {
+            @Override
+            public void execute() {
+                ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
+                dependencyTreeDialog.show();
+            }
+        }.start();
     }
 
     @NonNls

@@ -419,13 +419,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
      *             Select schema popup                 *
      ***************************************************/
     public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        new ConnectionAction("selecting the curent schema", psiFile) {
+        new ConnectionAction("selecting the current schema", psiFile) {
             @Override
             public void execute() {
                 DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-                ConnectionHandler connectionHandler = psiFile.getActiveConnection();
-                if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
                     List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
                     for (DBSchema schema  :schemas) {
                         SelectSchemaAction schemaAction = new SelectSchemaAction(psiFile, schema, callback);
@@ -440,7 +440,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
                         true);
 
-                popupBuilder.showCenteredInCurrentWindow(project);
+                popupBuilder.showCenteredInCurrentWindow(getProject());
             }
         }.start();
     }

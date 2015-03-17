@@ -77,7 +77,7 @@ public class ConnectionUtil {
         }
 
         try {
-            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(databaseSettings, detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
@@ -92,7 +92,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Map<String, String> connectionProperties, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(ConnectionDatabaseSettings databaseSettings, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         try {
             Properties properties = new Properties();
             if (!databaseSettings.isOsAuthentication()) {
@@ -102,8 +102,9 @@ public class ConnectionUtil {
             String appName = "Database Navigator - " + connectionType.getName() + "";
             properties.put("ApplicationName", appName);
             properties.put("v$session.program", appName);
-            if (connectionProperties != null) {
-                properties.putAll(connectionProperties);
+            Map<String, String> configProperties = databaseSettings.getProperties();
+            if (configProperties != null) {
+                properties.putAll(configProperties);
             }
 
             Driver driver = DatabaseDriverManager.getInstance().getDriver(

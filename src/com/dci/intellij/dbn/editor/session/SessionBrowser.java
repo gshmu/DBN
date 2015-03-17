@@ -90,11 +90,11 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(boolean force) {
         if (!loading && !isPreventLoading(force)) {
+            setLoading(true);
             new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", true, false)) {
                 @Override
                 public void execute() {
                     try {
-                        setLoading(true);
                         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
                         SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
                         replaceModel(model);
@@ -102,6 +102,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                         EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                         setLoading(false);
                     }
+                }
+
+                @Override
+                public void cancel() {
+                    setLoading(false);
+                    setRefreshInterval(0);
                 }
             }.start();
         }
