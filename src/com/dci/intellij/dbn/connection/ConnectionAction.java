@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.openapi.application.Application;
@@ -65,7 +64,7 @@ public abstract class ConnectionAction extends SimpleTask {
             } else {
                 ConnectionSettings connectionSettings = connectionHandler.getSettings();
                 ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-                if (connectionHandler.isPasswordProvided()) {
+                if (connectionHandler.isAuthenticationProvided()) {
                     MessageUtil.showInfoDialog(
                             connectionHandler.getProject(),
                             "Not Connected to Database",
@@ -86,9 +85,11 @@ public abstract class ConnectionAction extends SimpleTask {
                 } else {
                     ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
 
-                    String password = connectionManager.openPasswordDialog(connectionHandler);
-                    if (StringUtil.isNotEmpty(password)) {
+                    Authentication authentication = connectionManager.openUserPasswordDialog(connectionHandler);
+                    if (authentication != null) {
                         doExecute();
+                    } else {
+                        cancel();
                     }
                 }
             }

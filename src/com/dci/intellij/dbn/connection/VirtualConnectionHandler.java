@@ -157,18 +157,14 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return false;
     }
 
+    @NotNull
     @Override
-    public String getTemporaryPassword() {
-        return null;
+    public Authentication getTemporaryAuthentication() {
+        return new Authentication();
     }
 
     @Override
-    public void setTemporaryPassword(String temporaryPassword) {
-
-    }
-
-    @Override
-    public boolean isPasswordProvided() {
+    public boolean isAuthenticationProvided() {
         return false;
     }
 

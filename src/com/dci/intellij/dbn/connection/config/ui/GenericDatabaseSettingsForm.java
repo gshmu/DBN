@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -278,9 +279,12 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         connectionConfig.setDriverLibrary(driverLibraryTextField.getText());
         connectionConfig.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
         connectionConfig.setDatabaseUrl(urlTextField.getText());
-        connectionConfig.setUser(userTextField.getText());
-        connectionConfig.setPassword(new String(passwordField.getPassword()));
-        connectionConfig.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+
+        Authentication authentication = connectionConfig.getAuthentication();
+        authentication.setUser(userTextField.getText());
+        authentication.setPassword(new String(passwordField.getPassword()));
+        authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+
         connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
         connectionConfig.setProperties(propertiesEditorForm.getProperties());
         connectionConfig.updateHashCode();
@@ -294,7 +298,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 !connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
                 !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getUser(), userTextField.getText());
+                !CommonUtil.safeEqual(connectionConfig.getAuthentication().getUser(), userTextField.getText());
 
 
         applyChanges(connectionConfig);
@@ -321,9 +325,11 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         descriptionTextField.setText(connectionConfig.getDescription());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
         urlTextField.setText(connectionConfig.getDatabaseUrl());
-        userTextField.setText(connectionConfig.getUser());
-        passwordField.setText(connectionConfig.getPassword());
-        osAuthenticationCheckBox.setSelected(connectionConfig.isOsAuthentication());
+
+        Authentication authentication = connectionConfig.getAuthentication();
+        userTextField.setText(authentication.getUser());
+        passwordField.setText(authentication.getPassword());
+        osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
 
         populateDriverList(connectionConfig.getDriverLibrary());
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));

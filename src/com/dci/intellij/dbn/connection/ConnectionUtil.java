@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -69,26 +68,24 @@ public class ConnectionUtil {
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
-        String user = databaseSettings.getUser();
-        String password = databaseSettings.getPassword();
-        if (StringUtil.isEmpty(password)) {
-            password = connectionHandler.getTemporaryPassword();
+        Authentication authentication = databaseSettings.getAuthentication();
+        if (!authentication.isProvided()) {
+            authentication = connectionHandler.getTemporaryAuthentication();
         }
 
-        boolean osAuthentication = databaseSettings.isOsAuthentication();
-        if (authenticationError != null && authenticationError.isSame(osAuthentication, user, password) && !authenticationError.isExpired()) {
+        if (authenticationError != null && authenticationError.getAuthentication().isSame(authentication) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
         try {
-            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryPassword(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryAuthentication(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
             if (connectionHandler.getDatabaseType() != DatabaseType.UNKNOWN) {
                 DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
                 if (messageParserInterface.isAuthenticationException(e)){
-                    authenticationError = new AuthenticationError(osAuthentication, user, password, e);
+                    authenticationError = new AuthenticationError(authentication, e);
                     connectionStatus.setAuthenticationError(authenticationError);
                 }
             }
@@ -96,18 +93,20 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionDatabaseSettings databaseSettings, String temporaryPassword, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Authentication temporaryAuthentication, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         try {
             Properties properties = new Properties();
-            if (!databaseSettings.isOsAuthentication()) {
-                String password = databaseSettings.getPassword();
-                if (StringUtil.isEmpty(password)) {
-                    password = temporaryPassword;
-                }
-
-                properties.put("user", databaseSettings.getUser());
+            Authentication authentication = databaseSettings.getAuthentication();
+            if (!authentication.isProvided() && temporaryAuthentication != null) {
+                authentication = temporaryAuthentication;
+            }
+            if (!authentication.isOsAuthentication()) {
+                String user = authentication.getUser();
+                String password = authentication.getPassword();
+                properties.put("user", user);
                 properties.put("password", password);
             }
+
             String appName = "Database Navigator - " + connectionType.getName() + "";
             properties.put("ApplicationName", appName);
             properties.put("v$session.program", appName);

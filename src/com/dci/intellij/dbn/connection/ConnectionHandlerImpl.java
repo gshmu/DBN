@@ -20,8 +20,9 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -63,7 +64,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
-    private String temporaryPassword;
+    private Authentication temporaryAuthentication = new Authentication();
 
     private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>(this) {
         @Override
@@ -92,14 +93,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         this.allowConnection = allowConnection;
     }
 
-    @Override
-    public String getTemporaryPassword() {
-        return temporaryPassword;
-    }
 
     @Override
-    public void setTemporaryPassword(String temporaryPassword) {
-        this.temporaryPassword = temporaryPassword;
+    @NotNull
+    public Authentication getTemporaryAuthentication() {
+        int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
+        long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
+        if (TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
+            temporaryAuthentication = new Authentication();
+        }
+        return temporaryAuthentication;
     }
 
     @Override
@@ -110,7 +113,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         if (allowConnection || detailSettings.isConnectAutomatically()) {
-            if (isPasswordProvided()) {
+            if (isAuthenticationProvided()) {
                 return true;
             }
         }
@@ -118,9 +121,9 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
-    public boolean isPasswordProvided() {
+    public boolean isAuthenticationProvided() {
         ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
-        return databaseSettings.isOsAuthentication() || StringUtil.isNotEmpty(databaseSettings.getPassword()) || StringUtil.isNotEmpty(getTemporaryPassword());
+        return databaseSettings.getAuthentication().isProvided() || getTemporaryAuthentication().isProvided();
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -294,7 +297,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         try {
             connectionPool.closeConnections();
             changesBundle = null;
-            temporaryPassword = null;
+            temporaryAuthentication = new Authentication();
         } finally {
             connectionStatus.setConnected(false);
         }
@@ -305,7 +308,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public String getUserName() {
-        return connectionSettings.getDatabaseSettings().getUser() == null ? "" : connectionSettings.getDatabaseSettings().getUser();
+        return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthentication().getUser(), "");
     }
 
     public ConnectionLoadMonitor getLoadMonitor() {

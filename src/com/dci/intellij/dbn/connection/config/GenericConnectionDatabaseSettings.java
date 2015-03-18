@@ -5,6 +5,7 @@ import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -46,7 +47,8 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
     }
 
     public void updateHashCode() {
-        hashCode = (name + driver + driverLibrary + databaseUrl + user + password + osAuthentication).hashCode();
+        Authentication authentication = getAuthentication();
+        hashCode = (name + driver + driverLibrary + databaseUrl + authentication.getUser() + authentication.getPassword() + authentication.isOsAuthentication()).hashCode();
     }
 
     public GenericConnectionDatabaseSettings clone() {
@@ -62,7 +64,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
         return "Name:\t"      + name + "\n" +
                "Description:\t" + description + "\n" +
                "URL:\t"       + databaseUrl + "\n" +
-               "User:\t"      + user;
+               "User:\t"      + getAuthentication().getUser();
     }
 
    /*********************************************************
