@@ -109,7 +109,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     public static void initProgressIndicator(final ProgressIndicator progressIndicator, final boolean indeterminate, @Nullable final String text) {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 if (progressIndicator.isRunning()) {
                     progressIndicator.setIndeterminate(indeterminate);
                     if (text != null) progressIndicator.setText(text);

@@ -44,7 +44,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     private void update() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler != null) {
                     setVisible(true);

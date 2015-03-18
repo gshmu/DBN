@@ -93,7 +93,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             TaskInstructions taskInstructions = new TaskInstructions("Checking for third party changes on " + object.getQualifiedNameWithType(), false, false);
             new ConnectionAction("updating the object to database", object, taskInstructions) {
                 @Override
-                public void execute() {
+                protected void execute() {
                     Project project = getProject();
                     try {
                         final DBContentType contentType = virtualFile.getContentType();
@@ -196,7 +196,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     private void showSourceDiffDialog(final String databaseContent, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 DiffRequestFactory diffRequestFactory = new DiffRequestFactoryImpl();
                 MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
                         databaseContent,
@@ -237,7 +238,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private void doUpdateSourceToDatabase(final DBSchemaObject object, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
         new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", false) {
             @Override
-            public void execute(@NotNull ProgressIndicator indicator) {
+            protected void execute(@NotNull ProgressIndicator indicator) {
                 Project project = getProject();
                 try {
                     Editor editor = EditorUtil.getEditor(fileEditor);

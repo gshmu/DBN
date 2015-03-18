@@ -1,21 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
-import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCellValueListener;
-import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
-import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -33,6 +17,22 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCellValueListener;
+import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
+import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, Disposable {
     private DataEditorComponent editorComponent;
@@ -48,7 +48,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             if (cell == AbstractDatasetTableCellEditor.this.cell) {
                 new ConditionalLaterInvocator() {
                     @Override
-                    public void execute() {
+                    protected void execute() {
                         setCellValueToEditor();
                     }
                 }.start();

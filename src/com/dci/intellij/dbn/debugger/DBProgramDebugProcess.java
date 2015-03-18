@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -98,9 +97,9 @@ public class DBProgramDebugProcess extends XDebugProcess {
         return connectionHandler;
     }
 
-    @Nullable
+    @NotNull
     public Project getProject() {
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        return getSession().getProject();
     }
 
     @NotNull
@@ -120,7 +119,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         final Project project = getSession().getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
             @Override
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 try {
                     targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionSchema());
                     targetConnection.setAutoCommit(false);
@@ -145,8 +144,8 @@ public class DBProgramDebugProcess extends XDebugProcess {
         final XDebugSession session = getSession();
         final Project project = session.getProject();
         new BackgroundTask(project, "Initialize debug environment", true) {
-
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 final DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
 
                 if (status.PROCESS_IS_TERMINATING || status.TARGET_EXECUTION_TERMINATED) {
@@ -310,7 +309,8 @@ public class DBProgramDebugProcess extends XDebugProcess {
         status.PROCESS_IS_TERMINATING = true;
 
         new BackgroundTask(project, "Stopping debugger", true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setText("Cancelling / resuming method execution.");
                 try {
                     unregisterBreakpoints();
@@ -485,12 +485,13 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     private void navigateInEditor(final DBEditableObjectVirtualFile databaseFile, final int line) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 // todo review this
                 SourceCodeEditor sourceCodeEditor = null;
                 DBSourceCodeVirtualFile mainContentFile = (DBSourceCodeVirtualFile) databaseFile.getMainContentFile();
                 if (databaseFile.getContentFiles().size() > 1) {
-                    FileEditorManager editorManager = FileEditorManager.getInstance(databaseFile.getProject());
+                    FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
                     FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
                     if (fileEditors.length >= runtimeInfo.getNamespace()) {
                         FileEditor fileEditor = fileEditors[runtimeInfo.getNamespace() -1];

@@ -29,7 +29,7 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
         TaskInstructions taskInstructions = new TaskInstructions("Extracting select statement", false, true);
         new ConnectionAction("generating the statement", this, taskInstructions) {
             @Override
-            public void execute() {
+            protected void execute() {
                 Project project = getProject();
                 StatementGeneratorResult result = generateStatement(project);
                 if (result.getMessages().hasErrors()) {
@@ -44,7 +44,7 @@ public abstract class GenerateStatementAction extends AnAction implements Connec
     private void pasteStatement(final StatementGeneratorResult result, final Project project) {
         new SimpleLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
                 if (editor != null)
                     pasteToEditor(editor, result); else

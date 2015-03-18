@@ -98,7 +98,7 @@ public class MessageUtil {
 
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
                 if (callback != null) {
                     callback.setResult(option);

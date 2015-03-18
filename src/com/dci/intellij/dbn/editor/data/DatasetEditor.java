@@ -266,10 +266,11 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         if (!isLoading) {
             new ConnectionAction("loading table data", this) {
                 @Override
-                public void execute() {
+                protected void execute() {
                     setLoading(true);
                     new SimpleBackgroundTask("load table data") {
-                        public void execute() {
+                        @Override
+                        protected void execute() {
                             try {
                                 if (!isDisposed()) {
                                     editorForm.showLoadingHint();
@@ -314,7 +315,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     private void handleLoadError(final SQLException e, final DatasetLoadInstructions instr) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 final DBDataset dataset = getDataset();
                 if (!isDisposed()) {
                     focusEditor();
@@ -346,7 +348,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
                             MessageUtil.showErrorDialog(project, "Error", message, options, 0, new SimpleTask() {
                                 @Override
-                                public void execute() {
+                                protected void execute() {
                                     int option = getResult();
                                     DatasetLoadInstructions instructions = instr.clone();
                                     instructions.setDeliberateAction(true);

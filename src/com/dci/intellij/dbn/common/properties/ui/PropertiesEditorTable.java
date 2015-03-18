@@ -69,11 +69,13 @@ public class PropertiesEditorTable extends JTable {
         textField.setBorder(new EmptyBorder(0,0,0,0));
 
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 textField.selectAll();
                 textField.grabFocus();
             }
         }.start();
+
         selectCell(rowIndex, columnIndex);
         return textField;
     }

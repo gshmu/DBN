@@ -47,7 +47,7 @@ public abstract class ObjectListShowAction extends AnAction {
         TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), false, true);
         new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override
-            public void execute() {
+            protected void execute() {
                 final List<DBObject> objects = getObjectList();
                 if (!isCanceled()) {
                     new SimpleLaterInvocator() {

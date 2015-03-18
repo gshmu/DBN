@@ -93,7 +93,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void addExecutionResult(final CompilerResult compilerResult) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionConsoleForm != null) {
@@ -105,7 +106,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionConsoleForm != null) {
@@ -117,7 +119,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionConsoleForm != null) {
@@ -129,7 +132,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void addExecutionResult(final StatementExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionConsoleForm != null) {
@@ -156,7 +160,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void addExecutionResult(final MethodExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionConsoleForm != null) {
@@ -168,7 +173,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionConsoleForm != null) {
                     executionConsoleForm.selectResult(executionResult);

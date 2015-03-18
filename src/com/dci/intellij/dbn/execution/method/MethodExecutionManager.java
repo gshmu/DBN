@@ -83,9 +83,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         final AtomicBoolean result = new AtomicBoolean(false);
         new ConnectionAction("the method execution", executionInput) {
             @Override
-            public void execute() {
+            protected void execute() {
                 Project project = getProject();
-                ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler.isValid(true)) {
                     DBMethod method = executionInput.getMethod();
                     if (method == null) {
@@ -169,7 +169,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         executionInput.setExecuting(false);
                         if (!executionInput.isExecutionCancelled()) {
                             new SimpleLaterInvocator() {
-                                public void execute() {
+                                protected void execute() {
                                     MessageUtil.showErrorDialog(project, "Could not execute " + method.getTypeName() + ".", e);
                                     if (promptExecutionDialog(executionInput, false)) {
                                         MethodExecutionManager.this.execute(executionInput);

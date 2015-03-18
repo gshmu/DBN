@@ -93,7 +93,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             setLoading(true);
             new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", true, false)) {
                 @Override
-                public void execute() {
+                protected void execute() {
                     try {
                         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
                         SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
@@ -105,7 +105,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 }
 
                 @Override
-                public void cancel() {
+                protected void cancel() {
                     setLoading(false);
                     setRefreshInterval(0);
                 }

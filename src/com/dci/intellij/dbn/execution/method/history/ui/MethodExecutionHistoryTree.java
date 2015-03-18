@@ -122,7 +122,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                 TaskInstructions taskInstructions = new TaskInstructions("Loading Method details", false, false);
                 new ConnectionAction("loading the execution history", executionInput, taskInstructions) {
                     @Override
-                    public void execute() {
+                    protected void execute() {
                         final DBMethod method = executionInput.getMethod();
                         if (method != null) {
                             method.getArguments();
@@ -130,7 +130,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
 
                         new SimpleLaterInvocator() {
                             @Override
-                            public void execute() {
+                            protected void execute() {
                                 if (dialog != null && !dialog.isDisposed()) {
                                     dialog.showMethodExecutionPanel(executionInput);
                                     dialog.setSelectedExecutionInput(executionInput);

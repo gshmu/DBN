@@ -98,7 +98,8 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
     public void expandConnectionManagers() {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
                 ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
                 TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
@@ -164,7 +165,8 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
 
     private void selectPath(final TreePath treePath) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true);
             }
         }.start();
@@ -271,7 +273,8 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                             final DBObject navigationObject = object.getDefaultNavigationObject();
                             if (navigationObject != null) {
                                 new SimpleLaterInvocator(){
-                                    public void execute() {
+                                    @Override
+                                    protected void execute() {
                                         navigationObject.navigate(true);
                                     }
                                 }.start();
@@ -357,7 +360,8 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                     if (lastPathEntity.isDisposed()) return;
 
                     new ModalTask(lastPathEntity.getProject(), "Loading object information", true) {
-                        public void execute(@NotNull ProgressIndicator progressIndicator) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
                             ActionGroup actionGroup = null;
                             if (lastPathEntity instanceof DBObjectList) {
                                 DBObjectList objectList = (DBObjectList) lastPathEntity;
@@ -375,7 +379,8 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                                 ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                                 popupMenu = actionPopupMenu.getComponent();
                                 new SimpleLaterInvocator() {
-                                    public void execute() {
+                                    @Override
+                                    protected void execute() {
                                         popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
                                     }
                                 }.start();

@@ -23,7 +23,7 @@ public class TestConnectivityAction extends DumbAwareAction {
         connectionHandler.setAllowConnection(true);
         new BackgroundTask(project, "Trying to connect to " + connectionHandler.getName(), false) {
             @Override
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 connectionManager.testConnection(connectionHandler, true, true);
             }

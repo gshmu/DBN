@@ -224,7 +224,8 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     private void notifyListeners(final ListDataEvent listDataEvent, final TableModelEvent event) {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 if (listModel.isLoaded()) {
                     listModel.get().notifyListeners(listDataEvent);
                 }

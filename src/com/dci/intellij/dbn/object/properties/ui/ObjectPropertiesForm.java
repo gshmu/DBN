@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.BrowserSelectionChangeListener;
@@ -15,13 +22,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
@@ -77,12 +77,13 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
 
             new BackgroundTask(object.getProject(), "Rendering object properties", true) {
                 @Override
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     final ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                     Disposer.register(ObjectPropertiesForm.this, tableModel);
 
                     new SimpleLaterInvocator() {
-                        public void execute() {
+                        @Override
+                        protected void execute() {
                             objectLabel.setText(object.getName());
                             objectLabel.setIcon(object.getIcon());
                             objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");

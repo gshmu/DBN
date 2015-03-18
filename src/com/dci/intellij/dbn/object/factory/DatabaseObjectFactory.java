@@ -103,42 +103,44 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         TaskInstructions taskInstructions = new TaskInstructions("Dropping " + object.getQualifiedNameWithType(), false, false);
         ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object, taskInstructions) {
             @Override
-            public void execute() {
-                if (getResult() == 0) {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    Connection connection = null;
-                    try {
-                        DBContentType contentType = object.getContentType();
-                        connection = connectionHandler.getPoolConnection();
+            protected boolean canExecute() {
+                return getResult() == 0;
+            }
 
-                        String objectName = object.getQualifiedName();
-                        String objectTypeName = object.getTypeName();
-                        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-                        if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                            DBObjectStatusHolder status = object.getStatus();
-                            if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
-                                ddlInterface.dropObject(objectTypeName, objectName, connection);
-                            }
-                            if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
-                                ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
-                            }
+            @Override
+            protected void execute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                Connection connection = null;
+                try {
+                    DBContentType contentType = object.getContentType();
+                    connection = connectionHandler.getPoolConnection();
 
-                        } else {
+                    String objectName = object.getQualifiedName();
+                    String objectTypeName = object.getTypeName();
+                    DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+                    if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                        DBObjectStatusHolder status = object.getStatus();
+                        if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
                             ddlInterface.dropObject(objectTypeName, objectName, connection);
                         }
+                        if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                            ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
+                        }
 
-                        DBObjectList objectList = (DBObjectList) object.getTreeParent();
-                        objectList.reload();
-                        notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
-                    } catch (SQLException e) {
-                        String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
-                        Project project = getProject();
-                        MessageUtil.showErrorDialog(project, message, e);
-                    } finally {
-                        connectionHandler.freePoolConnection(connection);
+                    } else {
+                        ddlInterface.dropObject(objectTypeName, objectName, connection);
                     }
-                }
-            }
+
+                    DBObjectList objectList = (DBObjectList) object.getTreeParent();
+                    objectList.reload();
+                    notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
+                } catch (SQLException e) {
+                    String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
+                    Project project = getProject();
+                    MessageUtil.showErrorDialog(project, message, e);
+                } finally {
+                    connectionHandler.freePoolConnection(connection);
+                }            }
         };
 
         MessageUtil.showQuestionDialog(

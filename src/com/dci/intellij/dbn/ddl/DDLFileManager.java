@@ -162,7 +162,8 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public void projectOpened() {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 registerExtensions();
             }
         }.start();

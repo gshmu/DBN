@@ -121,7 +121,8 @@ public class EnvironmentTypesEditorTable extends DBNTable<EnvironmentTypesTableM
         textField.setBorder(new EmptyBorder(0,3,0,0));
 
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 textField.selectAll();
                 textField.grabFocus();
             }

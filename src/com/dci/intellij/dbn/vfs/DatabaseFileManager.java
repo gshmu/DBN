@@ -127,10 +127,13 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                 "You are about to close the editor for " + object.getQualifiedNameWithType() + " and you have unsaved changes.\nPlease select whether to save or discard the changes.",
                                 options, 0, new SimpleTask() {
                                     @Override
-                                    public void execute() {
-                                        if (getResult() == 0) {
-                                            databaseFile.saveChanges();
-                                        }
+                                    protected boolean canExecute() {
+                                        return getResult() == 0;
+                                    }
+
+                                    @Override
+                                    protected void execute() {
+                                        databaseFile.saveChanges();
                                     }
                                 });
                     }

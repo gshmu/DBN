@@ -88,7 +88,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void reloadTableModel() {
         new SimpleLaterInvocator() {
-            public void execute() {
+            protected void execute() {
                 if (executionResult != null) {
                     resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
                     resultScrollPane.setViewportView(resultTable);
@@ -105,7 +105,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void updateVisibleComponents() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            protected void execute() {
                 ResultSetDataModel dataModel = executionResult.getTableModel();
                 statusLabel.setText(executionResult.getExecutionInput().getConnectionHandler().getPresentableText() + ": " +
                         dataModel.getRowCount() + " records" + (dataModel.isResultSetExhausted() ? "" : " (Partial)"));

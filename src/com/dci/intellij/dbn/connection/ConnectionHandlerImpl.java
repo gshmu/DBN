@@ -480,7 +480,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             final Project project = getProject();
             new BackgroundTask(getProject(), "Trying to connect to " + getName(), false) {
                 @Override
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                     connectionManager.testConnection(ConnectionHandlerImpl.this, false, false);
                     //fixme check if the connection is pointing to a new database and reload if this is the case

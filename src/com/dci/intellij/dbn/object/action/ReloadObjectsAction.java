@@ -21,7 +21,7 @@ public class ReloadObjectsAction extends AnAction {
         TaskInstructions taskInstructions = new TaskInstructions("Reloading " + objectList.getObjectType().getListName(), false, false);
         new ConnectionAction("reloading the objects", objectList, taskInstructions){
             @Override
-            public void execute() {
+            protected void execute() {
                 objectList.reload();
             }
         }.start();
