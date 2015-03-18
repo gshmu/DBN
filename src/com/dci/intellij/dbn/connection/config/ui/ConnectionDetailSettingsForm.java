@@ -42,6 +42,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox autoConnectCheckBox;
     private JPanel autoConnectHintPanel;
     private JCheckBox databaseLoggingCheckBox;
+    private JTextField passwordExpiryTextField;
 
     public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
         super(configuration);
@@ -135,9 +136,11 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnableDdlFileBinding(newDdlFileBinding);
         configuration.setEnableDatabaseLogging(newDatabaseLogging);
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
-        int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle Time to Disconnect (minutes)", 0, 60, "");
-        int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max Connection Pool Size", 3, 20, "");
+        int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", 0, 60, "");
+        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Password expiry time (minutes)", 0, 60, "");
+        int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
+        configuration.setPasswordExpiryTime(passwordExpiryTime);
         configuration.setMaxConnectionPoolSize(maxPoolSize);
 
         new SettingsChangeNotifier() {
@@ -167,6 +170,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());
         environmentTypesComboBox.setSelectedValue(configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
+        passwordExpiryTextField.setText(Integer.toString(configuration.getPasswordExpiryTime()));
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));
         alternativeStatementDelimiterTextField.setText(configuration.getAlternativeStatementDelimiter());
     }

@@ -21,6 +21,9 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
@@ -60,6 +63,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
+    private String temporaryPassword;
 
     private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>(this) {
         @Override
@@ -89,8 +93,34 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
+    public String getTemporaryPassword() {
+        return temporaryPassword;
+    }
+
+    @Override
+    public void setTemporaryPassword(String temporaryPassword) {
+        this.temporaryPassword = temporaryPassword;
+    }
+
+    @Override
     public boolean canConnect() {
-        return !isDisposed && (allowConnection || connectionSettings.getDetailSettings().isConnectAutomatically());
+        if (isDisposed) {
+            return false;
+        }
+
+        ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
+        if (allowConnection || detailSettings.isConnectAutomatically()) {
+            if (isPasswordProvided()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isPasswordProvided() {
+        ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
+        return databaseSettings.isOsAuthentication() || StringUtil.isNotEmpty(databaseSettings.getPassword()) || StringUtil.isNotEmpty(getTemporaryPassword());
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -264,6 +294,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         try {
             connectionPool.closeConnections();
             changesBundle = null;
+            temporaryPassword = null;
         } finally {
             connectionStatus.setConnected(false);
         }

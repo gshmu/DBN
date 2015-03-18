@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
@@ -34,6 +35,7 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
+import com.dci.intellij.dbn.connection.ui.ConnectionPasswordDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -43,6 +45,7 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -136,10 +139,18 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
+    public void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
         Project project = databaseSettings.getProject();
         try {
-            Connection connection = ConnectionUtil.connect(databaseSettings, false, null, ConnectionType.TEST);
+            String temporaryPassword = null;
+            if (!databaseSettings.isOsAuthentication() && StringUtil.isEmpty(databaseSettings.getPassword())) {
+                temporaryPassword = openPasswordDialog(null);
+                if (StringUtil.isEmptyOrSpaces(temporaryPassword)){
+                    return;
+                }
+            }
+
+            Connection connection = ConnectionUtil.connect(databaseSettings, temporaryPassword, false, null, ConnectionType.TEST);
             ConnectionUtil.closeConnection(connection);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             if (showMessageDialog) {
@@ -178,10 +189,18 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return showConnectionInfo(databaseSettings);
     }
 
-    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
+    public ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
         Project project = databaseSettings.getProject();
         try {
-            Connection connection = ConnectionUtil.connect(databaseSettings, false, null, ConnectionType.TEST);
+            String temporaryPassword = null;
+            if (!databaseSettings.isOsAuthentication() && StringUtil.isEmpty(databaseSettings.getPassword())) {
+                temporaryPassword = openPasswordDialog(null);
+                if (StringUtil.isEmpty(temporaryPassword)) {
+                    return null;
+                }
+            }
+
+            Connection connection = ConnectionUtil.connect(databaseSettings, temporaryPassword, false, null, ConnectionType.TEST);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             ConnectionUtil.closeConnection(connection);
             MessageDialog.showInfoDialog(
@@ -199,6 +218,26 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     false);
             return null;
         }
+    }
+
+    public String openPasswordDialog(@Nullable ConnectionHandler connectionHandler) {
+        ConnectionPasswordDialog passwordDialog = new ConnectionPasswordDialog(getProject(), connectionHandler);
+        passwordDialog.show();
+        if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+            String password = passwordDialog.getPassword();
+            if (connectionHandler != null) {
+                if (passwordDialog.isRememberPassword()) {
+                    ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+                    databaseSettings.setPassword(password);
+                } else {
+                    connectionHandler.setTemporaryPassword(password);
+                }
+                connectionHandler.setAllowConnection(true);
+            }
+            return password;
+        }
+
+        return null;
     }
 
     /*********************************************************

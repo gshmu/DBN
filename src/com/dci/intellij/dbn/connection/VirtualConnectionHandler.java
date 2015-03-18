@@ -157,6 +157,21 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return false;
     }
 
+    @Override
+    public String getTemporaryPassword() {
+        return null;
+    }
+
+    @Override
+    public void setTemporaryPassword(String temporaryPassword) {
+
+    }
+
+    @Override
+    public boolean isPasswordProvided() {
+        return false;
+    }
+
     public ConnectionBundle getConnectionBundle() {return null;}
     public ConnectionPool getConnectionPool() {return null;}
 

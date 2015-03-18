@@ -19,6 +19,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private boolean enableDatabaseLogging = false;
     protected boolean connectAutomatically = true;
     private int idleTimeToDisconnect = 30;
+    private int passwordExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
     private String alternativeStatementDelimiter;
     private ConnectionSettings parent;
@@ -108,6 +109,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.idleTimeToDisconnect = idleTimeToDisconnect;
     }
 
+    public int getPasswordExpiryTime() {
+        return passwordExpiryTime;
+    }
+
+    public void setPasswordExpiryTime(int passwordExpiryTime) {
+        this.passwordExpiryTime = passwordExpiryTime;
+    }
+
     public String getAlternativeStatementDelimiter() {
         return alternativeStatementDelimiter;
     }
@@ -140,6 +149,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
         environmentTypeId = getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
+        passwordExpiryTime = getInteger(element, "password-expiry-time", passwordExpiryTime);
         maxConnectionPoolSize = getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         alternativeStatementDelimiter = getString(element, "alternative-statement-delimiter", null);
     }
@@ -153,6 +163,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         setBoolean(element, "database-logging", enableDatabaseLogging);
         setString(element, "environment-type", environmentTypeId);
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
+        setInteger(element, "password-expiry-time", passwordExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
         setBoolean(element, "connect-automatically", connectAutomatically);
