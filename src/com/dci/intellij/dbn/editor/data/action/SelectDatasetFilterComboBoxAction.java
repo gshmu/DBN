@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -12,12 +15,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JComponent;
 
 public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
     public SelectDatasetFilterComboBoxAction() {
@@ -36,10 +34,9 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent button) {
         DataContext dataContext = DataManager.getInstance().getDataContext(button);
-        Project project = (Project) dataContext.getData(PlatformDataKeys.PROJECT.getName());
+        DatasetEditor datasetEditor = AbstractDataEditorAction.getDatasetEditor(dataContext);
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        DatasetEditor datasetEditor = AbstractDataEditorAction.getActiveDatasetEditor(project);
         if (datasetEditor != null) {
             DBDataset dataset = datasetEditor.getDataset();
             OpenFilterSettingsAction openFilterSettingsAction = new OpenFilterSettingsAction(datasetEditor);
@@ -70,18 +67,16 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
         if (datasetEditor != null) {
             DBDataset dataset = datasetEditor.getDataset();
 
-            if (dataset != null) {
-                DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
-                DatasetFilter activeFilter = filterManager.getActiveFilter(dataset);
+            DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
+            DatasetFilter activeFilter = filterManager.getActiveFilter(dataset);
 
-                if (activeFilter == null) {
-                    presentation.setText("No Filter");
-                    presentation.setIcon(Icons.DATASET_FILTER_EMPTY);
-                } else {
-                    //e.getPresentation().setText(activeFilter.getName());
-                    presentation.setText(NamingUtil.enhanceNameForDisplay(activeFilter.getName()));
-                    presentation.setIcon(activeFilter.getIcon());
-                }
+            if (activeFilter == null) {
+                presentation.setText("No Filter");
+                presentation.setIcon(Icons.DATASET_FILTER_EMPTY);
+            } else {
+                //e.getPresentation().setText(activeFilter.getName());
+                presentation.setText(NamingUtil.enhanceNameForDisplay(activeFilter.getName()));
+                presentation.setIcon(activeFilter.getIcon());
             }
         }
 
