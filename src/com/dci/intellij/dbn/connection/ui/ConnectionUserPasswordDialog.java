@@ -6,23 +6,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionPasswordDialog extends DBNDialog<ConnectionPasswordForm> {
+public class ConnectionUserPasswordDialog extends DBNDialog<ConnectionUserPasswordForm> {
+    private boolean rememberUser;
     private boolean rememberPassword;
-    private String password;
+    private Authentication authentication = new Authentication();
 
-    public ConnectionPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler) {
+    public ConnectionUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler) {
         super(project, "Enter Password", true);
         setModal(true);
         setResizable(false);
-        component = new ConnectionPasswordForm(this, connectionHandler);
+        component = new ConnectionUserPasswordForm(this, connectionHandler);
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Connect");
         okAction.setEnabled(false);
         init();
+    }
+
+    public boolean isRememberUser() {
+        return rememberUser;
+    }
+
+    public void setRememberUser(boolean rememberUser) {
+        this.rememberUser = rememberUser;
     }
 
     public boolean isRememberPassword() {
@@ -33,13 +42,12 @@ public class ConnectionPasswordDialog extends DBNDialog<ConnectionPasswordForm> 
         this.rememberPassword = rememberPassword;
     }
 
-    public String getPassword() {
-        return password;
+    public Authentication getAuthentication() {
+        return authentication;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-        getOKAction().setEnabled(StringUtil.isNotEmpty(password));
+    public void updateConnectButton() {
+        getOKAction().setEnabled(authentication.isProvided());
     }
 
     @Override

@@ -137,7 +137,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnableDatabaseLogging(newDatabaseLogging);
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", 0, 60, "");
-        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Password expiry time (minutes)", 0, 60, "");
+        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Password expiry time (minutes)", 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
         configuration.setPasswordExpiryTime(passwordExpiryTime);

@@ -66,6 +66,10 @@ public class ConnectionPool implements Disposable {
         return standaloneConnection.getConnection();
     }
 
+    public long getLastAccessTimestamp() {
+        return lastAccessTimestamp;
+    }
+
     private void notifyStatusChange() {
         if (!isDisposed) {
             ConnectionStatusListener changeListener = EventManager.notify(getProject(), ConnectionStatusListener.TOPIC);

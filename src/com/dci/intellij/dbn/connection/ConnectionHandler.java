@@ -40,13 +40,12 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider {
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);
 
-    String getTemporaryPassword();
-
-    void setTemporaryPassword(String temporaryPassword);
+    @NotNull
+    Authentication getTemporaryAuthentication();
 
     boolean canConnect();
 
-    boolean isPasswordProvided();
+    boolean isAuthenticationProvided();
 
     ConnectionBundle getConnectionBundle();
     ConnectionPool getConnectionPool();
