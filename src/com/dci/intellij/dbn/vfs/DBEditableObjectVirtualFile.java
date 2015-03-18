@@ -97,10 +97,13 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                                     "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
                                     new SimpleTask() {
                                         @Override
-                                        public void execute() {
-                                            if (getResult() == DialogWrapper.OK_EXIT_CODE) {
-                                                fileAttachmentManager.createDDLFile(object);
-                                            }
+                                        protected boolean canExecute() {
+                                            return getResult() == DialogWrapper.OK_EXIT_CODE;
+                                        }
+
+                                        @Override
+                                        protected void execute() {
+                                            fileAttachmentManager.createDDLFile(object);
                                         }
                                     });
                         }
@@ -158,7 +161,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(getProject());
         if (ddlFileSettings.getGeneralSettings().isSynchronizeDDLFilesEnabled()) {
             new ConditionalLaterInvocator() {
-                public void execute() {
+                @Override
+                protected void execute() {
                     ObjectToDDLContentSynchronizer synchronizer = new ObjectToDDLContentSynchronizer(sourceContentType, DBEditableObjectVirtualFile.this);
                     ApplicationManager.getApplication().runWriteAction(synchronizer);
                 }

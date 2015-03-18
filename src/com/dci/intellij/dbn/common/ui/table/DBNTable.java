@@ -232,7 +232,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             if (scrollPane != null && scrollDistance != 0) {
                 new SimpleLaterInvocator() {
                     @Override
-                    public void execute() {
+                    protected void execute() {
                         JViewport viewport = scrollPane.getViewport();
                         Point viewPosition = viewport.getViewPosition();
                         viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));

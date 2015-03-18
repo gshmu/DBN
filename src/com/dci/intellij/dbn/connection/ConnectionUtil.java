@@ -49,7 +49,7 @@ public class ConnectionUtil {
         if (connection != null) {
             new SimpleBackgroundTask("close connection") {
                 @Override
-                public void execute() {
+                protected void execute() {
                     try {
                         connection.close();
                     } catch (Throwable e) {

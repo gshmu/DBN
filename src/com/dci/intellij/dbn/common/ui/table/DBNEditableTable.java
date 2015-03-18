@@ -81,7 +81,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
 
         selectCell(rowIndex, columnIndex);
         new SimpleLaterInvocator() {
-            public void execute() {
+            protected void execute() {
                 textField.grabFocus();
                 textField.selectAll();
             }

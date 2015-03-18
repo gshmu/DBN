@@ -288,7 +288,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
     public void showErrorPopup() {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 if (!isDisposed()) {
                     DatasetEditorModelRow row = getRow();
                     if (row != null) {

@@ -93,7 +93,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     private void disposeRows(final List<T> oldRows) {
         new SimpleBackgroundTask("dispose result-set mocel") {
             @Override
-            public void execute() {
+            protected void execute() {
                 // dispose old content
                 for (T row : oldRows) {
                     disposeRow(row);

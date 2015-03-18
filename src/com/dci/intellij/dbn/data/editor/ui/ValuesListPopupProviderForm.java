@@ -173,7 +173,8 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
 
     private void updateList() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 if (listModel.isFiltrable()) {
                     int index = list.getSelectedIndex();
                     listModel.notifyContentChanged();

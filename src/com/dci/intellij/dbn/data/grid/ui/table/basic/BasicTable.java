@@ -130,7 +130,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         if (viewport != null) {
             new ConditionalLaterInvocator() {
                 @Override
-                public void execute() {
+                protected void execute() {
                     DataGridTextAttributes attributes = cellRenderer.getAttributes();
                     Color background = readonly ?
                             attributes.getLoadingData(false).getBgColor() :

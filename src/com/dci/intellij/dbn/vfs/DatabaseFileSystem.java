@@ -327,7 +327,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public void openEditor(final DBObject object, @Nullable final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
         new ConnectionAction("opening the object editor", object, new TaskInstructions("Opening editor", false, true)) {
             @Override
-            public void execute() {
+            protected void execute() {
                 if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
                     DBObjectListContainer childObjects = object.getChildObjects();
                     if (childObjects != null) childObjects.load();
@@ -347,7 +347,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (isFileOpened(object) || databaseFile.preOpen()) {
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
@@ -365,9 +365,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
-
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (isFileOpened(schemaObject) || databaseFile.preOpen()) {
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());

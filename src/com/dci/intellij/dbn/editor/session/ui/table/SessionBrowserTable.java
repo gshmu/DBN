@@ -82,7 +82,8 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     public void clearSelection() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 SessionBrowserTable.super.clearSelection();
             }
         }.start();
@@ -92,7 +93,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public void removeEditor() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 SessionBrowserTable.super.removeEditor();
             }
         }.start();
@@ -101,7 +102,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public void updateTableGutter() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 getTableGutter().revalidate();
                 getTableGutter().repaint();
             }

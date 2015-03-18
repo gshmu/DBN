@@ -43,7 +43,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         } else {
             new BackgroundTask(project, "Performing " + actions[0].getName() + " on connection " + connectionName, background) {
                 @Override
-                public void execute(@NotNull ProgressIndicator indicator) {
+                protected void execute(@NotNull ProgressIndicator indicator) {
                     executeActions(connectionHandler, actions);
                 }
             }.start();

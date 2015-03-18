@@ -71,17 +71,20 @@ public class DBProgramRunner extends GenericProgramRunner {
         final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
         new ConnectionAction("the debug execution", runProfile.getMethod(), new TaskInstructions("Checking debug privileges", false, true)) {
             @Override
-            public void execute() {
+            protected boolean canExecute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
-                boolean allowed = databaseDebuggerManager.checkForbiddenOperation(getConnectionHandler(),
+                return databaseDebuggerManager.checkForbiddenOperation(connectionHandler,
                         "Another debug session is active on this connection. You can only run one debug session at the time.");
-                if (allowed) {
-                    performPrivilegeCheck(
-                            runProfile.getExecutionInput(),
-                            executor,
-                            environment,
-                            null);
-                }
+            }
+
+            @Override
+            protected void execute() {
+                performPrivilegeCheck(
+                        runProfile.getExecutionInput(),
+                        executor,
+                        environment,
+                        null);
             }
         }.start();
         return null;
@@ -113,14 +116,17 @@ public class DBProgramRunner extends GenericProgramRunner {
                         new String[]{"Continue anyway", "Cancel"}, 0,
                         new SimpleTask() {
                             @Override
-                            public void execute() {
-                                if (getResult() == 0) {
-                                    performInitialize(
-                                            executionInput,
-                                            executor,
-                                            environment,
-                                            callback);
-                                }
+                            protected boolean canExecute() {
+                                return getResult() == 0;
+                            }
+
+                            @Override
+                            protected void execute() {
+                                performInitialize(
+                                        executionInput,
+                                        executor,
+                                        environment,
+                                        callback);
                             }
                         });
             } else {
@@ -145,7 +151,8 @@ public class DBProgramRunner extends GenericProgramRunner {
                 final Project project = connectionHandler.getProject();
 
                 new BackgroundTask(project, "Initializing debug environment", false, true) {
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                         initProgressIndicator(progressIndicator, true, "Loading dependencies of " + runProfile.getMethod().getQualifiedNameWithType());
                         if (!project.isDisposed() && !progressIndicator.isCanceled()) {
@@ -189,7 +196,8 @@ public class DBProgramRunner extends GenericProgramRunner {
             final List<DBSchemaObject> dependencies) {
 
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 final Project project = executionInput.getProject();
                 DBProgramRunConfiguration runConfiguration = (DBProgramRunConfiguration) environment.getRunProfile();
                 CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
@@ -200,7 +208,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                     if (selectedDependencies.size() > 0) {
                         new BackgroundTask(project, "Compiling dependencies", false, true){
                             @Override
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                                 for (DBSchemaObject schemaObject : selectedDependencies) {
                                     if (!progressIndicator.isCanceled()) {
@@ -241,7 +249,8 @@ public class DBProgramRunner extends GenericProgramRunner {
             final ExecutionEnvironment environment,
             final Callback callback) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
                 if (connectionHandler != null) {
                     final Project project = connectionHandler.getProject();

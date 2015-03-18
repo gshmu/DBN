@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -185,7 +186,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     public void clearSelection() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 DatasetEditorTable.super.clearSelection();
             }
         }.start();
@@ -195,7 +197,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void removeEditor() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 DatasetEditorTable.super.removeEditor();
             }
         }.start();
@@ -204,9 +206,10 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void updateTableGutter() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
-                getTableGutter().revalidate();
-                getTableGutter().repaint();
+            protected void execute() {
+                DBNTableGutter tableGutter = getTableGutter();
+                tableGutter.revalidate();
+                tableGutter.repaint();
             }
         }.start();
     }
@@ -334,7 +337,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void fireEditingCancel() {
         if (isEditing()) {
             new SimpleLaterInvocator() {
-                public void execute() {
+                @Override
+                protected void execute() {
                     cancelEditing();
                 }
             }.start();
@@ -474,14 +478,16 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             final MouseEvent event,
             final DatasetEditorModelCell cell,
             final ColumnInfo columnInfo) {
-        new ModalTask(getDataset().getProject(), "Loading column information", true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+        new ModalTask(getProject(), "Loading column information", true) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 ActionGroup actionGroup = new DatasetEditorTableActionGroup(datasetEditor, cell, columnInfo);
                 if (!progressIndicator.isCanceled()) {
                     ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                     final JPopupMenu popupMenu = actionPopupMenu.getComponent();
                     new SimpleLaterInvocator() {
-                        public void execute() {
+                        @Override
+                        protected void execute() {
                             Component component = (Component) event.getSource();
                             int x = event.getX();
                             int y = event.getY();

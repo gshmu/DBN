@@ -58,43 +58,43 @@ public abstract class ConnectionAction extends SimpleTask {
     }
 
     public final void run() {
-        final ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
-            doExecute();
-        } else {
-            ConnectionSettings connectionSettings = connectionHandler.getSettings();
-            ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-            if (connectionHandler.isPasswordProvided()) {
-                MessageUtil.showInfoDialog(
-                        connectionHandler.getProject(),
-                        "Not Connected to Database",
-                        "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
-                                "If you want to continue with " + name + ", you need to connect.",
-                        OPTIONS_CONNECT_CANCEL, 0,
-                        new SimpleTask() {
-                            @Override
-                            public void execute() {
-                                if (getResult() == 0) {
-                                    connectionHandler.setAllowConnection(true);
-                                    doExecute();
-                                } else {
-                                    cancel();
-                                }
-                            }
-                        });
+        if (canExecute()) {
+            final ConnectionHandler connectionHandler = getConnectionHandler();
+            if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
+                doExecute();
             } else {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+                ConnectionSettings connectionSettings = connectionHandler.getSettings();
+                ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+                if (connectionHandler.isPasswordProvided()) {
+                    MessageUtil.showInfoDialog(
+                            connectionHandler.getProject(),
+                            "Not Connected to Database",
+                            "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
+                                    "If you want to continue with " + name + ", you need to connect.",
+                            OPTIONS_CONNECT_CANCEL, 0,
+                            new SimpleTask() {
+                                @Override
+                                protected void execute() {
+                                    if (getResult() == 0) {
+                                        connectionHandler.setAllowConnection(true);
+                                        doExecute();
+                                    } else {
+                                        cancel();
+                                    }
+                                }
+                            });
+                } else {
+                    ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
 
-                String password = connectionManager.openPasswordDialog(connectionHandler);
-                if (StringUtil.isNotEmpty(password)) {
-                    doExecute();
+                    String password = connectionManager.openPasswordDialog(connectionHandler);
+                    if (StringUtil.isNotEmpty(password)) {
+                        doExecute();
+                    }
                 }
             }
+        } else {
+            cancel();
         }
-    }
-
-    public void cancel() {
-
     }
 
     private void doExecute() {
@@ -120,5 +120,5 @@ public abstract class ConnectionAction extends SimpleTask {
         return connectionHandler;
     }
 
-    public abstract void execute();
+    protected abstract void execute();
 }

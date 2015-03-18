@@ -17,8 +17,20 @@ public abstract class SimpleTask implements RunnableTask<Integer>{
         run();
     }
 
+    protected boolean canExecute() {
+        return true;
+    }
+
     public void run() {
-        execute();
+        if (canExecute()) {
+            execute();
+        } else {
+            cancel();
+        }
+    }
+
+    protected void cancel() {
+
     }
 
     protected abstract void execute();

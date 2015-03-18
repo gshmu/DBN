@@ -110,10 +110,13 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                             new String[]{"Reload", "Keep changes"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
-                                    if (getResult() == 0) {
-                                        reloadAndUpdateEditors(false);
-                                    }
+                                protected boolean canExecute() {
+                                    return getResult() == 0;
+                                }
+
+                                @Override
+                                protected void execute() {
+                                    reloadAndUpdateEditors(false);
                                 }
                             });
                 } else {

@@ -60,7 +60,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void reload() {
         new BackgroundTask(getProject(), "Reloading data", true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
 
                 resultPanel.highlightLoading(true);
@@ -97,7 +98,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void fetchNextRecords() {
         new BackgroundTask(getProject(), "Loading data", true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 initProgressIndicator(progressIndicator, true, "Loading next records for " + getExecutionProcessor().getStatementName());
                 resultPanel.highlightLoading(true);
                 try {

@@ -41,7 +41,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
     private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile) {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 CreateRenameConsoleDialog createConsoleDialog = new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
                 createConsoleDialog.setModal(true);
                 createConsoleDialog.show();
@@ -78,14 +78,17 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         final Project project = getProject();
         SimpleTask deleteTask = new SimpleTask() {
             @Override
-            public void execute() {
-                if (getResult() == 0) {
-                    FileEditorManager.getInstance(project).closeFile(consoleFile);
-                    ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-                    String fileName = consoleFile.getName();
-                    connectionHandler.getConsoleBundle().removeConsole(fileName);
-                    eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
-                }
+            protected boolean canExecute() {
+                return getResult() == 0;
+            }
+
+            @Override
+            protected void execute() {
+                FileEditorManager.getInstance(project).closeFile(consoleFile);
+                ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
+                String fileName = consoleFile.getName();
+                connectionHandler.getConsoleBundle().removeConsole(fileName);
+                eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
             }
         };
         MessageUtil.showQuestionDialog(

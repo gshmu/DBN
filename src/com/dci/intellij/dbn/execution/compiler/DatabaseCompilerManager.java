@@ -79,25 +79,28 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     public void compileInBackground(final DBSchemaObject object, final CompileTypeOption compileType, final CompilerAction compilerAction) {
         new ConnectionAction("compiling the object", object) {
             @Override
-            public void execute() {
-                Project project = object.getProject();
-                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                boolean allowed = debuggerManager.checkForbiddenOperation(object.getConnectionHandler());
-                if (allowed) {
-                    final CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, object);
-                    if (selectedCompileType != null) {
-                        new BackgroundTask(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
-                                doCompileObject(object, selectedCompileType, compilerAction);
-                                if (DatabaseFileSystem.isFileOpened(object)) {
-                                    DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
-                                    DBContentType contentType = compilerAction.getContentType();
-                                    DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                                    sourceCodeFile.updateChangeTimestamp();
-                                }
+            protected boolean canExecute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                return debuggerManager.checkForbiddenOperation(connectionHandler);
+            }
+
+            @Override
+            protected void execute() {
+                final CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, object);
+                if (selectedCompileType != null) {
+                    new BackgroundTask(object.getProject(), "Compiling " + object.getQualifiedNameWithType(), true) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                            doCompileObject(object, selectedCompileType, compilerAction);
+                            if (DatabaseFileSystem.isFileOpened(object)) {
+                                DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
+                                DBContentType contentType = compilerAction.getContentType();
+                                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                                sourceCodeFile.updateChangeTimestamp();
                             }
-                        }.start();
-                    }
+                        }
+                    }.start();
                 }
             }
         }.start();
@@ -165,29 +168,33 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         TaskInstructions taskInstructions = new TaskInstructions("Compiling invalid objects", false, true);
         new ConnectionAction("compiling the invalid objects", schema, taskInstructions) {
             @Override
-            public void execute() {
-                final Project project = schema.getProject();
-                final ConnectionHandler connectionHandler = FailsafeUtil.get(schema.getConnectionHandler());
-                boolean allowed = DatabaseDebuggerManager.getInstance(project).checkForbiddenOperation(connectionHandler);
-                if (allowed) {
-                    final CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, null);
-                    if (selectedCompileType != null) {
-                        ProgressIndicator progressIndicator = getProgressIndicator();
-                        doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, selectedCompileType);
-                        doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, selectedCompileType);
-                        doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, selectedCompileType);
-                        doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, selectedCompileType);
-                        connectionHandler.getObjectBundle().refreshObjectsStatus(null);
+            protected boolean canExecute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                return debuggerManager.checkForbiddenOperation(connectionHandler);
+            }
 
-                        if (!progressIndicator.isCanceled()) {
-                            List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();
-                            buildCompilationErrors(schema.getPackages(), compilerErrors);
-                            buildCompilationErrors(schema.getFunctions(), compilerErrors);
-                            buildCompilationErrors(schema.getProcedures(), compilerErrors);
-                            buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
-                            if (compilerErrors.size() > 0) {
-                                ExecutionManager.getInstance(project).addExecutionResults(compilerErrors);
-                            }
+            @Override
+            protected void execute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                final CompileTypeOption selectedCompileType = getCompileTypeSelection(compileType, null);
+                if (selectedCompileType != null) {
+                    ProgressIndicator progressIndicator = getProgressIndicator();
+                    doCompileInvalidObjects(schema.getPackages(), "packages", progressIndicator, selectedCompileType);
+                    doCompileInvalidObjects(schema.getFunctions(), "functions", progressIndicator, selectedCompileType);
+                    doCompileInvalidObjects(schema.getProcedures(), "procedures", progressIndicator, selectedCompileType);
+                    doCompileInvalidObjects(schema.getDatasetTriggers(), "triggers", progressIndicator, selectedCompileType);
+                    connectionHandler.getObjectBundle().refreshObjectsStatus(null);
+
+                    if (!progressIndicator.isCanceled()) {
+                        List<CompilerResult> compilerErrors = new ArrayList<CompilerResult>();
+                        buildCompilationErrors(schema.getPackages(), compilerErrors);
+                        buildCompilationErrors(schema.getFunctions(), compilerErrors);
+                        buildCompilationErrors(schema.getProcedures(), compilerErrors);
+                        buildCompilationErrors(schema.getDatasetTriggers(), compilerErrors);
+                        if (compilerErrors.size() > 0) {
+                            ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+                            executionManager.addExecutionResults(compilerErrors);
                         }
                     }
                 }

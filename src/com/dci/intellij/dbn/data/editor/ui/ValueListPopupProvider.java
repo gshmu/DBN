@@ -109,7 +109,8 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
                     }
 
                     new SimpleLaterInvocator(){
-                        public void execute() {
+                         @Override
+                        protected void execute() {
                             try {
                                 if (!isShowingPopup()) {
                                     doShowPopup();

@@ -67,7 +67,7 @@ public class DataSearchResultController implements Disposable{
     public void updateResult(final DataFindModel findModel) {
         new BackgroundTask(searchableComponent.getTable().getProject(), "Updating search results", true) {
             @Override
-            public synchronized void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+            protected synchronized void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 DataModel dataModel = searchableComponent.getTable().getModel();
                 final DataSearchResult searchResult = dataModel.getSearchResult();
                 
@@ -103,7 +103,8 @@ public class DataSearchResultController implements Disposable{
                 searchResult.stopUpdating();
 
                 new SimpleLaterInvocator() {
-                    public void execute() {
+                    @Override
+                    protected void execute() {
                         BasicTable table = searchableComponent.getTable();
                         int selectedRowIndex = table.getSelectedRow();
                         int selectedColumnIndex = table.getSelectedRow();

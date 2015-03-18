@@ -592,7 +592,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
             new SimpleBackgroundTask("load database objects") {
-                public void execute() {
+                @Override
+                protected void execute() {
                     if (!isDisposed()) buildTreeChildren();
                 }
             }.start();
@@ -636,7 +637,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             if (!isDisposed && !project.isDisposed()) {
                 EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
                 new ConditionalLaterInvocator() {
-                    public void execute() {
+                    @Override
+                    protected void execute() {
                         if (!isDisposed()) {
                             DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
                         }

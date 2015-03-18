@@ -216,11 +216,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void executeStatement(final StatementExecutionProcessor executionProcessor) {
         ConnectionAction executionAction = new ConnectionAction("the statement execution", executionProcessor) {
             @Override
-            public void execute() {
+            protected void execute() {
                 executionProcessor.initExecutionInput(false);
                 promptVariablesDialog(executionProcessor,
                         new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            @Override
+                            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                                 executionProcessor.execute(progressIndicator);
                             }
                         });
@@ -246,7 +247,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             TaskInstructions taskInstructions = new TaskInstructions("Executing statements", false, true);
             ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider, taskInstructions) {
                 @Override
-                public void execute() {
+                protected void execute() {
                     boolean showIndeterminateProgress = executionProcessors.size() < 5;
                     ProgressIndicator progressIndicator = getProgressIndicator();
                     BackgroundTask.initProgressIndicator(progressIndicator, showIndeterminateProgress);
@@ -289,7 +290,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
                         OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
                             @Override
-                            public void execute() {
+                            protected void execute() {
                                 int option = getResult();
                                 if (option == 0 || option == 1) {
                                     int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();

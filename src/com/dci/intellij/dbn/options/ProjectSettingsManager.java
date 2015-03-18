@@ -148,19 +148,22 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                 new String[]{"Yes", "No"}, 0,
                 new SimpleTask() {
                     @Override
-                    public void execute() {
-                        if (getResult() == 0) {
-                            try {
-                                Element element = new Element("state");
-                                projectSettings.writeConfiguration(element);
+                    protected boolean canExecute() {
+                        return getResult() == 0;
+                    }
 
-                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
-                                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
-                                defaultProjectSettings.readConfiguration(element);
-                                MessageUtil.showInfoDialog(project, "Project Settings", "Project settings exported as default");
-                            } finally {
-                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
-                            }
+                    @Override
+                    protected void execute() {
+                        try {
+                            Element element = new Element("state");
+                            projectSettings.writeConfiguration(element);
+
+                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                            ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
+                            defaultProjectSettings.readConfiguration(element);
+                            MessageUtil.showInfoDialog(project, "Project Settings", "Project settings exported as default");
+                        } finally {
+                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                         }
                     }
                 });
@@ -179,23 +182,26 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     new String[]{"Yes", "No"}, 0,
                     new SimpleTask() {
                         @Override
-                        public void execute() {
-                            if (getResult() == 0) {
-                                try {
-                                    Element element = new Element("state");
-                                    ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
-                                    defaultProjectSettings.writeConfiguration(element);
+                        protected boolean canExecute() {
+                            return getResult() == 0;
+                        }
 
-                                    ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
-                                    projectSettings.readConfiguration(element);
-                                    ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                                    listener.settingsChanged();
-                                    if (!isNewProject) {
-                                        MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
-                                    }
-                                } finally {
-                                    ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
+                        @Override
+                        protected void execute() {
+                            try {
+                                Element element = new Element("state");
+                                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
+                                defaultProjectSettings.writeConfiguration(element);
+
+                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                                projectSettings.readConfiguration(element);
+                                ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
+                                listener.settingsChanged();
+                                if (!isNewProject) {
+                                    MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                                 }
+                            } finally {
+                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
                             }
 
                         }

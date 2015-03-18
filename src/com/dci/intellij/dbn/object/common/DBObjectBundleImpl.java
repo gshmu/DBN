@@ -313,7 +313,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
             String connectionString = " (" + connectionHandler.getName() + ")";
 
             new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     buildTreeChildren();
                 }
             }.start();
@@ -351,7 +352,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         if (project != null) {
             EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
             new ConditionalLaterInvocator() {
-                public void execute() {
+                @Override
+                protected void execute() {
                     DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
 
                 }
@@ -578,7 +580,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     public void refreshObjectsStatus(final DBSchemaObject requester) {
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             new BackgroundTask(getProject(), "Updating objects status", true) {
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
                         List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 

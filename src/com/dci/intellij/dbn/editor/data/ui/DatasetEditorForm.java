@@ -122,7 +122,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         if (oldEditorTable != null) {
             new ConditionalLaterInvocator(){
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (!isDisposed()) {
                         datasetTableScrollPane.setViewportView(datasetEditorTable);
                         datasetEditorTable.initTableGutter();
@@ -145,7 +145,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public void showLoadingHint() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 loadingLabel.setVisible(true);
                 loadingIconPanel.setVisible(true);
             }
@@ -154,7 +155,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public void hideLoadingHint() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 loadingLabel.setVisible(false);
                 loadingIconPanel.setVisible(false);
             }

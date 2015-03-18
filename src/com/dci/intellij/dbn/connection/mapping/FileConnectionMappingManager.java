@@ -296,21 +296,24 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     MessageUtil.showWarningDialog(project, "No Valid Connection", message, new String[]{"Select Connection", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
-                                    if (getResult() == 0) {
-                                        promptConnectionSelector(file, false, true,
-                                                new SimpleTask() {
-                                                    @Override
-                                                    public void execute() {
-                                                        if (file.getCurrentSchema() == null) {
-                                                            promptSchemaSelector(file, callback);
-                                                        } else {
-                                                            callback.start();
-                                                        }
+                                protected boolean canExecute() {
+                                    return getResult() == 0;
+                                }
 
+                                @Override
+                                protected void execute() {
+                                    promptConnectionSelector(file, false, true,
+                                            new SimpleTask() {
+                                                @Override
+                                                protected void execute() {
+                                                    if (file.getCurrentSchema() == null) {
+                                                        promptSchemaSelector(file, callback);
+                                                    } else {
+                                                        callback.start();
                                                     }
-                                                });
-                                    }
+
+                                                }
+                                            });
                                 }
                             });
 
@@ -321,7 +324,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     MessageUtil.showWarningDialog(project, "No Schema Selected", message, new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
+                                protected void execute() {
                                     Integer result = getResult();
                                     if (result == 0) {
                                         callback.start();
@@ -421,7 +424,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
         new ConnectionAction("selecting the current schema", psiFile) {
             @Override
-            public void execute() {
+            protected void execute() {
                 DefaultActionGroup actionGroup = new DefaultActionGroup();
 
                 ConnectionHandler connectionHandler = getConnectionHandler();

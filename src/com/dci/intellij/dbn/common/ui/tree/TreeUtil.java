@@ -66,7 +66,7 @@ public class TreeUtil {
     private static void notifyTreeModelListeners(final Set<TreeModelListener> treeModelListeners, final TreeEventType eventType, final TreeModelEvent event) {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 try {
                     if (event.getTreePath().getLastPathComponent() != null) {
                         for (TreeModelListener treeModelListener : treeModelListeners) {

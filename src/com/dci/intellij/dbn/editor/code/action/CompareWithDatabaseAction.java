@@ -23,7 +23,7 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         new ConnectionAction("comparing changes", sourcecodeFile, new TaskInstructions("Loading database source code", false, true)) {
             @Override
-            public void execute() {
+            protected void execute() {
                 Editor editor = getEditor(e);
                 if (sourcecodeFile != null && editor != null) {
                     String content = editor.getDocument().getText();

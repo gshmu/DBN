@@ -163,7 +163,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ')';
                 new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         try {
                             DatabaseLoadMonitor.startBackgroundLoad();
                             load(force);

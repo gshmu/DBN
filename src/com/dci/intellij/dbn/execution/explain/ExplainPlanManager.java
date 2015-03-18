@@ -47,45 +47,44 @@ public class ExplainPlanManager extends AbstractProjectComponent {
     public void explainPlan(final ExecutablePsiElement executable, final @Nullable RunnableTask<ExplainPlanResult> callback) {
         TaskInstructions taskInstructions = new TaskInstructions("Extracting explain plan for " + executable.getElementType().getDescription(), false, true);
         ConnectionAction explainAction = new ConnectionAction("generating the explain plan", executable.getFile(), taskInstructions) {
-            public void execute() {
-                ConnectionHandler connectionHandler = executable.getFile().getActiveConnection();
+            @Override
+            protected void execute() {
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 DBSchema currentSchema = executable.getFile().getCurrentSchema();
-                if (connectionHandler != null) {
-                    ExplainPlanResult explainPlanResult = null;
-                    Connection connection = null;
-                    Statement statement = null;
-                    ResultSet resultSet = null;
-                    try {
-                        DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
-                        connection = connectionHandler.getPoolConnection(currentSchema);
-                        metadataInterface.clearExplainPlanData(connection);
+                ExplainPlanResult explainPlanResult = null;
+                Connection connection = null;
+                Statement statement = null;
+                ResultSet resultSet = null;
+                try {
+                    DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
+                    DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                    connection = connectionHandler.getPoolConnection(currentSchema);
+                    metadataInterface.clearExplainPlanData(connection);
 
-                        DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
-                        String explainPlanStatementPrefix = compatibilityInterface.getExplainPlanStatementPrefix();
-                        String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
-                        statement = connection.createStatement();
-                        statement.execute(explainPlanQuery);
+                    DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
+                    String explainPlanStatementPrefix = compatibilityInterface.getExplainPlanStatementPrefix();
+                    String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
+                    statement = connection.createStatement();
+                    statement.execute(explainPlanQuery);
 
-                        resultSet = metadataInterface.loadExplainPlan(connection);
-                        explainPlanResult = new ExplainPlanResult(executable, resultSet);
+                    resultSet = metadataInterface.loadExplainPlan(connection);
+                    explainPlanResult = new ExplainPlanResult(executable, resultSet);
 
-                    } catch (SQLException e) {
-                        explainPlanResult = new ExplainPlanResult(executable, e.getMessage());
-                    } finally {
-                        ConnectionUtil.rollback(connection);
-                        ConnectionUtil.closeResultSet(resultSet);
-                        ConnectionUtil.closeStatement(statement);
-                        connectionHandler.freePoolConnection(connection);
-                    }
+                } catch (SQLException e) {
+                    explainPlanResult = new ExplainPlanResult(executable, e.getMessage());
+                } finally {
+                    ConnectionUtil.rollback(connection);
+                    ConnectionUtil.closeResultSet(resultSet);
+                    ConnectionUtil.closeStatement(statement);
+                    connectionHandler.freePoolConnection(connection);
+                }
 
-                    if (callback == null) {
-                        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-                        executionManager.addExplainPlanResult(explainPlanResult);
-                    } else {
-                        callback.setResult(explainPlanResult);
-                        callback.start();
-                    }
+                if (callback == null) {
+                    ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+                    executionManager.addExplainPlanResult(explainPlanResult);
+                } else {
+                    callback.setResult(explainPlanResult);
+                    callback.start();
                 }
             }
         };

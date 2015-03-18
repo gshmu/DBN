@@ -96,7 +96,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
             if (!connectionManager.hasUncommittedChanges()) {
                 new ConditionalLaterInvocator() {
                     @Override
-                    public void execute() {
+                    protected void execute() {
                         getCancelAction().putValue(Action.NAME, "Close");
                         commitAllAction.setEnabled(false);
                         rollbackAllAction.setEnabled(false);

@@ -176,7 +176,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
                 infoDialog.setModal(true);
                 infoDialog.show();
@@ -313,7 +313,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     if (connectionHandler.hasUncommittedChanges()) {
                         connectionHandler.getConnectionStatus().setResolvingIdleStatus(true);
                         new SimpleLaterInvocator() {
-                            public void execute() {
+                            @Override
+                            protected void execute() {
                                 IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler);
                                 idleConnectionDialog.show();
                             }
