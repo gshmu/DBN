@@ -4,14 +4,12 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
 
 public abstract class AbstractDataEditorAction extends DumbAwareAction {
     public AbstractDataEditorAction(String text) {
@@ -22,17 +20,19 @@ public abstract class AbstractDataEditorAction extends DumbAwareAction {
         super(text, null, icon);
     }
 
-    public static DatasetEditor getActiveDatasetEditor(Project project) {
-        if (project != null) {
-            FileEditor[] fileEditors = FileEditorManager.getInstance(project).getSelectedEditors();
-            for (FileEditor fileEditor : fileEditors) {
-                if (fileEditor instanceof DatasetEditor && GUIUtil.isFocused(fileEditor.getComponent(), true)) {
-                    return (DatasetEditor) fileEditor;
-                }
+
+    @Nullable
+    public static DatasetEditor getDatasetEditor(DataContext dataContext) {
+        DatasetEditor datasetEditor = DBNDataKeys.DATASET_EDITOR.getData(dataContext);
+        if (datasetEditor == null) {
+            FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
+            if (fileEditor instanceof DatasetEditor) {
+                return (DatasetEditor) fileEditor;
             }
         }
-        return null;
+        return datasetEditor;
     }
+
 
     @Nullable
     public static DatasetEditor getDatasetEditor(AnActionEvent e) {
