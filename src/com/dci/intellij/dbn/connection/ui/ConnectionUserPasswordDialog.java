@@ -11,12 +11,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.project.Project;
 
 public class ConnectionUserPasswordDialog extends DBNDialog<ConnectionUserPasswordForm> {
-    private boolean rememberUser;
-    private boolean rememberPassword;
+    private boolean rememberCredentials;
     private Authentication authentication = new Authentication();
 
     public ConnectionUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler) {
         super(project, "Enter Password", true);
+        if (connectionHandler != null) {
+            authentication = connectionHandler.getSettings().getDatabaseSettings().getAuthentication().clone();
+        }
         setModal(true);
         setResizable(false);
         component = new ConnectionUserPasswordForm(this, connectionHandler);
@@ -26,20 +28,12 @@ public class ConnectionUserPasswordDialog extends DBNDialog<ConnectionUserPasswo
         init();
     }
 
-    public boolean isRememberUser() {
-        return rememberUser;
+    public boolean isRememberCredentials() {
+        return rememberCredentials;
     }
 
-    public void setRememberUser(boolean rememberUser) {
-        this.rememberUser = rememberUser;
-    }
-
-    public boolean isRememberPassword() {
-        return rememberPassword;
-    }
-
-    public void setRememberPassword(boolean rememberPassword) {
-        this.rememberPassword = rememberPassword;
+    public void setRememberCredentials(boolean rememberCredentials) {
+        this.rememberCredentials = rememberCredentials;
     }
 
     public Authentication getAuthentication() {

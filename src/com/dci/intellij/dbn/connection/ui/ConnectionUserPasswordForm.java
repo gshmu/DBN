@@ -22,11 +22,10 @@ import com.intellij.ui.DocumentAdapter;
 public class ConnectionUserPasswordForm extends DBNFormImpl<ConnectionUserPasswordDialog>{
     private JPanel mainPanel;
     private JPanel headerPanel;
-    private JCheckBox rememberPasswordCheckBox;
     private JPasswordField passwordField;
     private JTextArea hintTextArea;
     private JTextField userTextField;
-    private JCheckBox rememberUserCheckBox;
+    private JCheckBox rememberCredentialsCheckBox;
 
     public ConnectionUserPasswordForm(@NotNull final ConnectionUserPasswordDialog parentComponent, final @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
@@ -37,7 +36,7 @@ public class ConnectionUserPasswordForm extends DBNFormImpl<ConnectionUserPasswo
             DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-            String user = connectionHandler.getSettings().getDatabaseSettings().getAuthentication().getUser();
+            String user = parentComponent.getAuthentication().getUser();
             if (StringUtil.isNotEmpty(user)) {
                 userTextField.setText(user);
             }
@@ -53,7 +52,7 @@ public class ConnectionUserPasswordForm extends DBNFormImpl<ConnectionUserPasswo
 
         } else {
             hintTextArea.setText("The system needs your credentials to connect to this database.");
-            rememberPasswordCheckBox.setVisible(false);
+            rememberCredentialsCheckBox.setVisible(false);
 
         }
 
@@ -68,23 +67,16 @@ public class ConnectionUserPasswordForm extends DBNFormImpl<ConnectionUserPasswo
 
         passwordField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
-                String password = new String(passwordField.getPassword());
+            protected void textChanged(DocumentEvent e) {String password = new String(passwordField.getPassword());
                 parentComponent.getAuthentication().setPassword(password);
                 parentComponent.updateConnectButton();
             }
         });
 
-        rememberUserCheckBox.addActionListener(new ActionListener() {
+        rememberCredentialsCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                parentComponent.setRememberUser(rememberUserCheckBox.isSelected());
-            }
-        });
-        rememberPasswordCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentComponent.setRememberPassword(rememberPasswordCheckBox.isSelected());
+                parentComponent.setRememberCredentials(rememberCredentialsCheckBox.isSelected());
             }
         });
     }
@@ -97,7 +89,7 @@ public class ConnectionUserPasswordForm extends DBNFormImpl<ConnectionUserPasswo
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return passwordField;
+        return StringUtil.isEmpty(userTextField.getText()) ? userTextField : passwordField;
     }
 
     @Override

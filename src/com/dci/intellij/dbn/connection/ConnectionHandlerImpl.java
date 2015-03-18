@@ -93,14 +93,20 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         this.allowConnection = allowConnection;
     }
 
+    @Override
+    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {
+        this.temporaryAuthentication = temporaryAuthentication;
+    }
 
     @Override
     @NotNull
     public Authentication getTemporaryAuthentication() {
-        int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
-        long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
-        if (TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
-            temporaryAuthentication = new Authentication();
+        if (temporaryAuthentication.isProvided()) {
+            int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
+            long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
+            if (temporaryAuthentication.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
+                temporaryAuthentication = new Authentication();
+            }
         }
         return temporaryAuthentication;
     }
