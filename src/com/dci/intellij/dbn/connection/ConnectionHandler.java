@@ -40,6 +40,8 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider {
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);
 
+    void setTemporaryAuthentication(Authentication temporaryAuthentication);
+
     @NotNull
     Authentication getTemporaryAuthentication();
 

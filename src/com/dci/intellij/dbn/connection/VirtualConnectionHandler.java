@@ -153,6 +153,9 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void setAllowConnection(boolean allowConnection) {}
 
     @Override
+    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {}
+
+    @Override
     public boolean canConnect() {
         return false;
     }
