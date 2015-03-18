@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -21,7 +22,6 @@ import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
 
     public static void closeResultSet(final ResultSet resultSet) {
         if (resultSet != null) {
@@ -71,13 +71,17 @@ public class ConnectionUtil {
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
         String user = databaseSettings.getUser();
         String password = databaseSettings.getPassword();
+        if (StringUtil.isEmpty(password)) {
+            password = connectionHandler.getTemporaryPassword();
+        }
+
         boolean osAuthentication = databaseSettings.isOsAuthentication();
         if (authenticationError != null && authenticationError.isSame(osAuthentication, user, password) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
         try {
-            Connection connection = connect(databaseSettings, detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryPassword(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
@@ -92,12 +96,17 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionDatabaseSettings databaseSettings, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(ConnectionDatabaseSettings databaseSettings, String temporaryPassword, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         try {
             Properties properties = new Properties();
             if (!databaseSettings.isOsAuthentication()) {
+                String password = databaseSettings.getPassword();
+                if (StringUtil.isEmpty(password)) {
+                    password = temporaryPassword;
+                }
+
                 properties.put("user", databaseSettings.getUser());
-                properties.put("password", databaseSettings.getPassword());
+                properties.put("password", password);
             }
             String appName = "Database Navigator - " + connectionType.getName() + "";
             properties.put("ApplicationName", appName);

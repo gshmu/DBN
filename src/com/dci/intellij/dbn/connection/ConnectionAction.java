@@ -6,6 +6,9 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -59,23 +62,34 @@ public abstract class ConnectionAction extends SimpleTask {
         if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
             doExecute();
         } else {
-            MessageUtil.showInfoDialog(
-                    connectionHandler.getProject(),
-                    "Not Connected to Database",
-                    "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
-                            "If you want to continue with " + name + ", you need to connect.",
-                    OPTIONS_CONNECT_CANCEL, 0,
-                    new SimpleTask() {
-                        @Override
-                        public void execute() {
-                            if (getResult() == 0) {
-                                connectionHandler.setAllowConnection(true);
-                                doExecute();
-                            } else {
-                                cancel();
+            ConnectionSettings connectionSettings = connectionHandler.getSettings();
+            ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+            if (connectionHandler.isPasswordProvided()) {
+                MessageUtil.showInfoDialog(
+                        connectionHandler.getProject(),
+                        "Not Connected to Database",
+                        "You are not connected to database \"" + connectionHandler.getName() + "\". \n" +
+                                "If you want to continue with " + name + ", you need to connect.",
+                        OPTIONS_CONNECT_CANCEL, 0,
+                        new SimpleTask() {
+                            @Override
+                            public void execute() {
+                                if (getResult() == 0) {
+                                    connectionHandler.setAllowConnection(true);
+                                    doExecute();
+                                } else {
+                                    cancel();
+                                }
                             }
-                        }
-                    });
+                        });
+            } else {
+                ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+
+                String password = connectionManager.openPasswordDialog(connectionHandler);
+                if (StringUtil.isNotEmpty(password)) {
+                    doExecute();
+                }
+            }
         }
     }
 
