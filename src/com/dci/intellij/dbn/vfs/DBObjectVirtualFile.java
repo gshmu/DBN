@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -30,7 +31,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
     private String url;
 
     public DBObjectVirtualFile(T object) {
-        this.objectRef = object.getRef();
+        this.objectRef = DBObjectRef.from(object);
     }
 
     public DBObjectRef<T> getObjectRef() {
@@ -60,10 +61,13 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return objectRef.hashCode();
     }
 
-    @Nullable
+    @NotNull
     public Project getProject() {
         T object = DBObjectRef.get(objectRef);
-        return object == null ? null : object.getProject();
+        if (object == null) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+        return object.getProject();
     }
 
     /*********************************************************

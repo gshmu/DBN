@@ -720,9 +720,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        Project project = connectionHandler == null ? null : connectionHandler.getProject();
-        return FailsafeUtil.get(project);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        return connectionHandler.getProject();
     }
 
     public int compareTo(@NotNull Object o) {

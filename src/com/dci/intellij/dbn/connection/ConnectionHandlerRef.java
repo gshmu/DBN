@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection;
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class ConnectionHandlerRef{
     private WeakReference<ConnectionHandler> reference;
@@ -22,10 +22,7 @@ public class ConnectionHandlerRef{
             reference = new WeakReference<ConnectionHandler>(connectionHandler);
         }
 
-        if (connectionHandler == null || connectionHandler.isDisposed()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return connectionHandler;
+        return FailsafeUtil.get(connectionHandler);
     }
 
     public static ConnectionHandlerRef from(ConnectionHandler connectionHandler) {

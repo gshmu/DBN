@@ -4,8 +4,8 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
@@ -51,10 +51,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
         Project project = DataKeys.PROJECT.getData(dataContext);
-        if (project == null || project.isDisposed()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return project;
+        return FailsafeUtil.get(project);
     }
 
     @Override

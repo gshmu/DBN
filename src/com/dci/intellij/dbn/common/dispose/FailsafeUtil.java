@@ -21,7 +21,9 @@ public class FailsafeUtil {
     }
 
     public static @NotNull Project get(@Nullable Project project) {
-        if (project == null || project.isDisposed()) throw AlreadyDisposedException.INSTANCE;
+        if (project == null || project.isDisposed()) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
         return project;
     }
 

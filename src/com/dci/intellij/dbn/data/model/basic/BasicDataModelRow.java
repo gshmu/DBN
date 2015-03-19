@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.data.model.basic;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.intellij.openapi.project.Project;
@@ -24,10 +24,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     }
 
     public BasicDataModel getModel() {
-        if (model == null || model.isDisposed()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return model;
+        return FailsafeUtil.get(model);
     }
 
     public List<T> getCells() {
