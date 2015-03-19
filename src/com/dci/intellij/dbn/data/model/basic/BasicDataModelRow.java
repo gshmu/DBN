@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.model.basic;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -23,6 +24,9 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     }
 
     public BasicDataModel getModel() {
+        if (model == null || model.isDisposed()) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
         return model;
     }
 
@@ -71,6 +75,9 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
         return cells.indexOf(cell);
     }
 
+    public Project getProject() {
+        return getModel().getProject();
+    }
 
     /********************************************************
      *                    Disposable                        *
@@ -89,9 +96,5 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
             cells = null;
             model = null;
         }
-    }
-
-    public Project getProject() {
-        return model == null ? null : model.getProject();
     }
 }

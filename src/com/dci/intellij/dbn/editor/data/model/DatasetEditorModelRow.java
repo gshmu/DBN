@@ -88,15 +88,16 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     public boolean matches(DataModelRow row, boolean lenient) {
         // try fast match by primary key
-        if (getModel().getDataset() instanceof DBTable) {
-            DBTable table = (DBTable) getModel().getDataset();
+        DatasetEditorModel model = getModel();
+        if (model.getDataset() instanceof DBTable) {
+            DBTable table = (DBTable) model.getDataset();
             List<DBColumn> uniqueColumns = table.getPrimaryKeyColumns();
             if (uniqueColumns.size() == 0) {
                 uniqueColumns = table.getUniqueKeyColumns();
             }
             if (uniqueColumns.size() > 0) {
                 for (DBColumn uniqueColumn : uniqueColumns) {
-                    int index = getModel().getHeader().indexOfColumn(uniqueColumn);
+                    int index = model.getHeader().indexOfColumn(uniqueColumn);
                     DatasetEditorModelCell localCell = getCellAtIndex(index);
                     DatasetEditorModelCell remoteCell = (DatasetEditorModelCell) row.getCellAtIndex(index);
                     if (!localCell.matches(remoteCell, false)) return false;

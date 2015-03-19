@@ -64,6 +64,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return editorComponent.getTextField();
     }
 
+    @NotNull
     public Project getProject() {
         return editorComponent.getProject();
     }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection;
 import java.lang.ref.WeakReference;
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 
 public class ConnectionHandlerRef{
     private WeakReference<ConnectionHandler> reference;
@@ -23,7 +23,7 @@ public class ConnectionHandlerRef{
         }
 
         if (connectionHandler == null || connectionHandler.isDisposed()) {
-            throw new ProcessCanceledException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         return connectionHandler;
     }

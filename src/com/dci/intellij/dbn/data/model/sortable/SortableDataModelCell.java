@@ -31,7 +31,8 @@ public class SortableDataModelCell extends BasicDataModelCell implements Compara
         }
     }
 
-    private SortableDataModel getModel() {
+    @NotNull
+    public SortableDataModel getModel() {
         return (SortableDataModel) getRow().getModel();
     }
 

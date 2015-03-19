@@ -7,6 +7,7 @@ import javax.swing.table.TableCellEditor;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -22,6 +23,7 @@ import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorErrorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
+import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 
@@ -206,6 +208,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         }
     }
 
+    @NotNull
     public DatasetEditorModelRow getRow() {
         return (DatasetEditorModelRow) super.getRow();
     }
@@ -234,7 +237,8 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public boolean isNavigable() {
-        return getColumnInfo().getColumn().isForeignKey() && getUserValue() != null;
+        DBColumn column = getColumnInfo().getColumn();
+        return column != null && column.isForeignKey() && getUserValue() != null;
     }
 
     public void notifyCellUpdated() {
@@ -292,19 +296,17 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
             protected void execute() {
                 if (!isDisposed()) {
                     DatasetEditorModelRow row = getRow();
-                    if (row != null) {
-                        DatasetEditorModel model = row.getModel();
-                        if (model != null) {
-                            DatasetEditorTable editorTable = model.getEditorTable();
-                            if (editorTable != null) {
-                                if (!editorTable.isShowing()) {
-                                    DBDataset dataset = getDataset();
-                                    DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
-                                }
-                                if (error != null) {
-                                    DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
-                                    errorForm.show();
-                                }
+                    DatasetEditorModel model = row.getModel();
+                    if (model != null) {
+                        DatasetEditorTable editorTable = model.getEditorTable();
+                        if (editorTable != null) {
+                            if (!editorTable.isShowing()) {
+                                DBDataset dataset = getDataset();
+                                DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
+                            }
+                            if (error != null) {
+                                DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(DatasetEditorModelCell.this);
+                                errorForm.show();
                             }
                         }
                     }
