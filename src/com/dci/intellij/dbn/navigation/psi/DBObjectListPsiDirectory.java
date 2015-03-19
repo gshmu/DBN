@@ -47,8 +47,10 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         virtualFile = new DBObjectListVirtualFile(objectList);
     }
 
+    @NotNull
     public DBObjectList getObjectList() {
-        return virtualFile == null ? null : virtualFile.getObjectList();
+        DBObjectListVirtualFile virtualFile = FailsafeUtil.get(this.virtualFile);
+        return virtualFile.getObjectList();
     }
 
     @NotNull
@@ -81,8 +83,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObjectList objectList = getObjectList();
-        Project project = objectList == null ? null : objectList.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.get(objectList.getProject());
     }
 
     @NotNull

@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -83,7 +84,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
 
     public Project getProject() {
-        return project;
+        return FailsafeUtil.get(project);
     }
 
     public boolean isDisposed() {

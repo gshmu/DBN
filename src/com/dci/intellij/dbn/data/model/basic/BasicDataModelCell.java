@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -54,10 +54,7 @@ public class BasicDataModelCell implements DataModelCell {
 
     @NotNull
     public BasicDataModelRow getRow() {
-        if (row == null || row.isDisposed()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return row;
+        return FailsafeUtil.get(row);
     }
 
     public void setUserValue(Object userValue) {

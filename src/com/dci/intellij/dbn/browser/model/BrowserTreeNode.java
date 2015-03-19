@@ -5,13 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 
-public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolTipProvider, Disposable, GenericDatabaseElement {
+public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolTipProvider, GenericDatabaseElement {
 
     void initTreeElement();
 

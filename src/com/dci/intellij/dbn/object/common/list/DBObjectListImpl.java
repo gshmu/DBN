@@ -32,7 +32,7 @@ import com.intellij.openapi.project.Project;
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
 
-    public DBObjectListImpl(DBObjectType objectType, BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    public DBObjectListImpl(DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
         super(treeParent, loader, dependencyAdapter, indexed);
         this.objectType = objectType;
     }
@@ -104,8 +104,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public Project getProject() {
         GenericDatabaseElement parent = getParent();
-        Project project = parent == null ? null : parent.getProject();
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.get(parent.getProject());
     }
 
     public GenericDatabaseElement getUndisposedElement() {

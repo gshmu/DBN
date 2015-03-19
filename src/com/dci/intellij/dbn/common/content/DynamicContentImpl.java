@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -43,7 +44,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
 
-    protected DynamicContentImpl(GenericDatabaseElement parent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    protected DynamicContentImpl(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
         this.parent = parent;
         this.loader = loader;
         this.dependencyAdapter = dependencyAdapter;
@@ -57,8 +58,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public abstract Filter<T> getFilter();
 
+    @NotNull
     public GenericDatabaseElement getParent() {
-        return parent;
+        return FailsafeUtil.get(parent);
     }
 
     @Nullable

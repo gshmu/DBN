@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.content.dependency;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.common.content.VoidDynamicContent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class BasicContentDependency extends ContentDependency {
     private DynamicContent sourceContent;
@@ -16,7 +16,7 @@ public class BasicContentDependency extends ContentDependency {
     @NotNull
     @Override
     public DynamicContent getSourceContent() {
-        return sourceContent == null ? VoidDynamicContent.INSTANCE : sourceContent;
+        return FailsafeUtil.get(sourceContent);
     }
 
     public void dispose() {

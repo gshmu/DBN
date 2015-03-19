@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -115,10 +115,7 @@ public abstract class ConnectionAction extends SimpleTask {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
-        if (connectionHandler == null || connectionHandler.isDisposed()) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return connectionHandler;
+        return FailsafeUtil.get(connectionHandler);
     }
 
     protected abstract void execute();
