@@ -48,7 +48,9 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private LazyValue<DataSearchResult> searchResult = new LazyValue<DataSearchResult>(this) {
         @Override
         protected DataSearchResult load() {
-            return new DataSearchResult();
+            DataSearchResult dataSearchResult = new DataSearchResult();
+            Disposer.register(this, dataSearchResult);
+            return dataSearchResult;
         }
     };
 
