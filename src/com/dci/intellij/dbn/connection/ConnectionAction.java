@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -10,7 +11,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -116,7 +116,7 @@ public abstract class ConnectionAction extends SimpleTask {
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
         if (connectionHandler == null || connectionHandler.isDisposed()) {
-            throw new ProcessCanceledException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         return connectionHandler;
     }

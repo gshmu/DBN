@@ -39,7 +39,7 @@ public class ObjectDependencyTreeNode implements Disposable {
 
     public ObjectDependencyTreeModel getModel() {
         if (model == null && parent == null) {
-            throw new AlreadyDisposedException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         return model == null ? getParent().getModel() : model;
     }

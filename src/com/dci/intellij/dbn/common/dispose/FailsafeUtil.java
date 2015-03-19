@@ -15,13 +15,13 @@ public class FailsafeUtil {
 
     public static @NotNull <T extends Disposable> T get(@Nullable T disposable) {
         if (disposable == null || disposable.isDisposed()) {
-            throw new AlreadyDisposedException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         return disposable;
     }
 
     public static @NotNull Project get(@Nullable Project project) {
-        if (project == null || project.isDisposed()) throw new AlreadyDisposedException();
+        if (project == null || project.isDisposed()) throw AlreadyDisposedException.INSTANCE;
         return project;
     }
 

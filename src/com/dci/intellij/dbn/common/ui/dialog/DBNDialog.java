@@ -4,6 +4,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
@@ -40,6 +41,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
 
+    @NotNull
     public Project getProject() {
         return project;
     }
