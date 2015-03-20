@@ -139,9 +139,9 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public String getUserName() {return "root";}
 
     public Connection getPoolConnection() throws SQLException {return null;}
-    public Connection getPoolConnection(DBSchema schema) throws SQLException {return null;}
+    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     public Connection getStandaloneConnection() throws SQLException {return null;}
-    public Connection getStandaloneConnection(DBSchema schema) throws SQLException {return null;}
+    public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     public void freePoolConnection(Connection connection) {}
 
     public ConnectionSettings getSettings() {return null;}
