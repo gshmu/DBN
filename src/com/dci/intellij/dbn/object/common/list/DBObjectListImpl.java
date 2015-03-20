@@ -40,7 +40,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public Filter<T> getFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null || connectionHandler.isDisposed() || connectionHandler.isVirtual() ? null :
+        return connectionHandler.isDisposed() || connectionHandler.isVirtual() ? null :
                 (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
@@ -131,9 +131,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             return getName() + " of " + object.getQualifiedNameWithType();
         }
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ?
-                getName() :
-                getName() + " from " + connectionHandler.getName() ;
+        return getName() + " from " + connectionHandler.getName();
     }
 
     /*********************************************************

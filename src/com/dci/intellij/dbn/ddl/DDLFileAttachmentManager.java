@@ -269,7 +269,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                     new SimpleTask() {
                         @Override
                         protected void execute() {
-                            if (getResult() == 1) {
+                            if (getOption() == 1) {
                                 createDDLFile(object);
                             }
                         }

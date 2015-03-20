@@ -90,7 +90,7 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                             new SimpleTask() {
                                 @Override
                                 protected boolean canExecute() {
-                                    return getResult() == 0;
+                                    return getOption() == 0;
                                 }
 
                                 @Override

@@ -151,7 +151,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                 new SimpleTask() {
                     @Override
                     protected boolean canExecute() {
-                        return getResult() == 0;
+                        return getOption() == 0;
                     }
 
                     @Override
@@ -185,7 +185,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                     new SimpleTask() {
                         @Override
                         protected boolean canExecute() {
-                            return getResult() == 0;
+                            return getOption() == 0;
                         }
 
                         @Override
