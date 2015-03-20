@@ -70,6 +70,10 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         return methodRef;
     }
 
+    public String getConnectionId() {
+        return methodRef.getConnectionId();
+    }
+
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return FailsafeUtil.get(methodRef.lookupConnectionHandler());

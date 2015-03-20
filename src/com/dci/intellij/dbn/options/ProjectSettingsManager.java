@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.options;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +13,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -192,11 +191,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                         @Override
                         protected void execute() {
                             try {
-                                Set<String> disposeConnectionIds = new HashSet<String>();
-                                List<ConnectionHandler> allConnectionHandlers = projectSettings.getConnectionSettings().getConnectionBundle().getAllConnectionHandlers();
-                                for (ConnectionHandler connectionHandler : allConnectionHandlers) {
-                                    disposeConnectionIds.add(connectionHandler.getId());
-                                }
+                                List<ConnectionHandler> oldConnectionHandlers = projectSettings.getConnectionSettings().getConnectionBundle().getAllConnectionHandlers();
 
                                 Element element = new Element("state");
                                 ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
@@ -205,9 +200,11 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                 projectSettings.readConfiguration(element);
 
+                                ConnectionManager.getInstance(project).disposeConnections(oldConnectionHandlers);
 
                                 ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                                listener.settingsChanged(disposeConnectionIds);
+                                listener.settingsChanged();
+
                                 if (!isNewProject) {
                                     MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                                 }

@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,13 +88,11 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                 ExecutionResult executionResult = getExecutionResult(tabInfo);
                 if (executionResult != null) {
                     ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-                    if (connectionHandler != null) {
-                        EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                        if (visibilitySettings.getExecutionResultTabs().value()){
-                            tabInfo.setTabColor(environmentType.getColor());
-                        } else {
-                            tabInfo.setTabColor(null);
-                        }
+                    EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+                    if (visibilitySettings.getExecutionResultTabs().value()){
+                        tabInfo.setTabColor(environmentType.getColor());
+                    } else {
+                        tabInfo.setTabColor(null);
                     }
                 }
             }
@@ -466,9 +465,18 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
             }
         }
-
-
     }
+
+    public void closeExecutionResults(List<ConnectionHandler> connectionHandlers) {
+        List<TabInfo> tabs = new ArrayList<TabInfo>(resultTabs.getTabs());
+        for (TabInfo tabInfo : tabs) {
+            ExecutionResult executionResult = getExecutionResult(tabInfo);
+            if (executionResult != null && connectionHandlers.contains(executionResult.getConnectionHandler())) {
+                removeTab(tabInfo);
+            }
+        }
+    }
+
 
     /*********************************************************
      *                      Miscellaneous                    *

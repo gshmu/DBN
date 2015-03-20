@@ -89,7 +89,8 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             if (project instanceof DefaultProject) {
                 DisposerUtil.dispose(connectionHandlers);
             } else {
-                ConnectionManager.getInstance(project).disposeConnections(connectionHandlers);
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                connectionManager.disposeConnections(connectionHandlers);
             }
         }
 

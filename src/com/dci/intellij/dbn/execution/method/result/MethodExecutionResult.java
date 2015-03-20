@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -110,32 +110,37 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
 
     @NotNull
     public String getName() {
-        DBMethod method = getMethod();
-        return method == null ? "[unknown]" : method.getName();
+        return getMethod().getName();
     }
 
     public Icon getIcon() {
-        DBMethod method = getMethod();
-        return method == null ? Icons.DBO_METHOD : method.getOriginalIcon();
+        return getMethod().getOriginalIcon();
     }
 
+    @NotNull
     public MethodExecutionInput getExecutionInput() {
-        return executionInput;
+        return FailsafeUtil.get(executionInput);
     }
 
-    @Nullable
+    @NotNull
     public DBMethod getMethod() {
-        return executionInput.getMethod();
+        return FailsafeUtil.get(getExecutionInput().getMethod());
     }
 
 
+    @NotNull
     public Project getProject() {
         return getMethod().getProject();
     }
 
+    @Override
+    public String getConnectionId() {
+        return executionInput.getConnectionId();
+    }
+
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        DBMethod method = getMethod();
-        return method == null ? null : method.getConnectionHandler();
+        return getMethod().getConnectionHandler();
     }
 
     @Override

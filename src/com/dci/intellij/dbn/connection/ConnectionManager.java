@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.jdom.Element;
@@ -36,6 +34,8 @@ import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.connection.ui.ConnectionUserPasswordDialog;
+import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -104,7 +104,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
         @Override
-        public void settingsChanged(Set<String> connectionIds) {
+        public void settingsChanged() {
             EventManager.notify(getProject(), ConnectionManagerListener.TOPIC).connectionsChanged();
         }
     };
@@ -331,19 +331,29 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
+    public void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
         final Project project = getProject();
-        final ArrayList<ConnectionHandler> disposeList = new ArrayList<ConnectionHandler>(connectionHandlers);
-        connectionHandlers.clear();
+        new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                executionManager.closeExecutionResults(connectionHandlers);
 
-        DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-        databaseFileManager.closeDatabaseFiles(disposeList,
+                DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+                databaseFileManager.closeDatabaseFiles(connectionHandlers);
+
+                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                methodExecutionManager.cleanupExecutionHistory(connectionHandlers);
+
                 new BackgroundTask(project, "Cleaning up connections", true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        DisposerUtil.dispose(disposeList);
+                        DisposerUtil.dispose(connectionHandlers);
                     }
-                });
+                };
+
+            }
+        }.start();
     }
 
     /**********************************************

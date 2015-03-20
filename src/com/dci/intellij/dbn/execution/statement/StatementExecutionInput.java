@@ -123,6 +123,10 @@ public class StatementExecutionInput implements Disposable {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
     }
 
+    public String getConnectionId() {
+        return connectionHandlerRef == null ? null : connectionHandlerRef.getConnectionId();
+    }
+
     @Nullable
     public DBSchema getCurrentSchema() {
         return DBObjectRef.get(currentSchemaRef);

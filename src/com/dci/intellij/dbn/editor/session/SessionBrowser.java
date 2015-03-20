@@ -48,6 +48,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private boolean preventLoading = false;
     private boolean loading;
     private Timer refreshTimer;
+    private FileEditorState cachedState;
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
@@ -198,7 +199,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return getEditorTable();
+        return isDisposed() ? null : getEditorTable();
     }
 
     @NonNls
@@ -209,9 +210,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-        SessionBrowserTable editorTable = getEditorTable();
-        SessionBrowserModel model = editorTable.getModel();
-        return model.getState().clone();
+        if (!isDisposed()) {
+            SessionBrowserTable editorTable = getEditorTable();
+            SessionBrowserModel model = editorTable.getModel();
+            cachedState = model.getState().clone();
+        }
+        return cachedState;
     }
 
     public void setState(@NotNull FileEditorState fileEditorState) {

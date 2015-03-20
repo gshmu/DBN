@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
@@ -8,7 +10,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 
 public interface StatementExecutionResult extends ExecutionResult {
-    StatementExecutionProcessor getExecutionProcessor();
+    @NotNull StatementExecutionProcessor getExecutionProcessor();
     StatementExecutionMessage getExecutionMessage();
     StatementExecutionInput getExecutionInput();
 

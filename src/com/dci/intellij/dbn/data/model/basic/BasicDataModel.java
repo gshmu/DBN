@@ -324,6 +324,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             DisposerUtil.dispose(rows);
             header = null;
             tableModelListeners.clear();
+            dataModelListeners.clear();
             searchResult = null;
             regionalSettings = null;
             project = null;

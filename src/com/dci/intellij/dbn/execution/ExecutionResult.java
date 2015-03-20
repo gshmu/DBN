@@ -21,8 +21,12 @@ public interface ExecutionResult extends Disposable, DataProviderSupplier {
 
     Icon getIcon();
 
+    @NotNull
     Project getProject();
 
+    String getConnectionId();
+
+    @NotNull
     ConnectionHandler getConnectionHandler();
 
     PsiFile createPreviewFile();
