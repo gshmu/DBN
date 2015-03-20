@@ -24,7 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -49,13 +48,12 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
 
     @NotNull
     public DBObjectList getObjectList() {
-        DBObjectListVirtualFile virtualFile = FailsafeUtil.get(this.virtualFile);
-        return virtualFile.getObjectList();
+        return getVirtualFile().getObjectList();
     }
 
     @NotNull
-    public VirtualFile getVirtualFile() {
-        return FailsafeUtil.nvl(virtualFile);
+    public DBObjectListVirtualFile getVirtualFile() {
+        return FailsafeUtil.get(virtualFile);
     }
 
     @Override
