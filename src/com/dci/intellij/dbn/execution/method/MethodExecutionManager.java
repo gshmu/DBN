@@ -12,11 +12,13 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -185,18 +187,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     private void cacheArgumentValues(MethodExecutionInput executionInput) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        if (connectionHandler != null) {
-            Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
-            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
-            }
+        Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
+        for (MethodExecutionArgumentValue argumentValue : argumentValues) {
+            argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
         }
     }
 
     public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
-            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = method.getConnectionHandler();
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
 
@@ -215,6 +215,13 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         executionHistory.setExecutionInputs(executionInputs);
     }
 
+    private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
+        @Override
+        public void settingsChanged(Set<String> connectionIds) {
+            executionHistory.cleanup(connectionIds);
+        }
+    };
+
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
@@ -224,6 +231,14 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return "DBNavigator.Project.MethodExecutionManager";
     }
 
+    public void projectOpened() {
+        Project project = getProject();
+        EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
+    }
+
+    public void projectClosed() {
+        EventManager.unsubscribe(connectionBundleSettingsListener);
+    }
     @Override
     public void disposeComponent() {
         executionHistory.dispose();

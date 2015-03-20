@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -55,24 +56,23 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         loadSessions(true);
     }
 
-    @Nullable
+    @NotNull
     public SessionBrowserTable getEditorTable() {
-        return editorForm == null ? null : editorForm.getEditorTable();
+        return getEditorForm().getEditorTable();
     }
 
-    @Nullable
+    @NotNull
     public SessionBrowserForm getEditorForm() {
-        return editorForm;
+        return FailsafeUtil.get(editorForm);
     }
 
     public void showSearchHeader() {
-        editorForm.showSearchHeader();
+        getEditorForm().showSearchHeader();
     }
 
     @Nullable
     public SessionBrowserModel getTableModel() {
-        SessionBrowserTable browserTable = getEditorTable();
-        return browserTable == null ? null : browserTable.getModel();
+        return getEditorTable().getModel();
     }
 
     public SessionBrowserSettings getSettings() {
@@ -82,10 +82,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public boolean isPreventLoading(boolean force) {
         if (force) return false;
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null && editorTable.getSelectedRowCount() > 1) {
-            return true;
-        }
-        return preventLoading;
+        return preventLoading || editorTable.getSelectedRowCount() > 1;
     }
 
     public void loadSessions(boolean force) {
@@ -119,14 +116,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 @Override
                 protected void execute() {
                     SessionBrowserTable editorTable = getEditorTable();
-                    if (editorTable != null) {
-                        SessionBrowserModel oldModel = editorTable.getModel();
-                        SessionBrowserState state = oldModel.getState();
-                        newModel.setState(state);
-                        editorTable.setModel(newModel);
-                        refreshTable();
-                        DisposerUtil.dispose(oldModel);
-                    }
+                    SessionBrowserModel oldModel = editorTable.getModel();
+                    SessionBrowserState state = oldModel.getState();
+                    newModel.setState(state);
+                    editorTable.setModel(newModel);
+                    refreshTable();
+                    DisposerUtil.dispose(oldModel);
                 }
             }.start();
         }
@@ -134,23 +129,19 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void clearFilter() {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            SessionBrowserFilterState filter = editorTable.getModel().getFilter();
-            if (filter != null) {
-                filter.clear();
-                refreshTable();
-            }
+        SessionBrowserFilterState filter = editorTable.getModel().getFilter();
+        if (filter != null) {
+            filter.clear();
+            refreshTable();
         }
     }
 
     public void refreshTable() {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            editorTable.revalidate();
-            editorTable.repaint();
-            editorTable.accommodateColumnsSize();
-            editorTable.restoreSelection();
-        }
+        editorTable.revalidate();
+        editorTable.repaint();
+        editorTable.accommodateColumnsSize();
+        editorTable.restoreSelection();
     }
 
     public void refreshLoadTimestamp() {
@@ -178,19 +169,17 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private void interruptSessions(SessionInterruptionType type) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            int[] selectedRows = editorTable.getSelectedRows();
-            Map<Object, Object> sessionIds = new HashMap<Object, Object>();
-            for (int selectedRow : selectedRows) {
-                SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
-                Object sessionId = row.getSessionId();
-                Object serialNumber = row.getSerialNumber();
-                sessionIds.put(sessionId, serialNumber);
-            }
-
-            sessionBrowserManager.interruptSessions(this, sessionIds, type);
-            loadSessions(true);
+        int[] selectedRows = editorTable.getSelectedRows();
+        Map<Object, Object> sessionIds = new HashMap<Object, Object>();
+        for (int selectedRow : selectedRows) {
+            SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
+            Object sessionId = row.getSessionId();
+            Object serialNumber = row.getSerialNumber();
+            sessionIds.put(sessionId, serialNumber);
         }
+
+        sessionBrowserManager.interruptSessions(this, sessionIds, type);
+        loadSessions(true);
     }
 
 
@@ -221,23 +210,18 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            SessionBrowserModel model = editorTable.getModel();
-            return model.getState().clone();
-        }
-        return SessionBrowserState.VOID;
+        SessionBrowserModel model = editorTable.getModel();
+        return model.getState().clone();
     }
 
     public void setState(@NotNull FileEditorState fileEditorState) {
         if (fileEditorState instanceof SessionBrowserState) {
             SessionBrowserTable editorTable = getEditorTable();
-            if (editorTable != null) {
-                SessionBrowserModel model = editorTable.getModel();
-                SessionBrowserState sessionBrowserState = (SessionBrowserState) fileEditorState;
-                model.setState(sessionBrowserState);
-                refreshTable();
-                startRefreshTimer((sessionBrowserState).getRefreshInterval());
-            }
+            SessionBrowserModel model = editorTable.getModel();
+            SessionBrowserState sessionBrowserState = (SessionBrowserState) fileEditorState;
+            model.setState(sessionBrowserState);
+            refreshTable();
+            startRefreshTimer((sessionBrowserState).getRefreshInterval());
         }
     }
 
@@ -297,18 +281,15 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             }
 
             SessionBrowserTable editorTable = getEditorTable();
-            if (editorTable != null) {
-                editorTable.setLoading(loading);
-                editorTable.revalidate();
-                editorTable.repaint();
-            }
+            editorTable.setLoading(loading);
+            editorTable.revalidate();
+            editorTable.repaint();
         }
 
     }
 
     public int getRowCount() {
-        SessionBrowserTable browserTable = getEditorTable();
-        return browserTable == null ? 0 : browserTable.getRowCount();
+        return getEditorTable().getRowCount();
     }
 
     public void setRefreshInterval(int refreshInterval) {
@@ -352,12 +333,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     @Nullable
     public Object getSelectedSessionId() {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            if (editorTable.getSelectedRowCount() == 1) {
-                int rowIndex = editorTable.getSelectedRow();
-                SessionBrowserModelRow rowAtIndex = editorTable.getModel().getRowAtIndex(rowIndex);
-                return rowAtIndex.getSessionId();
-            }
+        if (editorTable.getSelectedRowCount() == 1) {
+            int rowIndex = editorTable.getSelectedRow();
+            SessionBrowserModelRow rowAtIndex = editorTable.getModel().getRowAtIndex(rowIndex);
+            return rowAtIndex.getSessionId();
         }
         return null;
     }
@@ -381,7 +360,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowserFile.getConnectionHandler();
     }

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.method.action;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -28,7 +27,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent jComponent) {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()){
             actionGroup.add(new SetExecutionSchemaAction(executionInput, schema));

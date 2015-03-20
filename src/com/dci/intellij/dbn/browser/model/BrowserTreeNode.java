@@ -22,6 +22,7 @@ public interface BrowserTreeNode extends NavigationItem, ItemPresentation, ToolT
 
     BrowserTreeNode getTreeChild(int index);
 
+    @Nullable
     BrowserTreeNode getTreeParent();
 
     List<? extends BrowserTreeNode> getTreeChildren();

@@ -136,7 +136,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             if (schemaObject != null) {
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                if (connectionHandler != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
+                if (DatabaseFileSystem.isFileOpened(schemaObject)) {
                     return connectionHandler;
                 }
             }

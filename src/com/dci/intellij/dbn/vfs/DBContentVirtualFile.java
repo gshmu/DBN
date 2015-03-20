@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -36,7 +37,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     private int hashCode;
 
-    public DBContentVirtualFile(DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
+    public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
         this.mainDatabaseFile = mainDatabaseFile;
         this.contentType = contentType;
 
@@ -62,8 +63,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     @Nullable
     public ConnectionHandler getActiveConnection() {
-        DBSchemaObject object = getObject();
-        return object == null ? null : object.getConnectionHandler();
+        return getObject().getConnectionHandler();
     }
 
     @Override
@@ -73,12 +73,12 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     @Nullable
     public DBSchema getCurrentSchema() {
-        DBSchemaObject object = getObject();
-        return object == null ? null : object.getSchema();
+        return getObject().getSchema();
     }
 
+    @NotNull
     public DBEditableObjectVirtualFile getMainDatabaseFile() {
-        return mainDatabaseFile;
+        return FailsafeUtil.get(mainDatabaseFile);
     }
 
     public DBContentType getContentType() {
@@ -93,15 +93,15 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         this.modified = modified;
     }
 
-    @Nullable
+    @NotNull
     public DBSchemaObject getObject() {
-        return mainDatabaseFile == null ? null : mainDatabaseFile.getObject();
+        return getMainDatabaseFile().getObject();
     }
 
-    @Nullable
+    @NotNull
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return mainDatabaseFile.getConnectionHandler();
+        return getMainDatabaseFile().getConnectionHandler();
     }
 
     public DBLanguageDialect getLanguageDialect() {
@@ -111,9 +111,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
                         SQLLanguage.INSTANCE :
                         PSQLLanguage.INSTANCE;
         
-        return object == null ?
-                language.getMainLanguageDialect() :
-                object.getLanguageDialect(language);
+        return object.getLanguageDialect(language);
     }
 
     /*********************************************************
@@ -146,8 +144,7 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
     }
 
     public Project getProject() {
-        DBSchemaObject object = getObject();
-        return object == null ? null : object.getProject();
+        return getMainDatabaseFile().getProject();
     }
 
     public boolean isWritable() {
@@ -164,21 +161,15 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     @Nullable
     public VirtualFile getParent() {
-        if (mainDatabaseFile != null) {
-            DBSchemaObject object = mainDatabaseFile.getObject();
-            if (object != null) {
-                DBObject parentObject = object.getParentObject();
-                if (parentObject != null) {
-                    return parentObject.getVirtualFile();
-                }
-            }
+        DBObject parentObject = getObject().getParentObject();
+        if (parentObject != null) {
+            return parentObject.getVirtualFile();
         }
         return null;
     }
 
     public Icon getIcon() {
-        DBSchemaObject object = getObject();
-        return object == null ? null : object.getOriginalIcon();
+        return getObject().getOriginalIcon();
     }
 
     public VirtualFile[] getChildren() {

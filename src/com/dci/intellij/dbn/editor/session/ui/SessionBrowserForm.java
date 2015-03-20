@@ -7,8 +7,10 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Colors;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -121,7 +123,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     public void refreshLoadTimestamp() {
         boolean visible = !loadingLabel.isVisible();
         if (visible) {
-            SessionBrowserModel model = editorTable.getModel();
+            SessionBrowserModel model = getEditorTable().getModel();
             long timestamp = model.getTimestamp();
 /*
             RegionalSettings regionalSettings = RegionalSettings.getInstance(sessionBrowser.getProject());
@@ -135,19 +137,27 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
 
+    @NotNull
     public SessionBrowserTable getEditorTable() {
-        return editorTable;
+        return FailsafeUtil.get(editorTable);
     }
 
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
             sessionBrowser = null;
+            detailsForm = null;
         }
     }
 
+    @NotNull
+    public SessionBrowser getSessionBrowser() {
+        return FailsafeUtil.get(sessionBrowser);
+    }
+
+    @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return sessionBrowser.getConnectionHandler();
+        return getSessionBrowser().getConnectionHandler();
     }
 
     public float getHorizontalScrollProportion() {
@@ -159,7 +169,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
      *              SearchableDataComponent                  *
      *********************************************************/
     public void showSearchHeader() {
-        editorTable.clearSelection();
+        getEditorTable().clearSelection();
 
         if (dataSearchComponent == null) {
             dataSearchComponent = new DataSearchComponent(this);
@@ -181,6 +191,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     public void hideSearchHeader() {
         dataSearchComponent.resetFindModel();
         searchPanel.setVisible(false);
+        SessionBrowserTable editorTable = getEditorTable();
         editorTable.revalidate();
         editorTable.repaint();
         editorTable.requestFocus();
@@ -191,7 +202,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @Override
     public String getSelectedText() {
-        TableCellEditor cellEditor = editorTable.getCellEditor();
+        TableCellEditor cellEditor = getEditorTable().getCellEditor();
         if (cellEditor instanceof DatasetTableCellEditor) {
             DatasetTableCellEditor tableCellEditor = (DatasetTableCellEditor) cellEditor;
             return tableCellEditor.getTextField().getSelectedText();
@@ -201,7 +212,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @Override
     public BasicTable getTable() {
-        return editorTable;
+        return getEditorTable();
     }
 
     private void createUIComponents() {

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -38,19 +39,19 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return objectRef;
     }
 
-    @Nullable
+    @NotNull
     public T getObject() {
-        return objectRef.get();
+        return FailsafeUtil.get(objectRef.get());
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return objectRef.lookupConnectionHandler();
+        return getObject().getConnectionHandler();
     }
 
     public boolean equals(Object obj) {
         if (obj instanceof DBObjectVirtualFile) {
-            DBObjectVirtualFile objectFile = (DBObjectVirtualFile) obj;
+            DBObjectVirtualFile<T> objectFile = (DBObjectVirtualFile<T>) obj;
             return objectFile.objectRef.equals(objectRef);
         }
         return false;

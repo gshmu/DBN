@@ -73,6 +73,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     GenericDatabaseElement getParent();
     DynamicContentLoader getLoader();
     ContentDependencyAdapter getDependencyAdapter();
+
     ConnectionHandler getConnectionHandler();
 
     void loadInBackground(boolean force);
