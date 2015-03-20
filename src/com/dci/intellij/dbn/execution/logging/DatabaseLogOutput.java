@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -89,9 +88,6 @@ public class DatabaseLogOutput implements ExecutionResult {
         public Object getData(@NonNls String dataId) {
             if (DBNDataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
                 return DatabaseLogOutput.this;
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
             }
             return null;
         }

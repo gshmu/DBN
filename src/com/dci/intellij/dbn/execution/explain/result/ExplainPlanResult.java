@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -147,9 +146,6 @@ public class ExplainPlanResult implements ExecutionResult, DataProviderSupplier 
         public Object getData(@NonNls String dataId) {
             if (DBNDataKeys.EXPLAIN_PLAN_RESULT.is(dataId)) {
                 return ExplainPlanResult.this;
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
             }
             return null;
         }
