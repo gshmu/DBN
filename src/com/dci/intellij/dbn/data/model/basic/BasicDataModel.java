@@ -102,10 +102,11 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     @Override
     public void setFilter(Filter<T> filter) {
+        List<T> rows = getRows();
         if (filter == null) {
             if (rows instanceof FiltrableList) {
                 FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
-                rows = filtrableList.getFullList();
+                this.rows = filtrableList.getFullList();
             }
         }
         else {
@@ -114,7 +115,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
                 filtrableList = (FiltrableList<T>) rows;
             } else {
                 filtrableList = new FiltrableList<T>(rows);
-                rows = filtrableList;
+                this.rows = filtrableList;
             }
             filtrableList.setFilter(filter);
         }
@@ -131,9 +132,10 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         return new DataModelState();
     }
 
+    @NotNull
     @Override
     public List<T> getRows() {
-        return rows;
+        return FailsafeUtil.get(rows);
     }
 
     public void setRows(List<T> rows) {
@@ -147,18 +149,18 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     }
 
     public void addRow(T row) {
-        rows.add(row);
+        getRows().add(row);
         getState().setRowCount(getRowCount());
     }
 
     public void addRowAtIndex(int index, T row) {
-        rows.add(index, row);
+        getRows().add(index, row);
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
     }
 
     public void removeRowAtIndex(int index) {
-        DataModelRow row = rows.remove(index);
+        DataModelRow row = getRows().remove(index);
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
@@ -168,11 +170,12 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public T getRowAtIndex(int index) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
+        List<T> rows = getRows();
         return index > -1 && rows.size() > index ? rows.get(index) : null;
     }
 
     public DataModelCell getCellAt(int rowIndex, int columnIndex) {
-        return rows.get(rowIndex).getCellAtIndex(columnIndex);
+        return getRows().get(rowIndex).getCellAtIndex(columnIndex);
     }
 
     public ColumnInfo getColumnInfo(int columnIndex) {
@@ -180,11 +183,11 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     }
 
     public int indexOfRow(T row) {
-        return rows.indexOf(row);
+        return getRows().indexOf(row);
     }
 
     protected void updateRowIndexes(int startIndex) {
-        updateRowIndexes(rows, startIndex);
+        updateRowIndexes(getRows(), startIndex);
     }
 
     protected void updateRowIndexes(List<T> rows, int startIndex) {
@@ -249,7 +252,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
      *                     DataModel                        *
      *********************************************************/
     public int getRowCount() {
-        return rows.size();
+        return getRows().size();
     }
 
     public int getColumnCount() {
@@ -271,6 +274,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public Object getValueAt(int rowIndex, int columnIndex) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
+        List<T> rows = getRows();
         return rows.size() > rowIndex && columnIndex > -1 ? rows.get(rowIndex).getCellAtIndex(columnIndex) : null;
     }
 
@@ -322,6 +326,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         if (!disposed) {
             disposed = true;
             DisposerUtil.dispose(rows);
+            rows = null;
             header = null;
             tableModelListeners.clear();
             dataModelListeners.clear();
