@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.record.ResultSetRecordViewerDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -26,6 +28,7 @@ public class ResultSetTable<T extends ResultSetDataModel> extends SortableTable<
         return true;
     }
 
+    @NotNull
     @Override
     public T getModel() {
         return super.getModel();

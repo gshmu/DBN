@@ -17,7 +17,6 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -115,14 +114,13 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         isEditingEnabled = editingEnabled;
     }
 
-    @Nullable
+    @NotNull
     public DBDataset getDataset() {
         return getModel().getDataset();
     }
 
     public String getName() {
-        DBDataset dataset = getDataset();
-        return dataset == null ? "Disposed" : dataset.getName();
+        return getDataset().getName();
     }
 
     @Override

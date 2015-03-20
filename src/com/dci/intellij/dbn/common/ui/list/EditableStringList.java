@@ -100,8 +100,9 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
             if (!e.isConsumed()) {
                 int selectedRow = getSelectedRow();
                 int keyCode = e.getKeyCode();
+                EditableListModel model = getModel();
                 if (keyCode == KeyEvent.VK_DOWN) {
-                    if (selectedRow == getModel().getRowCount() - 1) {
+                    if (selectedRow == model.getRowCount() - 1) {
                         e.consume();
                         insertRow();
                     }
@@ -111,7 +112,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 } else if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE) {
                     Object source = e.getSource();
                     String value = source == EditableStringList.this ?
-                            (String) getModel().getValueAt(selectedRow, 0) :
+                            (String) model.getValueAt(selectedRow, 0) :
                             ((JTextField) source).getText();
 
                     if (StringUtil.isEmpty(value)) {

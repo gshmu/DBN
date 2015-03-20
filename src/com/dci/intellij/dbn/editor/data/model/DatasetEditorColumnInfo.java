@@ -2,8 +2,9 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
@@ -26,11 +27,8 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
-            if (column != null) {
-                Project project = column.getProject();
-                return DataGridSettings.getInstance(project).getTrackingColumnSettings().isTrackingColumn(column.getName());
-            }
-            return null;
+            Project project = column.getProject();
+            return DataGridSettings.getInstance(project).getTrackingColumnSettings().isTrackingColumn(column.getName());
         }
     };
 
@@ -42,9 +40,9 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         this.isForeignKey = column.isForeignKey();
     }
 
-    @Nullable
+    @NotNull
     public DBColumn getColumn() {
-        return DBObjectRef.get(columnRef);
+        return FailsafeUtil.get(DBObjectRef.get(columnRef));
     }
 
     public String getName() {
@@ -55,10 +53,9 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         return columnIndex;
     }
 
-    @Nullable
+    @NotNull
     public DBDataType getDataType() {
-        DBColumn column = getColumn();
-        return column == null ? null : column.getDataType();
+        return getColumn().getDataType();
     }
 
     public boolean isPrimaryKey() {
@@ -78,20 +75,18 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
             possibleValues = EMPTY_LIST;
             List<String> values;
             DBColumn column = getColumn();
-            if (column != null) {
-                if (column.isForeignKey()) {
-                    DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                    values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
-                } else {
-                    values = DatasetEditorUtils.loadDistinctColumnValues(column);
-                }
+            if (column.isForeignKey()) {
+                DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
+            } else {
+                values = DatasetEditorUtils.loadDistinctColumnValues(column);
+            }
 
-                if (values != null) {
-                    DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(column.getProject());
-                    int maxElementCount = dataEditorSettings.getValueListPopupSettings().getElementCountThreshold();
-                    if (values.size() > maxElementCount) values.clear();
-                    possibleValues = values;
-                }
+            if (values != null) {
+                DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(column.getProject());
+                int maxElementCount = dataEditorSettings.getValueListPopupSettings().getElementCountThreshold();
+                if (values.size() > maxElementCount) values.clear();
+                possibleValues = values;
             }
         }
         return possibleValues;
@@ -106,8 +101,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     }
 
     public boolean isSortable() {
-        DBColumn column = getColumn();
-        DBDataType type = column == null ? null : column.getDataType();
+        DBDataType type = getColumn().getDataType();
         return type != null && type.isNative() &&
                 type.getGenericDataType().is(
                         GenericDataType.LITERAL,

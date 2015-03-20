@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSpeedSearch;
@@ -9,9 +12,6 @@ import com.dci.intellij.dbn.data.model.sortable.SortableTableHeaderMouseListener
 import com.dci.intellij.dbn.data.model.sortable.SortableTableMouseListener;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.intellij.openapi.diagnostic.Logger;
-
-import javax.swing.JTable;
-import javax.swing.table.JTableHeader;
 
 public abstract class SortableTable<T extends SortableDataModel> extends BasicTable<T> {
     protected Logger logger = LoggerFactory.createLogger();
@@ -41,7 +41,7 @@ public abstract class SortableTable<T extends SortableDataModel> extends BasicTa
     public boolean sort(int columnIndex, SortDirection sortDirection, boolean keepExisting) {
         SortableDataModel model = getModel();
         int modelColumnIndex = convertColumnIndexToModel(columnIndex);
-        ColumnInfo columnInfo = getModel().getColumnInfo(modelColumnIndex);
+        ColumnInfo columnInfo = model.getColumnInfo(modelColumnIndex);
         if (columnInfo.isSortable()) {
             boolean sorted = model.sort(modelColumnIndex, sortDirection, keepExisting);
             if (sorted) {

@@ -88,8 +88,9 @@ public class PropertiesEditorTable extends JTable {
     public void insertRow() {
         stopCellEditing();
         int rowIndex = getSelectedRow();
-        rowIndex = getModel().getRowCount() == 0 ? 0 : rowIndex + 1;
-        getModel().insertRow(rowIndex);
+        PropertiesTableModel model = getModel();
+        rowIndex = model.getRowCount() == 0 ? 0 : rowIndex + 1;
+        model.insertRow(rowIndex);
         getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
 
         revalidate();
@@ -100,11 +101,12 @@ public class PropertiesEditorTable extends JTable {
     public void removeRow() {
         stopCellEditing();
         int selectedRow = getSelectedRow();
-        getModel().removeRow(selectedRow);
+        PropertiesTableModel model = getModel();
+        model.removeRow(selectedRow);
 
         revalidate();
         repaint();
-        if (getModel().getRowCount() == selectedRow && selectedRow > 0) {
+        if (model.getRowCount() == selectedRow && selectedRow > 0) {
             getSelectionModel().setSelectionInterval(selectedRow -1, selectedRow -1);
         }
     }
