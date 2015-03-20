@@ -28,7 +28,6 @@ import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -214,9 +213,6 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         public Object getData(@NonNls String dataId) {
             if (DBNDataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
                 return MethodExecutionResult.this;
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
             }
             return null;
         }

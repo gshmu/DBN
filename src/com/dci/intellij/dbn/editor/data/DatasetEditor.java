@@ -51,7 +51,6 @@ import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -578,9 +577,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         public Object getData(@NonNls String dataId) {
             if (DBNDataKeys.DATASET_EDITOR.is(dataId)) {
                 return DatasetEditor.this;
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return project;
             }
             return null;
         }

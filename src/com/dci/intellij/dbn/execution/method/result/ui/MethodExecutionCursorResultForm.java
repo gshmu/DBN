@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
@@ -145,9 +144,6 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
             }
             if (DBNDataKeys.METHOD_EXECUTION_ARGUMENT.is(dataId)) {
                 return DBObjectRef.get(argumentRef);
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
             }
             return null;
         }

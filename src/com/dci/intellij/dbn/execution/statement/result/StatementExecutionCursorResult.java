@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCurs
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
 
@@ -158,9 +157,6 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         public Object getData(@NonNls String dataId) {
             if (DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
                 return StatementExecutionCursorResult.this;
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
             }
             return null;
         }
