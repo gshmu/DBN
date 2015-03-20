@@ -54,6 +54,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         super(executionProcessor, resultName, updateCount);
     }
 
+    @NotNull
     public StatementExecutionCursorProcessor getExecutionProcessor() {
         return (StatementExecutionCursorProcessor) super.getExecutionProcessor();
     }
@@ -68,14 +69,12 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 long startTimeMillis = System.currentTimeMillis();
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
-                    if (connectionHandler != null) {
-                        Connection connection = connectionHandler.getStandaloneConnection(getExecutionProcessor().getCurrentSchema());
-                        Statement statement = connection.createStatement();
-                        statement.setQueryTimeout(getQueryExecutionSettings().getExecutionTimeout());
-                        statement.execute(getExecutionInput().getExecutableStatementText());
-                        ResultSet resultSet = statement.getResultSet();
-                        loadResultSet(resultSet);
-                    }
+                    Connection connection = connectionHandler.getStandaloneConnection(getExecutionProcessor().getCurrentSchema());
+                    Statement statement = connection.createStatement();
+                    statement.setQueryTimeout(getQueryExecutionSettings().getExecutionTimeout());
+                    statement.execute(getExecutionInput().getExecutableStatementText());
+                    ResultSet resultSet = statement.getResultSet();
+                    loadResultSet(resultSet);
                 } catch (final SQLException e) {
                     MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                 }

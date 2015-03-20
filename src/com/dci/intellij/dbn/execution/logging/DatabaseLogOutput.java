@@ -28,7 +28,7 @@ public class DatabaseLogOutput implements ExecutionResult {
     }
 
     public DatabaseLogOutputForm getForm(boolean create) {
-        if (logOutputForm == null) {
+        if (logOutputForm == null && create) {
             logOutputForm = new DatabaseLogOutputForm(getProject(), this);
             Disposer.register(this, logOutputForm);
         }
@@ -53,11 +53,18 @@ public class DatabaseLogOutput implements ExecutionResult {
         return Icons.EXEC_LOG_OUTPUT_CONSOLE;
     }
 
+    @NotNull
     @Override
     public Project getProject() {
         return null;
     }
 
+    @Override
+    public String getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
+    }
+
+    @NotNull
     @Override
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.get(connectionHandlerRef);

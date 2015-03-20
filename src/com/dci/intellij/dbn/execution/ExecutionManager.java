@@ -8,8 +8,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
@@ -62,14 +64,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }
     }
 
-    @Override
-    public void projectOpened() {
-        ToolWindow toolWindow = initExecutionConsole();
-        toolWindow.getContentManager().removeAllContents(false);
-        toolWindow.setAvailable(false, null);
-
-    }
-
     private ToolWindow initExecutionConsole() {
         ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(getProject());
         ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
@@ -81,12 +75,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
         if (toolWindow.getContentManager().getContents().length == 0) {
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            if (executionConsoleForm != null) {
-                ContentFactory contentFactory = new ContentFactoryImpl();
-                Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
-                toolWindow.getContentManager().addContent(content);
-                toolWindow.setAvailable(true, null);
-            }
+            ContentFactory contentFactory = new ContentFactoryImpl();
+            Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
+            toolWindow.getContentManager().addContent(content);
+            toolWindow.setAvailable(true, null);
         }
         return toolWindow;
     }
@@ -97,9 +89,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionConsoleForm != null) {
-                    executionConsoleForm.addResult(compilerResult);
-                }
+                executionConsoleForm.addResult(compilerResult);
             }
         }.start();
     }
@@ -110,9 +100,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionConsoleForm != null) {
-                    executionConsoleForm.addResults(compilerResults);
-                }
+                executionConsoleForm.addResults(compilerResults);
             }
         }.start();
     }
@@ -123,9 +111,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionConsoleForm != null) {
-                    executionConsoleForm.addResult(explainPlanResult);
-                }
+                executionConsoleForm.addResult(explainPlanResult);
             }
         }.start();
     }
@@ -136,15 +122,13 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionConsoleForm != null) {
-                    if (executionResult.isLoggingActive()) {
-                        executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), executionResult.getLoggingOutput());
-                    }
+                if (executionResult.isLoggingActive()) {
+                    executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), executionResult.getLoggingOutput());
+                }
 
-                    executionConsoleForm.addResult(executionResult);
-                    if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
-                        executionResult.navigateToEditor(true);
-                    }
+                executionConsoleForm.addResult(executionResult);
+                if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
+                    executionResult.navigateToEditor(true);
                 }
             }
         }.start();
@@ -164,9 +148,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             protected void execute() {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionConsoleForm != null) {
-                    executionConsoleForm.addResult(executionResult);
-                }
+                executionConsoleForm.addResult(executionResult);
             }
         }.start();
     }
@@ -176,10 +158,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
             @Override
             protected void execute() {
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                if (executionConsoleForm != null) {
-                    executionConsoleForm.selectResult(executionResult);
-                    showExecutionConsole();
-                }
+                executionConsoleForm.selectResult(executionResult);
+                showExecutionConsole();
             }
         }.start();
 
@@ -187,32 +167,43 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     public void removeMessagesTab() {
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-        if (executionConsoleForm != null) {
-            executionConsoleForm.removeMessagesTab();
-        }
+        executionConsoleForm.removeMessagesTab();
     }
 
     public void removeResultTab(ExecutionResult executionResult) {
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-        if (executionConsoleForm != null) {
-            executionConsoleForm.removeResultTab(executionResult);
-        }
+        executionConsoleForm.removeResultTab(executionResult);
     }
 
     public void selectResultTab(ExecutionResult executionResult) {
         showExecutionConsole();
         ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-        if (executionConsoleForm != null) {
-            executionConsoleForm.selectResultTab(executionResult);
-        }
+        executionConsoleForm.selectResultTab(executionResult);
     }
 
-    @Nullable
+    @NotNull
     public ExecutionConsoleForm getExecutionConsoleForm() {
-        if (executionConsoleForm == null && !isDisposed()) {
+        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
+        if (executionConsoleForm == null) {
             executionConsoleForm = new ExecutionConsoleForm(getProject());
         }
         return executionConsoleForm;
+    }
+
+    public void closeExecutionResults(List<ConnectionHandler> connectionHandlers){
+        getExecutionConsoleForm().closeExecutionResults(connectionHandlers);
+    }
+
+    /*********************************************************
+     *                    ProjectComponent                   *
+     *********************************************************/
+    public void projectOpened() {
+        ToolWindow toolWindow = initExecutionConsole();
+        toolWindow.getContentManager().removeAllContents(false);
+        toolWindow.setAvailable(false, null);
+    }
+
+    public void projectClosed() {
     }
 
     @NonNls

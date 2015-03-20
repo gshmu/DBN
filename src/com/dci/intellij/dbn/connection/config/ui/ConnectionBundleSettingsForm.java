@@ -15,10 +15,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.xmlbeans.impl.common.ReaderInputStream;
@@ -157,27 +155,22 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionBundle.setConnectionHandlers(newConnections);
 
 
-        final Set<String> disposedConnectionIds = new HashSet<String>();
-        // dispose old list
-        if (oldConnections.size() > 0) {
-            for (ConnectionHandler oldConnection : oldConnections) {
-                disposedConnectionIds.add(oldConnection.getId());
-            }
-
-            ConnectionManager connectionManager = ConnectionManager.getInstance(connectionBundle.getProject());
-            connectionManager.disposeConnections(oldConnections);
-        }
-
-         new SettingsChangeNotifier() {
+        new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
                 if (listChanged.get()) {
                     Project project = connectionBundle.getProject();
                     ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                    listener.settingsChanged(disposedConnectionIds);
+                    listener.settingsChanged();
                 }
             }
         };
+
+        // dispose old list
+        if (oldConnections.size() > 0) {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(connectionBundle.getProject());
+            connectionManager.disposeConnections(oldConnections);
+        }
     }
 
     public void resetFormChanges() {

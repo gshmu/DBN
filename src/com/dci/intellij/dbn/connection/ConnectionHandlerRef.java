@@ -14,6 +14,10 @@ public class ConnectionHandlerRef{
         connectionId = connectionHandler == null ? null : connectionHandler.getId();
     }
 
+    public String getConnectionId() {
+        return connectionId;
+    }
+
     @NotNull
     public ConnectionHandler get() {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();

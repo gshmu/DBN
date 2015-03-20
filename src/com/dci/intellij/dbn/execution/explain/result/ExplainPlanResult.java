@@ -85,6 +85,11 @@ public class ExplainPlanResult implements ExecutionResult, DataProviderSupplier 
     }
 
     @Override
+    public String getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
+    }
+
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.get(connectionHandlerRef);
     }
@@ -95,23 +100,21 @@ public class ExplainPlanResult implements ExecutionResult, DataProviderSupplier 
 
     @Override
     public PsiFile createPreviewFile() {
-        ConnectionHandler activeConnection = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
-        DBLanguageDialect languageDialect = activeConnection == null ?
-                SQLLanguage.INSTANCE.getMainLanguageDialect() :
-                activeConnection.getLanguageDialect(SQLLanguage.INSTANCE);
-        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, activeConnection, currentSchema);
+        DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, connectionHandler, currentSchema);
     }
 
+    @NotNull
     @Override
     public Project getProject() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     @Override
     public ExplainPlanResultForm getForm(boolean create) {
-        if (resultForm == null) {
+        if (resultForm == null && create) {
             resultForm = new ExplainPlanResultForm(this);
         }
         return resultForm;
