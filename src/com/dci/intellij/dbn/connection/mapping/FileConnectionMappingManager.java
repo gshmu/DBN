@@ -297,7 +297,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             new SimpleTask() {
                                 @Override
                                 protected boolean canExecute() {
-                                    return getResult() == 0;
+                                    return getOption() == 0;
                                 }
 
                                 @Override
@@ -325,7 +325,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                             new SimpleTask() {
                                 @Override
                                 protected void execute() {
-                                    Integer result = getResult();
+                                    Integer result = getOption();
                                     if (result == 0) {
                                         callback.start();
                                     } else if (result == 1) {

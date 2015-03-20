@@ -131,7 +131,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                             options, 0, new SimpleTask() {
                                 @Override
                                 protected boolean canExecute() {
-                                    return getResult() == 0;
+                                    return getOption() == 0;
                                 }
 
                                 @Override

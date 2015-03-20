@@ -18,7 +18,7 @@ import com.intellij.openapi.project.Project;
 
 public abstract class BackgroundTask<T> extends Task.Backgroundable implements RunnableTask<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private T result;
+    private T option;
 
     private static PerformInBackgroundOption START_IN_BACKGROUND = new PerformInBackgroundOption() {
         public boolean shouldStartInBackground() { return true;}
@@ -43,13 +43,13 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
 
     @Override
-    public void setResult(T result) {
-        this.result = result;
+    public void setOption(T option) {
+        this.option = option;
     }
 
     @Override
-    public T getResult() {
-        return result;
+    public T getOption() {
+        return option;
     }
 
     @Override

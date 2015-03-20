@@ -221,9 +221,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public abstract void notifyChangeListeners();
 
     public void setElements(List<T> elements) {
-        Filter filter = getFilter();
-        filterHashCode = filter == null ? 0 : filter.hashCode();
-
         if (disposed || elements == null || elements.size() == 0) {
             elements = EMPTY_CONTENT;
             index = null;
@@ -239,6 +236,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
             DisposerUtil.dispose(oldElements);
         }
+        Filter filter = getFilter();
+        filterHashCode = filter == null ? 0 : filter.hashCode();
     }
 
     public void sortElements(List<T> elements) {

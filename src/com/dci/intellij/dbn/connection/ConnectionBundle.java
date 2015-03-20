@@ -11,15 +11,15 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
@@ -87,10 +87,6 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return FailsafeUtil.get(project);
     }
 
-    public boolean isDisposed() {
-        return false;
-    }
-
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -101,6 +97,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
     public void addConnection(ConnectionHandler connectionHandler) {
         connectionHandlers.add(connectionHandler);
+        Disposer.register(this, connectionHandler);
     }
 
     public void setConnectionHandlers(List<ConnectionHandler> connectionHandlers) {
@@ -126,9 +123,15 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return connectionHandlers.getFullList();
     }
 
+    boolean disposed;
+
+    public boolean isDisposed() {
+        return disposed;
+    }
+
 
     public void dispose() {
-        DisposerUtil.dispose(connectionHandlers.getFullList());
+        disposed = true;
         project = null;
     }
 
