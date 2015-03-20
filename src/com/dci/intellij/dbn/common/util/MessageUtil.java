@@ -5,11 +5,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -46,7 +46,7 @@ public class MessageUtil {
         }
 
         if (exception != null) {
-            if (exception == DatabaseInterface.DBN_INTERRUPTED_EXCEPTION) {
+            if (exception == AlreadyDisposedException.INSTANCE) {
                 return; // process was interrupted
             }
 

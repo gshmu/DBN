@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.intellij.openapi.util.Disposer;
 
 public class ResultSetDataModel<T extends ResultSetDataModelRow> extends SortableDataModel<T> {
@@ -103,8 +103,8 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         }.start();
     }
 
-    protected void checkDisposed() throws SQLException {
-        if (isDisposed()) throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
+    protected void checkDisposed() {
+        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }
 
     protected void disposeRow(T row) {

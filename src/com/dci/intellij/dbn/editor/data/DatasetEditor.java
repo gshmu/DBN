@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -26,7 +28,6 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
@@ -51,6 +52,7 @@ import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -62,6 +64,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 
 public class DatasetEditor extends UserDataHolderBase implements FileEditor, FileConnectionMappingProvider, Disposable, ConnectionProvider, DataProviderSupplier {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     public static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, true, true, true);
     public static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(true, false, false, false);
     private DBObjectRef<DBDataset> datasetRef;
@@ -287,10 +291,12 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     }
                                 }
                                 dataLoadError = null;
-                            } catch (final SQLException e) {
-                                if (e != DatabaseInterface.DBN_INTERRUPTED_EXCEPTION) {
-                                    dataLoadError = e.getMessage();
-                                    handleLoadError(e, instructions);
+                            } catch (SQLException e) {
+                                dataLoadError = e.getMessage();
+                                handleLoadError(e, instructions);
+                            } catch (Exception e) {
+                                if (e != AlreadyDisposedException.INSTANCE) {
+                                    LOGGER.error("Error loading table data", e);
                                 }
                             } finally {
                                 if (editorForm != null) {

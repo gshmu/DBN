@@ -19,6 +19,7 @@ public interface DataModel<T extends DataModelRow> extends DBNTableWithGutterMod
     @Nullable
     Filter<T> getFilter();
 
+    @NotNull
     List<T> getRows();
 
     int indexOfRow(T row);

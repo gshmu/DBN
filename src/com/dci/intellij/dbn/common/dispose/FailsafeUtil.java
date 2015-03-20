@@ -20,12 +20,21 @@ public class FailsafeUtil {
         return disposable;
     }
 
+    public static @NotNull <T> T get(@Nullable T object) {
+        if (object == null) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+        return object;
+    }
+
     public static @NotNull Project get(@Nullable Project project) {
         if (project == null || project.isDisposed()) {
             throw AlreadyDisposedException.INSTANCE;
         }
         return project;
     }
+
+
 
     public static @NotNull VirtualFile nvl(@Nullable VirtualFile virtualFile) {
         return virtualFile == null ? DUMMY_VIRTUAL_FILE : virtualFile;

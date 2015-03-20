@@ -38,7 +38,6 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -112,13 +111,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     private void init(ResultSet resultSet) throws SQLException {
-        checkConnection();
         initObject(resultSet);
         initStatus(resultSet);
         initProperties();
         initLists();
 
-        checkConnection();
         objectRef = new DBObjectRef(this);
     }
 
@@ -151,11 +148,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public boolean isParentOf(DBObject object) {
         return this.equals(object.getParentObject());
-    }
-
-    protected void checkConnection() throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler == null) throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
     }
 
     public DBObjectProperties getProperties() {
