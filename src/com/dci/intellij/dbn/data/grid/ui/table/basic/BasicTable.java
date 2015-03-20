@@ -240,7 +240,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             valuePopup = null;
         }
         if (isLargeValuePopupActive() && !isRestoringSelection()) {
-            boolean isReadonly = getModel().isReadonly() || getModel().getState().isReadonly();
+            T model = getModel();
+            boolean isReadonly = model.isReadonly() || model.getState().isReadonly();
             if (isReadonly && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 int rowIndex = getSelectedRow();
                 int columnIndex = getSelectedColumn();
@@ -323,6 +324,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         scrollRectToVisible(cellRectangle);
     }
 
+    @NotNull
     @Override
     public T getModel() {
         return super.getModel();

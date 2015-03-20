@@ -39,9 +39,12 @@ public class IdleConnectionDialog extends DialogWithTimeout {
 
     @Override
     protected void doOKAction() {
-        ConnectionHandler handler = connectionHandler;
-        super.doOKAction();
-        handler.getConnectionStatus().setResolvingIdleStatus(false);
+        try {
+            connectionHandler.getConnectionStatus().setResolvingIdleStatus(false);
+        } finally {
+            super.doOKAction();
+        }
+
     }
 
     @Override
@@ -89,24 +92,31 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     }
 
     private void commit() {
-        ConnectionHandler handler = connectionHandler;
-        DatabaseTransactionManager transactionManager = getTransactionManager();
-        doOKAction();
-        transactionManager.execute(handler, true, TransactionAction.COMMIT, TransactionAction.DISCONNECT_IDLE);
+        try {
+            DatabaseTransactionManager transactionManager = getTransactionManager();
+            transactionManager.execute(connectionHandler, true, TransactionAction.COMMIT, TransactionAction.DISCONNECT_IDLE);
+        } finally {
+            doOKAction();
+        }
+
     }
 
     private void rollback() {
-        ConnectionHandler handler = connectionHandler;
-        DatabaseTransactionManager transactionManager = getTransactionManager();
-        doOKAction();
-        transactionManager.execute(handler, true, TransactionAction.ROLLBACK_IDLE, TransactionAction.DISCONNECT_IDLE);
+        try {
+            DatabaseTransactionManager transactionManager = getTransactionManager();
+            transactionManager.execute(connectionHandler, true, TransactionAction.ROLLBACK_IDLE, TransactionAction.DISCONNECT_IDLE);
+        } finally {
+            doOKAction();
+        }
     }
 
     private void ping() {
-        ConnectionHandler handler = connectionHandler;
-        DatabaseTransactionManager transactionManager = getTransactionManager();
-        doOKAction();
-        transactionManager.execute(handler, true, TransactionAction.PING);
+        try {
+            DatabaseTransactionManager transactionManager = getTransactionManager();
+            transactionManager.execute(connectionHandler, true, TransactionAction.PING);
+        } finally {
+            doOKAction();
+        }
     }
 
     private DatabaseTransactionManager getTransactionManager() {

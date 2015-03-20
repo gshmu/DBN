@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
@@ -109,19 +108,23 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return settings;
     }
 
-    @Nullable
+    @NotNull
     public DatasetEditorTable getEditorTable() {
-        return editorForm == null ? null : editorForm.getEditorTable();
+        return getEditorForm().getEditorTable();
+    }
+
+    @NotNull
+    public DatasetEditorForm getEditorForm() {
+        return FailsafeUtil.get(editorForm);
     }
 
     public void showSearchHeader() {
-        editorForm.showSearchHeader();
+        getEditorForm().showSearchHeader();
     }
 
-    @Nullable
+    @NotNull
     public DatasetEditorModel getTableModel() {
-        DatasetEditorTable editorTable = getEditorTable();
-        return editorTable == null ? null : editorTable.getModel();
+        return getEditorTable().getModel();
     }
 
 
@@ -137,8 +140,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @Nullable
     public DBSchema getCurrentSchema() {
-        DBDataset dataset = getDataset();
-        return dataset.getSchema();
+        return getDataset().getSchema();
     }
 
     public Project getProject() {
@@ -147,7 +149,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @NotNull
     public JComponent getComponent() {
-        return disposed ? new JPanel() : editorForm.getComponent();
+        return getEditorForm().getComponent();
     }
 
     @Nullable
@@ -177,8 +179,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     public boolean isModified() {
-        DatasetEditorModel model = getTableModel();
-        return model != null && model.isModified();
+        return getTableModel().isModified();
     }
 
     public boolean isValid() {
@@ -247,9 +248,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public void fetchNextRecords(int records) {
         try {
             DatasetEditorModel model = getTableModel();
-            if (model != null) {
-                model.fetchNextRecords(records, false);
-            }
+            model.fetchNextRecords(records, false);
             dataLoadError = null;
         } catch (SQLException e) {
             dataLoadError = e.getMessage();
@@ -278,13 +277,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
                                     try {
                                         DatasetEditorModel tableModel = getTableModel();
-                                        if (tableModel != null) {
-                                            tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
-                                            DatasetEditorTable editorTable = getEditorTable();
-                                            if (editorTable != null) {
-                                                editorTable.clearSelection();
-                                            }
-                                        }
+                                        tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
+                                        DatasetEditorTable editorTable = getEditorTable();
+                                        editorTable.clearSelection();
                                     } finally {
                                         if (!isDisposed()) {
                                             editorForm.afterRebuild(oldEditorTable);
@@ -390,11 +385,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         if (this.isLoading != loading) {
             this.isLoading = loading;
             DatasetEditorTable editorTable = getEditorTable();
-            if (editorTable != null) {
-                editorTable.setLoading(loading);
-                editorTable.revalidate();
-                editorTable.repaint();
-            }
+            editorTable.setLoading(loading);
+            editorTable.revalidate();
+            editorTable.repaint();
         }
 
     }
@@ -403,32 +396,25 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModel model = getTableModel();
 
-        if (editorTable != null && model != null) {
-            int[] indexes = editorTable.getSelectedRows();
-            model.deleteRecords(indexes);
-        }
+        int[] indexes = editorTable.getSelectedRows();
+        model.deleteRecords(indexes);
     }
 
     public void insertRecord() {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModel model = getTableModel();
 
-        if (editorTable != null && model != null) {
-            int[] indexes = editorTable.getSelectedRows();
-
-            int rowIndex = indexes.length > 0 && indexes[0] < model.getRowCount() ? indexes[0] : 0;
-            model.insertRecord(rowIndex);
-        }
+        int[] indexes = editorTable.getSelectedRows();
+        int rowIndex = indexes.length > 0 && indexes[0] < model.getRowCount() ? indexes[0] : 0;
+        model.insertRecord(rowIndex);
     }
 
     public void duplicateRecord() {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModel model = getTableModel();
-        if (editorTable != null && model != null) {
-            int[] indexes = editorTable.getSelectedRows();
-            if (indexes.length == 1) {
-                model.duplicateRecord(indexes[0]);
-            }
+        int[] indexes = editorTable.getSelectedRows();
+        if (indexes.length == 1) {
+            model.duplicateRecord(indexes[0]);
         }
     }
 
@@ -436,33 +422,27 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorModel model = getTableModel();
 
-        if (editorTable != null && model != null) {
-            int index = editorTable.getSelectedRow();
-            if (index == -1) index = 0;
+        int index = editorTable.getSelectedRow();
+        if (index == -1) index = 0;
+        DatasetEditorModelRow row = model.getRowAtIndex(index);
+        editorTable.stopCellEditing();
+        editorTable.selectRow(row.getIndex());
+        DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
+        editorDialog.show();
+    }
+
+    public void openRecordEditor(int index) {
+        if (index > -1) {
+            DatasetEditorModel model = getTableModel();
+
             DatasetEditorModelRow row = model.getRowAtIndex(index);
-            editorTable.stopCellEditing();
-            editorTable.selectRow(row.getIndex());
             DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
             editorDialog.show();
         }
     }
 
-    public void openRecordEditor(int index) {
-        if (index > -1) {
-            DatasetEditorTable editorTable = getEditorTable();
-            DatasetEditorModel model = getTableModel();
-
-            if (editorTable != null && model != null) {
-                DatasetEditorModelRow row = model.getRowAtIndex(index);
-                DatasetRecordEditorDialog editorDialog = new DatasetRecordEditorDialog(getProject(), row);
-                editorDialog.show();
-            }
-        }
-    }
-
     public boolean isInserting() {
-        DatasetEditorModel model = getTableModel();
-        return model != null && model.isInserting();
+        return getTableModel().isInserting();
     }
 
     public boolean isLoading() {
@@ -473,8 +453,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
      * The dataset is readonly. This can not be changed by the flag isReadonly
      */
     public boolean isReadonlyData() {
-        DatasetEditorModel model = getTableModel();
-        return model == null || model.isReadonly();
+        return getTableModel().isReadonly();
     }
 
     public boolean isReadonly() {
@@ -491,16 +470,12 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     public boolean isEditable() {
         DatasetEditorModel tableModel = getTableModel();
-        if (tableModel != null) {
-            ConnectionHandler connectionHandler = tableModel.getConnectionHandler();
-            return tableModel.isEditable() && connectionHandler != null && connectionHandler.isConnected();
-        }
-        return false;
+        ConnectionHandler connectionHandler = tableModel.getConnectionHandler();
+        return tableModel.isEditable() && connectionHandler.isConnected();
     }
 
     public int getRowCount() {
-        DatasetEditorTable editorTable = getEditorTable();
-        return editorTable == null ? 0 : editorTable.getRowCount();
+        return getEditorTable().getRowCount();
     }
 
 
@@ -517,7 +492,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         public void statusChanged(String connectionId) {
             DatasetEditorTable editorTable = getEditorTable();
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (editorTable != null && connectionHandler.getId().equals(connectionId)) {
+            if (connectionHandler.getId().equals(connectionId)) {
                 editorTable.updateBackground(!connectionHandler.isConnected());
                 if (connectionHandler.isConnected()) {
                     loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
@@ -535,30 +510,28 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();
-                if (model != null && editorTable != null) {
-                    if (action == TransactionAction.COMMIT) {
+                if (action == TransactionAction.COMMIT) {
 
-                        if (editorTable.isEditing()) {
-                            editorTable.stopCellEditing();
-                        }
-
-                        if (isInserting()) {
-                            try {
-                                model.postInsertRecord(true, false, true);
-                            } catch (SQLException e1) {
-                                MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
-                                model.cancelInsert(true);
-                            }
-                        }
+                    if (editorTable.isEditing()) {
+                        editorTable.stopCellEditing();
                     }
 
-                    if (action == TransactionAction.ROLLBACK || action == TransactionAction.ROLLBACK_IDLE) {
-                        if (editorTable.isEditing()) {
-                            editorTable.stopCellEditing();
-                        }
-                        if (isInserting()) {
+                    if (isInserting()) {
+                        try {
+                            model.postInsertRecord(true, false, true);
+                        } catch (SQLException e1) {
+                            MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                             model.cancelInsert(true);
                         }
+                    }
+                }
+
+                if (action == TransactionAction.ROLLBACK || action == TransactionAction.ROLLBACK_IDLE) {
+                    if (editorTable.isEditing()) {
+                        editorTable.stopCellEditing();
+                    }
+                    if (isInserting()) {
+                        model.cancelInsert(true);
                     }
                 }
             }
@@ -568,17 +541,15 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
                 DatasetEditorTable editorTable = getEditorTable();
-                if (model != null && editorTable != null) {
-                    if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {
-                        if (succeeded && isModified()) loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                    }
+                if (action == TransactionAction.COMMIT || action == TransactionAction.ROLLBACK) {
+                    if (succeeded && isModified()) loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                }
 
-                    if (action == TransactionAction.DISCONNECT) {
-                        editorTable.stopCellEditing();
-                        model.revertChanges();
-                        editorTable.revalidate();
-                        editorTable.repaint();
-                    }
+                if (action == TransactionAction.DISCONNECT) {
+                    editorTable.stopCellEditing();
+                    model.revertChanges();
+                    editorTable.revalidate();
+                    editorTable.repaint();
                 }
             }
         }
@@ -644,7 +615,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         DatasetColumnSetup columnSetup = editorState.getColumnSetup();
         List<DatasetColumnState> columnStates = columnSetup.getColumnStates();
         DBDataset dataset = getDataset();
-        if (dataset != null && columnStates.size() != dataset.getColumns().size()) {
+        if (columnStates.size() != dataset.getColumns().size()) {
             columnSetup.init(dataset);
         }
         return columnStates;

@@ -22,8 +22,10 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.openapi.project.Project;
@@ -90,8 +92,9 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     @Override
+    @NotNull
     public T getModel() {
-        return (T) super.getModel();
+        return FailsafeUtil.get((T) super.getModel());
     }
 
     private double calculateScrollDistance() {
@@ -182,11 +185,12 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         }
 
         // rows
-        for (int rowIndex =0; rowIndex < getModel().getRowCount(); rowIndex++) {
+        T model = getModel();
+        for (int rowIndex =0; rowIndex < model.getRowCount(); rowIndex++) {
             if (preferredWidth > MAX_COLUMN_WIDTH) {
                 break;
             }
-            Object value = getModel().getValueAt(rowIndex, columnIndex);
+            Object value = model.getValueAt(rowIndex, columnIndex);
             TableCellRenderer renderer = getCellRenderer(rowIndex, columnIndex);
 
             if (renderer != null) {

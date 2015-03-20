@@ -10,7 +10,9 @@ import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -164,8 +166,9 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
 
+    @NotNull
     public DatasetEditorTable getEditorTable() {
-        return datasetEditorTable;
+        return FailsafeUtil.get(datasetEditorTable);
     }
 
     public void dispose() {
@@ -177,7 +180,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     private ConnectionHandler getConnectionHandler() {
-        return datasetEditorTable.getDataset().getConnectionHandler();
+        return getEditorTable().getDataset().getConnectionHandler();
     }
 
     public float getHorizontalScrollProportion() {

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
@@ -73,8 +74,9 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         return true;
     }
 
+    @NotNull
     public Project getProject() {
-        return project;
+        return FailsafeUtil.get(project);
     }
 
     public void setHeader(@NotNull DataModelHeader header) {
