@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.jdom.Element;
@@ -103,7 +104,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
         @Override
-        public void settingsChanged() {
+        public void settingsChanged(Set<String> connectionIds) {
             EventManager.notify(getProject(), ConnectionManagerListener.TOPIC).connectionsChanged();
         }
     };

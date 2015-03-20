@@ -1,24 +1,25 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
-    private DBSchemaObject object;
+    private DBObjectRef<DBSchemaObject> objectRef;
     private boolean showLookupOption;
 
-    public AttachDDLFileDialog(List<VirtualFile> virtualFiles, DBSchemaObject object, boolean showLookupOption) {
+    public AttachDDLFileDialog(List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object, boolean showLookupOption) {
         super(object.getProject(), "Attach DDL File", true);
-        this.object = object;
+        this.objectRef = DBObjectRef.from(object);
         this.showLookupOption = showLookupOption;
         String hint =
             "Following DDL files were found matching the name of the selected " + object.getTypeName() + ".\n" +
@@ -37,6 +38,11 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
                 new SelectNoneAction(),
                 getCancelAction()
         };
+    }
+
+    @NotNull
+    public DBSchemaObject getObject() {
+        return DBObjectRef.getnn(objectRef);
     }
 
     private class SelectAllAction extends AbstractAction {
@@ -58,16 +64,15 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         public void actionPerformed(ActionEvent e) {
             component.selectNone();
             if (showLookupOption && component.isDoNotPromptSelected()) {
-                ConnectionHandler connectionHandler = object.getConnectionHandler();
-                if (connectionHandler != null) {
-                    connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
-                }
+                ConnectionHandler connectionHandler = getObject().getConnectionHandler();
+                connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
             }
             close(2);
         }
     }
 
     protected void doOKAction() {
+        DBSchemaObject object = getObject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
         Object[] selectedPsiFiles = component.getSelection();
         for (Object selectedPsiFile : selectedPsiFiles) {
@@ -76,9 +81,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
         if (showLookupOption && component.isDoNotPromptSelected()) {
             ConnectionHandler connectionHandler = object.getConnectionHandler();
-            if (connectionHandler != null) {
-                connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
-            }
+            connectionHandler.getSettings().getDetailSettings().setEnableDdlFileBinding(false);
         }
 
         super.doOKAction();

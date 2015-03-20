@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -76,33 +77,49 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     }
 
     public void projectOpened() {
-        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventManager.subscribe(getProject(), FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        EventManager.subscribe(getProject(), ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        Project project = getProject();
+        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventManager.subscribe(project, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
+        EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
     }
 
     public void projectClosed() {
         EventManager.unsubscribe(fileEditorManagerListener);
         EventManager.unsubscribe(fileEditorManagerListenerBefore);
         EventManager.unsubscribe(connectionSettingsListener);
+        EventManager.unsubscribe(connectionBundleSettingsListener);
     }
+
+    private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
+        @Override
+        public void settingsChanged(Set<String> connectionIds) {
+            for (String connectionId : connectionIds) {
+                closeFiles(connectionId);
+            }
+        }
+    };
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void settingsChanged(String connectionId) {
-            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
-            for (DBObjectRef objectRef : openFiles.keySet()) {
-                if (objectRef.getConnectionId().equals(connectionId)) {
-                    filesToClose.add(openFiles.get(objectRef));
-                }
-            }
-
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-            for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
-                fileEditorManager.closeFile(virtualFile);
-            }
+            closeFiles(connectionId);
         }
     };
+
+    private void closeFiles(String connectionId) {
+        Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
+        for (DBObjectRef objectRef : openFiles.keySet()) {
+            if (objectRef.getConnectionId().equals(connectionId)) {
+                filesToClose.add(openFiles.get(objectRef));
+            }
+        }
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+        for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
+            fileEditorManager.closeFile(virtualFile);
+        }
+    }
 
     /*********************************************
      *            FileEditorManagerListener       *

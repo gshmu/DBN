@@ -301,6 +301,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return getTreeChildren().get(index);
     }
 
+    @Nullable
     public BrowserTreeNode getTreeParent() {
         return treeParent;
     }

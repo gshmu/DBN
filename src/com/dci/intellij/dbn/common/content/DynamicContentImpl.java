@@ -63,9 +63,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         return FailsafeUtil.get(parent);
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return parent == null ? null : parent.getConnectionHandler();
+        return FailsafeUtil.get(getParent().getConnectionHandler());
     }
 
     public DynamicContentLoader<T> getLoader() {
@@ -163,7 +163,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             if (!isLoadingInBackground && shouldLoad(force)) {
                 isLoadingInBackground = true;
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ')';
+                String connectionString = " (" + connectionHandler.getName() + ')';
                 new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {

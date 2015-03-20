@@ -161,6 +161,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return getTreeChildren().get(index);
     }
 
+    @Nullable
     public BrowserTreeNode getTreeParent() {
         return (BrowserTreeNode) getParent();
     }

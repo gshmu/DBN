@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -36,7 +36,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -230,7 +229,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return getName();
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
         return file == null ? null : file.getActiveConnection();
@@ -238,20 +237,20 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Override
     public DBObject getParentObject() {
-        return DBObjectRef.get(parentObject);
+        return DBObjectRef.get(parentObjectRef);
     }
 
     public void setParentObject(DBVirtualObject virtualObject) {
-        parentObject = DBObjectRef.from(virtualObject);
+        parentObjectRef = DBObjectRef.from(virtualObject);
     }
 
     @NotNull
     public Project getProject() {
         if (underlyingPsiElement.isValid()) {
             return underlyingPsiElement.getProject();
-        } else{
-            throw new ProcessCanceledException();
         }
+
+        throw AlreadyDisposedException.INSTANCE;
     }
 
     public DBObjectType getObjectType() {
@@ -308,7 +307,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public String getCanonicalText() {
-        return null;
+        return getText();
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {

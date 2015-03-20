@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.options;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -189,14 +192,22 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                         @Override
                         protected void execute() {
                             try {
+                                Set<String> disposeConnectionIds = new HashSet<String>();
+                                List<ConnectionHandler> allConnectionHandlers = projectSettings.getConnectionSettings().getConnectionBundle().getAllConnectionHandlers();
+                                for (ConnectionHandler connectionHandler : allConnectionHandlers) {
+                                    disposeConnectionIds.add(connectionHandler.getId());
+                                }
+
                                 Element element = new Element("state");
                                 ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
                                 defaultProjectSettings.writeConfiguration(element);
 
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                 projectSettings.readConfiguration(element);
+
+
                                 ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                                listener.settingsChanged();
+                                listener.settingsChanged(disposeConnectionIds);
                                 if (!isNewProject) {
                                     MessageUtil.showInfoDialog(project, "Project Settings", "Default project settings loaded to project \"" + project.getName() + "\".");
                                 }

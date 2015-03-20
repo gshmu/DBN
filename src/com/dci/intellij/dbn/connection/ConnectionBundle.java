@@ -177,6 +177,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return true;
     }
 
+    @Nullable
     public BrowserTreeNode getTreeParent() {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();

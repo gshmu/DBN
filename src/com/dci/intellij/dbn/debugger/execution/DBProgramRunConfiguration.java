@@ -63,17 +63,17 @@ public class DBProgramRunConfiguration extends RunConfigurationBase implements L
 
     public void checkConfiguration() throws RuntimeConfigurationException {
         if (executionInput == null) {
-            throw new RuntimeConfigurationError("No method selected.");
+            throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
         }
 
-        if (getMethod() == null) {
+        if (executionInput.isObsolete()) {
             throw new RuntimeConfigurationError(
                     "Method " + executionInput.getMethodRef().getQualifiedName() + " could not be resolved. " +
                     "The database connection is down or method has been dropped.");
         }
 
         ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-        if (connectionHandler != null && !DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
             throw new RuntimeConfigurationError(
                     "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
         }

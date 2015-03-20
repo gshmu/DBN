@@ -82,7 +82,7 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
         return Icons.FILE_SQL;
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
     }
