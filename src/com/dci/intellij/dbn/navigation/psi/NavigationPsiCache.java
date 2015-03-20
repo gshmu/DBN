@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.navigation.psi;
 import java.util.Map;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -39,7 +40,7 @@ public class NavigationPsiCache implements Disposable {
         DBObjectRef objectRef = object.getRef();
         DBObjectPsiDirectory psiDirectory = objectPsiDirectories.get(objectRef);
         if (psiDirectory == null) {
-            psiDirectory = new DBObjectPsiDirectory(objectRef);
+            psiDirectory = new DBObjectPsiDirectory(object);
             objectPsiDirectories.put(objectRef, psiDirectory);
         }
 
@@ -58,13 +59,17 @@ public class NavigationPsiCache implements Disposable {
     
     
     public static DBObjectPsiFile getPsiFile(DBObject object) {
-        return object == null ? null :
-                object.getConnectionHandler().getPsiCache().lookupPsiFile(object);
+        object = FailsafeUtil.get(object);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        NavigationPsiCache psiCache = connectionHandler.getPsiCache();
+        return psiCache.lookupPsiFile(object);
     }
 
     public static DBObjectPsiDirectory getPsiDirectory(DBObject object) {
-        return object == null ? null :
-                object.getConnectionHandler().getPsiCache().lookupPsiDirectory(object);
+        object = FailsafeUtil.get(object);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        NavigationPsiCache psiCache = connectionHandler.getPsiCache();
+        return psiCache.lookupPsiDirectory(object);
     }
     
     public static DBObjectListPsiDirectory getPsiDirectory(DBObjectList objectList) {
