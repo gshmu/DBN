@@ -28,9 +28,9 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider {
     @NotNull
     Project getProject();
     Connection getPoolConnection() throws SQLException;
-    Connection getPoolConnection(DBSchema schema) throws SQLException;
+    Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException;
     Connection getStandaloneConnection() throws SQLException;
-    Connection getStandaloneConnection(DBSchema schema) throws SQLException;
+    Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException;
     void freePoolConnection(Connection connection);
     ConnectionSettings getSettings();
     ConnectionStatus getConnectionStatus();

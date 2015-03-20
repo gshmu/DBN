@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -350,18 +351,23 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionPool.allocateConnection();
     }
 
-    public Connection getStandaloneConnection(DBSchema schema) throws SQLException {
+    public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getStandaloneConnection();
-        if (!schema.isPublicSchema()) {
-            getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
+        if (schema != null && !schema.isPublicSchema()) {
+            DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
+            metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
         }
         return connection;
     }
 
-    public Connection getPoolConnection(DBSchema schema) throws SQLException {
+    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getPoolConnection();
         //if (!schema.isPublicSchema()) {
-        getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
+        if (schema != null) {
+            DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
+            metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
+        }
+
         //}
         return connection;
     }

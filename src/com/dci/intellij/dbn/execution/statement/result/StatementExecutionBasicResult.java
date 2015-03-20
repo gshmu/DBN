@@ -8,12 +8,13 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
@@ -27,10 +28,12 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private int executionDuration;
     private int updateCount;
     private CompilerResult compilerResult;
-    private DBObjectRef<DBSchemaObject> affectedObjectRef;
     private StatementExecutionProcessor executionProcessor;
     private String loggingOutput;
     private boolean loggingActive;
+
+    private ConnectionHandlerRef connectionHandlerRef;
+    private DBObjectRef<DBSchema> currentSchemaRef;
 
     public StatementExecutionBasicResult(
             @NotNull StatementExecutionProcessor executionProcessor,
@@ -39,6 +42,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
+        this.connectionHandlerRef = FailsafeUtil.get(executionProcessor.getConnectionHandler()).getRef();
+        this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
     }
 
     @Override
@@ -121,8 +126,12 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        ConnectionHandler connectionHandler = getExecutionProcessor().getConnectionHandler();
-        return FailsafeUtil.get(connectionHandler);
+        return connectionHandlerRef.get();
+    }
+
+    @Nullable
+    public DBSchema getCurrentSchema() {
+        return DBObjectRef.get(currentSchemaRef);
     }
 
     public ExecutionResultForm getForm(boolean create) {

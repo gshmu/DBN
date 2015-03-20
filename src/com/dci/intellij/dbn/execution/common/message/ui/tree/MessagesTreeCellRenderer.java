@@ -109,11 +109,9 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             }
 
             ConnectionHandler connectionHandler = message.getExecutionResult().getConnectionHandler();
-            if (connectionHandler != null) {
-                append(" - Connection: " + connectionHandler.getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", isOrphan ?
-                        SimpleTextAttributes.GRAY_ATTRIBUTES :
-                        SimpleTextAttributes.GRAY_ATTRIBUTES);
-            }
+            append(" - Connection: " + connectionHandler.getName() + ": " + message.getExecutionResult().getExecutionDuration() + "ms", isOrphan ?
+                    SimpleTextAttributes.GRAY_ATTRIBUTES :
+                    SimpleTextAttributes.GRAY_ATTRIBUTES);
         }
         else if (value instanceof ExplainPlanMessageNode) {
             ExplainPlanMessageNode explainPlanMessageNode = (ExplainPlanMessageNode) value;

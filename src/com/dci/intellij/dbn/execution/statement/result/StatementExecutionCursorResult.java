@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
@@ -68,7 +69,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 long startTimeMillis = System.currentTimeMillis();
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
-                    Connection connection = connectionHandler.getStandaloneConnection(getExecutionProcessor().getCurrentSchema());
+                    DBSchema currentSchema = getCurrentSchema();
+                    Connection connection = connectionHandler.getStandaloneConnection(currentSchema);
                     Statement statement = connection.createStatement();
                     statement.setQueryTimeout(getQueryExecutionSettings().getExecutionTimeout());
                     statement.execute(getExecutionInput().getExecutableStatementText());

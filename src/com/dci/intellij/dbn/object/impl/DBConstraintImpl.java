@@ -259,26 +259,24 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return new DBOperationExecutor() {
             public void executeOperation(DBOperationType operationType) throws SQLException, DBOperationNotSupportedException {
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                if (connectionHandler != null) {
-                    Connection connection = connectionHandler.getStandaloneConnection(getSchema());
-                    DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                    if (operationType == DBOperationType.ENABLE) {
-                        metadataInterface.enableConstraint(
-                                getSchema().getName(),
-                                getDataset().getName(),
-                                getName(),
-                                connection);
-                        getStatus().set(DBObjectStatus.ENABLED, true);
-                    } else if (operationType == DBOperationType.DISABLE) {
-                        metadataInterface.disableConstraint(
-                                getSchema().getName(),
-                                getDataset().getName(),
-                                getName(),
-                                connection);
-                        getStatus().set(DBObjectStatus.ENABLED, false);
-                    } else {
-                        throw new DBOperationNotSupportedException(operationType, getObjectType());
-                    }
+                Connection connection = connectionHandler.getStandaloneConnection(getSchema());
+                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                if (operationType == DBOperationType.ENABLE) {
+                    metadataInterface.enableConstraint(
+                            getSchema().getName(),
+                            getDataset().getName(),
+                            getName(),
+                            connection);
+                    getStatus().set(DBObjectStatus.ENABLED, true);
+                } else if (operationType == DBOperationType.DISABLE) {
+                    metadataInterface.disableConstraint(
+                            getSchema().getName(),
+                            getDataset().getName(),
+                            getName(),
+                            connection);
+                    getStatus().set(DBObjectStatus.ENABLED, false);
+                } else {
+                    throw new DBOperationNotSupportedException(operationType, getObjectType());
                 }
             }
         };
