@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.browser.model;
 
 import javax.swing.Icon;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -17,12 +19,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 
 public class LoadInProgressTreeNode implements BrowserTreeNode {
-    public static final LoadInProgressTreeNode LOOSE_INSTANCE = new LoadInProgressTreeNode(null);
-
     private BrowserTreeNode parent;
-    private boolean disposed;
 
-    public LoadInProgressTreeNode(BrowserTreeNode parent) {
+    public LoadInProgressTreeNode(@NotNull BrowserTreeNode parent) {
         this.parent = parent;
     }
 
@@ -37,15 +36,16 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     }
 
     public int getTreeDepth() {
-        return parent == null ? 0 : parent.getTreeDepth() + 1;
+        return getTreeParent().getTreeDepth() + 1;
     }
 
     public BrowserTreeNode getTreeChild(int index) {
         return null;
     }
 
+    @NotNull
     public BrowserTreeNode getTreeParent() {
-        return parent;
+        return FailsafeUtil.get(parent);
     }
 
     public List<? extends BrowserTreeNode> getTreeChildren() {
@@ -84,13 +84,13 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return null;
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return parent.getConnectionHandler();
+        return getTreeParent().getConnectionHandler();
     }
 
     public Project getProject() {
-        return parent.getProject();
+        return getTreeParent().getProject();
     }
 
     public GenericDatabaseElement getUndisposedElement() {
@@ -99,10 +99,6 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
 
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         return null;
-    }
-
-    public boolean isDisposed() {
-        return disposed || parent.isDisposed();
     }
 
     /*********************************************************
@@ -144,6 +140,13 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
     *********************************************************/
     public String getToolTip() {
         return null;
+    }
+
+
+    private boolean disposed;
+
+    public boolean isDisposed() {
+        return disposed;
     }
 
     public void dispose() {

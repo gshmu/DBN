@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -23,12 +24,13 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public interface ConnectionHandler extends Disposable {
+public interface ConnectionHandler extends Disposable, ConnectionProvider {
+    @NotNull
     Project getProject();
     Connection getPoolConnection() throws SQLException;
-    Connection getPoolConnection(DBSchema schema) throws SQLException;
+    Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException;
     Connection getStandaloneConnection() throws SQLException;
-    Connection getStandaloneConnection(DBSchema schema) throws SQLException;
+    Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException;
     void freePoolConnection(Connection connection);
     ConnectionSettings getSettings();
     ConnectionStatus getConnectionStatus();
@@ -38,7 +40,14 @@ public interface ConnectionHandler extends Disposable {
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);
 
+    void setTemporaryAuthentication(Authentication temporaryAuthentication);
+
+    @NotNull
+    Authentication getTemporaryAuthentication();
+
     boolean canConnect();
+
+    boolean isAuthenticationProvided();
 
     ConnectionBundle getConnectionBundle();
     ConnectionPool getConnectionPool();

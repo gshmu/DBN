@@ -2,17 +2,21 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
@@ -24,10 +28,12 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     private int executionDuration;
     private int updateCount;
     private CompilerResult compilerResult;
-    private DBObjectRef<DBSchemaObject> affectedObjectRef;
     private StatementExecutionProcessor executionProcessor;
     private String loggingOutput;
     private boolean loggingActive;
+
+    private ConnectionHandlerRef connectionHandlerRef;
+    private DBObjectRef<DBSchema> currentSchemaRef;
 
     public StatementExecutionBasicResult(
             @NotNull StatementExecutionProcessor executionProcessor,
@@ -36,6 +42,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
+        this.connectionHandlerRef = FailsafeUtil.get(executionProcessor.getConnectionHandler()).getRef();
+        this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
     }
 
     @Override
@@ -49,19 +57,21 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
     }
 
     public Icon getIcon() {
-        return executionProcessor == null || executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+        return getExecutionProcessor().isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
     }
 
+    @NotNull
     public StatementExecutionProcessor getExecutionProcessor() {
-        return executionProcessor;
+        return FailsafeUtil.get(executionProcessor);
     }
 
     public StatementExecutionMessage getExecutionMessage() {
         return executionMessage;
     }
 
+    @NotNull
     public StatementExecutionInput getExecutionInput() {
-        return executionProcessor == null ? null : executionProcessor.getExecutionInput();
+        return getExecutionProcessor().getExecutionInput();
     }
 
     public void navigateToEditor(boolean requestFocus) {
@@ -104,12 +114,24 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         }
     }
 
+    @NotNull
     public Project getProject() {
-        return executionProcessor == null ? null : executionProcessor.getProject();
+        return getExecutionProcessor().getProject();
     }
 
+    @Override
+    public String getConnectionId() {
+        return getExecutionInput().getConnectionId();
+    }
+
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return executionProcessor == null ? null : executionProcessor.getConnectionHandler();
+        return connectionHandlerRef.get();
+    }
+
+    @Nullable
+    public DBSchema getCurrentSchema() {
+        return DBObjectRef.get(currentSchemaRef);
     }
 
     public ExecutionResultForm getForm(boolean create) {
@@ -128,8 +150,7 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
 
     @Override
     public boolean isBulkExecution() {
-        StatementExecutionInput executionInput = getExecutionInput();
-        return executionInput != null && executionInput.isBulkExecution();
+        return getExecutionInput().isBulkExecution();
     }
 
     public void setCompilerResult(CompilerResult compilerResult) {
@@ -170,5 +191,11 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         disposed = true;
         executionProcessor = null;
         executionMessage = null;
+    }
+
+    @Nullable
+    @Override
+    public DataProvider getDataProvider() {
+        return null;
     }
 }

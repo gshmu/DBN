@@ -11,7 +11,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 
 public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>{
-    private T result;
+    private T option;
 
     public ModalTask(Project project, String title, boolean canBeCancelled) {
         super(project, title, canBeCancelled);
@@ -22,13 +22,13 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
     }
 
     @Override
-    public void setResult(T result) {
-        this.result = result;
+    public void setOption(T result) {
+        this.option = result;
     }
 
     @Override
-    public T getResult() {
-        return result;
+    public T getOption() {
+        return option;
     }
 
     @Override

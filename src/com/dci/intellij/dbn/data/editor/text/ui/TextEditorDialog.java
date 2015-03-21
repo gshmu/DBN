@@ -61,11 +61,12 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
 
     @Override
     protected void doOKAction() {
-        super.doOKAction();
         try {
             component.writeUserValue();
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(getProject(), "Could not write LOB content to database.", e);
+        } finally {
+            super.doOKAction();
         }
     }
 

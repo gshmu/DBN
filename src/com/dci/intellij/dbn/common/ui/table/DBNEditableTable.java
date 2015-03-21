@@ -72,7 +72,8 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
     @Override
     public void editingStopped(ChangeEvent e) {
         super.editingStopped(e);
-        getModel().notifyListeners(0, getModel().getRowCount(), 0);
+        T model = getModel();
+        model.notifyListeners(0, model.getRowCount(), 0);
     }
 
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
@@ -81,7 +82,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
 
         selectCell(rowIndex, columnIndex);
         new SimpleLaterInvocator() {
-            public void execute() {
+            protected void execute() {
                 textField.grabFocus();
                 textField.selectAll();
             }
@@ -92,8 +93,9 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
     public void insertRow() {
         stopCellEditing();
         int rowIndex = getSelectedRow();
-        rowIndex = getModel().getRowCount() == 0 ? 0 : rowIndex + 1;
-        getModel().insertRow(rowIndex);
+        T model = getModel();
+        rowIndex = model.getRowCount() == 0 ? 0 : rowIndex + 1;
+        model.insertRow(rowIndex);
         resizeAndRepaint();
         getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
     }
@@ -102,10 +104,11 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
     public void removeRow() {
         stopCellEditing();
         int selectedRow = getSelectedRow();
-        getModel().removeRow(selectedRow);
+        T model = getModel();
+        model.removeRow(selectedRow);
         resizeAndRepaint();
 
-        if (getModel().getRowCount() == selectedRow && selectedRow > 0) {
+        if (model.getRowCount() == selectedRow && selectedRow > 0) {
             getSelectionModel().setSelectionInterval(selectedRow -1, selectedRow -1);
         }
     }

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.vfs;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -14,7 +13,7 @@ public class DBDatasetVirtualFile extends DBContentVirtualFile {
         super(databaseFile, contentType);
     }
 
-    @Nullable
+    @NotNull
     public DBDataset getObject() {
         return (DBDataset) super.getObject();
     }

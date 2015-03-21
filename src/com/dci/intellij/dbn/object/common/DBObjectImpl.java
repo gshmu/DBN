@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -37,7 +38,6 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -78,7 +78,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     protected String name;
     protected DBObjectRef objectRef;
-    protected DBObjectRef parentObject;
+    protected DBObjectRef parentObjectRef;
     private DBObjectProperties properties;
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
@@ -96,7 +96,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     };
 
     public DBObjectImpl(DBObject parentObject, ResultSet resultSet) throws SQLException {
-        this.parentObject = DBObjectRef.from(parentObject);
+        this.parentObjectRef = DBObjectRef.from(parentObject);
         init(resultSet);
     }
 
@@ -111,13 +111,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     private void init(ResultSet resultSet) throws SQLException {
-        checkConnection();
         initObject(resultSet);
         initStatus(resultSet);
         initProperties();
         initLists();
 
-        checkConnection();
         objectRef = new DBObjectRef(this);
     }
 
@@ -152,11 +150,6 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return this.equals(object.getParentObject());
     }
 
-    protected void checkConnection() throws SQLException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler == null) throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
-    }
-
     public DBObjectProperties getProperties() {
         if (properties == null) {
             properties = new DBObjectProperties();
@@ -181,7 +174,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     }
 
     public DBObject getParentObject() {
-        return DBObjectRef.get(parentObject);
+        return DBObjectRef.get(parentObjectRef);
     }
 
     public DBObject getDefaultNavigationObject() {
@@ -273,7 +266,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         ConnectionHandler connectionHandler = getConnectionHandler();
         ttb.append(true, getQualifiedName(), false);
         ttb.append(true, "Connection: ", "-2", null, false );
-        ttb.append(false, connectionHandler == null ? "[unknown]" : connectionHandler.getPresentableText(), false);
+        ttb.append(false, connectionHandler.getPresentableText(), false);
     }
 
     public DBObjectAttribute[] getObjectAttributes(){return null;}
@@ -283,33 +276,29 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @Override
     public DBObjectBundle getObjectBundle() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getObjectBundle();
+        return connectionHandler.getObjectBundle();
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        if (parentObject != null) {
-            DBObject object = parentObject.get();
+        if (parentObjectRef != null) {
+            DBObject object = parentObjectRef.get();
             if (object != null) {
                 return object.getConnectionHandler();
             }
         } else if (objectBundle != null) {
             return objectBundle.getConnectionHandler();
         }
-        return null;
+        throw AlreadyDisposedException.INSTANCE;
     }
 
     @Override
     public EnvironmentType getEnvironmentType() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? EnvironmentType.DEFAULT : connectionHandler.getEnvironmentType();
+        return getConnectionHandler().getEnvironmentType();
     }
 
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ?
-                SQLLanguage.INSTANCE.getMainLanguageDialect() :
-                connectionHandler.getLanguageDialect(language);
+        return getConnectionHandler().getLanguageDialect(language);
     }
 
     public DBObjectListContainer getChildObjects() {
@@ -449,23 +438,21 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         Connection connection = null;
 
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            try {
-                connection = connectionHandler.getPoolConnection();
-                statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
-                statement.registerOutParameter(1, Types.CLOB);
-                statement.setString(2, getTypeName().toUpperCase());
-                statement.setString(3, name);
-                statement.setString(4, getParentObject().getName());
+        try {
+            connection = connectionHandler.getPoolConnection();
+            statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
+            statement.registerOutParameter(1, Types.CLOB);
+            statement.setString(2, getTypeName().toUpperCase());
+            statement.setString(3, name);
+            statement.setString(4, getParentObject().getName());
 
-                statement.execute();
-                ddl = statement.getString(1);
-                ddl = ddl == null ? null : ddl.trim();
-                statement.close();
-            } finally{
-                ConnectionUtil.closeStatement(statement);
-                connectionHandler.freePoolConnection(connection);
-            }
+            statement.execute();
+            ddl = statement.getString(1);
+            ddl = ddl == null ? null : ddl.trim();
+            statement.close();
+        } finally{
+            ConnectionUtil.closeStatement(statement);
+            connectionHandler.freePoolConnection(connection);
         }
         return ddl;
     }
@@ -555,9 +542,10 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return null;
     }
 
+    @Nullable
     public BrowserTreeNode getTreeParent() {
-        if (parentObject != null){
-            DBObject object = parentObject.get();
+        if (parentObjectRef != null){
+            DBObject object = parentObjectRef.get();
             if (object != null) {
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
@@ -592,7 +580,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
             new SimpleBackgroundTask("load database objects") {
-                public void execute() {
+                @Override
+                protected void execute() {
                     if (!isDisposed()) buildTreeChildren();
                 }
             }.start();
@@ -603,7 +592,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     private void buildTreeChildren() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed) {
+        if (!isDisposed) {
             Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
             List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
             List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
@@ -636,7 +625,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             if (!isDisposed && !project.isDisposed()) {
                 EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
                 new ConditionalLaterInvocator() {
-                    public void execute() {
+                    @Override
+                    protected void execute() {
                         if (!isDisposed()) {
                             DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
                         }
@@ -678,7 +668,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public boolean isLeafTreeElement() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed) {
+        if (!isDisposed) {
             Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
             for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
                 if (treeNode != null && filter.accepts(treeNode)) {
@@ -718,9 +708,8 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        Project project = connectionHandler == null ? null : connectionHandler.getProject();
-        return FailsafeUtil.nvl(project);
+        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        return connectionHandler.getProject();
     }
 
     public int compareTo(@NotNull Object o) {

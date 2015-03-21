@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.jdom.Element;
@@ -25,7 +23,6 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
@@ -36,6 +33,9 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
+import com.dci.intellij.dbn.connection.ui.ConnectionUserPasswordDialog;
+import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -45,6 +45,7 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -138,10 +139,18 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
+    public void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
         Project project = databaseSettings.getProject();
         try {
-            Connection connection = ConnectionUtil.connect(databaseSettings, null, false, null);
+            Authentication temporaryAuthentication = null;
+            if (!databaseSettings.getAuthentication().isProvided()) {
+                temporaryAuthentication = openUserPasswordDialog(null);
+                if (temporaryAuthentication == null){
+                    return;
+                }
+            }
+
+            Connection connection = ConnectionUtil.connect(databaseSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
             ConnectionUtil.closeConnection(connection);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             if (showMessageDialog) {
@@ -167,7 +176,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
                 infoDialog.setModal(true);
                 infoDialog.show();
@@ -177,15 +186,21 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     public ConnectionInfo showConnectionInfo(ConnectionSettings connectionSettings) {
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
-        return showConnectionInfo(databaseSettings, detailSettings);
+        return showConnectionInfo(databaseSettings);
     }
 
-    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings, @Nullable ConnectionDetailSettings detailSettings) {
+    public ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
         Project project = databaseSettings.getProject();
         try {
-            Map<String, String> connectionProperties = detailSettings == null ? null : detailSettings.getProperties();
-            Connection connection = ConnectionUtil.connect(databaseSettings, connectionProperties, false, null);
+            Authentication temporaryAuthentication = null;
+            if (!databaseSettings.getAuthentication().isProvided()) {
+                temporaryAuthentication = openUserPasswordDialog(null);
+                if (temporaryAuthentication == null) {
+                    return null;
+                }
+            }
+
+            Connection connection = ConnectionUtil.connect(databaseSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             ConnectionUtil.closeConnection(connection);
             MessageDialog.showInfoDialog(
@@ -203,6 +218,30 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     false);
             return null;
         }
+    }
+
+    public Authentication openUserPasswordDialog(@Nullable ConnectionHandler connectionHandler) {
+        ConnectionUserPasswordDialog passwordDialog = new ConnectionUserPasswordDialog(getProject(), connectionHandler);
+        passwordDialog.show();
+        if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+            Authentication newAuthentication = passwordDialog.getAuthentication();
+            if (connectionHandler != null) {
+                ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+                Authentication storedAuthentication = databaseSettings.getAuthentication();
+
+                if (passwordDialog.isRememberCredentials()) {
+                    storedAuthentication.setUser(newAuthentication.getUser());
+                    storedAuthentication.setPassword(newAuthentication.getPassword());
+                } else {
+                    connectionHandler.setTemporaryAuthentication(newAuthentication.clone());
+                }
+
+                connectionHandler.setAllowConnection(true);
+            }
+            return newAuthentication;
+        }
+
+        return null;
     }
 
     /*********************************************************
@@ -278,7 +317,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     if (connectionHandler.hasUncommittedChanges()) {
                         connectionHandler.getConnectionStatus().setResolvingIdleStatus(true);
                         new SimpleLaterInvocator() {
-                            public void execute() {
+                            @Override
+                            protected void execute() {
                                 IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler);
                                 idleConnectionDialog.show();
                             }
@@ -291,19 +331,29 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
+    public void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
         final Project project = getProject();
-        final ArrayList<ConnectionHandler> disposeList = new ArrayList<ConnectionHandler>(connectionHandlers);
-        connectionHandlers.clear();
+        new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                executionManager.closeExecutionResults(connectionHandlers);
 
-        DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-        databaseFileManager.closeDatabaseFiles(disposeList,
+                DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+                databaseFileManager.closeDatabaseFiles(connectionHandlers);
+
+                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                methodExecutionManager.cleanupExecutionHistory(connectionHandlers);
+
                 new BackgroundTask(project, "Cleaning up connections", true) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        DisposerUtil.dispose(disposeList);
+                        DisposerUtil.dispose(connectionHandlers);
                     }
-                });
+                };
+
+            }
+        }.start();
     }
 
     /**********************************************

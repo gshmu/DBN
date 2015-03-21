@@ -1,7 +1,17 @@
 package com.dci.intellij.dbn.connection;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -10,15 +20,6 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConnectionPool implements Disposable {
 
@@ -33,15 +34,14 @@ public class ConnectionPool implements Disposable {
     private List<ConnectionWrapper> poolConnections = new CopyOnWriteArrayList<ConnectionWrapper>();
     private ConnectionWrapper standaloneConnection;
 
-    public ConnectionPool(ConnectionHandler connectionHandler) {
+    public ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
     public synchronized Connection getStandaloneConnection(boolean recover) throws SQLException {
-        if (connectionHandler == null || connectionHandler.isDisposed()) {
-            throw new SQLException("Connection handler is disposed");
-        }
+        lastAccessTimestamp = System.currentTimeMillis();
+        ConnectionHandler connectionHandler = getConnectionHandler();
 
         if (standaloneConnection != null && recover && (standaloneConnection.isClosed() || !standaloneConnection.isValid())) {
             standaloneConnection = null;
@@ -49,7 +49,7 @@ public class ConnectionPool implements Disposable {
 
         if (standaloneConnection == null) {
             try {
-                Connection connection = ConnectionUtil.connect(connectionHandler);
+                Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
                 standaloneConnection = new ConnectionWrapper(connection);
                 NotificationUtil.sendInfoNotification(
                         getProject(),
@@ -64,20 +64,29 @@ public class ConnectionPool implements Disposable {
         return standaloneConnection.getConnection();
     }
 
-    private void notifyStatusChange() {
-        if (!isDisposed) {
-            ConnectionStatusListener changeListener = EventManager.notify(getProject(), ConnectionStatusListener.TOPIC);
-            changeListener.statusChanged(connectionHandler.getId());
-        }
+    public long getLastAccessTimestamp() {
+        return lastAccessTimestamp;
     }
 
-    @Nullable
+    private void notifyStatusChange() {
+        ConnectionStatusListener changeListener = EventManager.notify(getProject(), ConnectionStatusListener.TOPIC);
+        changeListener.statusChanged(getConnectionHandler().getId());
+    }
+
+    @NotNull
+    public ConnectionHandler getConnectionHandler() {
+        return FailsafeUtil.get(connectionHandler);
+    }
+
+    @NotNull
     private Project getProject() {
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     public synchronized Connection allocateConnection() throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         for (ConnectionWrapper connectionWrapper : poolConnections) {
             if (!connectionWrapper.isBusy()) {
@@ -105,7 +114,7 @@ public class ConnectionPool implements Disposable {
         }
 
         LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
-        Connection connection = ConnectionUtil.connect(connectionHandler);
+        Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.POOL);
         connection.setAutoCommit(true);
         connectionStatus.setConnected(true);
         connectionStatus.setValid(true);
@@ -259,7 +268,7 @@ public class ConnectionPool implements Disposable {
             long currentTimeMillis = System.currentTimeMillis();
             if (TimeUtil.isOlderThan(lastCheckTimestamp, TimeUtil.THIRTY_SECONDS)) {
                 lastCheckTimestamp = currentTimeMillis;
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 isValid = metadataInterface.isValid(connection);
                 return isValid;
             }

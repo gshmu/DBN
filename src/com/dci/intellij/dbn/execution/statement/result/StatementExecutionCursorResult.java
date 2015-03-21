@@ -19,8 +19,8 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.Disposer;
 
@@ -54,27 +54,28 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         super(executionProcessor, resultName, updateCount);
     }
 
+    @NotNull
     public StatementExecutionCursorProcessor getExecutionProcessor() {
         return (StatementExecutionCursorProcessor) super.getExecutionProcessor();
     }
 
     public void reload() {
         new BackgroundTask(getProject(), "Reloading data", true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
 
                 resultPanel.highlightLoading(true);
                 long startTimeMillis = System.currentTimeMillis();
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
-                    if (connectionHandler != null) {
-                        Connection connection = connectionHandler.getStandaloneConnection(getExecutionProcessor().getCurrentSchema());
-                        Statement statement = connection.createStatement();
-                        statement.setQueryTimeout(getQueryExecutionSettings().getExecutionTimeout());
-                        statement.execute(getExecutionInput().getExecutableStatementText());
-                        ResultSet resultSet = statement.getResultSet();
-                        loadResultSet(resultSet);
-                    }
+                    DBSchema currentSchema = getCurrentSchema();
+                    Connection connection = connectionHandler.getStandaloneConnection(currentSchema);
+                    Statement statement = connection.createStatement();
+                    statement.setQueryTimeout(getQueryExecutionSettings().getExecutionTimeout());
+                    statement.execute(getExecutionInput().getExecutableStatementText());
+                    ResultSet resultSet = statement.getResultSet();
+                    loadResultSet(resultSet);
                 } catch (final SQLException e) {
                     MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                 }
@@ -97,7 +98,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void fetchNextRecords() {
         new BackgroundTask(getProject(), "Loading data", true) {
-            public void execute(@NotNull ProgressIndicator progressIndicator) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 initProgressIndicator(progressIndicator, true, "Loading next records for " + getExecutionProcessor().getStatementName());
                 resultPanel.highlightLoading(true);
                 try {
@@ -155,16 +157,14 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     public DataProvider dataProvider = new DataProvider() {
         @Override
         public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.STATEMENT_EXECUTION_RESULT.is(dataId)) {
+            if (DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
                 return StatementExecutionCursorResult.this;
-            }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
             }
             return null;
         }
     };
 
+    @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
     }

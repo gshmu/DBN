@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -26,11 +29,11 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public Project getProject() {
-        return row == null ? null : row.getProject();
+        return getRow().getProject();
     }
 
     public TextContentType getContentType() {
-        DataModelState state = row.getModel().getState();
+        DataModelState state = getModel().getState();
         String contentTypeName = state.getTextContentTypeName(getColumnInfo().getName());
         if (contentTypeName == null) {
             DBDataType dataType = getColumnInfo().getDataType();
@@ -43,12 +46,15 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public void setContentType(TextContentType contentType) {
-        DataModelState state = row.getModel().getState();
+        DataModelState state = getModel().getState();
         state.setTextContentType(getColumnInfo().getName(), contentType.getName());
     }
 
+
+
+    @NotNull
     public BasicDataModelRow getRow() {
-        return row;
+        return FailsafeUtil.get(row);
     }
 
     public void setUserValue(Object userValue) {
@@ -74,11 +80,17 @@ public class BasicDataModelCell implements DataModelCell {
     @Override
     public String getFormattedUserValue() {
         if (userValue != null) {
-            RegionalSettings regionalSettings = getRow().getModel().getRegionalSettings();
+            RegionalSettings regionalSettings = getModel().getRegionalSettings();
             Formatter formatter = regionalSettings.getFormatter();
             return formatter.formatObject(userValue);
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public BasicDataModel getModel() {
+        return getRow().getModel();
     }
 
     public String getName() {
@@ -96,7 +108,7 @@ public class BasicDataModelCell implements DataModelCell {
     }
 
     public ColumnInfo getColumnInfo() {
-        return getRow().getModel().getColumnInfo(index);
+        return getModel().getColumnInfo(index);
     }
 
     public int getIndex() {
@@ -120,14 +132,15 @@ public class BasicDataModelCell implements DataModelCell {
             BasicDataModelCell cell = (BasicDataModelCell) obj;
             return cell.index == index &&
                     cell.getRow().getIndex() == getRow().getIndex() &&
-                    cell.getRow().getModel() == getRow().getModel();
+                    cell.getModel() == getModel();
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return index + row.getIndex() + row.getModel().hashCode();
+        BasicDataModelRow row = getRow();
+        return index + row.getIndex() + this.row.getModel().hashCode();
     }
 
     public void dispose() {

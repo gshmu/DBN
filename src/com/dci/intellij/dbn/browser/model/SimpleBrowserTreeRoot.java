@@ -49,6 +49,7 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
         return 0;
     }
 
+    @Nullable
     public BrowserTreeNode getTreeParent() {
         return null;
     }

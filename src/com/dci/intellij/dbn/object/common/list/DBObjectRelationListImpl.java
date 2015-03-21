@@ -19,7 +19,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     private DBObjectRelationType objectRelationType;
     private String name;
 
-    public DBObjectRelationListImpl(DBObjectRelationType type, GenericDatabaseElement parent, String name, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter) {
+    public DBObjectRelationListImpl(DBObjectRelationType type, @NotNull GenericDatabaseElement parent, String name, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter) {
         super(parent, loader, dependencyAdapter, false);
         this.objectRelationType = type;
         this.name = name;

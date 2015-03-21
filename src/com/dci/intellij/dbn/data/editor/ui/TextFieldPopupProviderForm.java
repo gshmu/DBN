@@ -64,6 +64,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return editorComponent.getTextField();
     }
 
+    @NotNull
     public Project getProject() {
         return editorComponent.getProject();
     }
@@ -158,7 +159,8 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                 }
 
                 new SimpleLaterInvocator(){
-                    public void execute() {
+                    @Override
+                    protected void execute() {
                         try {
                             if (!isShowingPopup()) {
                                 popup = createPopup();
@@ -192,7 +194,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         if (isShowingPopup()) {
             new ConditionalLaterInvocator() {
                 @Override
-                public void execute() {
+                protected void execute() {
                     popup.cancel();
                     popup = null;
                 }

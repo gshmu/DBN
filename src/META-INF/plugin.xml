@@ -27,9 +27,15 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Object dependency tree (preview)<br>
+                - Session Browser "quick Find Data" support<br>
+                - Method execution cursor result "Find Data" support<br>
+                - General bug fixes and performance improvements<br>
+            </ul>
             <li><b>3.0.4183</b>
             <ul>
-                - Object dependency tree (work in progress)<br>
                 - Zoom in/out support for data grids (Ctrl-MouseWheel)<br>
                 - Remember statement execution variables<br>
                 - Remember method execution parameter history<br>
@@ -305,13 +311,17 @@
             <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLoggingToggleAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
-            <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute statement"/>
-            <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png"/>
-            <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction"/>
-            <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction"/>
+            <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
+            </action>
+            <action id="DBNavigator.Actions.ExplainPlan" class="com.dci.intellij.dbn.execution.explain.action.ExplainPlanAction" text="Script Editor - Explain plan" icon="/img/action/ExplainStatement.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift ENTER"/>
+            </action>
+            <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction" icon="/img/action/ConnectionCommit.png"/>
+            <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction" icon="/img/action/ConnectionRollback.png"/>
             <separator/>
             <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
-            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings"/>
+            <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
             <!--
                         <action id="DBNavigator.Actions.DeleteConsole" class="com.dci.intellij.dbn.language.editor.action.DeleteConsoleEditorAction" text="Console - Delete" icon="/img/action/Delete.png"/>
             -->
@@ -356,6 +366,10 @@
             <action id="DBNavigator.Actions.CodeEditor.OpenSettings" class="com.dci.intellij.dbn.editor.code.action.OpenSettingsAction" text="Code Editor - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.SessionBrowser" text="Session Browser Controls">
+            <action id="DBNavigator.Actions.SessionBrowser.Find" class="com.dci.intellij.dbn.editor.session.action.DataFindAction" text="Session Browser - Find..." icon="/img/action/Find.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>
+            </action>
+            <separator/>
             <action id="DBNavigator.Actions.SessionBrowser.Reload" class="com.dci.intellij.dbn.editor.session.action.ReloadSessionsAction" text="Session Browser - Reload"/>
             <action id="DBNavigator.Actions.SessionBrowser.TimedReload" class="com.dci.intellij.dbn.editor.session.action.TimedReloadComboBoxAction" text="Session Browser - Automatic Reload"/>
             <separator/>
@@ -372,7 +386,7 @@
         <group id="DBNavigator.ActionGroup.DataEditor" text="Data Editor Controls">
             <action id="DBNavigator.Actions.DataEditor.SwitchEditableStatus" class="com.dci.intellij.dbn.editor.data.action.LockUnlockDataEditing" text="Data Editor - Lock / Unlock Editing"/>
             <separator/>
-            <action id="DBNavigator.Actions.DataEditor.FindData" class="com.dci.intellij.dbn.editor.data.action.DataFindAction" text="Data Editor - Find...">
+            <action id="DBNavigator.Actions.DataEditor.FindData" class="com.dci.intellij.dbn.editor.data.action.DataFindAction" text="Data Editor - Find..." icon="/img/action/Find.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>
             </action>
             <action id="DBNavigator.Actions.DataEditor.EditRecord" class="com.dci.intellij.dbn.editor.data.action.EditRecordAction" text="Data Editor - Edit Record"/>
@@ -414,13 +428,30 @@
             <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun statement"/>
             <action id="DBNavigator.Actions.ExecutionResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultResumeAction" text="Execution Result - Fetch next records"/>
             <separator/>
-            <action id="DBNavigator.Actions.ExecutionResult.FindData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultFindDataAction" text="Execution Result - Find data" icon="/img/action/Find.png">
+            <action id="DBNavigator.Actions.ExecutionResult.FindData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultFindDataAction" text="Execution Result - Find Data" icon="/img/action/Find.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>
             </action>
             <action id="DBNavigator.Actions.ExecutionResult.ExportData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultExportAction" text="Execution Result - Export data" icon="/img/action/DataExport.png"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.Settings" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultSettingsAction" text="Execution Result - Settings"/>
         </group>
+        <group id="DBNavigator.ActionGroup.MethodExecutionResult">
+            <action id="DBNavigator.Actions.MethodExecutionResult.Close" class="com.dci.intellij.dbn.execution.method.result.action.CloseExecutionResultAction" text="Method Execution Result - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.EditMethod" class="com.dci.intellij.dbn.execution.method.result.action.EditMethodAction" text="Method Execution Result - Edit Method" icon="/img/RerunMethodExecution.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.ExecuteAgain" class="com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionAction" text="Method Execution Result - Execute Again" icon="/img/EditSource.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.OpenExecutionDialog" class="com.dci.intellij.dbn.execution.method.result.action.PromptMethodExecutionAction" text="Method Execution Result - Open Execution Dialog" icon="/img/ExecuteMethodDialog.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.OpenSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Properties.png"/>
+        </group>
+        <group id="DBNavigator.ActionGroup.MethodExecutionCursorResult">
+            <action id="DBNavigator.Actions.MethodExecutionCursorResult.Find" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFindAction" text="Method Execution Cursor Result - Find Data" icon="/img/action/Find.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionCursorResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFetchNextRecordsAction" text="Method Execution Cursor Result - Fetch Next Records" icon="/img/action/ResumeExecution.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionCursorResult.ViewRecord" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultViewRecordAction" text="Method Execution Cursor Result - View Record" icon="/img/RecordViewer.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.MethodExecutionCursorResult.Export" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultExportAction" text="Method Execution Cursor Result - Export" icon="/img/action/DataExport.png"/>
+        </group>
+
+
         <group id="DBNavigator.ActionGroup.ExplainPlanResult">
             <action id="DBNavigator.Actions.ExplainPlanResult.Close" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultCloseAction" text="Explain Plan Result - Close" icon="/img/action/Close.png"/>
             <action id="DBNavigator.Actions.ExplainPlanResult.ViewStatement" class="com.dci.intellij.dbn.execution.explain.result.action.ExplainPlanResultViewStatementAction" text="Explain Plan Result - View statement" icon="/img/action/Preview.png"/>
@@ -438,7 +469,7 @@
             <action id="DBNavigator.Actions.Browser.HideObjectProperties" class="com.dci.intellij.dbn.browser.action.HideObjectPropertiesAction" text="Hide properties"/>
         </group>
 
-        <action id="DBNavigator.Actions.Navigation.GotoDatabaseObject" class="com.dci.intellij.dbn.navigation.action.GoToDatabaseObjectAction" text="Database Object...">
+        <action id="DBNavigator.Actions.Navigation.GotoDatabaseObject" class="com.dci.intellij.dbn.navigation.action.GoToDatabaseObjectAction" text="Navigate to Database Object...">
             <add-to-group group-id="GoToMenu" anchor="before" relative-to-action="GotoLine"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift D"/>
         </action>

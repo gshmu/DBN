@@ -32,7 +32,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
 
     protected static void showErrorDialog(final Project project, final String message) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 MessageUtil.showErrorDialog(project, message);
             }
         }.start();

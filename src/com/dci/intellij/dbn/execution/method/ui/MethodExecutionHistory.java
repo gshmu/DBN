@@ -2,12 +2,14 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -42,6 +44,17 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         this.selection = selection;
     }
 
+    public void cleanupHistory(List<ConnectionHandler> connectionHandlers) {
+        Iterator<MethodExecutionInput> iterator = executionInputs.iterator();
+        while (iterator.hasNext()) {
+            MethodExecutionInput executionInput = iterator.next();
+            if (connectionHandlers.contains(executionInput.getConnectionHandler())) {
+                iterator.remove();
+            }
+        }
+
+    }
+
     public MethodExecutionInput getExecutionInput(DBMethod method) {
         for (MethodExecutionInput executionInput : executionInputs) {
             if (executionInput.getMethodRef().is(method)) {
@@ -51,7 +64,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         MethodExecutionInput executionInput = new MethodExecutionInput(method);
         executionInputs.add(executionInput);
         Collections.sort(executionInputs);
-        selection = method.getRef();
+        selection = DBObjectRef.from(method);
         return executionInput;
     }
 
@@ -104,7 +117,6 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
                 Element configElement = (Element) object;
                 MethodExecutionInput executionInput = new MethodExecutionInput();
                 executionInput.readConfiguration(configElement);
-                DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
                 executionInputs.add(executionInput);
             }
             Collections.sort(executionInputs);
@@ -126,7 +138,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         Element configsElement = new Element("execution-inputs");
         element.addContent(configsElement);
         for (MethodExecutionInput executionInput : this.executionInputs) {
-            if (executionInput.getConnectionHandler() != null) {
+            if (!executionInput.isObsolete()) {
                 Element configElement = new Element("execution-input");
                 executionInput.writeConfiguration(configElement);
                 configsElement.addContent(configElement);

@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.intellij.openapi.actionSystem.Shortcut;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,10 +24,14 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+
 public class TextFieldWithPopup extends JPanel implements DataEditorComponent {
     private JTextField textField;
     private JPanel buttonsPanel;
-    //private JLabel button;
 
     private List<TextFieldPopupProvider> popupProviders = new ArrayList<TextFieldPopupProvider>();
     private UserValueHolder userValueHolder;

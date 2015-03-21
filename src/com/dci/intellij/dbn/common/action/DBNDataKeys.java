@@ -4,14 +4,20 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
-import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
+import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
+import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionCursorResultForm;
+import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
+import com.dci.intellij.dbn.object.DBArgument;
 import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.util.Key;
 
 public interface DBNDataKeys {
     DataKey<DatasetEditor> DATASET_EDITOR = DataKey.create("DBNavigator.DatasetEditor");
     DataKey<SessionBrowser> SESSION_BROWSER = DataKey.create("DBNavigator.SessionBrowser");
-    DataKey<StatementExecutionResult> STATEMENT_EXECUTION_RESULT = DataKey.create("DBNavigator.StatementExecutionResult");
+    DataKey<StatementExecutionCursorResult> STATEMENT_EXECUTION_CURSOR_RESULT = DataKey.create("DBNavigator.StatementExecutionCursorResult");
+    DataKey<MethodExecutionResult> METHOD_EXECUTION_RESULT = DataKey.create("DBNavigator.MethodExecutionResult");
+    DataKey<MethodExecutionCursorResultForm> METHOD_EXECUTION_CURSOR_RESULT_FORM = DataKey.create("DBNavigator.MethodExecutionCursorResult");
+    DataKey<DBArgument> METHOD_EXECUTION_ARGUMENT = DataKey.create("DBNavigator.MethodExecutionArgument");
     DataKey<ExplainPlanResult> EXPLAIN_PLAN_RESULT = DataKey.create("DBNavigator.ExplainPlanResult");
     DataKey<DatabaseLogOutput> DATABASE_LOG_OUTPUT = DataKey.create("DBNavigator.DatabaseLogOutput");
     Key<String> ACTION_PLACE_KEY = Key.create("DBNavigator.ActionPlace");

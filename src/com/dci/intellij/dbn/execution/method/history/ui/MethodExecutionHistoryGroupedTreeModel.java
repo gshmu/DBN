@@ -5,7 +5,6 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -18,18 +17,20 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
         super(executionInputs);
         this.executionInputs = executionInputs;
         for (MethodExecutionInput executionInput : executionInputs) {
-            RootTreeNode rootNode = getRoot();
+            if (!executionInput.isObsolete()) {
+                RootTreeNode rootNode = getRoot();
 
-            ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);
-            SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
+                ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);
+                SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
 
-            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            DBObjectRef parentRef = methodRef.getParentRef(DBObjectType.PROGRAM);
-            if (parentRef != null) {
-                ProgramTreeNode programNode = schemaNode.getProgramNode(executionInput);
-                programNode.getMethodNode(executionInput);
-            } else {
-                schemaNode.getMethodNode(executionInput);
+                DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+                DBObjectRef parentRef = methodRef.getParentRef(DBObjectType.PROGRAM);
+                if (parentRef != null) {
+                    ProgramTreeNode programNode = schemaNode.getProgramNode(executionInput);
+                    programNode.getMethodNode(executionInput);
+                } else {
+                    schemaNode.getMethodNode(executionInput);
+                }
             }
         }
     }
@@ -102,7 +103,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
             MethodTreeNode methodNode) {
         for (MethodExecutionInput executionInput : executionInputs) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+            ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             if (connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
                 methodRef.getObjectName().equalsIgnoreCase(methodNode.getName()) &&

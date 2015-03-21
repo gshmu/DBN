@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -90,7 +91,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     private void checkDisposed() throws SQLException {
         Project project = provider.getProject();
         if (project == null || project.isDisposed()) {
-            throw DatabaseInterface.DBN_INTERRUPTED_EXCEPTION;
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 

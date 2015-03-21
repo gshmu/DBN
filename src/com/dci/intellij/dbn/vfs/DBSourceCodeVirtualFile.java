@@ -55,22 +55,18 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public DBSourceCodeVirtualFile(final DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
         DBSchemaObject object = getObject();
-        if (object != null) {
-            updateChangeTimestamp();
-            setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
-            try {
-                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
-                SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-                content = sourceCodeContent.getSourceCode();
-                offsets = sourceCodeContent.getOffsets();
-                sourceLoadError = null;
-            } catch (SQLException e) {
-                content = "";
-                sourceLoadError = e.getMessage();
-                //MessageUtil.showErrorDialog("Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
-            }
-        } else {
-            sourceLoadError = "Could not find object in database";
+        updateChangeTimestamp();
+        setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
+        try {
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
+            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
+            content = sourceCodeContent.getSourceCode();
+            offsets = sourceCodeContent.getOffsets();
+            sourceLoadError = null;
+        } catch (SQLException e) {
+            content = "";
+            sourceLoadError = e.getMessage();
+            //MessageUtil.showErrorDialog("Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
         }
         EventManager.subscribe(databaseFile.getProject(), DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
@@ -110,10 +106,13 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                             new String[]{"Reload", "Keep changes"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
-                                    if (getResult() == 0) {
-                                        reloadAndUpdateEditors(false);
-                                    }
+                                protected boolean canExecute() {
+                                    return getOption() == 0;
+                                }
+
+                                @Override
+                                protected void execute() {
+                                    reloadAndUpdateEditors(false);
                                 }
                             });
                 } else {
@@ -157,7 +156,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         String parseRootId = getParseRootId();
-        if (connectionHandler != null && parseRootId != null) {
+        if (parseRootId != null) {
             DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
             if (languageDialect != null) {
                 DBSchemaObject underlyingObject = getObject();
@@ -176,8 +175,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public String getParseRootId() {
-        DBSchemaObject schemaObject = getObject();
-        return schemaObject == null ? null : schemaObject.getCodeParseRootId(contentType);
+        return getObject().getCodeParseRootId(contentType);
     }
 
     public DBLanguagePsiFile getPsiFile() {
@@ -186,15 +184,13 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public void updateChangeTimestamp() {
         DBSchemaObject object = getObject();
-        if (object != null) {
-            try {
-                Timestamp timestamp = object.loadChangeTimestamp(getContentType());
-                if (timestamp != null) {
-                    changeTimestamp = timestamp;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        try {
+            Timestamp timestamp = object.loadChangeTimestamp(getContentType());
+            if (timestamp != null) {
+                changeTimestamp = timestamp;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -228,25 +224,19 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             originalContent = null;
 
             DBSchemaObject object = getObject();
-            if (object != null) {
-                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
-                SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-                content = sourceCodeContent.getSourceCode();
-                offsets = sourceCodeContent.getOffsets();
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
+            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
+            content = sourceCodeContent.getSourceCode();
+            offsets = sourceCodeContent.getOffsets();
 
-                getMainDatabaseFile().updateDDLFiles(getContentType());
-                setModified(false);
-                sourceLoadError = null;
-                return true;
-            } else {
-                return false;
-            }
+            getMainDatabaseFile().updateDDLFiles(getContentType());
+            setModified(false);
+            sourceLoadError = null;
+            return true;
         } catch (SQLException e) {
             sourceLoadError = e.getMessage();
             DBSchemaObject object = mainDatabaseFile.getObject();
-            if (object != null) {
-                MessageUtil.showErrorDialog(project, "Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
-            }
+            MessageUtil.showErrorDialog(project, "Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
             return false;
         } finally {
             if (project != null && !project.isDisposed()) {
@@ -257,13 +247,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public void updateToDatabase() throws SQLException {
         DBSchemaObject object = getObject();
-        if (object != null) {
-            object.executeUpdateDDL(getContentType(), getLastSavedContent(), content);
-            updateChangeTimestamp();
-            getMainDatabaseFile().updateDDLFiles(getContentType());
-            setModified(false);
-            lastSavedContent = content;
-        }
+        object.executeUpdateDDL(getContentType(), getLastSavedContent(), content);
+        updateChangeTimestamp();
+        getMainDatabaseFile().updateDDLFiles(getContentType());
+        setModified(false);
+        lastSavedContent = content;
     }
 
     @NotNull

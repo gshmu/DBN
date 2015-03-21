@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -12,11 +18,6 @@ import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputConsole;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
-import com.dci.intellij.dbn.execution.method.result.action.CloseExecutionResultAction;
-import com.dci.intellij.dbn.execution.method.result.action.EditMethodAction;
-import com.dci.intellij.dbn.execution.method.result.action.OpenSettingsAction;
-import com.dci.intellij.dbn.execution.method.result.action.PromptMethodExecutionAction;
-import com.dci.intellij.dbn.execution.method.result.action.StartMethodExecutionAction;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -26,12 +27,6 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
-import java.util.List;
 
 public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
     private JPanel mainPanel;
@@ -62,6 +57,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         executionResultPanel.setSize(800, -1);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
+        ActionUtil.registerDataProvider(mainPanel, executionResult);
 
         Disposer.register(this, outputTabs);
         Disposer.register(this, executionResult);
@@ -202,14 +198,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
 
     private void createActionsPanel() {
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
-                "DBNavigator.MethodExecutionResult.Controls", false,
-                new CloseExecutionResultAction(this),
-                new EditMethodAction(this),
-                new StartMethodExecutionAction(this),
-                new PromptMethodExecutionAction(this),
-                ActionUtil.SEPARATOR,
-                new OpenSettingsAction());
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("DBNavigator.MethodExecutionResult.Controls", false,"DBNavigator.ActionGroup.MethodExecutionResult");
         actionsPanel.add(actionToolbar.getComponent());
     }
 

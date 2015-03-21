@@ -30,7 +30,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             selectedExecutionInput = executionHistory.getLastSelection();
         }
 
-        if (selectedExecutionInput != null) {
+        if (selectedExecutionInput != null && !selectedExecutionInput.isObsolete()) {
             showMethodExecutionPanel(selectedExecutionInput);
             this.selectedExecutionInput = selectedExecutionInput;
             component.setSelectedInput(selectedExecutionInput);
@@ -69,7 +69,6 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
 
     public void dispose() {
         super.dispose();
-        selectedExecutionInput = null;
     }
 
     public void setSelectedExecutionInput(MethodExecutionInput selectedExecutionInput) {

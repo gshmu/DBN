@@ -36,12 +36,12 @@ public class PsiResolveResult {
 
     public void preResolve(IdentifierPsiElement psiElement) {
         this.isResolving = true;
+        this.text = psiElement.getUnquotedText();
         ConnectionHandler connectionHandler = psiElement.getActiveConnection();
         this.isConnectionValid = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.getConnectionStatus().isValid();
         this.isConnectionActive = connectionHandler != null && !connectionHandler.isVirtual() && connectionHandler.canConnect();
         this.referencedElement = null;
         this.parent = null;
-        this.text = psiElement.getUnquotedText();
         this.activeConnection = ConnectionHandlerRef.from(connectionHandler);
         this.currentSchema = DBObjectRef.from(psiElement.getCurrentSchema());
         this.executableTextLength = psiElement.getEnclosingScopePsiElement().getTextLength();

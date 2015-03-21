@@ -81,11 +81,11 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public boolean promptExecutionDialog(final MethodExecutionInput executionInput, final boolean debug) {
         final AtomicBoolean result = new AtomicBoolean(false);
-        new ConnectionAction(executionInput) {
+        new ConnectionAction("the method execution", executionInput) {
             @Override
-            public void execute() {
+            protected void execute() {
                 Project project = getProject();
-                ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler.isValid(true)) {
                     DBMethod method = executionInput.getMethod();
                     if (method == null) {
@@ -169,7 +169,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         executionInput.setExecuting(false);
                         if (!executionInput.isExecutionCancelled()) {
                             new SimpleLaterInvocator() {
-                                public void execute() {
+                                protected void execute() {
                                     MessageUtil.showErrorDialog(project, "Could not execute " + method.getTypeName() + ".", e);
                                     if (promptExecutionDialog(executionInput, false)) {
                                         MethodExecutionManager.this.execute(executionInput);
@@ -185,18 +185,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     private void cacheArgumentValues(MethodExecutionInput executionInput) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        if (connectionHandler != null) {
-            Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
-            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
-            }
+        Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
+        for (MethodExecutionArgumentValue argumentValue : argumentValues) {
+            argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
         }
     }
 
     public void debugExecute(final MethodExecutionInput executionInput, final Connection connection) throws SQLException {
         final DBMethod method = executionInput.getMethod();
         if (method != null) {
-            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = method.getConnectionHandler();
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
 
@@ -215,6 +213,10 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         executionHistory.setExecutionInputs(executionInputs);
     }
 
+    public void cleanupExecutionHistory(List<ConnectionHandler> connectionHandlers) {
+        executionHistory.cleanupHistory(connectionHandlers);
+    }
+
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
@@ -222,6 +224,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     @NonNls
     public String getComponentName() {
         return "DBNavigator.Project.MethodExecutionManager";
+    }
+
+    public void projectOpened() {
     }
 
     @Override

@@ -75,14 +75,14 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
 
     public Project getProject() {
         Project project = sessionBrowser == null ? null : sessionBrowser.getProject();
-        return FailsafeUtil.nvl(project);
+        return FailsafeUtil.get(project);
     }
 
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
     }

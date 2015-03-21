@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.editor.session.SessionBrowserState;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
     private long timestamp = System.currentTimeMillis();
+    private String loadError;
 
     public SessionBrowserModel(ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -54,6 +55,14 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
             ConnectionUtil.closeResultSet(resultSet);
             resultSet = null;
         }
+    }
+
+    public String getLoadError() {
+        return loadError;
+    }
+
+    public void setLoadError(String loadError) {
+        this.loadError = loadError;
     }
 
     public long getTimestamp() {

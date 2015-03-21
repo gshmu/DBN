@@ -196,14 +196,14 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         public boolean isSelected(AnActionEvent anActionEvent) {
-            Project project = row.getModel().getProject();
+            Project project = row.getProject();
             ColumnSortingType sortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
             return sortingType == ColumnSortingType.ALPHABETICAL;
         }
 
         public void setSelected(AnActionEvent anActionEvent, boolean selected) {
             ColumnSortingType sortingType = selected ? ColumnSortingType.ALPHABETICAL : ColumnSortingType.BY_INDEX;
-            Project project = row.getModel().getProject();
+            Project project = row.getProject();
             DatasetEditorManager.getInstance(project).setRecordViewColumnSortingType(sortingType);
             sortColumns(sortingType);
         }
@@ -252,9 +252,10 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         public void actionPerformed(AnActionEvent e) {
-            if (row.getIndex() < row.getModel().getRowCount() -1) {
+            ResultSetDataModel model = row.getModel();
+            if (row.getIndex() < model.getRowCount() -1) {
                 int index = row.getIndex() + 1;
-                ResultSetDataModelRow nextRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
+                ResultSetDataModelRow nextRow = (ResultSetDataModelRow) model.getRowAtIndex(index);
                 setRow(nextRow);
                 table.selectRow(index);
             }
@@ -272,8 +273,9 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         public void actionPerformed(AnActionEvent e) {
-            int index = row.getModel().getRowCount() - 1 ;
-            ResultSetDataModelRow lastRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
+            ResultSetDataModel model = row.getModel();
+            int index = model.getRowCount() - 1 ;
+            ResultSetDataModelRow lastRow = (ResultSetDataModelRow) model.getRowAtIndex(index);
             setRow(lastRow);
             table.selectRow(index);
         }

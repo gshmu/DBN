@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -34,7 +35,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -325,25 +325,19 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     }
 
     public void openEditor(final DBObject object, @Nullable final EditorProviderId editorProviderId, final boolean scrollBrowser, final boolean focusEditor) {
-        new ConnectionAction(object) {
+        new ConnectionAction("opening the object editor", object, new TaskInstructions("Opening editor", false, true)) {
             @Override
-            public void execute() {
-                new BackgroundTask(object.getProject(), "Opening editor", false, true) {
-                    @Override
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
-                        if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                            DBObjectListContainer childObjects = object.getChildObjects();
-                            if (childObjects != null) childObjects.load();
-                            openSchemaObject((DBSchemaObject) object, editorProviderId, scrollBrowser, focusEditor);
+            protected void execute() {
+                if (object.getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                    DBObjectListContainer childObjects = object.getChildObjects();
+                    if (childObjects != null) childObjects.load();
+                    openSchemaObject((DBSchemaObject) object, editorProviderId, scrollBrowser, focusEditor);
 
-                        } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                            DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
-                            if (childObjects != null) childObjects.load();
-                            openChildObject(object, scrollBrowser, focusEditor, editorProviderId);
-                        }
-
-                    }
-                }.start();
+                } else if (object.getParentObject().getProperties().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                    DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
+                    if (childObjects != null) childObjects.load();
+                    openChildObject(object, scrollBrowser, focusEditor, editorProviderId);
+                }
             }
         }.start();
     }
@@ -353,7 +347,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (isFileOpened(object) || databaseFile.preOpen()) {
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
@@ -371,9 +365,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         final DBEditableObjectVirtualFile databaseFile = findDatabaseFile(schemaObject);
         if (!BackgroundTask.isProcessCancelled()) {
             new SimpleLaterInvocator() {
-
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (isFileOpened(schemaObject) || databaseFile.preOpen()) {
                         DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());

@@ -586,9 +586,6 @@ public class DataSearchComponent extends JPanel implements Disposable, Selection
 
     @Override
     public void dispose() {
-        DataModel dataModel = searchableComponent.getTable().getModel();
-        dataModel.removeDataModelListener(this);
-        dataModel.getSearchResult().clear();
         searchableComponent = null;
         findModel = null;
     }

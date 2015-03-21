@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -235,6 +236,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Nullable
     public static <T extends DBObject> T get(DBObjectRef<T> objectRef) {
         return objectRef == null ? null : objectRef.get();
+    }
+
+    @NotNull
+    public static <T extends DBObject> T getnn(DBObjectRef<T> objectRef) {
+        T object = get(objectRef);
+        return FailsafeUtil.get(object);
     }
 
     @Nullable

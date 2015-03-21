@@ -15,16 +15,26 @@ public class FailsafeUtil {
 
     public static @NotNull <T extends Disposable> T get(@Nullable T disposable) {
         if (disposable == null || disposable.isDisposed()) {
-            throw new AlreadyDisposedException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         return disposable;
     }
 
-    public static @NotNull Project nvl(@Nullable Project project) {
-        if (project == null) return DUMMY_PROJECT;
-        if (project.isDisposed()) throw new AlreadyDisposedException();
+    public static @NotNull <T> T get(@Nullable T object) {
+        if (object == null) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+        return object;
+    }
+
+    public static @NotNull Project get(@Nullable Project project) {
+        if (project == null || project.isDisposed()) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
         return project;
     }
+
+
 
     public static @NotNull VirtualFile nvl(@Nullable VirtualFile virtualFile) {
         return virtualFile == null ? DUMMY_VIRTUAL_FILE : virtualFile;

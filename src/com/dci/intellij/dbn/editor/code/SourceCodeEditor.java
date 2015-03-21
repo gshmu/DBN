@@ -78,7 +78,8 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
         public void objectDropped(DBSchemaObject object) {
             if (objectRef.is(object)) {
                 new ConditionalLaterInvocator() {
-                    public void execute() {
+                    @Override
+                    protected void execute() {
                         FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
                         fileEditorManager.closeFile(getVirtualFile().getMainDatabaseFile());
                     }

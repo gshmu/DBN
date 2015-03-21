@@ -367,6 +367,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return psiFile == null ? null : psiFile.getActiveConnection();
     }
 
+    @Nullable
     public DBSchema getCurrentSchema() {
         DBLanguagePsiFile psiFile = getPsiFile();
         return psiFile == null ? null : psiFile.getCurrentSchema();

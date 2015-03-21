@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -32,7 +31,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
         return getName();
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return null;
     }

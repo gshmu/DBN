@@ -56,26 +56,26 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     }
 
     protected void doOKAction() {
-        component.validateEntries(new ModalTask(getProject(), "Creating export file", true) {
-                                           @Override
-                                           protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                                               DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-                                               DataExportInstructions exportInstructions = component.getExportInstructions();
-                                               exportManager.setExportInstructions(exportInstructions);
-                                               exportManager.exportSortableTableContent(
-                                                       table,
-                                                       exportInstructions,
-                                                       connectionHandler,
-                                                       new SimpleLaterInvocator() {
-                                                           @Override
-                                                           protected void execute() {
-                                                               ExportDataDialog.super.doOKAction();
-                                                           }
-                                                       });
-                                           }
+        ModalTask callback = new ModalTask(getProject(), "Creating export file", true) {
+            @Override
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
+                DataExportInstructions exportInstructions = component.getExportInstructions();
+                exportManager.setExportInstructions(exportInstructions);
+                exportManager.exportSortableTableContent(
+                        table,
+                        exportInstructions,
+                        connectionHandler,
+                        new SimpleLaterInvocator() {
+                            @Override
+                            protected void execute() {
+                                ExportDataDialog.super.doOKAction();
+                            }
+                        });
+            }
 
-                                       }
-        );
+        };
+        component.validateEntries(callback);
     }
 
     @Override

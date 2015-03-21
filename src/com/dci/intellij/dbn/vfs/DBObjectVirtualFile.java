@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -30,26 +32,26 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
     private String url;
 
     public DBObjectVirtualFile(T object) {
-        this.objectRef = object.getRef();
+        this.objectRef = DBObjectRef.from(object);
     }
 
     public DBObjectRef<T> getObjectRef() {
         return objectRef;
     }
 
-    @Nullable
+    @NotNull
     public T getObject() {
-        return objectRef.get();
+        return FailsafeUtil.get(objectRef.get());
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return objectRef.lookupConnectionHandler();
+        return getObject().getConnectionHandler();
     }
 
     public boolean equals(Object obj) {
         if (obj instanceof DBObjectVirtualFile) {
-            DBObjectVirtualFile objectFile = (DBObjectVirtualFile) obj;
+            DBObjectVirtualFile<T> objectFile = (DBObjectVirtualFile<T>) obj;
             return objectFile.objectRef.equals(objectRef);
         }
         return false;
@@ -60,10 +62,13 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return objectRef.hashCode();
     }
 
-    @Nullable
+    @NotNull
     public Project getProject() {
         T object = DBObjectRef.get(objectRef);
-        return object == null ? null : object.getProject();
+        if (object == null) {
+            throw AlreadyDisposedException.INSTANCE;
+        }
+        return object.getProject();
     }
 
     /*********************************************************

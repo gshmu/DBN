@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -43,7 +44,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
 
-    protected DynamicContentImpl(GenericDatabaseElement parent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    protected DynamicContentImpl(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
         this.parent = parent;
         this.loader = loader;
         this.dependencyAdapter = dependencyAdapter;
@@ -57,13 +58,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public abstract Filter<T> getFilter();
 
+    @NotNull
     public GenericDatabaseElement getParent() {
-        return parent;
+        return FailsafeUtil.get(parent);
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return parent == null ? null : parent.getConnectionHandler();
+        return FailsafeUtil.get(getParent().getConnectionHandler());
     }
 
     public DynamicContentLoader<T> getLoader() {
@@ -161,9 +163,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
             if (!isLoadingInBackground && shouldLoad(force)) {
                 isLoadingInBackground = true;
                 ConnectionHandler connectionHandler = getConnectionHandler();
-                String connectionString = connectionHandler == null ? "" : " (" + connectionHandler.getName() + ')';
+                String connectionString = " (" + connectionHandler.getName() + ')';
                 new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         try {
                             DatabaseLoadMonitor.startBackgroundLoad();
                             load(force);
@@ -218,9 +221,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public abstract void notifyChangeListeners();
 
     public void setElements(List<T> elements) {
-        Filter filter = getFilter();
-        filterHashCode = filter == null ? 0 : filter.hashCode();
-
         if (disposed || elements == null || elements.size() == 0) {
             elements = EMPTY_CONTENT;
             index = null;
@@ -236,6 +236,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
         if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
             DisposerUtil.dispose(oldElements);
         }
+        Filter filter = getFilter();
+        filterHashCode = filter == null ? 0 : filter.hashCode();
     }
 
     public void sortElements(List<T> elements) {

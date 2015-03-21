@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -23,6 +25,7 @@ public class BasicColumnInfo implements ColumnInfo {
         return columnIndex;
     }
 
+    @NotNull
     public DBDataType getDataType() {
         return dataType;
     }

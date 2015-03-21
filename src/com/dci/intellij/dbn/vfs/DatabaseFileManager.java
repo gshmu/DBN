@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -76,33 +74,39 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     }
 
     public void projectOpened() {
-        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventManager.subscribe(getProject(), FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        EventManager.subscribe(getProject(), ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        Project project = getProject();
+        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventManager.subscribe(project, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
+        EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     public void projectClosed() {
-        EventManager.unsubscribe(fileEditorManagerListener);
-        EventManager.unsubscribe(fileEditorManagerListenerBefore);
-        EventManager.unsubscribe(connectionSettingsListener);
+        EventManager.unsubscribe(
+                fileEditorManagerListener,
+                fileEditorManagerListenerBefore,
+                connectionSettingsListener);
     }
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void settingsChanged(String connectionId) {
-            Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
-            for (DBObjectRef objectRef : openFiles.keySet()) {
-                if (objectRef.getConnectionId().equals(connectionId)) {
-                    filesToClose.add(openFiles.get(objectRef));
-                }
-            }
-
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-            for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
-                fileEditorManager.closeFile(virtualFile);
-            }
+            closeFiles(connectionId);
         }
     };
+
+    private void closeFiles(String connectionId) {
+        Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
+        for (DBObjectRef objectRef : openFiles.keySet()) {
+            if (objectRef.getConnectionId().equals(connectionId)) {
+                filesToClose.add(openFiles.get(objectRef));
+            }
+        }
+
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+        for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
+            fileEditorManager.closeFile(virtualFile);
+        }
+    }
 
     /*********************************************
      *            FileEditorManagerListener       *
@@ -120,20 +124,21 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     String[] options = new String[]{"Save", "Discard"};
                     DBSchemaObject object = databaseFile.getObject();
 
-                    if (object != null) {
-                        MessageUtil.showWarningDialog(
-                                getProject(),
-                                "Unsaved changes",
-                                "You are about to close the editor for " + object.getQualifiedNameWithType() + " and you have unsaved changes.\nPlease select whether to save or discard the changes.",
-                                options, 0, new SimpleTask() {
-                                    @Override
-                                    public void execute() {
-                                        if (getResult() == 0) {
-                                            databaseFile.saveChanges();
-                                        }
-                                    }
-                                });
-                    }
+                    MessageUtil.showWarningDialog(
+                            getProject(),
+                            "Unsaved changes",
+                            "You are about to close the editor for " + object.getQualifiedNameWithType() + " and you have unsaved changes.\nPlease select whether to save or discard the changes.",
+                            options, 0, new SimpleTask() {
+                                @Override
+                                protected boolean canExecute() {
+                                    return getOption() == 0;
+                                }
+
+                                @Override
+                                protected void execute() {
+                                    databaseFile.saveChanges();
+                                }
+                            });
                 }
             }
 
@@ -160,24 +165,16 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     };
 
-    public void closeDatabaseFiles(@Nullable final List<ConnectionHandler> connectionHandlers, @Nullable final RunnableTask callback) {
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                for (VirtualFile virtualFile : fileEditorManager.getOpenFiles()) {
-                    if (virtualFile instanceof DBVirtualFile) {
-                        DBVirtualFile databaseVirtualFile = (DBVirtualFile) virtualFile;
-                        if (connectionHandlers == null || connectionHandlers.contains(databaseVirtualFile.getConnectionHandler())) {
-                            fileEditorManager.closeFile(virtualFile);
-                        }
-                    }
-                }
-                if (callback != null) {
-                    callback.start();
+    public void closeDatabaseFiles(@NotNull final List<ConnectionHandler> connectionHandlers) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+        for (VirtualFile virtualFile : fileEditorManager.getOpenFiles()) {
+            if (virtualFile instanceof DBVirtualFile) {
+                DBVirtualFile databaseVirtualFile = (DBVirtualFile) virtualFile;
+                if (connectionHandlers.contains(databaseVirtualFile.getConnectionHandler())) {
+                    fileEditorManager.closeFile(virtualFile);
                 }
             }
-        }.start();
+        }
     }
 
     @Override
