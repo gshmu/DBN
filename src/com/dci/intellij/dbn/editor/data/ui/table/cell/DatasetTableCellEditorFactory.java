@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import javax.swing.table.TableCellEditor;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -18,6 +13,11 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+
+import javax.swing.table.TableCellEditor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DatasetTableCellEditorFactory implements Disposable {
     private Map<ColumnInfo, TableCellEditor> cache = new HashMap<ColumnInfo, TableCellEditor>();
@@ -61,18 +61,16 @@ public class DatasetTableCellEditorFactory implements Disposable {
                 final DatasetEditorColumnInfo dseColumnInfo = (DatasetEditorColumnInfo) columnInfo;
                 DBColumn column = dseColumnInfo.getColumn();
                 TextFieldWithPopup editorComponent = tableCellEditor.getEditorComponent();
-                if (column != null) {
-                    DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
+                DataEditorValueListPopupSettings valueListPopupSettings = dataEditorSettings.getValueListPopupSettings();
 
-                    if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
-                        ListPopupValuesProvider valuesProvider = new ListPopupValuesProviderImpl("Possible Values List", true) {
-                            @Override
-                            public List<String> getValues() {
-                                return dseColumnInfo.getPossibleValues();
-                            }
-                        };
-                        editorComponent.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());
-                    }
+                if (!column.isPrimaryKey() && !column.isUniqueKey() && dataLength <= valueListPopupSettings.getDataLengthThreshold()) {
+                    ListPopupValuesProvider valuesProvider = new ListPopupValuesProviderImpl("Possible Values List", true) {
+                        @Override
+                        public List<String> getValues() {
+                            return dseColumnInfo.getPossibleValues();
+                        }
+                    };
+                    editorComponent.createValuesListPopup(valuesProvider, valueListPopupSettings.isShowPopupButton());
                 }
                 editorComponent.createTextEditorPopup(true);
                 return tableCellEditor;
