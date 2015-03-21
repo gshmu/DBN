@@ -52,7 +52,7 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     @Override
     public Object getChild(Object parent, int index) {
         List<ObjectDependencyTreeNode> children = getChildren(parent);
-        if (children.size() <= index) throw new AlreadyDisposedException();
+        if (children.size() <= index) throw AlreadyDisposedException.INSTANCE;
         return children.get(index);
     }
 

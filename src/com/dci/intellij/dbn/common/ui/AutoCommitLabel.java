@@ -2,7 +2,9 @@ package com.dci.intellij.dbn.common.ui;
 
 import javax.swing.JLabel;
 import java.awt.Color;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -19,7 +21,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         Color AUTO_COMMIT_ON = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
         Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
-    private ConnectionHandlerRef connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
     private boolean subscribed = false;
 
     public AutoCommitLabel() {
@@ -29,9 +31,9 @@ public class AutoCommitLabel extends JLabel implements Disposable {
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
         if (connectionHandler == null || connectionHandler instanceof VirtualConnectionHandler) {
-            this.connectionHandler = null;
+            this.connectionHandlerRef = null;
         } else {
-            this.connectionHandler = connectionHandler.getRef();
+            this.connectionHandlerRef = connectionHandler.getRef();
             if (!subscribed) {
                 subscribed = true;
                 Project project = connectionHandler.getProject();
@@ -44,7 +46,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     private void update() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler != null) {
                     setVisible(true);
@@ -67,8 +69,14 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         }.start();
     }
 
+    @Nullable
     private ConnectionHandler getConnectionHandler() {
-        return this.connectionHandler == null ? null : this.connectionHandler.get();
+        try {
+            return this.connectionHandlerRef == null ? null : this.connectionHandlerRef.get();
+        } catch (AlreadyDisposedException e) {
+            this.connectionHandlerRef = null;
+            return null;
+        }
     }
 
     private ConnectionStatusListener connectionStatusListener = new ConnectionStatusListener() {
@@ -83,6 +91,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     };
     @Override
     public void dispose() {
+        connectionHandlerRef = null;
         EventManager.unsubscribe(connectionStatusListener);
     }
 

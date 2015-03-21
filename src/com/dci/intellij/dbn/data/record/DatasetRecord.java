@@ -58,8 +58,9 @@ public class DatasetRecord implements Disposable {
         }
 
         ConnectionHandler connectionHandler = dataset.getConnectionHandler();
-        if (connectionHandler != null) {
-            Connection connection = connectionHandler.getPoolConnection();
+        Connection connection = null;
+        try {
+            connection = connectionHandler.getPoolConnection();
             PreparedStatement statement = connection.prepareStatement(selectStatement.toString());
 
             int index = 1;
@@ -81,7 +82,10 @@ public class DatasetRecord implements Disposable {
                     index++;
                 }
             }
+        }  finally {
+            connectionHandler.freePoolConnection(connection);
         }
+
     }
 
     public DBDataset getDataset() {

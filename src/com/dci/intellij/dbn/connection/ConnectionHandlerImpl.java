@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -18,12 +19,17 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -58,6 +64,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
+    private Authentication temporaryAuthentication = new Authentication();
 
     private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>(this) {
         @Override
@@ -87,8 +94,42 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
+    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {
+        this.temporaryAuthentication = temporaryAuthentication;
+    }
+
+    @Override
+    @NotNull
+    public Authentication getTemporaryAuthentication() {
+        if (temporaryAuthentication.isProvided()) {
+            int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
+            long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
+            if (temporaryAuthentication.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
+                temporaryAuthentication = new Authentication();
+            }
+        }
+        return temporaryAuthentication;
+    }
+
+    @Override
     public boolean canConnect() {
-        return !isDisposed && (allowConnection || connectionSettings.getDetailSettings().isConnectAutomatically());
+        if (isDisposed) {
+            return false;
+        }
+
+        ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
+        if (allowConnection || detailSettings.isConnectAutomatically()) {
+            if (isAuthenticationProvided()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAuthenticationProvided() {
+        ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
+        return databaseSettings.getAuthentication().isProvided() || getTemporaryAuthentication().isProvided();
     }
 
     public ConnectionBundle getConnectionBundle() {
@@ -190,6 +231,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getPresentableText();
     }
 
+    @NotNull
     public Project getProject() {
         return connectionBundle.getProject();
     }
@@ -261,6 +303,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         try {
             connectionPool.closeConnections();
             changesBundle = null;
+            temporaryAuthentication = new Authentication();
         } finally {
             connectionStatus.setConnected(false);
         }
@@ -271,7 +314,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public String getUserName() {
-        return connectionSettings.getDatabaseSettings().getUser() == null ? "" : connectionSettings.getDatabaseSettings().getUser();
+        return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthentication().getUser(), "");
     }
 
     public ConnectionLoadMonitor getLoadMonitor() {
@@ -308,18 +351,23 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionPool.allocateConnection();
     }
 
-    public Connection getStandaloneConnection(DBSchema schema) throws SQLException {
+    public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getStandaloneConnection();
-        if (!schema.isPublicSchema()) {
-            getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
+        if (schema != null && !schema.isPublicSchema()) {
+            DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
+            metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
         }
         return connection;
     }
 
-    public Connection getPoolConnection(DBSchema schema) throws SQLException {
+    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {
         Connection connection = getPoolConnection();
         //if (!schema.isPublicSchema()) {
-        getInterfaceProvider().getMetadataInterface().setCurrentSchema(schema.getQuotedName(false), connection);
+        if (schema != null) {
+            DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
+            metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
+        }
+
         //}
         return connection;
     }
@@ -410,6 +458,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
                         Icons.CONNECTION_INVALID;
     }
 
+    @Nullable
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return this;
+    }
+
    /*********************************************************
     *                      Disposable                       *
     *********************************************************/
@@ -440,7 +494,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             final Project project = getProject();
             new BackgroundTask(getProject(), "Trying to connect to " + getName(), false) {
                 @Override
-                public void execute(@NotNull ProgressIndicator progressIndicator) {
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                     connectionManager.testConnection(ConnectionHandlerImpl.this, false, false);
                     //fixme check if the connection is pointing to a new database and reload if this is the case

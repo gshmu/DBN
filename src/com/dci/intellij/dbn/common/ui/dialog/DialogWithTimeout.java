@@ -34,7 +34,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
                 if (secondsLeft == 0) {
                     new SimpleLaterInvocator() {
                         @Override
-                        public void execute() {
+                        protected void execute() {
                             doDefaultAction();
                         }
                     }.start();

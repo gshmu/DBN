@@ -50,7 +50,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
                 activeConnection.setAllowConnection(true);
                 new BackgroundTask(project, "Trying to connect to " + activeConnection.getName(), false) {
                     @Override
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                         connectionManager.testConnection(activeConnection, false, true);
                     }

@@ -62,7 +62,7 @@ public class EventManager implements ApplicationComponent{
     @NotNull
     public static <T> T notify(@Nullable Project project, Topic<T> topic) {
         if (project == null || project.isDisposed()) {
-            throw new AlreadyDisposedException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         MessageBus messageBus = project.getMessageBus();
         return messageBus.syncPublisher(topic);

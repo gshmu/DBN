@@ -62,9 +62,9 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
 
                         SimpleTask openFileTask = new SimpleTask() {
                             @Override
-                            public void execute() {
+                            protected void execute() {
                                 successCallback.start();
-                                if (getResult() == 1) {
+                                if (getOption() == 1) {
                                     try {
                                         Desktop.getDesktop().open(file);
                                     } catch (IOException e) {

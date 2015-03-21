@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -52,6 +53,11 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
 
     DBUser getOwner();
     DBSchema getSchema();
+
+    @NotNull
+    @Override
+    ConnectionHandler getConnectionHandler();
+
     DBObject getParentObject();
 
     @Nullable DBObjectBundle getObjectBundle();

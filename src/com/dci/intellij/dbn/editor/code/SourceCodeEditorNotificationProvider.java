@@ -33,7 +33,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
         public void sourceCodeLoaded(final VirtualFile virtualFile) {
             new ConditionalLaterInvocator() {
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (!project.isDisposed()) {
                         EditorNotifications notifications = EditorNotifications.getInstance(project);
                         notifications.updateNotifications(virtualFile);

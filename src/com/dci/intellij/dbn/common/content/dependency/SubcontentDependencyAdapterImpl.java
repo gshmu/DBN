@@ -1,14 +1,17 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.intellij.openapi.util.Disposer;
 
 public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter implements SubcontentDependencyAdapter {
     private ContentDependency contentDependency;
 
-    public SubcontentDependencyAdapterImpl(GenericDatabaseElement sourceContentOwner, DynamicContentType sourceContentType) {
+    public SubcontentDependencyAdapterImpl(@NotNull GenericDatabaseElement sourceContentOwner, @NotNull DynamicContentType sourceContentType) {
         contentDependency = new LinkedContentDependency(sourceContentOwner, sourceContentType);
     }
 
@@ -63,7 +66,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
     public void dispose() {
-        contentDependency.dispose();
+        Disposer.dispose(contentDependency);
         contentDependency = VoidContentDependency.INSTANCE;
         super.dispose();
     }

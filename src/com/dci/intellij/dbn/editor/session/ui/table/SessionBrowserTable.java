@@ -12,7 +12,6 @@ import java.util.EventObject;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
@@ -29,7 +28,6 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupMenuListenerAdapter;
 
@@ -45,9 +43,11 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         this.sessionBrowser = sessionBrowser;
 
 
+/*
         DataProvider dataProvider = sessionBrowser.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
+*/
     }
 
     @Override
@@ -82,7 +82,8 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     public void clearSelection() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 SessionBrowserTable.super.clearSelection();
             }
         }.start();
@@ -92,7 +93,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public void removeEditor() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 SessionBrowserTable.super.removeEditor();
             }
         }.start();
@@ -101,7 +102,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public void updateTableGutter() {
         new ConditionalLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 getTableGutter().revalidate();
                 getTableGutter().repaint();
             }

@@ -21,7 +21,6 @@ import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    public static final String[] OPTIONS_CONNECT_CANCEL = new String[]{"Connect", "Cancel"};
 
     public static void closeResultSet(final ResultSet resultSet) {
         if (resultSet != null) {
@@ -49,7 +48,7 @@ public class ConnectionUtil {
         if (connection != null) {
             new SimpleBackgroundTask("close connection") {
                 @Override
-                public void execute() {
+                protected void execute() {
                     try {
                         connection.close();
                     } catch (Throwable e) {
@@ -60,7 +59,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionHandler connectionHandler) throws SQLException {
+    public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
@@ -69,22 +68,24 @@ public class ConnectionUtil {
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
-        String user = databaseSettings.getUser();
-        String password = databaseSettings.getPassword();
-        boolean osAuthentication = databaseSettings.isOsAuthentication();
-        if (authenticationError != null && authenticationError.isSame(osAuthentication, user, password) && !authenticationError.isExpired()) {
+        Authentication authentication = databaseSettings.getAuthentication();
+        if (!authentication.isProvided()) {
+            authentication = connectionHandler.getTemporaryAuthentication();
+        }
+
+        if (authenticationError != null && authenticationError.getAuthentication().isSame(authentication) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
         try {
-            Connection connection = connect(databaseSettings, detailSettings.getProperties(), detailSettings.isEnableAutoCommit(), connectionStatus);
+            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryAuthentication(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
             if (connectionHandler.getDatabaseType() != DatabaseType.UNKNOWN) {
                 DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
                 if (messageParserInterface.isAuthenticationException(e)){
-                    authenticationError = new AuthenticationError(osAuthentication, user, password, e);
+                    authenticationError = new AuthenticationError(authentication, e);
                     connectionStatus.setAuthenticationError(authenticationError);
                 }
             }
@@ -92,17 +93,26 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Map<String, String> connectionProperties, boolean autoCommit, @Nullable ConnectionStatus connectionStatus) throws SQLException {
+    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Authentication temporaryAuthentication, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         try {
             Properties properties = new Properties();
-            if (!databaseSettings.isOsAuthentication()) {
-                properties.put("user", databaseSettings.getUser());
-                properties.put("password", databaseSettings.getPassword());
+            Authentication authentication = databaseSettings.getAuthentication();
+            if (!authentication.isProvided() && temporaryAuthentication != null) {
+                authentication = temporaryAuthentication;
             }
-            properties.put("ApplicationName", "Database Navigator");
-            properties.put("v$session.program", "Database Navigator");
-            if (connectionProperties != null) {
-                properties.putAll(connectionProperties);
+            if (!authentication.isOsAuthentication()) {
+                String user = authentication.getUser();
+                String password = authentication.getPassword();
+                properties.put("user", user);
+                properties.put("password", password);
+            }
+
+            String appName = "Database Navigator - " + connectionType.getName() + "";
+            properties.put("ApplicationName", appName);
+            properties.put("v$session.program", appName);
+            Map<String, String> configProperties = databaseSettings.getProperties();
+            if (configProperties != null) {
+                properties.putAll(configProperties);
             }
 
             Driver driver = DatabaseDriverManager.getInstance().getDriver(

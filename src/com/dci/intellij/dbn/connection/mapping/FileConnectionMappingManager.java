@@ -136,7 +136,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             if (schemaObject != null) {
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                if (connectionHandler != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
+                if (DatabaseFileSystem.isFileOpened(schemaObject)) {
                     return connectionHandler;
                 }
             }
@@ -270,7 +270,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         if (editor!= null) {
             Document document = editor.getDocument();
             VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-            if (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile) {
+            if (virtualFile != null && (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile)) {
                 boolean changed = setCurrentSchema(virtualFile, schema);
                 if (changed) {
                     DocumentUtil.touchDocument(editor, false);
@@ -280,7 +280,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     }
 
 
-    public void selectConnectionAndSchema(@NotNull final DBLanguagePsiFile file, @NotNull final RunnableTask callback) {
+    public void selectConnectionAndSchema(@NotNull final DBLanguagePsiFile file, @NotNull final ConnectionAction callback) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
@@ -293,24 +293,27 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                                             "You can not execute statements against this connection. Please select a proper connection to continue.";
 
 
-                    MessageUtil.showWarningDialog(project, "No valid Connection", message, new String[]{"Select Connection", "Cancel"}, 0,
+                    MessageUtil.showWarningDialog(project, "No Valid Connection", message, new String[]{"Select Connection", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
-                                    if (getResult() == 0) {
-                                        promptConnectionSelector(file, false, true,
-                                                new SimpleTask() {
-                                                    @Override
-                                                    public void execute() {
-                                                        if (file.getCurrentSchema() == null) {
-                                                            promptSchemaSelector(file, callback);
-                                                        } else {
-                                                            callback.start();
-                                                        }
+                                protected boolean canExecute() {
+                                    return getOption() == 0;
+                                }
 
+                                @Override
+                                protected void execute() {
+                                    promptConnectionSelector(file, false, true,
+                                            new SimpleTask() {
+                                                @Override
+                                                protected void execute() {
+                                                    if (file.getCurrentSchema() == null) {
+                                                        promptSchemaSelector(file, callback);
+                                                    } else {
+                                                        callback.start();
                                                     }
-                                                });
-                                    }
+
+                                                }
+                                            });
                                 }
                             });
 
@@ -318,22 +321,20 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                     String message =
                             "You did not select any schema to run the statement against.\n" +
                                     "To continue with the statement execution please select a schema.";
-                    MessageUtil.showWarningDialog(project, "No valid Schema", message, new String[]{"Select Schema", "Cancel"}, 0,
+                    MessageUtil.showWarningDialog(project, "No Schema Selected", message, new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
-                                    if (getResult() == 0) {
+                                protected void execute() {
+                                    Integer result = getOption();
+                                    if (result == 0) {
+                                        callback.start();
+                                    } else if (result == 1) {
                                         promptSchemaSelector(file, callback);
                                     }
                                 }
                             });
                 } else {
-                    new ConnectionAction(file) {
-                        @Override
-                        public void execute() {
-                            callback.start();
-                        }
-                    }.start();
+                    callback.start();
                 }
             }
         }.start();
@@ -369,7 +370,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         }
 
         ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                "Select connection",
+                "Select Connection",
                 actionGroup,
                 SimpleDataContext.getProjectContext(null),
                 JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
@@ -421,13 +422,13 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
      *             Select schema popup                 *
      ***************************************************/
     public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        new ConnectionAction(psiFile) {
+        new ConnectionAction("selecting the current schema", psiFile) {
             @Override
-            public void execute() {
+            protected void execute() {
                 DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-                ConnectionHandler connectionHandler = psiFile.getActiveConnection();
-                if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
                     List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
                     for (DBSchema schema  :schemas) {
                         SelectSchemaAction schemaAction = new SelectSchemaAction(psiFile, schema, callback);
@@ -442,7 +443,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
                         JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
                         true);
 
-                popupBuilder.showCenteredInCurrentWindow(project);
+                popupBuilder.showCenteredInCurrentWindow(getProject());
             }
         }.start();
     }

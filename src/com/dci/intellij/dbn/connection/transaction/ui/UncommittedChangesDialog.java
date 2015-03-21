@@ -47,10 +47,12 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
         }
 
         public void actionPerformed(ActionEvent e) {
-            ConnectionHandler commitConnectionHandler = connectionHandler;
-            DatabaseTransactionManager transactionManager = getTransactionManager();
-            doOKAction();
-            transactionManager.execute(commitConnectionHandler, true, TransactionAction.COMMIT, additionalOperation);
+            try {
+                DatabaseTransactionManager transactionManager = getTransactionManager();
+                transactionManager.execute(connectionHandler, true, TransactionAction.COMMIT, additionalOperation);
+            } finally {
+                doOKAction();
+            }
         }
     }
 
@@ -60,10 +62,12 @@ public class UncommittedChangesDialog extends DBNDialog<UncommittedChangesForm> 
         }
 
         public void actionPerformed(ActionEvent e) {
-            ConnectionHandler commitConnectionHandler = connectionHandler;
-            DatabaseTransactionManager transactionManager = getTransactionManager();
-            doOKAction();
-            transactionManager.execute(commitConnectionHandler, true, TransactionAction.ROLLBACK, additionalOperation);
+            try {
+                DatabaseTransactionManager transactionManager = getTransactionManager();
+                transactionManager.execute(connectionHandler, true, TransactionAction.ROLLBACK, additionalOperation);
+            } finally {
+                doOKAction();
+            }
         }
     }
 

@@ -5,12 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
-public interface ExecutionResult extends Disposable {
+public interface ExecutionResult extends Disposable, DataProviderSupplier {
 
     @Nullable
     ExecutionResultForm getForm(boolean create);
@@ -20,8 +21,12 @@ public interface ExecutionResult extends Disposable {
 
     Icon getIcon();
 
+    @NotNull
     Project getProject();
 
+    String getConnectionId();
+
+    @NotNull
     ConnectionHandler getConnectionHandler();
 
     PsiFile createPreviewFile();

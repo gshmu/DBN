@@ -32,7 +32,7 @@ import com.intellij.openapi.project.Project;
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
     private DBObjectType objectType = DBObjectType.UNKNOWN;
 
-    public DBObjectListImpl(DBObjectType objectType, BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
+    public DBObjectListImpl(DBObjectType objectType, @NotNull BrowserTreeNode treeParent, DynamicContentLoader<T> loader, ContentDependencyAdapter dependencyAdapter, boolean indexed) {
         super(treeParent, loader, dependencyAdapter, indexed);
         this.objectType = objectType;
     }
@@ -40,7 +40,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public Filter<T> getFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null || connectionHandler.isDisposed() || connectionHandler.isVirtual() ? null :
+        return connectionHandler.isDisposed() || connectionHandler.isVirtual() ? null :
                 (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
     }
 
@@ -104,8 +104,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     public Project getProject() {
         GenericDatabaseElement parent = getParent();
-        Project project = parent == null ? null : parent.getProject();
-        return FailsafeUtil.nvl(project);
+        return FailsafeUtil.get(parent.getProject());
     }
 
     public GenericDatabaseElement getUndisposedElement() {
@@ -132,9 +131,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             return getName() + " of " + object.getQualifiedNameWithType();
         }
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ?
-                getName() :
-                getName() + " from " + connectionHandler.getName() ;
+        return getName() + " from " + connectionHandler.getName();
     }
 
     /*********************************************************
@@ -162,6 +159,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         return getTreeChildren().get(index);
     }
 
+    @Nullable
     public BrowserTreeNode getTreeParent() {
         return (BrowserTreeNode) getParent();
     }

@@ -65,8 +65,8 @@ public class CompilerResult implements Disposable {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally{
-            connectionHandler.freePoolConnection(connection);
             ConnectionUtil.closeResultSet(resultSet);
+            connectionHandler.freePoolConnection(connection);
         }
 
         if (compilerMessages.size() == 0) {

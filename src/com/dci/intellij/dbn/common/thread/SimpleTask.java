@@ -1,24 +1,36 @@
 package com.dci.intellij.dbn.common.thread;
 
 public abstract class SimpleTask implements RunnableTask<Integer>{
-    private int result;
+    private int option;
 
     @Override
-    public void setResult(Integer result) {
-        this.result = result;
+    public void setOption(Integer result) {
+        this.option = result;
     }
 
     @Override
-    public Integer getResult() {
-        return result;
+    public Integer getOption() {
+        return option;
     }
 
     public void start() {
         run();
     }
 
+    protected boolean canExecute() {
+        return true;
+    }
+
     public void run() {
-        execute();
+        if (canExecute()) {
+            execute();
+        } else {
+            cancel();
+        }
+    }
+
+    protected void cancel() {
+
     }
 
     protected abstract void execute();

@@ -8,12 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -25,12 +27,11 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class ExplainPlanResult implements ExecutionResult {
+public class ExplainPlanResult implements ExecutionResult, DataProviderSupplier {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
@@ -83,6 +84,11 @@ public class ExplainPlanResult implements ExecutionResult {
     }
 
     @Override
+    public String getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
+    }
+
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.get(connectionHandlerRef);
     }
@@ -93,23 +99,21 @@ public class ExplainPlanResult implements ExecutionResult {
 
     @Override
     public PsiFile createPreviewFile() {
-        ConnectionHandler activeConnection = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
-        DBLanguageDialect languageDialect = activeConnection == null ?
-                SQLLanguage.INSTANCE.getMainLanguageDialect() :
-                activeConnection.getLanguageDialect(SQLLanguage.INSTANCE);
-        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, activeConnection, currentSchema);
+        DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
+        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, connectionHandler, currentSchema);
     }
 
+    @NotNull
     @Override
     public Project getProject() {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     @Override
     public ExplainPlanResultForm getForm(boolean create) {
-        if (resultForm == null) {
+        if (resultForm == null && create) {
             resultForm = new ExplainPlanResultForm(this);
         }
         return resultForm;
@@ -143,13 +147,11 @@ public class ExplainPlanResult implements ExecutionResult {
             if (DBNDataKeys.EXPLAIN_PLAN_RESULT.is(dataId)) {
                 return ExplainPlanResult.this;
             }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
-            }
             return null;
         }
     };
 
+    @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
     }

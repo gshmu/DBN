@@ -48,12 +48,14 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
 
     private AbstractAction commitAllAction = new AbstractAction("Commit all", Icons.CONNECTION_COMMIT) {
         public void actionPerformed(ActionEvent e) {
-            DatabaseTransactionManager transactionManager = getTransactionManager();
-            List<ConnectionHandler> connectionHandlers = component.getConnectionHandlers();
-
-            doOKAction();
-            for (ConnectionHandler connectionHandler : connectionHandlers) {
-                transactionManager.execute(connectionHandler, true, TransactionAction.COMMIT, additionalOperation);
+            try {
+                DatabaseTransactionManager transactionManager = getTransactionManager();
+                List<ConnectionHandler> connectionHandlers = component.getConnectionHandlers();
+                for (ConnectionHandler connectionHandler : connectionHandlers) {
+                    transactionManager.execute(connectionHandler, true, TransactionAction.COMMIT, additionalOperation);
+                }
+            } finally {
+                doOKAction();
             }
         }
 
@@ -65,12 +67,15 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
 
     private AbstractAction rollbackAllAction = new AbstractAction("Rollback all", Icons.CONNECTION_ROLLBACK) {
         public void actionPerformed(ActionEvent e) {
-            DatabaseTransactionManager transactionManager = getTransactionManager();
-            List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(component.getConnectionHandlers());
+            try {
+                DatabaseTransactionManager transactionManager = getTransactionManager();
+                List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>(component.getConnectionHandlers());
 
-            doOKAction();
-            for (ConnectionHandler connectionHandler : connectionHandlers) {
-                transactionManager.execute(connectionHandler, true, TransactionAction.ROLLBACK, additionalOperation);
+                for (ConnectionHandler connectionHandler : connectionHandlers) {
+                    transactionManager.execute(connectionHandler, true, TransactionAction.ROLLBACK, additionalOperation);
+                }
+            } finally {
+                doOKAction();
             }
         }
 
@@ -96,7 +101,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
             if (!connectionManager.hasUncommittedChanges()) {
                 new ConditionalLaterInvocator() {
                     @Override
-                    public void execute() {
+                    protected void execute() {
                         getCancelAction().putValue(Action.NAME, "Close");
                         commitAllAction.setEnabled(false);
                         rollbackAllAction.setEnabled(false);

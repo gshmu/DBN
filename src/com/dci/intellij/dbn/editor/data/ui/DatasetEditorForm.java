@@ -10,7 +10,9 @@ import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -78,7 +80,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
 
-            ActionUtil.registerDataProvider(actionsPanel, datasetEditor.getDataProvider(), true);
+            ActionUtil.registerDataProvider(mainPanel, datasetEditor);
 
             Disposer.register(this, autoCommitLabel);
             Disposer.register(this, datasetEditorTable);
@@ -122,7 +124,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         if (oldEditorTable != null) {
             new ConditionalLaterInvocator(){
                 @Override
-                public void execute() {
+                protected void execute() {
                     if (!isDisposed()) {
                         datasetTableScrollPane.setViewportView(datasetEditorTable);
                         datasetEditorTable.initTableGutter();
@@ -145,7 +147,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public void showLoadingHint() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 loadingLabel.setVisible(true);
                 loadingIconPanel.setVisible(true);
             }
@@ -154,7 +157,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public void hideLoadingHint() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 loadingLabel.setVisible(false);
                 loadingIconPanel.setVisible(false);
             }
@@ -162,8 +166,9 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
 
+    @NotNull
     public DatasetEditorTable getEditorTable() {
-        return datasetEditorTable;
+        return FailsafeUtil.get(datasetEditorTable);
     }
 
     public void dispose() {
@@ -175,7 +180,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     private ConnectionHandler getConnectionHandler() {
-        return datasetEditorTable.getDataset().getConnectionHandler();
+        return getEditorTable().getDataset().getConnectionHandler();
     }
 
     public float getHorizontalScrollProportion() {

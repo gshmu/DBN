@@ -5,6 +5,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetColumnInfo;
@@ -25,6 +26,7 @@ public class SessionBrowserModelCell extends ResultSetDataModelCell implements C
         return getRow().getModel().getConnectionHandler();
     }
 
+    @NotNull
     public SessionBrowserModelRow getRow() {
         return (SessionBrowserModelRow) super.getRow();
     }

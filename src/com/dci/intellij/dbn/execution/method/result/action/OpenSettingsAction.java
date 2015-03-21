@@ -24,4 +24,9 @@ public class OpenSettingsAction extends DumbAwareAction {
             settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
         }
     }
+
+    @Override
+    public void update(AnActionEvent e) {
+        e.getPresentation().setText("Options");
+    }
 }

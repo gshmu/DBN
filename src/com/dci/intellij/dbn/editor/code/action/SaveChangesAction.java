@@ -47,7 +47,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
                     virtualFile.getContentType() == DBContentType.CODE_BODY ? "Save body" : "Save";
 
             DBSchemaObject object = virtualFile.getObject();
-            presentation.setEnabled(object != null && !object.getStatus().is(DBObjectStatus.SAVING) && virtualFile.isModified());
+            presentation.setEnabled(!object.getStatus().is(DBObjectStatus.SAVING) && virtualFile.isModified());
             presentation.setText(text);
         }
     }

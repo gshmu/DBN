@@ -78,27 +78,21 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public String createDDLStatement(DBSourceCodeVirtualFile virtualFile, DBContentType contentType) {
         DBSchemaObject object = virtualFile.getObject();
-        if (object != null) {
-            String content = virtualFile.getContent().trim();
-            if (content.length() > 0) {
-                Project project = getProject();
+        String content = virtualFile.getContent().trim();
+        if (content.length() > 0) {
+            Project project = getProject();
 
-                ConnectionHandler connectionHandler = object.getConnectionHandler();
-                if(connectionHandler != null) {
-                    String alternativeStatementDelimiter = connectionHandler.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
-                    DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-                    return ddlInterface.createDDLStatement(project,
-                            object.getObjectType().getTypeId(),
-                            connectionHandler.getUserName(),
-                            object.getSchema().getName(),
-                            object.getName(),
-                            contentType,
-                            content,
-                            alternativeStatementDelimiter);
-
-                }
-                return "";
-            }
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            String alternativeStatementDelimiter = connectionHandler.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            return ddlInterface.createDDLStatement(project,
+                    object.getObjectType().getTypeId(),
+                    connectionHandler.getUserName(),
+                    object.getSchema().getName(),
+                    object.getName(),
+                    contentType,
+                    content,
+                    alternativeStatementDelimiter);
         }
         return "";
     }
@@ -162,7 +156,8 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public void projectOpened() {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 registerExtensions();
             }
         }.start();

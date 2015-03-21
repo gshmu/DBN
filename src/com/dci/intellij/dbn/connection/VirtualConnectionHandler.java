@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -84,6 +85,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return getInterfaceProvider().getLanguageDialect(language);
     }
 
+    @NotNull
     public Project getProject() {return project;}
 
     public boolean isActive() {
@@ -127,13 +129,19 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return interfaceProvider;
     }
 
+    @Nullable
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        return this;
+    }
+
     public String getUser() {return "root";}
     public String getUserName() {return "root";}
 
     public Connection getPoolConnection() throws SQLException {return null;}
-    public Connection getPoolConnection(DBSchema schema) throws SQLException {return null;}
+    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     public Connection getStandaloneConnection() throws SQLException {return null;}
-    public Connection getStandaloneConnection(DBSchema schema) throws SQLException {return null;}
+    public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {return null;}
     public void freePoolConnection(Connection connection) {}
 
     public ConnectionSettings getSettings() {return null;}
@@ -145,7 +153,21 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void setAllowConnection(boolean allowConnection) {}
 
     @Override
+    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {}
+
+    @Override
     public boolean canConnect() {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public Authentication getTemporaryAuthentication() {
+        return new Authentication();
+    }
+
+    @Override
+    public boolean isAuthenticationProvided() {
         return false;
     }
 
@@ -185,4 +207,5 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void commit() throws SQLException {}
     public void rollback() throws SQLException {}
     public void dispose() {}
+
 }

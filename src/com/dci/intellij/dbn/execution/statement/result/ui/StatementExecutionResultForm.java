@@ -67,7 +67,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
-        ActionUtil.registerDataProvider(resultTable, executionResult.getDataProvider(), false);
+        ActionUtil.registerDataProvider(mainPanel, executionResult);
 
         Disposer.register(this, executionResult);
     }
@@ -88,7 +88,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void reloadTableModel() {
         new SimpleLaterInvocator() {
-            public void execute() {
+            protected void execute() {
                 if (executionResult != null) {
                     resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
                     resultScrollPane.setViewportView(resultTable);
@@ -105,7 +105,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void updateVisibleComponents() {
         new ConditionalLaterInvocator() {
-            public void execute() {
+            protected void execute() {
                 ResultSetDataModel dataModel = executionResult.getTableModel();
                 statusLabel.setText(executionResult.getExecutionInput().getConnectionHandler().getPresentableText() + ": " +
                         dataModel.getRowCount() + " records" + (dataModel.isResultSetExhausted() ? "" : " (Partial)"));
@@ -143,7 +143,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
         if (dataSearchComponent == null) {
             dataSearchComponent = new DataSearchComponent(this);
-            ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult.getDataProvider(), false);
+            ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
             searchPanel.add(dataSearchComponent, BorderLayout.CENTER);
 
             Disposer.register(this, dataSearchComponent);

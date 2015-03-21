@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -14,7 +12,6 @@ import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.project.Project;
 
 public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
-    private Map<String, String> properties = new HashMap<String, String>();
     private Charset charset = Charset.forName("UTF-8");
     private String environmentTypeId = EnvironmentType.DEFAULT.getId();
     private boolean enableAutoCommit;
@@ -22,6 +19,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private boolean enableDatabaseLogging = false;
     protected boolean connectAutomatically = true;
     private int idleTimeToDisconnect = 30;
+    private int passwordExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
     private String alternativeStatementDelimiter;
     private ConnectionSettings parent;
@@ -41,14 +39,6 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     /*********************************************************
      *                        Custom                         *
      *********************************************************/
-
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
 
     public Charset getCharset() {
         return charset;
@@ -119,6 +109,14 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         this.idleTimeToDisconnect = idleTimeToDisconnect;
     }
 
+    public int getPasswordExpiryTime() {
+        return passwordExpiryTime;
+    }
+
+    public void setPasswordExpiryTime(int passwordExpiryTime) {
+        this.passwordExpiryTime = passwordExpiryTime;
+    }
+
     public String getAlternativeStatementDelimiter() {
         return alternativeStatementDelimiter;
     }
@@ -151,18 +149,9 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
         environmentTypeId = getString(element, "environment-type", EnvironmentType.DEFAULT.getId());
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
+        passwordExpiryTime = getInteger(element, "password-expiry-time", passwordExpiryTime);
         maxConnectionPoolSize = getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         alternativeStatementDelimiter = getString(element, "alternative-statement-delimiter", null);
-
-        Element propertiesElement = element.getChild("properties");
-        if (propertiesElement != null) {
-            for (Object o : propertiesElement.getChildren()) {
-                Element propertyElement = (Element) o;
-                properties.put(
-                        propertyElement.getAttributeValue("key"),
-                        propertyElement.getAttributeValue("value"));
-            }
-        }
     }
 
     @Override
@@ -174,23 +163,10 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         setBoolean(element, "database-logging", enableDatabaseLogging);
         setString(element, "environment-type", environmentTypeId);
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
+        setInteger(element, "password-expiry-time", passwordExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
         setBoolean(element, "connect-automatically", connectAutomatically);
-
-
-        if (properties.size() > 0) {
-            Element propertiesElement = new Element("properties");
-            for (String propertyKey : properties.keySet()) {
-                Element propertyElement = new Element("property");
-                propertyElement.setAttribute("key", propertyKey);
-                propertyElement.setAttribute("value", CommonUtil.nvl(properties.get(propertyKey), ""));
-
-                propertiesElement.addContent(propertyElement);
-            }
-            element.addContent(propertiesElement);
-        }
-
     }
 
     public Project getProject() {

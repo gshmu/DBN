@@ -26,24 +26,28 @@ public abstract class DBSourceCodeLoader {
         Connection connection = null;
         ResultSet resultSet = null;
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        try {
-            connection = connectionHandler.getPoolConnection();
-            resultSet = loadSourceCode(connection);
-                                                 
-            StringBuilder sourceCode = new StringBuilder();
-            while (resultSet.next()) {
-                String codeLine = resultSet.getString(1);
-                sourceCode.append(codeLine);
+        if (connectionHandler != null) {
+            try {
+                connection = connectionHandler.getPoolConnection();
+                resultSet = loadSourceCode(connection);
+
+                StringBuilder sourceCode = new StringBuilder();
+                while (resultSet.next()) {
+                    String codeLine = resultSet.getString(1);
+                    sourceCode.append(codeLine);
+                }
+
+                if (sourceCode.length() == 0 && !lenient)
+                    throw new SQLException("Object not found in database.");
+
+                return StringUtil.removeCharacter(sourceCode.toString(), '\r');
+            } finally {
+                ConnectionUtil.closeResultSet(resultSet);
+                connectionHandler.freePoolConnection(connection);
             }
-
-            if (sourceCode.length() == 0 && !lenient)
-                throw new SQLException("Object not found in database.");
-
-            return StringUtil.removeCharacter(sourceCode.toString(), '\r');
-        } finally {
-            ConnectionUtil.closeResultSet(resultSet);
-            connectionHandler.freePoolConnection(connection);
         }
+
+        return "";
     }
 
     @Nullable

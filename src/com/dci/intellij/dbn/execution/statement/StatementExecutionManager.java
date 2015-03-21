@@ -18,10 +18,14 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
@@ -210,13 +214,14 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
      *                       Execution                       *
      *********************************************************/
     public void executeStatement(final StatementExecutionProcessor executionProcessor) {
-        SimpleTask executionTask = new SimpleTask() {
+        ConnectionAction executionAction = new ConnectionAction("the statement execution", executionProcessor) {
             @Override
-            public void execute() {
+            protected void execute() {
                 executionProcessor.initExecutionInput(false);
                 promptVariablesDialog(executionProcessor,
                         new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
-                            public void execute(@NotNull ProgressIndicator progressIndicator) {
+                            @Override
+                            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                                 executionProcessor.execute(progressIndicator);
                             }
                         });
@@ -224,40 +229,46 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         };
 
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-        connectionMappingManager.selectConnectionAndSchema(executionProcessor.getPsiFile(), executionTask);
+        connectionMappingManager.selectConnectionAndSchema(executionProcessor.getPsiFile(), executionAction);
     }
 
-    public void executeStatements(final List<StatementExecutionProcessor> executionProcessors) {
+    public void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
         if (executionProcessors.size() > 0) {
             DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
 
-            SimpleTask executionTask = new SimpleTask() {
+            ConnectionProvider connectionProvider = new ConnectionProvider() {
+                @Nullable
                 @Override
-                public void execute() {
-                    new BackgroundTask(getProject(), "Executing statements", false, true) {
-                        public void execute(@NotNull ProgressIndicator progressIndicator) {
-                            boolean showIndeterminateProgress = executionProcessors.size() < 5;
-                            initProgressIndicator(progressIndicator, showIndeterminateProgress);
+                public ConnectionHandler getConnectionHandler() {
+                    FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+                    return connectionMappingManager.getActiveConnection(virtualFile);
+                }
+            };
+            TaskInstructions taskInstructions = new TaskInstructions("Executing statements", false, true);
+            ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider, taskInstructions) {
+                @Override
+                protected void execute() {
+                    boolean showIndeterminateProgress = executionProcessors.size() < 5;
+                    ProgressIndicator progressIndicator = getProgressIndicator();
+                    BackgroundTask.initProgressIndicator(progressIndicator, showIndeterminateProgress);
 
-                            for (int i = 0; i < executionProcessors.size(); i++) {
-                                if (!progressIndicator.isCanceled()) {
-                                    if (!progressIndicator.isIndeterminate()) {
-                                        progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
-                                    }
-
-                                    final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
-                                    executionProcessor.initExecutionInput(true);
-                                    promptVariablesDialog(executionProcessor, new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
-                                        @Override
-                                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                                            executionProcessor.execute(progressIndicator);
-                                        }
-                                    });
-
-                                }
+                    for (int i = 0; i < executionProcessors.size(); i++) {
+                        if (!progressIndicator.isCanceled()) {
+                            if (!progressIndicator.isIndeterminate()) {
+                                progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
                             }
+
+                            final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
+                            executionProcessor.initExecutionInput(true);
+                            promptVariablesDialog(executionProcessor, new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
+                                @Override
+                                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                                    executionProcessor.execute(progressIndicator);
+                                }
+                            });
+
                         }
-                    }.start();
+                    }
                 }
             };
 
@@ -279,12 +290,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
                         OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, new SimpleTask() {
                             @Override
-                            public void execute() {
-                                int option = getResult();
+                            protected void execute() {
+                                int option = getOption();
                                 if (option == 0 || option == 1) {
                                     int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
                                     List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
-                                    executeStatements(executionProcessors);
+                                    executeStatements(executionProcessors, DocumentUtil.getVirtualFile(editor));
                                 }
                             }
                         });

@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
@@ -46,9 +45,9 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
         this.objectRef = object.getRef();
     }
 
-    @Nullable
+    @NotNull
     public DBObject getObject() {
-        return objectRef.get();
+        return FailsafeUtil.get(objectRef.get());
     }
 
     @Override
@@ -74,9 +73,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        DBObject object = getObject();
-        Project project = object == null ? null : object.getProject();
-        return FailsafeUtil.nvl(project);
+        return getObject().getProject();
     }
 
     @NotNull
@@ -86,12 +83,10 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     public PsiDirectory getParent() {
         DBObject object = getObject();
-        if (object != null) {
-            GenericDatabaseElement parent = object.getTreeParent();
-            if (parent instanceof DBObjectList) {
-                DBObjectList objectList = (DBObjectList) parent;
-                return NavigationPsiCache.getPsiDirectory(objectList);
-            }
+        GenericDatabaseElement parent = object.getTreeParent();
+        if (parent instanceof DBObjectList) {
+            DBObjectList objectList = (DBObjectList) parent;
+            return NavigationPsiCache.getPsiDirectory(objectList);
         }
         return null;
     }
@@ -102,9 +97,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     public void navigate(boolean requestFocus) {
         DBObject object = getObject();
-        if (object != null) {
-            object.navigate(requestFocus);
-        }
+        object.navigate(requestFocus);
     }
 
     public boolean canNavigate() {
@@ -305,8 +298,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     }
 
     public Icon getIcon(int flags) {
-        DBObject object = getObject();
-        return object == null ? null : object.getIcon();
+        return getObject().getIcon();
     }
 
     public <T> T getUserData(@NotNull Key<T> key) {
@@ -322,9 +314,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
      *********************************************************/
     @NotNull
     public VirtualFile getVirtualFile() {
-        DBObject object = getObject();
-        DBObjectVirtualFile virtualFile = object == null ? null : object.getVirtualFile();
-        return FailsafeUtil.nvl(virtualFile);
+        return getObject().getVirtualFile();
     }
 
     public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {

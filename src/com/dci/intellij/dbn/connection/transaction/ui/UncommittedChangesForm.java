@@ -95,7 +95,7 @@ public class UncommittedChangesForm extends DBNFormImpl {
     private void refreshForm(final ConnectionHandler connectionHandler) {
         new SimpleLaterInvocator() {
             @Override
-            public void execute() {
+            protected void execute() {
                 if (!isDisposed()) {
                     UncommittedChangesTableModel model = new UncommittedChangesTableModel(connectionHandler);
                     changesTable.setModel(model);

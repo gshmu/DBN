@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.intellij.openapi.project.Project;
@@ -23,7 +24,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     }
 
     public BasicDataModel getModel() {
-        return model;
+        return FailsafeUtil.get(model);
     }
 
     public List<T> getCells() {
@@ -71,6 +72,9 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
         return cells.indexOf(cell);
     }
 
+    public Project getProject() {
+        return getModel().getProject();
+    }
 
     /********************************************************
      *                    Disposable                        *
@@ -89,9 +93,5 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
             cells = null;
             model = null;
         }
-    }
-
-    public Project getProject() {
-        return model == null ? null : model.getProject();
     }
 }

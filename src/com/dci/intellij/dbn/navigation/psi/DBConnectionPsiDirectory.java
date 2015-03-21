@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -46,17 +45,22 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     }
 
     @NotNull
-    public VirtualFile getVirtualFile() {
-        return FailsafeUtil.nvl(virtualFile);
+    public DBConnectionVirtualFile getVirtualFile() {
+        return FailsafeUtil.get(virtualFile);
+    }
+
+    @NotNull
+    public ConnectionHandler getConnectionHandler() {
+        return getVirtualFile().getConnectionHandler();
     }
 
     @NotNull
     public String getName() {
-        return virtualFile.getConnectionHandler().getName();
+        return getConnectionHandler().getName();
     }
 
     public ItemPresentation getPresentation() {
-        return virtualFile.getConnectionHandler().getObjectBundle();
+        return getConnectionHandler().getObjectBundle();
     }
 
     public FileStatus getFileStatus() {
@@ -88,7 +92,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return FailsafeUtil.nvl(virtualFile == null ? null : virtualFile.getProject());
+        return getVirtualFile().getProject();
     }
 
     @NotNull
@@ -344,7 +348,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     }
 
     public void navigate(boolean requestFocus) {
-        virtualFile.getConnectionHandler().getObjectBundle().navigate(requestFocus);
+        getConnectionHandler().getObjectBundle().navigate(requestFocus);
     }
 
     public boolean canNavigate() {
@@ -360,7 +364,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     }
 
     public Icon getIcon(int flags) {
-        return virtualFile == null ? null : virtualFile.getIcon();
+        return getVirtualFile().getIcon();
     }
 
     public <T> T getUserData(@NotNull Key<T> key) {

@@ -103,7 +103,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             postLoadContent(dynamicContent, debugInfo);
         } catch (Exception e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
-            if (e == DatabaseInterface.DBN_INTERRUPTED_EXCEPTION) throw new InterruptedException();
+            if (e instanceof ProcessCanceledException) throw (ProcessCanceledException) e;
             if (e == DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION) throw new InterruptedException();
 
             String message = StringUtil.trim(e.getMessage()).replace("\n", " ");

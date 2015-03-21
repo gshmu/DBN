@@ -26,6 +26,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     private String name;
     private Project project;
     private EditorProviderId editorProviderId;
+    private BasicTextEditorState cachedState;
 
     public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
         this.project = project;
@@ -118,9 +119,11 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
 
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-        BasicTextEditorState editorState = createEditorState();
-        editorState.loadFromEditor(level, textEditor);
-        return editorState;
+        if (!isDisposed()) {
+            cachedState = createEditorState();
+            cachedState.loadFromEditor(level, textEditor);
+        }
+        return cachedState;
     }
 
     public void setState(@NotNull FileEditorState fileEditorState) {
@@ -128,10 +131,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
             BasicTextEditorState state = (BasicTextEditorState) fileEditorState;
             state.applyToEditor(textEditor);
         }
-    }
-
-    public void dispose() {
-        TextEditorProvider.getInstance().disposeEditor(textEditor);
     }
 
     @NonNls
@@ -143,5 +142,17 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
         return textEditor.getStructureViewBuilder();
+    }
+
+    private boolean disposed;
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    public void dispose() {
+        disposed = true;
+        TextEditorProvider.getInstance().disposeEditor(textEditor);
     }
 }

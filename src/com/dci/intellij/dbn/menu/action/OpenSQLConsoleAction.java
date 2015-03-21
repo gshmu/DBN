@@ -89,11 +89,14 @@ public class OpenSQLConsoleAction extends DumbAwareAction {
                             new String[]{"Setup Connection", "Cancel"}, 0,
                             new SimpleTask() {
                                 @Override
-                                public void execute() {
-                                    if (getResult() == 0) {
-                                        ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                                        settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
-                                    }
+                                protected boolean canExecute() {
+                                    return getOption() == 0;
+                                }
+
+                                @Override
+                                protected void execute() {
+                                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                                    settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
                                 }
                             });
                 }

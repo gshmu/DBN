@@ -130,7 +130,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         if (viewport != null) {
             new ConditionalLaterInvocator() {
                 @Override
-                public void execute() {
+                protected void execute() {
                     DataGridTextAttributes attributes = cellRenderer.getAttributes();
                     Color background = readonly ?
                             attributes.getLoadingData(false).getBgColor() :
@@ -240,7 +240,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             valuePopup = null;
         }
         if (isLargeValuePopupActive() && !isRestoringSelection()) {
-            boolean isReadonly = getModel().isReadonly() || getModel().getState().isReadonly();
+            T model = getModel();
+            boolean isReadonly = model.isReadonly() || model.getState().isReadonly();
             if (isReadonly && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 int rowIndex = getSelectedRow();
                 int columnIndex = getSelectedColumn();
@@ -321,5 +322,11 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     public void scrollCellToVisible(DataModelCell cell) {
         Rectangle cellRectangle = getCellRect(cell);
         scrollRectToVisible(cellRectangle);
+    }
+
+    @NotNull
+    @Override
+    public T getModel() {
+        return super.getModel();
     }
 }

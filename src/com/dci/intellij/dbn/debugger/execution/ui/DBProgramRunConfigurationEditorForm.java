@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.debugger.execution.ui;
 
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -26,13 +33,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
 
 public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
     private JPanel headerPanel;
@@ -82,7 +82,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
             if (project != null) {
                 BackgroundTask backgroundTask = new BackgroundTask(project, "Loading executable elements", false) {
                     @Override
-                    public void execute(@NotNull ProgressIndicator progressIndicator) {
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
                         DBMethod currentMethod = configuration.getExecutionInput() == null ? null : configuration.getExecutionInput().getMethod();
                         if (currentMethod != null) {
@@ -94,7 +94,8 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
                         final ObjectTreeModel objectTreeModel = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), settings.getMethod());
 
                         new SimpleLaterInvocator() {
-                            public void execute() {
+                            @Override
+                            protected void execute() {
                                 final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, settings, objectTreeModel);
                                 browserDialog.show();
                                 if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {

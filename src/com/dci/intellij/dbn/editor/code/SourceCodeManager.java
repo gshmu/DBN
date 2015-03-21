@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -36,6 +37,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
+import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
@@ -82,55 +84,52 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(virtualFile.getProject());
         final DBSchemaObject object = virtualFile.getObject();
         if (object != null) {
+            final DBObjectStatusHolder objectStatus = object.getStatus();
             if (!debuggerManager.checkForbiddenOperation(virtualFile.getActiveConnection())) {
-                object.getStatus().set(DBObjectStatus.SAVING, false);
+                objectStatus.set(DBObjectStatus.SAVING, false);
                 return;
             }
-            new ConnectionAction(object) {
+            objectStatus.set(DBObjectStatus.SAVING, true);
+            TaskInstructions taskInstructions = new TaskInstructions("Checking for third party changes on " + object.getQualifiedNameWithType(), false, false);
+            new ConnectionAction("updating the object to database", object, taskInstructions) {
                 @Override
-                public void execute() {
-                    object.getStatus().set(DBObjectStatus.SAVING, true);
-                    final Project project = virtualFile.getProject();
-                    final DBContentType contentType = virtualFile.getContentType();
+                protected void execute() {
+                    Project project = getProject();
+                    try {
+                        final DBContentType contentType = virtualFile.getContentType();
+                        Editor editor = EditorUtil.getEditor(fileEditor);
+                        if (editor != null) {
+                            String content = editor.getDocument().getText();
+                            if (isValidObjectTypeAndName(content, object, contentType)) {
+                                Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
+                                if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
 
-                    new BackgroundTask(project, "Checking for third party changes on " + object.getQualifiedNameWithType(), false) {
-                        public void execute(@NotNull ProgressIndicator progressIndicator) {
-                            try {
-                                Editor editor = EditorUtil.getEditor(fileEditor);
-                                if (editor != null) {
-                                    String content = editor.getDocument().getText();
-                                    if (isValidObjectTypeAndName(content, object, contentType)) {
-                                        Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
-                                        if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
+                                    virtualFile.setContent(content);
+                                    String message =
+                                            "The " + object.getQualifiedNameWithType() +
+                                                    " has been changed by another user. \nYou will be prompted to merge the changes";
+                                    MessageUtil.showErrorDialog(project, "Version conflict", message);
 
-                                            virtualFile.setContent(content);
-                                            String message =
-                                                    "The " + object.getQualifiedNameWithType() +
-                                                            " has been changed by another user. \nYou will be prompted to merge the changes";
-                                            MessageUtil.showErrorDialog(project, "Version conflict", message);
-
-                                            String databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                            showSourceDiffDialog(databaseContent, virtualFile, fileEditor);
-                                        } else {
-                                            doUpdateSourceToDatabase(object, virtualFile, fileEditor);
-                                            //sourceCodeEditor.afterSave();
-                                        }
-
-                                    } else {
-                                        String message = "You are not allowed to change the name or the type of the object";
-                                        object.getStatus().set(DBObjectStatus.SAVING, false);
-                                        MessageUtil.showErrorDialog(project, "Illegal action", message);
-                                    }
+                                    String databaseContent = loadSourceCodeFromDatabase(object, contentType);
+                                    showSourceDiffDialog(databaseContent, virtualFile, fileEditor);
+                                } else {
+                                    doUpdateSourceToDatabase(object, virtualFile, fileEditor);
+                                    //sourceCodeEditor.afterSave();
                                 }
-                            } catch (SQLException ex) {
-                                if (DatabaseFeature.OBJECT_REPLACING.isSupported(object)) {
-                                    virtualFile.updateChangeTimestamp();
-                                }
-                                MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
-                                object.getStatus().set(DBObjectStatus.SAVING, false);
+
+                            } else {
+                                String message = "You are not allowed to change the name or the type of the object";
+                                objectStatus.set(DBObjectStatus.SAVING, false);
+                                MessageUtil.showErrorDialog(project, "Illegal action", message);
                             }
                         }
-                    }.start();
+                    } catch (SQLException ex) {
+                        if (DatabaseFeature.OBJECT_REPLACING.isSupported(object)) {
+                            virtualFile.updateChangeTimestamp();
+                        }
+                        MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
+                        objectStatus.set(DBObjectStatus.SAVING, false);
+                    }
                 }
             }.start();
         }
@@ -197,7 +196,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     private void showSourceDiffDialog(final String databaseContent, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
         new SimpleLaterInvocator() {
-            public void execute() {
+            @Override
+            protected void execute() {
                 DiffRequestFactory diffRequestFactory = new DiffRequestFactoryImpl();
                 MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
                         databaseContent,
@@ -238,7 +238,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private void doUpdateSourceToDatabase(final DBSchemaObject object, final DBSourceCodeVirtualFile virtualFile, final FileEditor fileEditor) {
         new BackgroundTask(object.getProject(), "Saving " + object.getQualifiedNameWithType() + " to database", false) {
             @Override
-            public void execute(@NotNull ProgressIndicator indicator) {
+            protected void execute(@NotNull ProgressIndicator indicator) {
                 Project project = getProject();
                 try {
                     Editor editor = EditorUtil.getEditor(fileEditor);

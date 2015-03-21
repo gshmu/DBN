@@ -99,7 +99,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
          }
 
          if (cell.isDisposed()) return;
-         DataModel model = cell.getRow().getModel();
+         DataModel model = cell.getModel();
          if (model.hasSearchResult()) {
              DataSearchResult searchResult = model.getSearchResult();
 

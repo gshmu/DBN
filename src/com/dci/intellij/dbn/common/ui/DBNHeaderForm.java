@@ -39,7 +39,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
 
-        String connectionName = connectionHandler == null ? "unknown" : connectionHandler.getName();
+        String connectionName = connectionHandler.getName();
         objectLabel.setText("[" + connectionName + "] " + object.getQualifiedName());
         objectLabel.setIcon(object.getIcon());
         Color background = UIUtil.getPanelBackground();

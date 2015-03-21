@@ -3,9 +3,6 @@ package com.dci.intellij.dbn.editor.session;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -19,12 +16,13 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
@@ -35,23 +33,21 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 
-public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider {
+public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider, DataProviderSupplier {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean preventLoading = false;
     private boolean loading;
     private Timer refreshTimer;
-    private String modelError;
+    private FileEditorState cachedState;
 
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
@@ -60,24 +56,23 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         loadSessions(true);
     }
 
-    @Nullable
+    @NotNull
     public SessionBrowserTable getEditorTable() {
-        return editorForm == null ? null : editorForm.getEditorTable();
+        return getEditorForm().getEditorTable();
     }
 
-    @Nullable
+    @NotNull
     public SessionBrowserForm getEditorForm() {
-        return editorForm;
+        return FailsafeUtil.get(editorForm);
     }
 
     public void showSearchHeader() {
-        editorForm.showSearchHeader();
+        getEditorForm().showSearchHeader();
     }
 
     @Nullable
     public SessionBrowserModel getTableModel() {
-        SessionBrowserTable browserTable = getEditorTable();
-        return browserTable == null ? null : browserTable.getModel();
+        return getEditorTable().getModel();
     }
 
     public SessionBrowserSettings getSettings() {
@@ -87,38 +82,29 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public boolean isPreventLoading(boolean force) {
         if (force) return false;
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null && editorTable.getSelectedRowCount() > 1) {
-            return true;
-        }
-        return preventLoading;
+        return preventLoading || editorTable.getSelectedRowCount() > 1;
     }
 
     public void loadSessions(boolean force) {
         if (!loading && !isPreventLoading(force)) {
-            final ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
             setLoading(true);
-            new BackgroundTask(getProject(), "Loading sessions", true) {
+            new ConnectionAction("loading the sessions", this, new TaskInstructions("Loading sessions", true, false)) {
                 @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                protected void execute() {
                     try {
-                        if (isDisposed()) throw new InterruptedException("Process cancelled");
-                        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                        Connection connection = connectionHandler.getStandaloneConnection();
-                        ResultSet resultSet = metadataInterface.loadSessions(connection);
-                        SessionBrowserModel model = new SessionBrowserModel(connectionHandler, resultSet);
+                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                        SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
                         replaceModel(model);
-                        modelError = null;
-                    } catch (SQLException e) {
-                        modelError = e.getMessage();
-                        SessionBrowserModel model = getTableModel();
-                        if (model == null || model.isDisposed()) {
-                            model = new SessionBrowserModel(connectionHandler);
-                            replaceModel(model);
-                        }
                     } finally {
                         EventManager.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
                         setLoading(false);
                     }
+                }
+
+                @Override
+                protected void cancel() {
+                    setLoading(false);
+                    setRefreshInterval(0);
                 }
             }.start();
         }
@@ -130,14 +116,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 @Override
                 protected void execute() {
                     SessionBrowserTable editorTable = getEditorTable();
-                    if (editorTable != null) {
-                        SessionBrowserModel oldModel = editorTable.getModel();
-                        SessionBrowserState state = oldModel.getState();
-                        newModel.setState(state);
-                        editorTable.setModel(newModel);
-                        refreshTable();
-                        DisposerUtil.dispose(oldModel);
-                    }
+                    SessionBrowserModel oldModel = editorTable.getModel();
+                    SessionBrowserState state = oldModel.getState();
+                    newModel.setState(state);
+                    editorTable.setModel(newModel);
+                    refreshTable();
+                    DisposerUtil.dispose(oldModel);
                 }
             }.start();
         }
@@ -145,23 +129,19 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void clearFilter() {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            SessionBrowserFilterState filter = editorTable.getModel().getFilter();
-            if (filter != null) {
-                filter.clear();
-                refreshTable();
-            }
+        SessionBrowserFilterState filter = editorTable.getModel().getFilter();
+        if (filter != null) {
+            filter.clear();
+            refreshTable();
         }
     }
 
     public void refreshTable() {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            editorTable.revalidate();
-            editorTable.repaint();
-            editorTable.accommodateColumnsSize();
-            editorTable.restoreSelection();
-        }
+        editorTable.revalidate();
+        editorTable.repaint();
+        editorTable.accommodateColumnsSize();
+        editorTable.restoreSelection();
     }
 
     public void refreshLoadTimestamp() {
@@ -189,19 +169,17 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     private void interruptSessions(SessionInterruptionType type) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            int[] selectedRows = editorTable.getSelectedRows();
-            Map<Object, Object> sessionIds = new HashMap<Object, Object>();
-            for (int selectedRow : selectedRows) {
-                SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
-                Object sessionId = row.getSessionId();
-                Object serialNumber = row.getSerialNumber();
-                sessionIds.put(sessionId, serialNumber);
-            }
-
-            sessionBrowserManager.interruptSessions(this, sessionIds, type);
-            loadSessions(true);
+        int[] selectedRows = editorTable.getSelectedRows();
+        Map<Object, Object> sessionIds = new HashMap<Object, Object>();
+        for (int selectedRow : selectedRows) {
+            SessionBrowserModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);
+            Object sessionId = row.getSessionId();
+            Object serialNumber = row.getSerialNumber();
+            sessionIds.put(sessionId, serialNumber);
         }
+
+        sessionBrowserManager.interruptSessions(this, sessionIds, type);
+        loadSessions(true);
     }
 
 
@@ -220,7 +198,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return getEditorTable();
+        return isDisposed() ? null : getEditorTable();
     }
 
     @NonNls
@@ -231,24 +209,22 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
-        SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
+        if (!isDisposed()) {
+            SessionBrowserTable editorTable = getEditorTable();
             SessionBrowserModel model = editorTable.getModel();
-            return model.getState().clone();
+            cachedState = model.getState().clone();
         }
-        return SessionBrowserState.VOID;
+        return cachedState;
     }
 
     public void setState(@NotNull FileEditorState fileEditorState) {
         if (fileEditorState instanceof SessionBrowserState) {
             SessionBrowserTable editorTable = getEditorTable();
-            if (editorTable != null) {
-                SessionBrowserModel model = editorTable.getModel();
-                SessionBrowserState sessionBrowserState = (SessionBrowserState) fileEditorState;
-                model.setState(sessionBrowserState);
-                refreshTable();
-                startRefreshTimer((sessionBrowserState).getRefreshInterval());
-            }
+            SessionBrowserModel model = editorTable.getModel();
+            SessionBrowserState sessionBrowserState = (SessionBrowserState) fileEditorState;
+            model.setState(sessionBrowserState);
+            refreshTable();
+            startRefreshTimer((sessionBrowserState).getRefreshInterval());
         }
     }
 
@@ -308,18 +284,15 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             }
 
             SessionBrowserTable editorTable = getEditorTable();
-            if (editorTable != null) {
-                editorTable.setLoading(loading);
-                editorTable.revalidate();
-                editorTable.repaint();
-            }
+            editorTable.setLoading(loading);
+            editorTable.revalidate();
+            editorTable.repaint();
         }
 
     }
 
     public int getRowCount() {
-        SessionBrowserTable browserTable = getEditorTable();
-        return browserTable == null ? 0 : browserTable.getRowCount();
+        return getEditorTable().getRowCount();
     }
 
     public void setRefreshInterval(int refreshInterval) {
@@ -351,7 +324,8 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public String getModelError() {
-        return modelError;
+        SessionBrowserModel tableModel = getTableModel();
+        return tableModel == null ? null : tableModel.getLoadError();
     }
 
     public int getRefreshInterval() {
@@ -362,12 +336,10 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     @Nullable
     public Object getSelectedSessionId() {
         SessionBrowserTable editorTable = getEditorTable();
-        if (editorTable != null) {
-            if (editorTable.getSelectedRowCount() == 1) {
-                int rowIndex = editorTable.getSelectedRow();
-                SessionBrowserModelRow rowAtIndex = editorTable.getModel().getRowAtIndex(rowIndex);
-                return rowAtIndex.getSessionId();
-            }
+        if (editorTable.getSelectedRowCount() == 1) {
+            int rowIndex = editorTable.getSelectedRow();
+            SessionBrowserModelRow rowAtIndex = editorTable.getModel().getRowAtIndex(rowIndex);
+            return rowAtIndex.getSessionId();
         }
         return null;
     }
@@ -391,7 +363,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowserFile.getConnectionHandler();
     }
@@ -410,13 +382,11 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
             if (DBNDataKeys.SESSION_BROWSER.is(dataId)) {
                 return SessionBrowser.this;
             }
-            if (PlatformDataKeys.PROJECT.is(dataId)) {
-                return getProject();
-            }
             return null;
         }
     };
 
+    @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
     }

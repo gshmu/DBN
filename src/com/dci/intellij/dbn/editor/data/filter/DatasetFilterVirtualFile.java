@@ -76,7 +76,7 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
         return Icons.DBO_TABLE;
     }
 
-    @Nullable
+    @NotNull
     public ConnectionHandler getConnectionHandler() {
         return datasetRef.lookupConnectionHandler();
     }
