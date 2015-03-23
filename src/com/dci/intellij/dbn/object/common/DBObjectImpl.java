@@ -565,9 +565,13 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
 
     @NotNull
-    public synchronized List<BrowserTreeNode> getAllPossibleTreeChildren() {
+    public List<BrowserTreeNode> getAllPossibleTreeChildren() {
         if (allPossibleTreeChildren == null) {
-            allPossibleTreeChildren = buildAllPossibleTreeChildren();
+            synchronized (this) {
+                if (allPossibleTreeChildren == null) {
+                    allPossibleTreeChildren = buildAllPossibleTreeChildren();
+                }
+            }
         }
         return allPossibleTreeChildren;
     }

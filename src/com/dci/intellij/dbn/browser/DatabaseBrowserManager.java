@@ -124,7 +124,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return "DB Browser";
     }
 
-    public synchronized void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean requestFocus) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean requestFocus) {
         ToolWindow toolWindow = getBrowserToolWindow();
 
         toolWindow.show(null);
@@ -133,7 +133,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
     }
 
-    public synchronized void navigateToElement(@Nullable BrowserTreeNode treeNode) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode) {
         if (treeNode != null) {
             getToolWindowForm().getBrowserForm().selectElement(treeNode, false);
         }

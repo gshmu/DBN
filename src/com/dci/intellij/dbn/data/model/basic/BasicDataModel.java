@@ -61,7 +61,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     }
 
     @Override
-    public synchronized ListModel getListModel() {
+    public ListModel getListModel() {
         return listModel.get();
     }
 

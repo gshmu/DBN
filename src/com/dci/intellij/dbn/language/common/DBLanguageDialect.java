@@ -58,9 +58,13 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
         return getBaseLanguage().getSharedTokenTypes();
     }
 
-    public synchronized DBLanguageSyntaxHighlighter getSyntaxHighlighter() {
+    public DBLanguageSyntaxHighlighter getSyntaxHighlighter() {
         if (syntaxHighlighter == null) {
-            syntaxHighlighter = createSyntaxHighlighter();
+            synchronized (this) {
+                if (syntaxHighlighter == null) {
+                    syntaxHighlighter = createSyntaxHighlighter();
+                }
+            }
         }
         return syntaxHighlighter;
     }
@@ -68,7 +72,11 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
     @NotNull
     public synchronized DBLanguageParserDefinition getParserDefinition() {
         if (parserDefinition == null) {
-            parserDefinition = createParserDefinition();
+            synchronized (this) {
+                if (parserDefinition == null) {
+                    parserDefinition = createParserDefinition();
+                }
+            }
         }
         return parserDefinition;
     }

@@ -50,21 +50,18 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     public void load(boolean useCurrentFilter, boolean keepChanges) throws SQLException {
         ResultSet newResultSet;
-        synchronized (DISPOSE_LOCK) {
-            checkDisposed();
+        checkDisposed();
 
-            ConnectionUtil.closeResultSet(resultSet);
-            newResultSet = loadResultSet(useCurrentFilter);
-        }
+        ConnectionUtil.closeResultSet(resultSet);
+        newResultSet = loadResultSet(useCurrentFilter);
 
         if (newResultSet != null) {
-            synchronized (DISPOSE_LOCK) {
-                checkDisposed();
+            checkDisposed();
 
-                resultSet = newResultSet;
-                resultSetExhausted = false;
-                if (keepChanges) snapshotChanges(); else clearChanges();
-            }
+            resultSet = newResultSet;
+            resultSetExhausted = false;
+            if (keepChanges) snapshotChanges(); else clearChanges();
+            
             int rowCount = computeRowCount();
             fetchNextRecords(rowCount, true);
             restoreChanges();
@@ -120,13 +117,11 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     private void restoreChanges() throws SQLException {
         if (hasChanges()) {
             for (DatasetEditorModelRow row : getRows()) {
-                synchronized (DISPOSE_LOCK) {
-                    checkDisposed();
+                checkDisposed();
 
-                    DatasetEditorModelRow changedRow = lookupChangedRow(row, true);
-                    if (changedRow != null) {
-                        row.updateStatusFromRow(changedRow);
-                    }
+                DatasetEditorModelRow changedRow = lookupChangedRow(row, true);
+                if (changedRow != null) {
+                    row.updateStatusFromRow(changedRow);
                 }
             }
             isModified = true;
@@ -211,7 +206,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     public DatasetFilterInput resolveForeignKeyRecord(DatasetEditorModelCell cell) {
         DBColumn column = cell.getColumnInfo().getColumn();
-        if (column != null && column.isForeignKey()) {
+        if (column.isForeignKey()) {
             for (DBConstraint constraint : column.getConstraints()) {
                 constraint = (DBConstraint) constraint.getUndisposedElement();
                 if (constraint != null && constraint.isForeignKey()) {

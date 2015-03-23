@@ -37,20 +37,18 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
     public void load() throws SQLException {
         ResultSet newResultSet;
-        synchronized (DISPOSE_LOCK) {
-            checkDisposed();
 
-            ConnectionUtil.closeResultSet(resultSet);
-            newResultSet = loadResultSet();
-        }
+        checkDisposed();
+
+        ConnectionUtil.closeResultSet(resultSet);
+        newResultSet = loadResultSet();
 
         if (newResultSet != null) {
-            synchronized (DISPOSE_LOCK) {
-                checkDisposed();
+            checkDisposed();
 
-                resultSet = newResultSet;
-                resultSetExhausted = false;
-            }
+            resultSet = newResultSet;
+            resultSetExhausted = false;
+
             fetchNextRecords(10000, true);
             ConnectionUtil.closeResultSet(resultSet);
             resultSet = null;
@@ -77,11 +75,8 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
     private ResultSet loadResultSet() throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadSessions(connectionHandler.getStandaloneConnection());
-        }
-        return null;
+        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+        return metadataInterface.loadSessions(connectionHandler.getStandaloneConnection());
     }
 
     @Override

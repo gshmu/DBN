@@ -24,9 +24,13 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
         sharedTokenTypes = new SharedTokenTypeBundle(this);
     }
 
-    public synchronized final IFileElementType getFileElementType() {
+    public final IFileElementType getFileElementType() {
         if (fileElementType == null) {
-            fileElementType = createFileElementType(this);
+            synchronized (this) {
+                if (fileElementType == null) {
+                    fileElementType = createFileElementType(this);
+                }
+            }
         }
         return fileElementType;
     }
@@ -51,12 +55,14 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
     @NotNull
     public D[] getAvailableLanguageDialects() {
-        synchronized (this) {
-            if (languageDialects == null) {
-                languageDialects = createLanguageDialects();
+        if (languageDialects == null) {
+            synchronized (this) {
+                if (languageDialects == null) {
+                    languageDialects = createLanguageDialects();
+                }
             }
-            return languageDialects;
         }
+        return languageDialects;
     }
 
     public D getLanguageDialect(DBLanguageDialectIdentifier id) {
