@@ -12,12 +12,16 @@ public class ChainElement<T extends ChainElement<T>> {
         }
     }
 
-    public synchronized int getIndex() {
+    public int getIndex() {
         if (index == -1) {
-            T child = (T) this;
-            while (child != null) {
-                index++;
-                child = child.getPrevious();
+            synchronized (this) {
+                if (index == -1) {
+                    T child = (T) this;
+                    while (child != null) {
+                        index++;
+                        child = child.getPrevious();
+                    }
+                }
             }
         }
         return index;
