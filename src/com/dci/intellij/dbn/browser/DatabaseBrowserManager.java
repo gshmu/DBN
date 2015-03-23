@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -97,9 +98,15 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     }
 
-    public synchronized BrowserToolWindowForm getToolWindowForm() {
+    @NotNull
+    public BrowserToolWindowForm getToolWindowForm() {
         if (toolWindowForm == null) {
-            toolWindowForm = new BrowserToolWindowForm(getProject());
+            synchronized (this) {
+                if (toolWindowForm == null) {
+                    if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
+                    toolWindowForm = new BrowserToolWindowForm(getProject());
+                }
+            }
         }
         return toolWindowForm;
     }
@@ -114,10 +121,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     public BooleanSetting getShowObjectProperties() {
         return showObjectProperties;
-    }
-
-    public boolean isDisposed() {
-        return false;
     }
 
     public String toString() {
@@ -190,21 +193,16 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
-            if (toolWindowForm != null) {
-                final DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
-                if (browserTree != null && browserTree.getTargetSelection() != null) {
-                    new ConditionalLaterInvocator() {
-                        @Override
-                        protected void execute() {
-                            browserTree.scrollToSelectedElement();
-                        }
-                    }.start();
-                }
+            final DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
+            if (browserTree != null && browserTree.getTargetSelection() != null) {
+                new ConditionalLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        browserTree.scrollToSelectedElement();
+                    }
+                }.start();
             }
         }
-    }
-
-    public void dispose() {
     }
 
     public boolean isTabbedMode() {

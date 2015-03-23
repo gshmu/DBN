@@ -72,51 +72,54 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
 
     public List<Driver> loadDrivers(String libraryName) {
-        List<Driver> drivers = driversCache.get(libraryName);
-        if (drivers == null && new File(libraryName).isFile()) {
-            String taskDescription = ProgressMonitor.getTaskDescription();
-            ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
-            try {
-                drivers = new ArrayList<Driver>();
-                URL[] urls = new URL[]{new File(libraryName).toURI().toURL()};
-                URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
+        if (!driversCache.containsKey(libraryName)) {
+            synchronized (this) {
+                if (driversCache.containsKey(libraryName) && new File(libraryName).isFile()) {
+                    String taskDescription = ProgressMonitor.getTaskDescription();
+                    ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
+                    try {
+                        List<Driver> drivers = new ArrayList<Driver>();
+                        URL[] urls = new URL[]{new File(libraryName).toURI().toURL()};
+                        URLClassLoader classLoader = URLClassLoader.newInstance(urls, getClass().getClassLoader());
 
-                JarFile jarFile = new JarFile(libraryName);
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (name.endsWith(".class")) {
+                        JarFile jarFile = new JarFile(libraryName);
+                        Enumeration<JarEntry> entries = jarFile.entries();
+                        while (entries.hasMoreElements()) {
+                            JarEntry entry = entries.nextElement();
+                            String name = entry.getName();
+                            if (name.endsWith(".class")) {
 
-                        int index = name.lastIndexOf('.');
-                        String className = name.substring(0, index);
-                        className = className.replace('/', '.').replace('\\', '.');
+                                int index = name.lastIndexOf('.');
+                                String className = name.substring(0, index);
+                                className = className.replace('/', '.').replace('\\', '.');
 
-                        try {
-                            if (className.contains("Driver")) {
-                                Class<?> clazz = classLoader.loadClass(className);
-                                if (Driver.class.isAssignableFrom(clazz)) {
-                                    Driver driver = (Driver) clazz.newInstance();
-                                    drivers.add(driver);
+                                try {
+                                    if (className.contains("Driver")) {
+                                        Class<?> clazz = classLoader.loadClass(className);
+                                        if (Driver.class.isAssignableFrom(clazz)) {
+                                            Driver driver = (Driver) clazz.newInstance();
+                                            drivers.add(driver);
+                                        }
+                                    }
+                                }
+                                catch(Throwable throwable) {
+                                    // ignore
                                 }
                             }
                         }
-                        catch(Throwable throwable) {
-                            // ignore
-                        }
+                        driversCache.put(libraryName, drivers);
+                    } catch(Exception e) {
+                        LOGGER.warn("Error loading drivers from library " + libraryName, e);
+                    } finally {
+                        ProgressMonitor.setTaskDescription(taskDescription);
                     }
                 }
-                driversCache.put(libraryName, drivers);
-            } catch(Exception e) {
-                LOGGER.warn("Error loading drivers from library " + libraryName, e);
-            } finally {
-                ProgressMonitor.setTaskDescription(taskDescription);
             }
         }
-        return drivers;
+        return driversCache.get(libraryName);
     }
 
-    public synchronized Driver getDriver(String libraryName, String className) throws Exception {
+    public Driver getDriver(String libraryName, String className) throws Exception {
         if (StringUtil.isEmptyOrSpaces(className)) {
             throw new Exception("No driver class specified.");
         }

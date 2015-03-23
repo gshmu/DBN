@@ -67,7 +67,7 @@ public class DataSearchResultController implements Disposable{
     public void updateResult(final DataFindModel findModel) {
         new BackgroundTask(searchableComponent.getTable().getProject(), "Updating search results", true) {
             @Override
-            protected synchronized void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                 DataModel dataModel = searchableComponent.getTable().getModel();
                 final DataSearchResult searchResult = dataModel.getSearchResult();
                 
