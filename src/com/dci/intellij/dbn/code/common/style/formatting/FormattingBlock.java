@@ -316,21 +316,26 @@ public class FormattingBlock implements Block {
     }
 
     @NotNull
-    public synchronized List<Block> getSubBlocks() {
+    public List<Block> getSubBlocks() {
         if (childBlocks == null) {
-            PsiElement child = psiElement.getFirstChild();
-            while (child != null) {
-                if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
-                    if (childBlocks == null) childBlocks = new ArrayList<Block>();
-                    CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
-                    FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
-                    childBlocks.add(childBlock);
-                }
-                child = child.getNextSibling();
-            }
+           synchronized (this) {
+               if (childBlocks == null) {
+                   PsiElement child = psiElement.getFirstChild();
+                   while (child != null) {
+                       if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
+                           if (childBlocks == null) childBlocks = new ArrayList<Block>();
+                           CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
+                           FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
+                           childBlocks.add(childBlock);
+                       }
+                       child = child.getNextSibling();
+                   }
 
-            if (childBlocks == null) childBlocks = EMPTY_LIST;
+                   if (childBlocks == null) childBlocks = EMPTY_LIST;
+               }
+           }
         }
+
         return childBlocks;
     }
 

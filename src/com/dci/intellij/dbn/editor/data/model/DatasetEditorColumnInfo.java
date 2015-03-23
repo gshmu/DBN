@@ -70,23 +70,27 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         return isTrackingColumn.get();
     }
 
-    public synchronized List<String> getPossibleValues() {
+    public List<String> getPossibleValues() {
         if (possibleValues == null) {
-            possibleValues = EMPTY_LIST;
-            List<String> values;
-            DBColumn column = getColumn();
-            if (column.isForeignKey()) {
-                DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
-            } else {
-                values = DatasetEditorUtils.loadDistinctColumnValues(column);
-            }
+            synchronized (this) {
+                if (possibleValues == null) {
+                    possibleValues = EMPTY_LIST;
+                    List<String> values;
+                    DBColumn column = getColumn();
+                    if (column.isForeignKey()) {
+                        DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                        values = DatasetEditorUtils.loadDistinctColumnValues(foreignKeyColumn);
+                    } else {
+                        values = DatasetEditorUtils.loadDistinctColumnValues(column);
+                    }
 
-            if (values != null) {
-                DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(column.getProject());
-                int maxElementCount = dataEditorSettings.getValueListPopupSettings().getElementCountThreshold();
-                if (values.size() > maxElementCount) values.clear();
-                possibleValues = values;
+                    if (values != null) {
+                        DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(column.getProject());
+                        int maxElementCount = dataEditorSettings.getValueListPopupSettings().getElementCountThreshold();
+                        if (values.size() > maxElementCount) values.clear();
+                        possibleValues = values;
+                    }
+                }
             }
         }
         return possibleValues;

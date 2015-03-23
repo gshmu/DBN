@@ -13,13 +13,17 @@ public abstract class LazyValue<T> implements Disposable{
         Disposer.register(parent, this);
     }
 
-    public final synchronized T get(){
+    public final T get(){
         if (!loaded && !disposed) {
-            value = load();
-            if (value instanceof Disposable) {
-                Disposer.register(this, (Disposable) value);
+            synchronized (this) {
+                if (!loaded && !disposed) {
+                    value = load();
+                    if (value instanceof Disposable) {
+                        Disposer.register(this, (Disposable) value);
+                    }
+                    loaded = true;
+                }
             }
-            loaded = true;
         }
         return value;
     }

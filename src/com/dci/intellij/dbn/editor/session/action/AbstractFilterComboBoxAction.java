@@ -51,7 +51,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction {
         return actionGroup;
     }
 
-    public synchronized void update(AnActionEvent e) {
+    public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = filterType.getName();
         Icon icon = null;//Icons.DATASET_FILTER_EMPTY;
