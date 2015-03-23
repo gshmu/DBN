@@ -74,7 +74,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
     public List<Driver> loadDrivers(String libraryName) {
         if (!driversCache.containsKey(libraryName)) {
             synchronized (this) {
-                if (driversCache.containsKey(libraryName) && new File(libraryName).isFile()) {
+                if (!driversCache.containsKey(libraryName) && new File(libraryName).isFile()) {
                     String taskDescription = ProgressMonitor.getTaskDescription();
                     ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
                     try {

@@ -580,16 +580,19 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public List<? extends BrowserTreeNode> getTreeChildren() {
         if (visibleTreeChildren == null) {
-            visibleTreeChildren = new ArrayList<BrowserTreeNode>();
-            visibleTreeChildren.add(new LoadInProgressTreeNode(this));
+            synchronized (this) {
+                if (visibleTreeChildren == null) {
+                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
+                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-            new SimpleBackgroundTask("load database objects") {
-                @Override
-                protected void execute() {
-                    if (!isDisposed()) buildTreeChildren();
+                    new SimpleBackgroundTask("load database objects") {
+                        @Override
+                        protected void execute() {
+                            buildTreeChildren();
+                        }
+                    }.start();
                 }
-            }.start();
-
+            }
         }
         return visibleTreeChildren;
     }
@@ -642,27 +645,22 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     @Override
     public void refreshTreeChildren(@Nullable DBObjectType objectType) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed) {
-            if (visibleTreeChildren != null) {
-                for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                    treeNode.refreshTreeChildren(objectType);
-                }
+        if (visibleTreeChildren != null) {
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.refreshTreeChildren(objectType);
             }
         }
     }
 
     public void rebuildTreeChildren() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !isDisposed) {
-            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-            if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
-                buildTreeChildren();
-            }
-            if (visibleTreeChildren != null) {
-                for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                    treeNode.rebuildTreeChildren();
-                }
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+        if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
+            buildTreeChildren();
+        }
+        if (visibleTreeChildren != null) {
+            for (BrowserTreeNode treeNode : visibleTreeChildren) {
+                treeNode.rebuildTreeChildren();
             }
         }
     }
@@ -672,12 +670,10 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public boolean isLeafTreeElement() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (!isDisposed) {
-            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-            for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
-                if (treeNode != null && filter.accepts(treeNode)) {
-                    return false;
-                }
+        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+        for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
+            if (treeNode != null && filter.accepts(treeNode)) {
+                return false;
             }
         }
         return true;

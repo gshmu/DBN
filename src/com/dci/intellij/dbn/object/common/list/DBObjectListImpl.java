@@ -173,6 +173,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 loadInBackground(false);
                 return elements;
             }
+
+            if (elements.size() > 0 && elements.get(0).isDisposed()) {
+                loadInBackground(false);
+                return elements;
+            }
             if (scroll) {
                 DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
             }

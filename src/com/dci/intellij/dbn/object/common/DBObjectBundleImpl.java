@@ -308,18 +308,21 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
     public List<? extends BrowserTreeNode> getTreeChildren() {
         if (visibleTreeChildren == null) {
-            visibleTreeChildren = new ArrayList<BrowserTreeNode>();
-            visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            String connectionString = " (" + connectionHandler.getName() + ")";
+            synchronized (this) {
+                if (visibleTreeChildren == null) {
+                    visibleTreeChildren = new ArrayList<BrowserTreeNode>();
+                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    String connectionString = " (" + connectionHandler.getName() + ")";
 
-            new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                    buildTreeChildren();
+                    new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                            buildTreeChildren();
+                        }
+                    }.start();
                 }
-            }.start();
-
+            }
         }
         return visibleTreeChildren;
     }
