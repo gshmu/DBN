@@ -165,7 +165,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                 file.setUnderlyingObject(underlyingObject);
                 fileViewProvider.forceCachedPsi(file);
                 Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-                document.putUserData(FILE_KEY, getMainDatabaseFile());
                 PsiDocumentManagerImpl.cachePsi(document, file);
                 return file;
             }

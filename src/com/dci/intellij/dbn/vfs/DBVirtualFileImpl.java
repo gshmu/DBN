@@ -1,17 +1,27 @@
 package com.dci.intellij.dbn.vfs;
 
 import javax.swing.Icon;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.impl.PsiDocumentManagerBase;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile {
+    private static AtomicInteger ID_STORE = new AtomicInteger(0);
+    private int id;
     protected String name;
     protected String path;
     protected String url;
-    private int hashCode = -1;
+
+    public DBVirtualFileImpl() {
+        id = ID_STORE.getAndIncrement();
+    }
 
     @Override
     public boolean isInLocalFileSystem() {
@@ -22,6 +32,10 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @NotNull
     public abstract ConnectionHandler getConnectionHandler();
+
+    public int getId() {
+        return id;
+    }
 
     @NotNull
     @Override
@@ -57,23 +71,12 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     public final int hashCode() {
-        if (disposed) return super.hashCode();
-        if (hashCode == -1) {
-            synchronized (this) {
-                if (hashCode == -1) {
-                    DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(getProject());
-                    String sessionId = databaseFileManager.getSessionId();
-                    hashCode = (getUrl() + "#" + sessionId).hashCode();
-                }
-            }
-        }
-
-        return hashCode;
+        return id;
     }
 
     @Override
     public final boolean equals(Object obj) {
-        return !disposed && obj instanceof DBVirtualFileImpl && hashCode() == obj.hashCode();
+        return obj instanceof DBVirtualFileImpl && hashCode() == obj.hashCode();
     }
 
     @NotNull protected abstract String createPath();
@@ -88,13 +91,16 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private boolean disposed;
 
     @Override
-    public void dispose() {
-        disposed = true;
+    public final boolean isDisposed() {
+        return disposed;
     }
 
     @Override
-    public final boolean isDisposed() {
-        return disposed;
+    public void dispose() {
+        disposed = true;
+        Document cachedDocument = FileDocumentManager.getInstance().getCachedDocument(this);
+        if (cachedDocument != null) PsiDocumentManagerBase.cachePsi(cachedDocument, null);
+        putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
     }
 
 

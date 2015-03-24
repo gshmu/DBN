@@ -57,7 +57,6 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
             DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
             fileViewProvider.forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-            document.putUserData(FILE_KEY, this);
             PsiDocumentManagerImpl.cachePsi(document, file);
             return file;
         }
