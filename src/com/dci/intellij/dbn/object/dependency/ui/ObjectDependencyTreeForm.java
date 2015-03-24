@@ -74,7 +74,12 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         headerForm = new DBNHeaderForm(schemaObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, /*new ExpandTreeAction(),*/ new CollapseTreeAction());
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
+                new PreviousSelectionAction(),
+                new NextSelectionAction(),
+                ActionUtil.SEPARATOR,
+                new ExpandTreeAction(),
+                new CollapseTreeAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         Disposer.register(this, dependencyTree);
@@ -106,6 +111,55 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             presentation.setText("Expand All");
         }
     }
+
+    public class PreviousSelectionAction extends DumbAwareAction {
+        public PreviousSelectionAction() {
+            super("Previous", null, Icons.BROWSER_BACK);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            DBObject previous = dependencyTree.getSelectionHistory().previous();
+            dependencyTree.setRootObject((DBSchemaObject) previous, false);
+        }
+
+        public void update(AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+
+            DBObject previous = dependencyTree.getSelectionHistory().previousNoScroll();
+            if (previous != null) {
+                presentation.setEnabled(true);
+                presentation.setText("Previous (" + previous.getQualifiedNameWithType() + ")");
+            } else {
+                presentation.setText("Previous");
+                presentation.setEnabled(false);
+            }
+        }
+    }
+
+    public class NextSelectionAction extends DumbAwareAction {
+        public NextSelectionAction() {
+            super("Next", null, Icons.BROWSER_NEXT);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            DBObject next = dependencyTree.getSelectionHistory().next();
+            dependencyTree.setRootObject((DBSchemaObject) next, false);
+        }
+
+        public void update(AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+
+            DBObject next = dependencyTree.getSelectionHistory().nextNoScroll();
+            if (next != null) {
+                presentation.setEnabled(true);
+                presentation.setText("Next (" + next.getQualifiedNameWithType() + ")");
+            } else {
+                presentation.setText("Next");
+                presentation.setEnabled(false);
+            }
+        }
+    }
+
     public class CollapseTreeAction extends DumbAwareAction {
 
         public CollapseTreeAction() {
