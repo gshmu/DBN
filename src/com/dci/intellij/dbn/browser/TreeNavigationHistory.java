@@ -16,8 +16,8 @@ public class TreeNavigationHistory implements Disposable{
         if (history.size() > 0 && treeNode == history.get(offset)) {
             return;
         }
-        while (history.size() - 1  > offset) {
-            history.remove(offset);
+        while (history.size() > offset + 1) {
+            history.remove(offset + 1);
         }
 
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(treeNode.getProject());

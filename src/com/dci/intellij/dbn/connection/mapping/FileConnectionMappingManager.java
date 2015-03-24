@@ -47,6 +47,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -121,45 +122,48 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
     @Nullable
     public ConnectionHandler getActiveConnection(@NotNull VirtualFile virtualFile) {
-        // if the file is a database content file then get the connection from the underlying database object
-        if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
-            if (virtualFile instanceof FileConnectionMappingProvider) {
-                FileConnectionMappingProvider connectionMappingProvider = (FileConnectionMappingProvider) virtualFile;
-                return connectionMappingProvider.getActiveConnection();
-            }
-        }
-
-        if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
-            // if the file is an attached ddl file, then resolve the object which it is
-            // linked to, and return its database connection
-            DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            if (schemaObject != null) {
-                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                if (DatabaseFileSystem.isFileOpened(schemaObject)) {
-                    return connectionHandler;
+        try {
+            // if the file is a database content file then get the connection from the underlying database object
+            if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
+                if (virtualFile instanceof FileConnectionMappingProvider) {
+                    FileConnectionMappingProvider connectionMappingProvider = (FileConnectionMappingProvider) virtualFile;
+                    return connectionMappingProvider.getActiveConnection();
                 }
             }
 
-            // lookup connection mappings
-            ConnectionHandler connectionHandler = virtualFile.getUserData(ACTIVE_CONNECTION_KEY);
-            if (connectionHandler == null || connectionHandler.isDisposed()) {
-                FileConnectionMapping mapping = lookupMapping(virtualFile);
-                if (mapping != null) {
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                    connectionHandler = connectionManager.getConnectionHandler(mapping.getConnectionId());
-                    if (connectionHandler == null) {
-                        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-                        connectionHandler = connectionBundle.getVirtualConnection(mapping.getConnectionId());
+            if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
+                // if the file is an attached ddl file, then resolve the object which it is
+                // linked to, and return its database connection
+                DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
+                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                if (schemaObject != null) {
+                    ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                    if (DatabaseFileSystem.isFileOpened(schemaObject)) {
+                        return connectionHandler;
                     }
-
-                    if (connectionHandler != null)
-                        virtualFile.putUserData(ACTIVE_CONNECTION_KEY, connectionHandler);
                 }
-            }
-            return connectionHandler;
-        }
 
+                // lookup connection mappings
+                ConnectionHandler connectionHandler = virtualFile.getUserData(ACTIVE_CONNECTION_KEY);
+                if (connectionHandler == null || connectionHandler.isDisposed()) {
+                    FileConnectionMapping mapping = lookupMapping(virtualFile);
+                    if (mapping != null) {
+                        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                        connectionHandler = connectionManager.getConnectionHandler(mapping.getConnectionId());
+                        if (connectionHandler == null) {
+                            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+                            connectionHandler = connectionBundle.getVirtualConnection(mapping.getConnectionId());
+                        }
+
+                        if (connectionHandler != null)
+                            virtualFile.putUserData(ACTIVE_CONNECTION_KEY, connectionHandler);
+                    }
+                }
+                return connectionHandler;
+            }
+        } catch (ProcessCanceledException e) {
+            return null;
+        }
         return null;
     }
 

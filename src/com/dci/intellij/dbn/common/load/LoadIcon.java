@@ -26,8 +26,12 @@ public class LoadIcon implements Icon{
     private static class IconRollerTimerTask extends TimerTask {
         @Override
         public void run() {
-            iconIndex++;
-            if (iconIndex == icons.length) iconIndex = 0;
+            if (iconIndex == icons.length - 1) {
+                iconIndex = 0;
+            } else {
+                iconIndex++;
+            }
+
             if (ICON_ROLLER != null && TimeUtil.isOlderThan(lastAccessTimestamp, TimeUtil.TEN_SECONDS)) {
                 synchronized (IconRollerTimerTask.class) {
                     Timer cachedIconRoller = ICON_ROLLER;

@@ -889,7 +889,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 dataset = schema.getDataset(datasetName);
                 loaderCache.setObject(datasetName, dataset);
             }
-            return new DBDatasetTriggerImpl(dataset, resultSet);
+            return dataset == null ? null : new DBDatasetTriggerImpl(dataset, resultSet);
         }
     };
 
@@ -908,7 +908,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 table = schema.getTable(tableName);
                 loaderCache.setObject(tableName, table);
             }
-            return new DBNestedTableImpl(table, resultSet);
+            return table == null ? null : new DBNestedTableImpl(table, resultSet);
         }
     };
 
@@ -927,7 +927,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 packagee = schema.getPackage(packageName);
                 loaderCache.setObject(packageName, packagee);
             }
-            return new DBPackageFunctionImpl(packagee, resultSet);
+            return packagee == null ? null : new DBPackageFunctionImpl(packagee, resultSet);
         }
     };
 
@@ -946,7 +946,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 packagee = schema.getPackage(packageName);
                 loaderCache.setObject(packageName, packagee);
             }
-            return new DBPackageProcedureImpl(packagee, resultSet);
+            return packagee == null ? null : new DBPackageProcedureImpl(packagee, resultSet);
         }
     };
 
@@ -965,7 +965,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 packagee = schema.getPackage(packageName);
                 loaderCache.setObject(packageName, packagee);
             }
-            return new DBPackageTypeImpl(packagee, resultSet);
+            return packagee == null ? null : new DBPackageTypeImpl(packagee, resultSet);
         }
     };
 
@@ -986,7 +986,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 type = schema.getType(typeName);
                 loaderCache.setObject(typeName, type);
             }
-            return new DBTypeAttributeImpl(type, resultSet);
+            return type == null ? null : new DBTypeAttributeImpl(type, resultSet);
         }
     };
 

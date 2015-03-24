@@ -17,8 +17,8 @@ public class DBObjectSelectionHistory implements Disposable{
             if (history.size() > 0 && history.get(offset).equals(objectRef)) {
                 return;
             }
-            while (history.size() - 1  > offset) {
-                history.remove(offset);
+            while (history.size() > offset + 1) {
+                history.remove(offset + 1);
             }
 
             while (history.size() > 30) {
@@ -41,15 +41,18 @@ public class DBObjectSelectionHistory implements Disposable{
         return offset > 0;
     }
 
-    public @Nullable DBObject nextNoScroll() {
+    @Nullable
+    public DBObject nextNoScroll() {
         return hasNext() ? DBObjectRef.get(history.get(offset + 1)) : null;
     }
 
-    public @Nullable DBObject previousNoScroll() {
+    @Nullable
+    public DBObject previousNoScroll() {
         return hasPrevious() ? DBObjectRef.get(history.get(offset - 1)) : null;
     }
 
-    public @Nullable DBObject next() {
+    @Nullable
+    public DBObject next() {
         if (offset < history.size() -1) {
             offset = offset + 1;
             DBObjectRef objectRef = history.get(offset);
@@ -63,7 +66,8 @@ public class DBObjectSelectionHistory implements Disposable{
         return null;
     }
 
-    public @Nullable DBObject previous() {
+    @Nullable
+    public DBObject previous() {
         if (offset > 0) {
             offset = offset-1;
             DBObjectRef objectRef = history.get(offset);

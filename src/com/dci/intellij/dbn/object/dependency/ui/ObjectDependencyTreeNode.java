@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
+import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +62,11 @@ public class ObjectDependencyTreeNode implements Disposable {
                 shouldLoad = false;
             } else {
                 dependencies = new ArrayList<ObjectDependencyTreeNode>();
-                //dependencies.add(new ObjectDependencyTreeNode(this, null));
+                TreePath treePath = new TreePath(getTreePath());
+                if (getModel().getTree().isExpanded(treePath)) {
+                    dependencies.add(new ObjectDependencyTreeNode(this, null));
+                }
+
             }
         }
 

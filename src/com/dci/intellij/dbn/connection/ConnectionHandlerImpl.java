@@ -387,12 +387,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionPool;
     }
 
-    public synchronized DatabaseInterfaceProvider getInterfaceProvider() {
+    public DatabaseInterfaceProvider getInterfaceProvider() {
         if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
-            try {
-                interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
-            } catch (SQLException e) {
+            synchronized (this) {
+                if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
+                    try {
+                        interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
+                    } catch (SQLException e) {
 
+                    }
+                }
             }
         }
         if (interfaceProvider != null) {

@@ -125,41 +125,37 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     public List<DBSchema> getReferencingSchemas() throws SQLException {
         List<DBSchema> schemas = new ArrayList<DBSchema>();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            Connection connection = connectionHandler.getPoolConnection(getSchema());
-            ResultSet resultSet = null;
-            try {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                resultSet = metadataInterface.loadReferencingSchemas(getSchema().getName(), getName(), connection);
-                while (resultSet.next()) {
-                    String schemaName = resultSet.getString("SCHEMA_NAME");
-                    DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
-                    if (schema != null)  {
-                        schemas.add(schema);
-                    }
+        Connection connection = connectionHandler.getPoolConnection(getSchema());
+        ResultSet resultSet = null;
+        try {
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            resultSet = metadataInterface.loadReferencingSchemas(getSchema().getName(), getName(), connection);
+            while (resultSet.next()) {
+                String schemaName = resultSet.getString("SCHEMA_NAME");
+                DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
+                if (schema != null)  {
+                    schemas.add(schema);
                 }
-                if (schemas.isEmpty()) {
-                    schemas.add(getSchema());
-                }
-
-            } finally {
-                ConnectionUtil.closeResultSet(resultSet);
-                connectionHandler.freePoolConnection(connection);
             }
+            if (schemas.isEmpty()) {
+                schemas.add(getSchema());
+            }
+
+        } finally {
+            ConnectionUtil.closeResultSet(resultSet);
+            connectionHandler.freePoolConnection(connection);
         }
         return schemas;
     }
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            Connection connection = connectionHandler.getPoolConnection(getSchema());
-            try {
-                DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-                ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
-            } finally {
-                connectionHandler.freePoolConnection(connection);
-            }
+        Connection connection = connectionHandler.getPoolConnection(getSchema());
+        try {
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
+        } finally {
+            connectionHandler.freePoolConnection(connection);
         }
     }
 
@@ -186,10 +182,8 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             if (schema == null) {
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                if (connectionHandler != null) {
-                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
-                    loaderCache.setObject(objectOwner,  schema);
-                }
+                schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                loaderCache.setObject(objectOwner,  schema);
             }
 
             return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
@@ -215,10 +209,8 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             if (schema == null) {
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                if (connectionHandler != null) {
-                    schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
-                    loaderCache.setObject(objectOwner,  schema);
-                }
+                schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
+                loaderCache.setObject(objectOwner,  schema);
             }
             return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
         }
