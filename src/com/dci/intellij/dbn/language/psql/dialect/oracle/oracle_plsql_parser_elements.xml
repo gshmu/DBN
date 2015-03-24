@@ -284,7 +284,7 @@
             <token id="000000118" type-id="KW_SERIALLY_REUSABLE" />
             <token id="000000119" type-id="CHR_SEMICOLON" />
         </sequence>
-        <iteration id="000000120">
+        <iteration id="000000120" optional="true">
             <one-of id="000000121">
                 <element ref-id="type_declaration" />
                 <element ref-id="subtype_definition" />
@@ -320,7 +320,7 @@
             <token id="000000135" type-id="KW_SERIALLY_REUSABLE" />
             <token id="000000136" type-id="CHR_SEMICOLON" />
         </sequence>
-        <iteration id="000000137">
+        <iteration id="000000137" optional="true">
             <one-of id="000000138">
                 <element ref-id="type_declaration" />
                 <element ref-id="subtype_definition" />

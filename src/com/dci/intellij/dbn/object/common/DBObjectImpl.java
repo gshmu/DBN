@@ -62,6 +62,7 @@ import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -485,7 +486,12 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     @NotNull
     public DBObjectVirtualFile getVirtualFile() {
         if (virtualFile == null) {
-            virtualFile = new DBObjectVirtualFile(this);
+            synchronized (this) {
+                if (virtualFile == null) {
+                    virtualFile = new DBObjectVirtualFile(this);
+                    Disposer.register(this, virtualFile);
+                }
+            }
         }
         return virtualFile;
     }

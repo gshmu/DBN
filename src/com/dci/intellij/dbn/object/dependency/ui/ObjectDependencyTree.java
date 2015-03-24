@@ -10,6 +10,7 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.MouseEvent;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -31,12 +32,14 @@ import com.intellij.util.ui.tree.TreeUtil;
 public class ObjectDependencyTree extends JTree implements Disposable{
     private DBObjectSelectionHistory selectionHistory =  new DBObjectSelectionHistory();
     private ObjectDependencyTreeSpeedSearch speedSearch;
+    private Project project;
 
     public ObjectDependencyTree(Project project, DBSchemaObject schemaObject) {
+        this.project = project;
         selectionHistory.add(schemaObject);
         ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
         ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
-        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, dependencyType);
+        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(this, schemaObject, dependencyType);
         setModel(model);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setCellRenderer(new ObjectDependencyTreeCellRenderer());
@@ -58,21 +61,25 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         addMouseListener(new MouseInputAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                    final TreePath path = getPathForLocation(event.getX(), event.getY());
-                    if (path != null) {
-                        final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
-                        DBObject object = node.getObject();
-                        if (object != null) {
-                            event.consume();
-                            object.navigate(true);
+                int button = event.getButton();
+                if (button == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
+                    if (event.getClickCount() > 1) {
+                        TreePath path = getPathForLocation(event.getX(), event.getY());
+                        if (path != null) {
+                            ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
+                            DBObject object = node.getObject();
+                            if (object != null) {
+                                event.consume();
+                                setRootObject((DBSchemaObject) object, true);
+                                //object.navigate(true);
+                            }
                         }
                     }
                 }
             }
 
             public void mouseReleased(final MouseEvent event) {
-                if (event.getButton() == MouseEvent.BUTTON3) {
+                if (false && event.getButton() == MouseEvent.BUTTON3) {
                     final TreePath path = getPathForLocation(event.getX(), event.getY());
                     if (path != null) {
                         final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
@@ -97,6 +104,15 @@ public class ObjectDependencyTree extends JTree implements Disposable{
                 }
             }
         });
+    }
+
+    @Override
+    protected void processMouseEvent(MouseEvent e) {
+        super.processMouseEvent(e);
+    }
+
+    public Project getProject() {
+        return project;
     }
 
     public DBObjectSelectionHistory getSelectionHistory() {
@@ -134,30 +150,31 @@ public class ObjectDependencyTree extends JTree implements Disposable{
     }
 
     public void setDependencyType(ObjectDependencyType dependencyType) {
-        ObjectDependencyManager.getInstance(getModel().getProject()).setLastUserDependencyType(dependencyType);
         ObjectDependencyTreeModel oldModel = getModel();
+        Project project = FailsafeUtil.get(oldModel.getProject());
+        ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
+        dependencyManager.setLastUserDependencyType(dependencyType);
+
         DBSchemaObject object = oldModel.getObject();
-        Project project = oldModel.getProject();
-        if (object != null && project != null && !project.isDisposed()) {
-            ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, object, dependencyType);
+        if (object != null) {
+            ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(this, object, dependencyType);
             setModel(model);
             Disposer.dispose(oldModel);
         }
     }
 
     public void setRootObject(DBSchemaObject object, boolean addHistory) {
+        ObjectDependencyTreeModel oldModel = getModel();
+        Project project = FailsafeUtil.get(oldModel.getProject());
+
         if (addHistory) {
             selectionHistory.add(object);
         }
 
-        ObjectDependencyTreeModel oldModel = getModel();
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
-        Project project = oldModel.getProject();
-        if (project != null && !project.isDisposed()) {
-            ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, object, dependencyType);
-            setModel(model);
-            Disposer.dispose(oldModel);
-        }
+        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(this, object, dependencyType);
+        setModel(model);
+        Disposer.dispose(oldModel);
     }
 
     private boolean disposed;
@@ -171,6 +188,8 @@ public class ObjectDependencyTree extends JTree implements Disposable{
     public void dispose() {
         disposed = true;
         speedSearch = null;
+        selectionHistory = null;
+        project = null;
     }
 
 

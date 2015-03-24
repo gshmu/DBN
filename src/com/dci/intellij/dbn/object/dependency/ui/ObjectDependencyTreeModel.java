@@ -6,38 +6,45 @@ import javax.swing.tree.TreePath;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     private Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
     private ObjectDependencyTreeNode root;
     private ObjectDependencyType dependencyType;
-    private Project project;
+    private ObjectDependencyTree tree;
     private DBObjectRef<DBSchemaObject> objectRef;
 
 
-    public ObjectDependencyTreeModel(Project project, DBSchemaObject object, ObjectDependencyType dependencyType) {
-        this.project = project;
+    public ObjectDependencyTreeModel(ObjectDependencyTree tree, DBSchemaObject object, ObjectDependencyType dependencyType) {
+        this.tree = tree;
         this.objectRef = DBObjectRef.from(object);
         this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
+
+        Disposer.register(this, root);
     }
 
     public DBSchemaObject getObject() {
         return DBObjectRef.get(objectRef);
     }
 
+    public ObjectDependencyTree getTree() {
+        return tree;
+    }
+
     public Project getProject() {
-        return project;
+        return tree.getProject();
     }
 
     public ObjectDependencyType getDependencyType() {
@@ -45,6 +52,7 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     }
 
     @Override
+    @NotNull
     public ObjectDependencyTreeNode getRoot() {
         return root;
     }
@@ -101,8 +109,7 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     @Override
     public void dispose() {
         disposed = true;
-        DisposerUtil.dispose(root);
-        project = null;
+        root = null;
     }
 
     public void notifyNodeLoaded(ObjectDependencyTreeNode node) {

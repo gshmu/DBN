@@ -277,18 +277,16 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public void saveChanges() {
         FileDocumentManager.getInstance().saveAllDocuments();
         Project project = getProject();
-        if (project != null) {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-                if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
-                    FileEditor[] fileEditors = fileEditorManager.getEditors(this);
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof SourceCodeEditor) {
-                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                            sourceCodeManager.updateSourceToDatabase(sourceCodeEditor, (DBSourceCodeVirtualFile) contentVirtualFile);
-                            break;
-                        }
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+            if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
+                FileEditor[] fileEditors = fileEditorManager.getEditors(this);
+                for (FileEditor fileEditor : fileEditors) {
+                    if (fileEditor instanceof SourceCodeEditor) {
+                        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                        sourceCodeManager.updateSourceToDatabase(sourceCodeEditor, (DBSourceCodeVirtualFile) contentVirtualFile);
+                        break;
                     }
                 }
             }

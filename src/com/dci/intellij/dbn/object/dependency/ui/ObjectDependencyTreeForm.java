@@ -114,7 +114,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
     public class PreviousSelectionAction extends DumbAwareAction {
         public PreviousSelectionAction() {
-            super("Previous", null, Icons.BROWSER_BACK);
+            super("Previous Selection", null, Icons.BROWSER_BACK);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -124,21 +124,13 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
         public void update(AnActionEvent e) {
             Presentation presentation = e.getPresentation();
-
-            DBObject previous = dependencyTree.getSelectionHistory().previousNoScroll();
-            if (previous != null) {
-                presentation.setEnabled(true);
-                presentation.setText("Previous (" + previous.getQualifiedNameWithType() + ")");
-            } else {
-                presentation.setText("Previous");
-                presentation.setEnabled(false);
-            }
+            presentation.setEnabled(dependencyTree.getSelectionHistory().hasPrevious());
         }
     }
 
     public class NextSelectionAction extends DumbAwareAction {
         public NextSelectionAction() {
-            super("Next", null, Icons.BROWSER_NEXT);
+            super("Next Selection", null, Icons.BROWSER_NEXT);
         }
 
         public void actionPerformed(AnActionEvent e) {
@@ -148,15 +140,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
         public void update(AnActionEvent e) {
             Presentation presentation = e.getPresentation();
-
-            DBObject next = dependencyTree.getSelectionHistory().nextNoScroll();
-            if (next != null) {
-                presentation.setEnabled(true);
-                presentation.setText("Next (" + next.getQualifiedNameWithType() + ")");
-            } else {
-                presentation.setText("Next");
-                presentation.setEnabled(false);
-            }
+            presentation.setEnabled(dependencyTree.getSelectionHistory().hasNext());
         }
     }
 
