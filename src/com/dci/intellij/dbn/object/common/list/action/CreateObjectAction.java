@@ -16,7 +16,7 @@ public class CreateObjectAction extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent anActionEvent) {
-        DBSchema schema = (DBSchema) objectList.getParent();
+        DBSchema schema = (DBSchema) objectList.getParentElement();
         DatabaseObjectFactory factory =
                 DatabaseObjectFactory.getInstance(schema.getProject());
         factory.openFactoryInputDialog(schema, objectList.getObjectType());

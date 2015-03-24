@@ -42,6 +42,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
@@ -153,6 +154,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public DBSessionBrowserVirtualFile getSessionBrowserFile() {
         if (sessionBrowserFile == null) {
             sessionBrowserFile = new DBSessionBrowserVirtualFile(this);
+            Disposer.register(this, sessionBrowserFile);
         }
         return sessionBrowserFile;
     }

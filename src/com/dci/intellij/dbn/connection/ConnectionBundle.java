@@ -87,6 +87,11 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         return FailsafeUtil.get(project);
     }
 
+    @Override
+    public GenericDatabaseElement getParentElement() {
+        return null;
+    }
+
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }

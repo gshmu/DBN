@@ -161,14 +161,14 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private static final DynamicContentLoader INDEX_COLUMN_RELATION_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return metadataInterface.loadIndexRelations(table.getSchema().getName(), table.getName(), connection);
         }
 
         public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String columnName = resultSet.getString("COLUMN_NAME");
             String indexName = resultSet.getString("INDEX_NAME");
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             DBIndex index = table.getIndex(indexName);
             DBColumn column = table.getColumn(columnName);
 
@@ -186,7 +186,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
         public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
             DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return indexColumnRelation.getColumn().getDataset().equals(table);
         }
     };
@@ -219,7 +219,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
     private static final DynamicSubcontentLoader NESTED_TABLES_LOADER = new DynamicSubcontentLoader<DBNestedTable>(true) {
         public boolean match(DBNestedTable nestedTable, DynamicContent dynamicContent) {
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return nestedTable.getTable().equals(table);
         }
 
@@ -231,19 +231,19 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private static final DynamicContentLoader<DBNestedTable> NESTED_TABLES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBNestedTable>() {
         public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);
       }
 
         public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return new DBNestedTableImpl(table, resultSet);
         }
     };
 
     private static final DynamicSubcontentLoader INDEXES_LOADER = new DynamicSubcontentLoader<DBIndex>(true) {
         public boolean match(DBIndex index, DynamicContent dynamicContent) {
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             DBObject indexTable = index.getTable();
             return indexTable != null && indexTable.equals(table);
         }
@@ -256,12 +256,12 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     private static final DynamicContentLoader<DBIndex> INDEXES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBIndex>() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return metadataInterface.loadIndexes(table.getSchema().getName(), table.getName(), connection);
 }
 
         public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTable table = (DBTable) dynamicContent.getParent();
+            DBTable table = (DBTable) dynamicContent.getParentElement();
             return new DBIndexImpl(table, resultSet);
         }
     };

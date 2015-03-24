@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -26,7 +26,9 @@ import com.dci.intellij.dbn.object.factory.ui.FunctionFactoryInputForm;
 import com.dci.intellij.dbn.object.factory.ui.ProcedureFactoryInputForm;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputDialog;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
+import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
@@ -100,8 +102,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     public void dropObject(final DBSchemaObject object) {
-        TaskInstructions taskInstructions = new TaskInstructions("Dropping " + object.getQualifiedNameWithType(), false, false);
-        ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object, taskInstructions) {
+        ConnectionAction dropObjectAction = new ConnectionAction("dropping the object", object) {
             @Override
             protected boolean canExecute() {
                 return getOption() == 0;
@@ -109,38 +110,15 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
             @Override
             protected void execute() {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                Connection connection = null;
-                try {
-                    DBContentType contentType = object.getContentType();
-                    connection = connectionHandler.getPoolConnection();
+                DatabaseFileManager.getInstance(getProject()).closeFile(object);
 
-                    String objectName = object.getQualifiedName();
-                    String objectTypeName = object.getTypeName();
-                    DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-                    if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                        DBObjectStatusHolder status = object.getStatus();
-                        if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
-                            ddlInterface.dropObject(objectTypeName, objectName, connection);
-                        }
-                        if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
-                            ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
-                        }
-
-                    } else {
-                        ddlInterface.dropObject(objectTypeName, objectName, connection);
+                new BackgroundTask(getProject(), "Dropping " + object.getQualifiedNameWithType(), false, false) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        doDropObject(object);
                     }
-
-                    DBObjectList objectList = (DBObjectList) object.getTreeParent();
-                    objectList.reload();
-                    notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
-                } catch (SQLException e) {
-                    String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
-                    Project project = getProject();
-                    MessageUtil.showErrorDialog(project, message, e);
-                } finally {
-                    connectionHandler.freePoolConnection(connection);
-                }            }
+                }.start();
+          }
         };
 
         MessageUtil.showQuestionDialog(
@@ -148,6 +126,43 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 "Drop object",
                 "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
                 MessageUtil.OPTIONS_YES_NO, 0, dropObjectAction);
+    }
+
+    private void doDropObject(DBSchemaObject object) {
+        ConnectionHandler connectionHandler = object.getConnectionHandler();
+        Connection connection = null;
+        try {
+            DBContentType contentType = object.getContentType();
+            connection = connectionHandler.getPoolConnection();
+
+            String objectName = object.getQualifiedName();
+            String objectTypeName = object.getTypeName();
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
+                DBObjectStatusHolder status = object.getStatus();
+                if (status.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
+                    ddlInterface.dropObjectBody(objectTypeName, objectName, connection);
+                }
+
+                if (status.is(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT)) {
+                    ddlInterface.dropObject(objectTypeName, objectName, connection);
+                }
+
+            } else {
+                ddlInterface.dropObject(objectTypeName, objectName, connection);
+            }
+
+            DBObjectList objectList = (DBObjectList) object.getTreeParent();
+            objectList.reload();
+
+            notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
+        } catch (SQLException e) {
+            String message = "Could not drop " + object.getQualifiedNameWithType() + ".";
+            Project project = getProject();
+            MessageUtil.showErrorDialog(project, message, e);
+        } finally {
+            connectionHandler.freePoolConnection(connection);
+        }
     }
 
 

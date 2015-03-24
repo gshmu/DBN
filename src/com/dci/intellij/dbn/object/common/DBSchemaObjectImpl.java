@@ -165,7 +165,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     private static final DynamicContentLoader REFERENCED_OBJECTS_LOADER = new DynamicContentResultSetLoader() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
+            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
             return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
         }
 
@@ -180,7 +180,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
 
             if (schema == null) {
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
                 schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
                 loaderCache.setObject(objectOwner,  schema);
@@ -193,7 +193,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     private static final DynamicContentLoader REFERENCING_OBJECTS_LOADER = new DynamicContentResultSetLoader() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
+            DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
             return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
         }
 
@@ -207,7 +207,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
 
             DBSchema schema = (DBSchema) loaderCache.getObject(objectOwner);
             if (schema == null) {
-                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParent();
+                DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
                 schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
                 loaderCache.setObject(objectOwner,  schema);

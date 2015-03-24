@@ -93,6 +93,11 @@ public class LoadInProgressTreeNode implements BrowserTreeNode {
         return getTreeParent().getProject();
     }
 
+    @Override
+    public GenericDatabaseElement getParentElement() {
+        return null;
+    }
+
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }

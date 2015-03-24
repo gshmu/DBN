@@ -31,15 +31,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
+public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private ConnectionHandlerRef connectionHandlerRef;
     private DBObjectRef<DBSchema> currentSchemaRef;
-    protected String name;
-    protected String path;
-    protected String url;
-
 
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
         this.connectionHandlerRef = connectionHandler.getRef();
@@ -62,10 +58,9 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     }
 
     public void setName(String name) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
         this.name = name;
-        path = DatabaseFileSystem.createPath(connectionHandler) + " CONSOLE - " + name;
-        url = DatabaseFileSystem.createUrl(connectionHandler) + "/console#" + name;
+        path = null;
+        url = null;
     }
 
     public Icon getIcon() {
@@ -77,6 +72,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         return connectionHandlerRef.get();
     }
 
+    @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
     }
@@ -114,14 +110,14 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
 
     @NotNull
     @Override
-    public String getPath() {
-        return path;
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(getConnectionHandler()) + " CONSOLE - " + name;
     }
 
     @NotNull
     @Override
-    public String getUrl() {
-        return url;
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/console#" + name;
     }
 
     @Override
@@ -134,17 +130,7 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
         return false;
     }
 
-    @Override
-    public boolean isValid() {
-        return true;
-    }
-
     public boolean isDefault() {return name.equals(getConnectionHandler().getName());}
-
-    @Override
-    public boolean isInLocalFileSystem() {
-        return false;
-    }
 
     @Override
     public VirtualFile getParent() {
@@ -215,20 +201,5 @@ public class DBConsoleVirtualFile extends VirtualFile implements DBParseableVirt
     @Override
     public int compareTo(@NotNull DBConsoleVirtualFile o) {
         return name.compareTo(o.name);
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        disposed = true;
     }
 }
