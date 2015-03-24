@@ -137,7 +137,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
         if (databaseFile == null || databaseFile.isDisposed()){
             databaseFile = createDatabaseFile(object);
-            Disposer.register(object, databaseFile);
             filesCache.put(objectRef, databaseFile);
         }
         return databaseFile;
