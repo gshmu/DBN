@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectSelectionHistory;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
@@ -28,8 +29,11 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 
 public class ObjectDependencyTree extends JTree implements Disposable{
+    private DBObjectSelectionHistory selectionHistory =  new DBObjectSelectionHistory();
     private ObjectDependencyTreeSpeedSearch speedSearch;
+
     public ObjectDependencyTree(Project project, DBSchemaObject schemaObject) {
+        selectionHistory.add(schemaObject);
         ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
         ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
         ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(project, schemaObject, dependencyType);
@@ -45,6 +49,8 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         });
 
         speedSearch = new ObjectDependencyTreeSpeedSearch(this);
+
+        Disposer.register(this, selectionHistory);
         Disposer.register(this, speedSearch);
         Disposer.register(this, model);
 
@@ -72,7 +78,7 @@ public class ObjectDependencyTree extends JTree implements Disposable{
                         final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
                         DefaultActionGroup actionGroup = new DefaultActionGroup();
                         if (node != null) {
-                            ObjectDependencyTreeNode rootNode = (ObjectDependencyTreeNode) node.getModel().getRoot();
+                            ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
                             DBObject object = node.getObject();
                             if (object instanceof DBSchemaObject && !CommonUtil.safeEqual(rootNode.getObject(), object)) {
                                 actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
@@ -93,6 +99,10 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         });
     }
 
+    public DBObjectSelectionHistory getSelectionHistory() {
+        return selectionHistory;
+    }
+
     public void selectElement(ObjectDependencyTreeNode treeNode) {
         TreePath treePath = new TreePath(treeNode.getTreePath());
         TreeUtil.selectPath(this, treePath);
@@ -108,7 +118,7 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         public void actionPerformed(AnActionEvent e) {
             DBSchemaObject schemaObject = DBObjectRef.get(objectRef);
             if (schemaObject != null) {
-                setRootObject(schemaObject);
+                setRootObject(schemaObject, true);
             }
         }
 
@@ -135,7 +145,11 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         }
     }
 
-    public void setRootObject(DBSchemaObject object) {
+    public void setRootObject(DBSchemaObject object, boolean addHistory) {
+        if (addHistory) {
+            selectionHistory.add(object);
+        }
+
         ObjectDependencyTreeModel oldModel = getModel();
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
         Project project = oldModel.getProject();

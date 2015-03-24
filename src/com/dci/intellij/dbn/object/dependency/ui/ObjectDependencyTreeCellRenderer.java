@@ -23,14 +23,15 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
         if (object != null) {
             ObjectDependencyTreeNode selectedNode = (ObjectDependencyTreeNode) tree.getLastSelectedPathComponent();
-            boolean highlight = selectedNode != null && selectedNode != node && CommonUtil.safeEqual(object, selectedNode.getObject());
+            boolean isLoading = node.isLoading();
+            boolean highlight = !isLoading && selectedNode != null && selectedNode != node && CommonUtil.safeEqual(object, selectedNode.getObject());
 
             SimpleTextAttributes regularAttributes = highlight ?
                     SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :
-                    SimpleTextAttributes.REGULAR_ATTRIBUTES;
+                    isLoading ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES;
             SimpleTextAttributes grayAttributes = highlight ?
                     SimpleTextAttributes.GRAY_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, new JBColor(0xCCCCFF, 0x155221), null) :
-                    SimpleTextAttributes.GRAY_ATTRIBUTES;
+                    isLoading ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES : SimpleTextAttributes.GRAY_ATTRIBUTES;
 
             Icon objectIcon = object.getIcon();
             ObjectDependencyTreeModel model = node.getModel();
@@ -38,6 +39,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
             Icon icon = node.getParent() == null ? objectIcon :
                     objectIcon == null ? dependencyTypeIcon : new MergedIcon(dependencyTypeIcon, 1, objectIcon);
             setIcon(icon);
+
             setBackground(selected ? UIUtil.getTreeSelectionBackground() : regularAttributes.getBgColor());
             //if (highlight) setBorder(new LineBorder(JBColor.red)); else setBorder(null);
             boolean appendSchema = true;
