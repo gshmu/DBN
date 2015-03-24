@@ -33,7 +33,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -253,8 +253,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                     navigateToElement(databaseFile.getObject());
                 }
-                else  if (file instanceof DBVirtualFile) {
-                    DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
+                else  if (file instanceof DBVirtualFileImpl) {
+                    DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
                     ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                     navigateToElement(connectionHandler.getObjectBundle());
                 }
@@ -271,8 +271,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
                         navigateToElement(databaseFile.getObject());
                     }
-                    else  if (newFile instanceof DBVirtualFile) {
-                        DBVirtualFile databaseVirtualFile = (DBVirtualFile) newFile;
+                    else  if (newFile instanceof DBVirtualFileImpl) {
+                        DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
                         ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                         navigateToElement(connectionHandler.getObjectBundle());
                     }

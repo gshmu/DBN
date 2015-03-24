@@ -19,26 +19,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.LocalTimeCounter;
 
-public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtualFile, Comparable<DBSessionBrowserVirtualFile> {
+public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private ConnectionHandlerRef connectionHandlerRef;
-    protected String name;
-    protected String path;
-    protected String url;
-
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = connectionHandler.getRef();
-        setName(connectionHandler.getName());
+        this.name = connectionHandler.getName();
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
-    }
-
-    public void setName(String name) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        this.name = name;
-        path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION BROWSER - " + name;
-        url = DatabaseFileSystem.createUrl(connectionHandler) + "/session_browser#" + name;
     }
 
     public Icon getIcon() {
@@ -50,6 +39,7 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
         return connectionHandlerRef.get();
     }
 
+    @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
     }
@@ -68,14 +58,15 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
 
     @NotNull
     @Override
-    public String getPath() {
-        return path;
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(getConnectionHandler()) + " SESSION BROWSER - " + name;
+
     }
 
     @NotNull
     @Override
-    public String getUrl() {
-        return url;
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(getConnectionHandler()) + "/session_browser#" + name;
     }
 
     @Override
@@ -88,17 +79,7 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
         return false;
     }
 
-    @Override
-    public boolean isValid() {
-        return true;
-    }
-
     public boolean isDefault() {return name.equals(getConnectionHandler().getName());}
-
-    @Override
-    public boolean isInLocalFileSystem() {
-        return false;
-    }
 
     @Override
     public VirtualFile getParent() {
@@ -165,18 +146,4 @@ public class DBSessionBrowserVirtualFile extends VirtualFile implements DBVirtua
         return name.compareTo(o.name);
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        disposed = true;
-    }
 }

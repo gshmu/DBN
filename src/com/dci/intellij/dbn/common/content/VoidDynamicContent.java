@@ -121,7 +121,7 @@ public class VoidDynamicContent implements DynamicContent{
 
     @NotNull
     @Override
-    public GenericDatabaseElement getParent() {
+    public GenericDatabaseElement getParentElement() {
         return null;
     }
 

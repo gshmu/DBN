@@ -19,6 +19,7 @@ import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vcs.FileStatus;
@@ -41,7 +42,8 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     private DBConnectionVirtualFile virtualFile;
 
     public DBConnectionPsiDirectory(ConnectionHandler connectionHandler) {
-        this.virtualFile = new DBConnectionVirtualFile(connectionHandler);
+        virtualFile = new DBConnectionVirtualFile(connectionHandler);
+        Disposer.register(this, virtualFile);
     }
 
     @NotNull

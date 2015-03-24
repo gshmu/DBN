@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,15 +23,13 @@ import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile implements DBVirtualFile {
+public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected DBObjectRef<T> objectRef;
 
-    private String path;
-    private String url;
-
     public DBObjectVirtualFile(T object) {
         this.objectRef = DBObjectRef.from(object);
+        this.name = objectRef.getFileName();
     }
 
     public DBObjectRef<T> getObjectRef() {
@@ -49,19 +46,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return getObject().getConnectionHandler();
     }
 
-    public boolean equals(Object obj) {
-        if (obj instanceof DBObjectVirtualFile) {
-            DBObjectVirtualFile<T> objectFile = (DBObjectVirtualFile<T>) obj;
-            return objectFile.objectRef.equals(objectRef);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return objectRef.hashCode();
-    }
-
     @NotNull
     public Project getProject() {
         T object = DBObjectRef.get(objectRef);
@@ -75,12 +59,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
      *                     VirtualFile                       *
      *********************************************************/
     @NotNull
-    @NonNls
-    public String getName() {
-        return objectRef.getFileName();
-    }
-
-    @NotNull
     public FileType getFileType() {
         return UnknownFileType.INSTANCE;
     }
@@ -91,20 +69,15 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
     }
 
     @NotNull
-    public String getPath() {
-        if (path == null) {
-            path = DatabaseFileSystem.createPath(getObject());
-        }
-        return path;
+    @Override
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(objectRef);
     }
 
     @NotNull
-    public String getUrl() {
-        if (url == null) {
-            T object = getObject();
-            url = DatabaseFileSystem.createUrl(object);
-        }
-        return url;
+    @Override
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(objectRef);
     }
 
     public boolean isWritable() {
@@ -115,25 +88,14 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
         return true;
     }
 
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
-    public boolean isInLocalFileSystem() {
-        return false;
-    }
-
     @Nullable
     public VirtualFile getParent() {
         if (CommonUtil.isCalledThrough(NavBarPresentation.class)) {
             T object = getObject();
-            if (object != null) {
-                BrowserTreeNode treeParent = object.getTreeParent();
-                if (treeParent instanceof DBObjectList<?>) {
-                    DBObjectList objectList = (DBObjectList) treeParent;
-                    return NavigationPsiCache.getPsiDirectory(objectList).getVirtualFile();
-                }
+            BrowserTreeNode treeParent = object.getTreeParent();
+            if (treeParent instanceof DBObjectList<?>) {
+                DBObjectList objectList = (DBObjectList) treeParent;
+                return NavigationPsiCache.getPsiDirectory(objectList).getVirtualFile();
             }
         }
         return null;
@@ -180,22 +142,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends VirtualFile impleme
     @Override
     public String getExtension() {
         return null;
-    }
-
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        disposed = true;
     }
 }
 

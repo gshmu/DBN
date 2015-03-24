@@ -77,12 +77,12 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
      *********************************************************/
 
     public Project getProject() {
-        return getParent().getProject();
+        return getParentElement().getProject();
     }
 
    public String getContentDescription() {
-        if (getParent() instanceof DBObject) {
-            DBObject object = (DBObject) getParent();
+        if (getParentElement() instanceof DBObject) {
+            DBObject object = (DBObject) getParentElement();
             return name + " of " + object.getQualifiedNameWithType();
         }
        return name + " from " + getConnectionHandler().getName() ;

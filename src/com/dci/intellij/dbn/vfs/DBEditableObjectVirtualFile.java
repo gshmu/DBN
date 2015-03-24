@@ -38,6 +38,7 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -113,23 +114,33 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return true;
     }
 
-    public synchronized List<DBContentVirtualFile> getContentFiles() {
+    public List<DBContentVirtualFile> getContentFiles() {
         if (contentFiles == null) {
-            contentFiles = new ArrayList<DBContentVirtualFile>();
-            DBContentType objectContentType = getObject().getContentType();
-            if (objectContentType.isBundle()) {
-                DBContentType[] contentTypes = objectContentType.getSubContentTypes();
-                for (DBContentType contentType : contentTypes) {
-                    DBContentVirtualFile virtualFile =
-                            contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
-                            contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
-                    contentFiles.add(virtualFile);
+            synchronized (this) {
+                if (contentFiles == null) {
+                    contentFiles = new ArrayList<DBContentVirtualFile>();
+                    DBContentType objectContentType = getObject().getContentType();
+                    if (objectContentType.isBundle()) {
+                        DBContentType[] contentTypes = objectContentType.getSubContentTypes();
+                        for (DBContentType contentType : contentTypes) {
+                            DBContentVirtualFile virtualFile =
+                                    contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
+                                            contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
+                            if (virtualFile != null) {
+                                contentFiles.add(virtualFile);
+                                Disposer.register(this, virtualFile);
+                            }
+                        }
+                    } else {
+                        DBContentVirtualFile virtualFile =
+                                objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
+                                        objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
+                        if (virtualFile != null) {
+                            contentFiles.add(virtualFile);
+                            Disposer.register(this, virtualFile);
+                        }
+                    }
                 }
-            } else {
-                DBContentVirtualFile virtualFile =
-                        objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
-                        objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
-                contentFiles.add(virtualFile);
             }
         }
         return contentFiles;
@@ -138,11 +149,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles() {
         DBSchemaObject object = getObject();
-        if (object != null) {
-            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
-            if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                return fileAttachmentManager.getAttachedDDLFiles(object);
-            }
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
+        if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
+            return fileAttachmentManager.getAttachedDDLFiles(object);
         }
         return null;
     }
@@ -181,7 +190,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @NotNull
     public FileType getFileType() {
         DBSchemaObject object = getObject();
-        DDLFileType type = object == null ? null : object.getDDLFileType(null);
+        DDLFileType type = object.getDDLFileType(null);
         return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
     }
 
@@ -238,14 +247,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     public DBContentType getMainContentType() {
         DBSchemaObject object = getObject();
-        if (object == null) {
-            return DBContentType.CODE;
-        } else {
-            DBContentType contentType = object.getContentType();
-            return
-                contentType == DBContentType.CODE ? DBContentType.CODE :
-                contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;
-        }
+        DBContentType contentType = object.getContentType();
+        return
+            contentType == DBContentType.CODE ? DBContentType.CODE :
+            contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;
     }
 
     public DBContentVirtualFile getMainContentFile() {

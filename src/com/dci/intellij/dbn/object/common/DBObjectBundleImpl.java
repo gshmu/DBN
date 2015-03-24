@@ -613,6 +613,12 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return connectionHandler == null ? null : connectionHandler.getProject();
     }
 
+    @Nullable
+    @Override
+    public GenericDatabaseElement getParentElement() {
+        return null;
+    }
+
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -740,7 +746,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String userName = resultSet.getString("USER_NAME");
 
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParent();
+            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
             DBUser user = objectBundle.getUser(userName);
             if (user != null) {
                 DBGrantedRole role = new DBGrantedRoleImpl(user, resultSet);
@@ -759,7 +765,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String userName = resultSet.getString("USER_NAME");
 
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParent();
+            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
             DBUser user = objectBundle.getUser(userName);
             if (user != null) {
                 DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(user, resultSet);
@@ -778,7 +784,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String roleName = resultSet.getString("ROLE_NAME");
 
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParent();
+            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
             DBRole role = objectBundle.getRole(roleName);
             if (role != null) {
                 DBGrantedRole grantedRole = new DBGrantedRoleImpl(role, resultSet);
@@ -797,7 +803,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
             String userName = resultSet.getString("ROLE_NAME");
 
-            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParent();
+            DBObjectBundle objectBundle = (DBObjectBundle) dynamicContent.getParentElement();
             DBRole role = objectBundle.getRole(userName);
             if (role != null) {
                 DBGrantedPrivilege privilege = new DBGrantedPrivilegeImpl(role, resultSet);

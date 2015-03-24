@@ -59,13 +59,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public abstract Filter<T> getFilter();
 
     @NotNull
-    public GenericDatabaseElement getParent() {
+    public GenericDatabaseElement getParentElement() {
         return FailsafeUtil.get(parent);
     }
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(getParent().getConnectionHandler());
+        return FailsafeUtil.get(getParentElement().getConnectionHandler());
     }
 
     public DynamicContentLoader<T> getLoader() {

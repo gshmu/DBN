@@ -37,6 +37,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -184,6 +185,11 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     public boolean isOfType(DBObjectType objectType) {
         return getObjectType().matches(objectType);
+    }
+
+    @Override
+    public GenericDatabaseElement getParentElement() {
+        return getParentObject();
     }
 
     public String getTypeName() {
@@ -548,7 +554,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         return null;
     }
 
-    @Nullable
+    @NotNull
     public BrowserTreeNode getTreeParent() {
         if (parentObjectRef != null){
             DBObject object = parentObjectRef.get();
@@ -561,12 +567,12 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
         } else if (objectBundle != null) {
             return objectBundle.getObjectListContainer().getObjectList(getObjectType());
         }
-        return null;
+        throw AlreadyDisposedException.INSTANCE;
     }
 
     public int getTreeDepth() {
         BrowserTreeNode treeParent = getTreeParent();
-        return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
+        return treeParent.getTreeDepth() + 1;
     }
 
 

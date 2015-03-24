@@ -21,13 +21,9 @@ import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile implements DBVirtualFile {
+public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
     protected T objectList;
-
-    protected String name;
-    protected String path;
-    protected String url;
 
     public DBObjectListVirtualFile(T objectList) {
         this.objectList = objectList;
@@ -43,34 +39,9 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
         return objectList.getConnectionHandler();
     }
 
+    @NotNull
     public Project getProject() {
         return objectList.getProject();
-    }
-
-    public boolean equals(Object obj) {
-        if (obj instanceof DBObjectListVirtualFile) {
-            DBObjectListVirtualFile objectListFile = (DBObjectListVirtualFile) obj;
-            return objectListFile.objectList.equals(objectList);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        GenericDatabaseElement parent = objectList.getParent();
-        if (parent instanceof DBObject) {
-            DBObject object = (DBObject) parent;
-            String qualifiedName = object.getQualifiedNameWithType() + '.' + name;
-            return qualifiedName.hashCode();
-        }
-
-        if (parent instanceof DBObjectBundle) {
-            DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            String qualifiedName = objectBundle.getConnectionHandler().getName() + '.' + name;
-            return qualifiedName.hashCode();
-        }
-
-        return super.hashCode();
     }
 
     /*********************************************************
@@ -98,21 +69,15 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
     }
 
     @NotNull
-    public String getPath() {
-        if (path == null) {
-            //path = DatabaseFileSystem.createPath(object);
-            path="";
-        }
-        return path;
+    @Override
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(objectList);
     }
 
     @NotNull
-    public String getUrl() {
-        if (url == null) {
-            //url = DatabaseFileSystem.createUrl(object);
-            url = "";
-        }
-        return url;
+    @Override
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(objectList);
     }
 
     public boolean isWritable() {
@@ -123,18 +88,9 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
         return true;
     }
 
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
-    public boolean isInLocalFileSystem() {
-        return false;
-    }
-
     @Nullable
     public VirtualFile getParent() {
-        GenericDatabaseElement parent = objectList.getParent();
+        GenericDatabaseElement parent = objectList.getParentElement();
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
             return NavigationPsiCache.getPsiDirectory(parentObject).getVirtualFile();
@@ -191,19 +147,10 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends VirtualFile
     public String getExtension() {
         return null;
     }
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
 
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
         objectList = null;
     }
 

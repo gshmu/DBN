@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorImpl;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -11,11 +9,9 @@ import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.factory.ObjectFactoryListener;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
@@ -42,7 +38,6 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
         } else {
             offsets = new SourceCodeOffsets();
         }
-        EventManager.subscribe(project, ObjectFactoryListener.TOPIC, objectFactoryListener);
     }
 
     public DBSchemaObject getObject() {
@@ -65,32 +60,5 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
 
     public DBContentType getContentType() {
         return getVirtualFile().getContentType();
-    }
-
-
-    /********************************************************
-     *                ObjectFactoryListener                 *
-     ********************************************************/
-    private ObjectFactoryListener objectFactoryListener = new ObjectFactoryListener() {
-        public void objectCreated(DBSchemaObject object) {
-        }
-
-        public void objectDropped(DBSchemaObject object) {
-            if (objectRef.is(object)) {
-                new ConditionalLaterInvocator() {
-                    @Override
-                    protected void execute() {
-                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                        fileEditorManager.closeFile(getVirtualFile().getMainDatabaseFile());
-                    }
-                }.start();
-            }
-
-        }    };
-
-    @Override
-    public void dispose() {
-        EventManager.unsubscribe(objectFactoryListener);
-        super.dispose();
     }
 }

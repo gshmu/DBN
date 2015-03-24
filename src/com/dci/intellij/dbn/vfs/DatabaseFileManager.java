@@ -108,6 +108,17 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     }
 
+    /********************************************************
+     *                ObjectFactoryListener                 *
+     ********************************************************/
+
+    public void closeFile(DBSchemaObject object) {
+        if (isFileOpened(object)) {
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+            fileEditorManager.closeFile(object.getVirtualFile());
+        }
+    }
+
     /*********************************************
      *            FileEditorManagerListener       *
      *********************************************/
@@ -168,8 +179,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     public void closeDatabaseFiles(@NotNull final List<ConnectionHandler> connectionHandlers) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
         for (VirtualFile virtualFile : fileEditorManager.getOpenFiles()) {
-            if (virtualFile instanceof DBVirtualFile) {
-                DBVirtualFile databaseVirtualFile = (DBVirtualFile) virtualFile;
+            if (virtualFile instanceof DBVirtualFileImpl) {
+                DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) virtualFile;
                 if (connectionHandlers.contains(databaseVirtualFile.getConnectionHandler())) {
                     fileEditorManager.closeFile(virtualFile);
                 }
