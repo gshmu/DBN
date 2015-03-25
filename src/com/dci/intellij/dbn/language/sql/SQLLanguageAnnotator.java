@@ -98,9 +98,9 @@ public class SQLLanguageAnnotator implements Annotator {
         scope.collectAliasDefinitionPsiElements(aliasDefinitions, aliasDefinition.getUnquotedText(), DBObjectType.ANY);
         if (aliasDefinitions.size() > 1) {
             holder.createWarningAnnotation(aliasDefinition, "Duplicate alias definition: " + aliasDefinition.getUnquotedText());
-        }
+        }*/
         Annotation annotation = holder.createInfoAnnotation(aliasDefinition, null);
-        annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);*/
+        annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);
     }
 
     private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {

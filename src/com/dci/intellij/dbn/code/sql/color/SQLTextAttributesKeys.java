@@ -13,7 +13,7 @@ public interface SQLTextAttributesKeys {
     TextAttributesKey STRING             = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.String",            DefaultLanguageHighlighterColors.STRING);
     TextAttributesKey NUMBER             = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Number",            DefaultLanguageHighlighterColors.NUMBER);
     TextAttributesKey DATA_TYPE          = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.DataType",          DefaultLanguageHighlighterColors.CONSTANT);
-    TextAttributesKey ALIAS              = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Alias",             DefaultLanguageHighlighterColors.IDENTIFIER);
+    TextAttributesKey ALIAS              = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Alias",             DefaultLanguageHighlighterColors.METADATA);
     TextAttributesKey IDENTIFIER         = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Identifier",        DefaultLanguageHighlighterColors.IDENTIFIER);
     TextAttributesKey QUOTED_IDENTIFIER  = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.QuotedIdentifier",  DefaultLanguageHighlighterColors.IDENTIFIER);
     TextAttributesKey KEYWORD            = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.SQL.Keyword",           DefaultLanguageHighlighterColors.KEYWORD);
