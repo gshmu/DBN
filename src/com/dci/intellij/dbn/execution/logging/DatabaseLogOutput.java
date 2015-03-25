@@ -38,13 +38,10 @@ public class DatabaseLogOutput implements ExecutionResult {
     @NotNull
     public String getName() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-            String databaseLogName = compatibilityInterface.getDatabaseLogName();
+        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        String databaseLogName = compatibilityInterface.getDatabaseLogName();
 
-            return connectionHandler.getName() + " - " + CommonUtil.nvl(databaseLogName, "Log Output");
-        }
-        return "Log Output";
+        return connectionHandler.getName() + " - " + CommonUtil.nvl(databaseLogName, "Log Output");
     }
 
     @Override
@@ -55,7 +52,7 @@ public class DatabaseLogOutput implements ExecutionResult {
     @NotNull
     @Override
     public Project getProject() {
-        return null;
+        return getConnectionHandler().getProject();
     }
 
     @Override
