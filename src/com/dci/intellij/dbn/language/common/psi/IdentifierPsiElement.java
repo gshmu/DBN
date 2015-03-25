@@ -571,14 +571,15 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }
 
         Set<IdentifierPsiElement> resolveStack = RESOLVE_STACK.get();
-        try {
-            if (resolveStack.contains(this)) {
-                return null;
-            }
 
-            resolveStack.add(this);
-            if (ref == null) ref = new PsiResolveResult(this);
-            if (ref.isDirty()) {
+        if (ref == null) ref = new PsiResolveResult(this);
+        if (ref.isDirty()) {
+            try {
+                if (resolveStack.contains(this)) {
+                    return ref.getReferencedElement();
+                }
+
+                resolveStack.add(this);
                 //System.out.println("resolving " + getTextRange() + " " + getText());
                 try {
                     //DatabaseLoadMonitor.setEnsureDataLoaded(false);
@@ -594,11 +595,11 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
                     ref.postResolve();
                     //DatabaseLoadMonitor.setEnsureDataLoaded(false);
                 }
+            } catch (Exception e) {
+                resolveStack.remove(this);
             }
-            return ref.getReferencedElement();
-        } finally {
-            resolveStack.remove(this);
         }
+        return ref.getReferencedElement();
     }
 
     @Override
