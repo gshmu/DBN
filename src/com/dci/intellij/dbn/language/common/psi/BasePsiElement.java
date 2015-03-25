@@ -129,7 +129,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public BasePsiElement getOriginalElement() {
         PsiFile containingFile = getContainingFile();
         PsiFile originalFile = containingFile.getOriginalFile();
-        if (originalFile == null || originalFile == containingFile) {
+        if (originalFile == containingFile) {
             return this;
         }
         int startOffset = getTextOffset();
@@ -157,7 +157,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     public boolean isOriginalElement() {
         PsiFile containingFile = getContainingFile();
         PsiFile originalFile = containingFile.getOriginalFile();
-        return originalFile == null || originalFile == containingFile;
+        return originalFile == containingFile;
 
     }
 
@@ -351,12 +351,10 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         SessionBrowser sessionBrowser = sessionBrowserStatementFile.getSessionBrowser();
                         if (sessionBrowser != null) {
                             SessionBrowserForm editorForm = sessionBrowser.getEditorForm();
-                            if (editorForm != null) {
-                                EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
-                                if (viewer != null) {
-                                    descriptor.navigateIn(viewer);
-                                    if (requestFocus) focusEditor(viewer);
-                                }
+                            EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
+                            if (viewer != null) {
+                                descriptor.navigateIn(viewer);
+                                if (requestFocus) focusEditor(viewer);
                             }
                         }
                         return;

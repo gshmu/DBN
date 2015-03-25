@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.ThreadLocalLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -540,18 +541,24 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return false;
     }
 
-    /**
-     * ******************************************************
-     * PsiReference                    *
-     * *******************************************************
-     */
+    /*********************************************************
+     *                       PsiReference                    *
+     ********************************************************/
     private PsiResolveResult ref;
+
+    public static final ThreadLocalLazyValue<Set<IdentifierPsiElement>> RESOLVE_STACK = new ThreadLocalLazyValue<Set<IdentifierPsiElement>>() {
+        @Override
+        protected Set<IdentifierPsiElement> create() {
+            return new THashSet<IdentifierPsiElement>();
+        }
+    };
 
     @Nullable
     public PsiElement resolve() {
         if (isResolving()) {
             return ref.getReferencedElement();
         }
+
         if (isDefinition() && (isAlias() || (isVariable() && !isSubject()))) {
             // alias definitions do not have references.
             // underlying object is determined on runtime
@@ -562,25 +569,36 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         if ((connectionHandler == null || connectionHandler.isVirtual()) && isObject() && isDefinition()) {
             return null;
         }
-        if (ref == null) ref = new PsiResolveResult(this);
-        if (ref.isDirty()) {
-            //System.out.println("resolving " + getTextRange() + " " + getText());
-            try {
-                //DatabaseLoadMonitor.setEnsureDataLoaded(false);
 
-                ref.preResolve(this);
-                if (getParent() instanceof QualifiedIdentifierPsiElement) {
-                    QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
-                    resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
-                } else {
-                    resolveWithScopeParentLookup(getObjectType(), getElementType());
-                }
-            } finally {
-                ref.postResolve();
-                //DatabaseLoadMonitor.setEnsureDataLoaded(false);
+        Set<IdentifierPsiElement> resolveStack = RESOLVE_STACK.get();
+        try {
+            if (resolveStack.contains(this)) {
+                return null;
             }
+
+            resolveStack.add(this);
+            if (ref == null) ref = new PsiResolveResult(this);
+            if (ref.isDirty()) {
+                //System.out.println("resolving " + getTextRange() + " " + getText());
+                try {
+                    //DatabaseLoadMonitor.setEnsureDataLoaded(false);
+
+                    ref.preResolve(this);
+                    if (getParent() instanceof QualifiedIdentifierPsiElement) {
+                        QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
+                        resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
+                    } else {
+                        resolveWithScopeParentLookup(getObjectType(), getElementType());
+                    }
+                } finally {
+                    ref.postResolve();
+                    //DatabaseLoadMonitor.setEnsureDataLoaded(false);
+                }
+            }
+            return ref.getReferencedElement();
+        } finally {
+            resolveStack.remove(this);
         }
-        return ref.getReferencedElement();
     }
 
     @Override
