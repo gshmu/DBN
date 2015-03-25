@@ -69,7 +69,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
 
     @Override
     public ExecutionResult getExecutionResult() {
-        return null;
+        return explainPlanResult;
     }
 
     public void collapseAllNodes() {
