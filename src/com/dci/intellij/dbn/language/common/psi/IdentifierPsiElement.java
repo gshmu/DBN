@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.ThreadLocalLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -200,6 +199,10 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return getElementType().isLocalReference();
     }
 
+    public boolean isQualifiedIdentifierMember() {
+        return getParent() instanceof QualifiedIdentifierPsiElement;
+    }
+
     public DBObjectType getObjectType() {
         if (ref != null && ref.getObjectType() != null) {
             return ref.getObjectType();
@@ -217,6 +220,9 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
     public synchronized DBObject resolveUnderlyingObjectType() {
         return null;
     }
+
+    private boolean isResolvingUnderlyingObject = false;
+
     /**
      * Looks-up whatever underlying database object may be referenced from this identifier.
      * - if this references to a synonym, the DBObject behind the synonym is returned.
@@ -226,101 +232,45 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      */
     @Nullable
     public DBObject resolveUnderlyingObject() {
-        UnderlyingObjectResolver underlyingObjectResolver = getElementType().getUnderlyingObjectResolver();
-        if (underlyingObjectResolver != null) {
-            DBObject underlyingObject = underlyingObjectResolver.resolve(this);
-            return resolveActualObject(underlyingObject);
+        if (isResolvingUnderlyingObject) {
+            return null;
         }
-
-
-        PsiElement psiReferenceElement = resolve();
-        if (psiReferenceElement != this) {
-            if (psiReferenceElement instanceof DBObject) {
-                DBObject underlyingObject = (DBObject) psiReferenceElement;
-                return resolveActualObject(underlyingObject.getUndisposedElement());
+        try {
+            isResolvingUnderlyingObject = true;
+            UnderlyingObjectResolver underlyingObjectResolver = getElementType().getUnderlyingObjectResolver();
+            if (underlyingObjectResolver != null) {
+                DBObject underlyingObject = underlyingObjectResolver.resolve(this);
+                return resolveActualObject(underlyingObject);
             }
 
-            if (psiReferenceElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
-                return identifierPsiElement.resolveUnderlyingObject();
-            }
-        }
 
-        if (isAlias() && isDefinition()) {
-            DBObject underlyingObject = AliasObjectResolver.getInstance().resolve(this);
-            return resolveActualObject(underlyingObject);
-        }
-
-        DBObject underlyingObject = SurroundingVirtualObjectResolver.getInstance().resolve(this);
-        if (underlyingObject != null) {
-            return underlyingObject;
-        }
-
-/*        DBObjectType objectType = getObjectType();
-        if (isObject()) {
-            if (psiReferenceElement instanceof DBObject) {
-                DBObject object = (DBObject) psiReferenceElement;
-                underlyingObject = object.getUndisposedElement();
-            } else if (psiReferenceElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
-                PsiElement underlyingPsiElement = identifierPsiElement.resolve();
-                if (underlyingPsiElement == null) {
-                    BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
-                    if (virtualObjectPsiElement != null) {
-                        underlyingObject = virtualObjectPsiElement.resolveUnderlyingObject();
-                    }
+            PsiElement psiReferenceElement = resolve();
+            if (psiReferenceElement != this) {
+                if (psiReferenceElement instanceof DBObject) {
+                    DBObject underlyingObject = (DBObject) psiReferenceElement;
+                    return resolveActualObject(underlyingObject.getUndisposedElement());
                 }
-                else if (underlyingPsiElement instanceof DBObject) {
-                    underlyingObject = (DBObject) underlyingPsiElement;
-                }
-            }
-        } else if (isAlias()) {
-            BasePsiElement aliasDefinition;
-            if (isDefinition()) {
-                aliasDefinition = this;
-            } else {
-                BasePsiElement resolveScope = getEnclosingScopePsiElement();
 
-                PsiLookupAdapter lookupAdapter = new AliasDefinitionLookupAdapter(this, objectType, getUnquotedText());
-                aliasDefinition = lookupAdapter.findInScope(resolveScope);
-            }
-
-            if (aliasDefinition != null && aliasDefinition instanceof IdentifierPsiElement) {
-                BasePsiElement aliasedObject = PsiUtil.resolveAliasedEntityElement((IdentifierPsiElement) aliasDefinition);
-                if (aliasedObject != null) {
-                    if (aliasedObject.isVirtualObject()) {
-                        underlyingObject = aliasedObject.resolveUnderlyingObject();
-                    } else if (aliasedObject instanceof IdentifierPsiElement) {
-                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) aliasedObject;
-                        PsiElement underlyingPsiElement = identifierPsiElement.resolve();
-                        if (underlyingPsiElement != null && underlyingPsiElement instanceof DBObject) {
-                            underlyingObject = (DBObject) underlyingPsiElement;
-                        }
-                    }
-                }
-            }
-        } else if (isVariable()) {
-            if (isReference()) {
                 if (psiReferenceElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement variablePsiElement = (IdentifierPsiElement) psiReferenceElement;
-                    if (variablePsiElement.isDefinition()) {
-                        PsiElement result = variablePsiElement.resolve();
-                        if (result == null) {
-                            BasePsiElement virtualObjectPsiElement = variablePsiElement.findEnclosingVirtualObjectPsiElement(objectType);
-                            if (virtualObjectPsiElement != null) {
-                                return virtualObjectPsiElement.resolveUnderlyingObject();
-                            }
-                        }
-                        else if (result instanceof IdentifierPsiElement) {
-                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) result;
-                            return identifierPsiElement.resolveUnderlyingObject();
-                        }
-                    }
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
+                    return identifierPsiElement.resolveUnderlyingObject();
                 }
             }
-        }*/
 
-        return resolveActualObject(underlyingObject);
+            if (isAlias() && isDefinition()) {
+                DBObject underlyingObject = AliasObjectResolver.getInstance().resolve(this);
+                return resolveActualObject(underlyingObject);
+            }
+
+            DBObject underlyingObject = SurroundingVirtualObjectResolver.getInstance().resolve(this);
+            if (underlyingObject != null) {
+                return underlyingObject;
+            }
+
+            return resolveActualObject(underlyingObject);
+        } finally {
+            isResolvingUnderlyingObject = false;
+        }
     }
 
     private static DBObject resolveActualObject(DBObject object) {
@@ -546,13 +496,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      ********************************************************/
     private PsiResolveResult ref;
 
-    public static final ThreadLocalLazyValue<Set<IdentifierPsiElement>> RESOLVE_STACK = new ThreadLocalLazyValue<Set<IdentifierPsiElement>>() {
-        @Override
-        protected Set<IdentifierPsiElement> create() {
-            return new THashSet<IdentifierPsiElement>();
-        }
-    };
-
     @Nullable
     public PsiElement resolve() {
         if (isResolving()) {
@@ -570,33 +513,21 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
             return null;
         }
 
-        Set<IdentifierPsiElement> resolveStack = RESOLVE_STACK.get();
-
         if (ref == null) ref = new PsiResolveResult(this);
         if (ref.isDirty()) {
             try {
-                if (resolveStack.contains(this)) {
-                    return ref.getReferencedElement();
-                }
+                //DatabaseLoadMonitor.setEnsureDataLoaded(false);
 
-                resolveStack.add(this);
-                //System.out.println("resolving " + getTextRange() + " " + getText());
-                try {
-                    //DatabaseLoadMonitor.setEnsureDataLoaded(false);
-
-                    ref.preResolve(this);
-                    if (getParent() instanceof QualifiedIdentifierPsiElement) {
-                        QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
-                        resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
-                    } else {
-                        resolveWithScopeParentLookup(getObjectType(), getElementType());
-                    }
-                } finally {
-                    ref.postResolve();
-                    //DatabaseLoadMonitor.setEnsureDataLoaded(false);
+                ref.preResolve(this);
+                if (getParent() instanceof QualifiedIdentifierPsiElement) {
+                    QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
+                    resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
+                } else {
+                    resolveWithScopeParentLookup(getObjectType(), getElementType());
                 }
-            } catch (Exception e) {
-                resolveStack.remove(this);
+            } finally {
+                ref.postResolve();
+                //DatabaseLoadMonitor.setEnsureDataLoaded(false);
             }
         }
         return ref.getReferencedElement();

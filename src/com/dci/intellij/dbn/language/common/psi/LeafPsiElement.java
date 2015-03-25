@@ -111,6 +111,8 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
             Set<BasePsiElement> parentObjectPsiElements = null;
             for (DBObjectType parentObjectType : parentTypes) {
                 PsiLookupAdapter lookupAdapter = new ObjectLookupAdapter(lookupIssuer, parentObjectType, null);
+                lookupAdapter.setAssertResolved(true);
+
                 parentObjectPsiElements = !objectType.isSchemaObject() && parentObjectType.isSchemaObject() ?
                         lookupAdapter.collectInScope(sourceScope, parentObjectPsiElements) :
                         lookupAdapter.collectInParentScopeOf(sourceScope, parentObjectPsiElements);

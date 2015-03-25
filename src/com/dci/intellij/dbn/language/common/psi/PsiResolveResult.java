@@ -60,7 +60,7 @@ public class PsiResolveResult {
     }
 
     boolean isDirty() {
-        //if (isResolving) return false;
+        if (isResolving) return false;
         if (isNew) return true;
 
         if (resolveTrials > 3 && lastResolveInvocation < System.currentTimeMillis() - 3000) {

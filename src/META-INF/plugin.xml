@@ -421,12 +421,12 @@
         </group>
         <group id="DBNavigator.ActionGroup.StatementExecutionResult">
             <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close" icon="/img/action/Close.png"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View statement" icon="/img/action/Preview.png"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View record" icon="/img/RecordViewer.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View Statement" icon="/img/action/Preview.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View Record" icon="/img/RecordViewer.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.ExecutionResult.OpenVariablesDialog" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultVariablesDialogAction" text="Execution Result - Open variables dialog"/>
-            <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun statement"/>
-            <action id="DBNavigator.Actions.ExecutionResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultResumeAction" text="Execution Result - Fetch next records"/>
+            <action id="DBNavigator.Actions.ExecutionResult.OpenVariablesDialog" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultVariablesDialogAction" text="Execution Result - Open Variables Dialog"/>
+            <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun Statement"/>
+            <action id="DBNavigator.Actions.ExecutionResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultResumeAction" text="Execution Result - Fetch Next Records"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.FindData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultFindDataAction" text="Execution Result - Find Data" icon="/img/action/Find.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>

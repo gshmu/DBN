@@ -428,20 +428,22 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             canScrollToSource = false;
             ExecutionResultForm resultForm = executionResult.getForm(false);
             if (resultForm != null) {
-                TabInfo tabInfo = resultTabs.findInfo(resultForm.getComponent());
-                if (resultTabs.getTabs().contains(tabInfo)) {
-                    resultTabs.removeTab(tabInfo);
-                    if (executionResult instanceof StatementExecutionResult) {
-                        StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                        StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
-                        if (executionInput != null && !executionInput.isDisposed()) {
+                try {
+                    TabInfo tabInfo = resultTabs.findInfo(resultForm.getComponent());
+                    if (resultTabs.getTabs().contains(tabInfo)) {
+                        if (executionResult instanceof StatementExecutionResult) {
+                            StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                            StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
                             DBLanguagePsiFile file = executionInput.getExecutionProcessor().getPsiFile();
+
+                            resultTabs.removeTab(tabInfo);
                             DocumentUtil.refreshEditorAnnotations(file);
                         }
                     }
-                }
-                if (getTabCount() == 0) {
-                    ExecutionManager.getInstance(getProject()).hideExecutionConsole();
+                } finally {
+                    if (getTabCount() == 0) {
+                        ExecutionManager.getInstance(getProject()).hideExecutionConsole();
+                    }
                 }
             }
         } finally {
