@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.execution.statement.result.action;
 import javax.swing.Icon;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -15,11 +17,16 @@ public abstract class AbstractExecutionResultAction extends DumbAwareAction {
     }
 
     public StatementExecutionCursorResult getExecutionResult(AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            return e.getData(DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT);
+        StatementExecutionCursorResult result = e.getData(DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT);
+        if (result == null) {
+            Project project = FailsafeUtil.get(e.getProject());
+            ExecutionManager executionManager = ExecutionManager.getInstance(project);
+            ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
+            if (executionResult instanceof StatementExecutionCursorResult) {
+                return (StatementExecutionCursorResult) executionResult;
+            }
         }
-        return null;
+        return result;
     }
 
     @Override

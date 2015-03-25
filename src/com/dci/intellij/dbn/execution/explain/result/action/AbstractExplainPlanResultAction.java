@@ -4,9 +4,13 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 
 public abstract class AbstractExplainPlanResultAction extends DumbAwareAction {
     protected AbstractExplainPlanResultAction(String text, Icon icon) {
@@ -14,7 +18,16 @@ public abstract class AbstractExplainPlanResultAction extends DumbAwareAction {
     }
 
     public static ExplainPlanResult getExplainPlanResult(AnActionEvent e) {
-        return e.getData(DBNDataKeys.EXPLAIN_PLAN_RESULT);
+        ExplainPlanResult result = e.getData(DBNDataKeys.EXPLAIN_PLAN_RESULT);
+        if (result == null) {
+            Project project = FailsafeUtil.get(e.getProject());
+            ExecutionManager executionManager = ExecutionManager.getInstance(project);
+            ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
+            if (executionResult instanceof ExplainPlanResult) {
+                return (ExplainPlanResult) executionResult;
+            }
+        }
+        return result;
     }
 
     @Override
