@@ -431,12 +431,15 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                 try {
                     TabInfo tabInfo = resultTabs.findInfo(resultForm.getComponent());
                     if (resultTabs.getTabs().contains(tabInfo)) {
+                        DBLanguagePsiFile file = null;
                         if (executionResult instanceof StatementExecutionResult) {
                             StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                             StatementExecutionInput executionInput = statementExecutionResult.getExecutionInput();
-                            DBLanguagePsiFile file = executionInput.getExecutionProcessor().getPsiFile();
+                            file = executionInput.getExecutionProcessor().getPsiFile();
+                        }
 
-                            resultTabs.removeTab(tabInfo);
+                        resultTabs.removeTab(tabInfo);
+                        if (file != null) {
                             DocumentUtil.refreshEditorAnnotations(file);
                         }
                     }
