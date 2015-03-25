@@ -87,14 +87,18 @@ public class PSQLLanguageAnnotator implements Annotator {
         if (identifierPsiElement.isReference()) {
             identifierPsiElement.resolve();
         }
+
+         if (identifierPsiElement.isAlias()) {
+             if (identifierPsiElement.isReference())
+                 annotateAliasRef(identifierPsiElement, holder); else
+                 annotateAliasDef(identifierPsiElement, holder);
+         }
+
 /*
         if (identifierPsiElement.isObject() && identifierPsiElement.isReference()) {
             annotateObject(identifierPsiElement, holder);
-        } else if (identifierPsiElement.isAlias()) {
-            if (identifierPsiElement.isReference())
-                annotateAliasRef(identifierPsiElement, holder); else
-                annotateAliasDef(identifierPsiElement, holder);
-        }
+        } else
+
 */
     }
 
@@ -104,19 +108,19 @@ public class PSQLLanguageAnnotator implements Annotator {
             annotation.setTextAttributes(PSQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
         } else {
             Annotation annotation = holder.createInfoAnnotation(aliasReference, null);
-            annotation.setTextAttributes(PSQLTextAttributesKeys.DATA_TYPE);
+            annotation.setTextAttributes(PSQLTextAttributesKeys.ALIAS);
         }
     }
 
-    private void annotateAliasDef(IdentifierPsiElement aliasDefinition, AnnotationHolder holder) {
+    private static void annotateAliasDef(IdentifierPsiElement aliasDefinition, AnnotationHolder holder) {
         /*Set<PsiElement> aliasDefinitions = new HashSet<PsiElement>();
         SequencePsiElement sourceScope = aliasDefinition.getEnclosingScopePsiElement();
         sourceScope.collectAliasDefinitionPsiElements(aliasDefinitions, aliasDefinition.getUnquotedText(), DBObjectType.ANY, null);
         if (aliasDefinitions.size() > 1) {
             holder.createWarningAnnotation(aliasDefinition, "Duplicate alias definition: " + aliasDefinition.getUnquotedText());
-        }
+        }*/
         Annotation annotation = holder.createInfoAnnotation(aliasDefinition, null);
-        annotation.setTextAttributes(SQLTextAttributesKeys.DATA_TYPE);*/
+        annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);
     }
 
     private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
