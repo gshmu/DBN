@@ -30,8 +30,8 @@
             <li><b>3.0.NEXT</b>
             <ul>
                 - Object dependency tree (preview)<br>
-                - Session Browser "quick Find Data" support<br>
-                - Method execution cursor result "Find Data" support<br>
+                - Session Browser "quick Find Data" support (Ctrl-F)<br>
+                - Method execution cursor result "Find Data" support (Ctrl-F)<br>
                 - General bug fixes and performance improvements<br>
             </ul>
             <li><b>3.0.4183</b>

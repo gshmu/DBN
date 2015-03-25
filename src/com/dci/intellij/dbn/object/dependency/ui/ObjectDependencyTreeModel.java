@@ -112,6 +112,11 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
         root = null;
     }
 
+    public void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {
+        TreePath treePath = new TreePath(node.getTreePath());
+        TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
+    }
+
     public void notifyNodeLoaded(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
         TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);

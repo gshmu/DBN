@@ -7,12 +7,19 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectSelectionHistory;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -30,6 +37,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 
 public class ObjectDependencyTree extends JTree implements Disposable{
+    private final Set<ObjectDependencyTreeNode> loadInProgressNodes = new HashSet<ObjectDependencyTreeNode>();
     private DBObjectSelectionHistory selectionHistory =  new DBObjectSelectionHistory();
     private ObjectDependencyTreeSpeedSearch speedSearch;
     private Project project;
@@ -61,21 +69,6 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         addMouseListener(new MouseInputAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
-                int button = event.getButton();
-                if (button == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                    if (event.getClickCount() > 1) {
-                        TreePath path = getPathForLocation(event.getX(), event.getY());
-                        if (path != null) {
-                            ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
-                            DBObject object = node.getObject();
-                            if (object != null) {
-                                event.consume();
-                                setRootObject((DBSchemaObject) object, true);
-                                //object.navigate(true);
-                            }
-                        }
-                    }
-                }
             }
 
             public void mouseReleased(final MouseEvent event) {
@@ -106,9 +99,43 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         });
     }
 
+    private long selectionTimestamp = System.currentTimeMillis();
     @Override
     protected void processMouseEvent(MouseEvent e) {
-        super.processMouseEvent(e);
+        int button = e.getButton();
+        int clickCount = e.getClickCount();
+        if (button == MouseEvent.BUTTON1) {
+            if (e.isControlDown()) {
+                if (clickCount == 1) {
+                    DBObject object = getMouseEventObject(e);
+                    if (object != null) {
+                        object.navigate(true);
+                        e.consume();
+                    }
+                }
+            } else if (clickCount == 2) {
+                DBObject object = getMouseEventObject(e);
+                if (object != null && TimeUtil.isOlderThan(selectionTimestamp, TimeUtil.ONE_SECOND)) {
+                    selectionTimestamp = System.currentTimeMillis();
+                    setRootObject((DBSchemaObject) object, true);
+                    e.consume();
+                }
+            }
+        }
+
+        if (!e.isConsumed()) {
+            super.processMouseEvent(e);
+        }
+    }
+
+    private DBObject getMouseEventObject(MouseEvent e) {
+        TreePath path = getPathForLocation(e.getX(), e.getY());
+        Object lastPathComponent = path == null ? null : path.getLastPathComponent();
+        if (lastPathComponent instanceof ObjectDependencyTreeNode) {
+            ObjectDependencyTreeNode dependencyTreeNode = (ObjectDependencyTreeNode) lastPathComponent;
+            return dependencyTreeNode.getObject();
+        }
+        return null;
     }
 
     public Project getProject() {
@@ -145,6 +172,63 @@ public class ObjectDependencyTree extends JTree implements Disposable{
     }
 
     @Override
+    protected void processMouseMotionEvent(MouseEvent e) {
+        boolean navigable = false;
+        if (e.isControlDown() && e.getID() != MouseEvent.MOUSE_DRAGGED && !e.isConsumed()) {
+            DBObject object = getMouseEventObject(e);
+            if (object != null && !object.equals(getModel().getObject())) {
+                navigable = true;
+            }
+        }
+
+        if (navigable) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        } else {
+            super.processMouseMotionEvent(e);
+            setCursor(Cursor.getDefaultCursor());
+        }
+    }
+
+
+
+    /****************************************************
+     *              LoadInProgress handling             *
+     ****************************************************/
+
+    public void registerLoadInProgressNode(ObjectDependencyTreeNode node) {
+        synchronized (loadInProgressNodes) {
+            boolean startTimer = loadInProgressNodes.size() == 0;
+            loadInProgressNodes.add(node);
+            if (startTimer) {
+                Timer reloader = new Timer("DBN Load in progress tree leaf reloader");
+                reloader.schedule(new LoadInProgressRefreshTask(), 0, 50);
+            }
+        }
+    }
+
+    private class LoadInProgressRefreshTask extends TimerTask {
+        int iterations = 0;
+        public void run() {
+            synchronized (loadInProgressNodes) {
+                Iterator<ObjectDependencyTreeNode> loadInProgressNodesIterator = loadInProgressNodes.iterator();
+                while (loadInProgressNodesIterator.hasNext()) {
+                    ObjectDependencyTreeNode loadInProgressTreeNode = loadInProgressNodesIterator.next();
+                    if (loadInProgressTreeNode.isDisposed()) {
+                        loadInProgressNodesIterator.remove();
+                    } else {
+                        getModel().refreshLoadInProgressNode(loadInProgressTreeNode);
+                    }
+                }
+
+                if (loadInProgressNodes.isEmpty()) {
+                    cancel();
+                }
+            }
+
+            iterations++;
+        }
+    }
+    @Override
     public ObjectDependencyTreeModel getModel() {
         return (ObjectDependencyTreeModel) super.getModel();
     }
@@ -165,8 +249,6 @@ public class ObjectDependencyTree extends JTree implements Disposable{
 
     public void setRootObject(DBSchemaObject object, boolean addHistory) {
         ObjectDependencyTreeModel oldModel = getModel();
-        Project project = FailsafeUtil.get(oldModel.getProject());
-
         if (addHistory) {
             selectionHistory.add(object);
         }
