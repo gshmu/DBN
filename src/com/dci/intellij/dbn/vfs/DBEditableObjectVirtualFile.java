@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -228,18 +229,22 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     public <T> T getUserData(@NotNull Key<T> key) {
         if (key == FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY) {
-            DBContentType mainContentType = getMainContentType();
-            boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
-            if (isCode) {
-                if (FAKE_DOCUMENT.get() != null) {
-                    return (T) FAKE_DOCUMENT.get();
-                }
+            try {
+                DBContentType mainContentType = getMainContentType();
+                boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
+                if (isCode) {
+                    if (FAKE_DOCUMENT.get() != null) {
+                        return (T) FAKE_DOCUMENT.get();
+                    }
 
-                DBContentVirtualFile mainContentFile = getMainContentFile();
-                if (mainContentFile != null) {
-                    Document document = DocumentUtil.getDocument(mainContentFile);
-                    return (T) document;
+                    DBContentVirtualFile mainContentFile = getMainContentFile();
+                    if (mainContentFile != null) {
+                        Document document = DocumentUtil.getDocument(mainContentFile);
+                        return (T) document;
+                    }
                 }
+            } catch (AlreadyDisposedException e) {
+
             }
         }
         return super.getUserData(key);
