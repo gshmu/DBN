@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -63,7 +62,6 @@ public abstract class ConnectionAction extends SimpleTask {
                 doExecute();
             } else {
                 ConnectionSettings connectionSettings = connectionHandler.getSettings();
-                ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
                 if (connectionHandler.isAuthenticationProvided()) {
                     MessageUtil.showInfoDialog(
                             connectionHandler.getProject(),
@@ -78,6 +76,7 @@ public abstract class ConnectionAction extends SimpleTask {
                                         connectionHandler.setAllowConnection(true);
                                         doExecute();
                                     } else {
+                                        ConnectionAction.this.cancel();
                                         cancel();
                                     }
                                 }
