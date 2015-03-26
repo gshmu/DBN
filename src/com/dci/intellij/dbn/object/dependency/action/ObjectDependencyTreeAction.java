@@ -21,7 +21,7 @@ public class ObjectDependencyTreeAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
         DBSchemaObject schemaObject = DBObjectRef.get(schemaObjectRef);
-        if (schemaObject != null && project != null && !project.isDisposed()) {
+        if (schemaObject != null && project != null) {
             ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
             dependencyManager.openDependencyTree(schemaObject);
         }

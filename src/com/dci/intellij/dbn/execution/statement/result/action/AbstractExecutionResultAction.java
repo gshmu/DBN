@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
@@ -16,14 +16,17 @@ public abstract class AbstractExecutionResultAction extends DumbAwareAction {
         super(text, null, icon);
     }
 
+    @Nullable
     public StatementExecutionCursorResult getExecutionResult(AnActionEvent e) {
         StatementExecutionCursorResult result = e.getData(DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT);
         if (result == null) {
-            Project project = FailsafeUtil.get(e.getProject());
-            ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
-            if (executionResult instanceof StatementExecutionCursorResult) {
-                return (StatementExecutionCursorResult) executionResult;
+            Project project = e.getProject();
+            if (project != null) {
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
+                if (executionResult instanceof StatementExecutionCursorResult) {
+                    return (StatementExecutionCursorResult) executionResult;
+                }
             }
         }
         return result;
