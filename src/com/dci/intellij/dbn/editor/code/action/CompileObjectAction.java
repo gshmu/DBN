@@ -48,43 +48,39 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
         } else {
 
             DBSchemaObject schemaObject = virtualFile.getObject();
-            if (schemaObject != null) {
-                if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
-                    CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
-                    CompileTypeOption compileType = compilerSettings.getCompileTypeOption();
-                    DBObjectStatusHolder status = schemaObject.getStatus();
-                    DBContentType contentType = virtualFile.getContentType();
+            if (schemaObject.getProperties().is(DBObjectProperty.COMPILABLE) && DatabaseFeature.OBJECT_INVALIDATION.isSupported(schemaObject)) {
+                CompilerSettings compilerSettings = getCompilerSettings(schemaObject.getProject());
+                CompileTypeOption compileType = compilerSettings.getCompileTypeOption();
+                DBObjectStatusHolder status = schemaObject.getStatus();
+                DBContentType contentType = virtualFile.getContentType();
 
-                    boolean isDebug = compileType == CompileTypeOption.DEBUG;
-                    if (compileType == CompileTypeOption.KEEP) {
-                        isDebug = status.is(contentType, DBObjectStatus.DEBUG);
-                    }
-
-                    boolean isPresent = status.is(contentType, DBObjectStatus.PRESENT);
-                    boolean isValid = status.is(contentType, DBObjectStatus.VALID);
-                    boolean isModified = virtualFile.isModified();
-
-                    boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
-                    boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
-
-                    presentation.setEnabled(isEnabled);
-                    String text =
-                            contentType == DBContentType.CODE_SPEC ? "Compile spec" :
-                                    contentType == DBContentType.CODE_BODY ? "Compile body" : "Compile";
-
-                    if (isDebug) text = text + " (Debug)";
-                    if (compileType == CompileTypeOption.ASK) text = text + "...";
-
-                    presentation.setVisible(true);
-                    presentation.setText(text);
-
-                    Icon icon = isDebug ?
-                            CompileTypeOption.DEBUG.getIcon() :
-                            CompileTypeOption.NORMAL.getIcon();
-                    presentation.setIcon(icon);
-                } else {
-                    presentation.setVisible(false);
+                boolean isDebug = compileType == CompileTypeOption.DEBUG;
+                if (compileType == CompileTypeOption.KEEP) {
+                    isDebug = status.is(contentType, DBObjectStatus.DEBUG);
                 }
+
+                boolean isPresent = status.is(contentType, DBObjectStatus.PRESENT);
+                boolean isValid = status.is(contentType, DBObjectStatus.VALID);
+                boolean isModified = virtualFile.isModified();
+
+                boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
+                boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
+
+                presentation.setEnabled(isEnabled);
+                String text =
+                        contentType == DBContentType.CODE_SPEC ? "Compile spec" :
+                                contentType == DBContentType.CODE_BODY ? "Compile body" : "Compile";
+
+                if (isDebug) text = text + " (Debug)";
+                if (compileType == CompileTypeOption.ASK) text = text + "...";
+
+                presentation.setVisible(true);
+                presentation.setText(text);
+
+                Icon icon = isDebug ?
+                        CompileTypeOption.DEBUG.getIcon() :
+                        CompileTypeOption.NORMAL.getIcon();
+                presentation.setIcon(icon);
             } else {
                 presentation.setVisible(false);
             }

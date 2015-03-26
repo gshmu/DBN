@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 
 public class SaveChangesAction extends AbstractSourceCodeEditorAction {
@@ -26,17 +26,17 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
 
     public void actionPerformed(@NotNull final AnActionEvent e) {
         final Project project = ActionUtil.getProject(e);
-        final DBSourceCodeVirtualFile virtualFile = getSourcecodeFile(e);
-        final FileEditor fileEditor = getFileEditor(e);
-        if (project != null && virtualFile != null && fileEditor != null) {
+        final SourceCodeEditor fileEditor = getFileEditor(e);
+        if (project != null && fileEditor != null) {
             CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
             ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChangesOptionHandler();
-            boolean canContinue = optionHandler.resolve(virtualFile.getMainDatabaseFile().getObject().getQualifiedNameWithType());
+            boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
             if (canContinue) {
                 new WriteActionRunner() {
                     public void run() {
                         FileDocumentManager.getInstance().saveAllDocuments();
-                        SourceCodeManager.getInstance(project).updateSourceToDatabase(fileEditor, virtualFile);
+                        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                        sourceCodeManager.updateSourceToDatabase(fileEditor);
                     }
                 }.start();
             }

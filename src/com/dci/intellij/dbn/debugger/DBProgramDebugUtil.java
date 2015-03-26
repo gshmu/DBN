@@ -20,7 +20,7 @@ public class DBProgramDebugUtil {
 
             if (virtualFile instanceof DBSourceCodeVirtualFile) {
                 DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-                return sourceCodeFile.getMainDatabaseFile().getObject();
+                return sourceCodeFile.getObject();
             }
         }
         return null;
