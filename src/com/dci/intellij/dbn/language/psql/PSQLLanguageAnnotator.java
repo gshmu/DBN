@@ -103,13 +103,16 @@ public class PSQLLanguageAnnotator implements Annotator {
     }
 
     private static void annotateAliasRef(IdentifierPsiElement aliasReference, AnnotationHolder holder) {
-        if (aliasReference.resolve() == null) {
+        /*if (aliasReference.resolve() == null) {
             Annotation annotation = holder.createWarningAnnotation(aliasReference, "Unknown identifier");
             annotation.setTextAttributes(PSQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
         } else {
             Annotation annotation = holder.createInfoAnnotation(aliasReference, null);
             annotation.setTextAttributes(PSQLTextAttributesKeys.ALIAS);
-        }
+        }*/
+
+        Annotation annotation = holder.createInfoAnnotation(aliasReference, null);
+        annotation.setTextAttributes(PSQLTextAttributesKeys.ALIAS);
     }
 
     private static void annotateAliasDef(IdentifierPsiElement aliasDefinition, AnnotationHolder holder) {
