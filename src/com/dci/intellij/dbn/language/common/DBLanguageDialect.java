@@ -7,6 +7,7 @@ import java.util.Set;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
@@ -16,11 +17,28 @@ import com.intellij.psi.tree.IFileElementType;
 
 public abstract class DBLanguageDialect extends LanguageDialect implements DBFileElementTypeProvider {
     private DBLanguageDialectIdentifier identifier;
-    private DBLanguageSyntaxHighlighter syntaxHighlighter;
-    private DBLanguageParserDefinition parserDefinition;
-    private IFileElementType fileElementType;
-    private Set<ChameleonTokenType> chameleonTokens;
+    private LazyValue<DBLanguageSyntaxHighlighter> syntaxHighlighter = new LazyValue<DBLanguageSyntaxHighlighter>() {
+        @Override
+        protected DBLanguageSyntaxHighlighter load() {
+            return createSyntaxHighlighter();
+        }
+    };
+
+    private LazyValue<DBLanguageParserDefinition> parserDefinition = new LazyValue<DBLanguageParserDefinition>(null) {
+        @Override
+        protected DBLanguageParserDefinition load() {
+            return createParserDefinition();
+        }
+    };
+
+    private LazyValue<IFileElementType> fileElementType = new LazyValue<IFileElementType>() {
+        @Override
+        protected IFileElementType load() {
+            return createFileElementType();
+        }
+    };
     private ChameleonElementType chameleonElementType;
+    private Set<ChameleonTokenType> chameleonTokens;
     private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<DBLanguageDialectIdentifier, DBLanguageDialect>(DBLanguageDialectIdentifier.class);
 
     public DBLanguageDialect(@NonNls @NotNull DBLanguageDialectIdentifier identifier, @NotNull DBLanguage baseLanguage) {
@@ -59,33 +77,16 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
     }
 
     public DBLanguageSyntaxHighlighter getSyntaxHighlighter() {
-        if (syntaxHighlighter == null) {
-            synchronized (this) {
-                if (syntaxHighlighter == null) {
-                    syntaxHighlighter = createSyntaxHighlighter();
-                }
-            }
-        }
-        return syntaxHighlighter;
+        return syntaxHighlighter.get();
     }
 
     @NotNull
     public synchronized DBLanguageParserDefinition getParserDefinition() {
-        if (parserDefinition == null) {
-            synchronized (this) {
-                if (parserDefinition == null) {
-                    parserDefinition = createParserDefinition();
-                }
-            }
-        }
-        return parserDefinition;
+        return parserDefinition.get();
     }
 
-    public synchronized IFileElementType getFileElementType() {
-        if (fileElementType == null) {
-            fileElementType = createFileElementType();
-        }
-        return fileElementType;
+    public IFileElementType getFileElementType() {
+        return fileElementType.get();
     }
 
     public TokenTypeBundle getParserTokenTypes() {
@@ -111,7 +112,11 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
 
     public synchronized ChameleonElementType getChameleonElementType(DBLanguageDialect parentLanguage) {
         if (chameleonElementType == null) {
-            chameleonElementType = new ChameleonElementType(this, parentLanguage);
+            synchronized (this) {
+                if (chameleonElementType == null) {
+                    chameleonElementType = new ChameleonElementType(this, parentLanguage);
+                }
+            }
         }
         return chameleonElementType;
     }
