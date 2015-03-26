@@ -40,7 +40,7 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
         boolean visible = false;
         if (virtualFile != null) {
             DBSchemaObject schemaObject = virtualFile.getObject();
-            if (schemaObject != null && schemaObject.getObjectType().matches(DBObjectType.METHOD)) {
+            if (schemaObject.getObjectType().matches(DBObjectType.METHOD)) {
                 visible = true;
             }
         }

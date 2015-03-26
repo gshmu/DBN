@@ -295,7 +295,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                 for (FileEditor fileEditor : fileEditors) {
                     if (fileEditor instanceof SourceCodeEditor) {
                         SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                        sourceCodeManager.updateSourceToDatabase(sourceCodeEditor, (DBSourceCodeVirtualFile) contentVirtualFile);
+                        sourceCodeManager.updateSourceToDatabase(sourceCodeEditor);
                         break;
                     }
                 }

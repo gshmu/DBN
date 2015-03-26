@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -26,6 +27,9 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -55,6 +59,7 @@ import com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -81,10 +86,35 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         fileEditorListener = new DBLanguageFileEditorListener();
     }
 
-    public void updateSourceToDatabase(final FileEditor fileEditor, final DBSourceCodeVirtualFile virtualFile) {
-        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(virtualFile.getProject());
+    public void loadSourceFromDatabase(@NotNull final SourceCodeEditor fileEditor) {
+        final DBSourceCodeVirtualFile virtualFile = fileEditor.getVirtualFile();
+        TaskInstructions taskInstructions = new TaskInstructions("Reverting local changes", false, false);
+        new ConnectionAction("reverting the changes", virtualFile, taskInstructions) {
+            @Override
+            protected void execute() {
+                boolean reloaded = virtualFile.reloadFromDatabase();
+
+                if (reloaded) {
+                    new WriteActionRunner() {
+                        public void run() {
+                            Editor editor = EditorUtil.getEditor(fileEditor);
+                            if (editor != null) {
+                                editor.getDocument().setText(virtualFile.getContent());
+                                virtualFile.setModified(false);
+                            }
+                        }
+                    }.start();
+                }
+            }
+        }.start();
+    }
+
+    public void updateSourceToDatabase(@NotNull final SourceCodeEditor fileEditor) {
+        final DBSourceCodeVirtualFile virtualFile = fileEditor.getVirtualFile();
         final DBSchemaObject object = virtualFile.getObject();
         final DBObjectStatusHolder objectStatus = object.getStatus();
+
+        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
         if (!debuggerManager.checkForbiddenOperation(virtualFile.getActiveConnection())) {
             objectStatus.set(DBObjectStatus.SAVING, false);
             return;
@@ -288,6 +318,32 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                 basePsiElement.navigateInEditor(fileEditor, true);
             }
         }
+    }
+
+    @Override
+    public boolean canCloseProject(Project project) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+
+        CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(getProject()).getConfirmationSettings();
+        InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChangesOptionHandler();
+
+        for (VirtualFile openFile : openFiles) {
+            if (openFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
+
+                if (databaseFile.isModified()) {
+                    DBSchemaObject object = databaseFile.getObject();
+                    CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
+
+                    switch (option) {
+                        case SAVE: databaseFile.saveChanges(); break;
+                        case CANCEL: return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     @Override

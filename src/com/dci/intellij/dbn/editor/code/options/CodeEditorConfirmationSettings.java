@@ -15,19 +15,19 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
             new ConfirmationOptionHandler(
                     "save-changes",
                     "Save changes",
-                    "Are you sure you want to save the changes for {0}?" + REMEMBER_OPTION_HINT, false);
+                    "Save the changes for {0}?" + REMEMBER_OPTION_HINT, false);
 
     private ConfirmationOptionHandler revertChangesOptionHandler =
             new ConfirmationOptionHandler(
                     "revert-changes",
                     "Revert Changes",
-                    "Are you sure you want to revert the changes for {0}?" + REMEMBER_OPTION_HINT, true);
+                    "Revert the changes for {0}?" + REMEMBER_OPTION_HINT, true);
 
     private InteractiveOptionHandler<CodeEditorChangesOption> exitOnChangesOptionHandler =
             new InteractiveOptionHandler<CodeEditorChangesOption>(
                     "exit-on-changes",
                     "Unsaved Changes",
-                    "You are about to close the editor for {0} and you have unsaved changes.\nPlease select whether to save or discard the changes." + REMEMBER_OPTION_HINT,
+                    "You are about to close the editor for {0} and you have unsaved changes.\nPlease choose whether to save or discard the changes." + REMEMBER_OPTION_HINT,
                     CodeEditorChangesOption.ASK,
                     CodeEditorChangesOption.SAVE,
                     CodeEditorChangesOption.DISCARD,
