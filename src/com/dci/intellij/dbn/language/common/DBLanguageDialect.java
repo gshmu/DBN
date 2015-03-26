@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.language.common;
 
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
@@ -14,6 +7,13 @@ import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor
 import com.intellij.lang.LanguageDialect;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IFileElementType;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class DBLanguageDialect extends LanguageDialect implements DBFileElementTypeProvider {
     private DBLanguageDialectIdentifier identifier;
@@ -24,7 +24,7 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
         }
     };
 
-    private LazyValue<DBLanguageParserDefinition> parserDefinition = new LazyValue<DBLanguageParserDefinition>(null) {
+    private LazyValue<DBLanguageParserDefinition> parserDefinition = new LazyValue<DBLanguageParserDefinition>() {
         @Override
         protected DBLanguageParserDefinition load() {
             return createParserDefinition();
