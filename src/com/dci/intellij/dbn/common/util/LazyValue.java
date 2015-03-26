@@ -9,6 +9,9 @@ public abstract class LazyValue<T> implements Disposable{
     private boolean loaded = false;
     private boolean disposed = false;
 
+    public LazyValue() {
+    }
+
     public LazyValue(Disposable parent) {
         Disposer.register(parent, this);
     }

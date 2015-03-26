@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.language.sql.dialect.SQLLanguageDialect;
 import com.intellij.lang.PsiBuilder;
 
 public class OracleSQLLanguageDialect extends SQLLanguageDialect {
-    ChameleonElementType plsqlChameleonElementType;
+    private ChameleonElementType plsqlChameleonElementType;
     public OracleSQLLanguageDialect() {
         super(DBLanguageDialectIdentifier.ORACLE_SQL);
     }
@@ -32,8 +32,12 @@ public class OracleSQLLanguageDialect extends SQLLanguageDialect {
     public ChameleonElementType getChameleonTokenType(DBLanguageDialectIdentifier dialectIdentifier) {
         if (dialectIdentifier == DBLanguageDialectIdentifier.ORACLE_PLSQL) {
             if (plsqlChameleonElementType == null) {
-                DBLanguageDialect plsqlDialect = DBLanguageDialect.getLanguageDialect(DBLanguageDialectIdentifier.ORACLE_PLSQL);
-                plsqlChameleonElementType = plsqlDialect.getChameleonElementType(this);
+                synchronized (this) {
+                    if (plsqlChameleonElementType == null) {
+                        DBLanguageDialect plsqlDialect = DBLanguageDialect.getLanguageDialect(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+                        plsqlChameleonElementType = plsqlDialect.getChameleonElementType(this);
+                    }
+                }
             }
             return plsqlChameleonElementType;
         }
