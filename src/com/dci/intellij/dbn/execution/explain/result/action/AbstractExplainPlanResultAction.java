@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
@@ -20,11 +19,13 @@ public abstract class AbstractExplainPlanResultAction extends DumbAwareAction {
     public static ExplainPlanResult getExplainPlanResult(AnActionEvent e) {
         ExplainPlanResult result = e.getData(DBNDataKeys.EXPLAIN_PLAN_RESULT);
         if (result == null) {
-            Project project = FailsafeUtil.get(e.getProject());
-            ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
-            if (executionResult instanceof ExplainPlanResult) {
-                return (ExplainPlanResult) executionResult;
+            Project project = e.getProject();
+            if (project != null) {
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
+                if (executionResult instanceof ExplainPlanResult) {
+                    return (ExplainPlanResult) executionResult;
+                }
             }
         }
         return result;

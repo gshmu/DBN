@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.method.result.action;
 import javax.swing.Icon;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -18,12 +17,14 @@ public abstract class MethodExecutionResultAction extends DumbAwareAction {
 
     public MethodExecutionResult getExecutionResult(AnActionEvent e) {
         MethodExecutionResult result = e.getData(DBNDataKeys.METHOD_EXECUTION_RESULT);
-        if (result == null) {
-            Project project = FailsafeUtil.get(e.getProject());
-            ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
-            if (executionResult instanceof MethodExecutionResult) {
-                return (MethodExecutionResult) executionResult;
+        if (result == null ) {
+            Project project = e.getProject();
+            if (project != null) {
+                ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                ExecutionResult executionResult = executionManager.getSelectedExecutionResult();
+                if (executionResult instanceof MethodExecutionResult) {
+                    return (MethodExecutionResult) executionResult;
+                }
             }
         }
 
