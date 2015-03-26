@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -72,6 +73,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public DataGridTrackingColumnSettingsForm createConfigurationEditor() {
         return new DataGridTrackingColumnSettingsForm(this);
     }

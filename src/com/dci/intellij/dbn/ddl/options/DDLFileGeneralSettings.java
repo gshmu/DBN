@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.ddl.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -66,6 +67,7 @@ public class DDLFileGeneralSettings extends Configuration<DDLFileGeneralSettings
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     public DDLFileGeneralSettingsForm createConfigurationEditor() {
         return new DDLFileGeneralSettingsForm(this);
     }

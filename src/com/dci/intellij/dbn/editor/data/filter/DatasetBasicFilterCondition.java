@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 import java.text.ParseException;
 import java.util.Date;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
@@ -152,6 +153,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
    /****************************************************
     *                   Configuration                  *
     ****************************************************/
+    @NotNull
     public DatasetBasicFilterConditionForm createConfigurationEditor() {
         DBDataset dataset = filter.lookupDataset();
         return new DatasetBasicFilterConditionForm(dataset, this);

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserGeneralSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
@@ -18,6 +19,7 @@ public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<Databas
         super(project);
     }
 
+    @NotNull
     @Override
     public DatabaseBrowserGeneralSettingsForm createConfigurationEditor() {
         return new DatabaseBrowserGeneralSettingsForm(this);

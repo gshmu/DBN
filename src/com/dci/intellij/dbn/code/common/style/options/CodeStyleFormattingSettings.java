@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.style.options;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleFormattingSettingsForm;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -42,6 +43,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     public CodeStyleFormattingSettingsForm createConfigurationEditor() {
         return new CodeStyleFormattingSettingsForm(this);
     }

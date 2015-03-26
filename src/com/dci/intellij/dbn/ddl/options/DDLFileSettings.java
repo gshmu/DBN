@@ -59,6 +59,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
     /********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @NotNull
     public DDFileSettingsForm createConfigurationEditor() {
         return new DDFileSettingsForm(this);
     }

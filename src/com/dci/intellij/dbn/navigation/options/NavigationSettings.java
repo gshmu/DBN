@@ -57,6 +57,7 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     @Override
     public NavigationSettingsForm createConfigurationEditor() {
         return new NavigationSettingsForm(this);

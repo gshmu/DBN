@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -37,6 +38,7 @@ public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortin
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public DataGridSortingSettingsForm createConfigurationEditor() {
         return new DataGridSortingSettingsForm(this);
     }

@@ -22,6 +22,7 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         sortingSettings = new DatabaseBrowserSortingSettings(project);
     }
 
+    @NotNull
     @Override
     public DatabaseBrowserSettingsForm createConfigurationEditor() {
         return new DatabaseBrowserSettingsForm(this);

@@ -13,10 +13,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -28,6 +30,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -132,24 +135,17 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             if (file instanceof DBEditableObjectVirtualFile) {
                 final DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 if (databaseFile.isModified()) {
-                    String[] options = new String[]{"Save", "Discard"};
                     DBSchemaObject object = databaseFile.getObject();
 
-                    MessageUtil.showWarningDialog(
-                            getProject(),
-                            "Unsaved changes",
-                            "You are about to close the editor for " + object.getQualifiedNameWithType() + " and you have unsaved changes.\nPlease select whether to save or discard the changes.",
-                            options, 0, new SimpleTask() {
-                                @Override
-                                protected boolean canExecute() {
-                                    return getOption() == 0;
-                                }
+                    CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(getProject()).getConfirmationSettings();
+                    InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChangesOptionHandler();
+                    CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
 
-                                @Override
-                                protected void execute() {
-                                    databaseFile.saveChanges();
-                                }
-                            });
+                    switch (option) {
+                        case SAVE: databaseFile.saveChanges(); break;
+                        case DISCARD: databaseFile.revertChanges(); break;
+                        case CANCEL: throw new ProcessCanceledException();
+                    }
                 }
             }
 

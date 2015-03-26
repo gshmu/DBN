@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -49,6 +50,7 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public DatatEditorValueListPopupSettingsForm createConfigurationEditor() {
         return new DatatEditorValueListPopupSettingsForm(this);
     }

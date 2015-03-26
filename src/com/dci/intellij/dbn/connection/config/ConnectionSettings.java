@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import java.util.UUID;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -57,6 +58,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         this.connectionId = connectionId;
     }
 
+    @NotNull
     @Override
     protected ConnectionSettingsForm createConfigurationEditor() {
         return new ConnectionSettingsForm(this);

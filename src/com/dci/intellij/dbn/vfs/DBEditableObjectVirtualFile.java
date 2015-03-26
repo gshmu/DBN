@@ -302,5 +302,16 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             }
         }
     }
+
+    public void revertChanges() {
+        List<DBContentVirtualFile> contentFiles = getContentFiles();
+        for (DBContentVirtualFile contentFile : contentFiles) {
+            if (contentFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) contentFile;
+                sourceCodeVirtualFile.reloadFromDatabase();
+            }
+        }
+
+    }
 }
 

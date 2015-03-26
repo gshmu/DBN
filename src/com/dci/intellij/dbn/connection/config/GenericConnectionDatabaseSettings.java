@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import java.io.File;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -18,6 +19,7 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
         super(connectionSettings);
     }
 
+    @NotNull
     public GenericDatabaseSettingsForm createConfigurationEditor() {
         return new GenericDatabaseSettingsForm(this);
     }

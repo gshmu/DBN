@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -51,6 +52,7 @@ public class StatementExecutionSettings extends Configuration{
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
         return new StatementExecutionSettingsForm(this);
     }

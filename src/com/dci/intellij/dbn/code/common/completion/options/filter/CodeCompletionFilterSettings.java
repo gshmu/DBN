@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter;
 
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterSettingsForm;
@@ -129,6 +130,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     protected CodeCompletionFilterSettingsForm createConfigurationEditor() {
         return new CodeCompletionFilterSettingsForm(this);
     }
