@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.browser.options;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserFilterSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -14,6 +16,7 @@ public class DatabaseBrowserFilterSettings extends CompositeProjectConfiguration
         objectTypeFilterSettings = new ObjectTypeFilterSettings(project, true);
     }
 
+    @NotNull
     @Override
     public DatabaseBrowserFilterSettingsForm createConfigurationEditor() {
         return new DatabaseBrowserFilterSettingsForm(this);

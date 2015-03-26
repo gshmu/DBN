@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.ddl.options;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -66,6 +67,7 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @NotNull
     public DDLFileExtensionSettingsForm createConfigurationEditor() {
         return new DDLFileExtensionSettingsForm(this);
     }

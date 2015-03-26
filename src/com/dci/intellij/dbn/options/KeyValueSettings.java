@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.options;
 import java.util.HashMap;
 import java.util.Map;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -67,7 +68,8 @@ public class KeyValueSettings extends Configuration {
         }
     }
 
+    @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

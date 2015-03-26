@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
@@ -116,6 +117,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     @Override
     protected ObjectNameFilterSettingsForm createConfigurationEditor() {
         return new ObjectNameFilterSettingsForm(this);

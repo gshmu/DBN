@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -10,7 +13,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
 
 public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
@@ -70,6 +72,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     @Override
     public ConnectionFilterSettingsForm createConfigurationEditor() {
         return new ConnectionFilterSettingsForm(this);

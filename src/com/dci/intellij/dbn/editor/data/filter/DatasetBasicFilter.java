@@ -1,15 +1,17 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
-import org.jdom.Element;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatasetBasicFilter extends DatasetFilterImpl {
     public static final int JOIN_TYPE_AND = 0;
@@ -126,9 +128,10 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+   @NotNull
    public ConfigurationEditorForm createConfigurationEditor() {
-       DBDataset dataset = lookupDataset();
-       return dataset == null ? null : new DatasetBasicFilterForm(dataset, this);
+       DBDataset dataset = FailsafeUtil.get(lookupDataset());
+       return new DatasetBasicFilterForm(dataset, this);
    }
 
    public void readConfiguration(Element element) {

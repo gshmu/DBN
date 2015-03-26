@@ -81,9 +81,11 @@ public class ProjectSettings
         }
     }
 
+    @NotNull
     @Override
     public JComponent createComponent() {
-        return null;//super.createComponent();
+        throw new UnsupportedOperationException();
+        //super.createComponent();
     }
 
     public JComponent createCustomComponent() {
@@ -172,6 +174,7 @@ public class ProjectSettings
     /*********************************************************
      *                    Configuration                      *
      *********************************************************/
+    @NotNull
     public ProjectSettingsEditorForm createConfigurationEditor() {
         return new ProjectSettingsEditorForm(this);
     }

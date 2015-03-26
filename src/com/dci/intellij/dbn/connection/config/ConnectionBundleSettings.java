@@ -75,6 +75,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     /*********************************************************
     *                   UnnamedConfigurable                 *
     *********************************************************/
+    @NotNull
     public ConnectionBundleSettingsForm createConfigurationEditor() {
         return new ConnectionBundleSettingsForm(this);
     }

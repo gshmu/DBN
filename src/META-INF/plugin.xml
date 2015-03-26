@@ -29,7 +29,9 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
-                - Object dependency tree (preview)<br>
+                - Object dependency tree<br>
+                - Connection credentials interactive dialogs<br>
+                - Confirmation options for code editors<br>
                 - Session Browser "quick Find Data" support (Ctrl-F)<br>
                 - Method execution cursor result "Find Data" support (Ctrl-F)<br>
                 - General bug fixes and performance improvements<br>
@@ -572,7 +574,6 @@
 
         <additionalTextAttributes scheme="Default" file="resources/DBNDefaultColors.xml" id="DBN-Default"/>
         <additionalTextAttributes scheme="Darcula" file="resources/DBNDarculaColors.xml" id="DBN-Darcula"/>
-
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 

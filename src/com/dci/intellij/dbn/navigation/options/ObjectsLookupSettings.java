@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -26,6 +27,7 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
         super(project);
     }
 
+    @NotNull
     @Override
     public ObjectsLookupSettingsForm createConfigurationEditor() {
         return new ObjectsLookupSettingsForm(this);

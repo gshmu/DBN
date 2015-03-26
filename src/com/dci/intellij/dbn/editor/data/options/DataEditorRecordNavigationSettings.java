@@ -1,14 +1,17 @@
 package com.dci.intellij.dbn.editor.data.options;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorRecordNavigationSettingsForm;
-import org.jdom.Element;
 
 public class DataEditorRecordNavigationSettings extends Configuration<DataEditorRecordNavigationSettingsForm> {
     private RecordNavigationTarget navigationTarget = RecordNavigationTarget.VIEWER;
 
+    @NotNull
     @Override
     public DataEditorRecordNavigationSettingsForm createConfigurationEditor() {
         return new DataEditorRecordNavigationSettingsForm(this);
