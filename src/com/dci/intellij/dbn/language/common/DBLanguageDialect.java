@@ -1,43 +1,44 @@
 package com.dci.intellij.dbn.language.common;
 
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
 import com.intellij.lang.LanguageDialect;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public abstract class DBLanguageDialect extends LanguageDialect implements DBFileElementTypeProvider {
     private DBLanguageDialectIdentifier identifier;
-    private LazyValue<DBLanguageSyntaxHighlighter> syntaxHighlighter = new LazyValue<DBLanguageSyntaxHighlighter>() {
+    private LazyValue<DBLanguageSyntaxHighlighter> syntaxHighlighter = new SimpleLazyValue<DBLanguageSyntaxHighlighter>() {
         @Override
         protected DBLanguageSyntaxHighlighter load() {
             return createSyntaxHighlighter();
         }
     };
 
-    private LazyValue<DBLanguageParserDefinition> parserDefinition = new LazyValue<DBLanguageParserDefinition>() {
+    private LazyValue<DBLanguageParserDefinition> parserDefinition = new SimpleLazyValue<DBLanguageParserDefinition>() {
         @Override
         protected DBLanguageParserDefinition load() {
             return createParserDefinition();
         }
     };
 
-    private LazyValue<IFileElementType> fileElementType = new LazyValue<IFileElementType>() {
+    private LazyValue<IFileElementType> fileElementType = new SimpleLazyValue<IFileElementType>() {
         @Override
         protected IFileElementType load() {
             return createFileElementType();
         }
     };
-    private ChameleonElementType chameleonElementType;
+
     private Set<ChameleonTokenType> chameleonTokens;
     private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<DBLanguageDialectIdentifier, DBLanguageDialect>(DBLanguageDialectIdentifier.class);
 
@@ -81,7 +82,7 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
     }
 
     @NotNull
-    public synchronized DBLanguageParserDefinition getParserDefinition() {
+    public DBLanguageParserDefinition getParserDefinition() {
         return parserDefinition.get();
     }
 
@@ -108,17 +109,6 @@ public abstract class DBLanguageDialect extends LanguageDialect implements DBFil
             }
         }
         return null;
-    }
-
-    public synchronized ChameleonElementType getChameleonElementType(DBLanguageDialect parentLanguage) {
-        if (chameleonElementType == null) {
-            synchronized (this) {
-                if (chameleonElementType == null) {
-                    chameleonElementType = new ChameleonElementType(this, parentLanguage);
-                }
-            }
-        }
-        return chameleonElementType;
     }
 
     public Map<TokenPairTemplate,TokenPairRangeMonitor> createTokenPairRangeMonitors(PsiBuilder builder){

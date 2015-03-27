@@ -62,9 +62,13 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         }
     }
 
-    public synchronized DBObjectStatusHolder getStatus() {
+    public DBObjectStatusHolder getStatus() {
         if (objectStatus == null) {
-            objectStatus = new DBObjectStatusHolder(getContentType());
+            synchronized (this) {
+                if (objectStatus == null) {
+                    objectStatus = new DBObjectStatusHolder(getContentType());
+                }
+            }
         }
         return objectStatus;
     }

@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -17,7 +19,38 @@ import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
 import com.intellij.openapi.project.Project;
 
 public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFilterSettingsForm> {
-    private List<ObjectTypeFilterSetting> objectTypeFilterSettings;
+    private LazyValue<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = new SimpleLazyValue<List<ObjectTypeFilterSetting>>() {
+        @Override
+        protected List<ObjectTypeFilterSetting> load() {
+            List<ObjectTypeFilterSetting> objectTypeFilterSettings = new ArrayList<ObjectTypeFilterSetting>();
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SCHEMA));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.USER));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.ROLE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.PRIVILEGE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.CHARSET));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.TABLE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.VIEW));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.MATERIALIZED_VIEW));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.NESTED_TABLE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.COLUMN));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.INDEX));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.CONSTRAINT));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DATASET_TRIGGER));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DATABASE_TRIGGER));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SYNONYM));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SEQUENCE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.PROCEDURE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.FUNCTION));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.PACKAGE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.TYPE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.TYPE_ATTRIBUTE));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.ARGUMENT));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DIMENSION));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.CLUSTER));
+            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DBLINK));
+            return objectTypeFilterSettings;
+        }
+    };
     private BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
     private boolean projectLevel;
 
@@ -111,37 +144,8 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         return null;
     }
 
-    public synchronized List<ObjectTypeFilterSetting> getSettings() {
-        if (objectTypeFilterSettings == null) {
-            objectTypeFilterSettings = new ArrayList<ObjectTypeFilterSetting>();
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.SCHEMA));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.USER));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.ROLE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.PRIVILEGE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.CHARSET));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.TABLE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.VIEW));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.MATERIALIZED_VIEW));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.NESTED_TABLE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.COLUMN));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.INDEX));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.CONSTRAINT));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.DATASET_TRIGGER));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.DATABASE_TRIGGER));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.SYNONYM));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.SEQUENCE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.PROCEDURE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.FUNCTION));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.PACKAGE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.TYPE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.TYPE_ATTRIBUTE));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.ARGUMENT));
-
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.DIMENSION));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.CLUSTER));
-            objectTypeFilterSettings.add(new ObjectTypeFilterSetting(this, DBObjectType.DBLINK));
-        }
-        return objectTypeFilterSettings;
+    public List<ObjectTypeFilterSetting> getSettings() {
+        return objectTypeFilterSettings.get();
     }
 
     public boolean isSelected(ObjectTypeFilterSetting objectFilterEntry) {
