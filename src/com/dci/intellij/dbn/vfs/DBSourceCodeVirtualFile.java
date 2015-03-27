@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -293,7 +294,10 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public void documentChanged(DocumentEvent event) {
-        setModified(true);
+        CharSequence newContent = event.getDocument().getCharsSequence();
+        if (!StringUtil.equals(newContent, content)){
+            setModified(true);
+        }
     }
 
     @Override
