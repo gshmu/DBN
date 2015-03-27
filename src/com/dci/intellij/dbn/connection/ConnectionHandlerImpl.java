@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -67,7 +68,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private ConnectionHandlerRef ref;
     private Authentication temporaryAuthentication = new Authentication();
 
-    private LazyValue<NavigationPsiCache> psiCache = new LazyValue<NavigationPsiCache>(this) {
+    private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
         @Override
         protected NavigationPsiCache load() {
             return new NavigationPsiCache(ConnectionHandlerImpl.this);
@@ -479,7 +480,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             DisposerUtil.dispose(objectBundle);
             DisposerUtil.dispose(connectionPool);
             DisposerUtil.dispose(consoleBundle);
-            DisposerUtil.dispose(psiCache);
             DisposerUtil.dispose(loadMonitor);
             DisposerUtil.dispose(sessionBrowserFile);
             connectionPool = null;
