@@ -74,7 +74,7 @@ VARIABLE = ":"{wso}({IDENTIFIER}|{INTEGER})
 
 <PSQL_BLOCK> {
     "begin" { blockNesting++; }
-    "end"({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}";"  { blockNesting--; if (blockNesting < 0) { blockNesting = 0; return endPsqlBlock(); }}
+    "end"({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}";"  { blockNesting--; if (blockNesting <= 0) { blockNesting = 0; return endPsqlBlock(); }}
 
     {WHITE_SPACE}+   {}
     {BLOCK_COMMENT}  {}
