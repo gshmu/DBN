@@ -206,19 +206,19 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     private static final DynamicContentLoader<DBTypeAttribute> ATTRIBUTES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTypeAttribute>() {
         public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return metadataInterface.loadTypeAttributes(type.getSchema().getName(), type.getName(), connection);
         }
 
         public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTypeImpl type = (DBTypeImpl) dynamicContent.getParent();
+            DBTypeImpl type = (DBTypeImpl) dynamicContent.getParentElement();
             return new DBTypeAttributeImpl(type, resultSet);
         }
     };
 
     private static final DynamicSubcontentLoader ATTRIBUTES_LOADER = new DynamicSubcontentLoader<DBTypeAttribute>(true) {
         public boolean match(DBTypeAttribute typeAttribute, DynamicContent dynamicContent) {
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return typeAttribute.getType().equals(type);
         }
 
@@ -230,12 +230,12 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     private static final DynamicContentLoader<DBTypeFunction> FUNCTIONS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTypeFunction>() {
         public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return metadataInterface.loadTypeFunctions(type.getSchema().getName(), type.getName(), connection);
         }
 
         public DBTypeFunction createElement(DynamicContent<DBTypeFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return new DBTypeFunctionImpl(type, resultSet);
         }
     };
@@ -246,7 +246,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
 
         public boolean match(DBTypeFunction function, DynamicContent dynamicContent) {
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return function.getType() == type;
         }
     };
@@ -254,12 +254,12 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     private static final DynamicContentLoader<DBTypeProcedure> PROCEDURES_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBTypeProcedure>() {
         public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return metadataInterface.loadTypeProcedures(type.getSchema().getName(), type.getName(), connection);
         }
 
         public DBTypeProcedure createElement(DynamicContent<DBTypeProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return new DBTypeProcedureImpl(type, resultSet);
         }
     };
@@ -270,7 +270,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
 
         public boolean match(DBTypeProcedure procedure, DynamicContent dynamicContent) {
-            DBType type = (DBType) dynamicContent.getParent();
+            DBType type = (DBType) dynamicContent.getParentElement();
             return procedure.getType() == type;
         }
     };
@@ -278,7 +278,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     private static final DynamicSubcontentLoader SUB_TYPES_LOADER = new DynamicSubcontentLoader<DBType>(false) {
         public boolean match(DBType type, DynamicContent dynamicContent) {
             DBType superType = type.getSuperType();
-            DBType thisType = (DBType) dynamicContent.getParent();
+            DBType thisType = (DBType) dynamicContent.getParentElement();
             return superType != null && superType.equals(thisType);
         }
 

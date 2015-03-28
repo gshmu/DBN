@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 
 public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditorSettingsForm> implements TopLevelConfig {
     private CodeEditorGeneralSettings generalSettings = new CodeEditorGeneralSettings();
+    private CodeEditorConfirmationSettings confirmationSettings = new CodeEditorConfirmationSettings();
 
     public CodeEditorSettings(Project project) {
         super(project);
@@ -53,9 +54,14 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
        return generalSettings;
     }
 
+    public CodeEditorConfirmationSettings getConfirmationSettings() {
+        return confirmationSettings;
+    }
+
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     public CodeEditorSettingsForm createConfigurationEditor() {
         return new CodeEditorSettingsForm(this);
     }
@@ -67,6 +73,7 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
 
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
-                generalSettings};
+            generalSettings,
+            confirmationSettings};
     }
 }

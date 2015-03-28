@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
@@ -33,12 +34,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class SessionBrowserStatementVirtualFile extends VirtualFile implements DBParseableVirtualFile, FileConnectionMappingProvider {
+public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
-    protected String name;
-    protected String path;
-    protected String url;
     private SessionBrowser sessionBrowser;
     private DBObjectRef<DBSchema> schemaRef;
 
@@ -48,8 +46,6 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
         this.content = content;
         ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
         name = connectionHandler.getName();
-        path = DatabaseFileSystem.createPath(connectionHandler) + " SESSION_BROWSER_STATEMENT";
-        url = DatabaseFileSystem.createUrl(connectionHandler) + "#SESSION_BROWSER_STATEMENT";
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
@@ -62,7 +58,6 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
             DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
             fileViewProvider.forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-            document.putUserData(FILE_KEY, this);
             PsiDocumentManagerImpl.cachePsi(document, file);
             return file;
         }
@@ -73,9 +68,23 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
         return sessionBrowser;
     }
 
+    @NotNull
     public Project getProject() {
         Project project = sessionBrowser == null ? null : sessionBrowser.getProject();
         return FailsafeUtil.get(project);
+    }
+
+    @NotNull
+    @Override
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(getConnectionHandler()) + " SESSION_BROWSER_STATEMENT";
+
+    }
+
+    @NotNull
+    @Override
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(getConnectionHandler()) + "#SESSION_BROWSER_STATEMENT";
     }
 
     public Icon getIcon() {
@@ -115,18 +124,6 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
         return DatabaseFileSystem.getInstance();
     }
 
-    @NotNull
-    @Override
-    public String getPath() {
-        return path;
-    }
-
-    @NotNull
-    @Override
-    public String getUrl() {
-        return url;
-    }
-
     @Override
     public boolean isWritable() {
         return true;
@@ -134,16 +131,6 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
 
     @Override
     public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
-    public boolean isInLocalFileSystem() {
         return false;
     }
 
@@ -213,19 +200,9 @@ public class SessionBrowserStatementVirtualFile extends VirtualFile implements D
         return "sql";
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
         sessionBrowser = null;
     }
 }

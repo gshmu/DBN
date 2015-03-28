@@ -26,36 +26,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 
-public abstract class DBContentVirtualFile extends VirtualFile implements FileConnectionMappingProvider, DBVirtualFile {
+public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements FileConnectionMappingProvider  {
     protected DBEditableObjectVirtualFile mainDatabaseFile;
     protected DBContentType contentType;
     private FileType fileType;
     private boolean modified;
-    private String name;
-    private String path;
-    private String url;
-
-    private int hashCode;
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
         this.mainDatabaseFile = mainDatabaseFile;
         this.contentType = contentType;
 
         DBSchemaObject object = mainDatabaseFile.getObject();
-        Project project = object.getProject();
-        DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-
-        hashCode = (databaseFileManager.getSessionId() + '#' +
-                    object.getConnectionHandler().getId() + '#' +
-                        object.getObjectType() + '#' +
-                        object.getQualifiedName() + '#' +
-                        object.getOverload() + '#' +
-                        contentType).hashCode();
-
-
         this.name = object.getName();
-        this.path = DatabaseFileSystem.createPath(object, this.contentType);
-        this.url = DatabaseFileSystem.createUrl(object);
 
         DDLFileType ddlFileType = object.getDDLFileType(contentType);
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
@@ -64,11 +46,6 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
     @Nullable
     public ConnectionHandler getActiveConnection() {
         return getObject().getConnectionHandler();
-    }
-
-    @Override
-    public boolean isInLocalFileSystem() {
-        return false;
     }
 
     @Nullable
@@ -134,15 +111,18 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
     }
 
     @NotNull
-    public String getPath() {
-        return path;
+    @Override
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(getObject().getRef(), contentType);
     }
 
     @NotNull
-    public String getUrl() {
-        return url;
+    @Override
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(getObject().getRef(), contentType);
     }
 
+    @NotNull
     public Project getProject() {
         return getMainDatabaseFile().getProject();
     }
@@ -153,10 +133,6 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
 
     public boolean isDirectory() {
         return false;
-    }
-
-    public boolean isValid() {
-        return true;
     }
 
     @Nullable
@@ -194,31 +170,9 @@ public abstract class DBContentVirtualFile extends VirtualFile implements FileCo
         return 1;
     }
 
-    public boolean equals(Object obj) {
-        if (obj instanceof DBContentVirtualFile) {
-            DBContentVirtualFile virtualFile = (DBContentVirtualFile) obj;
-            return virtualFile.hashCode() == hashCode;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    public boolean isDisposed() {
-        return disposed;
-    }
-
     @Override
     public void dispose() {
-        disposed = true;
+        super.dispose();
         mainDatabaseFile = null;
     }
 }

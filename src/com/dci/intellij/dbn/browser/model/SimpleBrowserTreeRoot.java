@@ -32,6 +32,12 @@ public class SimpleBrowserTreeRoot implements BrowserTreeNode {
         return project;
     }
 
+    @Nullable
+    @Override
+    public GenericDatabaseElement getParentElement() {
+        return null;
+    }
+
     /**************************************************
      *              BrowserTreeNode            *
      **************************************************/

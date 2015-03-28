@@ -67,6 +67,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
     /*********************************************************
      *                    Configuration                      *
      *********************************************************/
+    @NotNull
     public ExecutionEngineSettingsForm createConfigurationEditor() {
         return new ExecutionEngineSettingsForm(this);
     }

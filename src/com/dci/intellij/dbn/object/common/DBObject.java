@@ -96,4 +96,8 @@ public interface DBObject extends BrowserTreeNode, PsiNamedElement, DynamicConte
     DBObjectRef getRef();
 
     boolean isParentOf(DBObject object);
+
+    @NotNull
+    @Override
+    BrowserTreeNode getTreeParent();
 }

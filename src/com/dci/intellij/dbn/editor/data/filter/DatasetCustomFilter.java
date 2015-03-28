@@ -1,15 +1,17 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
+import javax.swing.Icon;
+import org.jdom.CDATA;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetCustomFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jdom.CDATA;
-import org.jdom.Element;
-
-import javax.swing.Icon;
 
 public class DatasetCustomFilter extends DatasetFilterImpl {
     private String condition;
@@ -61,9 +63,10 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     /*****************************************************
      *                   Configuration                   *
      *****************************************************/
+    @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
-        DBDataset dataset = lookupDataset();
-        return dataset == null ? null : new DatasetCustomFilterForm(dataset, this);
+        DBDataset dataset = FailsafeUtil.get(lookupDataset());
+        return new DatasetCustomFilterForm(dataset, this);
     }
 
     public void readConfiguration(Element element) {

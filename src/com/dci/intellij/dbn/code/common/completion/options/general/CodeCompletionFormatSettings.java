@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion.options.general;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.completion.options.general.ui.CodeCompletionFormatSettingsForm;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -20,6 +21,7 @@ public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFo
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+   @NotNull
    public CodeCompletionFormatSettingsForm createConfigurationEditor() {
        return new CodeCompletionFormatSettingsForm(this);
    }

@@ -81,6 +81,7 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     public DataEditorSettingsForm createConfigurationEditor() {
         return new DataEditorSettingsForm(this);
     }

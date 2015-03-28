@@ -70,7 +70,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     int size();
 
     @NotNull
-    GenericDatabaseElement getParent();
+    GenericDatabaseElement getParentElement();
     DynamicContentLoader getLoader();
     ContentDependencyAdapter getDependencyAdapter();
 

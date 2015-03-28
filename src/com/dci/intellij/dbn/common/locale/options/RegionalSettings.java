@@ -89,6 +89,7 @@ public class RegionalSettings extends Configuration<RegionalSettingsEditorForm> 
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @NotNull
     public RegionalSettingsEditorForm createConfigurationEditor() {
         return new RegionalSettingsEditorForm(this);
     }

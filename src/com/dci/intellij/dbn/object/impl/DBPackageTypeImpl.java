@@ -77,7 +77,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     private static final DynamicContentLoader ATTRIBUTES_LOADER = new DynamicContentResultSetLoader() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBPackageTypeImpl type = (DBPackageTypeImpl) dynamicContent.getParent();
+            DBPackageTypeImpl type = (DBPackageTypeImpl) dynamicContent.getParentElement();
             return metadataInterface.loadProgramTypeAttributes(
                     type.getSchema().getName(),
                     type.getPackage().getName(),
@@ -85,7 +85,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         }
 
         public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBTypeImpl type = (DBTypeImpl) dynamicContent.getParent();
+            DBTypeImpl type = (DBTypeImpl) dynamicContent.getParentElement();
             return new DBTypeAttributeImpl(type, resultSet);
         }
     };

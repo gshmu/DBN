@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import java.nio.charset.Charset;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
@@ -128,6 +129,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     @Override
     public ConnectionDetailSettingsForm createConfigurationEditor() {
         return new ConnectionDetailSettingsForm(this);

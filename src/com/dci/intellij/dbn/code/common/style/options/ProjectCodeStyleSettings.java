@@ -41,6 +41,7 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
         return ConfigId.CODE_STYLE;
     }
 
+    @NotNull
     public CodeStyleSettingsForm createConfigurationEditor() {
         return new CodeStyleSettingsForm(this);
     }

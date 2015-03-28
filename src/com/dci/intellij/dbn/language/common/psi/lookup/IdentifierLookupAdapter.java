@@ -32,10 +32,12 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
         this.attribute = attribute;
     }
 
+
     public boolean matches(BasePsiElement basePsiElement) {
         if (basePsiElement instanceof IdentifierPsiElement && basePsiElement != lookupIssuer) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
             return
+                matchesResolveState(identifierPsiElement) &&
                 matchesType(identifierPsiElement) &&
                 matchesObjectType(identifierPsiElement) &&
                 matchesCategory(identifierPsiElement) &&
@@ -43,6 +45,11 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
                 matchesName(identifierPsiElement);
         }
         return false;
+    }
+
+
+    private boolean matchesResolveState(IdentifierPsiElement identifierPsiElement) {
+        return !isAssertResolved() || identifierPsiElement.isResolved() || !identifierPsiElement.isQualifiedIdentifierMember();
     }
 
     private boolean matchesType(IdentifierPsiElement identifierPsiElement) {

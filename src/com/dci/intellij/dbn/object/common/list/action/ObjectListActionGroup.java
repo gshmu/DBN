@@ -8,7 +8,7 @@ public class ObjectListActionGroup extends DefaultActionGroup {
 
     public ObjectListActionGroup(DBObjectList objectList) {
         add(new ReloadObjectsAction(objectList));
-        if(objectList.getParent() instanceof DBSchema) {
+        if(objectList.getParentElement() instanceof DBSchema) {
             add (new CreateObjectAction(objectList));
         }
     }

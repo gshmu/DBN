@@ -29,9 +29,11 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
-                - Object dependency tree (preview)<br>
-                - Session Browser "quick Find Data" support<br>
-                - Method execution cursor result "Find Data" support<br>
+                - Object dependency tree<br>
+                - Connection credentials interactive dialogs<br>
+                - Confirmation options for code editors<br>
+                - Session Browser "quick Find Data" support (Ctrl-F)<br>
+                - Method execution cursor result "Find Data" support (Ctrl-F)<br>
                 - General bug fixes and performance improvements<br>
             </ul>
             <li><b>3.0.4183</b>
@@ -421,12 +423,12 @@
         </group>
         <group id="DBNavigator.ActionGroup.StatementExecutionResult">
             <action id="DBNavigator.Actions.ExecutionResult.Close" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultCloseAction" text="Execution Result - Close" icon="/img/action/Close.png"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View statement" icon="/img/action/Preview.png"/>
-            <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View record" icon="/img/RecordViewer.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewStatementAction" text="Execution Result - View Statement" icon="/img/action/Preview.png"/>
+            <action id="DBNavigator.Actions.ExecutionResult.ViewRecord" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultViewRecordAction" text="Execution Result - View Record" icon="/img/RecordViewer.png"/>
             <separator/>
-            <action id="DBNavigator.Actions.ExecutionResult.OpenVariablesDialog" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultVariablesDialogAction" text="Execution Result - Open variables dialog"/>
-            <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun statement"/>
-            <action id="DBNavigator.Actions.ExecutionResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultResumeAction" text="Execution Result - Fetch next records"/>
+            <action id="DBNavigator.Actions.ExecutionResult.OpenVariablesDialog" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultVariablesDialogAction" text="Execution Result - Open Variables Dialog"/>
+            <action id="DBNavigator.Actions.ExecutionResult.RerunStatement" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultRerunAction" text="Execution Result - Rerun Statement"/>
+            <action id="DBNavigator.Actions.ExecutionResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultResumeAction" text="Execution Result - Fetch Next Records"/>
             <separator/>
             <action id="DBNavigator.Actions.ExecutionResult.FindData" class="com.dci.intellij.dbn.execution.statement.result.action.ExecutionResultFindDataAction" text="Execution Result - Find Data" icon="/img/action/Find.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>
@@ -444,7 +446,9 @@
             <action id="DBNavigator.Actions.MethodExecutionResult.Settings" class="com.dci.intellij.dbn.execution.method.result.action.OpenSettingsAction" text="Method Execution Result - Open Execution Dialog" icon="/img/action/Properties.png"/>
         </group>
         <group id="DBNavigator.ActionGroup.MethodExecutionCursorResult">
-            <action id="DBNavigator.Actions.MethodExecutionCursorResult.Find" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFindAction" text="Method Execution Cursor Result - Find Data" icon="/img/action/Find.png"/>
+            <action id="DBNavigator.Actions.MethodExecutionCursorResult.Find" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFindAction" text="Method Execution Cursor Result - Find Data" icon="/img/action/Find.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl F"/>
+            </action>
             <action id="DBNavigator.Actions.MethodExecutionCursorResult.FetchNextRecords" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultFetchNextRecordsAction" text="Method Execution Cursor Result - Fetch Next Records" icon="/img/action/ResumeExecution.png"/>
             <action id="DBNavigator.Actions.MethodExecutionCursorResult.ViewRecord" class="com.dci.intellij.dbn.execution.method.result.action.CursorResultViewRecordAction" text="Method Execution Cursor Result - View Record" icon="/img/RecordViewer.png"/>
             <separator/>
@@ -570,7 +574,6 @@
 
         <additionalTextAttributes scheme="Default" file="resources/DBNDefaultColors.xml" id="DBN-Default"/>
         <additionalTextAttributes scheme="Darcula" file="resources/DBNDarculaColors.xml" id="DBN-Darcula"/>
-
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 

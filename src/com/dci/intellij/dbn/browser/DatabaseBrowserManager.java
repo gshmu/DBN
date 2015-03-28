@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -32,7 +33,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -97,9 +98,15 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     }
 
-    public synchronized BrowserToolWindowForm getToolWindowForm() {
+    @NotNull
+    public BrowserToolWindowForm getToolWindowForm() {
         if (toolWindowForm == null) {
-            toolWindowForm = new BrowserToolWindowForm(getProject());
+            synchronized (this) {
+                if (toolWindowForm == null) {
+                    if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
+                    toolWindowForm = new BrowserToolWindowForm(getProject());
+                }
+            }
         }
         return toolWindowForm;
     }
@@ -116,15 +123,11 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return showObjectProperties;
     }
 
-    public boolean isDisposed() {
-        return false;
-    }
-
     public String toString() {
         return "DB Browser";
     }
 
-    public synchronized void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean requestFocus) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean requestFocus) {
         ToolWindow toolWindow = getBrowserToolWindow();
 
         toolWindow.show(null);
@@ -133,7 +136,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         }
     }
 
-    public synchronized void navigateToElement(@Nullable BrowserTreeNode treeNode) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode) {
         if (treeNode != null) {
             getToolWindowForm().getBrowserForm().selectElement(treeNode, false);
         }
@@ -190,21 +193,16 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
-            if (toolWindowForm != null) {
-                final DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
-                if (browserTree != null && browserTree.getTargetSelection() != null) {
-                    new ConditionalLaterInvocator() {
-                        @Override
-                        protected void execute() {
-                            browserTree.scrollToSelectedElement();
-                        }
-                    }.start();
-                }
+            final DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
+            if (browserTree != null && browserTree.getTargetSelection() != null) {
+                new ConditionalLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        browserTree.scrollToSelectedElement();
+                    }
+                }.start();
             }
         }
-    }
-
-    public void dispose() {
     }
 
     public boolean isTabbedMode() {
@@ -255,8 +253,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                     navigateToElement(databaseFile.getObject());
                 }
-                else  if (file instanceof DBVirtualFile) {
-                    DBVirtualFile databaseVirtualFile = (DBVirtualFile) file;
+                else  if (file instanceof DBVirtualFileImpl) {
+                    DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
                     ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                     navigateToElement(connectionHandler.getObjectBundle());
                 }
@@ -273,8 +271,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
                         navigateToElement(databaseFile.getObject());
                     }
-                    else  if (newFile instanceof DBVirtualFile) {
-                        DBVirtualFile databaseVirtualFile = (DBVirtualFile) newFile;
+                    else  if (newFile instanceof DBVirtualFileImpl) {
+                        DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
                         ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                         navigateToElement(connectionHandler.getObjectBundle());
                     }

@@ -25,7 +25,6 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction {
 
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
-        SessionBrowser sessionBrowser = getSessionBrowser(component);
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         actionGroup.add(new SelectRefreshTimeAction(0));
         actionGroup.addSeparator();
@@ -37,7 +36,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction {
         return actionGroup;
     }
 
-    public synchronized void update(AnActionEvent e) {
+    public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Icon icon = Icons.ACTION_TIMED_REFRESH_OFF;
         String text = "No refresh";

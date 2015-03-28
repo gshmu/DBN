@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.common.ui;
 
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
 
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends GUIUtil implements DBNForm {
     private boolean disposed;
@@ -50,7 +50,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         }
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
-        Project project = DataKeys.PROJECT.getData(dataContext);
+        Project project = PlatformDataKeys.PROJECT.getData(dataContext);
         return FailsafeUtil.get(project);
     }
 

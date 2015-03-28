@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
@@ -20,8 +20,8 @@ import com.intellij.util.io.ReadOnlyAttributeUtil;
 public class VirtualFileUtil {
 
     public static Icon getIcon(VirtualFile virtualFile) {
-        if (virtualFile instanceof DBVirtualFile) {
-            DBVirtualFile file = (DBVirtualFile) virtualFile;
+        if (virtualFile instanceof DBVirtualFileImpl) {
+            DBVirtualFileImpl file = (DBVirtualFileImpl) virtualFile;
             return file.getIcon();
         }
         return virtualFile.getFileType().getIcon();

@@ -6,6 +6,16 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 
 public abstract class PsiLookupAdapter {
+    private boolean assertResolved = false;
+
+    public void setAssertResolved(boolean assertResolved) {
+        this.assertResolved = assertResolved;
+    }
+
+    public boolean isAssertResolved() {
+        return assertResolved;
+    }
+
     public abstract boolean matches(BasePsiElement element);
 
     public abstract boolean accepts(BasePsiElement element);

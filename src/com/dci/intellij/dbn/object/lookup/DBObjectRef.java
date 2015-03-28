@@ -41,9 +41,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             parent = parentObj.getRef();
         } else {
             ConnectionHandler connectionHandler = object.getConnectionHandler();
-            if (connectionHandler != null) {
-                connectionId = connectionHandler.getId();
-            }
+            connectionId = connectionHandler.getId();
         }
     }
 
@@ -222,6 +220,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     public String getConnectionId() {
         return parent == null ? connectionId : parent.getConnectionId();
+    }
+
+    public DBObjectRef getParent() {
+        return parent;
     }
 
     public boolean is(@NotNull T object) {

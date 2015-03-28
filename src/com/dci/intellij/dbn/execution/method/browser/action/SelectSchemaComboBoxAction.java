@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -8,10 +12,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 
 public class SelectSchemaComboBoxAction extends DBNComboBoxAction {
     MethodExecutionBrowserForm browserComponent;
@@ -33,7 +33,7 @@ public class SelectSchemaComboBoxAction extends DBNComboBoxAction {
         return actionGroup;
     }
 
-    public synchronized void update(AnActionEvent e) {
+    public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = "Schema";
         Icon icon = null;

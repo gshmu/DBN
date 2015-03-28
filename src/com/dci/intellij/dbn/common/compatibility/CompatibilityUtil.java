@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.compatibility;
 
 import javax.swing.JComponent;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import java.awt.Color;
 
 import com.intellij.find.editorHeaderActions.Utils;
@@ -36,5 +37,13 @@ public class CompatibilityUtil {
 
     public static boolean isUnderGTKLookAndFeel() {
         return UIUtil.isUnderGTKLookAndFeel();
+    }
+
+    public static boolean isUnderIntelliJLaF() {
+        try {
+            return UIUtil.isUnderIntelliJLaF();
+        } catch (Error e) {
+            return UIManager.getLookAndFeel().getName().contains("IntelliJ");
+        }
     }
 }

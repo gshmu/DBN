@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.ui.tab;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
@@ -57,12 +56,7 @@ public class TabbedPane extends JBTabsImpl {
         ActionCallback actionCallback = super.removeTab(tabInfo);
         if (object instanceof Disposable) {
             final Disposable disposable = (Disposable) object;
-            new SimpleBackgroundTask("dispose component") {
-                @Override
-                protected void execute() {
-                    Disposer.dispose(disposable);
-                }
-            }.start();
+            Disposer.dispose(disposable);
             tabInfo.setObject(null);
         }
         return actionCallback;

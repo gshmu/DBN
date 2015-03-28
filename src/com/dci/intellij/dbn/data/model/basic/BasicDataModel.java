@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -39,14 +40,14 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private Filter<T> filter;
     private RegionalSettings regionalSettings;
 
-    private LazyValue<BasicDataGutterModel> listModel = new LazyValue<BasicDataGutterModel>(this) {
+    private LazyValue<BasicDataGutterModel> listModel = new DisposableLazyValue<BasicDataGutterModel>(this) {
         @Override
         protected BasicDataGutterModel load() {
             return new BasicDataGutterModel(BasicDataModel.this);
         }
     };
 
-    private LazyValue<DataSearchResult> searchResult = new LazyValue<DataSearchResult>(this) {
+    private LazyValue<DataSearchResult> searchResult = new DisposableLazyValue<DataSearchResult>(this) {
         @Override
         protected DataSearchResult load() {
             DataSearchResult dataSearchResult = new DataSearchResult();
@@ -61,7 +62,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     }
 
     @Override
-    public synchronized ListModel getListModel() {
+    public ListModel getListModel() {
         return listModel.get();
     }
 

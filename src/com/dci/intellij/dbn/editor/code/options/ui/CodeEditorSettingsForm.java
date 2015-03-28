@@ -9,10 +9,12 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 public class CodeEditorSettingsForm extends CompositeConfigurationEditorForm<CodeEditorSettings> {
     private JPanel mainPanel;
     private JPanel generalSettingsPanel;
+    private JPanel confirmationSettingsPanel;
 
     public CodeEditorSettingsForm(CodeEditorSettings settings) {
         super(settings);
         generalSettingsPanel.add(settings.getGeneralSettings().createComponent(), BorderLayout.CENTER);
+        confirmationSettingsPanel.add(settings.getConfirmationSettings().createComponent(), BorderLayout.CENTER);
         resetFormChanges();
     }
 

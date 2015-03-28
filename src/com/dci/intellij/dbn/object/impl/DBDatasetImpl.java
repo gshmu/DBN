@@ -102,7 +102,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
         public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
             DBConstraintColumnRelation constraintColumnRelation = (DBConstraintColumnRelation) sourceElement;
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return constraintColumnRelation.getColumn().getDataset() == dataset;
         }
     };
@@ -110,7 +110,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     private static final DynamicContentLoader CONSTRAINT_COLUMN_RELATION_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return metadataInterface.loadConstraintRelations(dataset.getSchema().getName(), dataset.getName(), connection);
         }
 
@@ -119,7 +119,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             String constraintName = resultSet.getString("CONSTRAINT_NAME");
             int position = resultSet.getInt("POSITION");
 
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             DBColumn column = dataset.getColumn(columnName);
             DBConstraint constraint = dataset.getConstraint(constraintName);
 
@@ -132,7 +132,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
     private static final DynamicSubcontentLoader COLUMNS_LOADER = new DynamicSubcontentLoader<DBColumn>(true) {
         public boolean match(DBColumn column, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return CommonUtil.safeEqual(column.getDataset(), dataset);
         }
 
@@ -143,19 +143,19 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     private static final DynamicContentLoader<DBColumn> COLUMNS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBColumn>() {
         public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return metadataInterface.loadColumns(dataset.getSchema().getName(), dataset.getName(), connection);
         }
 
         public DBColumn createElement(DynamicContent<DBColumn> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParent();
+            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
             return new DBColumnImpl(dataset, resultSet);
         }
     };
 
     private static final DynamicSubcontentLoader<DBConstraint> CONSTRAINTS_LOADER = new DynamicSubcontentLoader<DBConstraint>(true) {
         public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             DBDataset constraintDataset = constraint.getDataset();
             return constraintDataset != null && constraintDataset.equals(dataset);
         }
@@ -168,19 +168,19 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     private static final DynamicContentLoader<DBConstraint> CONSTRAINTS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBConstraint>() {
         public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return metadataInterface.loadConstraints(dataset.getSchema().getName(), dataset.getName(), connection);
         }
 
         public DBConstraint createElement(DynamicContent<DBConstraint> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParent();
+            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
             return new DBConstraintImpl(dataset, resultSet);
         }
     };
 
     private static final DynamicSubcontentLoader TRIGGERS_LOADER = new DynamicSubcontentLoader<DBDatasetTrigger>(true) {
         public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return trigger.getDataset().equals(dataset);
         }
 
@@ -192,12 +192,12 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
     private static final DynamicContentLoader<DBDatasetTrigger> TRIGGERS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBDatasetTrigger>() {
         public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBDataset dataset = (DBDataset) dynamicContent.getParent();
+            DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
             return metadataInterface.loadDatasetTriggers(dataset.getSchema().getName(), dataset.getName(), connection);
         }
 
         public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParent();
+            DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
             return new DBDatasetTriggerImpl(dataset, resultSet);
         }
     };

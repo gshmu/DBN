@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -93,61 +95,106 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(ConnectionDatabaseSettings databaseSettings, @Nullable Authentication temporaryAuthentication, boolean autoCommit, @Nullable ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(final ConnectionDatabaseSettings databaseSettings, @Nullable Authentication temporaryAuthentication, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+        ConnectTimeoutTask connectTask = null;
         try {
-            Properties properties = new Properties();
-            Authentication authentication = databaseSettings.getAuthentication();
-            if (!authentication.isProvided() && temporaryAuthentication != null) {
-                authentication = temporaryAuthentication;
-            }
-            if (!authentication.isOsAuthentication()) {
-                String user = authentication.getUser();
-                String password = authentication.getPassword();
-                properties.put("user", user);
-                properties.put("password", password);
-            }
+            connectTask = new ConnectTimeoutTask();
+            connectTask.connectionType = connectionType;
+            connectTask.temporaryAuthentication = temporaryAuthentication;
+            connectTask.databaseSettings = databaseSettings;
+            connectTask.connectionStatus = connectionStatus;
+            connectTask.autoCommit = autoCommit;
+            connectTask.start();
 
-            String appName = "Database Navigator - " + connectionType.getName() + "";
-            properties.put("ApplicationName", appName);
-            properties.put("v$session.program", appName);
-            Map<String, String> configProperties = databaseSettings.getProperties();
-            if (configProperties != null) {
-                properties.putAll(configProperties);
-            }
-
-            Driver driver = DatabaseDriverManager.getInstance().getDriver(
-                    databaseSettings.getDriverLibrary(),
-                    databaseSettings.getDriver());
-
-            Connection connection = driver.connect(databaseSettings.getDatabaseUrl(), properties);
-            if (connection == null) {
-                throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
-            }
-            connection.setAutoCommit(autoCommit);
-            if (connectionStatus != null) {
-                connectionStatus.setStatusMessage(null);
-                connectionStatus.setConnected(true);
-                connectionStatus.setValid(true);
-            }
-
-            DatabaseType databaseType = getDatabaseType(connection);
-            databaseSettings.setDatabaseType(databaseType);
-            databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
-            databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-
-            return connection;
-        } catch (Throwable e) {
-            DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
-            databaseSettings.setDatabaseType(databaseType);
-            databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
-            if (connectionStatus != null) {
-                connectionStatus.setStatusMessage(e.getMessage());
-                connectionStatus.setConnected(false);
-                connectionStatus.setValid(false);
-            }
-            if (e instanceof SQLException)
-                throw (SQLException) e;  else
+        } catch (Exception e) {
+            if (e instanceof SQLException) {
+                throw (SQLException) e;
+            } else {
                 throw new SQLException(e.getMessage());
+            }
+        }
+
+        if (connectTask.exception != null) {
+            throw connectTask.exception;
+        }
+
+        if (connectTask.connection == null) {
+            throw new SQLException("Could not connect to database. Communication timeout");
+        }
+
+        return connectTask.connection;
+    }
+
+    private static class ConnectTimeoutTask extends SimpleTimeoutTask {
+        private ConnectionType connectionType;
+        private Authentication temporaryAuthentication;
+        private ConnectionDatabaseSettings databaseSettings;
+        private ConnectionStatus connectionStatus;
+        private boolean autoCommit;
+
+        private Connection connection;
+        private SQLException exception;
+
+        public ConnectTimeoutTask() {
+            super("DBN connect thread", TimeUtil.THIRTY_SECONDS);
+        }
+
+        @Override
+        public void run() {
+            try {
+                final Properties properties = new Properties();
+                Authentication authentication = databaseSettings.getAuthentication();
+                if (!authentication.isProvided() && temporaryAuthentication != null) {
+                    authentication = temporaryAuthentication;
+                }
+                if (!authentication.isOsAuthentication()) {
+                    String user = authentication.getUser();
+                    String password = authentication.getPassword();
+                    properties.put("user", user);
+                    properties.put("password", password);
+                }
+
+                String appName = "Database Navigator - " + connectionType.getName() + "";
+                properties.put("ApplicationName", appName);
+                properties.put("v$session.program", appName);
+                Map<String, String> configProperties = databaseSettings.getProperties();
+                if (configProperties != null) {
+                    properties.putAll(configProperties);
+                }
+
+                final Driver driver = DatabaseDriverManager.getInstance().getDriver(
+                        databaseSettings.getDriverLibrary(),
+                        databaseSettings.getDriver());
+
+                connection = driver.connect(databaseSettings.getDatabaseUrl(), properties);
+                if (connection == null) {
+                    throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
+                }
+                connection.setAutoCommit(autoCommit);
+                if (connectionStatus != null) {
+                    connectionStatus.setStatusMessage(null);
+                    connectionStatus.setConnected(true);
+                    connectionStatus.setValid(true);
+                }
+
+                DatabaseType databaseType = getDatabaseType(connection);
+                databaseSettings.setDatabaseType(databaseType);
+                databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
+                databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
+
+            } catch (Throwable e) {
+                DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
+                databaseSettings.setDatabaseType(databaseType);
+                databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
+                if (connectionStatus != null) {
+                    connectionStatus.setStatusMessage(e.getMessage());
+                    connectionStatus.setConnected(false);
+                    connectionStatus.setValid(false);
+                }
+                exception = e instanceof SQLException ?
+                        (SQLException) e :
+                        new SQLException(e.getMessage());
+            }
         }
     }
 

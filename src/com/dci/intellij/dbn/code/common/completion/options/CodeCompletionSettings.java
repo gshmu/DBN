@@ -82,6 +82,7 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
     *                     Configuration                      *
     *********************************************************/
 
+    @NotNull
     protected CodeCompletionSettingsForm createConfigurationEditor() {
         return new CodeCompletionSettingsForm(this);
     }

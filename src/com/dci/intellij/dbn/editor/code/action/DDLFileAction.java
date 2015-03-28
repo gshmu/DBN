@@ -33,13 +33,11 @@ public class DDLFileAction extends GroupPopupAction {
         DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
         if (sourcecodeFile != null) {
             DBSchemaObject object = sourcecodeFile.getObject();
-            if (object != null) {
-                return new AnAction[]{
-                        new CreateDDLFileAction(object),
-                        new AttachDDLFileAction(object),
-                        new DetachDDLFileAction(object)
-                };
-            }
+            return new AnAction[]{
+                    new CreateDDLFileAction(object),
+                    new AttachDDLFileAction(object),
+                    new DetachDDLFileAction(object)
+            };
         }
         return new AnAction[0];
     }

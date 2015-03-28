@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -109,6 +110,7 @@ public class TransactionManagerSettings extends Configuration<TransactionManager
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public TransactionManagerSettingsForm createConfigurationEditor() {
         return new TransactionManagerSettingsForm(this);
     }

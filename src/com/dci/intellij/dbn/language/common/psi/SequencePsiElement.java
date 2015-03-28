@@ -52,9 +52,9 @@ public class SequencePsiElement extends BasePsiElement {
             PsiLookupAdapter lookupAdapter,
             int scopeCrossCount) {
 
+        ProgressIndicatorProvider.checkCanceled();
         PsiElement child = getFirstChild();
         while (child != null) {
-            ProgressIndicatorProvider.checkCanceled();
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
                 if (lookupAdapter.accepts(basePsiElement)) {

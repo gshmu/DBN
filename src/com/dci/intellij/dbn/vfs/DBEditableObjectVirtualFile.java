@@ -6,9 +6,10 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -38,6 +39,7 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -113,23 +115,33 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         return true;
     }
 
-    public synchronized List<DBContentVirtualFile> getContentFiles() {
+    public List<DBContentVirtualFile> getContentFiles() {
         if (contentFiles == null) {
-            contentFiles = new ArrayList<DBContentVirtualFile>();
-            DBContentType objectContentType = getObject().getContentType();
-            if (objectContentType.isBundle()) {
-                DBContentType[] contentTypes = objectContentType.getSubContentTypes();
-                for (DBContentType contentType : contentTypes) {
-                    DBContentVirtualFile virtualFile =
-                            contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
-                            contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
-                    contentFiles.add(virtualFile);
+            synchronized (this) {
+                if (contentFiles == null) {
+                    contentFiles = new ArrayList<DBContentVirtualFile>();
+                    DBContentType objectContentType = getObject().getContentType();
+                    if (objectContentType.isBundle()) {
+                        DBContentType[] contentTypes = objectContentType.getSubContentTypes();
+                        for (DBContentType contentType : contentTypes) {
+                            DBContentVirtualFile virtualFile =
+                                    contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
+                                            contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
+                            if (virtualFile != null) {
+                                contentFiles.add(virtualFile);
+                                Disposer.register(this, virtualFile);
+                            }
+                        }
+                    } else {
+                        DBContentVirtualFile virtualFile =
+                                objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
+                                        objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
+                        if (virtualFile != null) {
+                            contentFiles.add(virtualFile);
+                            Disposer.register(this, virtualFile);
+                        }
+                    }
                 }
-            } else {
-                DBContentVirtualFile virtualFile =
-                        objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
-                        objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
-                contentFiles.add(virtualFile);
             }
         }
         return contentFiles;
@@ -138,11 +150,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles() {
         DBSchemaObject object = getObject();
-        if (object != null) {
-            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
-            if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
-                return fileAttachmentManager.getAttachedDDLFiles(object);
-            }
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(object.getProject());
+        if (object.getProperties().is(DBObjectProperty.EDITABLE)) {
+            return fileAttachmentManager.getAttachedDDLFiles(object);
         }
         return null;
     }
@@ -181,7 +191,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @NotNull
     public FileType getFileType() {
         DBSchemaObject object = getObject();
-        DDLFileType type = object == null ? null : object.getDDLFileType(null);
+        DDLFileType type = object.getDDLFileType(null);
         return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
     }
 
@@ -219,18 +229,22 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     public <T> T getUserData(@NotNull Key<T> key) {
         if (key == FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY) {
-            DBContentType mainContentType = getMainContentType();
-            boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
-            if (isCode) {
-                if (FAKE_DOCUMENT.get() != null) {
-                    return (T) FAKE_DOCUMENT.get();
-                }
+            try {
+                DBContentType mainContentType = getMainContentType();
+                boolean isCode = mainContentType == DBContentType.CODE || mainContentType == DBContentType.CODE_BODY;
+                if (isCode) {
+                    if (FAKE_DOCUMENT.get() != null) {
+                        return (T) FAKE_DOCUMENT.get();
+                    }
 
-                DBContentVirtualFile mainContentFile = getMainContentFile();
-                if (mainContentFile != null) {
-                    Document document = DocumentUtil.getDocument(mainContentFile);
-                    return (T) document;
+                    DBContentVirtualFile mainContentFile = getMainContentFile();
+                    if (mainContentFile != null) {
+                        Document document = DocumentUtil.getDocument(mainContentFile);
+                        return (T) document;
+                    }
                 }
+            } catch (AlreadyDisposedException e) {
+
             }
         }
         return super.getUserData(key);
@@ -238,14 +252,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     public DBContentType getMainContentType() {
         DBSchemaObject object = getObject();
-        if (object == null) {
-            return DBContentType.CODE;
-        } else {
-            DBContentType contentType = object.getContentType();
-            return
-                contentType == DBContentType.CODE ? DBContentType.CODE :
-                contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;
-        }
+        DBContentType contentType = object.getContentType();
+        return
+            contentType == DBContentType.CODE ? DBContentType.CODE :
+            contentType == DBContentType.CODE_SPEC_AND_BODY ? DBContentType.CODE_BODY : null;
     }
 
     public DBContentVirtualFile getMainContentFile() {
@@ -261,7 +271,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     public void dispose() {
         super.dispose();
-        DisposerUtil.dispose(contentFiles);
+        CollectionUtil.clearCollection(contentFiles);
     }
 
 
@@ -277,22 +287,31 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public void saveChanges() {
         FileDocumentManager.getInstance().saveAllDocuments();
         Project project = getProject();
-        if (project != null) {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-                if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
-                    FileEditor[] fileEditors = fileEditorManager.getEditors(this);
-                    for (FileEditor fileEditor : fileEditors) {
-                        if (fileEditor instanceof SourceCodeEditor) {
-                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                            sourceCodeManager.updateSourceToDatabase(sourceCodeEditor, (DBSourceCodeVirtualFile) contentVirtualFile);
-                            break;
-                        }
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+            if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
+                FileEditor[] fileEditors = fileEditorManager.getEditors(this);
+                for (FileEditor fileEditor : fileEditors) {
+                    if (fileEditor instanceof SourceCodeEditor) {
+                        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                        sourceCodeManager.updateSourceToDatabase(sourceCodeEditor);
+                        break;
                     }
                 }
             }
         }
+    }
+
+    public void revertChanges() {
+        List<DBContentVirtualFile> contentFiles = getContentFiles();
+        for (DBContentVirtualFile contentFile : contentFiles) {
+            if (contentFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) contentFile;
+                sourceCodeVirtualFile.reloadFromDatabase();
+            }
+        }
+
     }
 }
 
