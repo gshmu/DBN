@@ -17,6 +17,7 @@ public class EnvironmentSettings extends ProjectConfiguration {
         super(project);
     }
 
+    @NotNull
     @Override
     protected ConfigurationEditorForm createConfigurationEditor() {
         return new EnvironmentSettingsForm(this);

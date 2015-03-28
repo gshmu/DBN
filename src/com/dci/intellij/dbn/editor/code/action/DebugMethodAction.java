@@ -28,10 +28,8 @@ public class DebugMethodAction extends AbstractSourceCodeEditorAction {
             Project project = virtualFile.getProject();
 
             DBMethod method = (DBMethod) virtualFile.getObject();
-            if (method != null) {
-                DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
-                executionManager.createDebugConfiguration(method);
-            }
+            DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
+            executionManager.createDebugConfiguration(method);
         }
     }
 
@@ -41,7 +39,7 @@ public class DebugMethodAction extends AbstractSourceCodeEditorAction {
         boolean visible = false;
         if (virtualFile != null) {
             DBSchemaObject schemaObject = virtualFile.getObject();
-            if (schemaObject != null && schemaObject.getObjectType().matches(DBObjectType.METHOD) && DatabaseFeature.DEBUGGING.isSupported(schemaObject)) {
+            if (schemaObject.getObjectType().matches(DBObjectType.METHOD) && DatabaseFeature.DEBUGGING.isSupported(schemaObject)) {
                 visible = true;
             }
         }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code.action;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -22,9 +23,10 @@ public abstract class AbstractSourceCodeEditorAction extends DumbAwareAction {
     }
 
     @Nullable
-    protected FileEditor getFileEditor(AnActionEvent e) {
+    protected SourceCodeEditor getFileEditor(AnActionEvent e) {
         Editor editor = getEditor(e);
-        return EditorUtil.getFileEditor(editor);
+        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        return fileEditor instanceof SourceCodeEditor ? (SourceCodeEditor) fileEditor : null;
     }
 
     @Nullable

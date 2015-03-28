@@ -20,6 +20,7 @@ public class ObjectDependencyTreeNode implements Disposable {
     private ObjectDependencyTreeModel model;
     private ObjectDependencyTreeNode parent;
     private boolean shouldLoad = true;
+    private boolean isLoading = false;
     private static int loaderCount = 0;
 
     public ObjectDependencyTreeNode(ObjectDependencyTreeNode parent, DBObject object) {
@@ -57,48 +58,62 @@ public class ObjectDependencyTreeNode implements Disposable {
             DBObject object = getObject();
             if (isDisposed() || object == null || isRecursive(object)) {
                 dependencies = Collections.emptyList();
+                shouldLoad = false;
             } else {
                 dependencies = new ArrayList<ObjectDependencyTreeNode>();
-                dependencies.add(new ObjectDependencyTreeNode(this, null));
+                if (getTreePath().length < 2) {
+                    ObjectDependencyTreeNode loadInProgressNode = new ObjectDependencyTreeNode(this, null);
+                    dependencies.add(loadInProgressNode);
+                    getModel().getTree().registerLoadInProgressNode(loadInProgressNode);
+                }
             }
         }
 
-        if (load && shouldLoad && loaderCount < 10) {
-            shouldLoad = false;
-            loaderCount++;
-            new SimpleBackgroundTask("load dependencies") {
-                @Override
-                protected void execute() {
-                    try {
-                        DBObject object = getObject();
-                        if (object != null && object instanceof DBSchemaObject) {
-                            List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
-                            DBSchemaObject schemaObject = (DBSchemaObject) object;
-                            List<DBObject> dependentObjects = loadDependencies(schemaObject);
+        if (load && shouldLoad) {
+            isLoading = true;
 
-                            if (dependentObjects != null) {
-                                for (DBObject dependentObject : dependentObjects) {
+            if (loaderCount < 10) {
+                shouldLoad = false;
+                loaderCount++;
+                new SimpleBackgroundTask("load dependencies") {
+                    @Override
+                    protected void execute() {
+                        try {
+                            DBObject object = getObject();
+                            if (object != null && object instanceof DBSchemaObject) {
+                                List<ObjectDependencyTreeNode> newDependencies = new ArrayList<ObjectDependencyTreeNode>();
+                                DBSchemaObject schemaObject = (DBSchemaObject) object;
+                                List<DBObject> dependentObjects = loadDependencies(schemaObject);
+
+                                if (dependentObjects != null) {
+                                    for (DBObject dependentObject : dependentObjects) {
                                         /*if (dependentObject instanceof DBSchemaObject) {
                                             loadDependencies((DBSchemaObject) dependentObject);
                                         }*/
-                                    ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
-                                    newDependencies.add(node);
+                                        ObjectDependencyTreeNode node = new ObjectDependencyTreeNode(ObjectDependencyTreeNode.this, dependentObject);
+                                        newDependencies.add(node);
+                                    }
                                 }
+
+                                List<ObjectDependencyTreeNode> oldDependencies = dependencies;
+                                dependencies = newDependencies;
+                                DisposerUtil.dispose(oldDependencies);
+
+                                getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                             }
-
-                            List<ObjectDependencyTreeNode> oldDependencies = dependencies;
-                            dependencies = newDependencies;
-                            DisposerUtil.dispose(oldDependencies);
-
-                            getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
+                        } finally {
+                            isLoading = false;
+                            loaderCount--;
                         }
-                    } finally {
-                        loaderCount--;
                     }
-                }
-            }.start();
+                }.start();
+            }
         }
         return dependencies;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
     }
 
     @Nullable

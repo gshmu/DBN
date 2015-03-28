@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.options;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSortingSettingsForm;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
@@ -48,6 +49,7 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
         return false;
     }
 
+    @NotNull
     @Override
     public DatabaseBrowserSortingSettingsForm createConfigurationEditor() {
         return new DatabaseBrowserSortingSettingsForm(this);

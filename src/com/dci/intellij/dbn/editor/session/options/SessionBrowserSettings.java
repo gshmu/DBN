@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -65,6 +66,7 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public SessionBrowserSettingsForm createConfigurationEditor() {
         return new SessionBrowserSettingsForm(this);
     }

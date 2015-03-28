@@ -107,61 +107,59 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";
         ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-        if (connectionHandler != null) {
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-            String databaseLogName = compatibilityInterface.getDatabaseLogName();
-            if (databaseLogName != null) {
-                logConsoleName = databaseLogName;
-            }
+        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+        String databaseLogName = compatibilityInterface.getDatabaseLogName();
+        if (databaseLogName != null) {
+            logConsoleName = databaseLogName;
+        }
 
-            DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
-            outputConsole.writeToConsole(logOutput);
-            Disposer.register(this, outputConsole);
+        DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
+        outputConsole.writeToConsole(logOutput);
+        Disposer.register(this, outputConsole);
 
-            TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
-            outputTabInfo.setText(outputConsole.getTitle());
-            outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
-            outputTabInfo.setObject(outputConsole);
-            outputTabs.addTab(outputTabInfo);
+        TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
+        outputTabInfo.setText(outputConsole.getTitle());
+        outputTabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
+        outputTabInfo.setObject(outputConsole);
+        outputTabs.addTab(outputTabInfo);
 
-            boolean isFirst = true;
-            for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
-                if (argumentValue.isCursor()) {
-                    DBArgument argument = argumentValue.getArgument();
+        boolean isFirst = true;
+        for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
+            if (argumentValue.isCursor()) {
+                DBArgument argument = argumentValue.getArgument();
 
-                    MethodExecutionCursorResultForm cursorResultForm =
-                            new MethodExecutionCursorResultForm(this, executionResult, argument);
+                MethodExecutionCursorResultForm cursorResultForm =
+                        new MethodExecutionCursorResultForm(this, executionResult, argument);
 
-                    TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
-                    tabInfo.setText(argument.getName());
-                    tabInfo.setIcon(argument.getIcon());
-                    tabInfo.setObject(cursorResultForm);
-                    outputTabs.addTab(tabInfo);
-                    if (isFirst) {
-                        outputTabs.select(tabInfo, false);
-                        isFirst = false;
-                    }
-                } else if (argumentValue.isLargeObject()) {
-                    DBArgument argument = argumentValue.getArgument();
+                TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
+                tabInfo.setText(argument.getName());
+                tabInfo.setIcon(argument.getIcon());
+                tabInfo.setObject(cursorResultForm);
+                outputTabs.addTab(tabInfo);
+                if (isFirst) {
+                    outputTabs.select(tabInfo, false);
+                    isFirst = false;
+                }
+            } else if (argumentValue.isLargeObject()) {
+                DBArgument argument = argumentValue.getArgument();
 
-                    MethodExecutionLargeValueResultForm largeValueResultForm =
-                            new MethodExecutionLargeValueResultForm(this, executionResult, argument);
+                MethodExecutionLargeValueResultForm largeValueResultForm =
+                        new MethodExecutionLargeValueResultForm(this, executionResult, argument);
 
-                    TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
-                    tabInfo.setText(argument.getName());
-                    tabInfo.setIcon(argument.getIcon());
-                    tabInfo.setObject(largeValueResultForm);
-                    outputTabs.addTab(tabInfo);
-                    if (isFirst) {
-                        outputTabs.select(tabInfo, false);
-                        isFirst = false;
-                    }
+                TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
+                tabInfo.setText(argument.getName());
+                tabInfo.setIcon(argument.getIcon());
+                tabInfo.setObject(largeValueResultForm);
+                outputTabs.addTab(tabInfo);
+                if (isFirst) {
+                    outputTabs.select(tabInfo, false);
+                    isFirst = false;
                 }
             }
-
-            outputTabs.revalidate();
-            outputTabs.repaint();
         }
+
+        outputTabs.revalidate();
+        outputTabs.repaint();
     }
 
     public void selectArgumentOutputTab(DBArgument argument) {
@@ -187,10 +185,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     private void updateStatusBarLabels() {
         ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
-        if (connectionHandler != null) {
-            connectionLabel.setIcon(connectionHandler.getIcon());
-            connectionLabel.setText(connectionHandler.getName());
-        }
+        connectionLabel.setIcon(connectionHandler.getIcon());
+        connectionLabel.setText(connectionHandler.getName());
 
         durationLabel.setText(": " + executionResult.getExecutionDuration() + " ms");
     }

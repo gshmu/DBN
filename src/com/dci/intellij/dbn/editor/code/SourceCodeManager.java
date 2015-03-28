@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -26,6 +27,9 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
+import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
@@ -42,6 +46,7 @@ import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.SettingsSavingComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
@@ -54,6 +59,7 @@ import com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -66,7 +72,7 @@ import com.intellij.openapi.vfs.VirtualFile;
         @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
         @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
-public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, SettingsSavingComponent {
 
     private DBLanguageFileEditorListener fileEditorListener;
 
@@ -80,59 +86,88 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         fileEditorListener = new DBLanguageFileEditorListener();
     }
 
-    public void updateSourceToDatabase(final FileEditor fileEditor, final DBSourceCodeVirtualFile virtualFile) {
-        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(virtualFile.getProject());
-        final DBSchemaObject object = virtualFile.getObject();
-        if (object != null) {
-            final DBObjectStatusHolder objectStatus = object.getStatus();
-            if (!debuggerManager.checkForbiddenOperation(virtualFile.getActiveConnection())) {
-                objectStatus.set(DBObjectStatus.SAVING, false);
-                return;
-            }
-            objectStatus.set(DBObjectStatus.SAVING, true);
-            TaskInstructions taskInstructions = new TaskInstructions("Checking for third party changes on " + object.getQualifiedNameWithType(), false, false);
-            new ConnectionAction("updating the object to database", object, taskInstructions) {
-                @Override
-                protected void execute() {
-                    Project project = getProject();
-                    try {
-                        final DBContentType contentType = virtualFile.getContentType();
-                        Editor editor = EditorUtil.getEditor(fileEditor);
-                        if (editor != null) {
-                            String content = editor.getDocument().getText();
-                            if (isValidObjectTypeAndName(content, object, contentType)) {
-                                Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
-                                if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
+    public void loadSourceFromDatabase(@NotNull final SourceCodeEditor fileEditor) {
+        final DBSourceCodeVirtualFile virtualFile = fileEditor.getVirtualFile();
+        TaskInstructions taskInstructions = new TaskInstructions("Reverting local changes", false, false);
+        new ConnectionAction("reverting the changes", virtualFile, taskInstructions) {
+            @Override
+            protected void execute() {
+                boolean reloaded = virtualFile.reloadFromDatabase();
 
-                                    virtualFile.setContent(content);
-                                    String message =
-                                            "The " + object.getQualifiedNameWithType() +
-                                                    " has been changed by another user. \nYou will be prompted to merge the changes";
-                                    MessageUtil.showErrorDialog(project, "Version conflict", message);
-
-                                    String databaseContent = loadSourceCodeFromDatabase(object, contentType);
-                                    showSourceDiffDialog(databaseContent, virtualFile, fileEditor);
-                                } else {
-                                    doUpdateSourceToDatabase(object, virtualFile, fileEditor);
-                                    //sourceCodeEditor.afterSave();
-                                }
-
-                            } else {
-                                String message = "You are not allowed to change the name or the type of the object";
-                                objectStatus.set(DBObjectStatus.SAVING, false);
-                                MessageUtil.showErrorDialog(project, "Illegal action", message);
+                if (reloaded) {
+                    new WriteActionRunner() {
+                        public void run() {
+                            Editor editor = EditorUtil.getEditor(fileEditor);
+                            if (editor != null) {
+                                editor.getDocument().setText(virtualFile.getContent());
+                                virtualFile.setModified(false);
                             }
                         }
-                    } catch (SQLException ex) {
-                        if (DatabaseFeature.OBJECT_REPLACING.isSupported(object)) {
-                            virtualFile.updateChangeTimestamp();
-                        }
-                        MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
-                        objectStatus.set(DBObjectStatus.SAVING, false);
-                    }
+                    }.start();
                 }
-            }.start();
+            }
+        }.start();
+    }
+
+    public void updateSourceToDatabase(@NotNull final SourceCodeEditor fileEditor) {
+        final DBSourceCodeVirtualFile virtualFile = fileEditor.getVirtualFile();
+        final DBSchemaObject object = virtualFile.getObject();
+        final DBObjectStatusHolder objectStatus = object.getStatus();
+
+        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+        if (!debuggerManager.checkForbiddenOperation(virtualFile.getActiveConnection())) {
+            objectStatus.set(DBObjectStatus.SAVING, false);
+            return;
         }
+        objectStatus.set(DBObjectStatus.SAVING, true);
+        TaskInstructions taskInstructions = new TaskInstructions("Checking for third party changes on " + object.getQualifiedNameWithType(), false, false);
+        new ConnectionAction("saving the " + object.getQualifiedNameWithType(), object, taskInstructions) {
+            @Override
+            protected void execute() {
+                Project project = getProject();
+                try {
+                    final DBContentType contentType = virtualFile.getContentType();
+                    Editor editor = EditorUtil.getEditor(fileEditor);
+                    if (editor != null) {
+                        String content = editor.getDocument().getText();
+                        if (isValidObjectTypeAndName(content, object, contentType)) {
+                            Timestamp lastUpdated = object.loadChangeTimestamp(contentType);
+                            if (lastUpdated != null && lastUpdated.after(virtualFile.getChangeTimestamp())) {
+
+                                virtualFile.setContent(content);
+                                String message =
+                                        "The " + object.getQualifiedNameWithType() +
+                                                " has been changed by another user. \nYou will be prompted to merge the changes";
+                                MessageUtil.showErrorDialog(project, "Version conflict", message);
+
+                                String databaseContent = loadSourceCodeFromDatabase(object, contentType);
+                                showSourceDiffDialog(databaseContent, virtualFile, fileEditor);
+                            } else {
+                                doUpdateSourceToDatabase(object, virtualFile, fileEditor);
+                                //sourceCodeEditor.afterSave();
+                            }
+
+                        } else {
+                            String message = "You are not allowed to change the name or the type of the object";
+                            objectStatus.set(DBObjectStatus.SAVING, false);
+                            MessageUtil.showErrorDialog(project, "Illegal action", message);
+                        }
+                    }
+                } catch (SQLException ex) {
+                    if (DatabaseFeature.OBJECT_REPLACING.isSupported(object)) {
+                        virtualFile.updateChangeTimestamp();
+                    }
+                    MessageUtil.showErrorDialog(project, "Could not save changes to database.", ex);
+                    objectStatus.set(DBObjectStatus.SAVING, false);
+                }
+            }
+
+            @Override
+            protected void cancel() {
+                objectStatus.set(DBObjectStatus.SAVING, false);
+            }
+
+        }.start();
     }
 
     public String loadSourceCodeFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
@@ -144,52 +179,47 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         String sourceCode = object.loadCodeFromDatabase(contentType);
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        DatabaseDDLInterface ddlInterface = null;
-        if (connectionHandler != null) {
-            ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
-        }
+        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+        ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
         return sourceCodeContent;
     }
 
     private boolean isValidObjectTypeAndName(String text, DBSchemaObject object, DBContentType contentType) {
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        if (connectionHandler != null) {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
-                int typeIndex = StringUtil.indexOfIgnoreCase(text, object.getTypeName(), 0);
-                if (typeIndex == -1 || !StringUtil.isEmptyOrSpaces(text.substring(0, typeIndex))) {
-                    return false;
-                }
-
-                int typeEndIndex = typeIndex + object.getTypeName().length();
-                if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
-
-                if (contentType.getObjectTypeSubname() != null) {
-                    int subnameIndex = StringUtil.indexOfIgnoreCase(text, contentType.getObjectTypeSubname(), typeEndIndex);
-                    typeEndIndex = subnameIndex + contentType.getObjectTypeSubname().length();
-                    if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
-                }
-
-                char quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
-
-
-                String objectName = object.getName();
-                int nameIndex = StringUtil.indexOfIgnoreCase(text, objectName, typeEndIndex);
-                if (nameIndex == -1) return false;
-                int nameEndIndex = nameIndex + objectName.length();
-
-                if (text.charAt(nameIndex -1) == quotes) {
-                    if (text.charAt(nameEndIndex) != quotes) return false;
-                    nameIndex = nameIndex -1;
-                    nameEndIndex = nameEndIndex + 1;
-                }
-
-                String typeNameGap = text.substring(typeEndIndex, nameIndex);
-                typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ").replace(quotes, ' ');
-                if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
-                if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
+        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+        if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
+            int typeIndex = StringUtil.indexOfIgnoreCase(text, object.getTypeName(), 0);
+            if (typeIndex == -1 || !StringUtil.isEmptyOrSpaces(text.substring(0, typeIndex))) {
+                return false;
             }
+
+            int typeEndIndex = typeIndex + object.getTypeName().length();
+            if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
+
+            if (contentType.getObjectTypeSubname() != null) {
+                int subnameIndex = StringUtil.indexOfIgnoreCase(text, contentType.getObjectTypeSubname(), typeEndIndex);
+                typeEndIndex = subnameIndex + contentType.getObjectTypeSubname().length();
+                if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
+            }
+
+            char quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
+
+
+            String objectName = object.getName();
+            int nameIndex = StringUtil.indexOfIgnoreCase(text, objectName, typeEndIndex);
+            if (nameIndex == -1) return false;
+            int nameEndIndex = nameIndex + objectName.length();
+
+            if (text.charAt(nameIndex -1) == quotes) {
+                if (text.charAt(nameEndIndex) != quotes) return false;
+                nameIndex = nameIndex -1;
+                nameEndIndex = nameEndIndex + 1;
+            }
+
+            String typeNameGap = text.substring(typeEndIndex, nameIndex);
+            typeNameGap = StringUtil.replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ").replace(quotes, ' ');
+            if (!StringUtil.isEmptyOrSpaces(typeNameGap)) return false;
+            if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
         }
         return true;
     }
@@ -209,26 +239,24 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         ActionButtonPresentation.CANCEL_WITH_PROMPT);
                 mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
                 final DBSchemaObject object = virtualFile.getObject();
-                if (object != null) {
-                    mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
+                mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
 
-                    DiffManager.getInstance().getDiffTool().show(mergeRequest);
+                DiffManager.getInstance().getDiffTool().show(mergeRequest);
 
-                    int result = mergeRequest.getResult();
-                    if (result == 0) {
-                        doUpdateSourceToDatabase(object, virtualFile, fileEditor);
-                        //sourceCodeEditor.afterSave();
-                    } else if (result == 1) {
-                        new WriteActionRunner() {
-                            public void run() {
-                                Editor editor = EditorUtil.getEditor(fileEditor);
-                                if (editor != null) {
-                                    editor.getDocument().setText(virtualFile.getContent());
-                                    object.getStatus().set(DBObjectStatus.SAVING, false);
-                                }
+                int result = mergeRequest.getResult();
+                if (result == 0) {
+                    doUpdateSourceToDatabase(object, virtualFile, fileEditor);
+                    //sourceCodeEditor.afterSave();
+                } else if (result == 1) {
+                    new WriteActionRunner() {
+                        public void run() {
+                            Editor editor = EditorUtil.getEditor(fileEditor);
+                            if (editor != null) {
+                                editor.getDocument().setText(virtualFile.getContent());
+                                object.getStatus().set(DBObjectStatus.SAVING, false);
                             }
-                        }.start();
-                    }
+                        }
+                    }.start();
                 }
             }
         }.start();
@@ -248,19 +276,17 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         virtualFile.updateToDatabase();
 
                         ConnectionHandler connectionHandler = object.getConnectionHandler();
-                        if (connectionHandler != null) {
-                            if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
-                                connectionHandler.getObjectBundle().refreshObjectsStatus(object);
-                            }
-
-                            if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
-                                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                                DBContentType contentType = virtualFile.getContentType();
-                                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
-                                compilerManager.createCompilerResult(object, compilerAction);
-                            }
-                            object.reload();
+                        if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(object)) {
+                            connectionHandler.getObjectBundle().refreshObjectsStatus(object);
                         }
+
+                        if (object.getProperties().is(DBObjectProperty.COMPILABLE)) {
+                            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                            DBContentType contentType = virtualFile.getContentType();
+                            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.SAVE, contentType, virtualFile, fileEditor);
+                            compilerManager.createCompilerResult(object, compilerAction);
+                        }
+                        object.reload();
                     }
                 } catch (SQLException e) {
                     MessageUtil.showErrorDialog(project, "Could not save changes to database.", e);
@@ -301,6 +327,32 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
+    public boolean canCloseProject(Project project) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+
+        CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(getProject()).getConfirmationSettings();
+        InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChangesOptionHandler();
+
+        for (VirtualFile openFile : openFiles) {
+            if (openFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
+
+                if (databaseFile.isModified()) {
+                    DBSchemaObject object = databaseFile.getObject();
+                    CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
+
+                    switch (option) {
+                        case SAVE: databaseFile.saveChanges(); break;
+                        case CANCEL: return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void projectOpened() {
         EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
@@ -327,5 +379,13 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void loadState(Element element) {
+    }
+
+    /*********************************************
+     *            SettingsSavingComponent        *
+     *********************************************/
+    @Override
+    public void save() {
+        System.out.printf("");
     }
 }

@@ -61,6 +61,7 @@ public class DatabaseConsoleBundle implements Disposable{
         DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name);
         consoles.add(console);
         Collections.sort(consoles);
+
         return console;
     }
 

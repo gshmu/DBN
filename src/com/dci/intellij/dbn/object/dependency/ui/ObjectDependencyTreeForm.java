@@ -74,7 +74,12 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         headerForm = new DBNHeaderForm(schemaObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, /*new ExpandTreeAction(),*/ new CollapseTreeAction());
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
+                new PreviousSelectionAction(),
+                new NextSelectionAction(),
+                ActionUtil.SEPARATOR,
+                new ExpandTreeAction(),
+                new CollapseTreeAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         Disposer.register(this, dependencyTree);
@@ -106,6 +111,39 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             presentation.setText("Expand All");
         }
     }
+
+    public class PreviousSelectionAction extends DumbAwareAction {
+        public PreviousSelectionAction() {
+            super("Previous Selection", null, Icons.BROWSER_BACK);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            DBObject previous = dependencyTree.getSelectionHistory().previous();
+            dependencyTree.setRootObject((DBSchemaObject) previous, false);
+        }
+
+        public void update(AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+            presentation.setEnabled(dependencyTree.getSelectionHistory().hasPrevious());
+        }
+    }
+
+    public class NextSelectionAction extends DumbAwareAction {
+        public NextSelectionAction() {
+            super("Next Selection", null, Icons.BROWSER_NEXT);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            DBObject next = dependencyTree.getSelectionHistory().next();
+            dependencyTree.setRootObject((DBSchemaObject) next, false);
+        }
+
+        public void update(AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+            presentation.setEnabled(dependencyTree.getSelectionHistory().hasNext());
+        }
+    }
+
     public class CollapseTreeAction extends DumbAwareAction {
 
         public CollapseTreeAction() {

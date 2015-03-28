@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.code.options;
 
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -41,6 +42,7 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @NotNull
     public CodeEditorGeneralSettingsForm createConfigurationEditor() {
         return new CodeEditorGeneralSettingsForm(this);
     }

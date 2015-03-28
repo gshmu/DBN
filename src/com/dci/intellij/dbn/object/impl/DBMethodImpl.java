@@ -166,7 +166,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     private static final DynamicContentLoader<DBArgument> ARGUMENTS_ALTERNATIVE_LOADER = new DynamicContentResultSetLoader<DBArgument>() {
         public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            DBMethod method = (DBMethod) dynamicContent.getParent();
+            DBMethod method = (DBMethod) dynamicContent.getParentElement();
             String ownerName = method.getSchema().getName();
             int overload = method.getOverload();
             DBProgram program = method.getProgram();
@@ -188,7 +188,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         }
 
         public DBArgument createElement(DynamicContent<DBArgument> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            DBMethod method = (DBMethod) dynamicContent.getParent();
+            DBMethod method = (DBMethod) dynamicContent.getParentElement();
             return new DBArgumentImpl(method, resultSet);
         }
     };
@@ -199,7 +199,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
         }
 
         public boolean match(DBArgument argument, DynamicContent dynamicContent) {
-            DBMethod method = (DBMethod) dynamicContent.getParent();
+            DBMethod method = (DBMethod) dynamicContent.getParentElement();
             DBMethod argumentMethod = argument.getMethod();
             return argumentMethod != null && argumentMethod.equals(method) && argument.getOverload() == method.getOverload();
         }

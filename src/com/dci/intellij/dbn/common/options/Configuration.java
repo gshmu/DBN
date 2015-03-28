@@ -50,19 +50,17 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         return configurationEditorForm;
     }
 
+    @NotNull
     protected abstract T createConfigurationEditor();
 
+    @NotNull
     public JComponent createComponent() {
         configurationEditorForm = createConfigurationEditor();
-        return configurationEditorForm == null ? null : configurationEditorForm.getComponent();
+        return configurationEditorForm.getComponent();
     }
 
     public void setModified(boolean modified) {
-        if (modified && !isResetting()) {
-            isModified = true;
-        } else{
-            isModified = modified;
-        }
+        isModified = modified && !isResetting() || modified;
     }
 
     private static Boolean isResetting() {

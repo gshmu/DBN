@@ -206,6 +206,15 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public void projectClosed() {
     }
 
+
+    @Override
+    public void projectClosing(Project project) {
+        if (executionConsoleForm != null) {
+            executionConsoleForm.removeAllTabs();
+        }
+        super.projectClosing(project);
+    }
+
     @NonNls
     @NotNull
     public String getComponentName() {

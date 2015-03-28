@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -266,6 +267,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         super.disposeUIResources();
     }
 
+   @NotNull
    public DatasetFilterForm createConfigurationEditor() {
        return new DatasetFilterForm(this, lookupDataset());
    }

@@ -12,7 +12,7 @@ public interface PSQLTextAttributesKeys {
     TextAttributesKey STRING             = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.String",            DefaultLanguageHighlighterColors.STRING);
     TextAttributesKey NUMBER             = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.Number",            DefaultLanguageHighlighterColors.NUMBER);
     TextAttributesKey DATA_TYPE          = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.DataType",          DefaultLanguageHighlighterColors.CONSTANT);
-    TextAttributesKey ALIAS              = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.Alias",             DefaultLanguageHighlighterColors.IDENTIFIER);
+    TextAttributesKey ALIAS              = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.Alias",             DefaultLanguageHighlighterColors.METADATA);
     TextAttributesKey IDENTIFIER         = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.Identifier",        DefaultLanguageHighlighterColors.IDENTIFIER);
     TextAttributesKey QUOTED_IDENTIFIER  = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.QuotedIdentifier",  DefaultLanguageHighlighterColors.IDENTIFIER);
     TextAttributesKey KEYWORD            = TextAttributesKey.createTextAttributesKey("DBNavigator.TextAttributes.PSQL.Keyword",           DefaultLanguageHighlighterColors.KEYWORD);

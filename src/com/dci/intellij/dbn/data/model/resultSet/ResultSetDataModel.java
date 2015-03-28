@@ -19,7 +19,6 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     protected ResultSet resultSet;
     protected ConnectionHandler connectionHandler;
     protected boolean resultSetExhausted = false;
-    protected final Object DISPOSE_LOCK = new Object();
 
     public ResultSetDataModel(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());
@@ -57,38 +56,34 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
             resultSetExhausted = true;
         } else {
             while (count < records) {
-                synchronized (DISPOSE_LOCK) {
-                    checkDisposed();
-                    if (resultSet.next()) {
-                        count++;
-                        T row = createRow(initialIndex + count);
-                        newRows.add(row);
-                    } else {
-                        resultSetExhausted = true;
-                        break;
-                    }
+                checkDisposed();
+                if (resultSet.next()) {
+                    count++;
+                    T row = createRow(initialIndex + count);
+                    newRows.add(row);
+                } else {
+                    resultSetExhausted = true;
+                    break;
                 }
             }
         }
 
-        synchronized (DISPOSE_LOCK) {
-            checkDisposed();
+        checkDisposed();
 
-            sort(newRows);
-            setRows(newRows);
+        sort(newRows);
+        setRows(newRows);
 
-            if (reset) {
-                disposeRows(oldRows);
-            }
-
-            int newRowCount = getRowCount();
-            if (newRowCount > originalRowCount) notifyRowsInserted(originalRowCount, newRowCount);
-            if (newRowCount < originalRowCount) notifyRowsDeleted(newRowCount, originalRowCount);
-            int updateIndex = Math.min(originalRowCount, newRowCount);
-            if (updateIndex > 0) notifyRowsUpdated(0, updateIndex);
-
-            return newRowCount;
+        if (reset) {
+            disposeRows(oldRows);
         }
+
+        int newRowCount = getRowCount();
+        if (newRowCount > originalRowCount) notifyRowsInserted(originalRowCount, newRowCount);
+        if (newRowCount < originalRowCount) notifyRowsDeleted(newRowCount, originalRowCount);
+        int updateIndex = Math.min(originalRowCount, newRowCount);
+        if (updateIndex > 0) notifyRowsUpdated(0, updateIndex);
+
+        return newRowCount;
     }
 
     private void disposeRows(final List<T> oldRows) {
@@ -141,12 +136,10 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            synchronized (DISPOSE_LOCK) {
-                super.dispose();
-                closeResultSet();
-                resultSet = null;
-                connectionHandler = null;
-            }
+            super.dispose();
+            closeResultSet();
+            resultSet = null;
+            connectionHandler = null;
         }
     }
 

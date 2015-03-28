@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 
 public class ExecutionResultRerunAction extends AbstractExecutionResultAction {
     public ExecutionResultRerunAction() {
-        super("Rerun statement", Icons.EXEC_RESULT_RERUN);
+        super("Rerun Statement", Icons.EXEC_RESULT_RERUN);
     }
 
     @Override

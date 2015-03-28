@@ -45,6 +45,7 @@ public class SQLCodeStyleSettings extends CodeStyleCustomSettings<SQLCodeStyleSe
     /*********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @NotNull
     public SQLCodeStyleSettingsEditorForm createConfigurationEditor() {
         return new SQLCodeStyleSettingsEditorForm(this);
     }

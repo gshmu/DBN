@@ -63,6 +63,7 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     public OperationsSettingsForm createConfigurationEditor() {
         return new OperationsSettingsForm(this);
     }

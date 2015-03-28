@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -49,7 +50,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private DatasetEditorTable datasetEditorTable;
     private DatasetEditor datasetEditor;
 
-    private LazyValue<DataSearchComponent> dataSearchComponent = new LazyValue<DataSearchComponent>(this) {
+    private LazyValue<DataSearchComponent> dataSearchComponent = new DisposableLazyValue<DataSearchComponent>(this) {
         @Override
         protected DataSearchComponent load() {
             DataSearchComponent dataSearchComponent = new DataSearchComponent(DatasetEditorForm.this);

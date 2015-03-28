@@ -11,8 +11,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class DBFileIconProvider implements FileIconProvider{
     @Override
     public Icon getIcon(@NotNull VirtualFile file, int flags, @Nullable Project project) {
-        if (file instanceof DBVirtualFile) {
-            DBVirtualFile virtualFile = (DBVirtualFile) file;
+        if (file instanceof DBVirtualFileImpl) {
+            DBVirtualFileImpl virtualFile = (DBVirtualFileImpl) file;
             return virtualFile.getIcon();
         }
         return null;

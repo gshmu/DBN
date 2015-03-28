@@ -69,6 +69,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @NotNull
     public DataGridSettingsForm createConfigurationEditor() {
         return new DataGridSettingsForm(this);
     }

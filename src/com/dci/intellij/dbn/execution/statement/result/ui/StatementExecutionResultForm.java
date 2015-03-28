@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.BorderLayout;
@@ -90,10 +91,13 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         new SimpleLaterInvocator() {
             protected void execute() {
                 if (executionResult != null) {
+                    JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
+                    int horizontalScrolling = horizontalScrollBar.getValue();
                     resultTable = new ResultSetTable(executionResult.getTableModel(), true, recordViewInfo);
                     resultScrollPane.setViewportView(resultTable);
                     resultTable.initTableGutter();
                     resultTable.setName(executionResult.getName());
+                    horizontalScrollBar.setValue(horizontalScrolling);
                 }
             }
         }.start();

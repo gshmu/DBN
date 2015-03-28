@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.language.common.ParseException;
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
+import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 
 public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperElementType> {
     public WrapperElementTypeParser(WrapperElementType elementType) {
@@ -49,13 +51,19 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
             matchedTokens = matchedTokens + wrappedResult.getMatchedTokens();
 
             ParseResultType wrappedResultType = wrappedResult.getType();
-            if (wrappedResultType == ParseResultType.NO_MATCH && !isStrong && !elementType.isWrappedElementOptional() && builder.getTokenType() != endTokenType) {
-                builder.setExplicitRange(beginTokenType, initialExplicitRange);
-                return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+            if (wrappedResultType == ParseResultType.NO_MATCH  && !elementType.isWrappedElementOptional()) {
+                if (!isStrong && builder.getTokenType() != endTokenType) {
+                    builder.setExplicitRange(beginTokenType, initialExplicitRange);
+                    return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
+                } else {
+                    Set<TokenType> possibleTokens = wrappedElement.getLookupCache().getFirstPossibleTokens();
+                    ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
+
+                }
             }
 
             // check the end element => exit with partial match if not available
-            ParseResult endTokenResult = endTokenElement.getParser().parse(node, false, depth -1, context);
+            ParseResult endTokenResult = endTokenElement.getParser().parse(node, false, depth - 1, context);
             if (endTokenResult.isMatch()) {
                 matchedTokens++;
                 return stepOut(node, context, depth, ParseResultType.FULL_MATCH, matchedTokens);

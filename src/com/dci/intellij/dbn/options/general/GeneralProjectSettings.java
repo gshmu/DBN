@@ -60,6 +60,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @NotNull
     public GeneralProjectSettingsForm createConfigurationEditor() {
         return new GeneralProjectSettingsForm(this);
     }

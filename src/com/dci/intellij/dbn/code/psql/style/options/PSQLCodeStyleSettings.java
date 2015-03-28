@@ -43,6 +43,7 @@ public class PSQLCodeStyleSettings extends CodeStyleCustomSettings<PSQLCodeStyle
     /*********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @NotNull
     public PSQLCodeStyleSettingsEditorForm createConfigurationEditor() {
         return new PSQLCodeStyleSettingsEditorForm(this);
     }

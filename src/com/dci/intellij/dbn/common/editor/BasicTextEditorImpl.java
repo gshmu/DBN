@@ -16,6 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -32,8 +33,9 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         this.project = project;
         this.name = name;
         this.virtualFile = virtualFile;
-        textEditor = (TextEditor) TextEditorProvider.getInstance().createEditor(project, virtualFile);
         this.editorProviderId = editorProviderId;
+        textEditor = (TextEditor) TextEditorProvider.getInstance().createEditor(project, virtualFile);
+        Disposer.register(this, textEditor);
     }
 
     public Project getProject() {
@@ -153,6 +155,5 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
 
     public void dispose() {
         disposed = true;
-        TextEditorProvider.getInstance().disposeEditor(textEditor);
     }
 }

@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -26,8 +27,10 @@ import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -132,9 +135,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
     public DBEditableObjectVirtualFile findDatabaseFile(DBSchemaObject object) {
         DBObjectRef objectRef = object.getRef();
         DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
-        if (databaseFile == null ){
+        if (databaseFile == null || databaseFile.isDisposed()){
             databaseFile = createDatabaseFile(object);
-
             filesCache.put(objectRef, databaseFile);
         }
         return databaseFile;
@@ -145,13 +147,14 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         return DatabaseFileManager.getInstance(project).isFileOpened(object);
     }
 
-    public static String createPath(DBObject object, DBContentType contentType) {
-        StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
-        DBObject parent = object.getParentObject();
+    @NotNull
+    public static String createPath(DBObjectRef objectRef, DBContentType contentType) {
+        StringBuilder buffer = new StringBuilder(objectRef.getFileName());
+        DBObjectRef parent = objectRef.getParent();
         while (parent != null) {
             buffer.insert(0, '.');
-            buffer.insert(0, parent.getName());
-            parent = parent.getParentObject();
+            buffer.insert(0, parent.getObjectName());
+            parent = parent.getParent();
         }
         buffer.insert(0, " - ");
         if (contentType == DBContentType.CODE_SPEC) {
@@ -162,66 +165,83 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             buffer.insert(0, " BODY");
         }
 
-        buffer.insert(0, object.getTypeName().toUpperCase());
+        buffer.insert(0, objectRef.getObjectType().getName().toUpperCase());
         buffer.insert(0, "] ");
-        buffer.insert(0, object.getConnectionHandler().getName());
+        buffer.insert(0, objectRef.lookupConnectionHandler().getName());
         buffer.insert(0, '[');
 
         return buffer.toString();
     }
 
-    public static String createPath(DBObject object) {
-        StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
-        DBObject parent = object.getParentObject();
+    @NotNull
+    public static String createPath(DBObjectList objectList) {
+        StringBuilder buffer = new StringBuilder(objectList.getName());
+        GenericDatabaseElement parent = objectList.getParentElement();
         while (parent != null) {
             buffer.insert(0, '.');
             buffer.insert(0, parent.getName());
-            parent = parent.getParentObject();
+            parent = parent.getParentElement();
         }
         buffer.insert(0, " - ");
-        buffer.insert(0, object.getTypeName().toUpperCase());
+
+        buffer.insert(0, objectList.getName().toUpperCase() + "LIST");
         buffer.insert(0, "] ");
-        buffer.insert(0, object.getConnectionHandler().getName());
+        buffer.insert(0, objectList.getConnectionHandler().getName());
         buffer.insert(0, '[');
 
         return buffer.toString();
     }
 
-    public static String createUrl(DBObject object) {
-        if (object == null) {
+    @NotNull
+    public static String createPath(DBObjectRef objectRef) {
+        StringBuilder buffer = new StringBuilder(objectRef.getFileName());
+        DBObjectRef parent = objectRef.getParent();
+        while (parent != null) {
+            buffer.insert(0, '.');
+            buffer.insert(0, parent.getObjectName());
+            parent = parent.getParent();
+        }
+        buffer.insert(0, " - ");
+        buffer.insert(0, objectRef.getObjectType().getName().toUpperCase());
+        buffer.insert(0, "] ");
+        buffer.insert(0, objectRef.lookupConnectionHandler().getName());
+        buffer.insert(0, '[');
+
+        return buffer.toString();
+    }
+
+    @NotNull
+    public static String createUrl(DBObjectList objectList) {
+        GenericDatabaseElement parentElement = objectList.getParentElement();
+        if (parentElement instanceof DBObject) {
+            DBObject parentObject = (DBObject) parentElement;
+            return createUrl(parentObject.getRef()) + objectList.getName();
+        }
+
+        if (parentElement instanceof DBObjectBundle) {
+            DBObjectBundle objectBundle = (DBObjectBundle) parentElement;
+            return createUrl(objectBundle.getConnectionHandler()) + "/bundle";
+        }
+        return createUrl(objectList.getConnectionHandler()) + "/unknown";
+    }
+
+
+    public static String createUrl(DBObjectRef objectRef) {
+        if (objectRef == null) {
             return PROTOCOL + "://" + UUID.randomUUID() + "/null";
         } else {
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
-            String connectionId = connectionHandler == null ? "null" : connectionHandler.getId();
-            return PROTOCOL + "://" + connectionId + "/object#" + object.getRef().serialize()/* + "." + getDefaultExtension(object)*/;
+            String connectionId = objectRef.getConnectionId();
+            return PROTOCOL + "://" + connectionId + "/object#" + objectRef.serialize()/* + "." + getDefaultExtension(object)*/;
         }
+    }
 
-/*
-        StringBuilder buffer = new StringBuilder(object.getRef().getFileName());
-        DBObjectType objectType = object.getObjectType();
-        buffer.insert(0, "#");
-        buffer.insert(0, objectType);
-        buffer.append(".");
-        buffer.append(getDefaultExtension(object));
-
-        DBObject parent = object.getParentObject();
-        while (parent != null) {
-            buffer.insert(0, ".");
-            buffer.insert(0, parent.getName());
-            objectType = parent.getObjectType();
-            if (objectType != DBObjectType.SCHEMA) {
-                buffer.insert(0, "#");
-                buffer.insert(0, objectType);
-            }
-            if (parent instanceof DBSchema) break;
-            parent = parent.getParentObject();
+    public static String createUrl(DBObjectRef objectRef, DBContentType contentType) {
+        if (objectRef == null) {
+            return PROTOCOL + "://" + UUID.randomUUID() + "/null";
+        } else {
+            String connectionId = objectRef.getConnectionId();
+            return PROTOCOL + "://" + connectionId + "/object_" + contentType.name().toLowerCase() + "#" + objectRef.serialize();
         }
-        buffer.insert(0, "/");
-        buffer.insert(0, object.getConnectionHandler().getId());
-        buffer.insert(0, "://");
-        buffer.insert(0, PROTOCOL);
-        return buffer.toString();
-*/
     }
 
     public static String createPath(ConnectionHandler connectionHandler) {
@@ -407,7 +427,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         while (objectRefs.hasNext()) {
             DBObjectRef objectRef = objectRefs.next();
             DBEditableObjectVirtualFile file = filesCache.get(objectRef);
-            if (file.getProject() == project) {
+            if (file.isDisposed() || file.getProject() == project) {
                 objectRefs.remove();
                 Disposer.dispose(file);
             }

@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.editor.data.options;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorPopupSettingsForm;
-import org.jdom.Element;
 
 public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettingsForm>{
     private boolean active = false;
@@ -50,6 +52,7 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+   @NotNull
    public DataEditorPopupSettingsForm createConfigurationEditor() {
        return new DataEditorPopupSettingsForm(this);
    }

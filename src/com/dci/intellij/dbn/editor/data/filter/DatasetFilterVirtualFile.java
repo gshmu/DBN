@@ -22,32 +22,28 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
 
-public class DatasetFilterVirtualFile extends VirtualFile implements DBParseableVirtualFile, FileConnectionMappingProvider {
+public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private DBObjectRef<DBDataset> datasetRef;
-    protected String name;
-    protected String path;
-    protected String url;
-
 
     public DatasetFilterVirtualFile(DBDataset dataset, String content) {
-        this.datasetRef = dataset.getRef();
+        this.datasetRef = DBObjectRef.from(dataset);
         this.content = content;
         name = dataset.getName();
-        path = DatabaseFileSystem.createPath(dataset) + " FILTER";
-        url = DatabaseFileSystem.createUrl(dataset) + "#FILTER";
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
@@ -61,11 +57,16 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
             DBLanguagePsiFile file = (DBLanguagePsiFile) languageDialect.getParserDefinition().createFile(fileViewProvider);
             fileViewProvider.forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(fileViewProvider.getVirtualFile());
-            document.putUserData(FILE_KEY, this);
             PsiDocumentManagerImpl.cachePsi(document, file);
             return file;
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    protected Project getProject() {
+        return getDataset().getProject();
     }
 
     public DBDataset getDataset() {
@@ -108,14 +109,14 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
 
     @NotNull
     @Override
-    public String getPath() {
-        return path;
+    protected String createPath() {
+        return DatabaseFileSystem.createPath(datasetRef) + " FILTER";
     }
 
     @NotNull
     @Override
-    public String getUrl() {
-        return url;
+    protected String createUrl() {
+        return DatabaseFileSystem.createUrl(datasetRef) + "#FILTER";
     }
 
     @Override
@@ -125,16 +126,6 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
 
     @Override
     public boolean isDirectory() {
-        return false;
-    }
-
-    @Override
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
-    public boolean isInLocalFileSystem() {
         return false;
     }
 
@@ -204,18 +195,4 @@ public class DatasetFilterVirtualFile extends VirtualFile implements DBParseable
         return "sql";
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        disposed = true;
-    }
 }

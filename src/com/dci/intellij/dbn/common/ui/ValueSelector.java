@@ -34,6 +34,7 @@ import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.intellij.ide.DataManager;
@@ -431,7 +432,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             final GraphicsConfig config = new GraphicsConfig(g);
             g.translate(x, y);
 
-            if (UIUtil.isUnderDarcula() || UIUtil.isUnderIntelliJLaF()) {
+            if (UIUtil.isUnderDarcula() || CompatibilityUtil.isUnderIntelliJLaF()) {
                 if (isFocused || isShowingPopup) {
                     DarculaUIUtil.paintFocusRing(g, 2, 2, width - 4, height - 4);
                 } else {

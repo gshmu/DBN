@@ -86,7 +86,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
             } else {
                 boolean showBold = false;
                 boolean showGrey = false;
-                boolean isError = false;
+                boolean isDisposed = false;
                 if (treeNode instanceof DBObject) {
                     DBObject object = (DBObject) treeNode;
                     if (object.isOfType(DBObjectType.SCHEMA)) {
@@ -95,11 +95,11 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
                         showGrey = schema.isEmptySchema();
                     }
 
-                    isError = !object.isValid();
+                    isDisposed = object.isDisposed();
                 }
 
                 SimpleTextAttributes textAttributes =
-                        isError ? SimpleTextAttributes.ERROR_ATTRIBUTES :
+                        isDisposed ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
                         showBold ? (showGrey ? SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES) :
                                 (showGrey ? SimpleTextAttributes.GRAYED_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 

@@ -19,20 +19,22 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = e.getProject();
         ResultSetTable resultSetTable = getResultSetTable(e);
-        if (project != null) {
-            try {
-                ResultSetDataModel model = resultSetTable.getModel();
-                if (!model.isResultSetExhausted()) {
-                    ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(project);
-                    int fetchBlockSize = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
+        if (resultSetTable != null) {
+            Project project = e.getProject();
+            if (project != null) {
+                try {
+                    ResultSetDataModel model = resultSetTable.getModel();
+                    if (!model.isResultSetExhausted()) {
+                        ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(project);
+                        int fetchBlockSize = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
 
-                    model.fetchNextRecords(fetchBlockSize, false);
+                        model.fetchNextRecords(fetchBlockSize, false);
+                    }
+
+                } catch (SQLException ex) {
+                    MessageUtil.showErrorDialog(project, "Could not perform operation.", ex);
                 }
-
-            } catch (SQLException ex) {
-                MessageUtil.showErrorDialog(project, "Could not perform operation.", ex);
             }
         }
     }

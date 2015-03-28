@@ -59,13 +59,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     public abstract Filter<T> getFilter();
 
     @NotNull
-    public GenericDatabaseElement getParent() {
+    public GenericDatabaseElement getParentElement() {
         return FailsafeUtil.get(parent);
     }
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(getParent().getConnectionHandler());
+        return FailsafeUtil.get(getParentElement().getConnectionHandler());
     }
 
     public DynamicContentLoader<T> getLoader() {
@@ -122,36 +122,40 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     }
 
     public final void load(boolean force) {
-        synchronized (LOAD_LOCK) {
-            if (shouldLoad(force)) {
-                isLoading = true;
-                try {
-                    performLoad();
-                    isLoaded = true;
-                } catch (InterruptedException e) {
-                    setElements(EMPTY_CONTENT);
-                    isDirty = true;
-                } finally {
-                    isLoading = false;
-                    updateChangeTimestamp();
+        if (shouldLoad(force)) {
+            synchronized (LOAD_LOCK) {
+                if (shouldLoad(force)) {
+                    isLoading = true;
+                    try {
+                        performLoad();
+                        isLoaded = true;
+                    } catch (InterruptedException e) {
+                        setElements(EMPTY_CONTENT);
+                        isDirty = true;
+                    } finally {
+                        isLoading = false;
+                        updateChangeTimestamp();
+                    }
                 }
             }
         }
     }
 
     public final void reload() {
-        synchronized (LOAD_LOCK) {
-            if (!disposed && !isLoading) {
-                isLoading = true;
-                try {
-                    performReload();
-                    isLoaded = true;
-                } catch (InterruptedException e) {
-                    setElements(EMPTY_CONTENT);
-                    isDirty = true;
-                } finally {
-                    isLoading = false;
-                    updateChangeTimestamp();
+        if (!disposed && !isLoading) {
+            synchronized (LOAD_LOCK) {
+                if (!disposed && !isLoading) {
+                    isLoading = true;
+                    try {
+                        performReload();
+                        isLoaded = true;
+                    } catch (InterruptedException e) {
+                        setElements(EMPTY_CONTENT);
+                        isDirty = true;
+                    } finally {
+                        isLoading = false;
+                        updateChangeTimestamp();
+                    }
                 }
             }
         }
@@ -159,23 +163,25 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     @Override
     public final void loadInBackground(final boolean force) {
-        synchronized (BACKGROUND_LOAD_LOCK) {
-            if (!isLoadingInBackground && shouldLoad(force)) {
-                isLoadingInBackground = true;
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                String connectionString = " (" + connectionHandler.getName() + ')';
-                new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                        try {
-                            DatabaseLoadMonitor.startBackgroundLoad();
-                            load(force);
-                        } finally {
-                            DatabaseLoadMonitor.endBackgroundLoad();
-                            isLoadingInBackground = false;
+        if (!isLoadingInBackground && shouldLoad(force)) {
+            synchronized (BACKGROUND_LOAD_LOCK) {
+                if (!isLoadingInBackground && shouldLoad(force)) {
+                    isLoadingInBackground = true;
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    String connectionString = " (" + connectionHandler.getName() + ')';
+                    new BackgroundTask(getProject(), "Loading data dictionary" + connectionString, true) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                            try {
+                                DatabaseLoadMonitor.startBackgroundLoad();
+                                load(force);
+                            } finally {
+                                DatabaseLoadMonitor.endBackgroundLoad();
+                                isLoadingInBackground = false;
+                            }
                         }
-                    }
-                }.start();
+                    }.start();
+                }
             }
         }
     }

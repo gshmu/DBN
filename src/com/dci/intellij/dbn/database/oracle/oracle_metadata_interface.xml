@@ -174,7 +174,7 @@
 
     <statement-execution-processor id="dataset-columns" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select
+            select distinct
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
                 null as DATA_TYPE_PACKAGE,
@@ -244,7 +244,7 @@
             order by col.COLUMN_NAME asc
         </statement>
         <statement prefixes="DBA, ALL" comment="Oracle 8.0">
-            select
+            select distinct
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
                 null as DATA_TYPE_PACKAGE,
@@ -317,7 +317,7 @@
 
     <statement-execution-processor id="all-dataset-columns" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select
+            select distinct
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
@@ -387,7 +387,7 @@
             order by col.TABLE_NAME asc
         </statement>
         <statement prefixes="DBA, ALL" comment="Oracle 8.0">
-            select
+            select distinct
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,

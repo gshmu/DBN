@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFiltersSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -58,6 +60,7 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
     /*********************************************************
     *                   Configuration                       *
     *********************************************************/
+    @NotNull
     protected CodeCompletionFiltersSettingsForm createConfigurationEditor() {
         return new CodeCompletionFiltersSettingsForm(this);
     }

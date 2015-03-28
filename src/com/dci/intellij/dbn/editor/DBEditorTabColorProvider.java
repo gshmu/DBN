@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.fileEditor.impl.EditorTabColorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,7 +33,7 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider{
                 EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(connectionHandler.getProject()).getEnvironmentSettings();
                 EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
                 EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                if (file instanceof DBVirtualFile) {
+                if (file instanceof DBVirtualFileImpl) {
                     if (visibilitySettings.getObjectEditorTabs().value()) {
                         return environmentType == null ? null : environmentType.getColor();
                     }

@@ -29,20 +29,18 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
                     String content = editor.getDocument().getText();
                     sourcecodeFile.setContent(content);
                     DBSchemaObject object = sourcecodeFile.getObject();
-                    if (object != null) {
-                        Project project = getProject();
-                        try {
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            String referenceText = sourceCodeManager.loadSourceCodeFromDatabase(object, sourcecodeFile.getContentType());
-                            if (!isCanceled()) {
-                                openDiffWindow(e, referenceText, "Database version", "Local version vs. database version");
-                            }
-
-                        } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog(
-                                    project, "Could not load sourcecode for " +
-                                            object.getQualifiedNameWithType() + " from database.", e1);
+                    Project project = getProject();
+                    try {
+                        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                        String referenceText = sourceCodeManager.loadSourceCodeFromDatabase(object, sourcecodeFile.getContentType());
+                        if (!isCanceled()) {
+                            openDiffWindow(e, referenceText, "Database version", "Local version vs. database version");
                         }
+
+                    } catch (SQLException e1) {
+                        MessageUtil.showErrorDialog(
+                                project, "Could not load sourcecode for " +
+                                        object.getQualifiedNameWithType() + " from database.", e1);
                     }
                 }
             }
