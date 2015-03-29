@@ -15,24 +15,20 @@ public abstract class SynchronizedTask extends SimpleTask {
 
     @Override
     public final void run() {
-        if (canExecute()) {
-            if (syncObject == null) {
-                try {
+        try {
+            if (canExecute()) {
+                if (syncObject == null) {
                     execute();
-                } catch (ProcessCanceledException e) {
-                    // do nothing
-                }
-            } else {
-                synchronized (syncObject) {
-                    try {
+                } else {
+                    synchronized (syncObject) {
                         execute();
-                    } catch (ProcessCanceledException e) {
-                        // do nothing
                     }
                 }
+            } else {
+                cancel();
             }
-        } else {
-            cancel();
+        } catch (ProcessCanceledException e) {
+            // do nothing
         }
     }
 }
