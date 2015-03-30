@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -26,8 +25,6 @@ public class ExecuteStatementAction extends AnAction {
             FileEditor fileEditor = EditorUtil.getFileEditor(editor);
             if (fileEditor != null) {
                 StatementExecutionManager.getInstance(project).executeStatementAtCursor(fileEditor);
-                PsiFile file = DocumentUtil.getFile(editor);
-                DocumentUtil.refreshEditorAnnotations(file);
             }
         }
     }

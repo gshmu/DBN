@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -64,7 +63,6 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
             StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
             executionManager.executeStatement(executionProcessor);
-            DocumentUtil.refreshEditorAnnotations(executable.getFile());
         }
     }
 
