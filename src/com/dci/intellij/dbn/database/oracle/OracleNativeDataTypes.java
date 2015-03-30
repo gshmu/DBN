@@ -50,8 +50,10 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
         createDateTimeDefinition("TIME WITH TIME ZONE", Timestamp.class, OracleTypes.TIMESTAMPTZ);
         createDateTimeDefinition("TIMESTAMP WITH LOCAL TIME ZONE", Timestamp.class, OracleTypes.TIMESTAMPLTZ);
         createDateTimeDefinition("TIMESTAMP", Timestamp.class, OracleTypes.TIMESTAMP);
-        createBasicDefinition("INTERVAL DAY TO SECOND", Object.class, OracleTypes.INTERVALDS, GenericDataType.DATE_TIME);
-        createBasicDefinition("INTERVAL YEAR TO MONTH", Object.class, OracleTypes.INTERVALYM, GenericDataType.DATE_TIME);
+        createBasicDefinition("INTERVAL DAY TO SECOND", Object.class, OracleTypes.INTERVALDS, GenericDataType.PROPRIETARY);
+        createBasicDefinition("INTERVAL YEAR TO MONTH", Object.class, OracleTypes.INTERVALYM, GenericDataType.PROPRIETARY);
+        createBasicDefinition("INTERVALDS", Object.class, OracleTypes.INTERVALDS, GenericDataType.PROPRIETARY);
+        createBasicDefinition("INTERVALYM", Object.class, OracleTypes.INTERVALYM, GenericDataType.PROPRIETARY);
 
         createLargeValueDefinition("BLOB", Blob.class, OracleTypes.BLOB, GenericDataType.BLOB);
         createLargeValueDefinition("CLOB", Clob.class, OracleTypes.CLOB, GenericDataType.CLOB);
