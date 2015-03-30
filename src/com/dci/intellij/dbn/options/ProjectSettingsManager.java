@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -199,8 +198,6 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
                                 ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                 projectSettings.readConfiguration(element);
-
-                                ConnectionManager.getInstance(project).disposeConnections(oldConnectionHandlers);
 
                                 ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
                                 listener.settingsChanged();

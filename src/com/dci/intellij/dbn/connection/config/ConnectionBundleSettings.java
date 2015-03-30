@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -84,16 +85,21 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
      *                      Configurable                     *
      *********************************************************/
     public void readConfiguration(Element element) {
+
         if (IS_IMPORT_EXPORT_ACTION.get()) {
-            Project project = getProject();
             List<ConnectionHandler> connectionHandlers = connectionBundle.getAllConnectionHandlers();
+            List<ConnectionHandler> disposeList = new ArrayList<ConnectionHandler>(connectionHandlers);
+            connectionHandlers.clear();
+
+            Project project = getProject();
             if (project instanceof DefaultProject) {
-                DisposerUtil.dispose(connectionHandlers);
+                DisposerUtil.dispose(disposeList);
             } else {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionManager.disposeConnections(connectionHandlers);
+                connectionManager.disposeConnections(disposeList);
             }
         }
+
 
         for (Object o : element.getChildren()) {
             Element connectionElement = (Element) o;
@@ -125,6 +131,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
                 }
             }
         }
+
     }
 
     public void writeConfiguration(Element element) {
