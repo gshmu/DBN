@@ -1,8 +1,5 @@
 package com.dci.intellij.dbn.common.thread;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.application.Application;
@@ -15,6 +12,8 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BackgroundTask<T> extends Task.Backgroundable implements RunnableTask<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -67,11 +66,9 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
             execute(progressIndicator);
         } catch (ProcessCanceledException e) {
-            // no action required here
-            LOGGER.info(getTitle() + " interrupted");
+            // no action
         } catch (InterruptedException e) {
-            // no action required here
-            LOGGER.info(getTitle() + " interrupted");
+            // no action
         } catch (Exception e) {
             LOGGER.error("Error executing background operation.", e);
         } finally {
