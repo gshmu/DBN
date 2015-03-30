@@ -222,7 +222,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
                             @Override
                             protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                                executionProcessor.execute(progressIndicator);
+                                try {
+                                    executionProcessor.execute(progressIndicator);
+                                } finally {
+                                    DBLanguagePsiFile file = executionProcessor.getPsiFile();
+                                    if (file != null) {
+                                        DocumentUtil.refreshEditorAnnotations(file);
+                                    }
+                                }
+
                             }
                         });
             }
