@@ -160,9 +160,8 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                     temporaryConfig = new GenericConnectionDatabaseSettings(getConfiguration().getParent());
                     applyChanges(temporaryConfig);
 
-                    ConnectionManager connectionManager = ConnectionManager.getInstance(configuration.getProject());
-                    if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
-                    if (source == infoButton) connectionManager.showConnectionInfo(temporaryConfig);
+                    if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
+                    if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig);
                 }
                 else if (source == osAuthenticationCheckBox) {
                     userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
