@@ -5616,23 +5616,23 @@
                 </wrapper>
             </sequence>
             <sequence id="000002941">
-                <token flavor="data_type" type-id="KW_INTERVAL" id="000002942" />
+                <token flavor="datatype" type-id="KW_INTERVAL" id="000002942" />
                 <one-of id="000002943">
                     <sequence id="000002944">
-                        <token flavor="data_type" type-id="KW_YEAR" id="000002945" />
+                        <token flavor="datatype" type-id="KW_YEAR" id="000002945" />
                         <wrapper optional="true" template="PARENTHESES" id="000002946">
                             <token original-name="year_precision" type-id="INTEGER" id="000002947" />
                         </wrapper>
-                        <token flavor="data_type" type-id="KW_TO" id="000002948" />
-                        <token flavor="data_type" type-id="KW_MONTH" id="000002949" />
+                        <token flavor="datatype" type-id="KW_TO" id="000002948" />
+                        <token flavor="datatype" type-id="KW_MONTH" id="000002949" />
                     </sequence>
                     <sequence id="000002950">
-                        <token flavor="data_type" type-id="KW_DAY" id="000002951" />
+                        <token flavor="datatype" type-id="KW_DAY" id="000002951" />
                         <wrapper optional="true" template="PARENTHESES" id="000002952">
                             <token original-name="day_precision" type-id="INTEGER" id="000002953" />
                         </wrapper>
-                        <token flavor="data_type" type-id="KW_TO" id="000002954" />
-                        <token flavor="data_type" type-id="KW_SECOND" id="000002955" />
+                        <token flavor="datatype" type-id="KW_TO" id="000002954" />
+                        <token flavor="datatype" type-id="KW_SECOND" id="000002955" />
                         <wrapper optional="true" template="PARENTHESES" id="000002956">
                             <token original-name="fractional_seconds" type-id="INTEGER" id="000002957" />
                         </wrapper>

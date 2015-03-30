@@ -9167,20 +9167,20 @@
                 <token type-id="DT_INTERVAL" id="000005124" />
                 <one-of id="000005125">
                     <sequence id="000005126">
-                        <token flavor="data_type" type-id="KW_YEAR" id="000005127" />
+                        <token flavor="datatype" type-id="KW_YEAR" id="000005127" />
                         <wrapper optional="true" template="PARENTHESES" id="000005128">
                             <token original-name="year_precision" type-id="INTEGER" id="000005129" />
                         </wrapper>
-                        <token flavor="data_type" type-id="KW_TO" id="000005130" />
-                        <token flavor="data_type" type-id="KW_MONTH" id="000005131" />
+                        <token flavor="datatype" type-id="KW_TO" id="000005130" />
+                        <token flavor="datatype" type-id="KW_MONTH" id="000005131" />
                     </sequence>
                     <sequence id="000005132">
-                        <token flavor="data_type" type-id="KW_DAY" id="000005133" />
+                        <token flavor="datatype" type-id="KW_DAY" id="000005133" />
                         <wrapper optional="true" template="PARENTHESES" id="000005134">
                             <token original-name="day_precision" type-id="INTEGER" id="000005135" />
                         </wrapper>
-                        <token flavor="data_type" type-id="KW_TO" id="000005136" />
-                        <token flavor="data_type" type-id="KW_SECOND" id="000005137" />
+                        <token flavor="datatype" type-id="KW_TO" id="000005136" />
+                        <token flavor="datatype" type-id="KW_SECOND" id="000005137" />
                         <wrapper optional="true" template="PARENTHESES" id="000005138">
                             <token original-name="fractional_seconds" type-id="INTEGER" id="000005139" />
                         </wrapper>
