@@ -34,6 +34,7 @@ import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 
 @State(
     name = "DBNavigator.Project.MethodExecutionManager",
@@ -230,9 +231,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void disposeComponent() {
-        executionHistory.dispose();
-        super.disposeComponent();
+    public void dispose() {
+        super.dispose();
+        Disposer.dispose(executionHistory);
     }
 
     /****************************************

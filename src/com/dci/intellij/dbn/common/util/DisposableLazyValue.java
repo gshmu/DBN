@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 
@@ -14,9 +15,13 @@ public abstract class DisposableLazyValue<T> implements  LazyValue<T>, Disposabl
     }
 
     public final T get(){
-        if (!loaded && !disposed) {
+        if (disposed) throw AlreadyDisposedException.INSTANCE;
+
+        if (!loaded) {
             synchronized (this) {
-                if (!loaded && !disposed) {
+                if (disposed) throw AlreadyDisposedException.INSTANCE;
+
+                if (!loaded) {
                     value = load();
                     if (value instanceof Disposable) {
                         Disposer.register(this, (Disposable) value);

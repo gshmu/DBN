@@ -88,14 +88,15 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
-    public void disposeComponent() {
+    public void dispose() {
+        ConnectionBundle connectionBundle = getConnectionBundle();
+        super.dispose();
         idleConnectionCleaner.cancel();
         idleConnectionCleaner.purge();
         EventManager.unsubscribe(
                 connectionBundleSettingsListener,
                 connectionSettingsListener);
-        Disposer.dispose(getConnectionBundle());
-        super.disposeComponent();
+        Disposer.dispose(connectionBundle);
     }
 
     /*********************************************************
