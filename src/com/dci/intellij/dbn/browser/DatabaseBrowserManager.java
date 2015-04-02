@@ -17,13 +17,12 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionManagerListener;
@@ -62,7 +61,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);
     private BooleanSetting showObjectProperties = new BooleanSetting("show-object-properties", true);
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<Boolean>();
-    private BrowserToolWindowForm toolWindowForm;
+    private DisposableLazyValue<BrowserToolWindowForm> toolWindowForm = new DisposableLazyValue<BrowserToolWindowForm>(this) {
+        @Override
+        protected BrowserToolWindowForm load() {
+            return new BrowserToolWindowForm(getProject());
+        }
+    };
 
     private DatabaseBrowserManager(Project project) {
         super(project);
@@ -100,15 +104,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     @NotNull
     public BrowserToolWindowForm getToolWindowForm() {
-        if (toolWindowForm == null) {
-            synchronized (this) {
-                if (toolWindowForm == null) {
-                    if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
-                    toolWindowForm = new BrowserToolWindowForm(getProject());
-                }
-            }
-        }
-        return toolWindowForm;
+        return toolWindowForm.get();
     }
 
     public BooleanSetting getAutoscrollFromEditor() {
@@ -174,15 +170,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         EventManager.subscribe(project, ConnectionManagerListener.TOPIC, connectionManagerListener);
     }
 
-    public void disposeComponent() {
+    public void dispose() {
+        super.dispose();
         EventManager.unsubscribe(
                 fileEditorManagerListener,
                 filterChangeListener,
                 connectionManagerListener);
-
-        DisposerUtil.dispose(toolWindowForm);
-        toolWindowForm = null;
-        super.disposeComponent();
     }
 
     /**
@@ -220,9 +213,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private ConnectionManagerListener connectionManagerListener = new ConnectionManagerListener() {
         @Override
         public void connectionsChanged() {
-            if (toolWindowForm != null) {
-                toolWindowForm.getBrowserForm().rebuild();
-            }
+            getToolWindowForm().getBrowserForm().rebuild();
         }
     };
 

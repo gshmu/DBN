@@ -70,10 +70,6 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
         return "DBNavigator.Project.DatabaseConsoleManager";
     }
 
-    public void disposeComponent() {
-        super.disposeComponent();
-    }
-
     public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
         final Project project = getProject();
         SimpleTask deleteTask = new SimpleTask() {

@@ -67,8 +67,8 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         return "DBNavigator.Project.DatabaseLoaderManager";
     }
 
-    public void disposeComponent() {
-        super.disposeComponent();
+    public void dispose() {
+        super.dispose();
         if (loaderQueue != null) {
             Disposer.dispose(loaderQueue);
             loaderQueue = null;

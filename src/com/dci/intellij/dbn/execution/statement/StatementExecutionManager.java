@@ -165,9 +165,9 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     @Override
-    public void disposeComponent() {
+    public void dispose() {
+        super.dispose();
         EventManager.unsubscribe(psiDocumentTransactionListener);
-        super.disposeComponent();
     }
 
     private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {
