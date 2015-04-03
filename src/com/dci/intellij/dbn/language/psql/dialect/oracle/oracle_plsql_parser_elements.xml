@@ -59,7 +59,7 @@
             <element optional="true" ref-id="label" />
         </sequence>
         <token id="000000016" type-id="KW_BEGIN" />
-        <sequence id="000000017" optional="true">
+        <sequence id="000000017">
             <iteration id="000000018">
                 <element ref-id="statement_block" />
             </iteration>

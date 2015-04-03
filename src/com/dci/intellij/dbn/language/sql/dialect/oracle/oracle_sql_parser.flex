@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
+import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor;
+import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.Marker;
 %%
 
 %class OracleSQLParserFlexLexer
@@ -21,7 +23,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 %eof}
 
 %{
-    private int braceCounter = 0;
     private TokenTypeBundle tt;
     public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
@@ -30,17 +31,37 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
     private int blockNesting = 0;
     private int blockStartPos = 0;
 
-    public void startPsqlBlock(boolean incNesting) {
+    /*
+    public void startPsqlBlock(boolean isDeclareBloc) {
+        blockNesting = 0;
         yybegin(PSQL_BLOCK);
         blockStartPos = zzStartRead;
         if (incNesting) blockNesting++;
     }
 
     public IElementType endPsqlBlock() {
+        blockNesting = 0;
         yybegin(YYINITIAL);
         zzStartRead = blockStartPos;
         return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
     }
+    */
+
+    public IElementType getChameleon() {
+        return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+    }
+
+    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
+        protected void lexerStart() {
+            //yypushback(yylength());
+            yybegin(PSQL_BLOCK);
+            blockStartPos = zzStartRead;
+        }
+        protected void lexerEnd() {
+            yybegin(YYINITIAL);
+            zzStartRead = blockStartPos;
+        }
+    };
 
 %}
 
@@ -57,6 +78,7 @@ PSQL_BLOCK_START_CREATE_TYPE    = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"type"
 PSQL_BLOCK_START_CREATE = {PSQL_BLOCK_START_CREATE_PACKAGE}|{PSQL_BLOCK_START_CREATE_TRIGGER}|{PSQL_BLOCK_START_CREATE_METHOD}|{PSQL_BLOCK_START_CREATE_TYPE}
 PSQL_BLOCK_START_DECLARE = "declare"
 PSQL_BLOCK_START_BEGIN = "begin"
+PSQL_BLOCK_START = {PSQL_BLOCK_START_CREATE}|{PSQL_BLOCK_START_DECLARE}|{PSQL_BLOCK_START_BEGIN}
 PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop")";"
 PSQL_BLOCK_END = "end"({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}";"
 
@@ -94,21 +116,23 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 %%
 
 <PSQL_BLOCK> {
-    {BLOCK_COMMENT}            {}
-    {LINE_COMMENT}             {}
-    {STRING}                   {}
+    {BLOCK_COMMENT}                 {}
+    {LINE_COMMENT}                  {}
+    {STRING}                        {}
 
-    {PSQL_BLOCK_START_BEGIN}   { blockNesting++; }
-    {PSQL_BLOCK_START_CREATE}  { blockNesting = 0; yypushback(yylength()); return endPsqlBlock(); }
-    {PSQL_BLOCK_END_IGNORE}    {}
-    {PSQL_BLOCK_END}           { blockNesting--; if (blockNesting <= 0) { blockNesting = 0; return endPsqlBlock();}}
+    {PSQL_BLOCK_START_CREATE}       { if (blockStartPos < zzCurrentPos) {yypushback(yylength()); plsqlBlockMonitor.end(true); return getChameleon();}}
+    {PSQL_BLOCK_END_IGNORE}         {}
+    {PSQL_BLOCK_END}                { if (plsqlBlockMonitor.end(false)) return getChameleon();}
 
-    {IDENTIFIER}               {}
-    {INTEGER}                  {}
-    {NUMBER}                   {}
-    {WHITE_SPACE}+             {}
-    \n|\r|.                    {}
-    <<EOF>>                    { blockNesting = 0; return endPsqlBlock(); }
+    "begin"                         { plsqlBlockMonitor.mark(Marker.BEGIN); }
+    "function"{ws}{IDENTIFIER}      { plsqlBlockMonitor.mark(Marker.METHOD); }
+    "procedure"{ws}{IDENTIFIER}     { plsqlBlockMonitor.mark(Marker.METHOD); }
+    {IDENTIFIER}                    {}
+    {INTEGER}                       {}
+    {NUMBER}                        {}
+    {WHITE_SPACE}+                  {}
+    \n|\r|.                         {}
+    <<EOF>>                         { plsqlBlockMonitor.end(true); return getChameleon(); }
 }
 
 
@@ -323,13 +347,15 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     "update"{ws}"any"{ws}"cube"{ws}"dimension" {return tt.getObjectTokenType(201);}
     "update"{ws}"any"{ws}"table" {return tt.getObjectTokenType(202);}
 
-
-    {PSQL_BLOCK_START_CREATE_PACKAGE}  { startPsqlBlock(true); }
-    {PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_DECLARE}         { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_BEGIN}           { startPsqlBlock(true); }
+    //{PSQL_BLOCK_START}  {  }
+    //{PSQL_BLOCK_START_CREATE_PACKAGE}  { startPsqlBlock(true); }
+    //{PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
+    //{PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
+    //{PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
+    //{PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
+    {PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
+    {PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
+    {PSQL_BLOCK_START_BEGIN}           { plsqlBlockMonitor.start(Marker.BEGIN); }
 
     {VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
     {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }

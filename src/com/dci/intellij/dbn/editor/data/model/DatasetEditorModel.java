@@ -204,6 +204,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         return isInserting || isModified;
     }
 
+    @Nullable
     public DatasetFilterInput resolveForeignKeyRecord(DatasetEditorModelCell cell) {
         DBColumn column = cell.getColumnInfo().getColumn();
         if (column.isForeignKey()) {
