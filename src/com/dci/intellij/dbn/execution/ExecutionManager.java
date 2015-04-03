@@ -8,9 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
@@ -40,7 +39,12 @@ import com.intellij.ui.content.ContentFactoryImpl;
 )
 public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
-    private ExecutionConsoleForm executionConsoleForm;
+    private DisposableLazyValue<ExecutionConsoleForm> executionConsoleForm = new DisposableLazyValue<ExecutionConsoleForm>(this) {
+        @Override
+        protected ExecutionConsoleForm load() {
+            return new ExecutionConsoleForm(getProject());
+        }
+    };
 
     private ExecutionManager(Project project) {
         super(project);
@@ -183,11 +187,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     @NotNull
     public ExecutionConsoleForm getExecutionConsoleForm() {
-        if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
-        if (executionConsoleForm == null) {
-            executionConsoleForm = new ExecutionConsoleForm(getProject());
-        }
-        return executionConsoleForm;
+        return executionConsoleForm.get();
     }
 
     public void closeExecutionResults(List<ConnectionHandler> connectionHandlers){
@@ -209,8 +209,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     @Override
     public void projectClosing(Project project) {
-        if (executionConsoleForm != null) {
-            executionConsoleForm.removeAllTabs();
+        if (executionConsoleForm.isLoaded()) {
+            getExecutionConsoleForm().removeAllTabs();
         }
         super.projectClosing(project);
     }
@@ -222,15 +222,13 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     @Override
-    public void disposeComponent() {
-        super.disposeComponent();
-        DisposerUtil.dispose(executionConsoleForm);
-        executionConsoleForm = null;
+    public void dispose() {
+        super.dispose();
     }
 
     @Nullable
     public ExecutionResult getSelectedExecutionResult() {
-        return executionConsoleForm == null ? null : executionConsoleForm.getSelectedExecutionResult();
+        return executionConsoleForm.isLoaded() ? getExecutionConsoleForm().getSelectedExecutionResult() : null;
     }
 
     /*********************************************

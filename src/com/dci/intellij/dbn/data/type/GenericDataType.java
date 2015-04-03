@@ -13,6 +13,7 @@ public enum GenericDataType {
     OBJECT("Object"),
     ARRAY("Array"),
     XMLTYPE("XML Type"),
+    PROPRIETARY("Proprietary"),
     ;
 
     private String name;

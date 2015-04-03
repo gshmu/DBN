@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
+import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor;
+import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.Marker;
 %%
 
 %class OracleSQLParserFlexLexer
@@ -21,7 +23,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 %eof}
 
 %{
-    private int braceCounter = 0;
     private TokenTypeBundle tt;
     public OracleSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
@@ -30,17 +31,37 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
     private int blockNesting = 0;
     private int blockStartPos = 0;
 
-    public void startPsqlBlock(boolean incNesting) {
+    /*
+    public void startPsqlBlock(boolean isDeclareBloc) {
+        blockNesting = 0;
         yybegin(PSQL_BLOCK);
         blockStartPos = zzStartRead;
         if (incNesting) blockNesting++;
     }
 
     public IElementType endPsqlBlock() {
+        blockNesting = 0;
         yybegin(YYINITIAL);
         zzStartRead = blockStartPos;
         return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
     }
+    */
+
+    public IElementType getChameleon() {
+        return tt.getChameleon(DBLanguageDialectIdentifier.ORACLE_PLSQL);
+    }
+
+    OraclePLSQLBlockMonitor plsqlBlockMonitor = new OraclePLSQLBlockMonitor() {
+        protected void lexerStart() {
+            //yypushback(yylength());
+            yybegin(PSQL_BLOCK);
+            blockStartPos = zzStartRead;
+        }
+        protected void lexerEnd() {
+            yybegin(YYINITIAL);
+            zzStartRead = blockStartPos;
+        }
+    };
 
 %}
 
@@ -57,6 +78,7 @@ PSQL_BLOCK_START_CREATE_TYPE    = {PSQL_BLOCK_START_CREATE_OR_REPLACE}"type"
 PSQL_BLOCK_START_CREATE = {PSQL_BLOCK_START_CREATE_PACKAGE}|{PSQL_BLOCK_START_CREATE_TRIGGER}|{PSQL_BLOCK_START_CREATE_METHOD}|{PSQL_BLOCK_START_CREATE_TYPE}
 PSQL_BLOCK_START_DECLARE = "declare"
 PSQL_BLOCK_START_BEGIN = "begin"
+PSQL_BLOCK_START = {PSQL_BLOCK_START_CREATE}|{PSQL_BLOCK_START_DECLARE}|{PSQL_BLOCK_START_BEGIN}
 PSQL_BLOCK_END_IGNORE = "end"{ws}("if"|"loop")";"
 PSQL_BLOCK_END = "end"({ws}({IDENTIFIER}|{QUOTED_IDENTIFIER}))*{wso}";"
 
@@ -94,21 +116,23 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 %%
 
 <PSQL_BLOCK> {
-    {BLOCK_COMMENT}            {}
-    {LINE_COMMENT}             {}
-    {STRING}                   {}
+    {BLOCK_COMMENT}                 {}
+    {LINE_COMMENT}                  {}
+    {STRING}                        {}
 
-    {PSQL_BLOCK_START_BEGIN}   { blockNesting++; }
-    {PSQL_BLOCK_START_CREATE}  { blockNesting = 0; yypushback(yylength()); return endPsqlBlock(); }
-    {PSQL_BLOCK_END_IGNORE}    {}
-    {PSQL_BLOCK_END}           { blockNesting--; if (blockNesting <= 0) { blockNesting = 0; return endPsqlBlock();}}
+    {PSQL_BLOCK_START_CREATE}       { if (blockStartPos < zzCurrentPos) {yypushback(yylength()); plsqlBlockMonitor.end(true); return getChameleon();}}
+    {PSQL_BLOCK_END_IGNORE}         {}
+    {PSQL_BLOCK_END}                { if (plsqlBlockMonitor.end(false)) return getChameleon();}
 
-    {IDENTIFIER}               {}
-    {INTEGER}                  {}
-    {NUMBER}                   {}
-    {WHITE_SPACE}+             {}
-    \n|\r|.                    {}
-    <<EOF>>                    { blockNesting = 0; return endPsqlBlock(); }
+    "begin"                         { plsqlBlockMonitor.mark(Marker.BEGIN); }
+    "function"{ws}{IDENTIFIER}      { plsqlBlockMonitor.mark(Marker.METHOD); }
+    "procedure"{ws}{IDENTIFIER}     { plsqlBlockMonitor.mark(Marker.METHOD); }
+    {IDENTIFIER}                    {}
+    {INTEGER}                       {}
+    {NUMBER}                        {}
+    {WHITE_SPACE}+                  {}
+    \n|\r|.                         {}
+    <<EOF>>                         { plsqlBlockMonitor.end(true); return getChameleon(); }
 }
 
 
@@ -323,13 +347,15 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
     "update"{ws}"any"{ws}"cube"{ws}"dimension" {return tt.getObjectTokenType(201);}
     "update"{ws}"any"{ws}"table" {return tt.getObjectTokenType(202);}
 
-
-    {PSQL_BLOCK_START_CREATE_PACKAGE}  { startPsqlBlock(true); }
-    {PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_DECLARE}         { startPsqlBlock(false); }
-    {PSQL_BLOCK_START_BEGIN}           { startPsqlBlock(true); }
+    //{PSQL_BLOCK_START}  {  }
+    //{PSQL_BLOCK_START_CREATE_PACKAGE}  { startPsqlBlock(true); }
+    //{PSQL_BLOCK_START_CREATE_TRIGGER}  { startPsqlBlock(false); }
+    //{PSQL_BLOCK_START_CREATE_METHOD}   { startPsqlBlock(false); }
+    //{PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
+    //{PSQL_BLOCK_START_CREATE_TYPE}     { startPsqlBlock(false); }
+    {PSQL_BLOCK_START_CREATE}          { plsqlBlockMonitor.start(Marker.CREATE); }
+    {PSQL_BLOCK_START_DECLARE}         { plsqlBlockMonitor.start(Marker.DECLARE); }
+    {PSQL_BLOCK_START_BEGIN}           { plsqlBlockMonitor.start(Marker.BEGIN); }
 
     {VARIABLE}          {return tt.getSharedTokenTypes().getVariable(); }
     {SQLP_VARIABLE}     {return tt.getSharedTokenTypes().getVariable(); }
@@ -365,49 +391,49 @@ CT_SIZE_CLAUSE = {INTEGER}{wso}("k"|"m"|"g"|"t"|"p"|"e"){ws}
 
 
 
-
     "varchar2" {return tt.getDataTypeTokenType(0);}
-    "with"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(1);}
-    "with"{ws}"local"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(2);}
-    "varchar" {return tt.getDataTypeTokenType(3);}
-    "urowid" {return tt.getDataTypeTokenType(4);}
-    "to"{ws}"second" {return tt.getDataTypeTokenType(5);}
-    "to"{ws}"month" {return tt.getDataTypeTokenType(6);}
-    "timestamp" {return tt.getDataTypeTokenType(7);}
-    "smallint" {return tt.getDataTypeTokenType(8);}
-    "rowid" {return tt.getDataTypeTokenType(9);}
-    "real" {return tt.getDataTypeTokenType(10);}
-    "raw" {return tt.getDataTypeTokenType(11);}
-    "nvarchar2" {return tt.getDataTypeTokenType(12);}
-    "numeric" {return tt.getDataTypeTokenType(13);}
-    "number" {return tt.getDataTypeTokenType(14);}
-    "nclob" {return tt.getDataTypeTokenType(15);}
-    "nchar"{ws}"varying" {return tt.getDataTypeTokenType(16);}
-    "nchar" {return tt.getDataTypeTokenType(17);}
-    "national"{ws}"character"{ws}"varying" {return tt.getDataTypeTokenType(18);}
-    "national"{ws}"character" {return tt.getDataTypeTokenType(19);}
-    "national"{ws}"char"{ws}"varying" {return tt.getDataTypeTokenType(20);}
+    "bfile" {return tt.getDataTypeTokenType(1);}
+    "binary_double" {return tt.getDataTypeTokenType(2);}
+    "binary_float" {return tt.getDataTypeTokenType(3);}
+    "blob" {return tt.getDataTypeTokenType(4);}
+    "boolean" {return tt.getDataTypeTokenType(5);}
+    "byte" {return tt.getDataTypeTokenType(6);}
+    "char" {return tt.getDataTypeTokenType(7);}
+    "character" {return tt.getDataTypeTokenType(8);}
+    "character"{ws}"varying" {return tt.getDataTypeTokenType(9);}
+    "clob" {return tt.getDataTypeTokenType(10);}
+    "date" {return tt.getDataTypeTokenType(11);}
+    "decimal" {return tt.getDataTypeTokenType(12);}
+    "double"{ws}"precision" {return tt.getDataTypeTokenType(13);}
+    "float" {return tt.getDataTypeTokenType(14);}
+    "int" {return tt.getDataTypeTokenType(15);}
+    "integer" {return tt.getDataTypeTokenType(16);}
+    "interval" {return tt.getDataTypeTokenType(17);}
+    "long" {return tt.getDataTypeTokenType(18);}
+    "long"{ws}"raw" {return tt.getDataTypeTokenType(19);}
+    "long"{ws}"varchar" {return tt.getDataTypeTokenType(20);}
     "national"{ws}"char" {return tt.getDataTypeTokenType(21);}
-    "long"{ws}"varchar" {return tt.getDataTypeTokenType(22);}
-    "long"{ws}"raw" {return tt.getDataTypeTokenType(23);}
-    "long" {return tt.getDataTypeTokenType(24);}
-    "interval"{ws}"year" {return tt.getDataTypeTokenType(25);}
-    "interval"{ws}"day" {return tt.getDataTypeTokenType(26);}
-    "integer" {return tt.getDataTypeTokenType(27);}
-    "int" {return tt.getDataTypeTokenType(28);}
-    "float" {return tt.getDataTypeTokenType(29);}
-    "double"{ws}"precision" {return tt.getDataTypeTokenType(30);}
-    "decimal" {return tt.getDataTypeTokenType(31);}
-    "date" {return tt.getDataTypeTokenType(32);}
-    "clob" {return tt.getDataTypeTokenType(33);}
-    "character"{ws}"varying" {return tt.getDataTypeTokenType(34);}
-    "character" {return tt.getDataTypeTokenType(35);}
-    "char" {return tt.getDataTypeTokenType(36);}
-    "byte" {return tt.getDataTypeTokenType(37);}
-    "blob" {return tt.getDataTypeTokenType(38);}
-    "binary_float" {return tt.getDataTypeTokenType(39);}
-    "binary_double" {return tt.getDataTypeTokenType(40);}
-    "bfile" {return tt.getDataTypeTokenType(41);}
+    "national"{ws}"char"{ws}"varying" {return tt.getDataTypeTokenType(22);}
+    "national"{ws}"character" {return tt.getDataTypeTokenType(23);}
+    "national"{ws}"character"{ws}"varying" {return tt.getDataTypeTokenType(24);}
+    "nchar" {return tt.getDataTypeTokenType(25);}
+    "nchar"{ws}"varying" {return tt.getDataTypeTokenType(26);}
+    "nclob" {return tt.getDataTypeTokenType(27);}
+    "number" {return tt.getDataTypeTokenType(28);}
+    "numeric" {return tt.getDataTypeTokenType(29);}
+    "nvarchar2" {return tt.getDataTypeTokenType(30);}
+    "raw" {return tt.getDataTypeTokenType(31);}
+    "real" {return tt.getDataTypeTokenType(32);}
+    "rowid" {return tt.getDataTypeTokenType(33);}
+    "smallint" {return tt.getDataTypeTokenType(34);}
+    "timestamp" {return tt.getDataTypeTokenType(35);}
+    "urowid" {return tt.getDataTypeTokenType(36);}
+    "varchar" {return tt.getDataTypeTokenType(37);}
+    "with"{ws}"local"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(38);}
+    "with"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(39);}
+
+
+
 
 
 

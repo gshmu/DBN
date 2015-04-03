@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -232,7 +233,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
-        return file == null ? null : file.getActiveConnection();
+        ConnectionHandler connectionHandler = file == null ? null : file.getActiveConnection();
+        return FailsafeUtil.get(connectionHandler);
     }
 
     @Override

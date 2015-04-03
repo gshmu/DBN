@@ -112,51 +112,50 @@ SQLP_VARIABLE = "&""&"?{IDENTIFIER}
 
 
 "varchar2" {return tt.getDataTypeTokenType(0);}
-"with"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(1);}
-"with"{ws}"local"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(2);}
-"varchar" {return tt.getDataTypeTokenType(3);}
-"urowid" {return tt.getDataTypeTokenType(4);}
-"to"{ws}"second" {return tt.getDataTypeTokenType(5);}
-"to"{ws}"month" {return tt.getDataTypeTokenType(6);}
-"timestamp" {return tt.getDataTypeTokenType(7);}
-"string" {return tt.getDataTypeTokenType(8);}
-"smallint" {return tt.getDataTypeTokenType(9);}
-"rowid" {return tt.getDataTypeTokenType(10);}
-"real" {return tt.getDataTypeTokenType(11);}
-"raw" {return tt.getDataTypeTokenType(12);}
-"pls_integer" {return tt.getDataTypeTokenType(13);}
-"nvarchar2" {return tt.getDataTypeTokenType(14);}
-"numeric" {return tt.getDataTypeTokenType(15);}
-"number" {return tt.getDataTypeTokenType(16);}
-"nclob" {return tt.getDataTypeTokenType(17);}
-"nchar"{ws}"varying" {return tt.getDataTypeTokenType(18);}
-"nchar" {return tt.getDataTypeTokenType(19);}
-"national"{ws}"character"{ws}"varying" {return tt.getDataTypeTokenType(20);}
-"national"{ws}"character" {return tt.getDataTypeTokenType(21);}
+"bfile" {return tt.getDataTypeTokenType(1);}
+"binary_double" {return tt.getDataTypeTokenType(2);}
+"binary_float" {return tt.getDataTypeTokenType(3);}
+"binary_integer" {return tt.getDataTypeTokenType(4);}
+"blob" {return tt.getDataTypeTokenType(5);}
+"boolean" {return tt.getDataTypeTokenType(6);}
+"byte" {return tt.getDataTypeTokenType(7);}
+"char" {return tt.getDataTypeTokenType(8);}
+"character" {return tt.getDataTypeTokenType(9);}
+"character"{ws}"varying" {return tt.getDataTypeTokenType(10);}
+"clob" {return tt.getDataTypeTokenType(11);}
+"date" {return tt.getDataTypeTokenType(12);}
+"decimal" {return tt.getDataTypeTokenType(13);}
+"double"{ws}"precision" {return tt.getDataTypeTokenType(14);}
+"float" {return tt.getDataTypeTokenType(15);}
+"int" {return tt.getDataTypeTokenType(16);}
+"integer" {return tt.getDataTypeTokenType(17);}
+"long" {return tt.getDataTypeTokenType(18);}
+"long"{ws}"raw" {return tt.getDataTypeTokenType(19);}
+"long"{ws}"varchar" {return tt.getDataTypeTokenType(20);}
+"national"{ws}"char" {return tt.getDataTypeTokenType(21);}
 "national"{ws}"char"{ws}"varying" {return tt.getDataTypeTokenType(22);}
-"national"{ws}"char" {return tt.getDataTypeTokenType(23);}
-"long"{ws}"varchar" {return tt.getDataTypeTokenType(24);}
-"long"{ws}"raw" {return tt.getDataTypeTokenType(25);}
-"long" {return tt.getDataTypeTokenType(26);}
-"interval"{ws}"year" {return tt.getDataTypeTokenType(27);}
-"interval"{ws}"day" {return tt.getDataTypeTokenType(28);}
-"integer" {return tt.getDataTypeTokenType(29);}
-"int" {return tt.getDataTypeTokenType(30);}
-"float" {return tt.getDataTypeTokenType(31);}
-"double"{ws}"precision" {return tt.getDataTypeTokenType(32);}
-"decimal" {return tt.getDataTypeTokenType(33);}
-"date" {return tt.getDataTypeTokenType(34);}
-"clob" {return tt.getDataTypeTokenType(35);}
-"character"{ws}"varying" {return tt.getDataTypeTokenType(36);}
-"character" {return tt.getDataTypeTokenType(37);}
-"char" {return tt.getDataTypeTokenType(38);}
-"byte" {return tt.getDataTypeTokenType(39);}
-"boolean" {return tt.getDataTypeTokenType(40);}
-"blob" {return tt.getDataTypeTokenType(41);}
-"binary_integer" {return tt.getDataTypeTokenType(42);}
-"binary_float" {return tt.getDataTypeTokenType(43);}
-"binary_double" {return tt.getDataTypeTokenType(44);}
-"bfile" {return tt.getDataTypeTokenType(45);}
+"national"{ws}"character" {return tt.getDataTypeTokenType(23);}
+"national"{ws}"character"{ws}"varying" {return tt.getDataTypeTokenType(24);}
+"nchar" {return tt.getDataTypeTokenType(25);}
+"nchar"{ws}"varying" {return tt.getDataTypeTokenType(26);}
+"nclob" {return tt.getDataTypeTokenType(27);}
+"number" {return tt.getDataTypeTokenType(28);}
+"numeric" {return tt.getDataTypeTokenType(29);}
+"nvarchar2" {return tt.getDataTypeTokenType(30);}
+"pls_integer" {return tt.getDataTypeTokenType(31);}
+"raw" {return tt.getDataTypeTokenType(32);}
+"real" {return tt.getDataTypeTokenType(33);}
+"rowid" {return tt.getDataTypeTokenType(34);}
+"smallint" {return tt.getDataTypeTokenType(35);}
+"string" {return tt.getDataTypeTokenType(36);}
+"timestamp" {return tt.getDataTypeTokenType(37);}
+"urowid" {return tt.getDataTypeTokenType(38);}
+"varchar" {return tt.getDataTypeTokenType(39);}
+"with"{ws}"local"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(40);}
+"with"{ws}"time"{ws}"zone" {return tt.getDataTypeTokenType(41);}
+
+
+
 
 
 

@@ -50,9 +50,6 @@ public class DatasetEditorStateManager extends AbstractProjectComponent implemen
     public String getComponentName() {
         return "DBNavigator.Project.DatasetEditorStateManager";
     }
-    public void disposeComponent() {
-        super.disposeComponent();
-    }
 
     /*********************************************
      *            PersistentStateComponent       *

@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
+import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -45,7 +46,6 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import com.intellij.ui.tabs.JBTabsPosition;
@@ -57,7 +57,12 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
-    private ExecutionMessagesPanel executionMessagesPanel;
+    private DisposableLazyValue<ExecutionMessagesPanel> executionMessagesPanel = new DisposableLazyValue<ExecutionMessagesPanel>(this) {
+        @Override
+        protected ExecutionMessagesPanel load() {
+            return new ExecutionMessagesPanel(ExecutionConsoleForm.this);
+        }
+    };
 
     private boolean canScrollToSource;
 
@@ -119,8 +124,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     }
                 }
 
-                if (executionMessagesPanel != null) {
-                    JComponent messagePanelComponent = executionMessagesPanel.getComponent();
+                if (executionMessagesPanel.isLoaded()) {
+                    JComponent messagePanelComponent = getMessagesPanel().getComponent();
                     messagePanelComponent.revalidate();
                     messagePanelComponent.repaint();
                 }
@@ -296,11 +301,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
      *                       Messages                        *
      *********************************************************/
     private ExecutionMessagesPanel getMessagesPanel() {
-        if (executionMessagesPanel == null) {
-            executionMessagesPanel = new ExecutionMessagesPanel(this);
-            Disposer.register(this, executionMessagesPanel);
-        }
-        return executionMessagesPanel;
+        return executionMessagesPanel.get();
     }
 
     private void prepareMessagesTab() {

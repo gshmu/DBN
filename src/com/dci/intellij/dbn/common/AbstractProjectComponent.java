@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 
-public abstract class AbstractProjectComponent implements ProjectComponent, ProjectManagerListener{
+public abstract class AbstractProjectComponent implements ProjectComponent, ProjectManagerListener, Disposable{
     private Project project;
-    private boolean isDisposed = false;
 
     protected AbstractProjectComponent(Project project) {
         this.project = project;
@@ -55,12 +55,18 @@ public abstract class AbstractProjectComponent implements ProjectComponent, Proj
     /********************************************* *
      *                Disposable                   *
      ***********************************************/
+    private boolean disposed = false;
+
     public boolean isDisposed() {
-        return isDisposed;
+        return disposed;
     }
 
-    public void disposeComponent() {
-        isDisposed = true;
+    @Override
+    public void dispose() {
+        disposed = true;
         project = null;
+    }
+
+    public final void disposeComponent() {
     }
 }

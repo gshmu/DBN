@@ -706,12 +706,23 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public abstract boolean matches(BasePsiElement basePsiElement, MatchType matchType);
 
-    public synchronized DBObject resolveUnderlyingObject() {
-        if (isVirtualObject() && (underlyingObject == null || !underlyingObject.isValid()) ) {
-            DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
-            underlyingObject = new DBVirtualObject(virtualObjectType, this);
+    public DBObject resolveUnderlyingObject() {
+        if (isVirtualObject()) {
+            if (getCachedUnderlyingObject() == null) {
+                synchronized (this) {
+                    if (getCachedUnderlyingObject() == null) {
+                        DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
+                        underlyingObject = new DBVirtualObject(virtualObjectType, this);
+                    }
+                }
+            }
+
         }
         return underlyingObject;
+    }
+
+    public DBVirtualObject getCachedUnderlyingObject() {
+        return underlyingObject != null && underlyingObject.isValid() ? underlyingObject : null;
     }
 
     public char getIdentifierQuotesChar() {

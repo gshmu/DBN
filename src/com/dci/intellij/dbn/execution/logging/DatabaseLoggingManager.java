@@ -29,11 +29,6 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         return project.getComponent(DatabaseLoggingManager.class);
     }
 
-    @Override
-    public void disposeComponent() {
-        super.disposeComponent();
-    }
-
     /*********************************************************
      *                       Custom                          *
      *********************************************************/

@@ -343,9 +343,9 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public String getComponentName() {
         return "DBNavigator.Project.DDLFileAttachmentManager";
     }
-    public void disposeComponent() {
+    public void dispose() {
+        super.dispose();
         mappings.clear();
-        super.disposeComponent();
     }
     /************************************************
      *               VirtualFileListener            *
