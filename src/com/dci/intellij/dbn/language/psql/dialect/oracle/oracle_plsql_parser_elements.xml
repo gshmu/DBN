@@ -3470,7 +3470,7 @@
             <sequence id="000001724">
                 <token id="000001725" type-id="KW_EXTEND" />
                 <wrapper id="000001726" optional="true" template="PARENTHESES">
-                    <sequence id="000001727">
+                    <sequence id="000001727" optional="true">
                         <element original-name="number" ref-id="expression" />
                         <sequence id="000001728" optional="true">
                             <token id="000001729" type-id="CHR_COMMA" />

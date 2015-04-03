@@ -144,8 +144,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = databaseSettings.getProject();
         try {
             Authentication temporaryAuthentication = null;
-            if (!databaseSettings.getAuthentication().isProvided()) {
-                temporaryAuthentication = openUserPasswordDialog(project, null);
+            Authentication authentication = databaseSettings.getAuthentication();
+            if (!authentication.isProvided()) {
+                temporaryAuthentication = openUserPasswordDialog(project, null, authentication.clone());
                 if (temporaryAuthentication == null){
                     return;
                 }
@@ -194,8 +195,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = databaseSettings.getProject();
         try {
             Authentication temporaryAuthentication = null;
-            if (!databaseSettings.getAuthentication().isProvided()) {
-                temporaryAuthentication = openUserPasswordDialog(project, null);
+            Authentication authentication = databaseSettings.getAuthentication();
+            if (!authentication.isProvided()) {
+                temporaryAuthentication = openUserPasswordDialog(project, null, authentication.clone());
                 if (temporaryAuthentication == null) {
                     return null;
                 }
@@ -221,8 +223,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler) {
-        ConnectionUserPasswordDialog passwordDialog = new ConnectionUserPasswordDialog(project, connectionHandler);
+    public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
+        ConnectionUserPasswordDialog passwordDialog = new ConnectionUserPasswordDialog(project, connectionHandler, authentication);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             Authentication newAuthentication = passwordDialog.getAuthentication();

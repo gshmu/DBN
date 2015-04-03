@@ -12,13 +12,11 @@ import com.intellij.openapi.project.Project;
 
 public class ConnectionUserPasswordDialog extends DBNDialog<ConnectionUserPasswordForm> {
     private boolean rememberCredentials;
-    private Authentication authentication = new Authentication();
+    private Authentication authentication;
 
-    public ConnectionUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler) {
+    public ConnectionUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
         super(project, "Enter Password", true);
-        if (connectionHandler != null) {
-            authentication = connectionHandler.getSettings().getDatabaseSettings().getAuthentication().clone();
-        }
+        this.authentication = authentication;
         setModal(true);
         setResizable(false);
         component = new ConnectionUserPasswordForm(this, connectionHandler);
