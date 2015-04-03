@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionManagerListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -330,29 +331,32 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             Element connectionElement = new Element("connection");
 
             boolean addConnectionElement = false;
-            for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
-                List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
-                DBObjectListContainer childObjects = schema.getChildObjects();
-                if (childObjects != null) {
-                    List<DBObjectList<DBObject>> allObjectLists = childObjects.getAllObjectLists();
-                    for (DBObjectList<DBObject> objectList : allObjectLists) {
-                        if (objectList.isLoaded() || objectList.isLoading()) {
-                            objectTypes.add(objectList.getObjectType());
+            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            if (objectBundle.getObjectListContainer().getObjectList(DBObjectType.SCHEMA).isLoaded()) {
+                for (DBSchema schema : objectBundle.getSchemas()) {
+                    List<DBObjectType> objectTypes = new ArrayList<DBObjectType>();
+                    DBObjectListContainer childObjects = schema.getChildObjects();
+                    if (childObjects != null) {
+                        List<DBObjectList<DBObject>> allObjectLists = childObjects.getAllObjectLists();
+                        for (DBObjectList<DBObject> objectList : allObjectLists) {
+                            if (objectList.isLoaded() || objectList.isLoading()) {
+                                objectTypes.add(objectList.getObjectType());
+                            }
                         }
                     }
+                    if (objectTypes.size() > 0) {
+                        Element schemaElement = new Element("schema");
+                        schemaElement.setAttribute("name", schema.getName());
+                        schemaElement.setAttribute("object-types", DBObjectType.toCommaSeparated(objectTypes));
+                        connectionElement.addContent(schemaElement);
+                        addConnectionElement = true;
+                    }
                 }
-                if (objectTypes.size() > 0) {
-                    Element schemaElement = new Element("schema");
-                    schemaElement.setAttribute("name", schema.getName());
-                    schemaElement.setAttribute("object-types", DBObjectType.toCommaSeparated(objectTypes));
-                    connectionElement.addContent(schemaElement);
-                    addConnectionElement = true;
-                }
-            }
 
-            if (addConnectionElement) {
-                connectionElement.setAttribute("connection-id", connectionHandler.getId());
-                nodesElement.addContent(connectionElement);
+                if (addConnectionElement) {
+                    connectionElement.setAttribute("connection-id", connectionHandler.getId());
+                    nodesElement.addContent(connectionElement);
+                }
             }
         }
     }

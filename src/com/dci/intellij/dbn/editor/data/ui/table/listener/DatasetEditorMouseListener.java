@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.editor.data.ui.table.listener;
 
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
@@ -7,10 +11,6 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.Disposable;
-
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class DatasetEditorMouseListener extends MouseAdapter implements Disposable {
     private DatasetEditorTable table;
@@ -47,10 +47,10 @@ public class DatasetEditorMouseListener extends MouseAdapter implements Disposab
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(event.getPoint());
             DBColumn column = cell.getColumnInfo().getColumn();
 
-            if (column!= null && column.isForeignKey() && cell.getUserValue() != null) {
+            if (column.isForeignKey() && cell.getUserValue() != null) {
                 table.clearSelection();
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
-                if (filterInput.getColumns().size() > 0) {
+                if (filterInput != null && filterInput.getColumns().size() > 0) {
                     DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(column.getProject());
                     datasetEditorManager.navigateToRecord(filterInput, event);
                     event.consume();
