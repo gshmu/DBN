@@ -49,6 +49,6 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component.getConsoleNameTextField();
+        return component == null ? null : component.getConsoleNameTextField();
     }
 }

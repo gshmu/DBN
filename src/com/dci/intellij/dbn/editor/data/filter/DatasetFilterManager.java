@@ -181,9 +181,9 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     public String getComponentName() {
         return "DBNavigator.Project.DatasetFilterManager";
     }
-    public void disposeComponent() {
+    public void dispose() {
+        super.dispose();
         filters.clear();
-        super.disposeComponent();
     }
 
     /****************************************

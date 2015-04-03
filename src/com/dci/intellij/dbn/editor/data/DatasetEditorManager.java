@@ -178,7 +178,8 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
     }
 
     @Override
-    public void disposeComponent() {
+    public void dispose() {
+        super.dispose();
         EventManager.unsubscribe(fileEditorListener);
     }
 

@@ -35,9 +35,9 @@ public class ExplainPlanManager extends AbstractProjectComponent {
     }
 
     @Override
-    public void disposeComponent() {
+    public void dispose() {
+        super.dispose();
         //EventManager.unsubscribe(psiDocumentTransactionListener);
-        super.disposeComponent();
     }
 
     /*********************************************************

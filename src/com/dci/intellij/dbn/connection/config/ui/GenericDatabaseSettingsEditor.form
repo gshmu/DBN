@@ -52,7 +52,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="23aca" binding="connectionParametersPanel" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="23aca" binding="connectionParametersPanel" layout-manager="GridLayoutManager" row-count="7" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="8" left="8" bottom="8" right="8"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -88,7 +88,7 @@
               </component>
               <component id="48c7" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="driverLibraryTextField">
                 <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
@@ -104,7 +104,7 @@
               </component>
               <component id="1de94" class="javax.swing.JTextField" binding="descriptionTextField">
                 <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="9" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="9" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
@@ -131,7 +131,7 @@
               </component>
               <component id="ab2b2" class="javax.swing.JTextField" binding="urlTextField">
                 <constraints>
-                  <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="9" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="4" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="9" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
@@ -150,7 +150,7 @@
               </component>
               <component id="8fdf5" class="javax.swing.JTextField" binding="userTextField">
                 <constraints>
-                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
@@ -169,7 +169,7 @@
               </component>
               <component id="9a713" class="javax.swing.JPasswordField" binding="passwordField">
                 <constraints>
-                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="9" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
@@ -182,20 +182,28 @@
                   <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Use OS Authentication"/>
+                  <text value="Use &amp;OS Authentication"/>
                 </properties>
               </component>
-              <hspacer id="191a2">
-                <constraints>
-                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </hspacer>
               <component id="31f36" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="driverComboBox">
                 <constraints>
-                  <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="1" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
+              <component id="cd0bc" class="javax.swing.JCheckBox" binding="emptyPasswordCheckBox">
+                <constraints>
+                  <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Use &amp;Empty Password "/>
+                </properties>
+              </component>
+              <hspacer id="58624">
+                <constraints>
+                  <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
             </children>
           </grid>
           <component id="84b0e" class="javax.swing.JCheckBox" binding="activeCheckBox">

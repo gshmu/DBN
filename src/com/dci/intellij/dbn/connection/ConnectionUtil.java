@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
@@ -151,7 +152,9 @@ public class ConnectionUtil {
                     String user = authentication.getUser();
                     String password = authentication.getPassword();
                     properties.put("user", user);
-                    properties.put("password", password);
+                    if (StringUtil.isNotEmpty(password)) {
+                        properties.put("password", password);
+                    }
                 }
 
                 String appName = "Database Navigator - " + connectionType.getName() + "";

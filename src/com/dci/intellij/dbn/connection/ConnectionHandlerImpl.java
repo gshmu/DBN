@@ -134,6 +134,8 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return databaseSettings.getAuthentication().isProvided() || getTemporaryAuthentication().isProvided();
     }
 
+
+
     public ConnectionBundle getConnectionBundle() {
         return connectionBundle;
     }

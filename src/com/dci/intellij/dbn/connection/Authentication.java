@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 public class Authentication {
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
+    private boolean emptyPassword;
     private String user;
     private String password;
 
@@ -34,8 +35,16 @@ public class Authentication {
         this.osAuthentication = osAuthentication;
     }
 
+    public boolean isEmptyPassword() {
+        return emptyPassword;
+    }
+
+    public void setEmptyPassword(boolean emptyPassword) {
+        this.emptyPassword = emptyPassword;
+    }
+
     public boolean isProvided() {
-        return osAuthentication || (StringUtil.isNotEmpty(user) && StringUtil.isNotEmpty(password));
+        return osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyPassword));
     }
 
     public boolean isOlderThan(long millis) {
@@ -55,6 +64,7 @@ public class Authentication {
         authentication.user = user;
         authentication.password = password;
         authentication.osAuthentication = osAuthentication;
+        authentication.emptyPassword = emptyPassword;
         return authentication;
     }
 }

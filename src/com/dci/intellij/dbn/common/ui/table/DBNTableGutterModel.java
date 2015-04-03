@@ -5,8 +5,10 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 
 public class DBNTableGutterModel<T extends DBNTableWithGutterModel> implements ListModel, Disposable{
     private T tableModel;
@@ -16,13 +18,14 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> implements L
         this.tableModel = tableModel;
     }
 
+    @NotNull
     public T getTableModel() {
-        return tableModel;
+        return FailsafeUtil.get(tableModel);
     }
 
     @Override
     public int getSize() {
-        return tableModel.getRowCount();
+        return getTableModel().getRowCount();
     }
 
     @Override
@@ -58,8 +61,8 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> implements L
 
     public void dispose() {
         if (!disposed) {
-            listeners.clear();
             disposed = true;
+            listeners.clear();
             tableModel = null;
         }
     }

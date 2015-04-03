@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -39,15 +48,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @State(
         name = "DBNavigator.Project.ConnectionManager",
@@ -88,14 +88,15 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
-    public void disposeComponent() {
+    public void dispose() {
+        ConnectionBundle connectionBundle = getConnectionBundle();
+        super.dispose();
         idleConnectionCleaner.cancel();
         idleConnectionCleaner.purge();
         EventManager.unsubscribe(
                 connectionBundleSettingsListener,
                 connectionSettingsListener);
-        Disposer.dispose(getConnectionBundle());
-        super.disposeComponent();
+        Disposer.dispose(connectionBundle);
     }
 
     /*********************************************************
@@ -139,12 +140,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
+    public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
         Project project = databaseSettings.getProject();
         try {
             Authentication temporaryAuthentication = null;
-            if (!databaseSettings.getAuthentication().isProvided()) {
-                temporaryAuthentication = openUserPasswordDialog(null);
+            Authentication authentication = databaseSettings.getAuthentication();
+            if (!authentication.isProvided()) {
+                temporaryAuthentication = openUserPasswordDialog(project, null, authentication.clone());
                 if (temporaryAuthentication == null){
                     return;
                 }
@@ -189,12 +191,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return showConnectionInfo(databaseSettings);
     }
 
-    public ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
+    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
         Project project = databaseSettings.getProject();
         try {
             Authentication temporaryAuthentication = null;
-            if (!databaseSettings.getAuthentication().isProvided()) {
-                temporaryAuthentication = openUserPasswordDialog(null);
+            Authentication authentication = databaseSettings.getAuthentication();
+            if (!authentication.isProvided()) {
+                temporaryAuthentication = openUserPasswordDialog(project, null, authentication.clone());
                 if (temporaryAuthentication == null) {
                     return null;
                 }
@@ -220,8 +223,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public Authentication openUserPasswordDialog(@Nullable ConnectionHandler connectionHandler) {
-        ConnectionUserPasswordDialog passwordDialog = new ConnectionUserPasswordDialog(getProject(), connectionHandler);
+    public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
+        ConnectionUserPasswordDialog passwordDialog = new ConnectionUserPasswordDialog(project, connectionHandler, authentication);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             Authentication newAuthentication = passwordDialog.getAuthentication();

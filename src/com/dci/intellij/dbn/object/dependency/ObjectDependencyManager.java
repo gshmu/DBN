@@ -57,10 +57,6 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
         return "DBNavigator.Project.ObjectDependencyManager";
     }
 
-    public void disposeComponent() {
-        super.disposeComponent();
-    }
-
     public Element getState() {
         Element element = new Element("state");
         ConfigurationUtil.setEnum(element, "last-used-dependency-type", lastUserDependencyType);
