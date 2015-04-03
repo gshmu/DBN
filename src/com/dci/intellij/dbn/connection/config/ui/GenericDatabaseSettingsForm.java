@@ -60,6 +60,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
     private DBNComboBox<DriverOption> driverComboBox;
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
+    private JCheckBox emptyPasswordCheckBox;
     private JCheckBox activeCheckBox;
     private JPanel connectionParametersPanel;
     private JPanel propertiesGroupPanel;
@@ -95,8 +96,12 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 "Library must contain classes implementing the 'java.sql.Driver' class.",
                 project, LIBRARY_FILE_DESCRIPTOR);
 
-        userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
-        passwordField.setEnabled(!osAuthenticationCheckBox.isSelected());
+        boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
+        boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
+        userTextField.setEnabled(!isOsAuthentication);
+        passwordField.setEnabled(!isOsAuthentication && !emptyPasswordCheckBox.isSelected());
+        passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
+        emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
     }
 
     protected DocumentListener createDocumentListener() {
@@ -163,9 +168,21 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                     if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
                     if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig);
                 }
-                else if (source == osAuthenticationCheckBox) {
-                    userTextField.setEnabled(!osAuthenticationCheckBox.isSelected());
-                    passwordField.setEnabled(!osAuthenticationCheckBox.isSelected());
+                else if (source == osAuthenticationCheckBox || source == emptyPasswordCheckBox) {
+                    boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
+                    boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
+                    userTextField.setEnabled(!isOsAuthentication);
+                    passwordField.setEnabled(!isOsAuthentication && !isEmptyPassword);
+                    passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
+                    emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
+
+                    if (isOsAuthentication || isEmptyPassword) {
+                        passwordField.setText("");
+                    }
+                    if (isOsAuthentication) {
+                        userTextField.setText("");
+                        emptyPasswordCheckBox.setSelected(false);
+                    }
                     getConfiguration().setModified(true);
                 } else {
                     getConfiguration().setModified(true);
@@ -283,6 +300,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         authentication.setUser(userTextField.getText());
         authentication.setPassword(new String(passwordField.getPassword()));
         authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+        authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
         connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
         connectionConfig.setProperties(propertiesEditorForm.getProperties());
@@ -329,6 +347,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
         userTextField.setText(authentication.getUser());
         passwordField.setText(authentication.getPassword());
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
+        emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
         populateDriverList(connectionConfig.getDriverLibrary());
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));

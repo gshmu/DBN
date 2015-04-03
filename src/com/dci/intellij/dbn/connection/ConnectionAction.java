@@ -82,7 +82,8 @@ public abstract class ConnectionAction extends SimpleTask {
                                     }
                                 });
                     } else {
-                        Authentication authentication = ConnectionManager.openUserPasswordDialog(getProject(), connectionHandler);
+                        Authentication authentication = connectionHandler.getSettings().getDatabaseSettings().getAuthentication();
+                        authentication = ConnectionManager.openUserPasswordDialog(getProject(), connectionHandler, authentication.clone());
                         if (authentication != null) {
                             doExecute();
                         } else {
