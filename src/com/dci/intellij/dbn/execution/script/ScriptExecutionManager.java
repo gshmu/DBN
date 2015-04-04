@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.script;
 
+import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.intellij.openapi.project.Project;
 
 public class ScriptExecutionManager extends AbstractProjectComponent {
 
@@ -13,7 +13,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
     }
 
     public static ScriptExecutionManager getInstance(@NotNull Project project) {
-        return project.getComponent(ScriptExecutionManager.class);
+        return FailsafeUtil.getComponent(project, ScriptExecutionManager.class);
     }
 
     /*********************************************************

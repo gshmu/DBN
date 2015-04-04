@@ -1,20 +1,7 @@
 package com.dci.intellij.dbn.ddl;
 
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -49,6 +36,20 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @State(
     name = "DBNavigator.Project.DDLFileAttachmentManager",
@@ -335,7 +336,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
      *            ProjectComponent         *
      ***************************************/
     public static DDLFileAttachmentManager getInstance(@NotNull Project project) {
-        return project.getComponent(DDLFileAttachmentManager.class);
+        return FailsafeUtil.getComponent(project, DDLFileAttachmentManager.class);
     }
 
     @NonNls

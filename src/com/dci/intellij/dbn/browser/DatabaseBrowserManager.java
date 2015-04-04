@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -156,7 +157,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
      *            ProjectComponent         *
      ***************************************/
     public static DatabaseBrowserManager getInstance(@NotNull Project project) {
-        return project.getComponent(DatabaseBrowserManager.class);
+        return FailsafeUtil.getComponent(project, DatabaseBrowserManager.class);
     }
 
     @NonNls @NotNull

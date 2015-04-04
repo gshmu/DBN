@@ -1,18 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -61,6 +50,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @State(
         name = "DBNavigator.Project.StatementExecutionManager",
@@ -86,7 +87,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
-        return project.getComponent(StatementExecutionManager.class);
+        return FailsafeUtil.getComponent(project, StatementExecutionManager.class);
     }
 
     public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable variable) {
