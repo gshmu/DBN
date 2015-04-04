@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -44,7 +45,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     }
 
     public static ProjectSettingsManager getInstance(@NotNull Project project) {
-        return project.getComponent(ProjectSettingsManager.class);
+        return FailsafeUtil.getComponent(project, ProjectSettingsManager.class);
     }
 
     public static ProjectSettings getSettings(Project project) {

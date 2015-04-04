@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,6 +15,13 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @State(
     name = "DBNavigator.Project.DatasetFilterManager",
@@ -170,7 +170,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     public static DatasetFilterManager getInstance(@NotNull Project project) {
-        return project.getComponent(DatasetFilterManager.class);
+        return FailsafeUtil.getComponent(project, DatasetFilterManager.class);
     }
 
     /***************************************

@@ -1,13 +1,7 @@
 package com.dci.intellij.dbn.editor.code;
 
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -65,6 +59,13 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -77,7 +78,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private DBLanguageFileEditorListener fileEditorListener;
 
     public static SourceCodeManager getInstance(@NotNull Project project) {
-        return project.getComponent(SourceCodeManager.class);
+        return FailsafeUtil.getComponent(project, SourceCodeManager.class);
     }
 
     private SourceCodeManager(Project project) {

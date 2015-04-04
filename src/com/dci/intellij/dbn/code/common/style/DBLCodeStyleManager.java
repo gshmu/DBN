@@ -1,13 +1,9 @@
 package com.dci.intellij.dbn.code.common.style;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -29,6 +25,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @State(
     name = "DBNavigator.Project.CodeStyleManager",
@@ -42,7 +42,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
     }
 
     public static DBLCodeStyleManager getInstance(@NotNull Project project) {
-        return project.getComponent(DBLCodeStyleManager.class);
+        return FailsafeUtil.getComponent(project, DBLCodeStyleManager.class);
     }
 
     public void formatCase(PsiFile file) {
