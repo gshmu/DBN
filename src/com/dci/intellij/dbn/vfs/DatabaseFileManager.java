@@ -194,12 +194,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             for (VirtualFile virtualFile : fileViewProviderCache.keySet()) {
                 if (virtualFile instanceof DBContentVirtualFile) {
                     DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
-                    if (contentVirtualFile.isDisposed() || contentVirtualFile.getProject() == project) {
+                    if (contentVirtualFile.isDisposed() || !contentVirtualFile.isValid() ||contentVirtualFile.getProject() == project) {
                         fileViewProviderCache.remove(virtualFile);
                     }
                 } else if (virtualFile instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile objectVirtualFile = (DBObjectVirtualFile) virtualFile;
-                    if (objectVirtualFile.isDisposed() || objectVirtualFile.getProject() == project) {
+                    if (objectVirtualFile.isDisposed() || !objectVirtualFile.isValid() || objectVirtualFile.getProject() == project) {
                         fileViewProviderCache.remove(virtualFile);
                     }
                 }
