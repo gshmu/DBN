@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -18,6 +9,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -42,6 +42,11 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
+    }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && connectionHandlerRef.isValid();
     }
 
     @NotNull

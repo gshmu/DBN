@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
-import java.lang.ref.WeakReference;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import java.lang.ref.WeakReference;
 
 public class ConnectionHandlerRef{
     private WeakReference<ConnectionHandler> reference;
@@ -35,5 +35,10 @@ public class ConnectionHandlerRef{
 
     public static ConnectionHandler get(ConnectionHandlerRef connectionHandlerRef) {
         return connectionHandlerRef == null ? null :connectionHandlerRef.get();
+    }
+
+    public boolean isValid() {
+        ConnectionHandler connectionHandler = reference == null ? null : reference.get();
+        return connectionHandler != null && !connectionHandler.isDisposed();
     }
 }

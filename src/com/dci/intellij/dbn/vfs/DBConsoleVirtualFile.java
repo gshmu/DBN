@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -30,6 +20,16 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -84,6 +84,12 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     public void setCurrentSchemaName(String currentSchemaName) {
         this.currentSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
     }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && connectionHandlerRef.isValid();
+    }
+
 
     @Nullable
     @Override
