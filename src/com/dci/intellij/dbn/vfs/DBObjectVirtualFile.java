@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
@@ -22,6 +15,13 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
@@ -53,6 +53,11 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
             throw AlreadyDisposedException.INSTANCE;
         }
         return object.getProject();
+    }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && objectRef.get() != null;
     }
 
     /*********************************************************
