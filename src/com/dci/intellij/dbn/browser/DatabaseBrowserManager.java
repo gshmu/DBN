@@ -216,7 +216,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         @Override
         public void connectionsChanged() {
             if (toolWindowForm.isLoaded()) {
-                getToolWindowForm().getBrowserForm().rebuild();
+                getToolWindowForm().rebuild();
             }
         }
     };

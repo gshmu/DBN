@@ -17,8 +17,6 @@ public abstract class DatabaseBrowserForm extends DBNFormImpl<DisposableProjectC
 
     public abstract void rebuildTree();
 
-    public abstract void rebuild();
-
     @Override
     public void dispose() {
         super.dispose();
