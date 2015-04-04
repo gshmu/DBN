@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
@@ -57,8 +58,10 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     private void initTabs() {
         Project project = getProject();
-        connectionTabs.dispose();
-        connectionTabs = new TabbedPane(this);
+
+        TabbedPane oldConnectionTabs = this.connectionTabs;
+        this.connectionTabs = new TabbedPane(this);
+
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler: connectionBundle.getConnectionHandlers()) {
@@ -68,26 +71,26 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             tabInfo.setText(CommonUtil.nvl(connectionHandler.getName(), "[unnamed connection]"));
             tabInfo.setObject(browserForm);
             //tabInfo.setIcon(connectionHandler.getIcon());
-            connectionTabs.addTab(tabInfo);
+            this.connectionTabs.addTab(tabInfo);
 
             EnvironmentType environmentType = connectionHandler.getEnvironmentType();
             tabInfo.setTabColor(environmentType.getColor());
         }
-        if (connectionTabs.getTabCount() == 0) {
+        if (this.connectionTabs.getTabCount() == 0) {
             mainPanel.removeAll();
             mainPanel.add(new JBList(new ArrayList()), BorderLayout.CENTER);
         } else {
             if (mainPanel.getComponentCount() > 0) {
                 Component component = mainPanel.getComponent(0);
-                if (component != connectionTabs) {
+                if (component != this.connectionTabs) {
                     mainPanel.removeAll();
-                    mainPanel.add(connectionTabs, BorderLayout.CENTER);
+                    mainPanel.add(this.connectionTabs, BorderLayout.CENTER);
                 }
             } else {
-                mainPanel.add(connectionTabs, BorderLayout.CENTER);
+                mainPanel.add(this.connectionTabs, BorderLayout.CENTER);
             }
         }
-
+        DisposerUtil.dispose(oldConnectionTabs);
     }
 
     @Nullable
@@ -135,15 +138,12 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         }
     }
 
+    @Override
     public void rebuildTree() {
         for (TabInfo tabInfo : connectionTabs.getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             browserForm.rebuildTree();
         }
-    }
-
-    public void rebuild() {
-        initTabs();
     }
 
     public void dispose() {
