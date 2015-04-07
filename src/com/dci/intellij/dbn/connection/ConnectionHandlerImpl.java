@@ -54,12 +54,17 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private ConnectionStatus connectionStatus;
     private ConnectionPool connectionPool;
     private ConnectionLoadMonitor loadMonitor;
-    private DBObjectBundle objectBundle;
     private DatabaseInterfaceProvider interfaceProvider;
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private DatabaseLogOutput logOutput;
+    private LazyValue<DBObjectBundle> objectBundle = new DisposableLazyValue<DBObjectBundle>(this) {
+        @Override
+        protected DBObjectBundle load() {
+            return new DBObjectBundleImpl(ConnectionHandlerImpl.this, connectionBundle);
+        }
+    };
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;
@@ -327,10 +332,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public DBObjectBundle getObjectBundle() {
-        if (objectBundle == null) {
-            objectBundle = new DBObjectBundleImpl(this, connectionBundle);
-        }
-        return objectBundle;
+        return objectBundle.get();
     }
 
     public DBSchema getUserSchema() {
@@ -479,7 +481,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            DisposerUtil.dispose(objectBundle);
             DisposerUtil.dispose(connectionPool);
             DisposerUtil.dispose(consoleBundle);
             DisposerUtil.dispose(loadMonitor);
