@@ -32,11 +32,13 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
         FileEditor fileEditor = getFileEditor(e);
         if (virtualFile != null && fileEditor != null) {
             Project project = virtualFile.getProject();
-            DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-            CompilerSettings compilerSettings = getCompilerSettings(project);
-            DBContentType contentType = virtualFile.getContentType();
-            CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
-            compilerManager.compileInBackground(virtualFile.getObject(), compilerSettings.getCompileTypeOption(), compilerAction);
+            if (project != null) {
+                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+                CompilerSettings compilerSettings = getCompilerSettings(project);
+                DBContentType contentType = virtualFile.getContentType();
+                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, virtualFile, fileEditor);
+                compilerManager.compileInBackground(virtualFile.getObject(), compilerSettings.getCompileTypeOption(), compilerAction);
+            }
         }
     }
 

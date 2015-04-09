@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ObjectToDDLContentSynchronizer implements Runnable {
@@ -20,33 +21,37 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
 
     public void run() {
         assert !sourceContentType.isBundle();
-        DDLFileManager ddlFileManager = DDLFileManager.getInstance(databaseFile.getProject());
-        List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
+        Project project = databaseFile.getProject();
 
-        if (ddlFiles != null && !ddlFiles.isEmpty()) {
-            for (VirtualFile ddlFile : ddlFiles) {
-                DDLFileType ddlFileType = ddlFileManager.getDDLFileTypeForExtension(ddlFile.getExtension());
-                DBContentType fileContentType = ddlFileType.getContentType();
+        if (project != null) {
+            DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
+            List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
 
-                StringBuilder buffer = new StringBuilder();
-                if (fileContentType.isBundle()) {
-                    DBContentType[] contentTypes = fileContentType.getSubContentTypes();
-                    for (DBContentType contentType : contentTypes) {
-                        DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                        String statement = ddlFileManager.createDDLStatement(virtualFile, contentType);
-                        if (statement.trim().length() > 0) {
-                            buffer.append(statement);
-                            buffer.append('\n');
+            if (ddlFiles != null && !ddlFiles.isEmpty()) {
+                for (VirtualFile ddlFile : ddlFiles) {
+                    DDLFileType ddlFileType = ddlFileManager.getDDLFileTypeForExtension(ddlFile.getExtension());
+                    DBContentType fileContentType = ddlFileType.getContentType();
+
+                    StringBuilder buffer = new StringBuilder();
+                    if (fileContentType.isBundle()) {
+                        DBContentType[] contentTypes = fileContentType.getSubContentTypes();
+                        for (DBContentType contentType : contentTypes) {
+                            DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
+                            String statement = ddlFileManager.createDDLStatement(virtualFile, contentType);
+                            if (statement.trim().length() > 0) {
+                                buffer.append(statement);
+                                buffer.append('\n');
+                            }
+                            if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
                         }
-                        if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
+                    } else {
+                        DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
+                        buffer.append(ddlFileManager.createDDLStatement(virtualFile, fileContentType));
+                        buffer.append('\n');
                     }
-                } else {
-                    DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
-                    buffer.append(ddlFileManager.createDDLStatement(virtualFile, fileContentType));
-                    buffer.append('\n');
+                    Document document = DocumentUtil.getDocument(ddlFile);
+                    document.setText(buffer.toString());
                 }
-                Document document = DocumentUtil.getDocument(ddlFile);
-                document.setText(buffer.toString());
             }
         }
     }

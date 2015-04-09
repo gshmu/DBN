@@ -16,10 +16,10 @@ import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 
 public class ConnectionPool implements Disposable {
 
@@ -30,12 +30,15 @@ public class ConnectionPool implements Disposable {
 
     protected final Logger log = Logger.getInstance(getClass().getName());
     private ConnectionHandler connectionHandler;
+    private ConnectionValidator connectionValidator;
 
     private List<ConnectionWrapper> poolConnections = new CopyOnWriteArrayList<ConnectionWrapper>();
     private ConnectionWrapper standaloneConnection;
 
     public ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
+        connectionValidator = new ConnectionValidator(connectionHandler);
+        Disposer.register(this, connectionValidator);
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
@@ -207,7 +210,6 @@ public class ConnectionPool implements Disposable {
         if (!isDisposed) {
             isDisposed = true;
             closeConnectionsSilently();
-            connectionHandler = null;
         }
     }
 
@@ -268,9 +270,7 @@ public class ConnectionPool implements Disposable {
             long currentTimeMillis = System.currentTimeMillis();
             if (TimeUtil.isOlderThan(lastCheckTimestamp, TimeUtil.THIRTY_SECONDS)) {
                 lastCheckTimestamp = currentTimeMillis;
-                DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-                isValid = metadataInterface.isValid(connection);
-                return isValid;
+                isValid = connectionValidator.isValid(connection);
             }
             return isValid;
         }

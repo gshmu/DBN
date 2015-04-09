@@ -36,7 +36,6 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -166,9 +165,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
             if (schemaObject.getConnectionHandler() == connectionHandler) {
                 DBObjectListContainer childObjects = schemaObject.getChildObjects();
-                List<DBObjectList<DBObject>> objectLists = null;
                 if (childObjects != null) {
-                    objectLists = childObjects.getAllObjectLists();
+                    List<DBObjectList<DBObject>> objectLists = childObjects.getAllObjectLists();
                     for (DBObjectList objectList : objectLists) {
                         if (objectList.isLoaded()) {
                             objectList.reload();
@@ -426,7 +424,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler.getConnectionStatus().isConnected()) {
                     append(false, " - active", true);
-                } else if (connectionHandler.canConnect() && !connectionHandler.isValid()) {
+                } else if (connectionHandler.canConnect() && !connectionHandler.isValid(false)) {
                     append(false, " - invalid", true);
                     append(true, connectionHandler.getConnectionStatus().getStatusMessage(), "-2", "red", false);
                 }
@@ -434,7 +432,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
 
                 append(true, connectionHandler.getProject().getName(), false);
                 append(false, "/", false);
-                ConnectionBundle connectionBundle = connectionHandler.getConnectionBundle();
                 append(false, connectionHandler.getName(), false);
 
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();

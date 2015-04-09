@@ -25,11 +25,12 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
         FileEditor fileEditor = getFileEditor(e);
         if (virtualFile != null && fileEditor != null) {
             Project project = virtualFile.getProject();
-
-            DBMethod method = (DBMethod) virtualFile.getObject();
-            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-            if (executionManager.promptExecutionDialog(method, false)) {
-                executionManager.execute(method);
+            if (project != null) {
+                DBMethod method = (DBMethod) virtualFile.getObject();
+                MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+                if (executionManager.promptExecutionDialog(method, false)) {
+                    executionManager.execute(method);
+                }
             }
         }
     }

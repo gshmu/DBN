@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.editor.code;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
@@ -59,13 +66,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 @State(
     name = "DBNavigator.Project.SourceCodeManager",
@@ -230,34 +230,37 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             @Override
             protected void execute() {
                 DiffRequestFactory diffRequestFactory = new DiffRequestFactoryImpl();
-                MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
-                        databaseContent,
-                        virtualFile.getContent(),
-                        virtualFile.getLastSavedContent(),
-                        virtualFile,
-                        virtualFile.getProject(),
-                        ActionButtonPresentation.APPLY,
-                        ActionButtonPresentation.CANCEL_WITH_PROMPT);
-                mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
-                final DBSchemaObject object = virtualFile.getObject();
-                mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
+                Project project = virtualFile.getProject();
+                if (project != null) {
+                    MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
+                            databaseContent,
+                            virtualFile.getContent(),
+                            virtualFile.getLastSavedContent(),
+                            virtualFile,
+                            project,
+                            ActionButtonPresentation.APPLY,
+                            ActionButtonPresentation.CANCEL_WITH_PROMPT);
+                    mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
+                    final DBSchemaObject object = virtualFile.getObject();
+                    mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
 
-                DiffManager.getInstance().getDiffTool().show(mergeRequest);
+                    DiffManager.getInstance().getDiffTool().show(mergeRequest);
 
-                int result = mergeRequest.getResult();
-                if (result == 0) {
-                    doUpdateSourceToDatabase(object, virtualFile, fileEditor);
-                    //sourceCodeEditor.afterSave();
-                } else if (result == 1) {
-                    new WriteActionRunner() {
-                        public void run() {
-                            Editor editor = EditorUtil.getEditor(fileEditor);
-                            if (editor != null) {
-                                editor.getDocument().setText(virtualFile.getContent());
-                                object.getStatus().set(DBObjectStatus.SAVING, false);
+                    int result = mergeRequest.getResult();
+                    if (result == 0) {
+                        doUpdateSourceToDatabase(object, virtualFile, fileEditor);
+                        //sourceCodeEditor.afterSave();
+                    } else if (result == 1) {
+                        new WriteActionRunner() {
+                            public void run() {
+                                Editor editor = EditorUtil.getEditor(fileEditor);
+                                if (editor != null) {
+                                    editor.getDocument().setText(virtualFile.getContent());
+                                    object.getStatus().set(DBObjectStatus.SAVING, false);
+                                }
                             }
-                        }
-                    }.start();
+                        }.start();
+                    }
                 }
             }
         }.start();

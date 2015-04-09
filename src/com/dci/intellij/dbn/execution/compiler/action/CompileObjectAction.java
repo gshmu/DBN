@@ -42,7 +42,7 @@ public class CompileObjectAction extends AnAction {
         DBObjectStatusHolder status = object.getStatus();
 
         boolean isDebug = compileType == CompileTypeOption.DEBUG;
-        if (compileType == CompileTypeOption.KEEP) {
+        if (compileType == CompileTypeOption.KEEP && contentType != DBContentType.CODE_SPEC_AND_BODY) {
             isDebug = status.is(contentType, DBObjectStatus.DEBUG);
         }
 
@@ -50,14 +50,16 @@ public class CompileObjectAction extends AnAction {
         boolean isValid = status.is(contentType, DBObjectStatus.VALID);
         //boolean isDebug = status.is(contentType, DBObjectStatus.DEBUG);
         boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
-        boolean isEnabled = isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid/* || isDebug != isDebugActive*/);
+        boolean isEnabled = isPresent && !isCompiling /*&& (compilerSettings.alwaysShowCompilerControls() || !isValid)*/;
 
         presentation.setEnabled(isEnabled);
 
         String text =
                 contentType == DBContentType.CODE_SPEC ? "Compile Spec" :
-                contentType == DBContentType.CODE_BODY ? "Compile Body" : "Compile";
-        if (isDebug) text = text + " (Debug)";
+                contentType == DBContentType.CODE_BODY ? "Compile Body" :
+                contentType == DBContentType.CODE_SPEC_AND_BODY ? "Compile Spec and Body" :
+                        "Compile";
+        if (isDebug) text = text + " (debug)";
         if (compileType == CompileTypeOption.ASK) text = text + "...";
         presentation.setText(text);
     }

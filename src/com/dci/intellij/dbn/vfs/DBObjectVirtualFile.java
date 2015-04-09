@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -20,7 +19,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
@@ -28,6 +26,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     protected DBObjectRef<T> objectRef;
 
     public DBObjectVirtualFile(T object) {
+        super(object.getProject());
         this.objectRef = DBObjectRef.from(object);
         this.name = objectRef.getFileName();
     }
@@ -44,15 +43,6 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return getObject().getConnectionHandler();
-    }
-
-    @NotNull
-    public Project getProject() {
-        T object = DBObjectRef.get(objectRef);
-        if (object == null) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return object.getProject();
     }
 
     /*********************************************************

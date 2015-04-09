@@ -188,7 +188,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public Project getProject() {
-        return sessionBrowserFile.getProject();
+        return FailsafeUtil.get(sessionBrowserFile.getProject());
     }
 
     @NotNull
