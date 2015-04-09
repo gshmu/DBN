@@ -227,9 +227,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     executionProcessor.execute(progressIndicator);
                                 } finally {
                                     DBLanguagePsiFile file = executionProcessor.getPsiFile();
-                                    if (file != null) {
-                                        DocumentUtil.refreshEditorAnnotations(file);
-                                    }
+                                    DocumentUtil.refreshEditorAnnotations(file);
                                 }
 
                             }
@@ -243,13 +241,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     public void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
         if (executionProcessors.size() > 0) {
-            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
 
+            final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
             ConnectionProvider connectionProvider = new ConnectionProvider() {
                 @Nullable
                 @Override
                 public ConnectionHandler getConnectionHandler() {
-                    FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
                     return connectionMappingManager.getActiveConnection(virtualFile);
                 }
             };
@@ -281,7 +278,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 }
             };
 
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
             connectionMappingManager.selectConnectionAndSchema(file, executionTask);
         }
     }

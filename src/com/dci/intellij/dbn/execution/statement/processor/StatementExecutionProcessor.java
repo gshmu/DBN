@@ -28,8 +28,10 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     @Nullable
     DBSchema getCurrentSchema();
 
+    @NotNull
     Project getProject();
 
+    @NotNull
     DBLanguagePsiFile getPsiFile();
 
     VirtualFile getVirtualFile();

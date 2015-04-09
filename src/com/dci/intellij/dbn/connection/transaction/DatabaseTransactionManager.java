@@ -1,6 +1,12 @@
 package com.dci.intellij.dbn.connection.transaction;
 
+import java.sql.SQLException;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -20,11 +26,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.SQLException;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -72,14 +73,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                         NotificationUtil.sendNotification(
                                 project,
                                 action.getNotificationType(),
-                                action.getName(),
+                                Constants.DBN_TITLE_PREFIX + action.getName(),
                                 action.getSuccessNotificationMessage(),
                                 connectionName);
                     }
                 } catch (SQLException ex) {
                     NotificationUtil.sendErrorNotification(
                             project,
-                            action.getName(),
+                            Constants.DBN_TITLE_PREFIX + action.getName(),
                             action.getErrorNotificationMessage(),
                             connectionName,
                             ex.getMessage());
