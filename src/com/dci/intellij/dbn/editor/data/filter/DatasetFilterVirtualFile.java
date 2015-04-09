@@ -28,7 +28,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
@@ -41,6 +40,7 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
     private DBObjectRef<DBDataset> datasetRef;
 
     public DatasetFilterVirtualFile(DBDataset dataset, String content) {
+        super(dataset.getProject());
         this.datasetRef = DBObjectRef.from(dataset);
         this.content = content;
         name = dataset.getName();
@@ -61,12 +61,6 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
             return file;
         }
         return null;
-    }
-
-    @NotNull
-    @Override
-    protected Project getProject() {
-        return getDataset().getProject();
     }
 
     public DBDataset getDataset() {

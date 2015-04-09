@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 
@@ -33,6 +32,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     private boolean modified;
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
+        super(mainDatabaseFile.getProject());
         this.mainDatabaseFile = mainDatabaseFile;
         this.contentType = contentType;
 
@@ -120,11 +120,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @Override
     protected String createUrl() {
         return DatabaseFileSystem.createUrl(getObject().getRef(), contentType);
-    }
-
-    @NotNull
-    public Project getProject() {
-        return getMainDatabaseFile().getProject();
     }
 
     public boolean isWritable() {

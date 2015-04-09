@@ -427,7 +427,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
         while (objectRefs.hasNext()) {
             DBObjectRef objectRef = objectRefs.next();
             DBEditableObjectVirtualFile file = filesCache.get(objectRef);
-            if (file.isDisposed() || file.getProject() == project) {
+            if (!file.isValid() || file.getProject() == project) {
                 objectRefs.remove();
                 Disposer.dispose(file);
             }
