@@ -7,6 +7,7 @@ import java.sql.Statement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -119,14 +120,14 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         return cachedExecutable != null;
     }
 
+    @NotNull
     public DBLanguagePsiFile getPsiFile() {
-        return psiFileRef.get();
+        return FailsafeUtil.get(psiFileRef.get());
     }
 
     @Override
     public VirtualFile getVirtualFile() {
-        DBLanguagePsiFile psiFile = getPsiFile();
-        return psiFile == null ? null : psiFile.getVirtualFile();
+        return getPsiFile().getVirtualFile();
     }
 
     @Override
@@ -302,7 +303,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     @Override
                     protected Boolean run() {
                         DBContentType contentType = getCompilableContentType();
-                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getPsiFile().getVirtualFile(), getFileEditor());
+                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.DDL, contentType, getVirtualFile(), getFileEditor());
                         compilerAction.setStartOffset(compilablePsiElement.getTextOffset());
                         CompilerResult compilerResult = null;
 
@@ -363,19 +364,17 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     @Nullable
     public ConnectionHandler getConnectionHandler() {
-        DBLanguagePsiFile psiFile = getPsiFile();
-        return psiFile == null ? null : psiFile.getActiveConnection();
+        return getPsiFile().getActiveConnection();
     }
 
     @Nullable
     public DBSchema getCurrentSchema() {
-        DBLanguagePsiFile psiFile = getPsiFile();
-        return psiFile == null ? null : psiFile.getCurrentSchema();
+        return getPsiFile().getCurrentSchema();
     }
 
+    @NotNull
     public Project getProject() {
-        DBLanguagePsiFile psiFile = getPsiFile();
-        return psiFile == null ? null : psiFile.getProject();
+        return getPsiFile().getProject();
     }
 
     @NotNull
