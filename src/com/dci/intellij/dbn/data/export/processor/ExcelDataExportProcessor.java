@@ -1,14 +1,9 @@
 package com.dci.intellij.dbn.data.export.processor;
 
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.data.export.DataExportException;
-import com.dci.intellij.dbn.data.export.DataExportFormat;
-import com.dci.intellij.dbn.data.export.DataExportInstructions;
-import com.dci.intellij.dbn.data.export.DataExportModel;
-import com.intellij.openapi.project.Project;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,10 +16,14 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Date;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.export.DataExportException;
+import com.dci.intellij.dbn.data.export.DataExportFormat;
+import com.dci.intellij.dbn.data.export.DataExportInstructions;
+import com.dci.intellij.dbn.data.export.DataExportModel;
+import com.intellij.openapi.project.Project;
 
 public class ExcelDataExportProcessor extends DataExportProcessor{
 
@@ -143,7 +142,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
 
     private class CellStyleCache {
         private Workbook workbook;
-        private RegionalSettings regionalSettings;
+        private Formatter formatter;
 
         private CellStyle dateStyle;
         private CellStyle datetimeStyle;
@@ -152,18 +151,13 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
 
         private CellStyleCache(Workbook workbook, Project project) {
             this.workbook = workbook;
-            regionalSettings = RegionalSettings.getInstance(project);
-        }
-
-
-        private Formatter getFormatter() {
-            return regionalSettings.getFormatter();
+            formatter = getFormatter(project);
         }
 
         public CellStyle getDateStyle() {
             if (dateStyle == null) {
                 dateStyle = workbook.createCellStyle();
-                String dateFormatPattern = getFormatter().getDateFormatPattern();
+                String dateFormatPattern = formatter.getDateFormatPattern();
                 short dateFormat = getFormat(dateFormatPattern);
                 dateStyle.setDataFormat(dateFormat);
             }
@@ -173,7 +167,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         public CellStyle getDatetimeStyle() {
             if (datetimeStyle == null) {
                 datetimeStyle = workbook.createCellStyle();
-                String datetimeFormatPattern = getFormatter().getDatetimeFormatPattern();
+                String datetimeFormatPattern = formatter.getDatetimeFormatPattern();
                 short dateFormat = getFormat(datetimeFormatPattern);
                 datetimeStyle.setDataFormat(dateFormat);
             }
@@ -184,7 +178,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         public CellStyle getNumberStyle() {
             if (numberStyle == null) {
                 numberStyle = workbook.createCellStyle();
-                String numberFormatPattern = getFormatter().getNumberFormatPattern();
+                String numberFormatPattern = formatter.getNumberFormatPattern();
                 short numberFormat = getFormat(numberFormatPattern);
                 numberStyle.setDataFormat(numberFormat);
             }
@@ -195,7 +189,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         public CellStyle getIntegerStyle() {
             if (integerStyle == null) {
                 integerStyle = workbook.createCellStyle();
-                String integerFormatPattern = getFormatter().getIntegerFormatPattern();
+                String integerFormatPattern = formatter.getIntegerFormatPattern();
                 short integerFormat = getFormat(integerFormatPattern);
                 integerStyle.setDataFormat(integerFormat);
             }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -28,6 +29,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
         this.resultSetRowIndex = resultSetRowIndex;
     }
 
+    @NotNull
     @Override
     public DatasetEditorModel getModel() {
         return (DatasetEditorModel) super.getModel();

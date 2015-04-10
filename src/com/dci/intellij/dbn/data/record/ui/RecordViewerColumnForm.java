@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.data.record.ui;
 
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.data.record.DatasetRecord;
-import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.ui.UIUtil;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -18,6 +9,15 @@ import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.data.record.DatasetRecord;
+import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.object.DBColumn;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.UIUtil;
 
 public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
     private JLabel columnLabel;
@@ -102,12 +102,6 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
             return null;
         }
     }*/
-
-    private Formatter getFormatter() {
-        Project project = record.getDataset().getProject();
-        return Formatter.getInstance(project);
-    }
-
 
     public JTextField getViewComponent() {
         return valueTextField;

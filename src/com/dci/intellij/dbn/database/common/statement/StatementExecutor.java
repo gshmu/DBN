@@ -12,12 +12,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class StatementExecutionTimeoutCall<T> implements Callable<T>{
-    public static int PEAK = 0;
+public abstract class StatementExecutor<T> implements Callable<T>{
     public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
         @Override
         public Thread newThread(@NotNull Runnable runnable) {
-            PEAK++;
             Thread thread = new Thread(runnable, "DBN - Database Interface Thread");
             thread.setPriority(Thread.MIN_PRIORITY);
             return thread;
@@ -26,7 +24,7 @@ public abstract class StatementExecutionTimeoutCall<T> implements Callable<T>{
 
     private long timeoutSeconds;
 
-    public StatementExecutionTimeoutCall(long timeoutSeconds) {
+    public StatementExecutor(long timeoutSeconds) {
         this.timeoutSeconds = timeoutSeconds;
     }
 

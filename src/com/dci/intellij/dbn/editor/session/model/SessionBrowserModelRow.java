@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.session.model;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -16,6 +17,7 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
         super(model, resultSet);
     }
 
+    @NotNull
     @Override
     public SessionBrowserModel getModel() {
         return (SessionBrowserModel) super.getModel();

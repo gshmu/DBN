@@ -17,7 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -136,11 +135,9 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             if (userValue instanceof String) {
                 editorComponent.setText((String) userValue);
             } else {
-                Formatter formatter = getFormatter();
-                if (formatter != null) {
-                    String stringValue = formatter.formatObject(userValue);
-                    editorComponent.setText(stringValue);
-                }
+                Formatter formatter = cell.getFormatter();
+                String stringValue = formatter.formatObject(userValue);
+                editorComponent.setText(stringValue);
             }
         } else {
             editorComponent.setText("");
@@ -165,8 +162,8 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             if (trim) textValue = textValue.trim();
             
             if (textValue.length() > 0) {
-                Formatter formatter = getFormatter();
-                Object value = formatter == null ? null : formatter.parseObject(clazz, textValue);
+                Formatter formatter = cell.getFormatter();
+                Object value = formatter.parseObject(clazz, textValue);
                 return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
             } else {
                 return null;
@@ -178,12 +175,6 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     public Object getCellEditorValueLenient() {
         return editorComponent.getText().trim();
-    }
-
-    @Nullable
-    private Formatter getFormatter() {
-        Project project = cell.getProject();
-        return project == null ? null : Formatter.getInstance(project);
     }
 
     /********************************************************
