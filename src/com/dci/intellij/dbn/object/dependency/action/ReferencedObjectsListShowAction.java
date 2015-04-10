@@ -14,15 +14,15 @@ public class ReferencedObjectsListShowAction extends ObjectListShowAction {
     }
 
     public List<DBObject> getObjectList() {
-        return ((DBSchemaObject) sourceObject).getReferencedObjects();
+        return ((DBSchemaObject) getSourceObject()).getReferencedObjects();
     }
 
     public String getTitle() {
-        return "Objects referenced by " + sourceObject.getQualifiedNameWithType();
+        return "Objects referenced by " + getSourceObject().getQualifiedNameWithType();
     }
 
     public String getEmptyListMessage() {
-        return "No referenced objects found for " + sourceObject.getQualifiedNameWithType();
+        return "No referenced objects found for " + getSourceObject().getQualifiedNameWithType();
     }
 
 
@@ -32,7 +32,7 @@ public class ReferencedObjectsListShowAction extends ObjectListShowAction {
 
     @Override
     protected AnAction createObjectAction(DBObject object) {
-        return new NavigateToObjectAction(this.sourceObject, object);
+        return new NavigateToObjectAction(this.getSourceObject(), object);
     }
 
 }

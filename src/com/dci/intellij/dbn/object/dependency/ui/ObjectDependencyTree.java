@@ -18,6 +18,7 @@ import java.util.TimerTask;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -269,9 +270,11 @@ public class ObjectDependencyTree extends JTree implements Disposable{
     @Override
     public void dispose() {
         disposed = true;
+        GUIUtil.removeListeners(this);
         speedSearch = null;
         selectionHistory = null;
         project = null;
+        setModel(null);
     }
 
 
