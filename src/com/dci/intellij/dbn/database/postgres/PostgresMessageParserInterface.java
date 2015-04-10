@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,7 +21,7 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
 
     @Override
     public boolean isTimeoutException(SQLException e) {
-        return false;
+        return e == DatabaseInterface.DBN_TIMEOUT_EXCEPTION;
     }
 
     @Override

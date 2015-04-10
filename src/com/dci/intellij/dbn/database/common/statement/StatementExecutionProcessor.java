@@ -27,6 +27,7 @@ public class StatementExecutionProcessor {
     private boolean isPreparedStatement;
     private int timeout;
     private List<StatementDefinition> statementDefinitions = new ArrayList<StatementDefinition>();
+    private StatementDefinition statementDefinition;
     private SQLException lastException;
     public static final int DEFAULT_TIMEOUT = 30;
 
@@ -47,6 +48,11 @@ public class StatementExecutionProcessor {
                 String prefixes = child.getAttributeValue("prefixes");
                 readStatements(statementText, prefixes);
             }
+        }
+        if (statementDefinitions.size() == 1) {
+            statementDefinition = statementDefinitions.get(0);
+            statementDefinitions.clear();
+            statementDefinitions = null;
         }
     }
 
@@ -78,61 +84,70 @@ public class StatementExecutionProcessor {
     }
 
     public ResultSet executeQuery(Connection connection, boolean forceExecution, Object... arguments) throws SQLException {
-        SQLException exception = null;
-        for (StatementDefinition statementDefinition : statementDefinitions) {
-            try {
-                return executeQuery(statementDefinition, connection, forceExecution, arguments);
-            } catch (SQLException e){
-                exception = e;
+        if (statementDefinition != null) {
+            return executeQuery(statementDefinition, connection, forceExecution, arguments);
+        } else {
+            SQLException exception = null;
+            for (StatementDefinition statementDefinition : statementDefinitions) {
+                try {
+                    return executeQuery(statementDefinition, connection, forceExecution, arguments);
+                } catch (SQLException e){
+                    exception = e;
+                }
             }
+            throw exception;
         }
-        throw exception;
     }
 
-    private ResultSet executeQuery(StatementDefinition statementDefinition, Connection connection, boolean forceExecution, Object... arguments) throws SQLException {
+    private ResultSet executeQuery(final StatementDefinition statementDefinition, final Connection connection, boolean forceExecution, final Object... arguments) throws SQLException {
         if (forceExecution || statementDefinition.canExecute(connection)) {
-            String statementText = null;
-            Statement statement = null;
-            boolean executionSuccessful = true;
-            try {
-                if (SettingsUtil.isDebugEnabled) {
-                    statementText = statementDefinition.prepareStatementText(arguments);
-                    LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
-                }
-                if (isPreparedStatement) {
-                    PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
-                    preparedStatement.setQueryTimeout(60);
-                    statement = preparedStatement;
-                    return preparedStatement.executeQuery();
-                } else {
-                    if (statementText == null)
-                        statementText = statementDefinition.prepareStatementText(arguments);
-                    statement = connection.createStatement();
-                    statement.setQueryTimeout(60);
-                    statement.execute(statementText);
-                    if (isQuery) {
-                        return statement.getResultSet();
-                    } else {
+            return new StatementExecutionTimeoutCall<ResultSet>(timeout) {
+
+                @Override
+                public ResultSet execute() throws Exception {
+                    String statementText = null;
+                    Statement statement = null;
+                    boolean executionSuccessful = true;
+                    try {
+                        if (SettingsUtil.isDebugEnabled) {
+                            statementText = statementDefinition.prepareStatementText(arguments);
+                            LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+                        }
+                        if (isPreparedStatement) {
+                            PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
+                            preparedStatement.setQueryTimeout(timeout);
+                            statement = preparedStatement;
+                            return preparedStatement.executeQuery();
+                        } else {
+                            if (statementText == null)
+                                statementText = statementDefinition.prepareStatementText(arguments);
+                            statement = connection.createStatement();
+                            statement.setQueryTimeout(timeout);
+                            statement.execute(statementText);
+                            if (isQuery) {
+                                return statement.getResultSet();
+                            } else {
+                                ConnectionUtil.closeStatement(statement);
+                                return null;
+                            }
+                        }
+
+                    } catch (SQLException exception) {
+                        executionSuccessful = false;
+
+                        if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
+                        if (interfaceProvider.getMessageParserInterface().isModelException(exception)) {
+                            statementDefinition.setDisabled(true);
+                            lastException = new SQLException("Model exception received while executing query '" + id +"'. " + exception.getMessage());
+                        } else {
+                            lastException = new SQLException("Too many failed attempts of executing query '" + id +"'. " + exception.getMessage());
+                        }
                         ConnectionUtil.closeStatement(statement);
-                        return null;
-                    }
-                }
-
-            } catch (SQLException exception) {
-                executionSuccessful = false;
-
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
-                if (interfaceProvider.getMessageParserInterface().isModelException(exception)) {
-                    statementDefinition.setDisabled(true);
-                    lastException = new SQLException("Model exception received while executing query '" + id +"'. " + exception.getMessage());
-                } else {
-                    lastException = new SQLException("Too many failed attempts of executing query '" + id +"'. " + exception.getMessage());
-                }
-                ConnectionUtil.closeStatement(statement);
-                throw exception;
-            } finally {
-                statementDefinition.updateExecutionStatus(executionSuccessful);
-            }
+                        throw exception;
+                    } finally {
+                        statementDefinition.updateExecutionStatus(executionSuccessful);
+                    }                }
+            }.start();
         } else {
             if (lastException == null) {
                 throw new SQLException("Too many failed attempts of executing query '" + id + "'.");
@@ -142,102 +157,132 @@ public class StatementExecutionProcessor {
     }
 
     public <T extends CallableStatementOutput> T executeCall(Connection connection, @Nullable T outputReader, Object... arguments) throws SQLException {
-        SQLException exception = null;
-        for (StatementDefinition statementDefinition : statementDefinitions) {
-            try {
-                return executeCall(statementDefinition, connection, outputReader, arguments);
-            } catch (SQLException e){
-                exception = e;
+        if (statementDefinition != null) {
+            return executeCall(statementDefinition, connection, outputReader, arguments);
+        } else {
+            SQLException exception = null;
+            for (StatementDefinition statementDefinition : statementDefinitions) {
+                try {
+                    return executeCall(statementDefinition, connection, outputReader, arguments);
+                } catch (SQLException e){
+                    exception = e;
+                }
+
             }
+            throw exception;
         }
-        throw exception;
     }
 
-    private <T extends CallableStatementOutput> T executeCall(StatementDefinition statementDefinition, Connection connection, @Nullable T outputReader, Object... arguments) throws SQLException {
-        String statementText = statementDefinition.prepareStatementText(arguments);
-        if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+    private <T extends CallableStatementOutput> T executeCall(final StatementDefinition statementDefinition, final Connection connection, @Nullable final T outputReader, final Object... arguments) throws SQLException {
+        return new StatementExecutionTimeoutCall<T>(timeout) {
+            @Override
+            public T execute() throws Exception {
+                String statementText = statementDefinition.prepareStatementText(arguments);
+                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-        CallableStatement callableStatement = connection.prepareCall(statementText);
-        try {
-            if (outputReader != null) outputReader.registerParameters(callableStatement);
-            callableStatement.setQueryTimeout(timeout);
-            callableStatement.execute();
-            if (outputReader != null) outputReader.read(callableStatement);
-            return outputReader;
-        } catch (SQLException exception) {
-            if (SettingsUtil.isDebugEnabled)
-                LOGGER.info(
-                        "[DBN-ERROR] Error executing statement: " + statementText +
-                                "\nCause: " + exception.getMessage());
+                CallableStatement callableStatement = connection.prepareCall(statementText);
+                try {
+                    if (outputReader != null) outputReader.registerParameters(callableStatement);
+                    callableStatement.setQueryTimeout(timeout);
+                    callableStatement.execute();
+                    if (outputReader != null) outputReader.read(callableStatement);
+                    return outputReader;
+                } catch (SQLException exception) {
+                    if (SettingsUtil.isDebugEnabled)
+                        LOGGER.info(
+                                "[DBN-ERROR] Error executing statement: " + statementText +
+                                        "\nCause: " + exception.getMessage());
 
-            throw exception;
-        } finally {
-            ConnectionUtil.closeStatement(callableStatement);
-        }
+                    throw exception;
+                } finally {
+                    ConnectionUtil.closeStatement(callableStatement);
+                }
+            }
+        }.start();
     }
 
     public void executeUpdate(Connection connection, Object... arguments) throws SQLException {
-        SQLException exception = null;
-        for (StatementDefinition statementDefinition : statementDefinitions) {
-            try {
-                executeUpdate(statementDefinition, connection, arguments);
-                return;
-            } catch (SQLException e){
-                exception = e;
+        if (statementDefinition != null) {
+            executeUpdate(statementDefinition, connection, arguments);
+        } else {
+            SQLException exception = null;
+            for (StatementDefinition statementDefinition : statementDefinitions) {
+                try {
+                    executeUpdate(statementDefinition, connection, arguments);
+                    return;
+                } catch (SQLException e){
+                    exception = e;
+                }
             }
+            throw exception;
         }
-        throw exception;
     }
 
-    private void executeUpdate(StatementDefinition statementDefinition, Connection connection, Object... arguments) throws SQLException {
-        String statementText = statementDefinition.prepareStatementText(arguments);
-        if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+    private void executeUpdate(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
+        new StatementExecutionTimeoutCall(timeout) {
+            @Override
+            public Object execute() throws Exception {
+                String statementText = statementDefinition.prepareStatementText(arguments);
+                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-        Statement statement = connection.createStatement();
-        try {
-            statement.setQueryTimeout(timeout);
-            statement.executeUpdate(statementText);
-        } catch (SQLException exception) {
-            if (SettingsUtil.isDebugEnabled)
-                LOGGER.info(
-                        "[DBN-ERROR] Error executing statement: " + statementText +
-                                "\nCause: " + exception.getMessage());
+                Statement statement = connection.createStatement();
+                try {
+                    statement.setQueryTimeout(timeout);
+                    statement.executeUpdate(statementText);
+                } catch (SQLException exception) {
+                    if (SettingsUtil.isDebugEnabled)
+                        LOGGER.info(
+                                "[DBN-ERROR] Error executing statement: " + statementText +
+                                        "\nCause: " + exception.getMessage());
 
-            throw exception;
-        } finally {
-            ConnectionUtil.closeStatement(statement);
-        }
+                    throw exception;
+                } finally {
+                    ConnectionUtil.closeStatement(statement);
+                }
+                return null;
+            }
+        }.start();
     }
 
     public boolean executeStatement(Connection connection, Object... arguments) throws SQLException {
-        SQLException exception = null;
-        for (StatementDefinition statementDefinition : statementDefinitions) {
-            try {
-                return executeStatement(statementDefinition, connection, arguments);
-            } catch (SQLException e){
-                exception = e;
+        if (statementDefinition != null) {
+            return executeStatement(statementDefinition, connection, arguments);
+        } else {
+            SQLException exception = null;
+            for (StatementDefinition statementDefinition : statementDefinitions) {
+                try {
+                    return executeStatement(statementDefinition, connection, arguments);
+                } catch (SQLException e){
+                    exception = e;
+                }
             }
+            throw exception;
         }
-        throw exception;
     }
 
-    private boolean executeStatement(StatementDefinition statementDefinition, Connection connection, Object... arguments) throws SQLException {
-        String statementText = statementDefinition.prepareStatementText(arguments);
-        if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+    private boolean executeStatement(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
+        return new StatementExecutionTimeoutCall<Boolean>(timeout) {
 
-        Statement statement = connection.createStatement();
-        try {
-            statement.setQueryTimeout(timeout);
-            return statement.execute(statementText);
-        } catch (SQLException exception) {
-            if (SettingsUtil.isDebugEnabled)
-                LOGGER.info(
-                        "[DBN-ERROR] Error executing statement: " + statementText +
-                                "\nCause: " + exception.getMessage());
+            @Override
+            public Boolean execute() throws Exception {
+                String statementText = statementDefinition.prepareStatementText(arguments);
+                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-            throw exception;
-        } finally {
-            ConnectionUtil.closeStatement(statement);
-        }
+                Statement statement = connection.createStatement();
+                try {
+                    statement.setQueryTimeout(timeout);
+                    return statement.execute(statementText);
+                } catch (SQLException exception) {
+                    if (SettingsUtil.isDebugEnabled)
+                        LOGGER.info(
+                                "[DBN-ERROR] Error executing statement: " + statementText +
+                                        "\nCause: " + exception.getMessage());
+
+                    throw exception;
+                } finally {
+                    ConnectionUtil.closeStatement(statement);
+                }
+            }
+        }.start();
     }
 }
