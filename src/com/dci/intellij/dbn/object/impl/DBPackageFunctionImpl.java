@@ -49,9 +49,4 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
     }
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {}
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }
