@@ -101,7 +101,7 @@ public class StatementExecutionProcessor {
 
     private ResultSet executeQuery(final StatementDefinition statementDefinition, final Connection connection, boolean forceExecution, final Object... arguments) throws SQLException {
         if (forceExecution || statementDefinition.canExecute(connection)) {
-            return new StatementExecutionTimeoutCall<ResultSet>(timeout) {
+            return new StatementExecutor<ResultSet>(timeout) {
 
                 @Override
                 public ResultSet execute() throws Exception {
@@ -174,7 +174,7 @@ public class StatementExecutionProcessor {
     }
 
     private <T extends CallableStatementOutput> T executeCall(final StatementDefinition statementDefinition, final Connection connection, @Nullable final T outputReader, final Object... arguments) throws SQLException {
-        return new StatementExecutionTimeoutCall<T>(timeout) {
+        return new StatementExecutor<T>(timeout) {
             @Override
             public T execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
@@ -219,7 +219,7 @@ public class StatementExecutionProcessor {
     }
 
     private void executeUpdate(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
-        new StatementExecutionTimeoutCall(timeout) {
+        new StatementExecutor(timeout) {
             @Override
             public Object execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
@@ -261,7 +261,7 @@ public class StatementExecutionProcessor {
     }
 
     private boolean executeStatement(final StatementDefinition statementDefinition, final Connection connection, final Object... arguments) throws SQLException {
-        return new StatementExecutionTimeoutCall<Boolean>(timeout) {
+        return new StatementExecutor<Boolean>(timeout) {
 
             @Override
             public Boolean execute() throws Exception {

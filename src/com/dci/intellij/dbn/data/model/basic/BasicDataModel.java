@@ -13,9 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
@@ -38,7 +40,14 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     private List<T> rows = new ArrayList<T>();
     private Project project;
     private Filter<T> filter;
-    private RegionalSettings regionalSettings;
+    private Formatter formatter;
+
+    private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
+        @Override
+        public void settingsChanged() {
+            BasicDataModel.this.formatter = Formatter.getInstance(project).clone();
+        }
+    };
 
     private LazyValue<BasicDataGutterModel> listModel = new DisposableLazyValue<BasicDataGutterModel>(this) {
         @Override
@@ -58,7 +67,8 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
 
     public BasicDataModel(Project project) {
         this.project = project;
-        this.regionalSettings = RegionalSettings.getInstance(project);
+        this.formatter = Formatter.getInstance(project).clone();
+        EventManager.subscribe(project, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
     @Override
@@ -66,8 +76,9 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
         return listModel.get();
     }
 
-    public RegionalSettings getRegionalSettings() {
-        return regionalSettings;
+    @NotNull
+    public Formatter getFormatter() {
+        return formatter;
     }
 
     @Override
@@ -332,7 +343,6 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             tableModelListeners.clear();
             dataModelListeners.clear();
             searchResult = null;
-            regionalSettings = null;
             project = null;
         }
     }

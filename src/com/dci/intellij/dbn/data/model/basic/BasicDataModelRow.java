@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -23,6 +24,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
         cells.add(cell);
     }
 
+    @NotNull
     public BasicDataModel getModel() {
         return FailsafeUtil.get(model);
     }

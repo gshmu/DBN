@@ -115,7 +115,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     public String getPluginVersion() {
         IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(PluginId.getId(DatabaseNavigator.DBN_PLUGIN_ID));
-        return pluginDescriptor.getVersion();
+        return pluginDescriptor != null ? pluginDescriptor.getVersion() : null;
     }
 
     public String getRepositoryPluginVersion() {

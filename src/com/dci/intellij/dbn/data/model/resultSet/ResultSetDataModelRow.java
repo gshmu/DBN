@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
-import com.dci.intellij.dbn.data.model.ColumnInfo;
-import com.dci.intellij.dbn.data.model.sortable.SortableDataModelRow;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.data.model.ColumnInfo;
+import com.dci.intellij.dbn.data.model.sortable.SortableDataModelRow;
 
 
 public class ResultSetDataModelRow<T extends ResultSetDataModelCell> extends SortableDataModelRow<T> {
@@ -17,6 +18,7 @@ public class ResultSetDataModelRow<T extends ResultSetDataModelCell> extends Sor
         }
     }
 
+    @NotNull
     @Override
     public ResultSetDataModel getModel() {
         return (ResultSetDataModel) super.getModel();
