@@ -200,7 +200,7 @@ public class ObjectDependencyTree extends JTree implements Disposable{
             boolean startTimer = loadInProgressNodes.size() == 0;
             loadInProgressNodes.add(node);
             if (startTimer) {
-                Timer reloader = new Timer("DBN Load in progress tree leaf reloader");
+                Timer reloader = new Timer("DBN - Object Dependency Tree (load in progress reload timer)");
                 reloader.schedule(new LoadInProgressRefreshTask(), 0, 50);
             }
         }

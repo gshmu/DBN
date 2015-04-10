@@ -46,7 +46,7 @@ public class LoadIcon implements Icon{
     private static void startRoller() {
         synchronized (IconRollerTimerTask.class) {
             if (ICON_ROLLER == null) {
-                ICON_ROLLER = new Timer("DBN Load in progress icon roller");
+                ICON_ROLLER = new Timer("DBN - Load in Progress (icon roller)");
                 ICON_ROLLER.schedule(new IconRollerTimerTask(), 50, 50);
             }
         }

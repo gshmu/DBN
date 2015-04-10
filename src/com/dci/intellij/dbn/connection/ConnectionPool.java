@@ -39,7 +39,7 @@ public class ConnectionPool implements Disposable {
         POOL_CLEANER_TASK.registerConnectionPool(this);
     }
 
-    public synchronized Connection getStandaloneConnection(boolean recover) throws SQLException {
+    public Connection getStandaloneConnection(boolean recover) throws SQLException {
         lastAccessTimestamp = System.currentTimeMillis();
         ConnectionHandler connectionHandler = getConnectionHandler();
 
@@ -48,16 +48,20 @@ public class ConnectionPool implements Disposable {
         }
 
         if (standaloneConnection == null) {
-            try {
-                Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
-                standaloneConnection = new ConnectionWrapper(connection);
-                NotificationUtil.sendInfoNotification(
-                        getProject(),
-                        Constants.DBN_TITLE_PREFIX + "Connected",
-                        "Connected to database \"{0}\"",
-                        connectionHandler.getName());
-            } finally {
-                notifyStatusChange();
+            synchronized (this) {
+                if (standaloneConnection == null) {
+                    try {
+                        Connection connection = ConnectionUtil.connect(connectionHandler, ConnectionType.MAIN);
+                        standaloneConnection = new ConnectionWrapper(connection);
+                        NotificationUtil.sendInfoNotification(
+                                getProject(),
+                                Constants.DBN_TITLE_PREFIX + "Connected",
+                                "Connected to database \"{0}\"",
+                                connectionHandler.getName());
+                    } finally {
+                        notifyStatusChange();
+                    }
+                }
             }
         }
 
@@ -244,7 +248,7 @@ public class ConnectionPool implements Disposable {
 
     private static ConnectionPoolCleanTask POOL_CLEANER_TASK = new ConnectionPoolCleanTask();
     static {
-        Timer poolCleaner = new Timer("DBN Connection pool cleaner");
+        Timer poolCleaner = new Timer("DBN - Connection Pool Cleaner");
         poolCleaner.schedule(POOL_CLEANER_TASK, TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
     }
 
