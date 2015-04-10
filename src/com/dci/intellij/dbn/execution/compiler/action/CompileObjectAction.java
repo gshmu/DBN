@@ -12,22 +12,28 @@ import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 
 public class CompileObjectAction extends AnAction {
-    private DBSchemaObject object;
+    private DBObjectRef<DBSchemaObject> objectRef;
     private DBContentType contentType;
 
     public CompileObjectAction(DBSchemaObject object, DBContentType contentType) {
         super("Compile");
-        this.object = object;
+        this.objectRef = DBObjectRef.from(object);
         this.contentType = contentType;
     }
 
+    public DBSchemaObject getObject() {
+        return DBObjectRef.getnn(objectRef);
+    }
+
     public void actionPerformed(@NotNull AnActionEvent e) {
+        DBSchemaObject object = getObject();
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(object.getProject());
         CompileTypeOption compileType = getCompilerSettings(object.getProject()).getCompileTypeOption();
         CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType);
@@ -35,6 +41,7 @@ public class CompileObjectAction extends AnAction {
     }
 
     public void update(@NotNull AnActionEvent e) {
+        DBSchemaObject object = getObject();
         Presentation presentation = e.getPresentation();
 
         CompilerSettings compilerSettings = getCompilerSettings(object.getProject());
