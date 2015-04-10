@@ -4,5 +4,6 @@ import java.sql.SQLException;
 
 public interface DatabaseInterface {
     SQLException DBN_NOT_CONNECTED_EXCEPTION = new SQLException("Not connected to database");
+    SQLException DBN_TIMEOUT_EXCEPTION = new SQLException("Timeout Exception");
     void reset();
 }
