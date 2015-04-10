@@ -13,7 +13,7 @@ public abstract class SimpleBackgroundTask extends SynchronizedTask{
     }
 
     public final void start() {
-        Thread thread = new Thread(this, "DBN Background Thread: " + name);
+        Thread thread = new Thread(this, "DBN - Background Thread: " + name);
         thread.setPriority(Thread.MIN_PRIORITY);
         thread.start();
     }
