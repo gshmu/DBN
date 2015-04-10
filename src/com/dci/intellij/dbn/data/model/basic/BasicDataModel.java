@@ -337,6 +337,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public void dispose() {
         if (!disposed) {
             disposed = true;
+            EventManager.unsubscribe(regionalSettingsListener);
             DisposerUtil.dispose(rows);
             rows = null;
             header = null;
