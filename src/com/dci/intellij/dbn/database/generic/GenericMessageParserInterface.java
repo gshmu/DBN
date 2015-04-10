@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.database.generic;
 
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 
@@ -15,7 +15,7 @@ public class GenericMessageParserInterface implements DatabaseMessageParserInter
 
     @Override
     public boolean isTimeoutException(SQLException e) {
-        return e == DatabaseInterface.DBN_TIMEOUT_EXCEPTION;
+        return e instanceof SQLTimeoutException;
     }
 
     @Override
