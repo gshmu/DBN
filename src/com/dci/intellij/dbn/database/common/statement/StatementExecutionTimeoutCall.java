@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.common.statement;
 
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -8,8 +9,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.dci.intellij.dbn.database.DatabaseInterface;
 
 public abstract class StatementExecutionTimeoutCall<T> implements Callable<T>{
     private long timeoutSeconds;
@@ -37,17 +36,20 @@ public abstract class StatementExecutionTimeoutCall<T> implements Callable<T>{
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Future<T> future = executor.submit(this);
             return future.get(timeoutSeconds, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw DatabaseInterface.DBN_TIMEOUT_EXCEPTION;
-        } catch (ExecutionException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof SQLException) {
-                throw (SQLException) cause;
-            } else {
-                throw new SQLException("Error processing request: " + cause.getMessage(), cause);
+        } catch (Exception e) {
+            if (e instanceof InterruptedException || e instanceof TimeoutException) {
+                throw new SQLTimeoutException("Operation timed out (timeout = " + timeoutSeconds + "s)", e);
             }
-        } catch (TimeoutException e) {
-            throw DatabaseInterface.DBN_TIMEOUT_EXCEPTION;
+
+            if (e instanceof ExecutionException) {
+                Throwable cause = e.getCause();
+                if (cause instanceof SQLException) {
+                    throw (SQLException) cause;
+                } else {
+                    throw new SQLException("Error processing request: " + cause.getMessage(), cause);
+                }
+            }
+            throw new SQLException("Error processing request: " + e.getMessage(), e);
         }
     }
 }
