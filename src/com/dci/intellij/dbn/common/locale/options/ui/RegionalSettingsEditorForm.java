@@ -175,7 +175,6 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     public void applyFormChanges() throws ConfigurationException {
         RegionalSettings regionalSettings = getConfiguration();
-        Formatter oldFormatter = regionalSettings.getFormatter();
 
         Locale locale = getSelectedLocale();
         regionalSettings.setLocale(locale);
@@ -191,7 +190,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         regionalSettings.getCustomTimeFormat().applyChanges(customTimeFormatTextField);
         regionalSettings.getCustomNumberFormat().applyChanges(customNumberFormatTextField);
 
-        if (!oldFormatter.equals(regionalSettings.getFormatter())) {
+        if (regionalSettings.isModified()) {
             EventManager.notify(getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
         }
 

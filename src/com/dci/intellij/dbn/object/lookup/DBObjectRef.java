@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.object.lookup;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -244,6 +246,30 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public static <T extends DBObject> T getnn(DBObjectRef<T> objectRef) {
         T object = get(objectRef);
         return FailsafeUtil.get(object);
+    }
+
+    public static List<DBObject> get(List<DBObjectRef> objectRefs) {
+        List<DBObject> objects = new ArrayList<DBObject>(objectRefs.size());
+        for (DBObjectRef objectRef : objectRefs) {
+            objects.add(get(objectRef));
+        }
+        return objects;
+    }
+
+    public static List<DBObject> getnn(List<DBObjectRef> objectRefs) {
+        List<DBObject> objects = new ArrayList<DBObject>(objectRefs.size());
+        for (DBObjectRef objectRef : objectRefs) {
+            objects.add(getnn(objectRef));
+        }
+        return objects;
+    }
+
+    public static List<DBObjectRef> from(List<DBObject> objects) {
+        List<DBObjectRef> objectRefs = new ArrayList<DBObjectRef>(objects.size());
+        for (DBObject object : objects) {
+            objectRefs.add(from(object));
+        }
+        return objectRefs;
     }
 
     @Nullable

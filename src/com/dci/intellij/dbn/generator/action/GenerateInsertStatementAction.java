@@ -1,30 +1,38 @@
 package com.dci.intellij.dbn.generator.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.generator.StatementGenerationManager;
 import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 public class GenerateInsertStatementAction extends GenerateStatementAction {
-    private DBTable table;
+    private DBObjectRef<DBTable> tableRef;
 
     public GenerateInsertStatementAction(DBTable table) {
         super("INSERT Statement");
-        this.table = table;
+        tableRef = DBObjectRef.from(table);
     }
 
     @Override
     protected StatementGeneratorResult generateStatement(Project project) {
         StatementGenerationManager statementGenerationManager = StatementGenerationManager.getInstance(project);
+        DBTable table = getTable();
         return statementGenerationManager.generateInsert(table);
+    }
+
+    @NotNull
+    private DBTable getTable() {
+        return DBObjectRef.getnn(tableRef);
     }
 
     @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return table.getConnectionHandler();
+        return getTable().getConnectionHandler();
     }
 }
