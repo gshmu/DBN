@@ -1,5 +1,20 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JPopupMenu;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
@@ -36,31 +51,14 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.JPopupMenu;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreePath;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class DatabaseBrowserTree extends DBNTree implements Disposable {
     private BrowserTreeNode targetSelection;
-    private BrowserTreeModel treeModel;
     private JPopupMenu popupMenu;
     private TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
 
     public DatabaseBrowserTree(BrowserTreeModel treeModel) {
         super(treeModel);
-        this.treeModel = treeModel;
 
         addKeyListener(keyListener);
         addMouseListener(mouseListener);
@@ -82,7 +80,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     }
 
     public Project getProject() {
-        return treeModel.getProject();
+        return getModel().getProject();
     }
 
     @Override
@@ -416,6 +414,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
             mouseListener = null;
             keyListener = null;
             treeModelListener = null;
+            setModel(null);
         }
     }
 

@@ -32,6 +32,7 @@ import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -211,14 +212,19 @@ public class ObjectDependencyTree extends JTree implements Disposable{
         int iterations = 0;
         public void run() {
             synchronized (loadInProgressNodes) {
-                Iterator<ObjectDependencyTreeNode> loadInProgressNodesIterator = loadInProgressNodes.iterator();
-                while (loadInProgressNodesIterator.hasNext()) {
-                    ObjectDependencyTreeNode loadInProgressTreeNode = loadInProgressNodesIterator.next();
-                    if (loadInProgressTreeNode.isDisposed()) {
-                        loadInProgressNodesIterator.remove();
-                    } else {
-                        getModel().refreshLoadInProgressNode(loadInProgressTreeNode);
+                try {
+                    Iterator<ObjectDependencyTreeNode> loadInProgressNodesIterator = loadInProgressNodes.iterator();
+                    while (loadInProgressNodesIterator.hasNext()) {
+                        ObjectDependencyTreeNode loadInProgressTreeNode = loadInProgressNodesIterator.next();
+                        if (loadInProgressTreeNode.isDisposed()) {
+                            loadInProgressNodesIterator.remove();
+                        } else {
+                            getModel().refreshLoadInProgressNode(loadInProgressTreeNode);
+                        }
                     }
+
+                } catch (ProcessCanceledException e) {
+                    loadInProgressNodes.clear();
                 }
 
                 if (loadInProgressNodes.isEmpty()) {

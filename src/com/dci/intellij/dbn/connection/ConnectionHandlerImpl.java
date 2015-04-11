@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -59,12 +58,6 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private DatabaseLogOutput logOutput;
-    private LazyValue<DBObjectBundle> objectBundle = new DisposableLazyValue<DBObjectBundle>(this) {
-        @Override
-        protected DBObjectBundle load() {
-            return new DBObjectBundleImpl(ConnectionHandlerImpl.this, connectionBundle);
-        }
-    };
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;
@@ -80,14 +73,26 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         }
     };
 
+    private LazyValue<DBObjectBundle> objectBundle = new DisposableLazyValue<DBObjectBundle>(this) {
+        @Override
+        protected DBObjectBundle load() {
+            return new DBObjectBundleImpl(ConnectionHandlerImpl.this, connectionBundle);
+        }
+    };
+
+
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
         this.connectionBundle = connectionBundle;
         this.connectionSettings = connectionSettings;
         connectionStatus = new ConnectionStatus();
         connectionPool = new ConnectionPool(this);
-        loadMonitor = new ConnectionLoadMonitor(this);
         consoleBundle = new DatabaseConsoleBundle(this);
+        loadMonitor = new ConnectionLoadMonitor(this);
         ref = new ConnectionHandlerRef(this);
+
+        Disposer.register(this, connectionPool);
+        Disposer.register(this, consoleBundle);
+        Disposer.register(this, loadMonitor);
     }
 
     @Override
@@ -481,12 +486,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            DisposerUtil.dispose(connectionPool);
-            DisposerUtil.dispose(consoleBundle);
-            DisposerUtil.dispose(loadMonitor);
-            DisposerUtil.dispose(sessionBrowserFile);
             connectionPool = null;
+            connectionBundle = null;
             changesBundle = null;
+            loadMonitor = null;
+            sessionBrowserFile = null;
         }
     }
 
