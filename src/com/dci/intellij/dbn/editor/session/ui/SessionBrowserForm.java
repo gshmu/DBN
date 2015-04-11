@@ -143,12 +143,11 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            sessionBrowser = null;
-            detailsForm = null;
-        }
-    }
+        super.dispose();
+        sessionBrowser = null;
+        detailsForm = null;
+        editorTable = null;
+        dataSearchComponent = null;    }
 
     @NotNull
     public SessionBrowser getSessionBrowser() {

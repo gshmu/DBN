@@ -339,11 +339,11 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
             disposed = true;
             EventManager.unsubscribe(regionalSettingsListener);
             DisposerUtil.dispose(rows);
-            rows = null;
-            header = null;
             tableModelListeners.clear();
             dataModelListeners.clear();
             searchResult = null;
+            header = null;
+            rows = null;
             project = null;
         }
     }

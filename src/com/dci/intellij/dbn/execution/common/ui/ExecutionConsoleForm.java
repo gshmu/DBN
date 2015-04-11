@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -58,7 +59,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
-    private DisposableLazyValue<ExecutionMessagesPanel> executionMessagesPanel = new DisposableLazyValue<ExecutionMessagesPanel>(this) {
+    private LazyValue<ExecutionMessagesPanel> executionMessagesPanel = new DisposableLazyValue<ExecutionMessagesPanel>(this) {
         @Override
         protected ExecutionMessagesPanel load() {
             return new ExecutionMessagesPanel(ExecutionConsoleForm.this);

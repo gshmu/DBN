@@ -210,6 +210,7 @@ public class ConnectionPool implements Disposable {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
+            connectionHandler = null;
             closeConnectionsSilently();
         }
     }
@@ -271,7 +272,7 @@ public class ConnectionPool implements Disposable {
             long currentTimeMillis = System.currentTimeMillis();
             if (TimeUtil.isOlderThan(lastCheckTimestamp, TimeUtil.THIRTY_SECONDS)) {
                 lastCheckTimestamp = currentTimeMillis;
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.isValid(connection);
             }
             return isValid;

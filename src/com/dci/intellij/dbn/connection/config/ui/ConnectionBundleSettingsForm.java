@@ -155,11 +155,11 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionBundle.setConnectionHandlers(newConnections);
 
 
+        final Project project = connectionBundle.getProject();
         new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
                 if (listChanged.get()) {
-                    Project project = connectionBundle.getProject();
                     ConnectionBundleSettingsListener listener = EventManager.notify(project, ConnectionBundleSettingsListener.TOPIC);
                     listener.settingsChanged();
                 }
@@ -168,8 +168,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
         // dispose old list
         if (oldConnections.size() > 0) {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(connectionBundle.getProject());
-            connectionManager.disposeConnections(oldConnections);
+            if (!project.isDefault()) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                connectionManager.disposeConnections(oldConnections);
+            }
         }
     }
 
