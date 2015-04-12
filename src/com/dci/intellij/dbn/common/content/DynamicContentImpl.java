@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> implements DynamicContent<T> {
@@ -341,7 +342,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                     DisposerUtil.dispose(elements);
             }
             CollectionUtil.clearMap(index);
-            dependencyAdapter.dispose();
+            Disposer.dispose(dependencyAdapter);
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
             parent = null;
         }

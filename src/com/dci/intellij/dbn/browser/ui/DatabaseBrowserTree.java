@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -414,7 +415,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
             mouseListener = null;
             keyListener = null;
             treeModelListener = null;
-            setModel(null);
+            setModel(SimpleBrowserTreeModel.EMPTY_MODEL);
         }
     }
 
