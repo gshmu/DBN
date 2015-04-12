@@ -8,8 +8,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
@@ -39,7 +41,7 @@ import com.intellij.ui.content.ContentFactoryImpl;
 )
 public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
-    private DisposableLazyValue<ExecutionConsoleForm> executionConsoleForm = new DisposableLazyValue<ExecutionConsoleForm>(this) {
+    private LazyValue<ExecutionConsoleForm> executionConsoleForm = new DisposableLazyValue<ExecutionConsoleForm>(this) {
         @Override
         protected ExecutionConsoleForm load() {
             return new ExecutionConsoleForm(getProject());
@@ -51,7 +53,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public static ExecutionManager getInstance(@NotNull Project project) {
-        return project.getComponent(ExecutionManager.class);
+        return FailsafeUtil.getComponent(project, ExecutionManager.class);
     }
 
     private void showExecutionConsole() {

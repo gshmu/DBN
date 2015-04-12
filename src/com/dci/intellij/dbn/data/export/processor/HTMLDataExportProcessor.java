@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Date;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
@@ -109,7 +108,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
         buffer.append("            </tr>\n");
 
-        RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
+        Formatter formatter = getFormatter(connectionHandler.getProject());
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             buffer.append("            <tr>\n");
@@ -125,7 +124,6 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
                     Object object = model.getValue(rowIndex, columnIndex);
 
                     if (object != null) {
-                        Formatter formatter = regionalSettings.getFormatter();
                         if (object instanceof Number) {
                             Number number = (Number) object;
                             value = formatter.formatNumber(number);

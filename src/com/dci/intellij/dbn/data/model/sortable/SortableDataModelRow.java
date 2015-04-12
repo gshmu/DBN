@@ -12,6 +12,7 @@ public class SortableDataModelRow<T extends SortableDataModelCell> extends Basic
         super(model);
     }
 
+    @NotNull
     @Override
     public SortableDataModel getModel() {
         return (SortableDataModel) super.getModel();

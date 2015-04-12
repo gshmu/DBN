@@ -12,13 +12,10 @@ import java.awt.event.KeyListener;
 import java.text.ParseException;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
 public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
@@ -31,15 +28,11 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
     private ResultSetRecordViewerForm parentForm;
     private ResultSetDataModelCell cell;
 
-    private RegionalSettings regionalSettings;
-
     public ResultSetRecordViewerColumnForm(ResultSetRecordViewerForm parentForm, ResultSetDataModelCell cell, boolean showDataType) {
         this.parentForm = parentForm;
-        Project project = cell.getProject();
         ColumnInfo columnInfo = cell.getColumnInfo();
 
         DBDataType dataType = columnInfo.getDataType();
-        regionalSettings = RegionalSettings.getInstance(project);
 
         columnLabel.setIcon(Icons.DBO_COLUMN);
         columnLabel.setText(columnInfo.getName());
@@ -68,7 +61,6 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
     public void setCell(ResultSetDataModelCell cell) {
         this.cell = cell;
 
-        Formatter formatter = regionalSettings.getFormatter();
         if (cell.getUserValue() instanceof String) {
             String userValue = (String) cell.getUserValue();
             if (userValue.indexOf('\n') > -1) {
@@ -77,7 +69,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
             }
             valueTextField.setText(userValue);
         } else {
-            String formattedUserValue = formatter.formatObject(cell.getUserValue());
+            String formattedUserValue = cell.getFormatter().formatObject(cell.getUserValue());
             valueTextField.setText(formattedUserValue);
         }
     }
@@ -102,18 +94,12 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         Class clazz = dataType.getTypeClass();
         String textValue = valueTextField.getText().trim();
         if (textValue.length() > 0) {
-            Object value = getFormatter().parseObject(clazz, textValue);
+            Object value = cell.getFormatter().parseObject(clazz, textValue);
             return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
         } else {
             return null;
         }
     }
-
-    private Formatter getFormatter() {
-        Project project = cell.getProject();
-        return Formatter.getInstance(project);
-    }
-
 
     public JTextField getViewComponent() {
         return valueTextField;
@@ -140,7 +126,6 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
 
     public void dispose() {
         super.dispose();
-        regionalSettings = null;
         parentForm = null;
         cell = null;
 

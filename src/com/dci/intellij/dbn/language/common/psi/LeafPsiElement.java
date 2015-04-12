@@ -61,7 +61,8 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
 
     @NotNull
     public String getCanonicalText() {
-        return null;
+        PsiElement reference = resolve();
+        return reference == null ? getText() : reference.getText();
     }
 
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {

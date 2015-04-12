@@ -1,13 +1,7 @@
 package com.dci.intellij.dbn.object.factory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -30,6 +24,13 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
 
@@ -38,7 +39,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     public static DatabaseObjectFactory getInstance(@NotNull Project project) {
-        return project.getComponent(DatabaseObjectFactory.class);
+        return FailsafeUtil.getComponent(project, DatabaseObjectFactory.class);
     }
 
     private void notifyFactoryEvent(ObjectFactoryEvent event) {

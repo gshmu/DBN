@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.browser.model.EmptyBrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -54,15 +54,12 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 
 public class DatabaseBrowserTree extends DBNTree implements Disposable {
-    public static final EmptyBrowserTreeModel EMPTY_TREE_MODEL = new EmptyBrowserTreeModel();
     private BrowserTreeNode targetSelection;
-    private BrowserTreeModel treeModel;
     private JPopupMenu popupMenu;
     private TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
 
     public DatabaseBrowserTree(BrowserTreeModel treeModel) {
         super(treeModel);
-        this.treeModel = treeModel;
 
         addKeyListener(keyListener);
         addMouseListener(mouseListener);
@@ -84,7 +81,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     }
 
     public Project getProject() {
-        return treeModel.getProject();
+        return getModel().getProject();
     }
 
     @Override
@@ -413,12 +410,12 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
         if (!disposed) {
             disposed = true;
             targetSelection = null;
-            setModel(EMPTY_TREE_MODEL);
             GUIUtil.removeListeners(this);
             treeSelectionListener = null;
             mouseListener = null;
             keyListener = null;
             treeModelListener = null;
+            setModel(SimpleBrowserTreeModel.EMPTY_MODEL);
         }
     }
 

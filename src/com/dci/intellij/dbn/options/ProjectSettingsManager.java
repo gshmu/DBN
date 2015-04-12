@@ -1,14 +1,10 @@
 package com.dci.intellij.dbn.options;
 
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -31,7 +27,6 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.SystemInfo;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +45,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
     }
 
     public static ProjectSettingsManager getInstance(@NotNull Project project) {
-        return project.getComponent(ProjectSettingsManager.class);
+        return FailsafeUtil.getComponent(project, ProjectSettingsManager.class);
     }
 
     public static ProjectSettings getSettings(Project project) {
@@ -196,8 +191,6 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
                         @Override
                         protected void execute() {
                             try {
-                                List<ConnectionHandler> oldConnectionHandlers = projectSettings.getConnectionSettings().getConnectionBundle().getAllConnectionHandlers();
-
                                 Element element = new Element("state");
                                 ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
                                 defaultProjectSettings.writeConfiguration(element);

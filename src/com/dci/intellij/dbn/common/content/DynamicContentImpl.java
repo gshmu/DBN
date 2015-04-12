@@ -19,14 +19,12 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> implements DynamicContent<T> {
     public static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
     public static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
-
-    private final Object LOAD_LOCK = new Object();
-    private final Object BACKGROUND_LOAD_LOCK = new Object();
 
     private long changeTimestamp = 0;
     private volatile boolean isLoading = false;
@@ -123,7 +121,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public final void load(boolean force) {
         if (shouldLoad(force)) {
-            synchronized (LOAD_LOCK) {
+            synchronized (this) {
                 if (shouldLoad(force)) {
                     isLoading = true;
                     try {
@@ -143,7 +141,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
 
     public final void reload() {
         if (!disposed && !isLoading) {
-            synchronized (LOAD_LOCK) {
+            synchronized (this) {
                 if (!disposed && !isLoading) {
                     isLoading = true;
                     try {
@@ -164,7 +162,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
     @Override
     public final void loadInBackground(final boolean force) {
         if (!isLoadingInBackground && shouldLoad(force)) {
-            synchronized (BACKGROUND_LOAD_LOCK) {
+            synchronized (this) {
                 if (!isLoadingInBackground && shouldLoad(force)) {
                     isLoadingInBackground = true;
                     ConnectionHandler connectionHandler = getConnectionHandler();
@@ -344,7 +342,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> implem
                     DisposerUtil.dispose(elements);
             }
             CollectionUtil.clearMap(index);
-            dependencyAdapter.dispose();
+            Disposer.dispose(dependencyAdapter);
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
             parent = null;
         }

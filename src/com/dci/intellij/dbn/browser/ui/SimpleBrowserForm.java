@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.util.Disposer;
@@ -63,14 +62,9 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserTree.selectElement(treeNode, requestFocus);
     }
 
+    @Override
     public void rebuildTree() {
         browserTree.getModel().getRoot().rebuildTreeChildren();
-    }
-
-    public void rebuild() {
-        BrowserTreeModel treeModel = browserTree.getModel();
-        BrowserTreeNode rootNode = treeModel.getRoot();
-        treeModel.notifyListeners(rootNode, TreeEventType.STRUCTURE_CHANGED);
     }
 
     public void dispose() {

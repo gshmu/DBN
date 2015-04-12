@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -86,7 +87,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
-        return project.getComponent(StatementExecutionManager.class);
+        return FailsafeUtil.getComponent(project, StatementExecutionManager.class);
     }
 
     public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable variable) {
@@ -213,7 +214,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     /*********************************************************
      *                       Execution                       *
      *********************************************************/
-    public void executeStatement(final StatementExecutionProcessor executionProcessor) {
+    public void executeStatement(final @NotNull StatementExecutionProcessor executionProcessor) {
         ConnectionAction executionAction = new ConnectionAction("the statement execution", executionProcessor) {
             @Override
             protected void execute() {
@@ -226,9 +227,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     executionProcessor.execute(progressIndicator);
                                 } finally {
                                     DBLanguagePsiFile file = executionProcessor.getPsiFile();
-                                    if (file != null) {
-                                        DocumentUtil.refreshEditorAnnotations(file);
-                                    }
+                                    DocumentUtil.refreshEditorAnnotations(file);
                                 }
 
                             }
@@ -242,13 +241,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     public void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
         if (executionProcessors.size() > 0) {
-            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
 
+            final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
             ConnectionProvider connectionProvider = new ConnectionProvider() {
                 @Nullable
                 @Override
                 public ConnectionHandler getConnectionHandler() {
-                    FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
                     return connectionMappingManager.getActiveConnection(virtualFile);
                 }
             };
@@ -280,7 +278,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 }
             };
 
-            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+            DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
             connectionMappingManager.selectConnectionAndSchema(file, executionTask);
         }
     }

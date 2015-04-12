@@ -21,7 +21,7 @@ public class ShowReferencingRecordsAction extends ObjectListShowAction{
 
     @Override
     public List<DBObject> getObjectList() {
-        DBColumn column = (DBColumn) sourceObject;
+        DBColumn column = (DBColumn) getSourceObject();
         return new ArrayList<DBObject>(column.getReferencingColumns());
     }
 

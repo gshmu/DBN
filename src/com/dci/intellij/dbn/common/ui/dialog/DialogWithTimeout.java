@@ -16,7 +16,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
         super(project, title, canBeParent);
         secondsLeft = timeoutSeconds;
         component = new DialogWithTimeoutForm(secondsLeft);
-        timeoutTimer = new Timer("DBN Timeout dialog task [" + getProject().getName() + "]");
+        timeoutTimer = new Timer("DBN - Timeout Dialog Task [" + getProject().getName() + "]");
         timeoutTimer.schedule(new TimeoutTask(), TimeUtil.ONE_SECOND, TimeUtil.ONE_SECOND);
     }
 

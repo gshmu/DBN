@@ -1,10 +1,7 @@
 package com.dci.intellij.dbn.object.dependency;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.ConfigurationUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -15,6 +12,9 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 @State(
         name = "DBNavigator.Project.ObjectDependencyManager",
@@ -30,7 +30,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
     }
 
     public static ObjectDependencyManager getInstance(@NotNull Project project) {
-        return project.getComponent(ObjectDependencyManager.class);
+        return FailsafeUtil.getComponent(project, ObjectDependencyManager.class);
     }
 
     public ObjectDependencyType getLastUserDependencyType() {

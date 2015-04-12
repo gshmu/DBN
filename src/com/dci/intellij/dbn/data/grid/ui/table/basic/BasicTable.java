@@ -5,7 +5,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -174,11 +173,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             tableGutter.setFixedCellHeight(rowHeight);
             tableGutter.setFixedCellWidth(getModel().getRowCount() == 0 ? 10 : -1);
         }
-    }
-
-    @Override
-    public void setModel(@NotNull TableModel dataModel) {
-        super.setModel(dataModel);
     }
 
     public DataModelCell getCellAtLocation(Point point) {

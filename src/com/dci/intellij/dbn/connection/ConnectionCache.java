@@ -15,16 +15,21 @@ import gnu.trove.THashMap;
 public class ConnectionCache implements ApplicationComponent{
     private static Map<String, ConnectionHandler> CACHE = new THashMap<String, ConnectionHandler>();
 
-    public static synchronized ConnectionHandler findConnectionHandler(String connectionId) {
+    public static ConnectionHandler findConnectionHandler(String connectionId) {
         ConnectionHandler connectionHandler = CACHE.get(connectionId);
         ProjectManager projectManager = ProjectManager.getInstance();
         if (connectionHandler == null && projectManager != null) {
-            for (Project project : projectManager.getOpenProjects()) {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionHandler = connectionManager.getConnectionHandler(connectionId);
-                if (connectionHandler != null && !connectionHandler.isDisposed()) {
-                    CACHE.put(connectionId, connectionHandler);
-                    return connectionHandler;
+            synchronized (ConnectionCache.class) {
+                connectionHandler = CACHE.get(connectionId);
+                if (connectionHandler == null) {
+                    for (Project project : projectManager.getOpenProjects()) {
+                        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                        connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                        if (connectionHandler != null && !connectionHandler.isDisposed()) {
+                            CACHE.put(connectionId, connectionHandler);
+                            return connectionHandler;
+                        }
+                    }
                 }
             }
         }

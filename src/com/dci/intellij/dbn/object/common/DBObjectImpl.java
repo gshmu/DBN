@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -88,6 +89,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     private LookupItemBuilder sqlLookupItemBuilder;
     private LookupItemBuilder psqlLookupItemBuilder;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     protected DBObjectVirtualFile virtualFile;
 
@@ -98,16 +100,19 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
     };
 
     public DBObjectImpl(DBObject parentObject, ResultSet resultSet) throws SQLException {
+        this.connectionHandlerRef = parentObject.getConnectionHandler().getRef();
         this.parentObjectRef = DBObjectRef.from(parentObject);
         init(resultSet);
     }
 
     public DBObjectImpl(DBObjectBundle objectBundle, ResultSet resultSet) throws SQLException {
+        this.connectionHandlerRef = objectBundle.getConnectionHandler().getRef();
         this.objectBundle = objectBundle;
         init(resultSet);
     }
 
     public DBObjectImpl(DBObjectBundle objectBundle, String name) {
+        this.connectionHandlerRef = objectBundle.getConnectionHandler().getRef();
         this.objectBundle = objectBundle;
         this.name = name;
     }
@@ -288,15 +293,7 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        if (parentObjectRef != null) {
-            DBObject object = parentObjectRef.get();
-            if (object != null) {
-                return object.getConnectionHandler();
-            }
-        } else if (objectBundle != null) {
-            return objectBundle.getConnectionHandler();
-        }
-        throw AlreadyDisposedException.INSTANCE;
+        return connectionHandlerRef.get();
     }
 
     @Override

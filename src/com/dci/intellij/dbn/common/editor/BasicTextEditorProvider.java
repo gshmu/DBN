@@ -40,7 +40,9 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
             @Override
             protected void execute() {
                 Project project = databaseFile.getProject();
-                EditorUtil.setEditorIcon(project, databaseFile, textEditor, icon);
+                if (project != null) {
+                    EditorUtil.setEditorIcon(project, databaseFile, textEditor, icon);
+                }
             }
         }.start();
     }

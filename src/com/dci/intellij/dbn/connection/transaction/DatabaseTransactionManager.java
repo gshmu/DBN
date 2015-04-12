@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -32,7 +34,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public static DatabaseTransactionManager getInstance(@NotNull Project project) {
-        return project.getComponent(DatabaseTransactionManager.class);
+        return FailsafeUtil.getComponent(project, DatabaseTransactionManager.class);
     }
 
     public void execute(final ConnectionHandler connectionHandler, boolean background, final TransactionAction... actions) {
@@ -71,14 +73,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                         NotificationUtil.sendNotification(
                                 project,
                                 action.getNotificationType(),
-                                action.getName(),
+                                Constants.DBN_TITLE_PREFIX + action.getName(),
                                 action.getSuccessNotificationMessage(),
                                 connectionName);
                     }
                 } catch (SQLException ex) {
                     NotificationUtil.sendErrorNotification(
                             project,
-                            action.getName(),
+                            Constants.DBN_TITLE_PREFIX + action.getName(),
                             action.getErrorNotificationMessage(),
                             connectionName,
                             ex.getMessage());

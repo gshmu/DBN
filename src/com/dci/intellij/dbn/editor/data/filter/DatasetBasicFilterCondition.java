@@ -6,7 +6,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -114,19 +114,19 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
             DBDataType dataType = column == null ? null : column.getDataType();
             if (dataType != null && dataType.isNative()) {
                 ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
-                RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
                 GenericDataType genericDataType = dataType.getGenericDataType();
                 if (genericDataType == GenericDataType.LITERAL) {
                     value = com.intellij.openapi.util.text.StringUtil.replace(value, "'", "''");
                     value = "'" + value + "'";
                 } else if (genericDataType == GenericDataType.DATE_TIME) {
                     DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                    Formatter formatter = Formatter.getInstance(dataset.getProject());
                     try {
-                        Date date = regionalSettings.getFormatter().parseDateTime(value);
+                        Date date = formatter.parseDateTime(value);
                         value = metadataInterface.createDateString(date);
                     } catch (ParseException e) {
                         try {
-                            Date date = regionalSettings.getFormatter().parseDate(value);
+                            Date date = formatter.parseDate(value);
                             value = metadataInterface.createDateString(date);
                         } catch (ParseException e1) {
                             // value can be something like "sysdate" => not parseable

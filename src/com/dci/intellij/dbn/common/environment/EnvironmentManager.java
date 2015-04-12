@@ -1,12 +1,7 @@
 package com.dci.intellij.dbn.common.environment;
 
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.intellij.openapi.Disposable;
@@ -20,6 +15,12 @@ import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 @State(
         name = "DBNavigator.Project.EnvironmentManager",
@@ -35,7 +36,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     }
 
     public static EnvironmentManager getInstance(@NotNull Project project) {
-        return project.getComponent(EnvironmentManager.class);
+        return FailsafeUtil.getComponent(project, EnvironmentManager.class);
     }
     
     @NonNls

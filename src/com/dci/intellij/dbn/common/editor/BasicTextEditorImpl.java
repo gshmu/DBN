@@ -155,5 +155,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
 
     public void dispose() {
         disposed = true;
+        project = null;
+        virtualFile = null;
     }
 }

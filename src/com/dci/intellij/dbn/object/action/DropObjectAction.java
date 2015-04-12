@@ -5,18 +5,25 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
 public class DropObjectAction extends AnAction {
-    private DBSchemaObject object;
+    private DBObjectRef<DBSchemaObject> objectRef;
 
     public DropObjectAction(DBSchemaObject object) {
         super("Drop...", null, Icons.ACTION_DELETE);
-        this.object = object;
+        objectRef = DBObjectRef.from(object);
+    }
+
+    public DBSchemaObject getObject() {
+        return DBObjectRef.getnn(objectRef);
     }
 
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DatabaseObjectFactory.getInstance(object.getProject()).dropObject(object);
+        DBSchemaObject object = getObject();
+        DatabaseObjectFactory objectFactory = DatabaseObjectFactory.getInstance(object.getProject());
+        objectFactory.dropObject(object);
     }
 }
