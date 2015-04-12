@@ -137,6 +137,8 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
     public void dispose() {
         disposed = true;
+        connectionHandlers.clear();
+        virtualConnections.clear();
         project = null;
     }
 

@@ -119,9 +119,11 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             }
             throw new DynamicContentLoadException(e, modelException);
         } finally {
-            connectionHandler.getLoadMonitor().decrementLoaderCount();
             ConnectionUtil.closeResultSet(resultSet);
-            connectionHandler.freePoolConnection(connection);
+            if (!connectionHandler.isDisposed()) {
+                connectionHandler.getLoadMonitor().decrementLoaderCount();
+                connectionHandler.freePoolConnection(connection);
+            }
         }
     }
 

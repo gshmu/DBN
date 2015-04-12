@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
@@ -38,7 +37,8 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     private DBObjectRef<DBSchema> currentSchemaRef;
 
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        super(connectionHandler.getProject());
+        connectionHandlerRef = connectionHandler.getRef();
         setCurrentSchemaName(connectionHandler.getUserName());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
@@ -70,11 +70,6 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
-    }
-
-    @NotNull
-    public Project getProject() {
-        return getConnectionHandler().getProject();
     }
 
     public void setCurrentSchema(DBSchema currentSchema) {

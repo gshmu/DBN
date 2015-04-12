@@ -11,6 +11,7 @@ public class CompileActionGroup extends DefaultActionGroup {
         super("Compile", true);
         getTemplatePresentation().setIcon(Icons.OBEJCT_COMPILE);
         if (object.getContentType() == DBContentType.CODE_SPEC_AND_BODY) {
+            add(new CompileObjectAction(object, DBContentType.CODE_SPEC_AND_BODY));
             add(new CompileObjectAction(object, DBContentType.CODE_SPEC));
             add(new CompileObjectAction(object, DBContentType.CODE_BODY));
         } else {

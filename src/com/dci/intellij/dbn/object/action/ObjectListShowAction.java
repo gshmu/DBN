@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
@@ -26,12 +27,12 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.tree.TreeUtil;
 
 public abstract class ObjectListShowAction extends AnAction {
-    protected DBObject sourceObject;
+    protected DBObjectRef sourceObjectRef;
     protected RelativePoint popupLocation;
 
     public ObjectListShowAction(String text, DBObject sourceObject) {
         super(text);
-        this.sourceObject = sourceObject;
+        sourceObjectRef = DBObjectRef.from(sourceObject);
     }
 
     public void setPopupLocation(RelativePoint popupLocation) {
@@ -43,8 +44,13 @@ public abstract class ObjectListShowAction extends AnAction {
     public abstract String getEmptyListMessage();
     public abstract String getListName();
 
+    public DBObject getSourceObject() {
+        return DBObjectRef.getnn(sourceObjectRef);
+    }
+
     public final void actionPerformed(@NotNull final AnActionEvent e) {
         TaskInstructions taskInstructions = new TaskInstructions("Loading " + getListName(), false, true);
+        DBObject sourceObject = getSourceObject();
         new ConnectionAction("loading " + getListName(), sourceObject, taskInstructions) {
             @Override
             protected void execute() {
@@ -84,6 +90,7 @@ public abstract class ObjectListShowAction extends AnAction {
 
     private void showPopup(JBPopup popup) {
         if (popupLocation == null) {
+            DBObject sourceObject = getSourceObject();
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(sourceObject.getProject());
             DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
             if (activeBrowserTree != null) {

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.oracle;
 
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.util.StringTokenizer;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
 
     @Override
     public boolean isTimeoutException(SQLException e) {
-        return e.getErrorCode() == 1013;
+        return e instanceof SQLTimeoutException || e.getErrorCode() == 1013;
     }
 
     @Override

@@ -32,11 +32,8 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     public Filter getFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            ObjectNameFilterSettings nameFilterSettings = connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings();
-            return nameFilterSettings.getFilter(objectRelationType);
-        }
-        return null;
+        ObjectNameFilterSettings nameFilterSettings = connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings();
+        return nameFilterSettings.getFilter(objectRelationType);
     }
 
     public DBObjectRelationType getObjectRelationType() {

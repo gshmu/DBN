@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.postgres;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -20,7 +21,7 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
 
     @Override
     public boolean isTimeoutException(SQLException e) {
-        return false;
+        return e instanceof SQLTimeoutException;
     }
 
     @Override

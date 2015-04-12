@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.util.Disposer;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
     public static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
@@ -141,10 +141,8 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public void disposeUIResources() {
-        if (configurationEditorForm != null) {
-            Disposer.dispose(configurationEditorForm);
-            configurationEditorForm = null;
-        }
+        DisposerUtil.dispose(configurationEditorForm);
+        configurationEditorForm = null;
     }
 
     public String getConfigElementName() {

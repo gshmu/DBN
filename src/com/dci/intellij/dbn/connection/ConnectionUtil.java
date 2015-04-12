@@ -8,13 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutTask;
+import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -97,51 +97,40 @@ public class ConnectionUtil {
     }
 
     public static Connection connect(final ConnectionDatabaseSettings databaseSettings, @Nullable Authentication temporaryAuthentication, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
-        ConnectTimeoutTask connectTask = null;
-        try {
-            connectTask = new ConnectTimeoutTask();
-            connectTask.connectionType = connectionType;
-            connectTask.temporaryAuthentication = temporaryAuthentication;
-            connectTask.databaseSettings = databaseSettings;
-            connectTask.connectionStatus = connectionStatus;
-            connectTask.autoCommit = autoCommit;
-            connectTask.start();
+        ConnectTimeoutCall connectCall = new ConnectTimeoutCall();
+        connectCall.connectionType = connectionType;
+        connectCall.temporaryAuthentication = temporaryAuthentication;
+        connectCall.databaseSettings = databaseSettings;
+        connectCall.connectionStatus = connectionStatus;
+        connectCall.autoCommit = autoCommit;
+        Connection connection = connectCall.start();
 
-        } catch (Exception e) {
-            if (e instanceof SQLException) {
-                throw (SQLException) e;
-            } else {
-                throw new SQLException(e.getMessage());
-            }
+        if (connectCall.exception != null) {
+            throw connectCall.exception;
         }
 
-        if (connectTask.exception != null) {
-            throw connectTask.exception;
-        }
-
-        if (connectTask.connection == null) {
+        if (connection == null) {
             throw new SQLException("Could not connect to database. Communication timeout");
         }
 
-        return connectTask.connection;
+        return connection;
     }
 
-    private static class ConnectTimeoutTask extends SimpleTimeoutTask {
+    private static class ConnectTimeoutCall extends SimpleTimeoutCall<Connection> {
         private ConnectionType connectionType;
         private Authentication temporaryAuthentication;
         private ConnectionDatabaseSettings databaseSettings;
         private ConnectionStatus connectionStatus;
         private boolean autoCommit;
 
-        private Connection connection;
         private SQLException exception;
 
-        public ConnectTimeoutTask() {
-            super("DBN connect thread", TimeUtil.THIRTY_SECONDS);
+        public ConnectTimeoutCall() {
+            super(30, TimeUnit.SECONDS, null);
         }
 
         @Override
-        public void run() {
+        public Connection call() throws Exception{
             try {
                 final Properties properties = new Properties();
                 Authentication authentication = databaseSettings.getAuthentication();
@@ -169,7 +158,7 @@ public class ConnectionUtil {
                         databaseSettings.getDriverLibrary(),
                         databaseSettings.getDriver());
 
-                connection = driver.connect(databaseSettings.getDatabaseUrl(), properties);
+                Connection connection = driver.connect(databaseSettings.getDatabaseUrl(), properties);
                 if (connection == null) {
                     throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
                 }
@@ -184,6 +173,7 @@ public class ConnectionUtil {
                 databaseSettings.setDatabaseType(databaseType);
                 databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
                 databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
+                return connection;
 
             } catch (Throwable e) {
                 DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
@@ -198,6 +188,7 @@ public class ConnectionUtil {
                         (SQLException) e :
                         new SQLException(e.getMessage());
             }
+            return null;
         }
     }
 

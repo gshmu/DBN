@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.object.common.status;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.editor.DBContentType;
 
 public class DBObjectStatusHolder {
@@ -10,7 +12,35 @@ public class DBObjectStatusHolder {
         this.mainContentType = mainContentType;
     }
 
-    private synchronized DBObjectStatusEntry get(DBContentType contentType, DBObjectStatus status, boolean create) {
+    private DBObjectStatusEntry get(DBContentType contentType, DBObjectStatus status, boolean create) {
+        DBObjectStatusEntry statusEntry = get(contentType, status);
+        if (statusEntry == null && create) {
+            synchronized (this) {
+                statusEntry = get(contentType, status);
+                if (statusEntry == null) {
+                    if (statusEntries == null) {
+                        statusEntries = new DBObjectStatusEntry[1];
+                        statusEntry = new DBObjectStatusEntry(contentType, status);
+                        statusEntries[0] = statusEntry;
+                    } else {
+                        statusEntry = get(contentType, status);
+                        if (statusEntry == null) {
+                            int currentSize = this.statusEntries.length;
+                            DBObjectStatusEntry[] statusEntries = new DBObjectStatusEntry[currentSize + 1];
+                            System.arraycopy(this.statusEntries, 0, statusEntries, 0, currentSize);
+                            statusEntry = new DBObjectStatusEntry(contentType, status);
+                            statusEntries[currentSize] = statusEntry;
+                            this.statusEntries = statusEntries;
+                        }
+                    }
+                }
+            }
+        }
+        return statusEntry;
+    }
+
+    @Nullable
+    private DBObjectStatusEntry get(DBContentType contentType, DBObjectStatus status) {
         if (statusEntries != null) {
             for (DBObjectStatusEntry statusEntry : statusEntries) {
                 if (statusEntry.getContentType() == contentType && statusEntry.getStatusType() == status) {
@@ -18,26 +48,7 @@ public class DBObjectStatusHolder {
                 }
             }
         }
-
-        DBObjectStatusEntry statusEntry = null;
-        if (create) {
-            if (statusEntries == null) {
-                statusEntries = new DBObjectStatusEntry[1];
-                statusEntry = new DBObjectStatusEntry(contentType, status);
-                statusEntries[0] = statusEntry;
-            } else {
-                statusEntry = get(contentType, status, false);
-                if (statusEntry == null) {
-                    int currentSize = this.statusEntries.length;
-                    DBObjectStatusEntry[] statusEntries = new DBObjectStatusEntry[currentSize + 1];
-                    System.arraycopy(this.statusEntries, 0, statusEntries, 0, currentSize);
-                    statusEntry = new DBObjectStatusEntry(contentType, status);
-                    statusEntries[currentSize] = statusEntry;
-                    this.statusEntries = statusEntries;
-                }
-            }
-        }
-        return statusEntry;
+        return null;
     }
 
 
@@ -78,21 +89,15 @@ public class DBObjectStatusHolder {
     }
 
     public boolean is(DBContentType contentType, DBObjectStatus status) {
-        DBObjectStatusEntry statusEntry = get(contentType, status, false);
+        DBObjectStatusEntry statusEntry = get(contentType, status);
         return statusEntry == null ?
                 status.getDefaultValue() :
                 statusEntry.getValue();
     }
 
     public boolean has(DBContentType contentType, DBObjectStatus status) {
-        if (statusEntries != null)  {
-            for (DBObjectStatusEntry statusEntry : statusEntries) {
-                if (statusEntry.getContentType() == contentType && statusEntry.getStatusType() == status) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        DBObjectStatusEntry statusEntry = get(contentType, status);
+        return statusEntry != null;
     }
 
     public boolean has(DBObjectStatus status) {

@@ -535,7 +535,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         private Project project;
         private String operationName;
         protected DebugOperationThread(String operationName, Project project) {
-            super("DBN Debug operation (" + operationName + ')');
+            super("DBN Debug Operation (" + operationName + ')');
             this.operationName = operationName;
         }
 

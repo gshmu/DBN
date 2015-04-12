@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
@@ -42,6 +41,7 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
 
 
     public SessionBrowserStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
+        super(sessionBrowser.getProject());
         this.sessionBrowser = sessionBrowser;
         this.content = content;
         ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
@@ -66,12 +66,6 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
 
     public SessionBrowser getSessionBrowser() {
         return sessionBrowser;
-    }
-
-    @NotNull
-    public Project getProject() {
-        Project project = sessionBrowser == null ? null : sessionBrowser.getProject();
-        return FailsafeUtil.get(project);
     }
 
     @NotNull

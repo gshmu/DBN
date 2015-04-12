@@ -1,19 +1,20 @@
 package com.dci.intellij.dbn.object.action;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
-
-import java.util.List;
 
 public class ObjectLazyNavigationListAction extends ObjectListShowAction {
     private DBObjectNavigationList navigationList;
-    private DBObject parentObject;
+    private DBObjectRef<DBObject> parentObjectRef;
 
     public ObjectLazyNavigationListAction(DBObject parentObject, DBObjectNavigationList navigationList) {
         super(navigationList.getName() + "...", parentObject);
         this.navigationList = navigationList;
-        this.parentObject = parentObject;
+        this.parentObjectRef = DBObjectRef.from(parentObject);
     }
 
     public List<DBObject> getObjectList() {
@@ -60,6 +61,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
     }*/
 
     protected AnAction createObjectAction(DBObject object) {
-        return new NavigateToObjectAction(parentObject, object);
+        DBObject sourceObject = DBObjectRef.getnn(parentObjectRef);
+        return new NavigateToObjectAction(sourceObject, object);
     }
 }

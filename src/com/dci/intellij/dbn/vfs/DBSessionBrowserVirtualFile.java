@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileSystem;
-import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.Icon;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -18,6 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.language.sql.SQLFileType;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.util.LocalTimeCounter;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -25,6 +24,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     private ConnectionHandlerRef connectionHandlerRef;
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
+        super(connectionHandler.getProject());
         this.connectionHandlerRef = connectionHandler.getRef();
         this.name = connectionHandler.getName();
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
@@ -40,20 +40,15 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     }
 
     @NotNull
-    public Project getProject() {
-        return getConnectionHandler().getProject();
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public boolean isValid() {
         return super.isValid() && connectionHandlerRef.isValid();
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
-    }
+    }    
 
     @NotNull
     @Override
