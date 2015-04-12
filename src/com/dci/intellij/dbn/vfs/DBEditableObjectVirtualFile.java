@@ -164,15 +164,18 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     public void updateDDLFiles(final DBContentType sourceContentType) {
-        DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(getProject());
-        if (ddlFileSettings.getGeneralSettings().isSynchronizeDDLFilesEnabled()) {
-            new ConditionalLaterInvocator() {
-                @Override
-                protected void execute() {
-                    ObjectToDDLContentSynchronizer synchronizer = new ObjectToDDLContentSynchronizer(sourceContentType, DBEditableObjectVirtualFile.this);
-                    ApplicationManager.getApplication().runWriteAction(synchronizer);
-                }
-            }.start();
+        Project project = getProject();
+        if (project != null) {
+            DDLFileSettings ddlFileSettings = DDLFileSettings.getInstance(project);
+            if (ddlFileSettings.getGeneralSettings().isSynchronizeDDLFilesEnabled()) {
+                new ConditionalLaterInvocator() {
+                    @Override
+                    protected void execute() {
+                        ObjectToDDLContentSynchronizer synchronizer = new ObjectToDDLContentSynchronizer(sourceContentType, DBEditableObjectVirtualFile.this);
+                        ApplicationManager.getApplication().runWriteAction(synchronizer);
+                    }
+                }.start();
+            }
         }
     }
 
@@ -287,16 +290,18 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     public void saveChanges() {
         FileDocumentManager.getInstance().saveAllDocuments();
         Project project = getProject();
-        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
-            if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
-                FileEditor[] fileEditors = fileEditorManager.getEditors(this);
-                for (FileEditor fileEditor : fileEditors) {
-                    if (fileEditor instanceof SourceCodeEditor) {
-                        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                        sourceCodeManager.updateSourceToDatabase(sourceCodeEditor);
-                        break;
+        if (project != null) {
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            for (DBContentVirtualFile contentVirtualFile : getContentFiles()) {
+                if (contentVirtualFile.isModified() && contentVirtualFile instanceof DBSourceCodeVirtualFile) {
+                    FileEditor[] fileEditors = fileEditorManager.getEditors(this);
+                    for (FileEditor fileEditor : fileEditors) {
+                        if (fileEditor instanceof SourceCodeEditor) {
+                            SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                            sourceCodeManager.updateSourceToDatabase(sourceCodeEditor);
+                            break;
+                        }
                     }
                 }
             }

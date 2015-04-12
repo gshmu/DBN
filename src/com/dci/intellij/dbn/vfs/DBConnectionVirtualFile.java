@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +19,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     private ConnectionHandlerRef connectionHandlerRef;
 
     public DBConnectionVirtualFile(ConnectionHandler connectionHandler) {
+        super(connectionHandler.getProject());
         this.connectionHandlerRef = connectionHandler.getRef();
         this.name = connectionHandler.getName();
     }
@@ -27,11 +27,6 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.get();
-    }
-
-    @NotNull
-    public Project getProject() {
-        return getConnectionHandler().getProject();
     }
 
     /*********************************************************

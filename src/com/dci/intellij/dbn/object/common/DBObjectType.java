@@ -99,7 +99,10 @@ public enum DBObjectType implements DynamicContentType {
     NON_EXISTENT(DatabaseObjectTypeId.NON_EXISTENT, "non-existent", null, null, null, true),
     UNKNOWN(DatabaseObjectTypeId.UNKNOWN, "unknown", null, null, null, true),
     NONE(DatabaseObjectTypeId.NONE, "none", null, null, null, true),
-    ANY(DatabaseObjectTypeId.ANY, "any", "dependencies", null, null, true);
+    ANY(DatabaseObjectTypeId.ANY, "any", "dependencies", null, null, true),
+
+    INCOMING_DEPENDENCY(DatabaseObjectTypeId.INCOMING_DEPENDENCY, "incoming dependency", "incoming dependencies", null, null, true),
+    OUTGOING_DEPENDENCY(DatabaseObjectTypeId.INCOMING_DEPENDENCY, "outgoing dependency", "outgoing dependencies", null, null, true);
 
     private DatabaseObjectTypeId typeId;
     private String name;
@@ -435,5 +438,8 @@ public enum DBObjectType implements DynamicContentType {
 
         PACKAGE.addIcon(DBContentType.CODE_SPEC, Icons.DBO_PACKAGE_SPEC);
         PACKAGE.addIcon(DBContentType.CODE_BODY, Icons.DBO_PACKAGE_BODY);
+
+        INCOMING_DEPENDENCY.setGenericType(ANY);
+        OUTGOING_DEPENDENCY.setGenericType(ANY);
     }
 }

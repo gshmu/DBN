@@ -57,8 +57,8 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         DBObjectProperties properties = getProperties();
         if (properties.is(DBObjectProperty.REFERENCEABLE)) {
             DBObjectListContainer childObjects = initChildObjects();
-            referencedObjects = childObjects.createObjectList(DBObjectType.ANY, this, REFERENCED_OBJECTS_LOADER, false, true);
-            referencingObjects = childObjects.createObjectList(DBObjectType.ANY, this, REFERENCING_OBJECTS_LOADER, false, true);
+            referencedObjects = childObjects.createObjectList(DBObjectType.INCOMING_DEPENDENCY, this, REFERENCED_OBJECTS_LOADER, false, true);
+            referencingObjects = childObjects.createObjectList(DBObjectType.OUTGOING_DEPENDENCY, this, REFERENCING_OBJECTS_LOADER, false, true);
         }
     }
 

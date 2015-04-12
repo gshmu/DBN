@@ -24,6 +24,8 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -57,7 +59,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
-    private DisposableLazyValue<ExecutionMessagesPanel> executionMessagesPanel = new DisposableLazyValue<ExecutionMessagesPanel>(this) {
+    private LazyValue<ExecutionMessagesPanel> executionMessagesPanel = new DisposableLazyValue<ExecutionMessagesPanel>(this) {
         @Override
         protected ExecutionMessagesPanel load() {
             return new ExecutionMessagesPanel(ExecutionConsoleForm.this);
@@ -347,13 +349,16 @@ public class ExecutionConsoleForm extends DBNFormImpl{
      *                       Logging                         *
      *********************************************************/
     public void displayLogOutput(ConnectionHandler connectionHandler, String output) {
+        boolean emptyOutput = StringUtil.isEmptyOrSpaces(output);
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult instanceof DatabaseLogOutput) {
                 DatabaseLogOutput logOutput = (DatabaseLogOutput) executionResult;
                 if (logOutput.getConnectionHandler() == connectionHandler) {
                     logOutput.write(output);
-                    tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
+                    if (!emptyOutput) {
+                        tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
+                    }
                     return;
                 }
             }
@@ -367,8 +372,9 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(form);
             tabInfo.setText(logOutput.getName());
-            tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
-
+            tabInfo.setIcon(emptyOutput ?
+                    Icons.EXEC_LOG_OUTPUT_CONSOLE :
+                    Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             if (visibilitySettings.getExecutionResultTabs().value()){
                 tabInfo.setTabColor(connectionHandler.getEnvironmentType().getColor());

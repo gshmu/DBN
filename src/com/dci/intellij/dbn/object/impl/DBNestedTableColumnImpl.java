@@ -30,11 +30,6 @@ public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTab
         return (DBNestedTable) getParentObject();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/

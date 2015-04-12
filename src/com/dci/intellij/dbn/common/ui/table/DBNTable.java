@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -45,6 +46,12 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private JBScrollPane scrollPane;
     private Timer scrollTimer;
 
+    @Override
+    public void setModel(TableModel dataModel) {
+        DBNTableModel tableModel = (DBNTableModel) dataModel;
+        Disposer.register(this, tableModel);
+        super.setModel(dataModel);
+    }
 
     public DBNTable(Project project, T tableModel, boolean showHeader) {
         super(tableModel);

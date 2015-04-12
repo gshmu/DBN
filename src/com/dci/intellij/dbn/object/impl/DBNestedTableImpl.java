@@ -65,12 +65,6 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
         super.buildToolTip(ttb);
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        typeRef = null;
-    }
-
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/

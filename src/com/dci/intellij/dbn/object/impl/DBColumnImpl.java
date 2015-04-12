@@ -332,9 +332,4 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         }
         return super.compareTo(o);
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

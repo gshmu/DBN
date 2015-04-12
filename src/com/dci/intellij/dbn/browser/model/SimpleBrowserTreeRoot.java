@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -20,16 +21,18 @@ import com.intellij.openapi.vcs.FileStatus;
 
 public class SimpleBrowserTreeRoot implements BrowserTreeNode {
     private List<ConnectionBundle> rootChildren;
-    private Project project;
+    private ProjectRef projectRef;
 
     public SimpleBrowserTreeRoot(Project project, ConnectionBundle connectionBundle) {
-        this.project = project;
-        this.rootChildren = new ArrayList<ConnectionBundle>();
-        this.rootChildren.add(connectionBundle);
+        this.projectRef = new ProjectRef(project);
+        if (connectionBundle != null) {
+            this.rootChildren = new ArrayList<ConnectionBundle>();
+            this.rootChildren.add(connectionBundle);
+        }
     }
 
     public Project getProject() {
-        return project;
+        return projectRef.get();
     }
 
     @Nullable

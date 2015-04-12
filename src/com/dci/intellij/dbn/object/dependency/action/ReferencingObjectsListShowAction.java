@@ -14,15 +14,15 @@ public class ReferencingObjectsListShowAction extends ObjectListShowAction {
     }
 
     public List<DBObject> getObjectList() {
-        return ((DBSchemaObject) sourceObject).getReferencingObjects();
+        return ((DBSchemaObject) getSourceObject()).getReferencingObjects();
     }
 
     public String getTitle() {
-        return "Objects referencing " + sourceObject.getQualifiedNameWithType();
+        return "Objects referencing " + getSourceObject().getQualifiedNameWithType();
     }
 
     public String getEmptyListMessage() {
-        return "No references on " +  sourceObject.getQualifiedNameWithType() + " found";
+        return "No references on " +  getSourceObject().getQualifiedNameWithType() + " found";
     }
 
     public String getListName() {
@@ -31,7 +31,7 @@ public class ReferencingObjectsListShowAction extends ObjectListShowAction {
 
     @Override
     protected AnAction createObjectAction(DBObject object) {
-        return new NavigateToObjectAction(this.sourceObject, object);
+        return new NavigateToObjectAction(this.getSourceObject(), object);
     }
     
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -121,38 +121,40 @@ public class StatementExecutionVariablesBundle implements Disposable{
         errorMap = null;
         List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(this.variables);
         Collections.sort(variables, NAME_LENGTH_COMPARATOR);
+        Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
         for (StatementExecutionVariable variable : variables) {
             String value = forPreview ? variable.getPreviewValueProvider().getValue() : variable.getValue();
             GenericDataType genericDataType = forPreview ? variable.getPreviewValueProvider().getDataType() : variable.getDataType();
 
             if (!StringUtil.isEmpty(value)) {
-                RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
 
                 if (genericDataType == GenericDataType.LITERAL) {
                     value = StringUtil.replace(value, "'", "''");
                     value = '\'' + value + '\'';
-                } else if (genericDataType == GenericDataType.DATE_TIME){
-                    DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                    try {
-                        Date date = regionalSettings.getFormatter().parseDateTime(value);
-                        value = metadataInterface.createDateString(date);
-                    } catch (ParseException e) {
-                        try {
-                            Date date = regionalSettings.getFormatter().parseDate(value);
-                            value = metadataInterface.createDateString(date);
-                        } catch (ParseException e1) {
-                            addError(variable, "Invalid date");
-                        }
-                    }
-                } else if (genericDataType == GenericDataType.NUMERIC){
-                    try {
-                        regionalSettings.getFormatter().parseNumber(value);
-                    } catch (ParseException e) {
-                        addError(variable, "Invalid number");
-                    }
-
                 } else {
-                    throw new IllegalArgumentException("Data type " + genericDataType.getName() + " not supported with execution variables.");
+                    if (genericDataType == GenericDataType.DATE_TIME){
+                        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                        try {
+                            Date date = formatter.parseDateTime(value);
+                            value = metadataInterface.createDateString(date);
+                        } catch (ParseException e) {
+                            try {
+                                Date date = formatter.parseDate(value);
+                                value = metadataInterface.createDateString(date);
+                            } catch (ParseException e1) {
+                                addError(variable, "Invalid date");
+                            }
+                        }
+                    } else if (genericDataType == GenericDataType.NUMERIC){
+                        try {
+                            formatter.parseNumber(value);
+                        } catch (ParseException e) {
+                            addError(variable, "Invalid number");
+                        }
+
+                    } else {
+                        throw new IllegalArgumentException("Data type " + genericDataType.getName() + " not supported with execution variables.");
+                    }
                 }
 
                 statementText = StringUtil.replaceIgnoreCase(statementText, variable.getName(), value);

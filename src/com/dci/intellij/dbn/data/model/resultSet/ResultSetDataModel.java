@@ -31,6 +31,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         this.resultSet = resultSet;
         setHeader(new ResultSetDataModelHeader(connectionHandler, resultSet));
         fetchNextRecords(maxRecords, false);
+        Disposer.register(connectionHandler, this);
     }
 
     protected T createRow(int resultSetRowIndex) throws SQLException {
@@ -87,7 +88,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     private void disposeRows(final List<T> oldRows) {
-        new SimpleBackgroundTask("dispose result-set mocel") {
+        new SimpleBackgroundTask("dispose result-set model") {
             @Override
             protected void execute() {
                 // dispose old content
@@ -135,13 +136,10 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
 
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            closeResultSet();
-            resultSet = null;
-            connectionHandler = null;
-        }
-    }
+        super.dispose();
+        closeResultSet();
+        resultSet = null;
+        connectionHandler = null;    }
 
     public boolean isInserting() {
         return false;

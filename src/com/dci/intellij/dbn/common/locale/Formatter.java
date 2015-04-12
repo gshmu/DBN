@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.project.Project;
 
 
-public class Formatter {
+public class Formatter implements Cloneable{
     private DateFormat dateFormat;
     private DateFormat timeFormat;
     private DateFormat dateTimeFormat;
@@ -29,6 +29,9 @@ public class Formatter {
     private String datetimeFormatPattern;
     private String numberFormatPattern;
     private String integerFormatPattern;
+
+    private Formatter() {
+    }
 
     public Formatter(Locale locale, DBDateFormat dateFormatOption, DBNumberFormat numberFormatOption) {
         int dFormat = dateFormatOption.getDateFormat();
@@ -104,7 +107,7 @@ public class Formatter {
         return integerFormatPattern;
     }
 
-    public synchronized String formatDate(Date date) {
+    public String formatDate(Date date) {
         return dateFormat.format(date);
     }
 
@@ -112,7 +115,7 @@ public class Formatter {
         return dateFormat.parse(string);
     }
 
-    public synchronized String formatTime(Date date) {
+    public String formatTime(Date date) {
         return timeFormat.format(date);
     }
 
@@ -120,7 +123,7 @@ public class Formatter {
         return timeFormat.parse(string);
     }
 
-    public synchronized String formatDateTime(Date date) {
+    public String formatDateTime(Date date) {
         return dateTimeFormat.format(date);
     }
 
@@ -129,7 +132,7 @@ public class Formatter {
     }
 
 
-    public synchronized String formatNumber(Number number) {
+    public String formatNumber(Number number) {
         return numberFormat.format(number);
     }
 
@@ -137,7 +140,7 @@ public class Formatter {
         return numberFormat.parse(string);
     }
 
-    public synchronized String formatInteger(Number number) {
+    public String formatInteger(Number number) {
         return integerFormat.format(number);
     }
 
@@ -145,7 +148,7 @@ public class Formatter {
         return integerFormat.parse(string);
     }
 
-    public synchronized String formatObject(Object object) {
+    public String formatObject(Object object) {
         if (object != null) {
             return
                 object instanceof Number ? formatNumber((Number) object) :
@@ -168,5 +171,55 @@ public class Formatter {
         return string;
     }
 
-    
+    @Override
+    public Formatter clone() {
+        Formatter clone = new Formatter();
+        clone.dateFormat = (DateFormat) dateFormat.clone();
+        clone.timeFormat = (DateFormat) timeFormat.clone();
+        clone.dateTimeFormat = (DateFormat) dateTimeFormat.clone();
+        clone.numberFormat = (NumberFormat) numberFormat.clone();
+        clone.integerFormat = (NumberFormat) integerFormat.clone();
+
+        clone.dateFormatPattern = dateFormatPattern;
+        clone.timeFormatPattern = timeFormatPattern;
+        clone.datetimeFormatPattern = datetimeFormatPattern;
+        clone.numberFormatPattern = numberFormatPattern;
+        clone.integerFormatPattern = integerFormatPattern;
+        return clone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Formatter formatter = (Formatter) o;
+
+        if (dateFormat != null ? !dateFormat.equals(formatter.dateFormat) : formatter.dateFormat != null) return false;
+        if (timeFormat != null ? !timeFormat.equals(formatter.timeFormat) : formatter.timeFormat != null) return false;
+        if (dateTimeFormat != null ? !dateTimeFormat.equals(formatter.dateTimeFormat) : formatter.dateTimeFormat != null) return false;
+        if (numberFormat != null ? !numberFormat.equals(formatter.numberFormat) : formatter.numberFormat != null) return false;
+        if (integerFormat != null ? !integerFormat.equals(formatter.integerFormat) : formatter.integerFormat != null) return false;
+        if (dateFormatPattern != null ? !dateFormatPattern.equals(formatter.dateFormatPattern) : formatter.dateFormatPattern != null) return false;
+        if (timeFormatPattern != null ? !timeFormatPattern.equals(formatter.timeFormatPattern) : formatter.timeFormatPattern != null) return false;
+        if (datetimeFormatPattern != null ? !datetimeFormatPattern.equals(formatter.datetimeFormatPattern) : formatter.datetimeFormatPattern != null) return false;
+        if (numberFormatPattern != null ? !numberFormatPattern.equals(formatter.numberFormatPattern) : formatter.numberFormatPattern != null) return false;
+        return !(integerFormatPattern != null ? !integerFormatPattern.equals(formatter.integerFormatPattern) : formatter.integerFormatPattern != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dateFormat != null ? dateFormat.hashCode() : 0;
+        result = 31 * result + (timeFormat != null ? timeFormat.hashCode() : 0);
+        result = 31 * result + (dateTimeFormat != null ? dateTimeFormat.hashCode() : 0);
+        result = 31 * result + (numberFormat != null ? numberFormat.hashCode() : 0);
+        result = 31 * result + (integerFormat != null ? integerFormat.hashCode() : 0);
+        result = 31 * result + (dateFormatPattern != null ? dateFormatPattern.hashCode() : 0);
+        result = 31 * result + (timeFormatPattern != null ? timeFormatPattern.hashCode() : 0);
+        result = 31 * result + (datetimeFormatPattern != null ? datetimeFormatPattern.hashCode() : 0);
+        result = 31 * result + (numberFormatPattern != null ? numberFormatPattern.hashCode() : 0);
+        result = 31 * result + (integerFormatPattern != null ? integerFormatPattern.hashCode() : 0);
+        return result;
+    }
 }

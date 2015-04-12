@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.method.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.action.ObjectListShowAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.AnAction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DebugProgramMethodAction extends ObjectListShowAction {
     public DebugProgramMethodAction(DBProgram program) {
@@ -17,7 +17,7 @@ public class DebugProgramMethodAction extends ObjectListShowAction {
     }
 
     public List<DBObject> getObjectList() {
-        DBProgram program = (DBProgram) sourceObject;
+        DBProgram program = (DBProgram) getSourceObject();
         List objects = new ArrayList();
         objects.addAll(program.getProcedures());
         objects.addAll(program.getFunctions());
@@ -29,7 +29,7 @@ public class DebugProgramMethodAction extends ObjectListShowAction {
     }
 
     public String getEmptyListMessage() {
-        DBProgram program = (DBProgram) sourceObject;
+        DBProgram program = (DBProgram) getSourceObject();
         return "The " + program.getQualifiedNameWithType() + " has no methods.";
     }
 
@@ -38,6 +38,6 @@ public class DebugProgramMethodAction extends ObjectListShowAction {
     }
 
     protected AnAction createObjectAction(DBObject object) {
-        return new DebugMethodAction((DBProgram) this.sourceObject, (DBMethod) object);
+        return new DebugMethodAction((DBProgram) getSourceObject(), (DBMethod) object);
     }
 }

@@ -152,8 +152,6 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
      *********************************************************/
     @Override
     public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-        }
+        super.dispose();
     }
 }

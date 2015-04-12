@@ -83,5 +83,7 @@ public enum DatabaseObjectTypeId {
     NON_EXISTENT,
     UNKNOWN,
     NONE,
-    ANY
+    ANY,
+    INCOMING_DEPENDENCY,
+    OUTGOING_DEPENDENCY
 }

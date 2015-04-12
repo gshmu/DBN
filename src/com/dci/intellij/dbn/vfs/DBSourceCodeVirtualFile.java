@@ -5,8 +5,10 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -38,6 +40,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
@@ -57,8 +60,9 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         DBSchemaObject object = getObject();
         updateChangeTimestamp();
         setCharset(databaseFile.getConnectionHandler().getSettings().getDetailSettings().getCharset());
+        Project project = FailsafeUtil.get(databaseFile.getProject());
         try {
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
             SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
             content = sourceCodeContent.getSourceCode();
             offsets = sourceCodeContent.getOffsets();
@@ -68,7 +72,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             sourceLoadError = e.getMessage();
             //MessageUtil.showErrorDialog("Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
         }
-        EventManager.subscribe(databaseFile.getProject(), DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventManager.subscribe(project, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -123,30 +127,33 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     };
 
     private void reloadAndUpdateEditors(boolean startInBackground) {
-        new BackgroundTask(getProject(), "Reloading object source code", startInBackground) {
-            @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                boolean reloaded = reloadFromDatabase();
-                if (reloaded) {
-                    new WriteActionRunner() {
-                        public void run() {
-                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                            FileEditor[] allEditors = fileEditorManager.getAllEditors(getMainDatabaseFile());
-                            for (FileEditor fileEditor : allEditors) {
-                                if (fileEditor instanceof SourceCodeEditor) {
-                                    SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
-                                    if (sourceCodeEditor.getVirtualFile().equals(DBSourceCodeVirtualFile.this)) {
-                                        Editor editor = sourceCodeEditor.getEditor();
-                                        editor.getDocument().setText(content);
-                                        setModified(false);
+        Project project = getProject();
+        if (project != null) {
+            new BackgroundTask(project, "Reloading object source code", startInBackground) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    boolean reloaded = reloadFromDatabase();
+                    if (reloaded) {
+                        new WriteActionRunner() {
+                            public void run() {
+                                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+                                FileEditor[] allEditors = fileEditorManager.getAllEditors(getMainDatabaseFile());
+                                for (FileEditor fileEditor : allEditors) {
+                                    if (fileEditor instanceof SourceCodeEditor) {
+                                        SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
+                                        if (sourceCodeEditor.getVirtualFile().equals(DBSourceCodeVirtualFile.this)) {
+                                            Editor editor = sourceCodeEditor.getEditor();
+                                            editor.getDocument().setText(content);
+                                            setModified(false);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }.start();
+                        }.start();
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public SourceCodeOffsets getOffsets() {
@@ -177,8 +184,13 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return getObject().getCodeParseRootId(contentType);
     }
 
+    @Nullable
     public DBLanguagePsiFile getPsiFile() {
-        return (DBLanguagePsiFile) PsiUtil.getPsiFile(getProject(), this);
+        Project project = getProject();
+        if (project != null) {
+            return (DBLanguagePsiFile) PsiUtil.getPsiFile(project, this);
+        }
+        return null;
     }
 
     public void updateChangeTimestamp() {
@@ -217,28 +229,32 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public boolean reloadFromDatabase() {
-        try {
-            updateChangeTimestamp();
-            originalContent = null;
+        Project project = getProject();
+        if (project != null) {
+            try {
+                updateChangeTimestamp();
+                originalContent = null;
 
-            DBSchemaObject object = getObject();
-            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
-            SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-            content = sourceCodeContent.getSourceCode();
-            offsets = sourceCodeContent.getOffsets();
+                DBSchemaObject object = getObject();
+                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                SourceCodeContent sourceCodeContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
+                content = sourceCodeContent.getSourceCode();
+                offsets = sourceCodeContent.getOffsets();
 
-            getMainDatabaseFile().updateDDLFiles(getContentType());
-            setModified(false);
-            sourceLoadError = null;
-            return true;
-        } catch (SQLException e) {
-            sourceLoadError = e.getMessage();
-            DBSchemaObject object = mainDatabaseFile.getObject();
-            MessageUtil.showErrorDialog(getProject(), "Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
-            return false;
-        } finally {
-            EventManager.notify(getProject(), SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
+                getMainDatabaseFile().updateDDLFiles(getContentType());
+                setModified(false);
+                sourceLoadError = null;
+                return true;
+            } catch (SQLException e) {
+                sourceLoadError = e.getMessage();
+                DBSchemaObject object = mainDatabaseFile.getObject();
+                MessageUtil.showErrorDialog(project, "Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
+                return false;
+            } finally {
+                EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
+            }
         }
+        return false;
     }
 
     public void updateToDatabase() throws SQLException {

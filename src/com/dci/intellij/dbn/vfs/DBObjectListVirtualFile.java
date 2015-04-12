@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFileImpl {
@@ -26,6 +25,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     protected T objectList;
 
     public DBObjectListVirtualFile(T objectList) {
+        super(objectList.getProject());
         this.objectList = objectList;
         this.name = NamingUtil.capitalize(objectList.getName());
     }
@@ -37,11 +37,6 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return objectList.getConnectionHandler();
-    }
-
-    @NotNull
-    public Project getProject() {
-        return objectList.getProject();
     }
 
     /*********************************************************

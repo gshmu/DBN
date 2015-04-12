@@ -4,7 +4,6 @@ import java.awt.datatransfer.Transferable;
 import java.util.Date;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -55,7 +54,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
         buffer.append("<table name=\"");
         buffer.append(model.getTableName());
         buffer.append("\">\n");
-        RegionalSettings regionalSettings = RegionalSettings.getInstance(connectionHandler.getProject());
+        Formatter formatter = getFormatter(connectionHandler.getProject());
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             buffer.append("    <row index=\"");
@@ -73,7 +72,6 @@ public class XMLDataExportProcessor extends DataExportProcessor{
                     Object object = model.getValue(rowIndex, columnIndex);
 
                     if (object != null) {
-                        Formatter formatter = regionalSettings.getFormatter();
                         if (object instanceof Number) {
                             Number number = (Number) object;
                             value = formatter.formatNumber(number);

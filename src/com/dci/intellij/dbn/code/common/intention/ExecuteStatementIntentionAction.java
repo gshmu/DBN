@@ -62,7 +62,9 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
         if (executable != null && fileEditor != null) {
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
             StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
-            executionManager.executeStatement(executionProcessor);
+            if (executionProcessor != null) {
+                executionManager.executeStatement(executionProcessor);
+            }
         }
     }
 
