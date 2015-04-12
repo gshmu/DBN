@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -37,8 +38,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         //toolWindow.setIcon(dbBrowser.getIcon(0));
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
 
-        displayMode = DatabaseBrowserSettings.getInstance(project).getGeneralSettings().getDisplayMode();
-        initBrowserForm();
+        rebuild();
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.Browser.Controls");
 
@@ -57,13 +57,10 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         EventManager.subscribe(project, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
     }
 
-    private void initBrowserForm() {
-        if (browserForm != null) {
-            Disposer.dispose(browserForm);
-        }
+    public void rebuild() {
+        displayMode = DatabaseBrowserSettings.getInstance(getProject()).getGeneralSettings().getDisplayMode();
         browserPanel.removeAll();
-
-        Project project = getProject();
+        DisposerUtil.dispose(browserForm);
         browserForm =
                 displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(this) :
                 displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(this) : null;
@@ -141,7 +138,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
             if (getDisplayMode() != displayMode) {
                 Disposer.dispose(browserForm);
                 setDisplayMode(displayMode);
-                initBrowserForm();
+                rebuild();
 
                 browserPanel.revalidate();
                 browserPanel.repaint();

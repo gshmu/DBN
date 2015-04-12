@@ -9,10 +9,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.HashSet;
 import gnu.trove.THashSet;
@@ -24,10 +26,8 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     private final Set<LoadInProgressTreeNode> loadInProgressNodes = new THashSet<LoadInProgressTreeNode>();
 
     protected BrowserTreeModel(BrowserTreeNode root) {
-        if (root != null) {
-            this.root = root;
-            EventManager.subscribe(root.getProject(), BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
-        }
+        this.root = root;
+        EventManager.subscribe(root.getProject(), BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
     }
 
     public void addTreeModelListener(TreeModelListener listener) {
@@ -46,7 +46,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     }
 
     public Project getProject() {
-        return root == null ? null : root.getProject();
+        return getRoot().getProject();
     }
 
     public abstract boolean contains(BrowserTreeNode node);
@@ -60,7 +60,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
             boolean startTimer = loadInProgressNodes.size() == 0;
             loadInProgressNodes.add(node);
             if (startTimer) {
-                Timer reloader = new Timer("DBN Load in progress tree leaf reloader");
+                Timer reloader = new Timer("DBN - Database Browser (load in progress reload timer)");
                 reloader.schedule(new LoadInProgressRefreshTask(), 0, 50);
             }
         }
@@ -73,10 +73,14 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
                 Iterator<LoadInProgressTreeNode> loadInProgressNodesIterator = loadInProgressNodes.iterator();
                 while (loadInProgressNodesIterator.hasNext()) {
                     LoadInProgressTreeNode loadInProgressTreeNode = loadInProgressNodesIterator.next();
-                    if (loadInProgressTreeNode.isDisposed()) {
+                    try {
+                        if (loadInProgressTreeNode.isDisposed()) {
+                            loadInProgressNodesIterator.remove();
+                        } else {
+                            notifyListeners(loadInProgressTreeNode, TreeEventType.NODES_CHANGED);
+                        }
+                    } catch (ProcessCanceledException e) {
                         loadInProgressNodesIterator.remove();
-                    } else {
-                        notifyListeners(loadInProgressTreeNode, TreeEventType.NODES_CHANGED);
                     }
                 }
 
@@ -95,7 +99,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
      *              TreeModel              *
      ***************************************/
     public BrowserTreeNode getRoot() {
-        return root;
+        return FailsafeUtil.get(root);
     }
 
     public Object getChild(Object parent, int index) {
@@ -126,8 +130,8 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
         if (!isDisposed) {
             isDisposed = true;
             EventManager.unsubscribe(browserTreeChangeListener);
-            browserTreeChangeListener = null;
             treeModelListeners.clear();
+            loadInProgressNodes.clear();
             root = null;
         }
     }

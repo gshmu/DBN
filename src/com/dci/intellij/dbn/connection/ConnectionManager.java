@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -60,7 +61,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private Timer idleConnectionCleaner;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
-        return project.getComponent(ConnectionManager.class);
+        return getComponent(project);
+    }
+
+    private static ConnectionManager getComponent(@NotNull Project project) {
+        return FailsafeUtil.getComponent(project, ConnectionManager.class);
     }
 
     private ConnectionManager(final Project project) {
@@ -83,7 +88,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = getProject();
         EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
         EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
-        idleConnectionCleaner = new Timer("DBN Idle connection cleaner [" + project.getName() + "]");
+        idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
     }
 

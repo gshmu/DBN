@@ -34,15 +34,20 @@ public class RegionalSettings extends Configuration<RegionalSettingsEditorForm> 
 
     @Override
     public void apply() throws ConfigurationException {
-        super.apply();
         formatter = useCustomFormats.value() ?
                 new Formatter(locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
                 new Formatter(locale, dateFormatOption, numberFormatOption);
-
+        super.apply();
     }
 
     public Formatter getFormatter(){
-        if (formatter == null) formatter = new Formatter(locale, dateFormatOption, numberFormatOption);
+        if (formatter == null) {
+            synchronized (this) {
+                if (formatter == null) {
+                    formatter = new Formatter(locale, dateFormatOption, numberFormatOption);
+                }
+            }
+        }
         return formatter;
     }
 

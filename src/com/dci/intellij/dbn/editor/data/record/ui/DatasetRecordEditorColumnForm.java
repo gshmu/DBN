@@ -1,7 +1,27 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.text.ParseException;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
@@ -24,46 +44,21 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.text.ParseException;
-import java.util.List;
-
-public class DatasetRecordEditorColumnForm extends DBNFormImpl {
+public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEditorForm> {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
     private JLabel dataTypeLabel;
     private JPanel mainPanel;
 
-    private DatasetRecordEditorForm parentForm;
     private DatasetEditorModelCell cell;
     private DataEditorComponent editorComponent;
 
-    private RegionalSettings regionalSettings;
-
     public DatasetRecordEditorColumnForm(DatasetRecordEditorForm parentForm, DatasetEditorModelCell cell) {
-        this.parentForm = parentForm;
+        super(parentForm);
         final DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
         DBColumn column = columnInfo.getColumn();
         DBDataType dataType = column.getDataType();
         Project project = column.getProject();
-        regionalSettings = RegionalSettings.getInstance(project);
 
         columnLabel.setIcon(column.getIcon());
         columnLabel.setText(column.getName());
@@ -143,7 +138,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         editorComponent.setEnabled(editable);
         editorComponent.setUserValueHolder(cell);
 
-        Formatter formatter = regionalSettings.getFormatter();
+        Formatter formatter = cell.getFormatter();
         if (cell.getUserValue() instanceof String) {
             String userValue = (String) cell.getUserValue();
             if (userValue.indexOf('\n') > -1) {
@@ -188,7 +183,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         Class clazz = dataType.getTypeClass();
         String textValue = editorComponent.getText().trim();
         if (textValue.length() > 0) {
-            Object value = getFormatter().parseObject(clazz, textValue);
+            Object value = cell.getFormatter().parseObject(clazz, textValue);
             DBNativeDataType nativeDataType = dataType.getNativeDataType();
             return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().convert(value);
         } else {
@@ -216,11 +211,6 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         }
     }
 
-    private Formatter getFormatter() {
-        Project project = cell.getRow().getModel().getDataset().getProject();
-        return Formatter.getInstance(project);
-    }
-
     /*********************************************************
      *                     Listeners                         *
      *********************************************************/
@@ -236,11 +226,12 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
+                DatasetRecordEditorForm parentComponent = getParentComponent();
                 if (e.getKeyCode() == 38) {//UP
-                    parentForm.focusPreviousColumnPanel(DatasetRecordEditorColumnForm.this);
+                    parentComponent.focusPreviousColumnPanel(DatasetRecordEditorColumnForm.this);
                     e.consume();
                 } else if (e.getKeyCode() == 40) { // DOWN
-                    parentForm.focusNextColumnPanel(DatasetRecordEditorColumnForm.this);
+                    parentComponent.focusNextColumnPanel(DatasetRecordEditorColumnForm.this);
                     e.consume();
                 }
             }
@@ -260,7 +251,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
                 }
 
                 Rectangle rectangle = new Rectangle(mainPanel.getLocation(), mainPanel.getSize());
-                parentForm.getColumnsPanel().scrollRectToVisible(rectangle);
+                getParentComponent().getColumnsPanel().scrollRectToVisible(rectangle);
             }
         }
 
@@ -272,8 +263,6 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
 
     public void dispose() {
         super.dispose();
-        regionalSettings = null;
-        parentForm = null;
         cell = null;
         editorComponent = null;
 

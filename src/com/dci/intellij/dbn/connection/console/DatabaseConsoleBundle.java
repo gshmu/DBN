@@ -74,6 +74,7 @@ public class DatabaseConsoleBundle implements Disposable{
     @Override
     public void dispose() {
         DisposerUtil.dispose(consoles);
+        connectionHandler = null;
     }
 
     public void renameConsole(String oldName, String newName) {

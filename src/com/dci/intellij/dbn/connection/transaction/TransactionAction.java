@@ -1,15 +1,14 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.notification.NotificationType;
-
 import java.io.Serializable;
 import java.sql.SQLException;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.intellij.notification.NotificationType;
+
 public enum TransactionAction implements Serializable {
     COMMIT(
-            Constants.DBN_TITLE_PREFIX + "Commit",
+            "Commit",
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             "Error committing connection \"{0}\". Details: {1}",
             false,
@@ -20,7 +19,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     ROLLBACK(
-            Constants.DBN_TITLE_PREFIX + "Rollback",
+            "Rollback",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             "Error rolling back connection \"{0}\". Details: {1}",
             false,
@@ -31,7 +30,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     ROLLBACK_IDLE(
-            Constants.DBN_TITLE_PREFIX + "Rollback",
+            "Rollback",
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             "Error rolling back connection \"{0}\". Details: {1}",
             false,
@@ -42,7 +41,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     DISCONNECT(
-            Constants.DBN_TITLE_PREFIX + "Disconnect",
+            "Disconnect",
             NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             "Error disconnecting from \"{0}\". Details: {1}",
             true,
@@ -54,7 +53,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     DISCONNECT_IDLE(
-            Constants.DBN_TITLE_PREFIX + "Idle Disconnect",
+            "Idle Disconnect",
             NotificationType.WARNING, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             "Error disconnecting from \"{0}\". Details: {1}",
             true,
@@ -65,7 +64,7 @@ public enum TransactionAction implements Serializable {
             }),
 
     PING(
-            Constants.DBN_TITLE_PREFIX + "Ping",
+            "Ping",
             null, "",
             "Error checking connectivity for \"{0}\". Details: {1}",
             false,
@@ -77,10 +76,10 @@ public enum TransactionAction implements Serializable {
             }),
 
     TURN_AUTO_COMMIT_ON(
-            Constants.DBN_TITLE_PREFIX + "Auto-Commit ON",
+            "Auto-Commit Switch ON",
             NotificationType.WARNING,
-            "Auto-Commit turned ON for connection \"{0}\".",
-            "Error turning Auto-Commit ON for connection \"{0}\". Details: {1}",
+            "Auto-Commit switched ON for connection \"{0}\".",
+            "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -90,9 +89,9 @@ public enum TransactionAction implements Serializable {
             }),
 
     TURN_AUTO_COMMIT_OFF(
-            Constants.DBN_TITLE_PREFIX + "Auto-Commit OFF",
-            NotificationType.INFORMATION, "Auto-Commit turned OFF for connection \"{0}\".",
-            "Error turning Auto-Commit OFF for connection\"{0}\". Details: {1}",
+            "Auto-Commit Switch OFF",
+            NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
+            "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
             new Executor() {
                 void execute(ConnectionHandler connectionHandler) throws SQLException {
@@ -109,7 +108,7 @@ public enum TransactionAction implements Serializable {
     private Executor executor;
     private boolean isStatusChange;
 
-    private TransactionAction(String name, NotificationType notificationType, String successNotificationMessage, String errorNotificationMessage, boolean isStatusChange, Executor executor) {
+    TransactionAction(String name, NotificationType notificationType, String successNotificationMessage, String errorNotificationMessage, boolean isStatusChange, Executor executor) {
         this.name = name;
         this.errorNotificationMessage = errorNotificationMessage;
         this.successNotificationMessage = successNotificationMessage;

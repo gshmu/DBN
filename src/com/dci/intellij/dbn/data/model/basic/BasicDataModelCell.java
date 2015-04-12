@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -80,8 +79,7 @@ public class BasicDataModelCell implements DataModelCell {
     @Override
     public String getFormattedUserValue() {
         if (userValue != null) {
-            RegionalSettings regionalSettings = getModel().getRegionalSettings();
-            Formatter formatter = regionalSettings.getFormatter();
+            Formatter formatter = getFormatter();
             return formatter.formatObject(userValue);
         }
         return null;
@@ -150,6 +148,11 @@ public class BasicDataModelCell implements DataModelCell {
             userValue = null;
             formattedUserValue = null;
         }
+    }
+
+    @NotNull
+    public Formatter getFormatter() {
+        return getModel().getFormatter();
     }
 
     public boolean isDisposed() {

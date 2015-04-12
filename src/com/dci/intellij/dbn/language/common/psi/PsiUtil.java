@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import java.util.Iterator;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
@@ -261,7 +262,7 @@ public class PsiUtil {
         return psiDocumentManager == null ? null : psiDocumentManager.getPsiFile(document);
     }
 
-    public static PsiFile getPsiFile(final Project project, final VirtualFile virtualFile) {
+    public static PsiFile getPsiFile(@NotNull final Project project, final VirtualFile virtualFile) {
         return new ConditionalReadActionRunner<PsiFile>() {
             @Override
             protected PsiFile run() {

@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.browser;
 
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
@@ -9,12 +17,14 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
+import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionManagerListener;
@@ -40,14 +50,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DatabaseBrowserManager",
@@ -62,7 +64,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);
     private BooleanSetting showObjectProperties = new BooleanSetting("show-object-properties", true);
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<Boolean>();
-    private DisposableLazyValue<BrowserToolWindowForm> toolWindowForm = new DisposableLazyValue<BrowserToolWindowForm>(this) {
+    private LazyValue<BrowserToolWindowForm> toolWindowForm = new DisposableLazyValue<BrowserToolWindowForm>(this) {
         @Override
         protected BrowserToolWindowForm load() {
             return new BrowserToolWindowForm(getProject());
@@ -156,7 +158,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
      *            ProjectComponent         *
      ***************************************/
     public static DatabaseBrowserManager getInstance(@NotNull Project project) {
-        return project.getComponent(DatabaseBrowserManager.class);
+        return FailsafeUtil.getComponent(project, DatabaseBrowserManager.class);
     }
 
     @NonNls @NotNull
@@ -215,7 +217,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         @Override
         public void connectionsChanged() {
             if (toolWindowForm.isLoaded()) {
-                getToolWindowForm().getBrowserForm().rebuild();
+                getToolWindowForm().rebuild();
             }
         }
     };

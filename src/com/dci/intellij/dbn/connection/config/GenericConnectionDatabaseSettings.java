@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.io.File;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSettings {
     protected String driverLibrary;
@@ -88,7 +88,11 @@ public class GenericConnectionDatabaseSettings extends ConnectionDatabaseSetting
 
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
-        setString(element, "driver-library", nvl(convertToRelativePath(driverLibrary)));
+        String driverLibrary = ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get() ?
+            convertToRelativePath(this.driverLibrary) :
+            this.driverLibrary;
+
+        setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
         setString(element, "url", nvl(databaseUrl));
     }

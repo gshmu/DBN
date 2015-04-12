@@ -65,7 +65,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public static SessionBrowserManager getInstance(@NotNull Project project) {
-        return project.getComponent(SessionBrowserManager.class);
+        return FailsafeUtil.getComponent(project, SessionBrowserManager.class);
     }
 
     public SessionBrowserSettings getSessionBrowserSettings() {
@@ -280,7 +280,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 openFiles.add(sessionBrowserFile);
 
                 if (schedule) {
-                    timestampUpdater = new Timer("DBN Session Browser timestamp updater");
+                    timestampUpdater = new Timer("DBN - Session Browser (timestamp update timer)");
                     timestampUpdater.schedule(new UpdateTimestampTask(), TimeUtil.ONE_SECOND, TimeUtil.ONE_SECOND);
                 }
             }

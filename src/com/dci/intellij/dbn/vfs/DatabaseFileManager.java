@@ -1,17 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -37,6 +27,17 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -54,7 +55,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         sessionId = UUID.randomUUID().toString();
     }
     public static DatabaseFileManager getInstance(@NotNull Project project) {
-        return project.getComponent(DatabaseFileManager.class);
+        return FailsafeUtil.getComponent(project, DatabaseFileManager.class);
     }
 
     /**
@@ -193,12 +194,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             for (VirtualFile virtualFile : fileViewProviderCache.keySet()) {
                 if (virtualFile instanceof DBContentVirtualFile) {
                     DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
-                    if (contentVirtualFile.isDisposed() || contentVirtualFile.getProject() == project) {
+                    if (contentVirtualFile.isDisposed() || !contentVirtualFile.isValid() ||contentVirtualFile.getProject() == project) {
                         fileViewProviderCache.remove(virtualFile);
                     }
                 } else if (virtualFile instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile objectVirtualFile = (DBObjectVirtualFile) virtualFile;
-                    if (objectVirtualFile.isDisposed() || objectVirtualFile.getProject() == project) {
+                    if (objectVirtualFile.isDisposed() || !objectVirtualFile.isValid() || objectVirtualFile.getProject() == project) {
                         fileViewProviderCache.remove(virtualFile);
                     }
                 }

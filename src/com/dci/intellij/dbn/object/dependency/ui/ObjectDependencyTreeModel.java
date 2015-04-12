@@ -109,6 +109,8 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     @Override
     public void dispose() {
         disposed = true;
+        listeners.clear();
+        tree = null;
         root = null;
     }
 

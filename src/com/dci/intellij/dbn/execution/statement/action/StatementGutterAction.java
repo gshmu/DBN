@@ -35,7 +35,9 @@ public class StatementGutterAction extends AnAction {
 
             if (executionProcessor == null) {
                 executionProcessor = getExecutionProcessor(true);
-                executionManager.executeStatement(executionProcessor);
+                if (executionProcessor != null) {
+                    executionManager.executeStatement(executionProcessor);
+                }
             } else {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
                 if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {

@@ -48,10 +48,4 @@ public class DBPackageProcedureImpl extends DBProcedureImpl implements DBPackage
     }
 
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {}
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        //packagee = null;
-    }
 }

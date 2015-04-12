@@ -140,11 +140,6 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         return properties;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/

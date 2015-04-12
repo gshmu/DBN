@@ -41,8 +41,6 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         addMouseListener(new SessionBrowserTableMouseListener(this));
         getSelectionModel().addListSelectionListener(listSelectionListener);
         this.sessionBrowser = sessionBrowser;
-
-
 /*
         DataProvider dataProvider = sessionBrowser.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);

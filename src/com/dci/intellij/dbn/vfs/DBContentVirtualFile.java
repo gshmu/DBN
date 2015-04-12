@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,9 +15,15 @@ import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements FileConnectionMappingProvider  {
     protected DBEditableObjectVirtualFile mainDatabaseFile;
@@ -33,6 +32,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     private boolean modified;
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
+        super(mainDatabaseFile.getProject());
         this.mainDatabaseFile = mainDatabaseFile;
         this.contentType = contentType;
 
@@ -68,6 +68,11 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     public void setModified(boolean modified) {
         this.modified = modified;
+    }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && mainDatabaseFile != null && mainDatabaseFile.isValid();
     }
 
     @NotNull
@@ -120,11 +125,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @Override
     protected String createUrl() {
         return DatabaseFileSystem.createUrl(getObject().getRef(), contentType);
-    }
-
-    @NotNull
-    public Project getProject() {
-        return getMainDatabaseFile().getProject();
     }
 
     public boolean isWritable() {

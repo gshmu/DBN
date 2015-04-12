@@ -69,11 +69,6 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         return true;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     private static final DynamicContentLoader ATTRIBUTES_LOADER = new DynamicContentResultSetLoader() {
         public ResultSet createResultSet(DynamicContent dynamicContent, Connection connection) throws SQLException {
             DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();

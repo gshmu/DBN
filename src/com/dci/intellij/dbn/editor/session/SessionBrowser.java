@@ -188,7 +188,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     public Project getProject() {
-        return sessionBrowserFile.getProject();
+        return FailsafeUtil.get(sessionBrowserFile.getProject());
     }
 
     @NotNull
@@ -309,7 +309,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     private void startRefreshTimer(int refreshInterval) {
         if (refreshTimer == null && refreshInterval > 0) {
-            refreshTimer = new Timer("DBN Session Browser refresher");
+            refreshTimer = new Timer("DBN - Session Browser (refresh timer)");
             int period = refreshInterval * 1000;
             refreshTimer.schedule(new RefreshTask(), period, period);
         }

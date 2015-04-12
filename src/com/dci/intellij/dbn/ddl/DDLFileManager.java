@@ -1,12 +1,7 @@
 package com.dci.intellij.dbn.ddl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -30,6 +25,12 @@ import com.intellij.openapi.fileTypes.FileTypeEvent;
 import com.intellij.openapi.fileTypes.FileTypeListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DDLFileManager",
@@ -61,7 +62,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     }
 
     public static DDLFileManager getInstance(@NotNull Project project) {
-        return project.getComponent(DDLFileManager.class);
+        return FailsafeUtil.getComponent(project, DDLFileManager.class);
     }
 
     public DDLFileExtensionSettings getExtensionSettings() {

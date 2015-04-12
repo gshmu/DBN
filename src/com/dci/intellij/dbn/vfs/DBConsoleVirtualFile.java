@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,12 +14,21 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentManagerImpl;
 import com.intellij.util.LocalTimeCounter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile, FileConnectionMappingProvider, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
@@ -38,7 +37,8 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     private DBObjectRef<DBSchema> currentSchemaRef;
 
     public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        super(connectionHandler.getProject());
+        connectionHandlerRef = connectionHandler.getRef();
         setCurrentSchemaName(connectionHandler.getUserName());
         setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
@@ -72,11 +72,6 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
         return connectionHandlerRef.get();
     }
 
-    @NotNull
-    public Project getProject() {
-        return getConnectionHandler().getProject();
-    }
-
     public void setCurrentSchema(DBSchema currentSchema) {
         this.currentSchemaRef = DBObjectRef.from(currentSchema);
     }
@@ -84,6 +79,12 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DBParseab
     public void setCurrentSchemaName(String currentSchemaName) {
         this.currentSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
     }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && connectionHandlerRef.isValid();
+    }
+
 
     @Nullable
     @Override

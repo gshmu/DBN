@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.connection.console;
 
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -17,6 +15,8 @@ import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.util.EventDispatcher;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class DatabaseConsoleManager extends AbstractProjectComponent {
     private final EventDispatcher<VirtualFileListener> eventDispatcher = EventDispatcher.create(VirtualFileListener.class);
@@ -26,7 +26,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent {
     }
 
     public static DatabaseConsoleManager getInstance(@NotNull Project project) {
-        return project.getComponent(DatabaseConsoleManager.class);
+        return FailsafeUtil.getComponent(project, DatabaseConsoleManager.class);
     }
 
     public void showCreateConsoleDialog(ConnectionHandler connectionHandler) {

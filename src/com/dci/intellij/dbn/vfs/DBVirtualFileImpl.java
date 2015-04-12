@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.vfs;
 import javax.swing.Icon;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -18,14 +20,22 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     protected String name;
     protected String path;
     protected String url;
+    private ProjectRef projectRef;
 
-    public DBVirtualFileImpl() {
+    public DBVirtualFileImpl(Project project) {
         id = ID_STORE.getAndIncrement();
+        projectRef = new ProjectRef(project);
     }
 
     @Override
     public boolean isInLocalFileSystem() {
         return false;
+    }
+
+    @Override
+    @Nullable
+    public final Project getProject() {
+        return projectRef.get();
     }
 
     public abstract Icon getIcon();
@@ -81,11 +91,10 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @NotNull protected abstract String createPath();
     @NotNull protected abstract String createUrl();
-    @NotNull protected abstract Project getProject();
 
     @Override
     public boolean isValid() {
-        return !isDisposed();
+        return !isDisposed() && getProject() != null;
     }
 
     private boolean disposed;

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -249,36 +250,32 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
         return list;
     }
 
-    public void selectActiveConnectionForEditor(Editor editor, @Nullable ConnectionHandler connectionHandler) {
-        if (editor!= null) {
-            Document document = editor.getDocument();
-            VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-            if (virtualFile != null && VirtualFileUtil.isLocalFileSystem(virtualFile) ) {
-                boolean changed = setActiveConnection(virtualFile, connectionHandler);
-                if (changed) {
-                    DocumentUtil.touchDocument(editor, true);
+    public void selectActiveConnectionForEditor(@NotNull Editor editor, @Nullable ConnectionHandler connectionHandler) {
+        Document document = editor.getDocument();
+        VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+        if (virtualFile != null && VirtualFileUtil.isLocalFileSystem(virtualFile) ) {
+            boolean changed = setActiveConnection(virtualFile, connectionHandler);
+            if (changed) {
+                DocumentUtil.touchDocument(editor, true);
 
-                    FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-                    if (fileEditor != null) {
-                        DBLanguageFileEditorToolbarForm toolbarForm = fileEditor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);
-                        if (toolbarForm != null) {
-                            toolbarForm.getAutoCommitLabel().setConnectionHandler(connectionHandler);
-                        }
+                FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
+                if (fileEditor != null) {
+                    DBLanguageFileEditorToolbarForm toolbarForm = fileEditor.getUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY);
+                    if (toolbarForm != null) {
+                        toolbarForm.getAutoCommitLabel().setConnectionHandler(connectionHandler);
                     }
                 }
             }
         }
     }
 
-    public void setCurrentSchemaForEditor(Editor editor, DBSchema schema) {
-        if (editor!= null) {
-            Document document = editor.getDocument();
-            VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-            if (virtualFile != null && (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile)) {
-                boolean changed = setCurrentSchema(virtualFile, schema);
-                if (changed) {
-                    DocumentUtil.touchDocument(editor, false);
-                }
+    public void setCurrentSchemaForEditor(@NotNull Editor editor, DBSchema schema) {
+        Document document = editor.getDocument();
+        VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+        if (virtualFile != null && (VirtualFileUtil.isLocalFileSystem(virtualFile) || virtualFile instanceof DBConsoleVirtualFile)) {
+            boolean changed = setCurrentSchema(virtualFile, schema);
+            if (changed) {
+                DocumentUtil.touchDocument(editor, false);
             }
         }
     }
@@ -512,7 +509,7 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     }
 
     public static FileConnectionMappingManager getInstance(@NotNull Project project) {
-        return project.getComponent(FileConnectionMappingManager.class);
+        return FailsafeUtil.getComponent(project, FileConnectionMappingManager.class);
     }
 
     @NotNull
