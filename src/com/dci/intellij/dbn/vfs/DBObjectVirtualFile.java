@@ -1,15 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -20,6 +12,13 @@ import com.intellij.ide.navigationToolbar.NavBarPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     private static final byte[] EMPTY_BYTE_CONTENT = new byte[0];
@@ -37,7 +36,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @NotNull
     public T getObject() {
-        return FailsafeUtil.get(objectRef.get());
+        return DBObjectRef.getnn(objectRef);
     }
 
     @NotNull
