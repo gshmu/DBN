@@ -28,7 +28,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
         setModal(false);
         setResizable(true);
         init();
-        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
+        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     @NotNull
@@ -116,7 +116,6 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            EventManager.unsubscribe(transactionListener);
             transactionListener = null;
         }
     }

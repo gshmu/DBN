@@ -18,7 +18,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
@@ -82,9 +84,17 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
 
             }
         });
+
+        EventManager.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
-
+    private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
+        @Override
+        public void settingsChanged() {
+            revalidate();
+            repaint();
+        }
+    };
 
     @NotNull
     public BasicTableSelectionRestorer createSelectionRestorer() {
@@ -304,7 +314,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         regionalSettings = null;
         dataGridSettings = null;
         tableGutter = null;
-        EditorColorsManager.getInstance().removeEditorColorsListener(this);
     }
 
     public Rectangle getCellRect(DataModelCell cell) {

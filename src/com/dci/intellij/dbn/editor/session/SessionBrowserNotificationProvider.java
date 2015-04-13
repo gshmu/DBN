@@ -21,7 +21,7 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
 
     public SessionBrowserNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
-        EventManager.subscribe(project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
+        EventManager.subscribe(project, project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 
     }
 

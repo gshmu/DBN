@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
@@ -66,8 +67,9 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
         headerForm = new DBNHeaderForm(connectionSettings.getDatabaseSettings().getName(), icon, detailSettings.getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        EventManager.subscribe(databaseSettings.getProject(), ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
-        EventManager.subscribe(databaseSettings.getProject(), EnvironmentConfigLocalListener.TOPIC, environmentConfigListener);
+        Project project = databaseSettings.getProject();
+        EventManager.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
+        EventManager.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, environmentConfigListener);
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();
@@ -110,11 +112,4 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
         }
     };
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        EventManager.unsubscribe(connectionPresentationChangeListener, environmentConfigListener);
-    }
 }

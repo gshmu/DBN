@@ -97,9 +97,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 */
         Disposer.register(this, editorForm);
 
-        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
-        EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
-        EventManager.subscribe(project, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
+        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        EventManager.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
+        EventManager.subscribe(project, this, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
     }
 
     @NotNull
@@ -604,7 +604,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            EventManager.unsubscribe(connectionStatusListener, transactionListener, dataGridSettingsChangeListener);
             editorForm = null;
             databaseFile = null;
             structureViewModel = null;

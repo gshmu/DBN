@@ -37,7 +37,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
             if (!subscribed) {
                 subscribed = true;
                 Project project = connectionHandler.getProject();
-                EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
+                EventManager.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
             }
         }
         update();
@@ -92,7 +92,6 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     @Override
     public void dispose() {
         connectionHandlerRef = null;
-        EventManager.unsubscribe(connectionStatusListener);
     }
 
 

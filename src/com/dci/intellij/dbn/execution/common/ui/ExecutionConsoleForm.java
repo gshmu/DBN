@@ -79,8 +79,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         resultTabs.setPopupGroup(new ExecutionConsolePopupActionGroup(this), "place", false);
         resultTabs.setTabsPosition(JBTabsPosition.bottom);
         resultTabs.setBorder(null);
-        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
-        EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        EventManager.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventManager.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public int getTabCount() {
@@ -510,10 +510,5 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         } finally {
             canScrollToSource = true;
         }
-    }
-
-    public void dispose() {
-        EventManager.unsubscribe(environmentChangeListener);
-        super.dispose();
     }
 }

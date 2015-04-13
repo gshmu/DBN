@@ -31,9 +31,9 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     public DDLMappedNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventManager.subscribe(project, DDLMappingListener.TOPIC, ddlMappingListener);
-        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerAdapter);
-        EventManager.subscribe(project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
+        EventManager.subscribe(project, project, DDLMappingListener.TOPIC, ddlMappingListener);
+        EventManager.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerAdapter);
+        EventManager.subscribe(project, project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
     }
 
     DDLMappingListener ddlMappingListener = new DDLMappingListener() {

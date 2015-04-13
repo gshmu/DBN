@@ -82,8 +82,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     private StatementExecutionManager(Project project) {
         super(project);
-        EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
-        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventManager.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        EventManager.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
@@ -163,12 +163,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             fileExecutionProcessors.put(textEditor, executionProcessors);
         }
         return executionProcessors;
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        EventManager.unsubscribe(psiDocumentTransactionListener);
     }
 
     private void bindExecutionProcessors(FileEditor fileEditor, MatchType matchType) {

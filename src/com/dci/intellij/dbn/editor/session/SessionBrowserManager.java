@@ -265,11 +265,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
     @Override
     public void projectOpened() {
-        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-    }
-
-    public void projectClosed() {
-        EventManager.unsubscribe(fileEditorManagerListener);
+        EventManager.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {

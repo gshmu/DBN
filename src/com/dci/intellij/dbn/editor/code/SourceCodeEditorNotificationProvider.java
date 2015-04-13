@@ -24,7 +24,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
     public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventManager.subscribe(project, SourceCodeLoadListener.TOPIC, sourceCodeLoadListener);
+        EventManager.subscribe(project, project, SourceCodeLoadListener.TOPIC, sourceCodeLoadListener);
 
     }
 

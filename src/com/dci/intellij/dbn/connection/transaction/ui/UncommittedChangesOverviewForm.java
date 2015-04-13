@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
@@ -50,7 +51,8 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        EventManager.subscribe(getProject(), TransactionListener.TOPIC, transactionListener);
+        Project project = getProject();
+        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {
@@ -84,7 +86,6 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
 
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(transactionListener);
         transactionListener = null;
         connectionHandlers = null;
     }

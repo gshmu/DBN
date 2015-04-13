@@ -358,12 +358,12 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void projectOpened() {
-        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+        EventManager.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
 
     @Override
     public void projectClosed() {
-        EventManager.unsubscribe(fileEditorListener);
+
     }
 
     @NonNls

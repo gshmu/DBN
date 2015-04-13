@@ -43,7 +43,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventManager.subscribe(getProject(), BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
+        EventManager.subscribe(getProject(), this, BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
     }
 
     public JComponent getComponent() {
@@ -104,7 +104,6 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     }
 
     public void dispose() {
-        EventManager.unsubscribe(browserSelectionChangeListener);
         super.dispose();
         object = null;
     }
