@@ -60,7 +60,7 @@ public class UncommittedChangesForm extends DBNFormImpl {
             rollbackButton.addActionListener(actionListener);
 
         }
-        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
+        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     @Override
@@ -71,7 +71,6 @@ public class UncommittedChangesForm extends DBNFormImpl {
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(transactionListener);
         transactionListener = null;
         connectionHandler = null;
     }

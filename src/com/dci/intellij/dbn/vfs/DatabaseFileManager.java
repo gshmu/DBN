@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.vfs;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentMap;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -27,17 +38,6 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.impl.FileManagerImpl;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 
 @State(
     name = "DBNavigator.Project.DatabaseFileManager",
@@ -79,16 +79,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     public void projectOpened() {
         Project project = getProject();
-        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventManager.subscribe(project, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
-    }
-
-    public void projectClosed() {
-        EventManager.unsubscribe(
-                fileEditorManagerListener,
-                fileEditorManagerListenerBefore,
-                connectionSettingsListener);
+        EventManager.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventManager.subscribe(project, this, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
+        EventManager.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {

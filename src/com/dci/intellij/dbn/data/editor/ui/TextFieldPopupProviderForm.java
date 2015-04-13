@@ -46,7 +46,8 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;
-        EventManager.subscribe(editorComponent.getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        Project project = editorComponent.getProject();
+        EventManager.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerAdapter() {
@@ -220,7 +221,6 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            EventManager.unsubscribe(fileEditorManagerListener);
             fileEditorManagerListener = null;
             editorComponent = null;
             popup = null;

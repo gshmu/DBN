@@ -68,7 +68,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public BasicDataModel(Project project) {
         this.project = project;
         this.formatter = Formatter.getInstance(project).clone();
-        EventManager.subscribe(project, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        EventManager.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
     @Override
@@ -337,7 +337,6 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            EventManager.unsubscribe(regionalSettingsListener);
             DisposerUtil.dispose(rows);
             tableModelListeners.clear();
             dataModelListeners.clear();

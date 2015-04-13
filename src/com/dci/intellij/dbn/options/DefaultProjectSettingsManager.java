@@ -36,12 +36,11 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
 
         @Override
     public void initComponent() {
-        EventManager.subscribe(ProjectLifecycleListener.TOPIC, projectLifecycleListener);
+        EventManager.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
     }
 
     @Override
     public void disposeComponent() {
-        EventManager.unsubscribe(projectLifecycleListener);
     }
 
     @NotNull

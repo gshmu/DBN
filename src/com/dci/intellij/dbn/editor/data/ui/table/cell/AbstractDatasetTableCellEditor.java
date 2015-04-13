@@ -64,7 +64,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
-        EventManager.subscribe(project, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
+        EventManager.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
 
         table.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -206,7 +206,6 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            EventManager.unsubscribe(cellValueListener);
             editorComponent = null;
             settings = null;
             table = null;

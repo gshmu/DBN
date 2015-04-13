@@ -168,17 +168,9 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     public void initComponent() {
         Project project = getProject();
-        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventManager.subscribe(project, ObjectFilterChangeListener.TOPIC, filterChangeListener);
-        EventManager.subscribe(project, ConnectionManagerListener.TOPIC, connectionManagerListener);
-    }
-
-    public void dispose() {
-        super.dispose();
-        EventManager.unsubscribe(
-                fileEditorManagerListener,
-                filterChangeListener,
-                connectionManagerListener);
+        EventManager.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventManager.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
+        EventManager.subscribe(project, this, ConnectionManagerListener.TOPIC, connectionManagerListener);
     }
 
     /**

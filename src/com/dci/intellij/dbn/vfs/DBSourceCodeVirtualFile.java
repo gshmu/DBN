@@ -72,7 +72,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             sourceLoadError = e.getMessage();
             //MessageUtil.showErrorDialog("Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
         }
-        EventManager.subscribe(project, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventManager.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -319,7 +319,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(dataDefinitionChangeListener);
         originalContent = null;
         lastSavedContent = null;
         content = "";

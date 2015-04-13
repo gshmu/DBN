@@ -27,7 +27,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
 
     protected BrowserTreeModel(BrowserTreeNode root) {
         this.root = root;
-        EventManager.subscribe(root.getProject(), BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
+        EventManager.subscribe(root.getProject(), this, BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
     }
 
     public void addTreeModelListener(TreeModelListener listener) {
@@ -129,7 +129,6 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            EventManager.unsubscribe(browserTreeChangeListener);
             treeModelListeners.clear();
             loadInProgressNodes.clear();
             root = null;

@@ -73,7 +73,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         autoConnectHintPanel.setVisible(visibleHint);
 
 
-        EventManager.subscribe(configuration.getProject(), EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
+        Project project = configuration.getProject();
+        EventManager.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
     }
 
     public void notifyPresentationChanges() {
@@ -190,7 +191,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
     @Override
     public void dispose() {
-        EventManager.unsubscribe(presentationChangeListener);
         super.dispose();
     }
 }

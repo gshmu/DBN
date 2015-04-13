@@ -22,7 +22,7 @@ public class DatasetEditorNotificationProvider extends EditorNotifications.Provi
     public DatasetEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventManager.subscribe(project, DatasetLoadListener.TOPIC, datasetLoadListener);
+        EventManager.subscribe(project, project, DatasetLoadListener.TOPIC, datasetLoadListener);
 
     }
 

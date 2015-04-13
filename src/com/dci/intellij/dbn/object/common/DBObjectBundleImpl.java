@@ -136,7 +136,8 @@ public class DBObjectBundleImpl implements DBObjectBundle {
                 ROLE_PRIVILEGE_RELATION_LOADER,
                 roles, systemPrivileges);
 
-        EventManager.subscribe(connectionHandler.getProject(), DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        Project project = connectionHandler.getProject();
+        EventManager.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -650,7 +651,6 @@ public class DBObjectBundleImpl implements DBObjectBundle {
     public void dispose() {
         if (!isDisposed) {
             isDisposed = true;
-            EventManager.unsubscribe(dataDefinitionChangeListener);
             DisposerUtil.dispose(objectLists);
             DisposerUtil.dispose(objectRelationLists);
             CollectionUtil.clearCollection(visibleTreeChildren);

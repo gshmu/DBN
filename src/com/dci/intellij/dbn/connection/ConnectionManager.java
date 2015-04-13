@@ -86,8 +86,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void initComponent() {
         super.initComponent();
         Project project = getProject();
-        EventManager.subscribe(project, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
-        EventManager.subscribe(project, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        EventManager.subscribe(project, this, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
+        EventManager.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
     }
@@ -98,9 +98,6 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         super.dispose();
         idleConnectionCleaner.cancel();
         idleConnectionCleaner.purge();
-        EventManager.unsubscribe(
-                connectionBundleSettingsListener,
-                connectionSettingsListener);
         Disposer.dispose(connectionBundle);
     }
 

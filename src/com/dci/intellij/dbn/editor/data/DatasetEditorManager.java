@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.editor.data;
 
+import java.awt.Component;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.event.EventManager;
@@ -33,15 +42,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.Component;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 
 @State(
     name = "DBNavigator.Project.DataEditorManager",
@@ -175,15 +175,8 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
 
     @Override
     public void initComponent() {
-        EventManager.subscribe(getProject(), FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+        EventManager.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        EventManager.unsubscribe(fileEditorListener);
-    }
-
 
     /****************************************
      *       PersistentStateComponent       *
