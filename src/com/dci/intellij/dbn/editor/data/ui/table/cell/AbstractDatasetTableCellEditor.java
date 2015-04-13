@@ -19,9 +19,9 @@ import java.text.ParseException;
 import java.util.EventObject;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -64,7 +64,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
-        EventManager.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
+        EventUtil.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
 
         table.addPropertyChangeListener(new PropertyChangeListener() {
             @Override

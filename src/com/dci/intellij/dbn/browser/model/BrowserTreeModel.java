@@ -10,9 +10,9 @@ import java.util.TimerTask;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -27,7 +27,7 @@ public abstract class BrowserTreeModel implements TreeModel, Disposable {
 
     protected BrowserTreeModel(BrowserTreeNode root) {
         this.root = root;
-        EventManager.subscribe(root.getProject(), this, BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
+        EventUtil.subscribe(root.getProject(), this, BrowserTreeChangeListener.TOPIC, browserTreeChangeListener);
     }
 
     public void addTreeModelListener(TreeModelListener listener) {

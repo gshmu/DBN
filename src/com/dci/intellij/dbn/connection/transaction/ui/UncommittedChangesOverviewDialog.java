@@ -8,9 +8,9 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
@@ -28,7 +28,7 @@ public class UncommittedChangesOverviewDialog extends DBNDialog<UncommittedChang
         setModal(false);
         setResizable(true);
         init();
-        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     @NotNull

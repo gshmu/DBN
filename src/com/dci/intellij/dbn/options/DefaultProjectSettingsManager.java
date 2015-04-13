@@ -4,7 +4,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -36,7 +36,7 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
 
         @Override
     public void initComponent() {
-        EventManager.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
+        EventUtil.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
     }
 
     @Override

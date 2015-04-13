@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
@@ -59,7 +59,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     public void executeActions(ConnectionHandler connectionHandler, TransactionAction... actions) {
         Project project = getProject();
         String connectionName = connectionHandler.getName();
-        TransactionListener transactionListener = EventManager.notify(project, TransactionListener.TOPIC);
+        TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
             if (action != null) {
                 boolean success = true;
@@ -91,7 +91,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                         transactionListener.afterAction(connectionHandler, action, success);
 
                         if (action.isStatusChange()) {
-                            ConnectionStatusListener statusListener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
+                            ConnectionStatusListener statusListener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
                             statusListener.statusChanged(connectionHandler.getId());
                         }
                     }

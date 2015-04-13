@@ -12,9 +12,9 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -50,7 +50,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             public void tabsMoved() {}
         });
 
-        EventManager.subscribe(getProject(), this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(getProject(), this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
 
         Disposer.register(this, connectionTabs);
     }

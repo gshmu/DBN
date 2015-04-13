@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -52,7 +52,7 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
         updateListModel();
 
         Project project = getProject();
-        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {

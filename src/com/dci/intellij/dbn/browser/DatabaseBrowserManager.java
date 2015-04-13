@@ -18,12 +18,12 @@ import com.dci.intellij.dbn.browser.ui.BrowserToolWindowForm;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -168,9 +168,9 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     public void initComponent() {
         Project project = getProject();
-        EventManager.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventManager.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
-        EventManager.subscribe(project, this, ConnectionManagerListener.TOPIC, connectionManagerListener);
+        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventUtil.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
+        EventUtil.subscribe(project, this, ConnectionManagerListener.TOPIC, connectionManagerListener);
     }
 
     /**

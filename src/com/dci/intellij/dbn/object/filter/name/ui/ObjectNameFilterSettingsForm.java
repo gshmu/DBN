@@ -11,10 +11,10 @@ import java.awt.event.MouseEvent;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -140,7 +140,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
             public void notifyChanges() {
                 if (notifyFilterListeners) {
                     Project project = filterSettings.getProject();
-                    ObjectFilterChangeListener listener = EventManager.notify(project, ObjectFilterChangeListener.TOPIC);
+                    ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     if (connectionHandler != null) {
                         listener.nameFiltersChanged(connectionHandler, null);

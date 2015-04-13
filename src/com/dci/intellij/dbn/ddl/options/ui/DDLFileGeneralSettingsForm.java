@@ -6,10 +6,10 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
 import com.intellij.openapi.options.ConfigurationException;
@@ -73,7 +73,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
             @Override
             public void notifyChanges() {
                 if (settingChanged) {
-                    DDLFileSettingsChangeListener listener = EventManager.notify(settings.getProject(), DDLFileSettingsChangeListener.TOPIC);
+                    DDLFileSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DDLFileSettingsChangeListener.TOPIC);
                     listener.settingsChanged();
 
                 }
