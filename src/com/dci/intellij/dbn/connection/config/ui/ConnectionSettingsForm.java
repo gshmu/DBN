@@ -9,12 +9,12 @@ import java.awt.Color;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -68,8 +68,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         headerForm = new DBNHeaderForm(connectionSettings.getDatabaseSettings().getName(), icon, detailSettings.getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         Project project = databaseSettings.getProject();
-        EventManager.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
-        EventManager.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, environmentConfigListener);
+        EventUtil.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, environmentConfigListener);
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();

@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
@@ -32,6 +31,7 @@ import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -139,7 +139,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
                connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
-        ConnectionPresentationChangeListener listener = EventManager.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
+        ConnectionPresentationChangeListener listener = EventUtil.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
         EnvironmentType environmentType = configuration.getParent().getDetailSettings().getEnvironmentType();
         listener.presentationChanged(name, icon, environmentType.getColor(), getConfiguration().getConnectionId(), configuration.getDatabaseType());
 
@@ -325,7 +325,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
             public void notifyChanges() {
                 if (settingsChanged) {
                     Project project = connectionConfig.getProject();
-                    ConnectionSettingsListener listener = EventManager.notify(project, ConnectionSettingsListener.TOPIC);
+                    ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
                     listener.settingsChanged(connectionConfig.getConnectionId());
                 }
             }

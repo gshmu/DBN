@@ -16,13 +16,13 @@ import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -74,12 +74,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
 
         Project project = configuration.getProject();
-        EventManager.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
     }
 
     public void notifyPresentationChanges() {
         Project project = getConfiguration().getProject();
-        ConnectionPresentationChangeListener listener = EventManager.notify(project, ConnectionPresentationChangeListener.TOPIC);
+        ConnectionPresentationChangeListener listener = EventUtil.notify(project, ConnectionPresentationChangeListener.TOPIC);
         EnvironmentType environmentType = environmentTypesComboBox.getSelectedValue();
         Color color = environmentType == null ? null : environmentType.getColor();
         listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null);
@@ -149,12 +149,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             public void notifyChanges() {
                 Project project = configuration.getProject();
                 if (environmentChanged) {
-                    EnvironmentChangeListener listener = EventManager.notify(project, EnvironmentChangeListener.TOPIC);
+                    EnvironmentChangeListener listener = EventUtil.notify(project, EnvironmentChangeListener.TOPIC);
                     listener.configurationChanged();
                 }
 
                 if (settingsChanged) {
-                    ConnectionStatusListener listener = EventManager.notify(project, ConnectionStatusListener.TOPIC);
+                    ConnectionStatusListener listener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
                     listener.statusChanged(configuration.getConnectionId());
                 }
             }

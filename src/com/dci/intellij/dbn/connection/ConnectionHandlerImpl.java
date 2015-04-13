@@ -13,13 +13,13 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -513,7 +513,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
                     //fixme check if the connection is pointing to a new database and reload if this is the case
                     //objectBundle.checkForDatabaseChange();
 
-                    EventManager.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(getObjectBundle(), TreeEventType.NODES_CHANGED);
+                    EventUtil.notify(project, BrowserTreeChangeListener.TOPIC).nodeChanged(getObjectBundle(), TreeEventType.NODES_CHANGED);
                 }
             }.start();
         }

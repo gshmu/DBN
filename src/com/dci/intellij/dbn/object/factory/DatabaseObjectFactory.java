@@ -1,9 +1,16 @@
 package com.dci.intellij.dbn.object.factory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,13 +31,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
 
@@ -47,9 +47,9 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         int eventType = event.getEventType();
         Project project = getProject();
         if (eventType == ObjectFactoryEvent.EVENT_TYPE_CREATE) {
-            EventManager.notify(project, ObjectFactoryListener.TOPIC).objectCreated(object);
+            EventUtil.notify(project, ObjectFactoryListener.TOPIC).objectCreated(object);
         } else if (eventType == ObjectFactoryEvent.EVENT_TYPE_DROP) {
-            EventManager.notify(project, ObjectFactoryListener.TOPIC).objectDropped(object);
+            EventUtil.notify(project, ObjectFactoryListener.TOPIC).objectDropped(object);
         }
     }
 

@@ -9,10 +9,10 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
@@ -60,7 +60,7 @@ public class UncommittedChangesForm extends DBNFormImpl {
             rollbackButton.addActionListener(actionListener);
 
         }
-        EventManager.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     @Override

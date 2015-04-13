@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -23,6 +22,7 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
@@ -192,7 +192,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         regionalSettings.getCustomNumberFormat().applyChanges(customNumberFormatTextField);
 
         if (modified) {
-            EventManager.notify(getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
+            EventUtil.notify(getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
         }
 
     }

@@ -13,13 +13,13 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -68,7 +68,7 @@ public class BasicDataModel<T extends DataModelRow> implements DataModel<T> {
     public BasicDataModel(Project project) {
         this.project = project;
         this.formatter = Formatter.getInstance(project).clone();
-        EventManager.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
     @Override

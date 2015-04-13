@@ -13,13 +13,13 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
@@ -86,8 +86,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void initComponent() {
         super.initComponent();
         Project project = getProject();
-        EventManager.subscribe(project, this, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
-        EventManager.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        EventUtil.subscribe(project, this, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
+        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
     }
@@ -108,7 +108,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
         @Override
         public void settingsChanged() {
-            EventManager.notify(getProject(), ConnectionManagerListener.TOPIC).connectionsChanged();
+            EventUtil.notify(getProject(), ConnectionManagerListener.TOPIC).connectionsChanged();
         }
     };
 

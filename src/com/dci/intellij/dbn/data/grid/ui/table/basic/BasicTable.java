@@ -18,12 +18,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -85,14 +86,19 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             }
         });
 
-        EventManager.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
         public void settingsChanged() {
-            revalidate();
-            repaint();
+            new SimpleLaterInvocator() {
+                @Override
+                protected void execute() {
+                    revalidate();
+                    repaint();
+                }
+            }.start();
         }
     };
 

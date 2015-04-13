@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -31,7 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
     private EnvironmentManager(Project project) {
         super(project);
-        EventManager.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
 
     }
 

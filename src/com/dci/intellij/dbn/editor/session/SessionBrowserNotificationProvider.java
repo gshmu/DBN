@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.session;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserErrorNotificationPanel;
@@ -21,7 +21,7 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
 
     public SessionBrowserNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
-        EventManager.subscribe(project, project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
+        EventUtil.subscribe(project, project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 
     }
 
