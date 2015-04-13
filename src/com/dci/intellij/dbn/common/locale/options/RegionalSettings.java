@@ -34,9 +34,7 @@ public class RegionalSettings extends Configuration<RegionalSettingsEditorForm> 
 
     @Override
     public void apply() throws ConfigurationException {
-        formatter = useCustomFormats.value() ?
-                new Formatter(locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
-                new Formatter(locale, dateFormatOption, numberFormatOption);
+        formatter = null;
         super.apply();
     }
 
@@ -44,7 +42,9 @@ public class RegionalSettings extends Configuration<RegionalSettingsEditorForm> 
         if (formatter == null) {
             synchronized (this) {
                 if (formatter == null) {
-                    formatter = new Formatter(locale, dateFormatOption, numberFormatOption);
+                    formatter = useCustomFormats.value() ?
+                            new Formatter(locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
+                            new Formatter(locale, dateFormatOption, numberFormatOption);
                 }
             }
         }
