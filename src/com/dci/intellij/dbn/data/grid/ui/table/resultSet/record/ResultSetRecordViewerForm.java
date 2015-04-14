@@ -106,7 +106,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
     }
 
     public JComponent getPreferredFocusedComponent() {
-        return columnForms.get(0).getViewComponent();
+        return null;//columnForms.get(0).getViewComponent();
     }
 
     public JPanel getComponent() {
