@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.project.Project;
@@ -149,8 +150,11 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
         DBEditableObjectVirtualFile databaseFile = breakpoint.getUserData(DATABASE_FILE_KEY);
         if (databaseFile == null) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFile = (DBEditableObjectVirtualFile) databaseFileSystem.findFileByPath(breakpoint.getFileUrl());
-            breakpoint.putUserData(DATABASE_FILE_KEY, databaseFile);
+            DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) databaseFileSystem.findFileByPath(breakpoint.getFileUrl());
+            if (contentVirtualFile != null) {
+                databaseFile = contentVirtualFile.getMainDatabaseFile();
+                breakpoint.putUserData(DATABASE_FILE_KEY, databaseFile);
+            }
         }
         return databaseFile; 
     }
