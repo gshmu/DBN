@@ -44,7 +44,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.GenericDatabaseSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -126,8 +126,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             for (int i=0; i<oldConnections.size(); i++) {
                 ConnectionSettings oldConfig = oldConnections.get(i).getSettings();
                 ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
+                ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) newConfig.getDatabaseSettings().getSettingsEditor();
                 if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
-                        (newConfig.getSettingsEditor() != null && newConfig.getDatabaseSettings().getSettingsEditor().isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
+                        (databaseSettingsForm != null && databaseSettingsForm.isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
                     listChanged.set(true);
                     break;
                 }
@@ -252,7 +253,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             while (model.getConnectionConfig(name) != null) {
                 name = NamingUtil.getNextNumberedName(name, true);
             }
-            GenericConnectionDatabaseSettings connectionConfig = (GenericConnectionDatabaseSettings) connectionSettings.getDatabaseSettings();
+            GenericDatabaseSettings connectionConfig = (GenericDatabaseSettings) connectionSettings.getDatabaseSettings();
             connectionConfig.setName(name);
             int selectedIndex = connectionsList.getSelectedIndex() + 1;
             model.add(selectedIndex, connectionSettings);

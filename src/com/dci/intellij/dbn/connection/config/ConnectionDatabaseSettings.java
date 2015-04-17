@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.jdom.Element;
@@ -8,14 +9,17 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.FileUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
-public abstract class ConnectionDatabaseSettings extends Configuration<GenericDatabaseSettingsForm> {
+public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
@@ -25,6 +29,10 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     protected DatabaseType databaseType = DatabaseType.UNKNOWN;
     protected double databaseVersion = 9999;
     protected int hashCode;
+
+    protected String driverLibrary;
+    protected String driver;
+
     private Authentication authentication = new Authentication();
     private Map<String, String> properties = new HashMap<String, String>();
 
@@ -56,6 +64,22 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     public String getName() {
         return name;
+    }
+
+    public String getDriverLibrary() {
+        return driverLibrary;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriverLibrary(String driverLibrary) {
+        this.driverLibrary = driverLibrary;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
     }
 
     public String getDisplayName() {
@@ -115,11 +139,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         return "database";
     }
 
-    public abstract String getDriverLibrary();
-
     public abstract void updateHashCode();
-
-    public abstract String getDriver();
 
     public abstract String getDatabaseUrl();
 
@@ -127,6 +147,9 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     public int hashCode() {
         return hashCode;
     }
+
+    @Override
+    public abstract ConnectionDatabaseSettings clone();
 
     @NotNull
     public String getConnectionId() {
@@ -147,6 +170,10 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         description      = getString(element, "description", description);
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
+
+        driverLibrary = convertToAbsolutePath(getString(element, "driver-library", driverLibrary));
+        driver        = getString(element, "driver", driver);
+
         authentication.setUser(getString(element, "user", authentication.getUser()));
         authentication.setPassword(PasswordUtil.decodePassword(getString(element, "password", authentication.getPassword())));
         authentication.setOsAuthentication(getBoolean(element, "os-authentication", authentication.isOsAuthentication()));
@@ -164,6 +191,13 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     }
 
     public void writeConfiguration(Element element) {
+        String driverLibrary = ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get() ?
+                convertToRelativePath(this.driverLibrary) :
+                this.driverLibrary;
+
+        setString(element, "driver-library", nvl(driverLibrary));
+        setString(element, "driver", nvl(driver));
+
         setString(element, "name", nvl(name));
         setString(element, "description", nvl(description));
         setBoolean(element, "active", active);
@@ -192,5 +226,37 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     protected static String nvl(Object value) {
         return (String) (value == null ? "" : value);
+    }
+
+    protected String convertToRelativePath(String path) {
+        if (!StringUtil.isEmptyOrSpaces(path)) {
+            VirtualFile baseDir = getProject().getBaseDir();
+            if (baseDir != null) {
+                File projectDir = new File(baseDir.getPath());
+                String relativePath = com.intellij.openapi.util.io.FileUtil.getRelativePath(projectDir, new File(path));
+                if (relativePath != null) {
+                    if (relativePath.lastIndexOf(".." + File.separatorChar) < 1) {
+                        return relativePath;
+                    }
+                }
+            }
+        }
+        return path;
+    }
+
+    protected String convertToAbsolutePath(String path) {
+        if (!StringUtil.isEmptyOrSpaces(path)) {
+            VirtualFile baseDir = getProject().getBaseDir();
+            if (baseDir != null) {
+                File projectDir = new File(baseDir.getPath());
+                if (new File(path).isAbsolute()) {
+                    return path;
+                } else {
+                    File file = FileUtil.createFileByRelativePath(projectDir, path);
+                    return file == null ? null : file.getPath();
+                }
+            }
+        }
+        return path;
     }
 }

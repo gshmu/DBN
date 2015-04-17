@@ -69,7 +69,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         configuration.setActive(enabled);
         configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
         configuration.setPort(ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null));
-        configuration.setUser(ConfigurationEditorUtil.validateStringInputValue(userTextField, "User", enabled));
+        configuration.setUser(userTextField.getText());
         configuration.setPassword(new String(passwordField.getPassword()));
 
     }

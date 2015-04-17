@@ -17,18 +17,18 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
-import com.dci.intellij.dbn.connection.config.GenericDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.GuidedDatabaseSettings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 
-public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<GenericDatabaseSettings>{
+public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<GuidedDatabaseSettings> {
     private JPanel mainPanel;
     private JTextField nameTextField;
     private JTextField descriptionTextField;
     private JTextField userTextField;
-    private JTextField urlTextField;
+    private JTextField hostTextField;
     private TextFieldWithBrowseButton driverLibraryTextField;
     private DBNComboBox<DriverOption> driverComboBox;
     private JPasswordField passwordField;
@@ -38,17 +38,16 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
     private JPanel connectionParametersPanel;
     private JPanel propertiesGroupPanel;
     private JPanel propertiesPanel;
-
-    private GenericDatabaseSettings temporaryConfig;
+    private JTextField portTextField;
+    private JTextField databaseTextField;
 
     private PropertiesEditorForm propertiesEditorForm;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
-    public GenericDatabaseSettingsForm(GenericDatabaseSettings connectionConfig) {
+    public GuidedDatabaseSettingsForm(GuidedDatabaseSettings connectionConfig) {
         super(connectionConfig);
         Project project = connectionConfig.getProject();
-        temporaryConfig = connectionConfig.clone();
         updateBorderTitleForeground(connectionParametersPanel);
         updateBorderTitleForeground(propertiesGroupPanel);
 
@@ -59,9 +58,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
 
 
-
         resetFormChanges();
-
         registerComponent(mainPanel);
 
         driverLibraryTextField.addBrowseFolderListener(
@@ -73,8 +70,8 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
     }
 
     @Override
-    protected GenericDatabaseSettings createConfig(ConnectionSettings configuration) {
-        return new GenericDatabaseSettings(configuration);
+    protected GuidedDatabaseSettings createConfig(ConnectionSettings configuration) {
+        return new GuidedDatabaseSettings(configuration, getConfiguration().getDatabaseType());
     }
 
     protected JCheckBox getActiveCheckBox() {
@@ -116,13 +113,15 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         return mainPanel;
     }
 
-    public void applyChanges(GenericDatabaseSettings connectionConfig){
+    public void applyChanges(GuidedDatabaseSettings connectionConfig){
         connectionConfig.setActive(activeCheckBox.isSelected());
         connectionConfig.setName(nameTextField.getText());
         connectionConfig.setDescription(descriptionTextField.getText());
         connectionConfig.setDriverLibrary(driverLibraryTextField.getText());
         connectionConfig.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
-        connectionConfig.setDatabaseUrl(urlTextField.getText());
+        connectionConfig.setHost(hostTextField.getText());
+        connectionConfig.setPort(portTextField.getText());
+        connectionConfig.setDatabase(databaseTextField.getText());
 
         Authentication authentication = connectionConfig.getAuthentication();
         authentication.setUser(userTextField.getText());
@@ -137,12 +136,14 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
 
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
-        final GenericDatabaseSettings connectionConfig = getConfiguration();
+        final GuidedDatabaseSettings connectionConfig = getConfiguration();
 
         final boolean settingsChanged =
                 !connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
+                !CommonUtil.safeEqual(connectionConfig.getHost(), hostTextField.getText()) ||
+                !CommonUtil.safeEqual(connectionConfig.getPort(), portTextField.getText()) ||
+                !CommonUtil.safeEqual(connectionConfig.getDatabase(), databaseTextField.getText()) ||
                 !CommonUtil.safeEqual(connectionConfig.getAuthentication().getUser(), userTextField.getText());
 
 
@@ -162,14 +163,14 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
 
 
     public void resetFormChanges() {
-        GenericDatabaseSettings connectionConfig = getConfiguration();
+        GuidedDatabaseSettings connectionConfig = getConfiguration();
         propertiesEditorForm.setProperties(connectionConfig.getProperties());
 
         activeCheckBox.setSelected(connectionConfig.isActive());
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
-        urlTextField.setText(connectionConfig.getDatabaseUrl());
+        hostTextField.setText(connectionConfig.getDatabaseUrl());
 
         Authentication authentication = connectionConfig.getAuthentication();
         userTextField.setText(authentication.getUser());
