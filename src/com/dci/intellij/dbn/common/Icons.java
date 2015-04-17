@@ -30,6 +30,7 @@ public class Icons {
     public static final Icon ACTION_SORT_ASC = load("/img/action/SortAscending.png");
     public static final Icon ACTION_SORT_DESC = load("/img/action/SortDescending.png");
     public static final Icon ACTION_ADD = load("/img/action/Add.png");
+    public static final Icon ACTION_ADD_MORE = load("/img/action/AddMore.png");
     public static final Icon ACTION_ADD_SPECIAL = load("/img/action/AddSpecial.png");
     public static final Icon ACTION_REMOVE = load("/img/action/Remove.png");
     public static final Icon ACTION_MOVE_UP = load("/img/action/MoveUp.png");

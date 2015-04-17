@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import javax.swing.Icon;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseType {
     ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "jdbc:oracle:thin:@[HOST]:[PORT]:[DATABASE]"),
@@ -46,8 +47,10 @@ public enum DatabaseType {
     }
 
     public static DatabaseType get(String name) {
-        for (DatabaseType databaseType : values()) {
-            if (name.equalsIgnoreCase(databaseType.name)) return databaseType;
+        if (StringUtil.isNotEmpty(name)) {
+            for (DatabaseType databaseType : values()) {
+                if (name.equalsIgnoreCase(databaseType.name)) return databaseType;
+            }
         }
         return null;
     }

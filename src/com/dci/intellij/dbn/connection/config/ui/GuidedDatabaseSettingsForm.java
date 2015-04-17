@@ -170,7 +170,9 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
-        hostTextField.setText(connectionConfig.getDatabaseUrl());
+        hostTextField.setText(connectionConfig.getHost());
+        portTextField.setText(connectionConfig.getPort());
+        databaseTextField.setText(connectionConfig.getDatabase());
 
         Authentication authentication = connectionConfig.getAuthentication();
         userTextField.setText(authentication.getUser());

@@ -314,6 +314,17 @@
     </module-components>
 
     <actions>
+        <group id="DBNavigator.ActionGroup.ConnectionSettings" text="Connections Settings">
+            <action id="DBNavigator.Actions.ConnectionSettings.CreateConnection" class="com.dci.intellij.dbn.connection.config.action.CreateConnectionDropdownAction" text="Connection Setup - Create Connection" icon="/img/action/AddMore.png"/>
+            <action id="DBNavigator.Actions.ConnectionSettings.RemoveConnection" class="com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction" text="Connection Setup - Remove Connection" icon="/img/action/Remove.png"/>
+            <action id="DBNavigator.Actions.ConnectionSettings.MoveConnectionsUp" class="com.dci.intellij.dbn.connection.config.action.MoveConnectionUpAction" text="Connection Setup - Move Connections Up" icon="/img/action/MoveUp.png"/>
+            <action id="DBNavigator.Actions.ConnectionSettings.MoveConnectionsDown" class="com.dci.intellij.dbn.connection.config.action.MoveConnectionDownAction" text="Connection Setup - Move Connections Down" icon="/img/action/MoveDown.png"/>
+            <action id="DBNavigator.Actions.ConnectionSettings.DuplicateConnection" class="com.dci.intellij.dbn.connection.config.action.DuplicateConnectionAction" text="Connection Setup - Duplicate Connection" icon="/img/action/Copy.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.ConnectionSettings.CopyConnections" class="com.dci.intellij.dbn.connection.config.action.CopyConnectionsAction" text="Connection Setup - Copy To Clipboard" icon="/img/action/CopyConnection.png"/>
+            <action id="DBNavigator.Actions.ConnectionSettings.PasteConnections" class="com.dci.intellij.dbn.connection.config.action.PasteConnectionAction" text="Connection Setup - Paste From Clipboard" icon="/img/action/PasteConnection.png"/>
+        </group>
+
         <group id="DBNavigator.ActionGroup.FileEditor" text="File Editor Controls">
             <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLoggingToggleAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
