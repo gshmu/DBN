@@ -21,7 +21,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     private JTextField userTextField;
     private JPasswordField passwordField;
     private JTextField portTextField;
-    private JCheckBox enabledCheckBox;
+    private JCheckBox activeCheckBox;
 
     public ConnectionSshTunnelSettingsForm(final ConnectionSshTunnelSettings configuration) {
         super(configuration);
@@ -46,7 +46,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
                 ConnectionSshTunnelSettings configuration = getConfiguration();
                 configuration.setModified(true);
 
-                if (source == enabledCheckBox) {
+                if (source == activeCheckBox) {
                     enableDisableFields();
                 }
             }
@@ -54,7 +54,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     }
 
     private void enableDisableFields() {
-        boolean enabled = enabledCheckBox.isSelected();
+        boolean enabled = activeCheckBox.isSelected();
         hostTextField.setEnabled(enabled);
         portTextField.setEnabled(enabled);
         userTextField.setEnabled(enabled);
@@ -65,8 +65,8 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     @Override
     public void applyFormChanges() throws ConfigurationException {
         final ConnectionSshTunnelSettings configuration = getConfiguration();
-        boolean enabled = enabledCheckBox.isSelected();
-        configuration.setEnabled(enabled);
+        boolean enabled = activeCheckBox.isSelected();
+        configuration.setActive(enabled);
         configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
         configuration.setPort(ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null));
         configuration.setUser(ConfigurationEditorUtil.validateStringInputValue(userTextField, "User", enabled));
@@ -77,7 +77,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     @Override
     public void resetFormChanges() {
         ConnectionSshTunnelSettings configuration = getConfiguration();
-        enabledCheckBox.setSelected(configuration.isEnabled());
+        activeCheckBox.setSelected(configuration.isActive());
         hostTextField.setText(configuration.getHost());
         portTextField.setText(Integer.toString(configuration.getPort()));
         userTextField.setText(configuration.getUser());
