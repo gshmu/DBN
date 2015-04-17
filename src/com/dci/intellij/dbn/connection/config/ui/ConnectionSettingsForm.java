@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
@@ -44,6 +45,11 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         TabInfo connectionTabInfo = new TabInfo(new JBScrollPane(databaseSettings.createComponent()));
         connectionTabInfo.setText("Connection");
         configTabbedPane.addTab(connectionTabInfo);
+
+        ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
+        TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
+        sshTunnelTabInfo.setText("SSH Tunnel");
+        configTabbedPane.addTab(sshTunnelTabInfo);
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         TabInfo detailsTabInfo = new TabInfo(new JBScrollPane(detailSettings.createComponent()));

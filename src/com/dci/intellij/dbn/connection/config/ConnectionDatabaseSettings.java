@@ -8,14 +8,12 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Base64Converter;
 
 public abstract class ConnectionDatabaseSettings extends Configuration<GenericDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -38,10 +36,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     public ConnectionSettings getParent() {
         return parent;
-    }
-
-    protected static String nvl(Object value) {
-        return (String) (value == null ? "" : value);
     }
 
     public ConnectivityStatus getConnectivityStatus() {
@@ -154,7 +148,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
         authentication.setUser(getString(element, "user", authentication.getUser()));
-        authentication.setPassword(decodePassword(getString(element, "password", authentication.getPassword())));
+        authentication.setPassword(PasswordUtil.decodePassword(getString(element, "password", authentication.getPassword())));
         authentication.setOsAuthentication(getBoolean(element, "os-authentication", authentication.isOsAuthentication()));
 
         Element propertiesElement = element.getChild("properties");
@@ -177,7 +171,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
         setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(authentication.getUser()));
-        setString(element, "password", encodePassword(authentication.getPassword()));
+        setString(element, "password", PasswordUtil.encodePassword(authentication.getPassword()));
 
         if (properties.size() > 0) {
             Element propertiesElement = new Element("properties");
@@ -192,27 +186,11 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         }
     }
 
-    private static String encodePassword(String password) {
-        try {
-            password = StringUtil.isEmpty(password) ? "" : Base64Converter.encode(nvl(password));
-        } catch (Exception e) {
-            // any exception would break the logic storing the connection settings
-            LOGGER.error("Error encoding password", e);
-        }
-        return password;
-    }
-
-    private static String decodePassword(String password) {
-        try {
-            password = StringUtil.isEmpty(password) ? "" : Base64Converter.decode(nvl(password));
-        } catch (Exception e) {
-            // password may not be encoded yet
-        }
-
-        return password;
-    }
-
     public Project getProject() {
         return parent.getProject();
+    }
+
+    protected static String nvl(Object value) {
+        return (String) (value == null ? "" : value);
     }
 }

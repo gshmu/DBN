@@ -162,7 +162,7 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 ConnectionDatabaseSettings configuration = getConfiguration();
 
                 if (source == testButton || source == infoButton) {
-                    temporaryConfig = new GenericConnectionDatabaseSettings(getConfiguration().getParent());
+                    temporaryConfig = new GenericConnectionDatabaseSettings(configuration.getParent());
                     applyChanges(temporaryConfig);
 
                     if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
@@ -183,9 +183,9 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                         userTextField.setText("");
                         emptyPasswordCheckBox.setSelected(false);
                     }
-                    getConfiguration().setModified(true);
+                    configuration.setModified(true);
                 } else {
-                    getConfiguration().setModified(true);
+                    configuration.setModified(true);
                 }
 
                 if (source == activeCheckBox || source == nameTextField || source == testButton || source == infoButton) {

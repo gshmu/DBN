@@ -42,7 +42,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
 
     public void applyFormChanges() throws ConfigurationException {
         DatabaseBrowserGeneralSettings configuration = getConfiguration();
-        ConfigurationEditorUtil.validateIntegerInputValue(navigationHistorySizeTextField, "Navigation history size", 0, 1000, "");
+        ConfigurationEditorUtil.validateIntegerInputValue(navigationHistorySizeTextField, "Navigation history size", true, 0, 1000, "");
 
         final boolean repaintTree = configuration.isModified();
         
