@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunnelSettingsForm> {
     private ConnectionSettings parent;
 
-    private boolean enabled = false;
+    private boolean active = false;
     private String host;
     private String user;
     private String password;
@@ -32,12 +32,12 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
      *                        Custom                         *
      *********************************************************/
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getHost() {
@@ -88,7 +88,7 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
 
     @Override
     public void readConfiguration(Element element) {
-        enabled = getBoolean(element, "enabled", enabled);
+        active = getBoolean(element, "active", active);
         host = getString(element, "host", host);
         port = getInteger(element, "port", port);
         user = getString(element, "user", user);
@@ -97,7 +97,7 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
 
     @Override
     public void writeConfiguration(Element element) {
-        setBoolean(element, "enabled", enabled);
+        setBoolean(element, "active", active);
         setString(element, "host", host);
         setInteger(element, "port", port);
         setString(element, "user", user);
