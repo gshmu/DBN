@@ -38,7 +38,7 @@ public abstract class GroupPopupAction extends DumbAwareAction {
         showBelowComponent(popup, component);
     }
 
-    private static void showBelowComponent(ListPopup popup, Component component) {
+    public static void showBelowComponent(ListPopup popup, Component component) {
         Point locationOnScreen = component.getLocationOnScreen();
         Point location = new Point(
                 (int) (locationOnScreen.getX() + 10),
