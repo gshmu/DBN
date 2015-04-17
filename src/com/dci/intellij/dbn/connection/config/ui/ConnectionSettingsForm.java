@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
@@ -15,6 +19,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -31,6 +36,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     private JPanel mainPanel;
     private JPanel contentPanel;
     private JPanel headerPanel;
+    private JButton infoButton;
+    private JButton testButton;
     private TabbedPane configTabbedPane;
 
     private DBNHeaderForm headerForm;
@@ -61,9 +68,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         filtersTabInfo.setText("Filters");
         configTabbedPane.addTab(filtersTabInfo);
 
-        GenericDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
+        ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) databaseSettings.getSettingsEditor();
         ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
-        filterSettings.getSettingsEditor();
 
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
         Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
@@ -79,7 +85,39 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();
+
+        registerComponent(testButton);
+        registerComponent(infoButton);
     }
+
+    protected ActionListener createActionListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                if (source == testButton || source == infoButton) {
+
+                    ConnectionSettings configuration = getConfiguration();
+                    ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+                    if (databaseSettingsForm != null) {
+                        ConnectionDatabaseSettings temporaryConfig = databaseSettingsForm.getTemporaryConfig(configuration);
+
+                        if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
+                        if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig);
+
+                        ConnectionBundleSettingsForm bundleSettingsForm = configuration.getParent().getSettingsEditor();
+                        if (bundleSettingsForm != null) {
+                            JList connectionList = bundleSettingsForm.getList();
+                            connectionList.revalidate();
+                            connectionList.repaint();
+                            databaseSettingsForm.notifyPresentationChanges();
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+
 
     public void selectTab(String tabName) {
         TabbedPaneUtil.selectTab(configTabbedPane, tabName);        

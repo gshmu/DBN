@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.GenericDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionListModel;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -32,7 +32,7 @@ public class AddConnectionAction extends DumbAwareAction {
         while (model.getConnectionConfig(name) != null) {
             name = NamingUtil.getNextNumberedName(name, true);
         }
-        GenericConnectionDatabaseSettings connectionConfig = (GenericConnectionDatabaseSettings) connectionSettings.getDatabaseSettings();
+        GenericDatabaseSettings connectionConfig = (GenericDatabaseSettings) connectionSettings.getDatabaseSettings();
         connectionConfig.setName(name);
         int selectedIndex = list.getSelectedIndex() + 1;
         model.add(selectedIndex, connectionSettings);

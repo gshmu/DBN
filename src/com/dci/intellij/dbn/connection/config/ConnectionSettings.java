@@ -22,7 +22,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     public ConnectionSettings(ConnectionBundleSettings parent) {
         super(parent.getProject());
         this.parent = parent;
-        databaseSettings = new GenericConnectionDatabaseSettings(this);
+        databaseSettings = new GenericDatabaseSettings(this);
         sshTunnelSettings = new ConnectionSshTunnelSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
         filterSettings = new ConnectionFilterSettings(this);
