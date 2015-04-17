@@ -1,0 +1,92 @@
+package com.dci.intellij.dbn.connection.config.ui;
+
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.ui.UIUtil;
+
+public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings>{
+    private JPanel mainPanel;
+    private JPanel sshGroupPanel;
+    private JTextField hostTextField;
+    private JTextField userTextField;
+    private JPasswordField passwordField;
+    private JTextField portTextField;
+    private JCheckBox enabledCheckBox;
+
+    public ConnectionSshTunnelSettingsForm(final ConnectionSshTunnelSettings configuration) {
+        super(configuration);
+
+        updateBorderTitleForeground(sshGroupPanel);
+
+        resetFormChanges();
+        enableDisableFields();
+        registerComponent(mainPanel);
+    }
+
+    @Override
+    public JComponent getComponent() {
+        return mainPanel;
+    }
+
+    @Override
+    protected ActionListener createActionListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object source = e.getSource();
+                ConnectionSshTunnelSettings configuration = getConfiguration();
+                configuration.setModified(true);
+
+                if (source == enabledCheckBox) {
+                    enableDisableFields();
+                }
+            }
+        };
+    }
+
+    private void enableDisableFields() {
+        boolean enabled = enabledCheckBox.isSelected();
+        hostTextField.setEnabled(enabled);
+        portTextField.setEnabled(enabled);
+        userTextField.setEnabled(enabled);
+        passwordField.setEnabled(enabled);
+        passwordField.setBackground(enabled ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
+    }
+
+    @Override
+    public void applyFormChanges() throws ConfigurationException {
+        final ConnectionSshTunnelSettings configuration = getConfiguration();
+        boolean enabled = enabledCheckBox.isSelected();
+        configuration.setEnabled(enabled);
+        configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
+        configuration.setPort(ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null));
+        configuration.setUser(ConfigurationEditorUtil.validateStringInputValue(userTextField, "User", enabled));
+        configuration.setPassword(new String(passwordField.getPassword()));
+
+    }
+
+    @Override
+    public void resetFormChanges() {
+        ConnectionSshTunnelSettings configuration = getConfiguration();
+        enabledCheckBox.setSelected(configuration.isEnabled());
+        hostTextField.setText(configuration.getHost());
+        portTextField.setText(Integer.toString(configuration.getPort()));
+        userTextField.setText(configuration.getUser());
+        passwordField.setText(configuration.getPassword());
+    }
+
+
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
+}

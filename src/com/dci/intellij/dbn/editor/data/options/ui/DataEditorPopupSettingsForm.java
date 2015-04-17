@@ -55,8 +55,8 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         settings.setActive(activeCheckBox.isSelected());
         settings.setActiveIfEmpty(activeIfEmptyCheckBox.isSelected());
         if (settings.isActive()) {
-            settings.setDataLengthThreshold(validateIntegerInputValue(lengthThresholdTextField, "Length threshold", 0, 999999999, null));
-            settings.setDelay(validateIntegerInputValue(delayTextField, "Delay", 10, 2000, null));
+            settings.setDataLengthThreshold(validateIntegerInputValue(lengthThresholdTextField, "Length threshold", true, 0, 999999999, null));
+            settings.setDelay(validateIntegerInputValue(delayTextField, "Delay", true, 10, 2000, null));
         }
     }
 

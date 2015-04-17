@@ -15,6 +15,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private boolean isNew;
 
     private ConnectionDatabaseSettings databaseSettings;
+    private ConnectionSshTunnelSettings sshTunnelSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
 
@@ -22,6 +23,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         super(parent.getProject());
         this.parent = parent;
         databaseSettings = new GenericConnectionDatabaseSettings(this);
+        sshTunnelSettings = new ConnectionSshTunnelSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
         filterSettings = new ConnectionFilterSettings(this);
     }
@@ -32,6 +34,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     public ConnectionDatabaseSettings getDatabaseSettings() {
         return databaseSettings;
+    }
+
+    public ConnectionSshTunnelSettings getSshTunnelSettings() {
+        return sshTunnelSettings;
     }
 
     public ConnectionDetailSettings getDetailSettings() {
@@ -46,6 +52,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 databaseSettings,
+                sshTunnelSettings,
                 detailSettings,
                 filterSettings};
     }

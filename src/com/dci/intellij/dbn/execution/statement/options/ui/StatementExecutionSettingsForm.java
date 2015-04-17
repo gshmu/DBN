@@ -29,8 +29,8 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
 
     public void applyFormChanges() throws ConfigurationException {
         StatementExecutionSettings settings = getConfiguration();
-        settings.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", 1, 10000, null));
-        settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", 0, 300, "\nUse value 0 for no timeout"));
+        settings.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
+        settings.setExecutionTimeout(ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 300, "\nUse value 0 for no timeout"));
         settings.setFocusResult(focusResultCheckBox.isSelected());
     }
 
