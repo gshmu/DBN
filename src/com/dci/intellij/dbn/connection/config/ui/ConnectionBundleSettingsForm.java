@@ -1,37 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.xmlbeans.impl.common.ReaderInputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -51,25 +21,41 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.action.CreateConnectionAction;
-import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xmlbeans.impl.common.ReaderInputStream;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener, DataProviderSupplier {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -102,22 +88,6 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         JComponent component = actionToolbar.getComponent();
         actionsPanel.add(component, BorderLayout.CENTER);
         connectionListScrollPane.setViewportView(connectionsList);
-
-
-/*
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(connectionsList);
-        decorator.setToolbarPosition(ActionToolbarPosition.TOP);
-        decorator.setAddAction(addAction);
-        decorator.setRemoveAction(removeAction);
-        decorator.addExtraAction(duplicateAction);
-        decorator.setMoveUpAction(moveUpAction);
-        decorator.setMoveDownAction(moveDownAction);
-        //decorator.addExtraAction(sortAction);
-        decorator.addExtraAction(copyAction);
-        decorator.addExtraAction(pasteAction);
-
-        this.connectionListPanel.add(decorator.createPanel(), BorderLayout.CENTER);
-*/
 
         if (connectionBundle.getConnectionHandlers().size() > 0) {
             selectConnection(connectionBundle.getConnectionHandlers().get(0));
@@ -381,133 +351,6 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             LOGGER.error("Could not paste database configuration from clipboard", ex);
         }
     }
-
-    @Deprecated
-    private AnActionButtonRunnable addAction = new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton anActionButton) {
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
-            ConnectionBundleSettings configuration = getConfiguration();
-            actionGroup.add(new CreateConnectionAction(DatabaseType.ORACLE));
-            actionGroup.add(new CreateConnectionAction(DatabaseType.MYSQL));
-            actionGroup.add(new CreateConnectionAction(DatabaseType.POSTGRES));
-            actionGroup.add(new CreateConnectionAction(null));
-
-            ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "Connection Type",
-                    actionGroup,
-                    anActionButton.getDataContext(),
-                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    true, null, 10);
-
-            Component component = anActionButton.getContextComponent();
-            GroupPopupAction.showBelowComponent(popup, component);
-        }
-    };
-
-    @Deprecated
-    private AnActionButton duplicateAction = new AnActionButton("Duplicate connection", Icons.ACTION_COPY) {
-        @Override
-        public void actionPerformed(AnActionEvent anActionEvent) {
-            duplicateSelectedConnection();
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return connectionsList.getSelectedIndices().length == 1;
-        }
-    };
-
-    @Deprecated
-    private AnActionButtonRunnable removeAction = new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton anActionButton) {
-            removeSelectedConnections();
-        }
-    };
-
-    private AnActionButtonRunnable moveUpAction = new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton anActionButton) {
-            moveSelectedConnectionsUp();
-        }
-    };
-
-
-    private AnActionButtonRunnable moveDownAction = new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton anActionButton) {
-            moveSelectedConnectionsDown();
-        }
-    };
-
-    private AnActionButton sortAction = new AnActionButton() {
-        private SortDirection currentSortDirection = SortDirection.ASCENDING;
-
-        @Override
-        public void actionPerformed(AnActionEvent anActionEvent) {
-            currentSortDirection = currentSortDirection == SortDirection.ASCENDING ?
-                    SortDirection.DESCENDING :
-                    SortDirection.ASCENDING;
-
-            if (connectionsList.getModel().getSize() > 0) {
-                Object selectedValue = connectionsList.getSelectedValue();
-                ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-                model.sort(currentSortDirection);
-                connectionsList.setSelectedValue(selectedValue, true);
-                getConfiguration().setModified(true);
-            }
-        }
-
-        @Override
-        public void updateButton(AnActionEvent e) {
-            Icon icon;
-            String text;
-            if (currentSortDirection != SortDirection.ASCENDING) {
-                icon = Icons.ACTION_SORT_ASC;
-                text = "Sort list ascending";
-            } else {
-                icon = Icons.ACTION_SORT_DESC;
-                text = "Sort list descending";
-            }
-            Presentation presentation = e.getPresentation();
-            presentation.setIcon(icon);
-            presentation.setText(text);
-        }
-    };
-
-    private AnActionButton copyAction = new AnActionButton("Copy configurations to clipboard", Icons.CONNECTION_COPY) {
-        @Override
-        public void actionPerformed(AnActionEvent anActionEvent) {
-            copyConnectionsToClipboard();
-        }
-    };
-
-    AnActionButton pasteAction = new AnActionButton("Paste configuration from clipboard", Icons.CONNECTION_PASTE) {
-        @Override
-        public void actionPerformed(AnActionEvent anActionEvent) {
-            pasteConnectionsFromClipboard();
-        }
-
-        @Override
-        public void updateButton(AnActionEvent e) {
-            Presentation presentation = e.getPresentation();
-            try {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Object clipboardData = clipboard.getData(DataFlavor.stringFlavor);
-                if (clipboardData instanceof String) {
-                    String clipboardString = (String) clipboardData;
-                    presentation.setEnabled(clipboardString.contains("connection-configurations"));
-                } else {
-                    presentation.setEnabled(false);
-                }
-            } catch (Exception ex) {
-                presentation.setEnabled(false);
-            }
-
-        }
-    };
-
 
     public DataProvider dataProvider = new DataProvider() {
         @Override
