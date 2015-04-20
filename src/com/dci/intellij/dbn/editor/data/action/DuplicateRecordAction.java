@@ -33,10 +33,8 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
                 presentation.setEnabled(false);
             } else {
                 DatasetEditorTable editorTable = datasetEditor.getEditorTable();
-                int[] selectedrows =
-                        editorTable == null ? null :
-                        editorTable.getSelectedRows();
-                presentation.setEnabled(selectedrows != null && selectedrows.length == 1 && selectedrows[0] < editorTable.getModel().getRowCount());
+                int[] selectedRows = editorTable.getSelectedRows();
+                presentation.setEnabled(selectedRows != null && selectedRows.length == 1 && selectedRows[0] < editorTable.getModel().getRowCount());
             }
         }
     }
