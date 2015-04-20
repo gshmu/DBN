@@ -25,8 +25,9 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSshSslSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
@@ -53,9 +54,14 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         connectionTabInfo.setText("Connection");
         configTabbedPane.addTab(connectionTabInfo);
 
-        ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
+        ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
+        TabInfo propertiesTabInfo = new TabInfo(new JBScrollPane(propertiesSettings.createComponent()));
+        propertiesTabInfo.setText("Properties");
+        configTabbedPane.addTab(propertiesTabInfo);
+
+        ConnectionSshSslSettings sshTunnelSettings = connectionSettings.getSshSslSettings();
         TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
-        sshTunnelTabInfo.setText("SSH Tunnel");
+        sshTunnelTabInfo.setText("SSH");
         configTabbedPane.addTab(sshTunnelTabInfo);
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();

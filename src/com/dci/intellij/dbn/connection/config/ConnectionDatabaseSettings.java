@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.Map;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -10,11 +14,6 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -31,7 +30,6 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     protected String driver;
 
     private Authentication authentication = new Authentication();
-    private Map<String, String> properties = new HashMap<String, String>();
 
     private ConnectionSettings parent;
 
@@ -116,15 +114,6 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         return authentication;
     }
 
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
                "Description:\t" + CommonUtil.nvl(description, "") + "\n" +
@@ -175,10 +164,13 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         authentication.setPassword(PasswordUtil.decodePassword(getString(element, "password", authentication.getPassword())));
         authentication.setOsAuthentication(getBoolean(element, "os-authentication", authentication.isOsAuthentication()));
 
+
+        // TODO backward compatibility (to remove)
         Element propertiesElement = element.getChild("properties");
         if (propertiesElement != null) {
             for (Object o : propertiesElement.getChildren()) {
                 Element propertyElement = (Element) o;
+                Map<String, String> properties = getParent().getPropertiesSettings().getProperties();
                 properties.put(
                         propertyElement.getAttributeValue("key"),
                         propertyElement.getAttributeValue("value"));
@@ -203,18 +195,6 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(authentication.getUser()));
         setString(element, "password", PasswordUtil.encodePassword(authentication.getPassword()));
-
-        if (properties.size() > 0) {
-            Element propertiesElement = new Element("properties");
-            for (String propertyKey : properties.keySet()) {
-                Element propertyElement = new Element("property");
-                propertyElement.setAttribute("key", propertyKey);
-                propertyElement.setAttribute("value", CommonUtil.nvl(properties.get(propertyKey), ""));
-
-                propertiesElement.addContent(propertyElement);
-            }
-            element.addContent(propertiesElement);
-        }
     }
 
     public Project getProject() {

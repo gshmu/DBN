@@ -1,21 +1,23 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
+import java.util.HashMap;
+import java.util.Map;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsForm;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 
-public abstract class ConnectionPropertiesSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
+public class ConnectionPropertiesSettings extends Configuration<ConnectionPropertiesSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
-    private Map<String, String> properties = new HashMap<String, String>();
     private ConnectionSettings parent;
+
+    private Map<String, String> properties = new HashMap<String, String>();
+    private boolean enableAutoCommit = false;
 
     public ConnectionPropertiesSettings(ConnectionSettings parent) {
         this.parent = parent;
@@ -33,17 +35,24 @@ public abstract class ConnectionPropertiesSettings<T extends ConnectionDatabaseS
         this.properties = properties;
     }
 
-    @Override
-    public String getConfigElementName() {
-        return "database";
+    public boolean isEnableAutoCommit() {
+        return enableAutoCommit;
     }
 
-    public abstract void updateHashCode();
+    public void setEnableAutoCommit(boolean isAutoCommit) {
+        this.enableAutoCommit = isAutoCommit;
+    }
 
-    public abstract String getDatabaseUrl();
+    @NotNull
+    @Override
+    protected ConnectionPropertiesSettingsForm createConfigurationEditor() {
+        return new ConnectionPropertiesSettingsForm(this);
+    }
 
     @Override
-    public abstract ConnectionPropertiesSettings clone();
+    public String getConfigElementName() {
+        return "properties";
+    }
 
     @NotNull
     public String getConnectionId() {
@@ -54,6 +63,7 @@ public abstract class ConnectionPropertiesSettings<T extends ConnectionDatabaseS
     *                 PersistentConfiguration               *
     *********************************************************/
     public void readConfiguration(Element element) {
+        enableAutoCommit = getBoolean(element, "auto-commit", enableAutoCommit);
         Element propertiesElement = element.getChild("properties");
         if (propertiesElement != null) {
             for (Object o : propertiesElement.getChildren()) {
@@ -63,10 +73,11 @@ public abstract class ConnectionPropertiesSettings<T extends ConnectionDatabaseS
                         propertyElement.getAttributeValue("value"));
             }
         }
-        updateHashCode();
+        getParent().getDatabaseSettings().updateHashCode();
     }
 
     public void writeConfiguration(Element element) {
+        setBoolean(element, "auto-commit", enableAutoCommit);
         if (properties.size() > 0) {
             Element propertiesElement = new Element("properties");
             for (String propertyKey : properties.keySet()) {

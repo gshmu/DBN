@@ -4,10 +4,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionSshSslSettingsForm;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunnelSettingsForm> {
+public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSettingsForm> {
     private ConnectionSettings parent;
 
     private boolean active = false;
@@ -16,7 +16,7 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
     private String password;
     private int port = 22;
 
-    public ConnectionSshTunnelSettings(ConnectionSettings parent) {
+    public ConnectionSshSslSettings(ConnectionSettings parent) {
         this.parent = parent;
     }
 
@@ -77,8 +77,8 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
      *********************************************************/
     @NotNull
     @Override
-    public ConnectionSshTunnelSettingsForm createConfigurationEditor() {
-        return new ConnectionSshTunnelSettingsForm(this);
+    public ConnectionSshSslSettingsForm createConfigurationEditor() {
+        return new ConnectionSshSslSettingsForm(this);
     }
 
     @Override

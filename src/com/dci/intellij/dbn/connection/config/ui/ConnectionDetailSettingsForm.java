@@ -122,7 +122,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         final boolean settingsChanged =
                 !configuration.getCharset().equals(newCharset) ||
-                configuration.isEnableAutoCommit() != newAutoCommit ||
                 configuration.isEnableDdlFileBinding() != newDdlFileBinding ||
                 configuration.isEnableDatabaseLogging() != newDatabaseLogging;
 
@@ -132,7 +131,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         configuration.setEnvironmentTypeId(newEnvironmentTypeId);
         configuration.setCharset(newCharset);
-        configuration.setEnableAutoCommit(newAutoCommit);
         configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
         configuration.setEnableDdlFileBinding(newDdlFileBinding);
         configuration.setEnableDatabaseLogging(newDatabaseLogging);
@@ -165,7 +163,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void resetFormChanges() {
         ConnectionDetailSettings configuration = getConfiguration();
         encodingComboBox.setSelectedValue(CharsetOption.get(configuration.getCharset()));
-        autoCommitCheckBox.setSelected(configuration.isEnableAutoCommit());
         ddlFileBindingCheckBox.setSelected(configuration.isEnableDdlFileBinding());
         databaseLoggingCheckBox.setSelected(configuration.isEnableDatabaseLogging());
         autoConnectCheckBox.setSelected(configuration.isConnectAutomatically());

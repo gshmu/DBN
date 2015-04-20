@@ -10,11 +10,11 @@ import java.awt.event.ActionListener;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSshSslSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.util.ui.UIUtil;
 
-public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings>{
+public class ConnectionSshSslSettingsForm extends ConfigurationEditorForm<ConnectionSshSslSettings>{
     private JPanel mainPanel;
     private JPanel sshGroupPanel;
     private JTextField hostTextField;
@@ -23,7 +23,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     private JTextField portTextField;
     private JCheckBox activeCheckBox;
 
-    public ConnectionSshTunnelSettingsForm(final ConnectionSshTunnelSettings configuration) {
+    public ConnectionSshSslSettingsForm(final ConnectionSshSslSettings configuration) {
         super(configuration);
 
         updateBorderTitleForeground(sshGroupPanel);
@@ -43,7 +43,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
-                ConnectionSshTunnelSettings configuration = getConfiguration();
+                ConnectionSshSslSettings configuration = getConfiguration();
                 configuration.setModified(true);
 
                 if (source == activeCheckBox) {
@@ -64,7 +64,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final ConnectionSshTunnelSettings configuration = getConfiguration();
+        final ConnectionSshSslSettings configuration = getConfiguration();
         boolean enabled = activeCheckBox.isSelected();
         configuration.setActive(enabled);
         configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
@@ -76,7 +76,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
 
     @Override
     public void resetFormChanges() {
-        ConnectionSshTunnelSettings configuration = getConfiguration();
+        ConnectionSshSslSettings configuration = getConfiguration();
         activeCheckBox.setSelected(configuration.isActive());
         hostTextField.setText(configuration.getHost());
         portTextField.setText(Integer.toString(configuration.getPort()));
