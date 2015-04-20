@@ -57,4 +57,16 @@ public enum DatabaseType implements Presentable {
         }
         return null;
     }
+
+    public static DatabaseType resolve(String name) {
+        name = name == null ? "" : name.toUpperCase();
+        if (name.contains("ORACLE")) {
+            return DatabaseType.ORACLE;
+        } else if (name.contains("MYSQL")) {
+            return DatabaseType.MYSQL;
+        } else if (name.contains("POSTGRESQL")) {
+            return DatabaseType.POSTGRES;
+        }
+        return UNKNOWN;
+    }
 }

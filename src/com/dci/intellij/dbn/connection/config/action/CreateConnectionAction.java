@@ -8,7 +8,7 @@ public class CreateConnectionAction extends ConnectionSettingsAction {
     private DatabaseType databaseType;
 
     public CreateConnectionAction(DatabaseType databaseType) {
-        super(databaseType == null ? "Generic" : databaseType.getDisplayName(),
+        super(databaseType == null ? "Advanced..." : databaseType.getDisplayName(),
               databaseType == null ? null : databaseType.getIcon());
         this.databaseType = databaseType;
     }

@@ -195,16 +195,7 @@ public class ConnectionUtil {
     }
 
     private static DatabaseType getDatabaseType(String driver) {
-        if (driver != null) {
-            if (driver.toUpperCase().contains("ORACLE")) {
-                return DatabaseType.ORACLE;
-            } else if (driver.toUpperCase().contains("MYSQL")) {
-                return DatabaseType.MYSQL;
-            } else if (driver.toUpperCase().contains("POSTGRESQL")) {
-                return DatabaseType.POSTGRES;
-            }
-        }
-        return DatabaseType.UNKNOWN;
+        return DatabaseType.resolve(driver);
 
     }
 
@@ -218,14 +209,7 @@ public class ConnectionUtil {
     public static DatabaseType getDatabaseType(Connection connection) throws SQLException {
         DatabaseMetaData databaseMetaData = connection.getMetaData();
         String productName = databaseMetaData.getDatabaseProductName();
-        if (productName.toUpperCase().contains("ORACLE")) {
-            return DatabaseType.ORACLE;
-        } else if (productName.toUpperCase().contains("MYSQL")) {
-            return DatabaseType.MYSQL;
-        } else if (productName.toUpperCase().contains("POSTGRESQL")) {
-            return DatabaseType.POSTGRES;
-        }
-        return DatabaseType.UNKNOWN;
+        return DatabaseType.resolve(productName);
     }
 
     public static void commit(Connection connection) {
