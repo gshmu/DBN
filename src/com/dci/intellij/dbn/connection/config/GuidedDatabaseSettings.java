@@ -66,9 +66,9 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
 
     public String getDatabaseUrl() {
         String databaseUrl = databaseType.getUrlPattern();
-        databaseUrl = databaseUrl.replace("[HOST]", CommonUtil.nvl(host, ""));
-        databaseUrl = databaseUrl.replace("[PORT]", CommonUtil.nvl(port, ""));
-        databaseUrl = databaseUrl.replace("[DATABASE]", CommonUtil.nvl(database, ""));
+        databaseUrl = databaseUrl.replace("<HOST>", CommonUtil.nvl(host, ""));
+        databaseUrl = databaseUrl.replace("<PORT>", CommonUtil.nvl(port, ""));
+        databaseUrl = databaseUrl.replace("<DATABASE>", CommonUtil.nvl(database, ""));
         return databaseUrl;
     }
 
