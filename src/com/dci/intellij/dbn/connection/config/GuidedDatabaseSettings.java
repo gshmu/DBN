@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,7 +88,7 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
 
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
-               "Description:\t" + description + "\n" +
+                (StringUtils.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
                "Host:\t"       + host + "\n" +
                "Port:\t"       + port + "\n" +
                "Database:\t"   + database + "\n" +

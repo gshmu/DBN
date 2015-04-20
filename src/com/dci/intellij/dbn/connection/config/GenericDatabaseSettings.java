@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +43,7 @@ public class GenericDatabaseSettings extends ConnectionDatabaseSettings {
 
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
-               "Description:\t" + description + "\n" +
+                (StringUtils.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
                "URL:\t"       + databaseUrl + "\n" +
                "User:\t"      + getAuthentication().getUser();
     }
