@@ -4,13 +4,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -35,13 +31,8 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox emptyPasswordCheckBox;
     private JCheckBox activeCheckBox;
-    private JPanel connectionParametersPanel;
-    private JPanel propertiesGroupPanel;
-    private JPanel propertiesPanel;
 
     private GenericDatabaseSettings temporaryConfig;
-
-    private PropertiesEditorForm propertiesEditorForm;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
@@ -49,16 +40,6 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         super(connectionConfig);
         Project project = connectionConfig.getProject();
         temporaryConfig = connectionConfig.clone();
-        updateBorderTitleForeground(connectionParametersPanel);
-        updateBorderTitleForeground(propertiesGroupPanel);
-
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.putAll(connectionConfig.getProperties());
-
-        propertiesEditorForm = new PropertiesEditorForm(this, properties, true);
-        propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
-
-
 
         resetFormChanges();
 
@@ -131,30 +112,29 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
         connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
-        connectionConfig.setProperties(propertiesEditorForm.getProperties());
         connectionConfig.updateHashCode();
     }
 
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
-        final GenericDatabaseSettings connectionConfig = getConfiguration();
+        final GenericDatabaseSettings configuration = getConfiguration();
 
         final boolean settingsChanged =
-                !connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getAuthentication().getUser(), userTextField.getText());
+                //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
+                !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getDatabaseUrl(), urlTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
 
 
-        applyChanges(connectionConfig);
+        applyChanges(configuration);
 
          new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
                 if (settingsChanged) {
-                    Project project = connectionConfig.getProject();
+                    Project project = configuration.getProject();
                     ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                    listener.settingsChanged(connectionConfig.getConnectionId());
+                    listener.settingsChanged(configuration.getConnectionId());
                 }
             }
         };
@@ -162,23 +142,22 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
 
 
     public void resetFormChanges() {
-        GenericDatabaseSettings connectionConfig = getConfiguration();
-        propertiesEditorForm.setProperties(connectionConfig.getProperties());
+        GenericDatabaseSettings configuration = getConfiguration();
 
-        activeCheckBox.setSelected(connectionConfig.isActive());
-        nameTextField.setText(connectionConfig.getDisplayName());
-        descriptionTextField.setText(connectionConfig.getDescription());
-        driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
-        urlTextField.setText(connectionConfig.getDatabaseUrl());
+        activeCheckBox.setSelected(configuration.isActive());
+        nameTextField.setText(configuration.getDisplayName());
+        descriptionTextField.setText(configuration.getDescription());
+        driverLibraryTextField.setText(configuration.getDriverLibrary());
+        urlTextField.setText(configuration.getDatabaseUrl());
 
-        Authentication authentication = connectionConfig.getAuthentication();
+        Authentication authentication = configuration.getAuthentication();
         userTextField.setText(authentication.getUser());
         passwordField.setText(authentication.getPassword());
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
         emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
-        populateDriverList(connectionConfig.getDriverLibrary());
-        driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
+        populateDriverList(configuration.getDriverLibrary());
+        driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), configuration.getDriver()));
     }
 }
 

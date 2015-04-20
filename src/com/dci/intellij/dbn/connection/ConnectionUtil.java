@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
@@ -67,6 +68,7 @@ public class ConnectionUtil {
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
+        ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
@@ -81,7 +83,7 @@ public class ConnectionUtil {
         }
 
         try {
-            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryAuthentication(), detailSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryAuthentication(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
@@ -149,7 +151,7 @@ public class ConnectionUtil {
                 String appName = "Database Navigator - " + connectionType.getName() + "";
                 properties.put("ApplicationName", appName);
                 properties.put("v$session.program", appName);
-                Map<String, String> configProperties = databaseSettings.getProperties();
+                Map<String, String> configProperties = databaseSettings.getParent().getPropertiesSettings().getProperties();
                 if (configProperties != null) {
                     properties.putAll(configProperties);
                 }

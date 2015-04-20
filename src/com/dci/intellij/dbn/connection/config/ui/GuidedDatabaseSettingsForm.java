@@ -4,13 +4,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -35,28 +31,14 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox emptyPasswordCheckBox;
     private JCheckBox activeCheckBox;
-    private JPanel connectionParametersPanel;
-    private JPanel propertiesGroupPanel;
-    private JPanel propertiesPanel;
     private JTextField portTextField;
     private JTextField databaseTextField;
-
-    private PropertiesEditorForm propertiesEditorForm;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
     public GuidedDatabaseSettingsForm(GuidedDatabaseSettings connectionConfig) {
         super(connectionConfig);
         Project project = connectionConfig.getProject();
-        updateBorderTitleForeground(connectionParametersPanel);
-        updateBorderTitleForeground(propertiesGroupPanel);
-
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.putAll(connectionConfig.getProperties());
-
-        propertiesEditorForm = new PropertiesEditorForm(this, properties, true);
-        propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
-
 
         resetFormChanges();
         registerComponent(mainPanel);
@@ -130,7 +112,6 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
         connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
-        connectionConfig.setProperties(propertiesEditorForm.getProperties());
         connectionConfig.updateHashCode();
     }
 
@@ -139,7 +120,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         final GuidedDatabaseSettings connectionConfig = getConfiguration();
 
         final boolean settingsChanged =
-                !connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
+                //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
                 !CommonUtil.safeEqual(connectionConfig.getHost(), hostTextField.getText()) ||
                 !CommonUtil.safeEqual(connectionConfig.getPort(), portTextField.getText()) ||
@@ -164,7 +145,6 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
 
     public void resetFormChanges() {
         GuidedDatabaseSettings connectionConfig = getConfiguration();
-        propertiesEditorForm.setProperties(connectionConfig.getProperties());
 
         activeCheckBox.setSelected(connectionConfig.isActive());
         nameTextField.setText(connectionConfig.getDisplayName());

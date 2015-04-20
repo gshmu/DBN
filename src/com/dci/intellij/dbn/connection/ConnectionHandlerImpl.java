@@ -296,7 +296,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean isAutoCommit() {
-        return connectionSettings.getDetailSettings().isEnableAutoCommit();
+        return connectionSettings.getPropertiesSettings().isEnableAutoCommit();
     }
 
     @Override
@@ -311,7 +311,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         connectionPool.setAutoCommit(autoCommit);
-        connectionSettings.getDetailSettings().setEnableAutoCommit(autoCommit);
+        connectionSettings.getPropertiesSettings().setEnableAutoCommit(autoCommit);
     }
 
     public void disconnect() throws SQLException {
