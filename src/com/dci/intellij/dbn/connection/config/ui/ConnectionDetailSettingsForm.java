@@ -32,7 +32,6 @@ import com.intellij.openapi.project.Project;
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
     private JPanel mainPanel;
     private DBNComboBox<CharsetOption> encodingComboBox;
-    private JCheckBox autoCommitCheckBox;
     private DBNComboBox<EnvironmentType> environmentTypesComboBox;
     private JPanel generalGroupPanel;
     private JTextField maxPoolSizeTextField;
@@ -85,6 +84,10 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null);
     }
 
+    public EnvironmentType getSelectedEnvironmentType() {
+        return environmentTypesComboBox.getSelectedValue();
+    }
+
     protected ActionListener createActionListener() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -114,7 +117,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         final ConnectionDetailSettings configuration = getConfiguration();
 
         Charset newCharset = encodingComboBox.getSelectedValue().getCharset();
-        boolean newAutoCommit = autoCommitCheckBox.isSelected();
         boolean newDdlFileBinding = ddlFileBindingCheckBox.isSelected();
         boolean newDatabaseLogging = databaseLoggingCheckBox.isSelected();
         EnvironmentType newEnvironmentType = environmentTypesComboBox.getSelectedValue();

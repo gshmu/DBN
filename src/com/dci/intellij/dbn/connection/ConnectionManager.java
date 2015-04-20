@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.info.ui.ConnectionInfoDialog;
@@ -142,7 +142,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public static void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
+    public void testConfigConnection(ConnectionDatabaseSettings databaseSettings, boolean showMessageDialog) {
         Project project = databaseSettings.getProject();
         try {
             Authentication temporaryAuthentication = null;
@@ -188,12 +188,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public ConnectionInfo showConnectionInfo(ConnectionSettings connectionSettings) {
-        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        return showConnectionInfo(databaseSettings);
+    public void showConnectionInfoDialog(Project project, ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
+        ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(project, connectionInfo, connectionName, environmentType);
+        infoDialog.setModal(true);
+        infoDialog.show();
     }
 
-    public static ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings) {
+    public ConnectionInfo showConnectionInfo(ConnectionDatabaseSettings databaseSettings, EnvironmentType environmentType) {
         Project project = databaseSettings.getProject();
         try {
             Authentication temporaryAuthentication = null;
@@ -208,11 +209,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             Connection connection = ConnectionUtil.connect(databaseSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             ConnectionUtil.closeConnection(connection);
-            MessageDialog.showInfoDialog(
+            showConnectionInfoDialog(getProject(), connectionInfo, databaseSettings.getName(), environmentType);
+/*            MessageDialog.showInfoDialog(
                     project,
                     "Database details for connection \"" + databaseSettings.getName() + '"',
                     connectionInfo.toString(),
-                    false);
+                    false);*/
             return connectionInfo;
 
         } catch (Exception e) {
