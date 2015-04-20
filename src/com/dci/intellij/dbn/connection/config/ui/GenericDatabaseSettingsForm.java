@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -35,6 +36,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox emptyPasswordCheckBox;
     private JCheckBox activeCheckBox;
+    private JLabel driverErrorLabel;
 
     private GenericDatabaseSettings temporaryConfig;
 
@@ -120,30 +122,49 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         return emptyPasswordCheckBox;
     }
 
+    public JLabel getDriverErrorLabel() {
+        return driverErrorLabel;
+    }
+
     public JPanel getComponent() {
         return mainPanel;
     }
 
-    public void applyChanges(GenericDatabaseSettings connectionConfig){
-        connectionConfig.setActive(activeCheckBox.isSelected());
-        connectionConfig.setName(nameTextField.getText());
-        connectionConfig.setDescription(descriptionTextField.getText());
-        connectionConfig.setDriverLibrary(driverLibraryTextField.getText());
-        connectionConfig.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
-        connectionConfig.setDatabaseUrl(urlTextField.getText());
+    public void applyChanges(GenericDatabaseSettings configuration){
+        configuration.setActive(activeCheckBox.isSelected());
+        configuration.setDatabaseType(databaseTypeComboBox.getSelectedValue());
+        configuration.setName(nameTextField.getText());
+        configuration.setDescription(descriptionTextField.getText());
+        configuration.setDriverLibrary(driverLibraryTextField.getText());
+        configuration.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
+        configuration.setDatabaseUrl(urlTextField.getText());
 
-        Authentication authentication = connectionConfig.getAuthentication();
+        Authentication authentication = configuration.getAuthentication();
         authentication.setUser(userTextField.getText());
         authentication.setPassword(new String(passwordField.getPassword()));
         authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
-        connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
-        connectionConfig.updateHashCode();
+        configuration.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
+        configuration.updateHashCode();
     }
 
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
+        DatabaseType selectedDatabaseType = databaseTypeComboBox.getSelectedValue();
+        if (selectedDatabaseType == null) {
+            throw new ConfigurationException("Database type not selected");
+        } else {
+            DriverOption selectedDriver = driverComboBox.getSelectedValue();
+            DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
+            if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
+                throw new ConfigurationException("Entered driver library does not match the selected database type");
+            }
+
+            databaseTypeComboBox.setEnabled(false);
+        }
+
+
         final GenericDatabaseSettings configuration = getConfiguration();
 
         final boolean settingsChanged =
@@ -170,6 +191,12 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
 
     public void resetFormChanges() {
         GenericDatabaseSettings configuration = getConfiguration();
+
+        DatabaseType databaseType = configuration.getDatabaseType();
+        if (databaseType != DatabaseType.UNKNOWN) {
+            databaseTypeComboBox.setSelectedValue(databaseType);
+            databaseTypeComboBox.setEnabled(false);
+        }
 
         activeCheckBox.setSelected(configuration.isActive());
         nameTextField.setText(configuration.getDisplayName());

@@ -29,13 +29,14 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JTextField hostTextField;
     private TextFieldWithBrowseButton driverLibraryTextField;
     private DBNComboBox<DriverOption> driverComboBox;
+    private DBNComboBox<DatabaseType> databaseTypeComboBox;
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox emptyPasswordCheckBox;
     private JCheckBox activeCheckBox;
     private JTextField portTextField;
     private JTextField databaseTextField;
-    private JLabel databaseTypeLabel;
+    private JLabel driverErrorLabel;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
@@ -46,8 +47,9 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         resetFormChanges();
         registerComponent(mainPanel);
         DatabaseType databaseType = configuration.getDatabaseType();
-        databaseTypeLabel.setText(databaseType.getName());
-        databaseTypeLabel.setIcon(databaseType.getIcon());
+        databaseTypeComboBox.setValues(databaseType);
+        databaseTypeComboBox.setSelectedValue(databaseType);
+        databaseTypeComboBox.setEnabled(false);
 
         driverLibraryTextField.addBrowseFolderListener(
                 "Select driver library",
@@ -97,6 +99,10 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         return emptyPasswordCheckBox;
     }
 
+    public JLabel getDriverErrorLabel() {
+        return driverErrorLabel;
+    }
+
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -123,26 +129,33 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
 
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
-        final GuidedDatabaseSettings connectionConfig = getConfiguration();
+        final GuidedDatabaseSettings configuration = getConfiguration();
+
+        DatabaseType selectedDatabaseType = configuration.getDatabaseType();
+        DriverOption selectedDriver = driverComboBox.getSelectedValue();
+        DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
+        if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
+            throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getDisplayName() + " driver library.");
+        }
 
         final boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getHost(), hostTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getPort(), portTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDatabase(), databaseTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getAuthentication().getUser(), userTextField.getText());
+                !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getHost(), hostTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getPort(), portTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getDatabase(), databaseTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
 
 
-        applyChanges(connectionConfig);
+        applyChanges(configuration);
 
          new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
                 if (settingsChanged) {
-                    Project project = connectionConfig.getProject();
+                    Project project = configuration.getProject();
                     ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                    listener.settingsChanged(connectionConfig.getConnectionId());
+                    listener.settingsChanged(configuration.getConnectionId());
                 }
             }
         };
