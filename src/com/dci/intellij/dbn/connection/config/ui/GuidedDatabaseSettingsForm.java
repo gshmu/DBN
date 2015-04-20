@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.Authentication;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.GuidedDatabaseSettings;
@@ -33,15 +35,19 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JCheckBox activeCheckBox;
     private JTextField portTextField;
     private JTextField databaseTextField;
+    private JLabel databaseTypeLabel;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
-    public GuidedDatabaseSettingsForm(GuidedDatabaseSettings connectionConfig) {
-        super(connectionConfig);
-        Project project = connectionConfig.getProject();
+    public GuidedDatabaseSettingsForm(GuidedDatabaseSettings configuration) {
+        super(configuration);
+        Project project = configuration.getProject();
 
         resetFormChanges();
         registerComponent(mainPanel);
+        DatabaseType databaseType = configuration.getDatabaseType();
+        databaseTypeLabel.setText(databaseType.getName());
+        databaseTypeLabel.setIcon(databaseType.getIcon());
 
         driverLibraryTextField.addBrowseFolderListener(
                 "Select driver library",

@@ -8,9 +8,12 @@ import javax.swing.JTextField;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.GenericDatabaseSettings;
@@ -26,6 +29,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
     private JTextField userTextField;
     private JTextField urlTextField;
     private TextFieldWithBrowseButton driverLibraryTextField;
+    private DBNComboBox<DatabaseType> databaseTypeComboBox;
     private DBNComboBox<DriverOption> driverComboBox;
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
@@ -40,6 +44,29 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         super(connectionConfig);
         Project project = connectionConfig.getProject();
         temporaryConfig = connectionConfig.clone();
+        databaseTypeComboBox.setValues(
+                DatabaseType.ORACLE,
+                DatabaseType.MYSQL,
+                DatabaseType.POSTGRES);
+
+        databaseTypeComboBox.addListener(new ValueSelectorListener<DatabaseType>() {
+            @Override
+            public void valueSelected(DatabaseType value) {
+                String url = urlTextField.getText();
+                String urlPattern = value.getUrlPattern();
+                if (StringUtil.isEmpty(url)) {
+                    urlTextField.setText(urlPattern);
+                } else {
+                    for (DatabaseType databaseType : DatabaseType.values()) {
+                        if (url.trim().equalsIgnoreCase(databaseType.getUrlPattern())) {
+                            urlTextField.setText(urlPattern);
+                            break;
+                        }
+                    }
+
+                }
+            }
+        });
 
         resetFormChanges();
 
