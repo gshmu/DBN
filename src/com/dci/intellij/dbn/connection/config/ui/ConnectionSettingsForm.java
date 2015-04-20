@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
@@ -106,9 +107,16 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                     ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
                     if (databaseSettingsForm != null) {
                         ConnectionDatabaseSettings temporaryConfig = databaseSettingsForm.getTemporaryConfig(configuration);
+                        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
 
-                        if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
-                        if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig);
+                        if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
+                        if (source == infoButton) {
+                            ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
+                            if (detailSettingsForm != null) {
+                                EnvironmentType environmentType = detailSettingsForm.getSelectedEnvironmentType();
+                                connectionManager.showConnectionInfo(temporaryConfig, environmentType);
+                            }
+                        }
 
                         ConnectionBundleSettingsForm bundleSettingsForm = configuration.getParent().getSettingsEditor();
                         if (bundleSettingsForm != null) {
