@@ -1,23 +1,20 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -171,7 +168,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
-        driverLibrary = convertToAbsolutePath(getString(element, "driver-library", driverLibrary));
+        driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
         authentication.setUser(getString(element, "user", authentication.getUser()));
@@ -192,7 +189,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public void writeConfiguration(Element element) {
         String driverLibrary = ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get() ?
-                convertToRelativePath(this.driverLibrary) :
+                FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
                 this.driverLibrary;
 
         setString(element, "driver-library", nvl(driverLibrary));
@@ -222,41 +219,5 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public Project getProject() {
         return parent.getProject();
-    }
-
-    protected static String nvl(Object value) {
-        return (String) (value == null ? "" : value);
-    }
-
-    protected String convertToRelativePath(String path) {
-        if (!StringUtil.isEmptyOrSpaces(path)) {
-            VirtualFile baseDir = getProject().getBaseDir();
-            if (baseDir != null) {
-                File projectDir = new File(baseDir.getPath());
-                String relativePath = com.intellij.openapi.util.io.FileUtil.getRelativePath(projectDir, new File(path));
-                if (relativePath != null) {
-                    if (relativePath.lastIndexOf(".." + File.separatorChar) < 1) {
-                        return relativePath;
-                    }
-                }
-            }
-        }
-        return path;
-    }
-
-    protected String convertToAbsolutePath(String path) {
-        if (!StringUtil.isEmptyOrSpaces(path)) {
-            VirtualFile baseDir = getProject().getBaseDir();
-            if (baseDir != null) {
-                File projectDir = new File(baseDir.getPath());
-                if (new File(path).isAbsolute()) {
-                    return path;
-                } else {
-                    File file = FileUtil.createFileByRelativePath(projectDir, path);
-                    return file == null ? null : file.getPath();
-                }
-            }
-        }
-        return path;
     }
 }

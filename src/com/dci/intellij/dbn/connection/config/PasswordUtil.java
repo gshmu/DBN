@@ -28,8 +28,8 @@ public class PasswordUtil {
         return password;
     }
 
-    private static String nvl(Object value) {
-        return (String) (value == null ? "" : value);
+    private static String nvl(String value) {
+        return value == null ? "" : value;
     }
 
 }
