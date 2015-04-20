@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.config;
 
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
@@ -116,7 +116,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
-               "Description:\t" + CommonUtil.nvl(description, "") + "\n" +
+                (StringUtils.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
                "User:\t"      + authentication.getUser();
     }
 
