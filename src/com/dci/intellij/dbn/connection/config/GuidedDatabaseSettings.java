@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
@@ -66,23 +65,17 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     }
 
     public String getConnectionUrl() {
-        String databaseUrl = databaseType.getUrlPattern();
-        databaseUrl = databaseUrl.replace("<HOST>", CommonUtil.nvl(host, ""));
-        databaseUrl = databaseUrl.replace("<PORT>", CommonUtil.nvl(port, ""));
-        databaseUrl = databaseUrl.replace("<DATABASE>", CommonUtil.nvl(database, ""));
-        return databaseUrl;
+        return databaseType.getUrlResolver().getUrl(host, port, database);
     }
 
     @Override
     public String getTunnelledConnectionUrl() {
         ConnectionSshSslSettings sshSslSettings = getParent().getSshSslSettings();
         if (sshSslSettings.isActive()) {
-            String databaseUrl = databaseType.getUrlPattern();
-            databaseUrl = databaseUrl.replace("<HOST>", CommonUtil.nvl(sshSslSettings.getHost(), ""));
-            databaseUrl = databaseUrl.replace("<PORT>", CommonUtil.nvl(sshSslSettings.getPort(), ""));
-            databaseUrl = databaseUrl.replace("<DATABASE>", CommonUtil.nvl(database, ""));
-            return databaseUrl;
-
+            return databaseType.getUrlResolver().getUrl(
+                    sshSslSettings.getHost(),
+                    sshSslSettings.getPort(),
+                    database);
         }
         return getConnectionUrl();
     }

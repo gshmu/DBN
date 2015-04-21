@@ -160,7 +160,7 @@ public class ConnectionUtil {
                         databaseSettings.getDriverLibrary(),
                         databaseSettings.getDriver());
 
-                Connection connection = driver.connect(databaseSettings.getConnectionUrl(), properties);
+                Connection connection = driver.connect(databaseSettings.getTunnelledConnectionUrl(), properties);
                 if (connection == null) {
                     throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
                 }

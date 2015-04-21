@@ -55,12 +55,12 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
             @Override
             public void valueSelected(DatabaseType value) {
                 String url = urlTextField.getText();
-                String urlPattern = value.getUrlPattern();
+                String urlPattern = value.getUrlResolver().getDefaultUrl();
                 if (StringUtil.isEmpty(url)) {
                     urlTextField.setText(urlPattern);
                 } else {
                     for (DatabaseType databaseType : DatabaseType.values()) {
-                        if (url.trim().equalsIgnoreCase(databaseType.getUrlPattern())) {
+                        if (url.trim().equalsIgnoreCase(databaseType.getUrlResolver().getDefaultUrl())) {
                             urlTextField.setText(urlPattern);
                             break;
                         }
