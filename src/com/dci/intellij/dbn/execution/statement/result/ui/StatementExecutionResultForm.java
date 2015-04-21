@@ -45,6 +45,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     public StatementExecutionResultForm(final StatementExecutionCursorResult executionResult) {
         this.executionResult = executionResult;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.StatementExecutionResult");
+        actionToolbar.setTargetComponent(actionsPanel);
 
         actionsPanel.add(actionToolbar.getComponent());
 

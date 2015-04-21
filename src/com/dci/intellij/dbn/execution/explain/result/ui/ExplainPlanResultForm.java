@@ -28,6 +28,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
         super(explainPlanResult.getProject());
         this.explainPlanResult = explainPlanResult;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.ExplainPlanResult");
+        actionToolbar.setTargetComponent(actionsPanel);
 
         actionsPanel.add(actionToolbar.getComponent());
 
