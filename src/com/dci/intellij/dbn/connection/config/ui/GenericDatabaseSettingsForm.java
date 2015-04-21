@@ -126,6 +126,11 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         return driverErrorLabel;
     }
 
+    @Override
+    public DBNComboBox<DatabaseType> getDatabaseTypeComboBox() {
+        return databaseTypeComboBox;
+    }
+
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -210,7 +215,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
         emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
-        populateDriverList(configuration.getDriverLibrary());
+        updateDriverFields();
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), configuration.getDriver()));
     }
 }

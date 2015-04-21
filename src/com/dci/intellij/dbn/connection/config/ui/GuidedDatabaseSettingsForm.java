@@ -82,6 +82,11 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     }
 
     @Override
+    public DBNComboBox<DatabaseType> getDatabaseTypeComboBox() {
+        return databaseTypeComboBox;
+    }
+
+    @Override
     protected JTextField getUserTextField() {
         return userTextField;
     }
@@ -179,7 +184,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
         emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
-        populateDriverList(connectionConfig.getDriverLibrary());
+        updateDriverFields();
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
     }
 }

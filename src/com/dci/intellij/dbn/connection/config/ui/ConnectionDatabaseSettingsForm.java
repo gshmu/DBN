@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -47,11 +48,12 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
     protected abstract TextFieldWithBrowseButton getDriverLibraryTextField();
     protected abstract JCheckBox getActiveCheckBox();
     protected abstract DBNComboBox<DriverOption> getDriverComboBox();
+    protected abstract DBNComboBox<DatabaseType> getDatabaseTypeComboBox();
     protected abstract JLabel getDriverErrorLabel();
     protected abstract JCheckBox getOsAuthenticationCheckBox();
     protected abstract JCheckBox getEmptyPasswordCheckBox();
-    abstract JTextField getUserTextField();
-    abstract JPasswordField getPasswordField();
+    protected abstract JTextField getUserTextField();
+    protected abstract JPasswordField getPasswordField();
 
     public void notifyPresentationChanges() {
         T configuration = temporaryConfig;//getConfiguration();
@@ -102,7 +104,7 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
                 Document document = e.getDocument();
 
                 if (document == getDriverLibraryTextField().getTextField().getDocument()) {
-                    updateLibraryTextField();
+                    updateDriverFields();
                 }
 
                 if (document == getNameTextField().getDocument()) {
@@ -183,22 +185,20 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
         };
     }
 
-    private void updateLibraryTextField() {
+    protected void updateDriverFields() {
         JTextField textField = getDriverLibraryTextField().getTextField();
-        if (fileExists(textField.getText())) {
-            populateDriverList(textField.getText());
-            textField.setForeground(UIUtil.getTextFieldForeground());
-        } else {
-            populateDriverList(null);
-            textField.setForeground(JBColor.RED);
-        }
-    }
+        String driverLibrary = textField.getText();
 
-    protected void populateDriverList(final String driverLibrary) {
         String error = null;
         boolean fileExists = StringUtil.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
         DBNComboBox<DriverOption> driverComboBox = getDriverComboBox();
         if (fileExists) {
+            textField.setForeground(UIUtil.getTextFieldForeground());
+            DatabaseType databaseType = DatabaseType.resolve(driverLibrary);
+            if (databaseType != DatabaseType.UNKNOWN && databaseType != getDatabaseTypeComboBox().getSelectedValue()) {
+                error = "The driver library does not match the selected database type";
+            }
+
             List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
             DriverOption selectedOption = driverComboBox.getSelectedValue();
             driverComboBox.clearValues();
@@ -223,10 +223,11 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
             }
             driverComboBox.setSelectedValue(selectedOption);
         } else {
+            textField.setForeground(JBColor.RED);
             if (StringUtil.isEmpty(driverLibrary)) {
-                error = "Cannot locate driver library file";
-            } else {
                 error = "Driver library is not specified";
+            } else {
+                error = "Cannot locate driver library file";
             }
             driverComboBox.clearValues();
             //driverComboBox.addItem("");
