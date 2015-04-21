@@ -197,31 +197,33 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
             DatabaseType databaseType = DatabaseType.resolve(driverLibrary);
             if (databaseType != DatabaseType.UNKNOWN && databaseType != getDatabaseTypeComboBox().getSelectedValue()) {
                 error = "The driver library does not match the selected database type";
-            }
-
-            List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
-            DriverOption selectedOption = driverComboBox.getSelectedValue();
-            driverComboBox.clearValues();
-            //driverComboBox.addItem("");
-            if (drivers != null) {
-                List<DriverOption> driverOptions = new ArrayList<DriverOption>();
-                for (Driver driver : drivers) {
-                    DriverOption driverOption = new DriverOption(driver);
-                    driverOptions.add(driverOption);
-                    if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
-                        selectedOption = driverOption;
-                    }
-                }
-
-                driverComboBox.setValues(driverOptions);
-
-                if (selectedOption == null && driverOptions.size() > 0) {
-                    selectedOption = driverOptions.get(0);
-                }
+                driverComboBox.clearValues();
+                driverComboBox.setSelectedValue(null);
             } else {
-                error = "Invalid driver library";
+                List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
+                DriverOption selectedOption = driverComboBox.getSelectedValue();
+                driverComboBox.clearValues();
+                //driverComboBox.addItem("");
+                if (drivers != null) {
+                    List<DriverOption> driverOptions = new ArrayList<DriverOption>();
+                    for (Driver driver : drivers) {
+                        DriverOption driverOption = new DriverOption(driver);
+                        driverOptions.add(driverOption);
+                        if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
+                            selectedOption = driverOption;
+                        }
+                    }
+
+                    driverComboBox.setValues(driverOptions);
+
+                    if (selectedOption == null && driverOptions.size() > 0) {
+                        selectedOption = driverOptions.get(0);
+                    }
+                } else {
+                    error = "Invalid driver library";
+                }
+                driverComboBox.setSelectedValue(selectedOption);
             }
-            driverComboBox.setSelectedValue(selectedOption);
         } else {
             textField.setForeground(JBColor.RED);
             if (StringUtil.isEmpty(driverLibrary)) {
