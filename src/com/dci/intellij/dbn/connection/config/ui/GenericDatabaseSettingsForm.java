@@ -142,7 +142,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         configuration.setDescription(descriptionTextField.getText());
         configuration.setDriverLibrary(driverLibraryTextField.getText());
         configuration.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
-        configuration.setDatabaseUrl(urlTextField.getText());
+        configuration.setConnectionUrl(urlTextField.getText());
 
         Authentication authentication = configuration.getAuthentication();
         authentication.setUser(userTextField.getText());
@@ -175,7 +175,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         final boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(configuration.getDatabaseUrl(), urlTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getConnectionUrl(), urlTextField.getText()) ||
                 !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
 
 
@@ -207,7 +207,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         nameTextField.setText(configuration.getDisplayName());
         descriptionTextField.setText(configuration.getDescription());
         driverLibraryTextField.setText(configuration.getDriverLibrary());
-        urlTextField.setText(configuration.getDatabaseUrl());
+        urlTextField.setText(configuration.getConnectionUrl());
 
         Authentication authentication = configuration.getAuthentication();
         userTextField.setText(authentication.getUser());

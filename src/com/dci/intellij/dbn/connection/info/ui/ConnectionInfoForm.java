@@ -134,21 +134,17 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
         setupDriverLibraryValueLabel.setText(databaseSettings.getDriverLibrary());
         setupDriverValueLabel.setText(databaseSettings.getDriver());
 
+        String port = databaseSettings.getPort();
+        String database = databaseSettings.getDatabase();
+
+        setupHostValueLabel.setText(databaseSettings.getHost());
+        setupPortValueLabel.setText(StringUtil.isEmpty(port) ? "-" : port);
+        setupDatabaseValueLabel.setText(StringUtil.isEmpty(database) ? "-" : database);
         if (databaseSettings instanceof GuidedDatabaseSettings) {
-            GuidedDatabaseSettings guidedDatabaseSettings = (GuidedDatabaseSettings) databaseSettings;
-            setupHostValueLabel.setText(guidedDatabaseSettings.getHost());
-            setupPortValueLabel.setText(guidedDatabaseSettings.getPort());
-            setupDatabaseValueLabel.setText(guidedDatabaseSettings.getDatabase());
             setupUrlLabel.setVisible(false);
             setupUrlValueLabel.setVisible(false);
         } else {
-            setupUrlValueLabel.setText(databaseSettings.getDatabaseUrl());
-            setupHostLabel.setVisible(false);
-            setupHostValueLabel.setVisible(false);
-            setupPortLabel.setVisible(false);
-            setupPortValueLabel.setVisible(false);
-            setupDatabaseLabel.setVisible(false);
-            setupDatabaseValueLabel.setVisible(false);
+            setupUrlValueLabel.setText(databaseSettings.getConnectionUrl());
         }
         updateBorderTitleForeground(setupPanel);
     }

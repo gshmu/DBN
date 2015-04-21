@@ -125,9 +125,17 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         return "database";
     }
 
-    public abstract void updateHashCode();
+    public abstract String getHost();
 
-    public abstract String getDatabaseUrl();
+    public abstract String getPort();
+
+    public abstract String getDatabase();
+
+    public abstract String getConnectionUrl();
+
+    public abstract String getTunnelledConnectionUrl();
+
+    public abstract void updateHashCode();
 
     @Override
     public int hashCode() {

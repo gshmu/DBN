@@ -14,7 +14,7 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
     private String host;
     private String user;
     private String password;
-    private int port = 22;
+    private String port = "22";
 
     public ConnectionSshSslSettings(ConnectionSettings parent) {
         this.parent = parent;
@@ -64,11 +64,11 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
         this.password = password;
     }
 
-    public int getPort() {
+    public String getPort() {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(String port) {
         this.port = port;
     }
 
@@ -90,7 +90,7 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
     public void readConfiguration(Element element) {
         active = getBoolean(element, "active", active);
         host = getString(element, "host", host);
-        port = getInteger(element, "port", port);
+        port = getString(element, "port", port);
         user = getString(element, "user", user);
         password = PasswordUtil.decodePassword(getString(element, "password", password));
     }
@@ -99,7 +99,7 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
     public void writeConfiguration(Element element) {
         setBoolean(element, "active", active);
         setString(element, "host", host);
-        setInteger(element, "port", port);
+        setString(element, "port", port);
         setString(element, "user", user);
         setString(element, "password", PasswordUtil.encodePassword(password));
 

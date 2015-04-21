@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
 
 public class GenericDatabaseSettings extends ConnectionDatabaseSettings {
-    protected String databaseUrl;
+    protected String connectionUrl;
 
     public GenericDatabaseSettings(ConnectionSettings connectionSettings) {
         super(connectionSettings);
@@ -19,17 +19,41 @@ public class GenericDatabaseSettings extends ConnectionDatabaseSettings {
         return new GenericDatabaseSettingsForm(this);
     }
 
-    public String getDatabaseUrl() {
-        return databaseUrl;
+    public String getConnectionUrl() {
+        return connectionUrl;
     }
 
-    public void setDatabaseUrl(String databaseUrl) {
-        this.databaseUrl = databaseUrl;
+    @Override
+    public String getTunnelledConnectionUrl() {
+        ConnectionSshSslSettings sshSslSettings = getParent().getSshSslSettings();
+        if (sshSslSettings.isActive()) {
+
+        }
+        return connectionUrl;
+    }
+
+    @Override
+    public String getHost() {
+        return getDatabaseType().resolveHost(connectionUrl);
+    }
+
+    @Override
+    public String getPort() {
+        return getDatabaseType().resolvePort(connectionUrl);
+    }
+
+    @Override
+    public String getDatabase() {
+        return getDatabaseType().resolveDatabase(connectionUrl);
+    }
+
+    public void setConnectionUrl(String connectionUrl) {
+        this.connectionUrl = connectionUrl;
     }
 
     public void updateHashCode() {
         Authentication authentication = getAuthentication();
-        hashCode = (name + getDriver() + getDriverLibrary() + databaseUrl + authentication.getUser() + authentication.getPassword() + authentication.isOsAuthentication()).hashCode();
+        hashCode = (name + getDriver() + getDriverLibrary() + connectionUrl + authentication.getUser() + authentication.getPassword() + authentication.isOsAuthentication()).hashCode();
     }
 
     public GenericDatabaseSettings clone() {
@@ -44,7 +68,7 @@ public class GenericDatabaseSettings extends ConnectionDatabaseSettings {
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
                 (StringUtils.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
-               "URL:\t"       + databaseUrl + "\n" +
+               "URL:\t"       + connectionUrl + "\n" +
                "User:\t"      + getAuthentication().getUser();
     }
 
@@ -53,11 +77,11 @@ public class GenericDatabaseSettings extends ConnectionDatabaseSettings {
     *********************************************************/
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        databaseUrl   = getString(element, "url", databaseUrl);
+        connectionUrl = getString(element, "url", connectionUrl);
     }
 
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
-        setString(element, "url", nvl(databaseUrl));
+        setString(element, "url", nvl(connectionUrl));
     }
 }

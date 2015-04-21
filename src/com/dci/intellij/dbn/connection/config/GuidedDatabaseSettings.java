@@ -48,6 +48,7 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
         this.host = host;
     }
 
+    @Override
     public String getPort() {
         return port;
     }
@@ -64,12 +65,26 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
         this.database = database;
     }
 
-    public String getDatabaseUrl() {
+    public String getConnectionUrl() {
         String databaseUrl = databaseType.getUrlPattern();
         databaseUrl = databaseUrl.replace("<HOST>", CommonUtil.nvl(host, ""));
         databaseUrl = databaseUrl.replace("<PORT>", CommonUtil.nvl(port, ""));
         databaseUrl = databaseUrl.replace("<DATABASE>", CommonUtil.nvl(database, ""));
         return databaseUrl;
+    }
+
+    @Override
+    public String getTunnelledConnectionUrl() {
+        ConnectionSshSslSettings sshSslSettings = getParent().getSshSslSettings();
+        if (sshSslSettings.isActive()) {
+            String databaseUrl = databaseType.getUrlPattern();
+            databaseUrl = databaseUrl.replace("<HOST>", CommonUtil.nvl(sshSslSettings.getHost(), ""));
+            databaseUrl = databaseUrl.replace("<PORT>", CommonUtil.nvl(sshSslSettings.getPort(), ""));
+            databaseUrl = databaseUrl.replace("<DATABASE>", CommonUtil.nvl(database, ""));
+            return databaseUrl;
+
+        }
+        return getConnectionUrl();
     }
 
     public void updateHashCode() {
