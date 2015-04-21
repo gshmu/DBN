@@ -65,8 +65,8 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
                             break;
                         }
                     }
-
                 }
+                updateDriverFields();
             }
         });
 
