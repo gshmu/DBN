@@ -85,15 +85,7 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
         return temporaryConfig.getConnectivityStatus();
     }
 
-    public T getTemporaryConfig(ConnectionSettings configuration) {
-        temporaryConfig = createConfig(configuration);
-        applyChanges(temporaryConfig);
-        return temporaryConfig;
-    }
-
     protected abstract T createConfig(ConnectionSettings configuration);
-
-    protected abstract void applyChanges(T temporaryConfig);
 
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {

@@ -133,7 +133,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public abstract String getConnectionUrl();
 
-    public abstract String getTunnelledConnectionUrl();
+    public abstract String getConnectionUrl(String host, String port);
 
     public abstract void updateHashCode();
 

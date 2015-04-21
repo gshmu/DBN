@@ -112,7 +112,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         return mainPanel;
     }
 
-    public void applyChanges(GuidedDatabaseSettings connectionConfig){
+    public void applyFormChanges(GuidedDatabaseSettings connectionConfig){
         connectionConfig.setActive(activeCheckBox.isSelected());
         connectionConfig.setName(nameTextField.getText());
         connectionConfig.setDescription(descriptionTextField.getText());
@@ -152,7 +152,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
                 !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
 
 
-        applyChanges(configuration);
+        applyFormChanges(configuration);
 
          new SettingsChangeNotifier() {
             @Override

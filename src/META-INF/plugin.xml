@@ -273,6 +273,7 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.code.SourceCodeSpecEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.console.SQLConsoleEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionCache</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.ssh.SshTunnelManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.DefaultProjectSettingsManager</implementation-class></component>
     </application-components>
     <project-components>

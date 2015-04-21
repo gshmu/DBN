@@ -24,15 +24,11 @@ public class GenericDatabaseSettings extends ConnectionDatabaseSettings {
     }
 
     @Override
-    public String getTunnelledConnectionUrl() {
-        ConnectionSshSslSettings sshSslSettings = getParent().getSshSslSettings();
-        if (sshSslSettings.isActive()) {
-            return databaseType.getUrlResolver().getUrl(
-                    sshSslSettings.getHost(),
-                    sshSslSettings.getPort(),
-                    getDatabase());
-        }
-        return connectionUrl;
+    public String getConnectionUrl(String host, String port) {
+        return databaseType.getUrlResolver().getUrl(
+                host,
+                port,
+                getDatabase());
     }
 
     @Override

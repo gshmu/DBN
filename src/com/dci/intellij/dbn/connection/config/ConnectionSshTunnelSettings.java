@@ -4,10 +4,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionSshSslSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
 import com.intellij.openapi.project.Project;
 
-public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSettingsForm> {
+public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunnelSettingsForm> {
     private ConnectionSettings parent;
 
     private boolean active = false;
@@ -16,7 +16,7 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
     private String password;
     private String port = "22";
 
-    public ConnectionSshSslSettings(ConnectionSettings parent) {
+    public ConnectionSshTunnelSettings(ConnectionSettings parent) {
         this.parent = parent;
     }
 
@@ -25,7 +25,7 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
     }
 
     public String getHelpTopic() {
-        return "connectionPropertySettings";
+        return "connectionSshTunnelSettings";
     }
 
     /*********************************************************
@@ -77,13 +77,13 @@ public class ConnectionSshSslSettings extends Configuration<ConnectionSshSslSett
      *********************************************************/
     @NotNull
     @Override
-    public ConnectionSshSslSettingsForm createConfigurationEditor() {
-        return new ConnectionSshSslSettingsForm(this);
+    public ConnectionSshTunnelSettingsForm createConfigurationEditor() {
+        return new ConnectionSshTunnelSettingsForm(this);
     }
 
     @Override
     public String getConfigElementName() {
-        return "ssh-tunnel";
+        return "ssh-settings";
     }
 
     @Override

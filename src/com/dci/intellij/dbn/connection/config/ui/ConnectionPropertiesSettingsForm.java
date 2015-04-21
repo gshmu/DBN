@@ -48,9 +48,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
         boolean newAutoCommit = autoCommitCheckBox.isSelected();
         final boolean settingsChanged = configuration.isEnableAutoCommit() != newAutoCommit;
 
-        configuration.setEnableAutoCommit(newAutoCommit);
-        configuration.setProperties(propertiesEditorForm.getProperties());
-
+        applyFormChanges(configuration);
 
         new SettingsChangeNotifier() {
             @Override
@@ -62,6 +60,12 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
                 }
             }
         };
+    }
+
+    @Override
+    public void applyFormChanges(ConnectionPropertiesSettings configuration) throws ConfigurationException {
+        configuration.setEnableAutoCommit(autoCommitCheckBox.isSelected());
+        configuration.setProperties(propertiesEditorForm.getProperties());
     }
 
     @Override
