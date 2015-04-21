@@ -9,6 +9,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import java.awt.Component;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.Map;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -24,6 +26,12 @@ public class PropertiesEditorTable extends JTable {
         setSelectionBackground(UIUtil.getTableBackground());
         setSelectionForeground(UIUtil.getTableForeground());
         setCellSelectionEnabled(true);
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                stopCellEditing();
+            }
+        });
     }
 
     ListSelectionListener selectionListener = new ListSelectionListener() {
