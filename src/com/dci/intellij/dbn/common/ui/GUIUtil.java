@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.Colors;
-import com.intellij.openapi.ui.Splitter;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -20,6 +14,12 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.lang.reflect.Method;
 import java.util.EventListener;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.Colors;
+import com.intellij.openapi.ui.Splitter;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.ui.awt.RelativePoint;
 
 public class GUIUtil{
     public static final Font REGULAR_FONT = com.intellij.util.ui.UIUtil.getLabelFont();

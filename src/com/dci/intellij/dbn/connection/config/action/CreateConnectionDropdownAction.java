@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 
 public class CreateConnectionDropdownAction extends GroupPopupAction {
     private AnAction[] actions = new AnAction[] {
@@ -41,6 +42,9 @@ public class CreateConnectionDropdownAction extends GroupPopupAction {
 
     @Override
     public void update(AnActionEvent e) {
-        e.getPresentation().setText("Create Connection");
+        DataProviderSupplier dataProviderSupplier = getDataProviderSupplier(e);
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(dataProviderSupplier != null);
+        presentation.setText("Create Connection");
     }
 }
