@@ -69,8 +69,8 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     }
 
     @Override
-    public String getTunnelledConnectionUrl() {
-        ConnectionSshSslSettings sshSslSettings = getParent().getSshSslSettings();
+    public String getConnectionUrl(String host, String port) {
+        ConnectionSshTunnelSettings sshSslSettings = getParent().getSshTunnelSettings();
         if (sshSslSettings.isActive()) {
             return databaseType.getUrlResolver().getUrl(
                     sshSslSettings.getHost(),

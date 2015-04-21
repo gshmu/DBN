@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.common.options.ui;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
-import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.DocumentAdapter;
-
 import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -23,6 +14,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
+import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.DocumentAdapter;
 
 public abstract class ConfigurationEditorForm<E extends Configuration> extends DBNFormImpl<ConfigurationEditorForm> {
     public static final String DBN_REGISTERED = "DBN_REGISTERED";
@@ -42,6 +42,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
     }
 
     public abstract void applyFormChanges() throws ConfigurationException;
+    public void applyFormChanges(E configuration) throws ConfigurationException {throw new UnsupportedOperationException("Not implemented by default");}
     public abstract void resetFormChanges();
 
     protected DocumentListener createDocumentListener() {

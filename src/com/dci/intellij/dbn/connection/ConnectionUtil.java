@@ -19,6 +19,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
+import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -66,13 +68,13 @@ public class ConnectionUtil {
     public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
-        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         Authentication authentication = databaseSettings.getAuthentication();
         if (!authentication.isProvided()) {
             authentication = connectionHandler.getTemporaryAuthentication();
@@ -83,7 +85,7 @@ public class ConnectionUtil {
         }
 
         try {
-            Connection connection = connect(databaseSettings, connectionHandler.getTemporaryAuthentication(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(connectionSettings, connectionHandler.getTemporaryAuthentication(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
@@ -98,11 +100,11 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(final ConnectionDatabaseSettings databaseSettings, @Nullable Authentication temporaryAuthentication, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(final ConnectionSettings connectionSettings, @Nullable Authentication temporaryAuthentication, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         ConnectTimeoutCall connectCall = new ConnectTimeoutCall();
         connectCall.connectionType = connectionType;
         connectCall.temporaryAuthentication = temporaryAuthentication;
-        connectCall.databaseSettings = databaseSettings;
+        connectCall.connectionSettings = connectionSettings;
         connectCall.connectionStatus = connectionStatus;
         connectCall.autoCommit = autoCommit;
         Connection connection = connectCall.start();
@@ -121,7 +123,7 @@ public class ConnectionUtil {
     private static class ConnectTimeoutCall extends SimpleTimeoutCall<Connection> {
         private ConnectionType connectionType;
         private Authentication temporaryAuthentication;
-        private ConnectionDatabaseSettings databaseSettings;
+        private ConnectionSettings connectionSettings;
         private ConnectionStatus connectionStatus;
         private boolean autoCommit;
 
@@ -133,6 +135,7 @@ public class ConnectionUtil {
 
         @Override
         public Connection call() throws Exception{
+            ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
                 final Properties properties = new Properties();
                 Authentication authentication = databaseSettings.getAuthentication();
@@ -160,7 +163,18 @@ public class ConnectionUtil {
                         databaseSettings.getDriverLibrary(),
                         databaseSettings.getDriver());
 
-                Connection connection = driver.connect(databaseSettings.getTunnelledConnectionUrl(), properties);
+
+                String connectionUrl = databaseSettings.getConnectionUrl();
+
+                SshTunnelManager sshTunnelManager = SshTunnelManager.getInstance();
+                SshTunnelConnector sshTunnelConnector = sshTunnelManager.ensureSshConnection(databaseSettings.getParent());
+                if (sshTunnelConnector != null) {
+                    String localHost = sshTunnelConnector.getLocalHost();
+                    String localPort = Integer.toString(sshTunnelConnector.getLocalPort());
+                    connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
+                }
+
+                Connection connection = driver.connect(connectionUrl, properties);
                 if (connection == null) {
                     throw new SQLException("Driver refused to create connection for this configuration. No failure information provided.");
                 }

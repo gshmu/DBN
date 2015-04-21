@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -28,7 +29,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSshSslSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
@@ -60,7 +62,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         propertiesTabInfo.setText("Properties");
         configTabbedPane.addTab(propertiesTabInfo);
 
-        ConnectionSshSslSettings sshTunnelSettings = connectionSettings.getSshSslSettings();
+        ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
         TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
         sshTunnelTabInfo.setText("SSH");
         configTabbedPane.addTab(sshTunnelTabInfo);
@@ -97,6 +99,26 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         registerComponent(infoButton);
     }
 
+    public ConnectionSettings getTemporaryConfig() throws ConfigurationException {
+        ConnectionSettings configuration = getConfiguration();
+        ConnectionSettings clone = configuration.clone();
+        ConnectionDatabaseSettingsForm databaseSettingsEditor = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+        if(databaseSettingsEditor != null) {
+            databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
+        }
+        ConnectionPropertiesSettingsForm propertiesSettingsEditor = configuration.getPropertiesSettings().getSettingsEditor();
+        if (propertiesSettingsEditor != null) {
+            propertiesSettingsEditor.applyFormChanges(clone.getPropertiesSettings());
+        }
+
+        ConnectionSshTunnelSettingsForm sshTunnelSettingsForm = configuration.getSshTunnelSettings().getSettingsEditor();
+        if (sshTunnelSettingsForm != null) {
+            sshTunnelSettingsForm.applyFormChanges(clone.getSshTunnelSettings());
+        }
+
+        return clone;
+    }
+
     protected ActionListener createActionListener() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -104,26 +126,33 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 if (source == testButton || source == infoButton) {
 
                     ConnectionSettings configuration = getConfiguration();
-                    ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
-                    if (databaseSettingsForm != null) {
-                        ConnectionDatabaseSettings temporaryConfig = databaseSettingsForm.getTemporaryConfig(configuration);
-                        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+                    ConnectionSettingsForm connectionSettingsForm = configuration.getSettingsEditor();
+                    if (connectionSettingsForm != null) {
+                        try {
+                            ConnectionSettings temporaryConfig = connectionSettingsForm.getTemporaryConfig();
+                            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
 
-                        if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
-                        if (source == infoButton) {
-                            ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
-                            if (detailSettingsForm != null) {
-                                EnvironmentType environmentType = detailSettingsForm.getSelectedEnvironmentType();
-                                connectionManager.showConnectionInfo(temporaryConfig, environmentType);
+                            if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
+                            if (source == infoButton) {
+                                ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
+                                if (detailSettingsForm != null) {
+                                    EnvironmentType environmentType = detailSettingsForm.getSelectedEnvironmentType();
+                                    connectionManager.showConnectionInfo(temporaryConfig, environmentType);
+                                }
                             }
-                        }
 
-                        ConnectionBundleSettingsForm bundleSettingsForm = configuration.getParent().getSettingsEditor();
-                        if (bundleSettingsForm != null) {
-                            JList connectionList = bundleSettingsForm.getList();
-                            connectionList.revalidate();
-                            connectionList.repaint();
-                            databaseSettingsForm.notifyPresentationChanges();
+                            ConnectionBundleSettingsForm bundleSettingsForm = configuration.getParent().getSettingsEditor();
+                            if (bundleSettingsForm != null) {
+                                JList connectionList = bundleSettingsForm.getList();
+                                connectionList.revalidate();
+                                connectionList.repaint();
+                                ConnectionDatabaseSettingsForm settingsEditor = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+                                if (settingsEditor != null) {
+                                    settingsEditor.notifyPresentationChanges();
+                                }
+                            }
+                        } catch (ConfigurationException e1) {
+                            MessageUtil.showErrorDialog(getProject(), "Configuration error", e1.getMessage());
                         }
                     }
                 }

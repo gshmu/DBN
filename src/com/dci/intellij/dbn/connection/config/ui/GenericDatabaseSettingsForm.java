@@ -135,7 +135,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         return mainPanel;
     }
 
-    public void applyChanges(GenericDatabaseSettings configuration){
+    public void applyFormChanges(GenericDatabaseSettings configuration){
         configuration.setActive(activeCheckBox.isSelected());
         configuration.setDatabaseType(databaseTypeComboBox.getSelectedValue());
         configuration.setName(nameTextField.getText());
@@ -179,7 +179,7 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
                 !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
 
 
-        applyChanges(configuration);
+        applyFormChanges(configuration);
 
          new SettingsChangeNotifier() {
             @Override
