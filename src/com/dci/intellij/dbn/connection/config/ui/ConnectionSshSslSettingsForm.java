@@ -68,7 +68,8 @@ public class ConnectionSshSslSettingsForm extends ConfigurationEditorForm<Connec
         boolean enabled = activeCheckBox.isSelected();
         configuration.setActive(enabled);
         configuration.setHost(ConfigurationEditorUtil.validateStringInputValue(hostTextField, "Host", enabled));
-        configuration.setPort(ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null));
+        int port = ConfigurationEditorUtil.validateIntegerInputValue(portTextField, "Port", enabled, 0, 999999, null);
+        configuration.setPort(Integer.toString(port));
         configuration.setUser(userTextField.getText());
         configuration.setPassword(new String(passwordField.getPassword()));
 
@@ -79,7 +80,7 @@ public class ConnectionSshSslSettingsForm extends ConfigurationEditorForm<Connec
         ConnectionSshSslSettings configuration = getConfiguration();
         activeCheckBox.setSelected(configuration.isActive());
         hostTextField.setText(configuration.getHost());
-        portTextField.setText(Integer.toString(configuration.getPort()));
+        portTextField.setText(configuration.getPort());
         userTextField.setText(configuration.getUser());
         passwordField.setText(configuration.getPassword());
     }
