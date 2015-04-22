@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
@@ -26,19 +38,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.GuiUtils;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecutionVariablesDialog> {
     private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<StatementExecutionVariableValueForm>();
     private StatementExecutionProcessor executionProcessor;
@@ -46,6 +45,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
     private JPanel variablesPanel;
     private JPanel previewPanel;
     private JPanel headerSeparatorPanel;
+    private JCheckBox reuseVariablesCheckBox;
     private Document previewDocument;
     private EditorEx viewer;
     private String statementText;
@@ -67,11 +67,6 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
             variablesPanel.add(variableValueForm.getComponent());
             variableValueForm.addDocumentListener(new DocumentAdapter() {
                 protected void textChanged(DocumentEvent e) {
-                    updatePreview();
-                }
-            });
-            variableValueForm.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
                     updatePreview();
                 }
             });
@@ -99,9 +94,6 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
 
     public void dispose() {
         super.dispose();
-        for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
-            variableValueForm.dispose();
-        }
         variableValueForms.clear();
         executionProcessor = null;
         EditorFactory.getInstance().releaseEditor(viewer);
@@ -120,7 +112,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
         }
     }
 
-    private void updatePreview() {
+    protected void updatePreview() {
         ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
         DBSchema currentSchema = executionProcessor.getCurrentSchema();
         Project project = connectionHandler.getProject();
