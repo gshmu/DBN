@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.connection;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum DatabaseUrlResolver {
 
-    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:thin:@)([._a-z0-9]+)(:[0-9]+)(:[a-z0-9]+)$",         "localhost", "1521", "XE"),
-    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]+)?$",      "localhost", "3306", "mysql"),
-    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]*)?$", "localhost", "5432", "postgres"),
+    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[a-z0-9]+)$",   "localhost", "1521", "XE"),
+    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]+)?$",      "localhost", "3306", "mysql"),
+    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]*)?$", "localhost", "5432", "postgres"),
     UNKNOWN ("",  "", "localhost", "1234", "database"),
     ;
 
