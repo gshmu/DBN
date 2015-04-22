@@ -4,6 +4,8 @@ import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -489,6 +491,13 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public boolean isQuery() {
         return false;
+    }
+
+    @Override
+    public List<StatementExecutionProcessor> asList() {
+        List<StatementExecutionProcessor> list = new ArrayList<StatementExecutionProcessor>();
+        list.add(this);
+        return list;
     }
 
     /********************************************************
