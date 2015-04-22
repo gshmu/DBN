@@ -11,16 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
@@ -50,7 +51,8 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        EventManager.subscribe(getProject(), TransactionListener.TOPIC, transactionListener);
+        Project project = getProject();
+        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {
@@ -84,7 +86,6 @@ public class UncommittedChangesOverviewForm extends DBNFormImpl<UncommittedChang
 
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(transactionListener);
         transactionListener = null;
         connectionHandlers = null;
     }

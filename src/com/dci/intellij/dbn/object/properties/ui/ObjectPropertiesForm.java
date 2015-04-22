@@ -11,12 +11,12 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.BrowserSelectionChangeListener;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
@@ -43,7 +43,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventManager.subscribe(getProject(), BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
+        EventUtil.subscribe(getProject(), this, BrowserSelectionChangeListener.TOPIC, browserSelectionChangeListener);
     }
 
     public JComponent getComponent() {
@@ -104,7 +104,6 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     }
 
     public void dispose() {
-        EventManager.unsubscribe(browserSelectionChangeListener);
         super.dispose();
         object = null;
     }

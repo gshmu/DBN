@@ -19,9 +19,11 @@ import java.beans.PropertyChangeListener;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -82,9 +84,21 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
 
             }
         });
+
+        EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
+    private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
+        @Override
+        public void settingsChanged() {
+            regionalSettingsChanged();
+        }
+    };
 
+    protected void regionalSettingsChanged() {
+        revalidate();
+        repaint();
+    }
 
     @NotNull
     public BasicTableSelectionRestorer createSelectionRestorer() {
@@ -304,7 +318,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         regionalSettings = null;
         dataGridSettings = null;
         tableGutter = null;
-        EditorColorsManager.getInstance().removeEditorColorsListener(this);
     }
 
     public Rectangle getCellRect(DataModelCell cell) {

@@ -26,7 +26,6 @@ public class EditRecordAction extends AbstractDataEditorAction {
         boolean enabled =
                 datasetEditor != null &&
                 datasetEditor.getActiveConnection().isConnected() &&
-                datasetEditor.getEditorTable() != null &&
                 datasetEditor.getEditorTable().getSelectedRow() != -1 &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();

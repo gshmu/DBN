@@ -8,14 +8,14 @@ import java.awt.Component;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 
 public class ConnectionConfigListCellRenderer extends DefaultListCellRenderer{
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         ConnectionSettings connectionSettings = (ConnectionSettings) value;
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus );
-        GenericDatabaseSettingsForm settingsEditor = databaseSettings.getSettingsEditor();
+        ConnectionDatabaseSettingsForm settingsEditor = (ConnectionDatabaseSettingsForm) databaseSettings.getSettingsEditor();
         String name = settingsEditor == null ?
                 databaseSettings.getName() :
                 settingsEditor.getConnectionName();

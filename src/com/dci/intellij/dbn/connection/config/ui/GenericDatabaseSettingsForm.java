@@ -1,91 +1,74 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.sql.Driver;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
-import com.dci.intellij.dbn.connection.config.GenericConnectionDatabaseSettings;
-import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.dci.intellij.dbn.connection.config.GenericDatabaseSettings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
 
-public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<GenericConnectionDatabaseSettings>{
-    private JButton testButton;
-    private JButton infoButton;
+public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<GenericDatabaseSettings>{
     private JPanel mainPanel;
     private JTextField nameTextField;
     private JTextField descriptionTextField;
     private JTextField userTextField;
     private JTextField urlTextField;
     private TextFieldWithBrowseButton driverLibraryTextField;
+    private DBNComboBox<DatabaseType> databaseTypeComboBox;
     private DBNComboBox<DriverOption> driverComboBox;
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox emptyPasswordCheckBox;
     private JCheckBox activeCheckBox;
-    private JPanel connectionParametersPanel;
-    private JPanel propertiesGroupPanel;
-    private JPanel propertiesPanel;
+    private JLabel driverErrorLabel;
 
-    private GenericConnectionDatabaseSettings temporaryConfig;
-
-    private PropertiesEditorForm propertiesEditorForm;
+    private GenericDatabaseSettings temporaryConfig;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
-    public GenericDatabaseSettingsForm(GenericConnectionDatabaseSettings connectionConfig) {
+    public GenericDatabaseSettingsForm(GenericDatabaseSettings connectionConfig) {
         super(connectionConfig);
         Project project = connectionConfig.getProject();
         temporaryConfig = connectionConfig.clone();
-        updateBorderTitleForeground(connectionParametersPanel);
-        updateBorderTitleForeground(propertiesGroupPanel);
+        databaseTypeComboBox.setValues(
+                DatabaseType.ORACLE,
+                DatabaseType.MYSQL,
+                DatabaseType.POSTGRES);
 
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.putAll(connectionConfig.getProperties());
-
-        propertiesEditorForm = new PropertiesEditorForm(this, properties, true);
-        propertiesPanel.add(propertiesEditorForm.getComponent(), BorderLayout.CENTER);
-
-
+        databaseTypeComboBox.addListener(new ValueSelectorListener<DatabaseType>() {
+            @Override
+            public void valueSelected(DatabaseType value) {
+                String url = urlTextField.getText();
+                String urlPattern = value.getUrlResolver().getDefaultUrl();
+                if (StringUtil.isEmpty(url)) {
+                    urlTextField.setText(urlPattern);
+                } else {
+                    for (DatabaseType databaseType : DatabaseType.values()) {
+                        if (url.trim().equalsIgnoreCase(databaseType.getUrlResolver().getDefaultUrl())) {
+                            urlTextField.setText(urlPattern);
+                            break;
+                        }
+                    }
+                }
+                updateDriverFields();
+            }
+        });
 
         resetFormChanges();
 
@@ -96,237 +79,115 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
                 "Library must contain classes implementing the 'java.sql.Driver' class.",
                 project, LIBRARY_FILE_DESCRIPTOR);
 
-        boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
-        boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-        userTextField.setEnabled(!isOsAuthentication);
-        passwordField.setEnabled(!isOsAuthentication && !emptyPasswordCheckBox.isSelected());
-        passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-        emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
+        updateAuthenticationFields();
     }
 
-    protected DocumentListener createDocumentListener() {
-        return new DocumentAdapter() {
-            protected void textChanged(DocumentEvent e) {
-                GenericConnectionDatabaseSettings configuration = getConfiguration();
-                configuration.setModified(true);
-
-                Document document = e.getDocument();
-
-                if (document == driverLibraryTextField.getTextField().getDocument()) {
-                    updateLibraryTextField();
-                }
-
-                if (document == nameTextField.getDocument()) {
-                    ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
-                    ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
-                    if (settingsEditor != null) {
-                        JList connectionList = settingsEditor.getList();
-                        connectionList.revalidate();
-                        connectionList.repaint();
-                        notifyPresentationChanges();
-                    }
-                }
-            }
-        };
+    @Override
+    protected GenericDatabaseSettings createConfig(ConnectionSettings configuration) {
+        return new GenericDatabaseSettings(configuration);
     }
 
-    public void notifyPresentationChanges() {
-        GenericConnectionDatabaseSettings configuration = temporaryConfig;//getConfiguration();
-        String name = nameTextField.getText();
-        ConnectivityStatus connectivityStatus = configuration.getConnectivityStatus();
-        Icon icon = configuration.getParent().isNew() ? Icons.CONNECTION_NEW :
-               !activeCheckBox.isSelected() ? Icons.CONNECTION_DISABLED :
-               connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
-               connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
-
-        ConnectionPresentationChangeListener listener = EventManager.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
-        EnvironmentType environmentType = configuration.getParent().getDetailSettings().getEnvironmentType();
-        listener.presentationChanged(name, icon, environmentType.getColor(), getConfiguration().getConnectionId(), configuration.getDatabaseType());
-
+    protected JCheckBox getActiveCheckBox() {
+        return activeCheckBox;
     }
 
-    private void updateLibraryTextField() {
-        JTextField textField = driverLibraryTextField.getTextField();
-        if (fileExists(textField.getText())) {
-            populateDriverList(textField.getText());
-            textField.setForeground(UIUtil.getTextFieldForeground());
-        } else {
-            textField.setForeground(JBColor.RED);
-        }
+    protected JTextField getNameTextField() {
+        return nameTextField;
     }
 
-    protected ActionListener createActionListener() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Object source = e.getSource();
-                ConnectionDatabaseSettings configuration = getConfiguration();
-
-                if (source == testButton || source == infoButton) {
-                    temporaryConfig = new GenericConnectionDatabaseSettings(getConfiguration().getParent());
-                    applyChanges(temporaryConfig);
-
-                    if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
-                    if (source == infoButton) ConnectionManager.showConnectionInfo(temporaryConfig);
-                }
-                else if (source == osAuthenticationCheckBox || source == emptyPasswordCheckBox) {
-                    boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
-                    boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-                    userTextField.setEnabled(!isOsAuthentication);
-                    passwordField.setEnabled(!isOsAuthentication && !isEmptyPassword);
-                    passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-                    emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
-
-                    if (isOsAuthentication || isEmptyPassword) {
-                        passwordField.setText("");
-                    }
-                    if (isOsAuthentication) {
-                        userTextField.setText("");
-                        emptyPasswordCheckBox.setSelected(false);
-                    }
-                    getConfiguration().setModified(true);
-                } else {
-                    getConfiguration().setModified(true);
-                }
-
-                if (source == activeCheckBox || source == nameTextField || source == testButton || source == infoButton) {
-                    ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
-                    ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
-
-                    if (settingsEditor != null) {
-                        JList connectionList = settingsEditor.getList();
-                        connectionList.revalidate();
-                        connectionList.repaint();
-                        notifyPresentationChanges();
-                    }
-                }
-            }
-        };
+    @Override
+    protected TextFieldWithBrowseButton getDriverLibraryTextField() {
+        return driverLibraryTextField;
     }
 
-
-
-    private void populateDriverList(final String driverLibrary) {
-        boolean fileExists = fileExists(driverLibrary);
-        if (fileExists) {
-            List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
-            DriverOption selectedOption = driverComboBox.getSelectedValue();
-            driverComboBox.clearValues();
-            //driverComboBox.addItem("");
-            if (drivers != null) {
-                List<DriverOption> driverOptions = new ArrayList<DriverOption>();
-                for (Driver driver : drivers) {
-                    DriverOption driverOption = new DriverOption(driver);
-                    driverOptions.add(driverOption);
-                    if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
-                        selectedOption = driverOption;
-                    }
-                }
-
-                driverComboBox.setValues(driverOptions);
-
-                if (selectedOption == null && driverOptions.size() > 0) {
-                    selectedOption = driverOptions.get(0);
-                }
-            }
-            driverComboBox.setSelectedValue(selectedOption);
-        } else {
-            driverComboBox.clearValues();
-            //driverComboBox.addItem("");
-        }
+    protected DBNComboBox<DriverOption> getDriverComboBox() {
+        return driverComboBox;
     }
 
-    private static class DriverOption implements Presentable {
-        private Driver driver;
-
-        public DriverOption(Driver driver) {
-            this.driver = driver;
-        }
-
-        public Driver getDriver() {
-            return driver;
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return driver.getClass().getName();
-        }
-
-        @Nullable
-        @Override
-        public Icon getIcon() {
-            return null;
-        }
-
-        public static DriverOption get(List<DriverOption> driverOptions, String name) {
-            for (DriverOption driverOption : driverOptions) {
-                if (driverOption.getName().equals(name)) {
-                    return driverOption;
-                }
-            }
-            return null;
-        }
+    @Override
+    protected JTextField getUserTextField() {
+        return userTextField;
     }
 
-    private static boolean fileExists(String driverLibrary) {
-        return driverLibrary != null && new File(driverLibrary).exists();
+    @Override
+    protected JPasswordField getPasswordField() {
+        return passwordField;
     }
 
-    public String getConnectionName() {
-        return nameTextField.getText();
+    protected JCheckBox getOsAuthenticationCheckBox() {
+        return osAuthenticationCheckBox;
     }
 
-    public boolean isConnectionActive() {
-        return activeCheckBox.isSelected();
+    protected JCheckBox getEmptyPasswordCheckBox() {
+        return emptyPasswordCheckBox;
     }
 
-    public ConnectivityStatus getConnectivityStatus() {
-        return temporaryConfig.getConnectivityStatus();
+    public JLabel getDriverErrorLabel() {
+        return driverErrorLabel;
+    }
+
+    @Override
+    public DBNComboBox<DatabaseType> getDatabaseTypeComboBox() {
+        return databaseTypeComboBox;
     }
 
     public JPanel getComponent() {
         return mainPanel;
     }
 
-    public void applyChanges(GenericConnectionDatabaseSettings connectionConfig){
-        connectionConfig.setActive(activeCheckBox.isSelected());
-        connectionConfig.setName(nameTextField.getText());
-        connectionConfig.setDescription(descriptionTextField.getText());
-        connectionConfig.setDriverLibrary(driverLibraryTextField.getText());
-        connectionConfig.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
-        connectionConfig.setDatabaseUrl(urlTextField.getText());
+    public void applyFormChanges(GenericDatabaseSettings configuration){
+        configuration.setActive(activeCheckBox.isSelected());
+        configuration.setDatabaseType(databaseTypeComboBox.getSelectedValue());
+        configuration.setName(nameTextField.getText());
+        configuration.setDescription(descriptionTextField.getText());
+        configuration.setDriverLibrary(driverLibraryTextField.getText());
+        configuration.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
+        configuration.setConnectionUrl(urlTextField.getText());
 
-        Authentication authentication = connectionConfig.getAuthentication();
+        Authentication authentication = configuration.getAuthentication();
         authentication.setUser(userTextField.getText());
         authentication.setPassword(new String(passwordField.getPassword()));
         authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
-        connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
-        connectionConfig.setProperties(propertiesEditorForm.getProperties());
-        connectionConfig.updateHashCode();
+        configuration.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
+        configuration.updateHashCode();
     }
 
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
-        final GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
+        DatabaseType selectedDatabaseType = databaseTypeComboBox.getSelectedValue();
+        if (selectedDatabaseType == null) {
+            throw new ConfigurationException("Database type not selected");
+        } else {
+            DriverOption selectedDriver = driverComboBox.getSelectedValue();
+            DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
+            if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
+                throw new ConfigurationException("Entered driver library does not match the selected database type");
+            }
+
+            databaseTypeComboBox.setEnabled(false);
+        }
+
+
+        final GenericDatabaseSettings configuration = getConfiguration();
 
         final boolean settingsChanged =
-                !connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getDatabaseUrl(), urlTextField.getText()) ||
-                !CommonUtil.safeEqual(connectionConfig.getAuthentication().getUser(), userTextField.getText());
+                //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
+                !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getConnectionUrl(), urlTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
 
 
-        applyChanges(connectionConfig);
+        applyFormChanges(configuration);
 
          new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
                 if (settingsChanged) {
-                    Project project = connectionConfig.getProject();
-                    ConnectionSettingsListener listener = EventManager.notify(project, ConnectionSettingsListener.TOPIC);
-                    listener.settingsChanged(connectionConfig.getConnectionId());
+                    Project project = configuration.getProject();
+                    ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
+                    listener.settingsChanged(configuration.getConnectionId());
                 }
             }
         };
@@ -334,28 +195,28 @@ public class GenericDatabaseSettingsForm extends ConfigurationEditorForm<Generic
 
 
     public void resetFormChanges() {
-        GenericConnectionDatabaseSettings connectionConfig = getConfiguration();
-        propertiesEditorForm.setProperties(connectionConfig.getProperties());
+        GenericDatabaseSettings configuration = getConfiguration();
 
-        activeCheckBox.setSelected(connectionConfig.isActive());
-        nameTextField.setText(connectionConfig.getDisplayName());
-        descriptionTextField.setText(connectionConfig.getDescription());
-        driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
-        urlTextField.setText(connectionConfig.getDatabaseUrl());
+        DatabaseType databaseType = configuration.getDatabaseType();
+        if (databaseType != DatabaseType.UNKNOWN) {
+            databaseTypeComboBox.setSelectedValue(databaseType);
+            databaseTypeComboBox.setEnabled(false);
+        }
 
-        Authentication authentication = connectionConfig.getAuthentication();
+        activeCheckBox.setSelected(configuration.isActive());
+        nameTextField.setText(configuration.getDisplayName());
+        descriptionTextField.setText(configuration.getDescription());
+        driverLibraryTextField.setText(configuration.getDriverLibrary());
+        urlTextField.setText(configuration.getConnectionUrl());
+
+        Authentication authentication = configuration.getAuthentication();
         userTextField.setText(authentication.getUser());
         passwordField.setText(authentication.getPassword());
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
         emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
-        populateDriverList(connectionConfig.getDriverLibrary());
-        driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
+        updateDriverFields();
+        driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), configuration.getDriver()));
     }
 }
 

@@ -4,15 +4,17 @@ import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -262,13 +264,13 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
                     if (isDataDefinitionStatement()) {
                         DBSchemaObject affectedObject = getAffectedObject();
                         if (affectedObject != null) {
-                            DataDefinitionChangeListener listener = EventManager.notify(project, DataDefinitionChangeListener.TOPIC);
+                            DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
                             listener.dataDefinitionChanged(affectedObject);
                         } else {
                             DBSchema affectedSchema = getAffectedSchema();
                             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
                             if (affectedSchema != null && subjectPsiElement != null) {
-                                DataDefinitionChangeListener listener = EventManager.notify(project, DataDefinitionChangeListener.TOPIC);
+                                DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
                                 listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
                             }
                         }
@@ -489,6 +491,13 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public boolean isQuery() {
         return false;
+    }
+
+    @Override
+    public List<StatementExecutionProcessor> asList() {
+        List<StatementExecutionProcessor> list = new ArrayList<StatementExecutionProcessor>();
+        list.add(this);
+        return list;
     }
 
     /********************************************************

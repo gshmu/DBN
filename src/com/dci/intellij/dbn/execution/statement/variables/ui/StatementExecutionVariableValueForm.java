@@ -1,27 +1,27 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
@@ -31,6 +31,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariable;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
+import com.dci.intellij.dbn.execution.statement.variables.VariableValueProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,9 +42,12 @@ import com.intellij.util.ui.UIUtil;
 public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementExecutionVariablesForm> {
     private JPanel mainPanel;
     private JLabel variableNameLabel;
-    private JComboBox dataTypeComboBox;
     private JPanel valueFieldPanel;
     private JLabel errorLabel;
+    private JCheckBox useNullCheckBox;
+    private JPanel dataTypePanel;
+
+    private DBNComboBox<GenericDataType> dataTypeComboBox;
 
     private StatementExecutionVariable variable;
     private TextFieldWithPopup editorComponent;
@@ -57,11 +61,13 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         variableNameLabel.setText(variable.getName().substring(1).trim());
         variableNameLabel.setIcon(Icons.DBO_VARIABLE);
 
-        dataTypeComboBox.addItem(GenericDataType.LITERAL);
-        dataTypeComboBox.addItem(GenericDataType.NUMERIC);
-        dataTypeComboBox.addItem(GenericDataType.DATE_TIME);
-        dataTypeComboBox.setRenderer(new DataTypeCellRenderer());
-        dataTypeComboBox.setSelectedItem(variable.getDataType());
+        dataTypeComboBox = new DBNComboBox<GenericDataType>(
+                Arrays.asList(
+                    GenericDataType.LITERAL,
+                    GenericDataType.NUMERIC,
+                    GenericDataType.DATE_TIME));
+        dataTypeComboBox.setSelectedValue(variable.getDataType());
+        dataTypePanel.add(dataTypeComboBox, BorderLayout.CENTER);
 
         StatementExecutionProcessor executionProcessor = parentComponent.getExecutionProcessor();
         Project project = executionProcessor.getProject();
@@ -103,6 +109,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
                 return false;
             }
         }, true);
+        editorComponent.setEnabled(!variable.useNull());
         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
         valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
         final JTextField textField = editorComponent.getTextField();
@@ -115,7 +122,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
                 textField.getDocument().addDocumentListener(new DocumentAdapter() {
                     @Override
                     protected void textChanged(DocumentEvent documentEvent) {
-                        textField.setForeground(UIUtil.getTextFieldForeground());
+                    textField.setForeground(UIUtil.getTextFieldForeground());
                     }
                 });
             }
@@ -126,19 +133,38 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
 
         textField.addKeyListener(ComboBoxSelectionKeyListener.create(dataTypeComboBox, false));
 
-        variable.setPreviewValueProvider(new StatementExecutionVariable.TemporaryValueProvider() {
+        variable.setPreviewValueProvider(new VariableValueProvider() {
             public String getValue() {
                 return textField.getText().trim();
             }
 
             public GenericDataType getDataType() {
-                return (GenericDataType) dataTypeComboBox.getSelectedItem();
+                return dataTypeComboBox.getSelectedValue();
+            }
+
+            @Override
+            public boolean useNull() {
+                return useNullCheckBox.isSelected();
             }
         });
 
-        dataTypeComboBox.addActionListener(new ActionListener() {
+        dataTypeComboBox.addListener(new ValueSelectorListener<GenericDataType>() {
+            @Override
+            public void valueSelected(GenericDataType value) {
+                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, value == GenericDataType.DATE_TIME);
+                getParentComponent().updatePreview();
+            }
+        });
+
+        useNullCheckBox.setSelected(variable.useNull());
+        useNullCheckBox.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataTypeComboBox.getSelectedItem() == GenericDataType.DATE_TIME);
+                boolean useNullValue = useNullCheckBox.isSelected();
+                if (useNullValue) editorComponent.getTextField().setText("");
+                editorComponent.setEnabled(!useNullValue);
+                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataTypeComboBox.getSelectedValue() == GenericDataType.DATE_TIME);
+                getParentComponent().updatePreview();
             }
         });
 
@@ -162,8 +188,10 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     }
 
     public void saveValue() {
-        variable.setValue(editorComponent.getTextField().getText().trim());
-        variable.setDataType((GenericDataType) dataTypeComboBox.getSelectedItem());
+        String trim = editorComponent.getTextField().getText().trim();
+        variable.setValue(trim);
+        variable.setDataType(dataTypeComboBox.getSelectedValue());
+        variable.setUseNull(useNullCheckBox.isSelected());
         StatementExecutionProcessor executionProcessor = getParentComponent().getExecutionProcessor();
         Project project = executionProcessor.getProject();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
@@ -172,19 +200,6 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
 
     public void addDocumentListener(DocumentListener documentListener) {
         editorComponent.getTextField().getDocument().addDocumentListener(documentListener);        
-    }
-
-    public void addActionListener(ActionListener actionListener) {
-        dataTypeComboBox.addActionListener(actionListener);
-    }
-
-    private class DataTypeCellRenderer extends DefaultListCellRenderer {
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            GenericDataType dataType = (GenericDataType) value;
-            label.setText(" " + dataType.getName() + " ");
-            return label;
-        }
     }
 
     protected int[] getMetrics(int[] metrics) {
@@ -205,6 +220,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
 
     public void dispose() {
         super.dispose();
+        variable.setPreviewValueProvider(null);
         variable = null;
         editorComponent = null;
     }

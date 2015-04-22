@@ -259,11 +259,9 @@ public class DBObjectListContainer implements Disposable {
             DBObjectType objectType = objectList.getObjectType();
             if (hidden) {
                 if (hiddenObjectLists == null) hiddenObjectLists = new EnumMap<DBObjectType, DBObjectList<DBObject>>(DBObjectType.class);
-                assert !hiddenObjectLists.containsKey(objectType);
                 hiddenObjectLists.put(objectType, objectList);
             } else {
                 if (objectLists == null) objectLists = new EnumMap<DBObjectType, DBObjectList<DBObject>>(DBObjectType.class);
-                assert !objectLists.containsKey(objectType);
                 objectLists.put(objectType, objectList);
             }
         }

@@ -27,7 +27,7 @@ public class BreakpointUpdaterFileEditorListener implements FileEditorManagerLis
                     XLineBreakpoint lineBreakpoint = (XLineBreakpoint) breakpoint;
                     lineBreakpoint.putUserData(DBProgramBreakpointHandler.BREAKPOINT_ID_KEY, null);
                     DBEditableObjectVirtualFile breakpointDatabaseFile = DBProgramBreakpointHandler.getDatabaseFile(lineBreakpoint);
-                    if (databaseFile == breakpointDatabaseFile) {
+                    if (databaseFile.equals(breakpointDatabaseFile)) {
                         breakpointManager.getLineBreakpointManager().registerBreakpoint((XLineBreakpointImpl) lineBreakpoint, true);
                     }
                 }

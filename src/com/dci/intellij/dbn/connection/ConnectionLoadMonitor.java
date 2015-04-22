@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
 
 public class ConnectionLoadMonitor implements Disposable {
@@ -23,7 +23,7 @@ public class ConnectionLoadMonitor implements Disposable {
     public void decrementLoaderCount() {
         activeLoaderCount--;
         if(activeLoaderCount == 0 && connectionHandler != null && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
-            EventManager.notify(connectionHandler.getProject(), ConnectionLoadListener.TOPIC).contentsLoaded(connectionHandler);
+            EventUtil.notify(connectionHandler.getProject(), ConnectionLoadListener.TOPIC).contentsLoaded(connectionHandler);
         }
     }
 

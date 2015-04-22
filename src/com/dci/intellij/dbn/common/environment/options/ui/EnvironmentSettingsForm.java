@@ -1,24 +1,24 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
-import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
-import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.ToolbarDecorator;
-
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.table.TableCellEditor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
+import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
+import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
+import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
 
 public class EnvironmentSettingsForm extends ConfigurationEditorForm<EnvironmentSettings> {
     private JPanel mainPanel;
@@ -111,7 +111,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
             @Override
             public void notifyChanges() {
                 if (settingsChanged || visibilityChanged) {
-                    EnvironmentChangeListener listener = EventManager.notify(getConfiguration().getProject(), EnvironmentChangeListener.TOPIC);
+                    EnvironmentChangeListener listener = EventUtil.notify(getConfiguration().getProject(), EnvironmentChangeListener.TOPIC);
                     listener.configurationChanged();
                 }
             }

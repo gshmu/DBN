@@ -18,12 +18,12 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -79,8 +79,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         resultTabs.setPopupGroup(new ExecutionConsolePopupActionGroup(this), "place", false);
         resultTabs.setTabsPosition(JBTabsPosition.bottom);
         resultTabs.setBorder(null);
-        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
-        EventManager.subscribe(project, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public int getTabCount() {
@@ -510,10 +510,5 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         } finally {
             canScrollToSource = true;
         }
-    }
-
-    public void dispose() {
-        EventManager.unsubscribe(environmentChangeListener);
-        super.dispose();
     }
 }

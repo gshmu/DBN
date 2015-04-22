@@ -195,6 +195,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     private void createActionsPanel() {
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("DBNavigator.MethodExecutionResult.Controls", false,"DBNavigator.ActionGroup.MethodExecutionResult");
+        actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent());
     }
 

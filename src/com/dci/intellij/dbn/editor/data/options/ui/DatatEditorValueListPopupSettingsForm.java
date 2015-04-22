@@ -29,8 +29,8 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         DataEditorValueListPopupSettings settings = getConfiguration();
         settings.setShowPopupButton(showPopupButtonCheckBox.isSelected());
-        settings.setElementCountThreshold(validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", 0, 10000, null));
-        settings.setDataLengthThreshold(validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", 0, 1000, null));
+        settings.setElementCountThreshold(validateIntegerInputValue(elementCountThresholdTextBox, "Element count threshold", true, 0, 10000, null));
+        settings.setDataLengthThreshold(validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", true, 0, 1000, null));
     }
 
     public void resetFormChanges() {

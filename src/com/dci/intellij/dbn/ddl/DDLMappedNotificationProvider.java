@@ -4,7 +4,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
@@ -31,9 +31,9 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     public DDLMappedNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventManager.subscribe(project, DDLMappingListener.TOPIC, ddlMappingListener);
-        EventManager.subscribe(project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerAdapter);
-        EventManager.subscribe(project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
+        EventUtil.subscribe(project, project, DDLMappingListener.TOPIC, ddlMappingListener);
+        EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerAdapter);
+        EventUtil.subscribe(project, project, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
     }
 
     DDLMappingListener ddlMappingListener = new DDLMappingListener() {

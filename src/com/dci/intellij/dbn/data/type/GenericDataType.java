@@ -1,6 +1,11 @@
 package com.dci.intellij.dbn.data.type;
 
-public enum GenericDataType {
+import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.Presentable;
+
+public enum GenericDataType implements Presentable{
     LITERAL("Literal"),
     NUMERIC("Numeric"),
     DATE_TIME("Date/Time"),
@@ -24,6 +29,13 @@ public enum GenericDataType {
     public String getName() {
         return name;
     }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        return null;
+    }
+
 
     public boolean is(GenericDataType... genericDataTypes) {
         for (GenericDataType genericDataType : genericDataTypes) {
