@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
@@ -7,12 +9,15 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
 public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
@@ -94,11 +99,13 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     }
 
     public DatabaseType getDatabaseType() {
-        return databaseType;
+        return CommonUtil.nvl(databaseType, DatabaseType.UNKNOWN);
     }
 
     public void setDatabaseType(DatabaseType databaseType) {
-        this.databaseType = databaseType;
+        if (this.databaseType == DatabaseType.UNKNOWN && databaseType != DatabaseType.UNKNOWN) {
+            this.databaseType = databaseType;
+        }
     }
 
     public double getDatabaseVersion() {
@@ -144,6 +151,46 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     @Override
     public abstract ConnectionDatabaseSettings clone();
+
+    public void checkConfiguration() throws ConfigurationException{
+        List<String> errors = new ArrayList<String>();
+        DatabaseType databaseType = getDatabaseType();
+        if (databaseType == DatabaseType.UNKNOWN) {
+            errors.add("Database type not provided");
+        }
+
+        String connectionUrl = getConnectionUrl();
+        if (StringUtils.isEmpty(connectionUrl)) {
+            errors.add("Database information not provided (url, host, port, database)");
+        } else {
+            DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+            if (!urlResolver.isValid(connectionUrl)) {
+                errors.add("Database information incomplete or invalid (host, port, database)");
+            }
+        }
+
+        if (StringUtils.isEmpty(getDriverLibrary())) {
+            errors.add("JDBC driver library not provided");
+        } else {
+            String driver = getDriver();
+            if (StringUtils.isEmpty(driver)) {
+                errors.add("JDBC driver not provided");
+            } else {
+                DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
+                if (driverDatabaseType != databaseType) {
+                    errors.add("JDBC driver does not match the selected database type");
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            StringBuilder message = new StringBuilder("Invalid or incomplete database configuration:");
+            for (String error : errors) {
+                message.append("\n - ").append(error);
+            }
+            throw new ConfigurationException(message.toString());
+        }
+    }
 
     @NotNull
     public String getConnectionId() {

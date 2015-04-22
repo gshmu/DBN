@@ -26,15 +26,7 @@ public class ConnectionInfo {
         userName = metaData.getUserName();
         driverJdbcType = metaData.getJDBCMajorVersion() + (metaData.getJDBCMinorVersion() > 0 ? "." + metaData.getJDBCMinorVersion() : "");
         String prodName = productName.toLowerCase();
-        if (prodName.contains("oracle")) {
-            databaseType = DatabaseType.ORACLE;
-        } else if (prodName.contains("mysql")) {
-            databaseType = DatabaseType.MYSQL;
-        } else if (prodName.contains("postgres")) {
-            databaseType = DatabaseType.POSTGRES;
-        } else {
-            databaseType = DatabaseType.UNKNOWN;
-        }
+        databaseType = DatabaseType.resolve(prodName);
     }
 
     public String toString() {

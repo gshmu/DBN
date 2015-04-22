@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -40,35 +41,52 @@ public enum DatabaseUrlResolver {
     }
 
     public String resolveHost(String url) {
-        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.matches()) {
-            return matcher.group(2);
+        if (StringUtil.isNotEmpty(url)) {
+            Matcher matcher = getMatcher(url);
+            if (matcher.matches()) {
+                return matcher.group(2);
+            }
         }
         return "";
     }
 
     public String resolvePort(String url) {
-        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.matches()) {
-            String portGroup = matcher.group(3);
-            if (StringUtil.isNotEmpty(portGroup)) {
-                return portGroup.substring(1);
+        if (StringUtil.isNotEmpty(url)) {
+            Matcher matcher = getMatcher(url);
+            if (matcher.matches()) {
+                String portGroup = matcher.group(3);
+                if (StringUtil.isNotEmpty(portGroup)) {
+                    return portGroup.substring(1);
+                }
             }
         }
         return "";
     }
 
     public String resolveDatabase(String url) {
-        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.matches()) {
-            String databaseGroup = matcher.group(4);
-            if (StringUtil.isNotEmpty(databaseGroup)) {
-                return databaseGroup.substring(1);
+        if (StringUtil.isNotEmpty(url)) {
+            Matcher matcher = getMatcher(url);
+            if (matcher.matches()) {
+                String databaseGroup = matcher.group(4);
+                if (StringUtil.isNotEmpty(databaseGroup)) {
+                    return databaseGroup.substring(1);
+                }
             }
         }
         return "";
+    }
+
+    public boolean isValid(String url) {
+        if (StringUtil.isNotEmpty(url)) {
+            Matcher matcher = getMatcher(url);
+            return matcher.matches();
+        }
+        return false;
+    }
+
+    @NotNull
+    private Matcher getMatcher(String url) {
+        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
+        return pattern.matcher(url);
     }
 }
