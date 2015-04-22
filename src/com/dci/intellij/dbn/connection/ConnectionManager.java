@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
@@ -45,6 +46,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -124,6 +126,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = getProject();
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         try {
+            databaseSettings.checkConfiguration();
             connectionHandler.getStandaloneConnection();
             if (showSuccessMessage) {
                 MessageDialog.showInfoDialog(
@@ -131,6 +134,14 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                         "Successfully connected to \"" + connectionHandler.getName() + "\".",
                         databaseSettings.getConnectionDetails(),
                         false);
+            }
+        } catch (ConfigurationException e) {
+            if (showErrorMessage) {
+                MessageUtil.showErrorDialog(
+                        project,
+                        "Invalid configuration",
+                        e.getMessage());
+
             }
         } catch (Exception e) {
             if (showErrorMessage) {
@@ -143,9 +154,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void testConfigConnection(ConnectionSettings connectionSettings, boolean showMessageDialog) {
+    public void testConfigConnection(ConnectionSettings connectionSettings, boolean showMessageDialog) throws ConfigurationException {
         Project project = connectionSettings.getProject();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        databaseSettings.checkConfiguration();
         try {
             Authentication temporaryAuthentication = null;
             Authentication authentication = databaseSettings.getAuthentication();
@@ -200,6 +212,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = connectionSettings.getProject();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         try {
+            databaseSettings.checkConfiguration();
             Authentication temporaryAuthentication = null;
             Authentication authentication = databaseSettings.getAuthentication();
             if (!authentication.isProvided()) {
@@ -220,14 +233,20 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     false);*/
             return connectionInfo;
 
+        } catch (ConfigurationException e) {
+            MessageUtil.showErrorDialog(
+                    project,
+                    "Invalid configuration",
+                    e.getMessage());
+
         } catch (Exception e) {
             MessageDialog.showErrorDialog(
                     project,
                     "Could not connect to \"" + databaseSettings.getName() + "\".",
                     databaseSettings.getConnectionDetails() + "\n\n" + e.getMessage(),
                     false);
-            return null;
         }
+        return null;
     }
 
     public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {

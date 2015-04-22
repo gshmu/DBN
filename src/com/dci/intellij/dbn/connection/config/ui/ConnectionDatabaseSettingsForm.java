@@ -196,7 +196,7 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
                 DriverOption selectedOption = driverComboBox.getSelectedValue();
                 driverComboBox.clearValues();
                 //driverComboBox.addItem("");
-                if (drivers != null) {
+                if (drivers != null && drivers.size() > 0) {
                     List<DriverOption> driverOptions = new ArrayList<DriverOption>();
                     for (Driver driver : drivers) {
                         DriverOption driverOption = new DriverOption(driver);

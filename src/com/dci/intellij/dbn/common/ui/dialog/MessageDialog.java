@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.uiDesigner.core.GridConstraints;
 
+@Deprecated
 public class MessageDialog extends DialogBuilder {
     private JTextArea messageTextArea;
     private JLabel messageLabel;

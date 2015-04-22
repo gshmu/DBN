@@ -39,12 +39,9 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JLabel setupDriverValueLabel;
     private JLabel setupUrlValueLabel;
     private JLabel statusMessageLabel;
-    private JLabel setupDatabaseLabel;
     private JLabel setupDatabaseValueLabel;
     private JLabel setupDescLabel;
-    private JLabel setupHostLabel;
     private JLabel setupHostValueLabel;
-    private JLabel setupPortLabel;
     private JLabel setupPortValueLabel;
     private JLabel setupUrlLabel;
 
@@ -131,22 +128,24 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
             setupDescriptionValueLabel.setText(description);
         }
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
-        setupDriverLibraryValueLabel.setText(databaseSettings.getDriverLibrary());
-        setupDriverValueLabel.setText(databaseSettings.getDriver());
+        setupDriverLibraryValueLabel.setText(getPresentableText(databaseSettings.getDriverLibrary()));
+        setupDriverValueLabel.setText(getPresentableText(databaseSettings.getDriver()));
 
-        String port = databaseSettings.getPort();
-        String database = databaseSettings.getDatabase();
-
-        setupHostValueLabel.setText(databaseSettings.getHost());
-        setupPortValueLabel.setText(StringUtil.isEmpty(port) ? "-" : port);
-        setupDatabaseValueLabel.setText(StringUtil.isEmpty(database) ? "-" : database);
+        setupHostValueLabel.setText(getPresentableText(databaseSettings.getHost()));
+        setupPortValueLabel.setText(getPresentableText(databaseSettings.getPort()));
+        setupDatabaseValueLabel.setText(getPresentableText(databaseSettings.getDatabase()));
         if (databaseSettings instanceof GuidedDatabaseSettings) {
             setupUrlLabel.setVisible(false);
             setupUrlValueLabel.setVisible(false);
         } else {
-            setupUrlValueLabel.setText(databaseSettings.getConnectionUrl());
+            setupUrlValueLabel.setText(getPresentableText(databaseSettings.getConnectionUrl()));
         }
         updateBorderTitleForeground(setupPanel);
+    }
+
+    @NotNull
+    private String getPresentableText(String value) {
+        return StringUtil.isEmpty(value) ? "-" : value;
     }
 
     @Override
