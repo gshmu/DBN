@@ -109,6 +109,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
                 return false;
             }
         }, true);
+        editorComponent.setEnabled(!variable.useNull());
         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
         valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
         final JTextField textField = editorComponent.getTextField();
@@ -156,7 +157,6 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         });
 
         useNullCheckBox.setSelected(variable.useNull());
-        editorComponent.setEnabled(!variable.useNull());
         useNullCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
