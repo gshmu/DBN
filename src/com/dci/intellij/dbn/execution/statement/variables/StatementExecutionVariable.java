@@ -134,4 +134,9 @@ public class StatementExecutionVariable extends VariableValueProvider implements
             valueHistory.add(value);
         }
     }
+
+    public void populate(StatementExecutionVariable variable) {
+        setUseNull(variable.useNull());
+        setValue(variable.getValue());
+    }
 }
