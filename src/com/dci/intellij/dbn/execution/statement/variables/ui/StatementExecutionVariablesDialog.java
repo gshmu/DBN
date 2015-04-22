@@ -27,7 +27,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component.getPreferredFocusedComponent();
+        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull

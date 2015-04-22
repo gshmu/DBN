@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +19,12 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -191,7 +192,6 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private StatementExecutionProcessor findExecutionProcessor(ExecutablePsiElement executablePsiElement, FileEditor fileEditor, MatchType matchType) {
-        DBLanguagePsiFile psiFile = executablePsiElement.getFile();
         Collection<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(fileEditor);
 
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
@@ -209,33 +209,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
      *                       Execution                       *
      *********************************************************/
     public void executeStatement(final @NotNull StatementExecutionProcessor executionProcessor) {
-        ConnectionAction executionAction = new ConnectionAction("the statement execution", executionProcessor) {
-            @Override
-            protected void execute() {
-                executionProcessor.initExecutionInput(false);
-                promptVariablesDialog(executionProcessor,
-                        new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
-                            @Override
-                            protected void execute(@NotNull ProgressIndicator progressIndicator) {
-                                try {
-                                    executionProcessor.execute(progressIndicator);
-                                } finally {
-                                    DBLanguagePsiFile file = executionProcessor.getPsiFile();
-                                    DocumentUtil.refreshEditorAnnotations(file);
-                                }
-
-                            }
-                        });
-            }
-        };
-
-        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-        connectionMappingManager.selectConnectionAndSchema(executionProcessor.getPsiFile(), executionAction);
+        executeStatements(executionProcessor.asList(), executionProcessor.getVirtualFile());
     }
 
     public void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
-        if (executionProcessors.size() > 0) {
-
+        final int size = executionProcessors.size();
+        if (size > 0) {
             final FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
             ConnectionProvider connectionProvider = new ConnectionProvider() {
                 @Nullable
@@ -244,31 +223,37 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     return connectionMappingManager.getActiveConnection(virtualFile);
                 }
             };
-            TaskInstructions taskInstructions = new TaskInstructions("Executing statements", false, true);
-            ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider, taskInstructions) {
+
+            ConnectionAction executionTask = new ConnectionAction("the statement execution", connectionProvider) {
                 @Override
                 protected void execute() {
-                    boolean showIndeterminateProgress = executionProcessors.size() < 5;
-                    ProgressIndicator progressIndicator = getProgressIndicator();
-                    BackgroundTask.initProgressIndicator(progressIndicator, showIndeterminateProgress);
-
-                    for (int i = 0; i < executionProcessors.size(); i++) {
-                        if (!progressIndicator.isCanceled()) {
-                            if (!progressIndicator.isIndeterminate()) {
-                                progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, executionProcessors.size()));
-                            }
-
-                            final StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
-                            executionProcessor.initExecutionInput(true);
-                            promptVariablesDialog(executionProcessor, new BackgroundTask(getProject(), "Executing " + executionProcessor.getStatementName(), false, true) {
-                                @Override
-                                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                                    executionProcessor.execute(progressIndicator);
+                    BackgroundTask executionCallback = new BackgroundTask(getProject(), size == 1 ? "Executing statement" : "Executing statements", false, true) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                            boolean showIndeterminateProgress = size < 5;
+                            BackgroundTask.initProgressIndicator(progressIndicator, showIndeterminateProgress);
+                            long lastRefresh = 0;
+                            for (int i = 0; i < size; i++) {
+                                if (!progressIndicator.isCanceled()) {
+                                    StatementExecutionProcessor executionProcessor = executionProcessors.get(i);
+                                    try {
+                                        if (!progressIndicator.isIndeterminate()) {
+                                            progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
+                                            executionProcessor.execute(progressIndicator);
+                                        }
+                                    } finally {
+                                        if (TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
+                                            lastRefresh = System.currentTimeMillis();
+                                            DBLanguagePsiFile file = executionProcessor.getPsiFile();
+                                            DocumentUtil.refreshEditorAnnotations(file);
+                                        }
+                                    }
                                 }
-                            });
-
+                            }
                         }
-                    }
+                    };
+
+                    promptVariablesDialog(executionProcessors, executionCallback);
                 }
             };
 
@@ -295,7 +280,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                 if (option == 0 || option == 1) {
                                     int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
                                     List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
-                                    executeStatements(executionProcessors, DocumentUtil.getVirtualFile(editor));
+                                    final VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+                                    executeStatements(executionProcessors, virtualFile);
                                 }
                             }
                         });
@@ -304,38 +290,41 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     }
 
-    public void promptVariablesDialog(@NotNull final StatementExecutionProcessor executionProcessor, @NotNull final RunnableTask callback) {
+    public void promptVariablesDialog(@NotNull final List<StatementExecutionProcessor> executionProcessors, @NotNull final RunnableTask callback) {
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
-                ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                if (executablePsiElement != null) {
-                    executablePsiElement.collectExecVariablePsiElements(bucket);
+                for (StatementExecutionProcessor executionProcessor : executionProcessors) {
+                    executionProcessor.initExecutionInput(true);
+                    StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
+                    Set<ExecVariablePsiElement> bucket = new THashSet<ExecVariablePsiElement>();
+                    ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+                    if (executablePsiElement != null) {
+                        executablePsiElement.collectExecVariablePsiElements(bucket);
+                    }
+
+                    StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
+                    if (bucket.isEmpty()) {
+                        executionVariables = null;
+                        executionInput.setExecutionVariables(null);
+                    } else {
+                        if (executionVariables == null){
+                            executionVariables = new StatementExecutionVariablesBundle(bucket);
+                            executionInput.setExecutionVariables(executionVariables);
+                        }
+                        executionVariables.initialize(bucket);
+                    }
+
+                    if (executionVariables != null) {
+                        StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executionInput.getExecutableStatementText());
+                        dialog.show();
+                        if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+                            return;
+                        }
+                    }
                 }
 
-                StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
-                if (bucket.isEmpty()) {
-                    executionVariables = null;
-                    executionInput.setExecutionVariables(null);
-                } else {
-                    if (executionVariables == null){
-                        executionVariables = new StatementExecutionVariablesBundle(bucket);
-                        executionInput.setExecutionVariables(executionVariables);
-                    }
-                    executionVariables.initialize(bucket);
-                }
-
-                if (executionVariables != null) {
-                    StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executionInput.getExecutableStatementText());
-                    dialog.show();
-                    if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                        callback.start();
-                    }
-                } else {
-                    callback.start();
-                }
+                callback.start();
             }
         }.start();
     }
