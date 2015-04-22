@@ -74,7 +74,7 @@ public class StatementExecutionVariablesBundle implements Disposable{
 
     public boolean isIncomplete() {
         for (StatementExecutionVariable variable : variables) {
-            if (StringUtil.isEmpty(variable.getValue())) {
+            if (!variable.isProvided()) {
                 return true;
             }
         }
@@ -123,41 +123,46 @@ public class StatementExecutionVariablesBundle implements Disposable{
         Collections.sort(variables, NAME_LENGTH_COMPARATOR);
         Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
         for (StatementExecutionVariable variable : variables) {
-            String value = forPreview ? variable.getPreviewValueProvider().getValue() : variable.getValue();
-            GenericDataType genericDataType = forPreview ? variable.getPreviewValueProvider().getDataType() : variable.getDataType();
+            VariableValueProvider previewValueProvider = variable.getPreviewValueProvider();
+            boolean useNullValue = forPreview ? previewValueProvider.useNull() : variable.useNull();
 
-            if (!StringUtil.isEmpty(value)) {
-
-                if (genericDataType == GenericDataType.LITERAL) {
-                    value = StringUtil.replace(value, "'", "''");
-                    value = '\'' + value + '\'';
-                } else {
-                    if (genericDataType == GenericDataType.DATE_TIME){
-                        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                        try {
-                            Date date = formatter.parseDateTime(value);
-                            value = metadataInterface.createDateString(date);
-                        } catch (ParseException e) {
-                            try {
-                                Date date = formatter.parseDate(value);
-                                value = metadataInterface.createDateString(date);
-                            } catch (ParseException e1) {
-                                addError(variable, "Invalid date");
-                            }
-                        }
-                    } else if (genericDataType == GenericDataType.NUMERIC){
-                        try {
-                            formatter.parseNumber(value);
-                        } catch (ParseException e) {
-                            addError(variable, "Invalid number");
-                        }
-
+            if (useNullValue) {
+                statementText = StringUtil.replaceIgnoreCase(statementText, variable.getName(), "NULL");
+            } else {
+                String value = forPreview ? previewValueProvider.getValue() : variable.getValue();
+                if (!StringUtil.isEmpty(value)) {
+                    GenericDataType genericDataType = forPreview ? previewValueProvider.getDataType() : variable.getDataType();
+                    if (genericDataType == GenericDataType.LITERAL) {
+                        value = StringUtil.replace(value, "'", "''");
+                        value = '\'' + value + '\'';
                     } else {
-                        throw new IllegalArgumentException("Data type " + genericDataType.getName() + " not supported with execution variables.");
-                    }
-                }
+                        if (genericDataType == GenericDataType.DATE_TIME){
+                            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                            try {
+                                Date date = formatter.parseDateTime(value);
+                                value = metadataInterface.createDateString(date);
+                            } catch (ParseException e) {
+                                try {
+                                    Date date = formatter.parseDate(value);
+                                    value = metadataInterface.createDateString(date);
+                                } catch (ParseException e1) {
+                                    addError(variable, "Invalid date");
+                                }
+                            }
+                        } else if (genericDataType == GenericDataType.NUMERIC){
+                            try {
+                                formatter.parseNumber(value);
+                            } catch (ParseException e) {
+                                addError(variable, "Invalid number");
+                            }
 
-                statementText = StringUtil.replaceIgnoreCase(statementText, variable.getName(), value);
+                        } else {
+                            throw new IllegalArgumentException("Data type " + genericDataType.getName() + " not supported with execution variables.");
+                        }
+                    }
+
+                    statementText = StringUtil.replaceIgnoreCase(statementText, variable.getName(), value);
+                }
             }
         }
         return statementText;

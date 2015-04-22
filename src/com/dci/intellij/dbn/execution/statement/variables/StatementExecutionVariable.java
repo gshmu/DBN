@@ -10,12 +10,13 @@ import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.intellij.openapi.components.PersistentStateComponent;
 
-public class StatementExecutionVariable implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
+public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
     private GenericDataType dataType;
     private String name;
     private int offset;
     private MostRecentStack<String> valueHistory = new MostRecentStack<String>();
-    private TemporaryValueProvider previewValueProvider;
+    private VariableValueProvider previewValueProvider;
+    private boolean useNull;
 
     public StatementExecutionVariable(Element state) {
         loadState(state);
@@ -64,12 +65,25 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
         return valueHistory;
     }
 
-    public TemporaryValueProvider getPreviewValueProvider() {
-        return previewValueProvider;
+    @NotNull
+    public VariableValueProvider getPreviewValueProvider() {
+        return previewValueProvider == null ? this : previewValueProvider;
     }
 
-    public void setPreviewValueProvider(TemporaryValueProvider previewValueProvider) {
+    public void setPreviewValueProvider(VariableValueProvider previewValueProvider) {
         this.previewValueProvider = previewValueProvider;
+    }
+
+    public boolean isProvided() {
+        return useNull || valueHistory.get() != null;
+    }
+
+    public boolean useNull() {
+        return useNull;
+    }
+
+    public void setUseNull(boolean isNull) {
+        this.useNull = isNull;
     }
 
     @Override
@@ -119,10 +133,5 @@ public class StatementExecutionVariable implements Comparable<StatementExecution
             String value = valuesTokenizer.nextToken().trim();
             valueHistory.add(value);
         }
-    }
-
-    public interface TemporaryValueProvider {
-        String getValue();
-        GenericDataType getDataType();
     }
 }
