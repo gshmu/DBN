@@ -17,8 +17,8 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.dialog.MessageDialog;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -125,70 +125,118 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
         Project project = getProject();
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+        String connectionName = connectionHandler.getName();
         try {
             databaseSettings.checkConfiguration();
             connectionHandler.getStandaloneConnection();
             if (showSuccessMessage) {
-                MessageDialog.showInfoDialog(
-                        project,
-                        "Successfully connected to \"" + connectionHandler.getName() + "\".",
-                        databaseSettings.getConnectionDetails(),
-                        false);
+                showSuccessfulConnectionMessage(project, connectionName);
             }
         } catch (ConfigurationException e) {
             if (showErrorMessage) {
-                MessageUtil.showErrorDialog(
-                        project,
-                        "Invalid configuration",
-                        e.getMessage());
+                showInvalidConfigMessage(project, e);
 
             }
         } catch (Exception e) {
             if (showErrorMessage) {
-                MessageDialog.showErrorDialog(
-                        project,
-                        "Could not connect to \"" + connectionHandler.getName() + "\".",
-                        databaseSettings.getConnectionDetails() + "\n\n" + e.getMessage(),
-                        false);
+                showErrorConnectionMessage(project, connectionName, e);
             }
         }
     }
 
-    public void testConfigConnection(ConnectionSettings connectionSettings, boolean showMessageDialog) throws ConfigurationException {
-        Project project = connectionSettings.getProject();
-        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        databaseSettings.checkConfiguration();
+    public void testConfigConnection(final ConnectionSettings connectionSettings, final boolean showMessageDialog) {
+        final Project project = connectionSettings.getProject();
+        final ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        final String connectionName = databaseSettings.getName();
         try {
-            Authentication temporaryAuthentication = null;
-            Authentication authentication = databaseSettings.getAuthentication();
-            if (!authentication.isProvided()) {
-                temporaryAuthentication = openUserPasswordDialog(project, null, authentication.clone());
-                if (temporaryAuthentication == null){
-                    return;
+            databaseSettings.checkConfiguration();
+            final Authentication temporaryAuthentication = getTemporaryAuthentication(databaseSettings);
+            if (temporaryAuthentication == null){
+                return;
+            }
+
+            new ModalTask(project, "Connecting to " + connectionName, false) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                    try {
+                        Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
+                        ConnectionUtil.closeConnection(connection);
+                        databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
+                        if (showMessageDialog) {
+                            showSuccessfulConnectionMessage(project, connectionName);
+                        }
+                    } catch (Exception e) {
+                        databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
+                        if (showMessageDialog) {
+                            showErrorConnectionMessage(project, connectionName, e);
+                        }
+                    }
                 }
-            }
+            }.start();
 
-            Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
-            ConnectionUtil.closeConnection(connection);
-            databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-            if (showMessageDialog) {
-                MessageDialog.showInfoDialog(
-                        project,
-                        "Test connection to \"" + databaseSettings.getName() + "\" succeeded. Configuration is valid.",
-                        databaseSettings.getConnectionDetails(),
-                        false);
-            }
-
-        } catch (Exception e) {
-            databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
-            if (showMessageDialog) {
-                MessageDialog.showErrorDialog(
-                        project,
-                        "Could not connect to \"" + databaseSettings.getName() + "\".",
-                        databaseSettings.getConnectionDetails() + "\n\n" + e.getMessage(),
-                        false);
-            }
+        } catch (ConfigurationException e) {
+            showInvalidConfigMessage(project, e);
         }
+    }
+
+    public void showConnectionInfo(final ConnectionSettings connectionSettings, final EnvironmentType environmentType) {
+        final ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        final String connectionName = databaseSettings.getName();
+        final Project project = connectionSettings.getProject();
+
+        try {
+            databaseSettings.checkConfiguration();
+            final Authentication temporaryAuthentication = getTemporaryAuthentication(databaseSettings);
+            if (temporaryAuthentication == null) {
+                return;
+            }
+
+            new ModalTask(project, "Connecting to " + connectionName, false) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                    try {
+                        Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
+                        ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
+                        ConnectionUtil.closeConnection(connection);
+                        showConnectionInfoDialog(getProject(), connectionInfo, connectionName, environmentType);
+                    } catch (Exception e) {
+                        showErrorConnectionMessage(project, connectionName, e);
+                    }
+
+                }
+            }.start();
+        } catch (ConfigurationException e) {
+            showInvalidConfigMessage(project, e);
+        }
+    }
+
+    public Authentication getTemporaryAuthentication(ConnectionDatabaseSettings databaseSettings) {
+        Authentication authentication = databaseSettings.getAuthentication().clone();
+        if (!authentication.isProvided()) {
+            return openUserPasswordDialog(databaseSettings.getProject(), null, authentication);
+        }
+        return authentication;
+    }
+
+    private void showErrorConnectionMessage(Project project, String connectionName, Exception e) {
+        MessageUtil.showErrorDialog(
+                project,
+                "Connection error",
+                "Cannot connect to \"" + connectionName + "\".\n" + e.getMessage());
+    }
+
+    private void showSuccessfulConnectionMessage(Project project, String connectionName) {
+        MessageUtil.showInfoDialog(
+                project,
+                "Connection successful",
+                "Connection to \"" + connectionName + "\" was successful.");
+    }
+
+    private void showInvalidConfigMessage(Project project, ConfigurationException e) {
+        MessageUtil.showErrorDialog(
+                project,
+                "Invalid configuration",
+                e.getMessage());
     }
 
     public void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
@@ -206,47 +254,6 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(project, connectionInfo, connectionName, environmentType);
         infoDialog.setModal(true);
         infoDialog.show();
-    }
-
-    public ConnectionInfo showConnectionInfo(ConnectionSettings connectionSettings, EnvironmentType environmentType) {
-        Project project = connectionSettings.getProject();
-        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        try {
-            databaseSettings.checkConfiguration();
-            Authentication temporaryAuthentication = null;
-            Authentication authentication = databaseSettings.getAuthentication();
-            if (!authentication.isProvided()) {
-                temporaryAuthentication = openUserPasswordDialog(project, null, authentication.clone());
-                if (temporaryAuthentication == null) {
-                    return null;
-                }
-            }
-
-            Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
-            ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-            ConnectionUtil.closeConnection(connection);
-            showConnectionInfoDialog(getProject(), connectionInfo, databaseSettings.getName(), environmentType);
-/*            MessageDialog.showInfoDialog(
-                    project,
-                    "Database details for connection \"" + databaseSettings.getName() + '"',
-                    connectionInfo.toString(),
-                    false);*/
-            return connectionInfo;
-
-        } catch (ConfigurationException e) {
-            MessageUtil.showErrorDialog(
-                    project,
-                    "Invalid configuration",
-                    e.getMessage());
-
-        } catch (Exception e) {
-            MessageDialog.showErrorDialog(
-                    project,
-                    "Could not connect to \"" + databaseSettings.getName() + "\".",
-                    databaseSettings.getConnectionDetails() + "\n\n" + e.getMessage(),
-                    false);
-        }
-        return null;
     }
 
     public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
