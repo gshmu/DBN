@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public enum DatabaseUrlResolver {
 
-    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[a-z0-9]+)$",   "localhost", "1521", "XE"),
+    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[a-z0-9]+)$", "localhost", "1521", "XE"),
     MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]+)?$",      "localhost", "3306", "mysql"),
     POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]*)?$", "localhost", "5432", "postgres"),
     UNKNOWN ("",  "", "localhost", "1234", "database"),
