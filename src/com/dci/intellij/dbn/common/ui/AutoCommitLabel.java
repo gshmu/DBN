@@ -5,8 +5,8 @@ import java.awt.Color;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
@@ -37,7 +37,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
             if (!subscribed) {
                 subscribed = true;
                 Project project = connectionHandler.getProject();
-                EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
+                EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
             }
         }
         update();
@@ -92,7 +92,6 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     @Override
     public void dispose() {
         connectionHandlerRef = null;
-        EventManager.unsubscribe(connectionStatusListener);
     }
 
 

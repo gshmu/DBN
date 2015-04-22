@@ -15,7 +15,6 @@ import com.intellij.openapi.project.Project;
 public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
     private Charset charset = Charset.forName("UTF-8");
     private String environmentTypeId = EnvironmentType.DEFAULT.getId();
-    private boolean enableAutoCommit;
     private boolean enableDdlFileBinding = true;
     private boolean enableDatabaseLogging = false;
     protected boolean connectAutomatically = true;
@@ -60,14 +59,6 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
 
     public String getEnvironmentTypeId() {
         return environmentTypeId;
-    }
-
-    public boolean isEnableAutoCommit() {
-        return enableAutoCommit;
-    }
-
-    public void setEnableAutoCommit(boolean enableAutoCommit) {
-        this.enableAutoCommit = enableAutoCommit;
     }
 
     public boolean isEnableDdlFileBinding() {
@@ -145,7 +136,6 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         String charsetName = getString(element, "charset", "UTF-8");
         charset = Charset.forName(charsetName);
         
-        enableAutoCommit = getBoolean(element, "auto-commit", enableAutoCommit);
         enableDdlFileBinding = getBoolean(element, "ddl-file-binding", enableDdlFileBinding);
         enableDatabaseLogging = getBoolean(element, "database-logging", enableDatabaseLogging);
         connectAutomatically = getBoolean(element, "connect-automatically", connectAutomatically);
@@ -160,7 +150,6 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     public void writeConfiguration(Element element) {
         setString(element, "charset", charset.name());
         
-        setBoolean(element, "auto-commit", enableAutoCommit);
         setBoolean(element, "ddl-file-binding", enableDdlFileBinding);
         setBoolean(element, "database-logging", enableDatabaseLogging);
         setString(element, "environment-type", environmentTypeId);

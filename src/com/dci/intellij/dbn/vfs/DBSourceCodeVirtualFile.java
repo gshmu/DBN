@@ -9,11 +9,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -72,7 +72,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
             sourceLoadError = e.getMessage();
             //MessageUtil.showErrorDialog("Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
         }
-        EventManager.subscribe(project, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -251,7 +251,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                 MessageUtil.showErrorDialog(project, "Could not reload sourcecode for " + object.getQualifiedNameWithType() + " from database.", e);
                 return false;
             } finally {
-                EventManager.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
+                EventUtil.notify(project, SourceCodeLoadListener.TOPIC).sourceCodeLoaded(mainDatabaseFile);
             }
         }
         return false;
@@ -319,7 +319,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public void dispose() {
         super.dispose();
-        EventManager.unsubscribe(dataDefinitionChangeListener);
         originalContent = null;
         lastSavedContent = null;
         content = "";

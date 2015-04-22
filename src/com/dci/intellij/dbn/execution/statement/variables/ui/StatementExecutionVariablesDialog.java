@@ -15,19 +15,20 @@ import com.intellij.openapi.project.Project;
 
 public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecutionVariablesForm> {
     private StatementExecutionProcessor executionProcessor;
+    private boolean reuseVariables = false;
 
-    public StatementExecutionVariablesDialog(StatementExecutionProcessor executionProcessor, String statementText) {
+    public StatementExecutionVariablesDialog(StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
         super(executionProcessor.getProject(), "Execution Variables", true);
         this.executionProcessor = executionProcessor;
         setModal(true);
         setResizable(true);
-        component = new StatementExecutionVariablesForm(this, executionProcessor, statementText);
+        component = new StatementExecutionVariablesForm(this, executionProcessor, statementText, isBulkExecution);
         init();
     }
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component.getPreferredFocusedComponent();
+        return component == null ? null : component.getPreferredFocusedComponent();
     }
 
     @NotNull
@@ -49,7 +50,7 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
             component.saveValues();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             Project project = getProject();
-            if (executionVariables.isIncomplete()) {
+            if (!executionVariables.isProvided()) {
                 MessageUtil.showErrorDialog(
                         project,
                         "Statement execution",
@@ -67,6 +68,14 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
                 doOKAction();
             }
         }
+    }
+
+    public boolean isReuseVariables() {
+        return reuseVariables;
+    }
+
+    public void setReuseVariables(boolean reuseVariables) {
+        this.reuseVariables = reuseVariables;
     }
 
     @Override

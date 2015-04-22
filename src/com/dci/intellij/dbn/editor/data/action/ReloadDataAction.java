@@ -30,7 +30,6 @@ public class ReloadDataAction extends AbstractDataEditorAction {
 
         boolean enabled =
                 datasetEditor != null &&
-                datasetEditor.getEditorTable() != null &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();
         presentation.setEnabled(enabled);

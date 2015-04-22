@@ -61,6 +61,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");
+        actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent());
         ActionUtil.registerDataProvider(mainPanel, this);
 

@@ -13,11 +13,11 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -97,9 +97,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 */
         Disposer.register(this, editorForm);
 
-        EventManager.subscribe(project, TransactionListener.TOPIC, transactionListener);
-        EventManager.subscribe(project, ConnectionStatusListener.TOPIC, connectionStatusListener);
-        EventManager.subscribe(project, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
+        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
+        EventUtil.subscribe(project, this, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
     }
 
     @NotNull
@@ -260,7 +260,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             MessageUtil.showErrorDialog(message, e);
 */
         } finally {
-            EventManager.notify(project, DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+            EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
         }
     }
 
@@ -302,7 +302,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     editorForm.hideLoadingHint();
                                 }
                                 setLoading(false);
-                                EventManager.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+                                EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
                             }
                         }
 
@@ -604,7 +604,6 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            EventManager.unsubscribe(connectionStatusListener, transactionListener, dataGridSettingsChangeListener);
             editorForm = null;
             databaseFile = null;
             structureViewModel = null;

@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.editor.data.action;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.DatasetEditorStateManager;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import org.jetbrains.annotations.NotNull;
 
 public class OpenSortingDialogAction extends AbstractDataEditorAction {
 
@@ -19,10 +20,8 @@ public class OpenSortingDialogAction extends AbstractDataEditorAction {
 
         if (datasetEditor != null) {
             DBDataset dataset = datasetEditor.getDataset();
-            if (dataset != null) {
-                DatasetEditorStateManager stateManager = DatasetEditorStateManager.getInstance(datasetEditor.getProject());
-                stateManager.openSortingDialog(datasetEditor);
-            }
+            DatasetEditorStateManager stateManager = DatasetEditorStateManager.getInstance(datasetEditor.getProject());
+            stateManager.openSortingDialog(datasetEditor);
         }
     }
 
@@ -34,7 +33,6 @@ public class OpenSortingDialogAction extends AbstractDataEditorAction {
 
         boolean enabled =
                 datasetEditor != null &&
-                datasetEditor.getEditorTable() != null &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();
         presentation.setEnabled(enabled);

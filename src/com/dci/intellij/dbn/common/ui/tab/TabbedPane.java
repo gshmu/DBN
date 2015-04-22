@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.ui.tab;
 
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JComponent;
 
 public class TabbedPane extends JBTabsImpl {
     public TabbedPane(@NotNull Disposable disposable) {
@@ -24,8 +24,11 @@ public class TabbedPane extends JBTabsImpl {
     @NotNull
     @Override
     public TabInfo addTab(TabInfo info, int index) {
-        registerDisposable(info);
-        return super.addTab(info, index);
+        if (info.getComponent() != null) {
+            registerDisposable(info);
+            return super.addTab(info, index);
+        }
+        return info;
     }
 
     @NotNull

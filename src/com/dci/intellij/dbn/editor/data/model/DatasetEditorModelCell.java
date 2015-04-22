@@ -9,10 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
@@ -94,7 +94,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                         setUserValue(newUserValue);
                     }
                     connectionHandler.notifyChanges(getDataset().getVirtualFile());
-                    EventManager.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
+                    EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
                 }
                 try {
                     if (!isInsertRow) resultSet.refreshRow();

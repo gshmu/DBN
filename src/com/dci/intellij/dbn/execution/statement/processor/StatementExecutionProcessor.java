@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,4 +73,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     void initExecutionInput(boolean bulkExecution);
 
     boolean isQuery();
+
+    List<StatementExecutionProcessor> asList();
 }

@@ -353,6 +353,12 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     @Override
+    protected void regionalSettingsChanged() {
+        cancelEditing();
+        super.regionalSettingsChanged();
+    }
+
+    @Override
     public void sort() {
         if (!isLoading()) {
             super.sort();

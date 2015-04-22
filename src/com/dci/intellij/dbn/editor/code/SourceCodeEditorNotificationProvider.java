@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.editor.code;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -24,7 +24,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotifications.Pr
     public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventManager.subscribe(project, SourceCodeLoadListener.TOPIC, sourceCodeLoadListener);
+        EventUtil.subscribe(project, project, SourceCodeLoadListener.TOPIC, sourceCodeLoadListener);
 
     }
 

@@ -1,13 +1,20 @@
 package com.dci.intellij.dbn.browser.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.ArrayList;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -17,13 +24,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.util.ArrayList;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
     private TabbedPane connectionTabs;
@@ -50,7 +50,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             public void tabsMoved() {}
         });
 
-        EventManager.subscribe(getProject(), EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(getProject(), this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
 
         Disposer.register(this, connectionTabs);
     }
@@ -147,7 +147,6 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     }
 
     public void dispose() {
-        EventManager.unsubscribe(environmentChangeListener);
         super.dispose();
     }
 

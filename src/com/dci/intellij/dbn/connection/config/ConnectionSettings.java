@@ -3,9 +3,11 @@ package com.dci.intellij.dbn.connection.config;
 import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
@@ -15,15 +17,30 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private boolean isNew;
 
     private ConnectionDatabaseSettings databaseSettings;
+    private ConnectionPropertiesSettings propertiesSettings;
+    private ConnectionSshTunnelSettings sshTunnelSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
 
-    public ConnectionSettings(ConnectionBundleSettings parent) {
+    private DatabaseType templateDatabaseType;
+
+    public ConnectionSettings(ConnectionBundleSettings parent, @Nullable DatabaseType templateDatabaseType) {
         super(parent.getProject());
         this.parent = parent;
-        databaseSettings = new GenericConnectionDatabaseSettings(this);
+        this.templateDatabaseType = templateDatabaseType;
+
+        databaseSettings = templateDatabaseType == null ?
+                new GenericDatabaseSettings(this) :
+                new GuidedDatabaseSettings(this, templateDatabaseType);
+
+        propertiesSettings = new ConnectionPropertiesSettings(this);
+        sshTunnelSettings = new ConnectionSshTunnelSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
         filterSettings = new ConnectionFilterSettings(this);
+    }
+
+    public DatabaseType getTemplateDatabaseType() {
+        return templateDatabaseType;
     }
 
     public ConnectionBundleSettings getParent() {
@@ -32,6 +49,14 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     public ConnectionDatabaseSettings getDatabaseSettings() {
         return databaseSettings;
+    }
+
+    public ConnectionPropertiesSettings getPropertiesSettings() {
+        return propertiesSettings;
+    }
+
+    public ConnectionSshTunnelSettings getSshTunnelSettings() {
+        return sshTunnelSettings;
     }
 
     public ConnectionDetailSettings getDetailSettings() {
@@ -46,6 +71,8 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 databaseSettings,
+                propertiesSettings,
+                sshTunnelSettings,
                 detailSettings,
                 filterSettings};
     }
@@ -74,6 +101,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
             generateNewId();
         } else {
             connectionId = element.getAttributeValue("id");
+            templateDatabaseType = DatabaseType.get(element.getAttributeValue("template-database-type"));
         }
         super.readConfiguration(element);
     }
@@ -89,6 +117,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("id", connectionId);
+        element.setAttribute("template-database-type", templateDatabaseType == null ? "" : templateDatabaseType.name());
         super.writeConfiguration(element);
     }
 
@@ -96,7 +125,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         try {
             Element connectionElement = new Element("Connection");
             writeConfiguration(connectionElement);
-            ConnectionSettings clone = new ConnectionSettings(parent);
+            ConnectionSettings clone = new ConnectionSettings(parent, templateDatabaseType);
             clone.readConfiguration(connectionElement);
             clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
             clone.generateNewId();

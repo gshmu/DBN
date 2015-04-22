@@ -31,7 +31,6 @@ public class ExportDataAction extends AbstractDataEditorAction {
 
         boolean enabled =
                 datasetEditor != null &&
-                datasetEditor.getEditorTable() != null &&
                 !datasetEditor.isInserting();
         presentation.setEnabled(enabled);
 

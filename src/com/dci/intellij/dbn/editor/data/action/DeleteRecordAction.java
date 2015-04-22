@@ -33,7 +33,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
                 presentation.setEnabled(false);
             } else {
                 DatasetEditorTable editorTable = datasetEditor.getEditorTable();
-                if (editorTable != null && editorTable.getSelectedRows() != null && editorTable.getSelectedRows().length > 0) {
+                if (editorTable.getSelectedRows() != null && editorTable.getSelectedRows().length > 0) {
                     for (int selectedRow : editorTable.getSelectedRows()) {
                         if (selectedRow < editorTable.getModel().getRowCount()) {
                             DatasetEditorModelRow row = editorTable.getModel().getRowAtIndex(selectedRow);

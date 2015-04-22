@@ -92,6 +92,17 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
                     if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
                         return findDatabaseFile((DBSchemaObject) object);
                     }
+                } else if (objectPath.startsWith("object_")) {
+                    int typeEndIndex = objectPath.indexOf("#");
+                    String contentTypeStr = objectPath.substring(7, typeEndIndex);
+                    DBContentType contentType = DBContentType.valueOf(contentTypeStr.toUpperCase());
+                    String identifier = objectPath.substring(typeEndIndex + 1);
+                    DBObjectRef objectRef = new DBObjectRef(connectionId, identifier);
+                    DBObject object = objectRef.get();
+                    if (object != null && object.getProperties().is(DBObjectProperty.EDITABLE)) {
+                        DBEditableObjectVirtualFile virtualFile = findDatabaseFile((DBSchemaObject) object);
+                        return virtualFile.getContentFile(contentType);
+                    }
                 } else {
                     // TODO remove this backward compatibility
                     StringTokenizer path = new StringTokenizer(objectPath, ".");

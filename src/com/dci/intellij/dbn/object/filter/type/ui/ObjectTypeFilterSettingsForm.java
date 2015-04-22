@@ -10,10 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -80,7 +80,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
             @Override
             public void notifyChanges() {
                 if (notifyFilterListeners) {
-                    ObjectFilterChangeListener listener = EventManager.notify(objectFilterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
+                    ObjectFilterChangeListener listener = EventUtil.notify(objectFilterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     listener.typeFiltersChanged(connectionHandler);
                 }

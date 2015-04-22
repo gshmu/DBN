@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.common.options;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -16,6 +7,15 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
     public static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
@@ -148,5 +148,9 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     public String getConfigElementName() {
         //throw new UnsupportedOperationException("Element name not defined for this configuration type.");
         return null;
+    }
+
+    protected static String nvl(String value) {
+        return value == null ? "" : value;
     }
 }

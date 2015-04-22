@@ -29,7 +29,6 @@ public class ImportDataAction extends AbstractDataEditorAction {
         } else {
             presentation.setVisible(!datasetEditor.isReadonlyData());
             boolean enabled =
-                    datasetEditor.getEditorTable() != null &&
                     datasetEditor.getActiveConnection().isConnected() &&
                     !datasetEditor.isReadonly() &&
                     !datasetEditor.isInserting();

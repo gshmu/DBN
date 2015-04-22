@@ -1,23 +1,26 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ui.GenericDatabaseSettingsForm;
+import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Base64Converter;
 
-public abstract class ConnectionDatabaseSettings extends Configuration<GenericDatabaseSettingsForm> {
+public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
@@ -27,8 +30,11 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     protected DatabaseType databaseType = DatabaseType.UNKNOWN;
     protected double databaseVersion = 9999;
     protected int hashCode;
+
+    protected String driverLibrary;
+    protected String driver;
+
     private Authentication authentication = new Authentication();
-    private Map<String, String> properties = new HashMap<String, String>();
 
     private ConnectionSettings parent;
 
@@ -38,10 +44,6 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
 
     public ConnectionSettings getParent() {
         return parent;
-    }
-
-    protected static String nvl(Object value) {
-        return (String) (value == null ? "" : value);
     }
 
     public ConnectivityStatus getConnectivityStatus() {
@@ -64,6 +66,22 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         return name;
     }
 
+    public String getDriverLibrary() {
+        return driverLibrary;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriverLibrary(String driverLibrary) {
+        this.driverLibrary = driverLibrary;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
     public String getDisplayName() {
         return name;
     }
@@ -81,11 +99,13 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     }
 
     public DatabaseType getDatabaseType() {
-        return databaseType;
+        return CommonUtil.nvl(databaseType, DatabaseType.UNKNOWN);
     }
 
     public void setDatabaseType(DatabaseType databaseType) {
-        this.databaseType = databaseType;
+        if (this.databaseType == DatabaseType.UNKNOWN && databaseType != DatabaseType.UNKNOWN) {
+            this.databaseType = databaseType;
+        }
     }
 
     public double getDatabaseVersion() {
@@ -101,18 +121,9 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         return authentication;
     }
 
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
-               "Description:\t" + CommonUtil.nvl(description, "") + "\n" +
+                (StringUtils.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
                "User:\t"      + authentication.getUser();
     }
 
@@ -121,17 +132,64 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         return "database";
     }
 
-    public abstract String getDriverLibrary();
+    public abstract String getHost();
+
+    public abstract String getPort();
+
+    public abstract String getDatabase();
+
+    public abstract String getConnectionUrl();
+
+    public abstract String getConnectionUrl(String host, String port);
 
     public abstract void updateHashCode();
-
-    public abstract String getDriver();
-
-    public abstract String getDatabaseUrl();
 
     @Override
     public int hashCode() {
         return hashCode;
+    }
+
+    @Override
+    public abstract ConnectionDatabaseSettings clone();
+
+    public void checkConfiguration() throws ConfigurationException{
+        List<String> errors = new ArrayList<String>();
+        DatabaseType databaseType = getDatabaseType();
+        if (databaseType == DatabaseType.UNKNOWN) {
+            errors.add("Database type not provided");
+        }
+
+        String connectionUrl = getConnectionUrl();
+        if (StringUtils.isEmpty(connectionUrl)) {
+            errors.add("Database information not provided (url, host, port, database)");
+        } else {
+            DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+            if (!urlResolver.isValid(connectionUrl)) {
+                errors.add("Database information incomplete or invalid (host, port, database)");
+            }
+        }
+
+        if (StringUtils.isEmpty(getDriverLibrary())) {
+            errors.add("JDBC driver library not provided");
+        } else {
+            String driver = getDriver();
+            if (StringUtils.isEmpty(driver)) {
+                errors.add("JDBC driver not provided");
+            } else {
+                DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
+                if (driverDatabaseType != databaseType) {
+                    errors.add("JDBC driver does not match the selected database type");
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            StringBuilder message = new StringBuilder("Invalid or incomplete database configuration:");
+            for (String error : errors) {
+                message.append("\n - ").append(error);
+            }
+            throw new ConfigurationException(message.toString());
+        }
     }
 
     @NotNull
@@ -153,14 +211,21 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         description      = getString(element, "description", description);
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
+
+        driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
+        driver        = getString(element, "driver", driver);
+
         authentication.setUser(getString(element, "user", authentication.getUser()));
-        authentication.setPassword(decodePassword(getString(element, "password", authentication.getPassword())));
+        authentication.setPassword(PasswordUtil.decodePassword(getString(element, "password", authentication.getPassword())));
         authentication.setOsAuthentication(getBoolean(element, "os-authentication", authentication.isOsAuthentication()));
 
+
+        // TODO backward compatibility (to remove)
         Element propertiesElement = element.getChild("properties");
         if (propertiesElement != null) {
             for (Object o : propertiesElement.getChildren()) {
                 Element propertyElement = (Element) o;
+                Map<String, String> properties = getParent().getPropertiesSettings().getProperties();
                 properties.put(
                         propertyElement.getAttributeValue("key"),
                         propertyElement.getAttributeValue("value"));
@@ -170,6 +235,13 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
     }
 
     public void writeConfiguration(Element element) {
+        String driverLibrary = ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get() ?
+                FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
+                this.driverLibrary;
+
+        setString(element, "driver-library", nvl(driverLibrary));
+        setString(element, "driver", nvl(driver));
+
         setString(element, "name", nvl(name));
         setString(element, "description", nvl(description));
         setBoolean(element, "active", active);
@@ -177,39 +249,7 @@ public abstract class ConnectionDatabaseSettings extends Configuration<GenericDa
         setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
         setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(authentication.getUser()));
-        setString(element, "password", encodePassword(authentication.getPassword()));
-
-        if (properties.size() > 0) {
-            Element propertiesElement = new Element("properties");
-            for (String propertyKey : properties.keySet()) {
-                Element propertyElement = new Element("property");
-                propertyElement.setAttribute("key", propertyKey);
-                propertyElement.setAttribute("value", CommonUtil.nvl(properties.get(propertyKey), ""));
-
-                propertiesElement.addContent(propertyElement);
-            }
-            element.addContent(propertiesElement);
-        }
-    }
-
-    private static String encodePassword(String password) {
-        try {
-            password = StringUtil.isEmpty(password) ? "" : Base64Converter.encode(nvl(password));
-        } catch (Exception e) {
-            // any exception would break the logic storing the connection settings
-            LOGGER.error("Error encoding password", e);
-        }
-        return password;
-    }
-
-    private static String decodePassword(String password) {
-        try {
-            password = StringUtil.isEmpty(password) ? "" : Base64Converter.decode(nvl(password));
-        } catch (Exception e) {
-            // password may not be encoded yet
-        }
-
-        return password;
+        setString(element, "password", PasswordUtil.encodePassword(authentication.getPassword()));
     }
 
     public Project getProject() {

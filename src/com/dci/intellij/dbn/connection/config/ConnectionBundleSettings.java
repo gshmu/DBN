@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -110,7 +111,8 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             }
 
             if (connectionHandler == null) {
-                ConnectionSettings connectionSettings = new ConnectionSettings(this);
+                DatabaseType templateDatabaseType = DatabaseType.get(connectionElement.getAttributeValue("template-database-type"));
+                ConnectionSettings connectionSettings = new ConnectionSettings(this, templateDatabaseType);
                 connectionSettings.readConfiguration(connectionElement);
                 connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionSettings);
                 connectionBundle.addConnection(connectionHandler);

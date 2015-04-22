@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.ui.DatasetLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -22,7 +22,7 @@ public class DatasetEditorNotificationProvider extends EditorNotifications.Provi
     public DatasetEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
         this.project = project;
 
-        EventManager.subscribe(project, DatasetLoadListener.TOPIC, datasetLoadListener);
+        EventUtil.subscribe(project, project, DatasetLoadListener.TOPIC, datasetLoadListener);
 
     }
 

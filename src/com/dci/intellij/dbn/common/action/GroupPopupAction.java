@@ -6,6 +6,8 @@ import java.awt.Point;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -34,11 +36,18 @@ public abstract class GroupPopupAction extends DumbAwareAction {
                 true, null, 10);
 
         //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
-        Component component = (Component) e.getInputEvent().getSource();
-        showBelowComponent(popup, component);
+        DataProviderSupplier dataProvider = getDataProviderSupplier(e);
+        if (dataProvider != null) {
+            ActionUtil.registerDataProvider(popup.getContent(), dataProvider);
+        }
+        showBelowComponent(popup, (Component) e.getInputEvent().getSource());
     }
 
-    private static void showBelowComponent(ListPopup popup, Component component) {
+    public DataProviderSupplier getDataProviderSupplier(AnActionEvent e) {
+        return null;
+    }
+
+    public static void showBelowComponent(ListPopup popup, Component component) {
         Point locationOnScreen = component.getLocationOnScreen();
         Point location = new Point(
                 (int) (locationOnScreen.getX() + 10),

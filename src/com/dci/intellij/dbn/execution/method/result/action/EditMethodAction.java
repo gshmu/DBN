@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 
 public class EditMethodAction extends MethodExecutionResultAction {
     public EditMethodAction() {
-        super("Edit method", Icons.OBEJCT_EDIT_SOURCE);
+        super("Edit Method", Icons.OBEJCT_EDIT_SOURCE);
     }
 
     @Override
@@ -26,6 +26,6 @@ public class EditMethodAction extends MethodExecutionResultAction {
         MethodExecutionResult executionResult = getExecutionResult(e);
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(executionResult != null);
-        presentation.setText("Edit method");
+        presentation.setText("Edit Method");
     }
 }

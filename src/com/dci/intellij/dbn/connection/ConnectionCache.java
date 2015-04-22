@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -39,13 +39,11 @@ public class ConnectionCache implements ApplicationComponent{
 
     @Override
     public void initComponent() {
-        EventManager.subscribe(ProjectLifecycleListener.TOPIC, projectLifecycleListener);
+        EventUtil.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
     }
 
     @Override
-    public void disposeComponent() {
-        EventManager.unsubscribe(projectLifecycleListener);
-    }
+    public void disposeComponent() { }
 
     @NotNull
     @Override

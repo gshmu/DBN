@@ -7,9 +7,16 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.options.ConfigurationException;
 
 public class ConfigurationEditorUtil {
-    public static int validateIntegerInputValue(@NotNull JTextField inputField, @NotNull String name, int min, int max, @Nullable String hint) throws ConfigurationException {
+    public static int validateIntegerInputValue(@NotNull JTextField inputField, @NotNull String name, boolean required, int min, int max, @Nullable String hint) throws ConfigurationException {
         try {
-            int integer = Integer.parseInt(inputField.getText());
+
+            String value = inputField.getText();
+            if (required && value.length() == 0) {
+                String message = "Input value for \"" + name + "\" must be specified";
+                throw new ConfigurationException(message, "Invalid config value");
+            }
+
+            int integer = Integer.parseInt(value);
             if (min > integer || max < integer) throw new NumberFormatException("Number not in range");
             return integer;
         } catch (NumberFormatException e) {

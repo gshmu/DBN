@@ -24,13 +24,13 @@ import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -326,7 +326,7 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
                     }
                 }
 
-                BrowserSelectionChangeListener listener = EventManager.notify(getProject(), BrowserSelectionChangeListener.TOPIC);
+                BrowserSelectionChangeListener listener = EventUtil.notify(getProject(), BrowserSelectionChangeListener.TOPIC);
                 listener.browserSelectionChanged();
 
             }

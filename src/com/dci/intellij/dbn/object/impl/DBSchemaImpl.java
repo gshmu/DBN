@@ -19,8 +19,8 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.event.EventManager;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -471,7 +471,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
             }
 
             for (BrowserTreeNode treeNode : refreshNodes) {
-                EventManager.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
+                EventUtil.notify(getProject(), BrowserTreeChangeListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
             }
         }
 

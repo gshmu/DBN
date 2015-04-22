@@ -11,13 +11,13 @@
       <title-color color="-16777216"/>
     </border>
     <children>
-      <grid id="a15ae" binding="generalGroupPanel" layout-manager="GridLayoutManager" row-count="12" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="a15ae" binding="generalGroupPanel" layout-manager="GridLayoutManager" row-count="11" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="8" left="8" bottom="8" right="8"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="etched" title="General"/>
+        <border type="none"/>
         <children>
           <component id="8c0a8" class="javax.swing.JLabel">
             <constraints>
@@ -25,15 +25,6 @@
             </constraints>
             <properties>
               <text value="Content &amp;encoding"/>
-            </properties>
-          </component>
-          <component id="3212" class="javax.swing.JCheckBox" binding="autoCommitCheckBox">
-            <constraints>
-              <grid row="9" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <enabled value="true"/>
-              <text value="&amp;Auto-Commit"/>
             </properties>
           </component>
           <component id="bb7bb" class="javax.swing.JLabel">
@@ -118,7 +109,7 @@
           </component>
           <grid id="62aa8" binding="autoConnectHintPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
-              <grid row="10" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="9" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -134,7 +125,7 @@
           </component>
           <vspacer id="6202f">
             <constraints>
-              <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <component id="5d6e3" class="javax.swing.JCheckBox" binding="databaseLoggingCheckBox">

@@ -1,9 +1,15 @@
 package com.dci.intellij.dbn.common.environment;
 
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentChangeListener;
-import com.dci.intellij.dbn.common.event.EventManager;
+import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -15,12 +21,6 @@ import com.intellij.openapi.fileEditor.impl.EditorsSplitters;
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 @State(
         name = "DBNavigator.Project.EnvironmentManager",
@@ -31,7 +31,7 @@ import java.util.Set;
 public class EnvironmentManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, Disposable {
     private EnvironmentManager(Project project) {
         super(project);
-        EventManager.subscribe(project, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
 
     }
 
@@ -58,11 +58,6 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
             }
         }
     };
-
-
-    public void dispose() {
-        EventManager.unsubscribe(environmentChangeListener);
-    }
 
     /*********************************************
      *            PersistentStateComponent       *
