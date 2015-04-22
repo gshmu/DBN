@@ -8,6 +8,8 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +52,7 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionVariablesForm(StatementExecutionVariablesDialog parentComponent, StatementExecutionProcessor executionProcessor, String statementText) {
+    public StatementExecutionVariablesForm(StatementExecutionVariablesDialog parentComponent, StatementExecutionProcessor executionProcessor, String statementText, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = statementText;
@@ -82,6 +84,16 @@ public class StatementExecutionVariablesForm extends DBNFormImpl<StatementExecut
         }
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
+
+        reuseVariablesCheckBox.setVisible(isBulkExecution);
+        if (isBulkExecution) {
+            reuseVariablesCheckBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    getParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected());
+                }
+            });
+        }
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {

@@ -22,8 +22,10 @@ public class MostRecentStack<T> implements Iterable<T>{
     }
 
     public void stack(T value) {
-        values.remove(value);
-        values.add(0, value);
+        if (value != null) {
+            values.remove(value);
+            values.add(0, value);
+        }
     }
 
     @Nullable

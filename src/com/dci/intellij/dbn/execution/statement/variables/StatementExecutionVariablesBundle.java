@@ -72,13 +72,24 @@ public class StatementExecutionVariablesBundle implements Disposable{
         variables = newVariables;
     }
 
-    public boolean isIncomplete() {
+    public boolean isProvided() {
         for (StatementExecutionVariable variable : variables) {
             if (!variable.isProvided()) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
+    }
+
+    public void populate(Map<String, StatementExecutionVariable> variableCache, boolean force) {
+        for (StatementExecutionVariable variable : variables) {
+            if (!variable.isProvided() || force) {
+                StatementExecutionVariable cacheVariable = variableCache.get(variable.getName().toUpperCase());
+                if (cacheVariable != null) {
+                    variable.populate(cacheVariable);
+                }
+            }
+        }
     }
 
     public boolean hasErrors() {

@@ -239,8 +239,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                     try {
                                         if (!progressIndicator.isIndeterminate()) {
                                             progressIndicator.setFraction(CommonUtil.getProgressPercentage(i, size));
-                                            executionProcessor.execute(progressIndicator);
                                         }
+                                        executionProcessor.execute(progressIndicator);
                                     } finally {
                                         if (TimeUtil.isOlderThan(lastRefresh, 2, TimeUnit.SECONDS)) {
                                             lastRefresh = System.currentTimeMillis();
@@ -294,6 +294,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         new SimpleLaterInvocator() {
             @Override
             protected void execute() {
+                Map<String, StatementExecutionVariable> variableCache = new HashMap<String, StatementExecutionVariable>();
+                boolean reuseVariables = false;
                 for (StatementExecutionProcessor executionProcessor : executionProcessors) {
                     executionProcessor.initExecutionInput(true);
                     StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
@@ -316,10 +318,28 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     }
 
                     if (executionVariables != null) {
-                        StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executionInput.getExecutableStatementText());
-                        dialog.show();
-                        if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-                            return;
+                        if (reuseVariables) {
+                            executionVariables.populate(variableCache, true);
+                        }
+
+                        if (!(reuseVariables && executionVariables.isProvided())) {
+                            boolean isBulkExecution = executionProcessors.size() > 1;
+                            String executableStatementText = executionInput.getExecutableStatementText();
+                            StatementExecutionVariablesDialog dialog = new StatementExecutionVariablesDialog(executionProcessor, executableStatementText, isBulkExecution);
+                            dialog.show();
+                            if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+                                return;
+                            } else {
+                                reuseVariables = dialog.isReuseVariables();
+                                if (reuseVariables) {
+                                    Set<StatementExecutionVariable> variables = executionVariables.getVariables();
+                                    for (StatementExecutionVariable variable : variables) {
+                                        variableCache.put(variable.getName().toUpperCase(), variable);
+                                    }
+                                } else {
+                                    variableCache.clear();
+                                }
+                            }
                         }
                     }
                 }
