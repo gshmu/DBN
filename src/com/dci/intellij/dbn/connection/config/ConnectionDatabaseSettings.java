@@ -1,16 +1,10 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -19,6 +13,12 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -123,7 +123,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public String getConnectionDetails() {
         return "Name:\t"      + name + "\n" +
-                (StringUtils.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
+                (StringUtil.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
                "User:\t"      + authentication.getUser();
     }
 
@@ -160,7 +160,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         }
 
         String connectionUrl = getConnectionUrl();
-        if (StringUtils.isEmpty(connectionUrl)) {
+        if (StringUtil.isEmpty(connectionUrl)) {
             errors.add("Database information not provided (url, host, port, database)");
         } else {
             DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
@@ -169,11 +169,11 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
             }
         }
 
-        if (StringUtils.isEmpty(getDriverLibrary())) {
+        if (StringUtil.isEmpty(getDriverLibrary())) {
             errors.add("JDBC driver library not provided");
         } else {
             String driver = getDriver();
-            if (StringUtils.isEmpty(driver)) {
+            if (StringUtil.isEmpty(driver)) {
                 errors.add("JDBC driver not provided");
             } else {
                 DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
