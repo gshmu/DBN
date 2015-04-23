@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -22,6 +16,12 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<GenericDatabaseSettings>{
     private JPanel mainPanel;
@@ -71,7 +71,6 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
         });
 
         resetFormChanges();
-
         registerComponent(mainPanel);
 
         driverLibraryTextField.addBrowseFolderListener(

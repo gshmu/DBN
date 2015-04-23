@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseUrlResolver {
 
-    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[a-z0-9]+)$", "localhost", "1521", "XE"),
-    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]+)?$",      "localhost", "3306", "mysql"),
-    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[a-z0-9]*)?$", "localhost", "5432", "postgres"),
+    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",    "localhost", "1521", "XE"),
+    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",      "localhost", "3306", "mysql"),
+    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$", "localhost", "5432", "postgres"),
     UNKNOWN ("",  "", "localhost", "1234", "database"),
     ;
 
@@ -24,7 +24,7 @@ public enum DatabaseUrlResolver {
     public String getUrl(String host, String port, String database) {
         return urlPattern.
                 replace("<HOST>", CommonUtil.nvl(host, "")).
-                replace("<PORT>", CommonUtil.nvl(port, "")).
+                replace(":<PORT>", StringUtil.isEmpty(port) ? "" : ":" + port).
                 replace("<DATABASE>", CommonUtil.nvl(database, ""));
     }
 
@@ -38,6 +38,18 @@ public enum DatabaseUrlResolver {
         this.defaultHost = defaultHost;
         this.defaultPort = defaultPort;
         this.defaultDatabase = defaultDatabase;
+    }
+
+    public String getDefaultHost() {
+        return defaultHost;
+    }
+
+    public String getDefaultPort() {
+        return defaultPort;
+    }
+
+    public String getDefaultDatabase() {
+        return defaultDatabase;
     }
 
     public String resolveHost(String url) {

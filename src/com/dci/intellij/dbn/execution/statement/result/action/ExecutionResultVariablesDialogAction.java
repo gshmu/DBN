@@ -25,12 +25,12 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             final Project project = executionResult.getProject();
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
             statementExecutionManager.promptVariablesDialog(executionProcessor.asList(),
-                    new BackgroundTask(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), false, true) {
-                        @Override
-                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                            executionProcessor.execute(progressIndicator);
-                        }
-                    });
+            new BackgroundTask(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), false, true) {
+                @Override
+                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                    executionProcessor.execute(progressIndicator);
+                }
+            });
         }
     }
 

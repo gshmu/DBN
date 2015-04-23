@@ -369,6 +369,6 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public int getSelectionSize() {
-        return connectionsList.getSelectedValuesList().size();
+        return connectionsList.getSelectedValues().length;
     }
 }

@@ -1,12 +1,5 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.object.DBPackage;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.common.DBObjectBundle;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
@@ -15,6 +8,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.object.DBPackage;
+import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 
 public class DBDataType {
     private DBNativeDataType nativeDataType;
@@ -279,29 +279,31 @@ public class DBDataType {
                 if (nativeDataType == null) name = dataTypeName;
             }
 
-            List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
-            for (DBDataType dataType : cachedDataTypes) {
-                if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
-                        CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
-                        CommonUtil.safeEqual(dataType.name, name) &&
-                        dataType.length == length &&
-                        dataType.precision == precision &&
-                        dataType.scale == scale &&
-                        dataType.set == set) {
-                    return dataType;
+            synchronized (this) {
+                List<DBDataType> cachedDataTypes = objectBundle.getCachedDataTypes();
+                for (DBDataType dataType : cachedDataTypes) {
+                    if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
+                            CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
+                            CommonUtil.safeEqual(dataType.name, name) &&
+                            dataType.length == length &&
+                            dataType.precision == precision &&
+                            dataType.scale == scale &&
+                            dataType.set == set) {
+                        return dataType;
+                    }
                 }
-            }
 
-            DBDataType dataType = new DBDataType();
-            dataType.nativeDataType = nativeDataType;
-            dataType.declaredType = declaredType;
-            dataType.name = name;
-            dataType.length = length;
-            dataType.precision = precision;
-            dataType.scale = scale;
-            dataType.set = set;
-            cachedDataTypes.add(dataType);
-            return dataType;
+                DBDataType dataType = new DBDataType();
+                dataType.nativeDataType = nativeDataType;
+                dataType.declaredType = declaredType;
+                dataType.name = name;
+                dataType.length = length;
+                dataType.precision = precision;
+                dataType.scale = scale;
+                dataType.set = set;
+                cachedDataTypes.add(dataType);
+                return dataType;
+            }
         }
     }
 }
