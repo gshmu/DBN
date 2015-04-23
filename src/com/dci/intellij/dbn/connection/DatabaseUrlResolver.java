@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseUrlResolver {
 
@@ -38,6 +38,18 @@ public enum DatabaseUrlResolver {
         this.defaultHost = defaultHost;
         this.defaultPort = defaultPort;
         this.defaultDatabase = defaultDatabase;
+    }
+
+    public String getDefaultHost() {
+        return defaultHost;
+    }
+
+    public String getDefaultPort() {
+        return defaultPort;
+    }
+
+    public String getDefaultDatabase() {
+        return defaultDatabase;
     }
 
     public String resolveHost(String url) {
