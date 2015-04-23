@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 
@@ -50,5 +51,14 @@ public class DisposerUtil {
         for (Disposable disposable : collection) {
             Disposer.register(parent, disposable);
         }
+    }
+
+    public static void disposeLater(final Disposable disposable) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                Disposer.dispose(disposable);
+            }
+        }.start();
     }
 }
