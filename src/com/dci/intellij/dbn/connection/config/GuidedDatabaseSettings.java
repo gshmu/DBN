@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.connection.config;
 
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     private String host;
@@ -21,22 +20,6 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     @NotNull
     public GuidedDatabaseSettingsForm createConfigurationEditor() {
         return new GuidedDatabaseSettingsForm(this);
-    }
-
-    public String getDriverLibrary() {
-        return driverLibrary;
-    }
-
-    public void setDriverLibrary(String driverLibrary) {
-        this.driverLibrary = driverLibrary;
-    }
-
-    public String getDriver() {
-        return driver;
-    }
-
-    public void setDriver(String driver) {
-        this.driver = driver;
     }
 
     public String getHost() {
