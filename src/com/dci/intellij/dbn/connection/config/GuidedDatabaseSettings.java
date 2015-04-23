@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.config;
 
+import com.dci.intellij.dbn.connection.Authentication;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
+import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.connection.Authentication;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
 
 public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     private String host;
@@ -16,27 +16,15 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     public GuidedDatabaseSettings(ConnectionSettings connectionSettings, DatabaseType databaseType) {
         super(connectionSettings);
         setDatabaseType(databaseType);
+        DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+        setHost(urlResolver.getDefaultHost());
+        setPort(urlResolver.getDefaultPort());
+        setDatabase(urlResolver.getDefaultDatabase());
     }
 
     @NotNull
     public GuidedDatabaseSettingsForm createConfigurationEditor() {
         return new GuidedDatabaseSettingsForm(this);
-    }
-
-    public String getDriverLibrary() {
-        return driverLibrary;
-    }
-
-    public void setDriverLibrary(String driverLibrary) {
-        this.driverLibrary = driverLibrary;
-    }
-
-    public String getDriver() {
-        return driver;
-    }
-
-    public void setDriver(String driver) {
-        this.driver = driver;
     }
 
     public String getHost() {

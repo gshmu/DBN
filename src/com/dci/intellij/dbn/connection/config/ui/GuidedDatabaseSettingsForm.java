@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -20,6 +14,12 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<GuidedDatabaseSettings> {
     private JPanel mainPanel;
@@ -44,19 +44,19 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         super(configuration);
         Project project = configuration.getProject();
 
-        resetFormChanges();
-        registerComponent(mainPanel);
         DatabaseType databaseType = configuration.getDatabaseType();
         databaseTypeComboBox.setValues(databaseType);
         databaseTypeComboBox.setSelectedValue(databaseType);
         databaseTypeComboBox.setEnabled(false);
 
+
+        resetFormChanges();
+        registerComponent(mainPanel);
+        updateAuthenticationFields();
         driverLibraryTextField.addBrowseFolderListener(
                 "Select driver library",
                 "Library must contain classes implementing the 'java.sql.Driver' class.",
                 project, LIBRARY_FILE_DESCRIPTOR);
-
-        updateAuthenticationFields();
     }
 
     @Override
