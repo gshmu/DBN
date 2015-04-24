@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.ddl.options.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
@@ -18,6 +9,15 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFileExtensionSettings> {
     private JPanel mainPanel;
@@ -81,7 +81,6 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         for (String fieldName : extensionTextFields.keySet()) {
             JTextField extensionTextField = extensionTextFields.get(fieldName);
             String extensionsText = ConfigurationEditorUtil.validateStringInputValue(extensionTextField, fieldName, true);
-            extensionTextField.setText(extensionsText);
             List<String> extensions = StringUtil.tokenize(extensionsText, ",");
             for (String extension : extensions) {
                 if (allExtensions.contains(extension)) {
@@ -113,7 +112,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
 
     private void applySetting(JTextField textField, String fileTypeId, AtomicBoolean changed) throws ConfigurationException {
         DDLFileType ddlFileType = getConfiguration().getDDLFileType(fileTypeId);
-        boolean valueChanged = ddlFileType.setExtensionsAsString(textField.getText());
+        boolean valueChanged = ddlFileType.setExtensionsAsString(textField.getText().trim());
         if (valueChanged) {
             changed.set(true);
         }
