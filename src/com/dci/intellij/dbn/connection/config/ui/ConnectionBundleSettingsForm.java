@@ -42,10 +42,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.diagnostic.Logger;
@@ -154,8 +154,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             @Override
             public void notifyChanges() {
                 if (listChanged.get()) {
-                    ConnectionBundleSettingsListener listener = EventUtil.notify(project, ConnectionBundleSettingsListener.TOPIC);
-                    listener.settingsChanged();
+                    EventUtil.notify(project, ConnectionSetupListener.TOPIC).setupChanged();
                 }
             }
         };

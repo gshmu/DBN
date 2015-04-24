@@ -67,6 +67,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         if (this.executionResult != executionResult) {
             MethodExecutionResult oldExecutionResult = this.executionResult;
             this.executionResult = executionResult;
+            ActionUtil.registerDataProvider(mainPanel, executionResult);
             rebuild();
 
             DisposerUtil.dispose(oldExecutionResult);
