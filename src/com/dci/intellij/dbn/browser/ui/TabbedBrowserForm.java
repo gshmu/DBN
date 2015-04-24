@@ -56,8 +56,9 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             }
         });
 
-        EventUtil.subscribe(getProject(), this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
-        EventUtil.subscribe(getProject(), this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        Project project = getProject();
+        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
 
         Disposer.register(this, connectionTabs);
     }
