@@ -1,14 +1,10 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
@@ -19,32 +15,14 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
         super("Compare with database", null, Icons.CODE_EDITOR_DIFF_DB);
     }
 
-    public void actionPerformed(@NotNull final AnActionEvent e) {
-        final DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
-        new ConnectionAction("comparing changes", sourcecodeFile, new TaskInstructions("Loading database source code", false, true)) {
-            @Override
-            protected void execute() {
-                Editor editor = getEditor(e);
-                if (sourcecodeFile != null && editor != null) {
-                    String content = editor.getDocument().getText();
-                    sourcecodeFile.setContent(content);
-                    DBSchemaObject object = sourcecodeFile.getObject();
-                    Project project = getProject();
-                    try {
-                        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                        String referenceText = sourceCodeManager.loadSourceCodeFromDatabase(object, sourcecodeFile.getContentType());
-                        if (!isCanceled()) {
-                            openDiffWindow(e, referenceText, "Database version", "Local version vs. database version");
-                        }
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        Project project = ActionUtil.getProject(e);
+        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
 
-                    } catch (SQLException e1) {
-                        MessageUtil.showErrorDialog(
-                                project, "Could not load sourcecode for " +
-                                        object.getQualifiedNameWithType() + " from database.", e1);
-                    }
-                }
-            }
-        }.start();
+        if (project != null && sourcecodeFile != null) {
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+            sourceCodeManager.showChangesAgainstDatabase(sourcecodeFile);
+        }
     }
 
     public void update(@NotNull AnActionEvent e) {

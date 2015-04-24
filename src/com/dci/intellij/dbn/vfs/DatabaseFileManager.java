@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
+import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
@@ -131,13 +132,28 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (databaseFile.isModified()) {
                     DBSchemaObject object = databaseFile.getObject();
 
-                    CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(getProject()).getConfirmationSettings();
+                    Project project = getProject();
+                    CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
                     InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChangesOptionHandler();
                     CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
 
                     switch (option) {
                         case SAVE: databaseFile.saveChanges(); break;
                         case DISCARD: databaseFile.revertChanges(); break;
+                        case SHOW: {
+                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                            List<DBContentVirtualFile> contentFiles = databaseFile.getContentFiles();
+                            for (DBContentVirtualFile contentFile : contentFiles) {
+                                if (contentFile instanceof DBSourceCodeVirtualFile) {
+                                    DBSourceCodeVirtualFile sourcecodeFile = (DBSourceCodeVirtualFile) contentFile;
+                                    if (sourcecodeFile.isModified()) {
+                                        sourceCodeManager.showChangesAgainstDatabase(sourcecodeFile);
+                                    }
+                                }
+                            }
+                            throw new ProcessCanceledException();
+
+                        }
                         case CANCEL: throw new ProcessCanceledException();
                     }
                 }
