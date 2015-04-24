@@ -29,6 +29,7 @@
         <ul>
             <li><b>3.0.4399</b>
             <ul>
+                - Support for various dark schemes in WebStorm/PhpStorm<br>
                 - Redesigned connection setup<br>
                 - Support for connection over SSH<br>
                 - Connection with empty password option<br>
@@ -592,7 +593,15 @@
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserNotificationProvider"/>
 
         <additionalTextAttributes scheme="Default" file="resources/DBNDefaultColors.xml" id="DBN-Default"/>
+        <additionalTextAttributes scheme="AllHallowsEve" file="resources/DBNAllHallowsEveColors.xml" id="DBN-AllHallowsEve"/>
+        <additionalTextAttributes scheme="Blackboard" file="resources/DBNBlackboardColors.xml" id="DBN-Blackboard"/>
+        <additionalTextAttributes scheme="Cobalt" file="resources/DBNCobaltColors.xml" id="DBN-Cobalt"/>
         <additionalTextAttributes scheme="Darcula" file="resources/DBNDarculaColors.xml" id="DBN-Darcula"/>
+        <additionalTextAttributes scheme="Monokai" file="resources/DBNMonokaiColors.xml" id="DBN-Monokai"/>
+        <additionalTextAttributes scheme="Railscasts" file="resources/DBNRailscastsColors.xml" id="DBN-Railscasts"/>
+        <additionalTextAttributes scheme="Twilight" file="resources/DBNTwilightColors.xml" id="DBN-Twilight"/>
+        <additionalTextAttributes scheme="VibrantInk" file="resources/DBNVibrantInkColors.xml" id="DBN-VibrantInk"/>
+        <additionalTextAttributes scheme="WarmNeon" file="resources/DBNWarmNeonColors.xml" id="DBN-WarmNeon"/>
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 

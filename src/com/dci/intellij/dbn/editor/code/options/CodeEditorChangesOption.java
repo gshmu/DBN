@@ -10,6 +10,7 @@ public enum CodeEditorChangesOption implements InteractiveOption {
     ASK("Ask", false),
     SAVE("Save", true),
     DISCARD("Discard", true),
+    SHOW("Show Changes", false),
     CANCEL("Cancel", false);
 
     private String name;
