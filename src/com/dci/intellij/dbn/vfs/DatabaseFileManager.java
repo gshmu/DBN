@@ -90,6 +90,11 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         public void settingsChanged(String connectionId) {
             closeFiles(connectionId);
         }
+
+        @Override
+        public void nameChanged(String connectionId) {
+
+        }
     };
 
     private void closeFiles(String connectionId) {

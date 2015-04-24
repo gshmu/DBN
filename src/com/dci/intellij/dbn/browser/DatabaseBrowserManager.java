@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.ConnectionManagerListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -170,7 +169,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         Project project = getProject();
         EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
         EventUtil.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
-        EventUtil.subscribe(project, this, ConnectionManagerListener.TOPIC, connectionManagerListener);
     }
 
     /**
@@ -198,22 +196,9 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return browserSettings.getGeneralSettings().getDisplayMode() == BrowserDisplayMode.TABBED;
     }
 
-    /***************************************
-     *           ModuleListener            *
-     ***************************************/
-
     /**********************************************************
      *                       Listeners                        *
      **********************************************************/
-    private ConnectionManagerListener connectionManagerListener = new ConnectionManagerListener() {
-        @Override
-        public void connectionsChanged() {
-            if (toolWindowForm.isLoaded()) {
-                getToolWindowForm().rebuild();
-            }
-        }
-    };
-
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
         public void typeFiltersChanged(ConnectionHandler connectionHandler) {
             if (connectionHandler == null) {
