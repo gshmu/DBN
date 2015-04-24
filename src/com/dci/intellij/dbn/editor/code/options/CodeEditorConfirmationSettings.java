@@ -31,6 +31,7 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
                     CodeEditorChangesOption.ASK,
                     CodeEditorChangesOption.SAVE,
                     CodeEditorChangesOption.DISCARD,
+                    CodeEditorChangesOption.SHOW,
                     CodeEditorChangesOption.CANCEL);
 
 

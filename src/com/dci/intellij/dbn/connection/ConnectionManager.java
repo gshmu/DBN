@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -15,7 +24,6 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettingsListener;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -43,15 +51,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @State(
         name = "DBNavigator.Project.ConnectionManager",
@@ -60,7 +59,6 @@ import java.util.TimerTask;
                 @Storage(file = StoragePathMacros.PROJECT_FILE)}
 )
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    private final ConnectionSettingsListener connectionSettingsListener;
     private Timer idleConnectionCleaner;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
@@ -73,23 +71,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private ConnectionManager(final Project project) {
         super(project);
-        connectionSettingsListener = new ConnectionSettingsListener() {
-            @Override
-            public void settingsChanged(String connectionId) {
-                ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
-                if (connectionHandler != null) {
-                    connectionHandler.getConnectionPool().closeConnectionsSilently();
-                    connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
-                }
-            }
-        };
     }
 
     @Override
     public void initComponent() {
         super.initComponent();
         Project project = getProject();
-        EventUtil.subscribe(project, this, ConnectionBundleSettingsListener.TOPIC, connectionBundleSettingsListener);
         EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
@@ -108,10 +95,19 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     *                       Listeners                        *
     *********************************************************/
 
-    private ConnectionBundleSettingsListener connectionBundleSettingsListener = new ConnectionBundleSettingsListener() {
+    ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
-        public void settingsChanged() {
-            EventUtil.notify(getProject(), ConnectionManagerListener.TOPIC).connectionsChanged();
+        public void settingsChanged(String connectionId) {
+            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            if (connectionHandler != null) {
+                connectionHandler.getConnectionPool().closeConnectionsSilently();
+                connectionHandler.getObjectBundle().getObjectListContainer().reload(true);
+            }
+        }
+
+        @Override
+        public void nameChanged(String connectionId) {
+
         }
     };
 

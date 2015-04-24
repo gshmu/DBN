@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -7,12 +13,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.util.ui.UIUtil;
 
 public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings>{
     private JPanel mainPanel;
@@ -42,9 +42,8 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
     protected ActionListener createActionListener() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                getConfiguration().setModified(true);
                 Object source = e.getSource();
-                ConnectionSshTunnelSettings configuration = getConfiguration();
-                configuration.setModified(true);
 
                 if (source == activeCheckBox) {
                     enableDisableFields();
