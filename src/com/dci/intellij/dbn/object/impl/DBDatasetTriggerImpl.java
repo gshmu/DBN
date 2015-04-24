@@ -94,25 +94,20 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
 
         public ResultSet loadSourceCode(Connection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                return metadataInterface.loadDatasetTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
-            }
-            return null;
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadDatasetTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
         }
     }
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) {
-            Connection connection = connectionHandler.getPoolConnection(getSchema());
-            try {
-                DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-                ddlInterface.updateTrigger(getDataset().getSchema().getName(), getDataset().getName(), getName(), oldCode, newCode, connection);
-            } finally {
-                connectionHandler.freePoolConnection(connection);
-            }
+        Connection connection = connectionHandler.getPoolConnection(getSchema());
+        try {
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            ddlInterface.updateTrigger(getDataset().getSchema().getName(), getDataset().getName(), getName(), oldCode, newCode, connection);
+        } finally {
+            connectionHandler.freePoolConnection(connection);
         }
     }
 

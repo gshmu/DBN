@@ -82,7 +82,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public String createDDLStatement(DBSourceCodeVirtualFile virtualFile, DBContentType contentType) {
         DBSchemaObject object = virtualFile.getObject();
-        String content = virtualFile.getContent().trim();
+        String content = virtualFile.getContent().toString().trim();
         if (content.length() > 0) {
             Project project = getProject();
 
