@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
@@ -45,12 +46,19 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 */
             }
 
-            public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {}
-            public void tabRemoved(TabInfo tabInfo) {}
-            public void tabsMoved() {}
+            public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {
+            }
+
+            public void tabRemoved(TabInfo tabInfo) {
+            }
+
+            public void tabsMoved() {
+            }
         });
 
-        EventUtil.subscribe(getProject(), this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        Project project = getProject();
+        EventUtil.subscribe(project, this, EnvironmentChangeListener.TOPIC, environmentChangeListener);
+        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
 
         Disposer.register(this, connectionTabs);
     }
@@ -168,6 +176,26 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
                 } else {
                     tabInfo.setTabColor(null);
                 }
+            }
+        }
+    };
+
+
+    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+        @Override
+        public void settingsChanged(String connectionId) {
+        }
+
+        @Override
+        public void nameChanged(String connectionId) {
+            for (TabInfo tabInfo : connectionTabs.getTabs()) {
+                SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
+                ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
+                if (connectionHandler.getId().equals(connectionId)) {
+                    tabInfo.setText(connectionHandler.getName());
+                    break;
+                }
+
             }
         }
     };

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -55,9 +56,10 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
 
         EventUtil.subscribe(project, this, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
+        EventUtil.subscribe(project, this, ConnectionSetupListener.TOPIC, connectionSetupListener);
     }
 
-    public void rebuild() {
+    public synchronized void rebuild() {
         displayMode = DatabaseBrowserSettings.getInstance(getProject()).getGeneralSettings().getDisplayMode();
         browserPanel.removeAll();
         DisposerUtil.dispose(browserForm);
@@ -142,6 +144,14 @@ public class BrowserToolWindowForm extends DBNFormImpl {
                 browserPanel.revalidate();
                 browserPanel.repaint();
             }
+        }
+    };
+
+
+    private ConnectionSetupListener connectionSetupListener = new ConnectionSetupListener() {
+        @Override
+        public void setupChanged() {
+            rebuild();
         }
     };
 
