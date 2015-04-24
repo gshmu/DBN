@@ -60,7 +60,9 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     }
 
     public void setModified(boolean modified) {
-        isModified = modified && !isResetting() || modified;
+        if (!isResetting()) {
+            isModified = modified;
+        }
     }
 
     private static Boolean isResetting() {
