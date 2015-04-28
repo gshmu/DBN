@@ -21,7 +21,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     }
 
     protected void addCell(T cell) {
-        cells.add(cell);
+        getCells().add(cell);
     }
 
     @NotNull
@@ -30,13 +30,13 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     }
 
     public List<T> getCells() {
-        return cells;
+        return FailsafeUtil.get(cells);
     }
 
 
     @Override
     public final T getCell(String columnName) {
-        List<T> cells = this.cells;
+        List<T> cells = getCells();
         if (cells != null) {
             for (T cell : cells) {
                 if (cell.getColumnInfo().getName().equals(columnName)) {
@@ -59,7 +59,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
 
 
     public T getCellAtIndex(int index) {
-        return cells.get(index);
+        return getCells().get(index);
     }
 
     public int getIndex() {
@@ -71,7 +71,7 @@ public class BasicDataModelRow<T extends DataModelCell> implements DataModelRow<
     }
 
     public int indexOf(T cell) {
-        return cells.indexOf(cell);
+        return getCells().indexOf(cell);
     }
 
     public Project getProject() {
