@@ -1,23 +1,27 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SearchableConfigurable;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.util.ArrayList;
+import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import java.util.ArrayList;
-import java.util.List;
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     public static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
     public static ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<List<SettingsChangeNotifier>>();
     private T configurationEditorForm;
@@ -110,7 +114,13 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         if (changeNotifiers != null) {
             try {
                 for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
-                    changeNotifier.notifyChanges();
+                    try {
+                        changeNotifier.notifyChanges();
+                    } catch (Exception e){
+                        if (!(e instanceof ProcessCanceledException)) {
+                            LOGGER.error("Error notifying configuration changes", e);
+                        }
+                    }
                 }
             } finally {
                 SETTINGS_CHANGE_NOTIFIERS.set(null);
