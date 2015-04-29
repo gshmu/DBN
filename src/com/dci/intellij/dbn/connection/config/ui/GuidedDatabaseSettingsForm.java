@@ -1,7 +1,15 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
+import com.dci.intellij.dbn.common.ui.DBNCollapsiblePanel;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -14,12 +22,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<GuidedDatabaseSettings> {
     private JPanel mainPanel;
@@ -37,6 +39,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JTextField portTextField;
     private JTextField databaseTextField;
     private JLabel driverErrorLabel;
+    private JPanel driverLibraryPanel;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
@@ -49,6 +52,8 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         databaseTypeComboBox.setSelectedValue(databaseType);
         databaseTypeComboBox.setEnabled(false);
 
+        DBNCollapsiblePanel driverPanel = new DBNCollapsiblePanel(this, new JPanel(), "Driver");
+        driverLibraryPanel.add(driverPanel.getComponent(), BorderLayout.CENTER);
 
         resetFormChanges();
         registerComponent(mainPanel);

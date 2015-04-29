@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.connection.config;
 
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
 import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
+import com.dci.intellij.dbn.driver.DriverType;
 
 public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     private String host;
@@ -50,6 +52,15 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
 
     public void setDatabase(String database) {
         this.database = database;
+    }
+
+    @Override
+    public String getDriver() {
+        if (driverType == DriverType.BUNDLED) {
+            return databaseType.getDriverClassName();
+        } else {
+            return super.getDriver();
+        }
     }
 
     public String getConnectionUrl() {
@@ -96,9 +107,10 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     *********************************************************/
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        host          = getString(element, "host", host);
-        port          = getString(element, "port", port);
-        database      = getString(element, "database", database);
+        host             = getString(element, "host", host);
+        port             = getString(element, "port", port);
+        database         = getString(element, "database", database);
+        driverType       = getEnum(element, "driver-lookup", DriverType.BUNDLED);
     }
 
     public void writeConfiguration(Element element) {
@@ -106,5 +118,6 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
         setString(element, "host", host);
         setString(element, "port", port);
         setString(element, "database", database);
+        setEnum(element, "driver-lookup", driverType);
     }
 }
