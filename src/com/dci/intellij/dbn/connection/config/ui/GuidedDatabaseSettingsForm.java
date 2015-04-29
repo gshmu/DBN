@@ -29,8 +29,6 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JTextField descriptionTextField;
     private JTextField userTextField;
     private JTextField hostTextField;
-    private TextFieldWithBrowseButton driverLibraryTextField;
-    private DBNComboBox<DriverOption> driverComboBox;
     private DBNComboBox<DatabaseType> databaseTypeComboBox;
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
@@ -38,30 +36,27 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JCheckBox activeCheckBox;
     private JTextField portTextField;
     private JTextField databaseTextField;
-    private JLabel driverErrorLabel;
     private JPanel driverLibraryPanel;
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
+    private ConnectionDriverSettingsForm<GuidedDatabaseSettingsForm> driverSettingsForm;
 
     public GuidedDatabaseSettingsForm(GuidedDatabaseSettings configuration) {
         super(configuration);
-        Project project = configuration.getProject();
 
         DatabaseType databaseType = configuration.getDatabaseType();
         databaseTypeComboBox.setValues(databaseType);
         databaseTypeComboBox.setSelectedValue(databaseType);
         databaseTypeComboBox.setEnabled(false);
 
-        DBNCollapsiblePanel driverPanel = new DBNCollapsiblePanel(this, new JPanel(), "Driver");
+        driverSettingsForm = new ConnectionDriverSettingsForm<GuidedDatabaseSettingsForm>(this);
+
+        DBNCollapsiblePanel driverPanel = new DBNCollapsiblePanel(this, driverSettingsForm.getComponent(), "Driver", false);
         driverLibraryPanel.add(driverPanel.getComponent(), BorderLayout.CENTER);
 
         resetFormChanges();
         registerComponent(mainPanel);
         updateAuthenticationFields();
-        driverLibraryTextField.addBrowseFolderListener(
-                "Select driver library",
-                "Library must contain classes implementing the 'java.sql.Driver' class.",
-                project, LIBRARY_FILE_DESCRIPTOR);
     }
 
     @Override
@@ -79,11 +74,11 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
 
     @Override
     protected TextFieldWithBrowseButton getDriverLibraryTextField() {
-        return driverLibraryTextField;
+        return driverSettingsForm.getDriverLibraryTextField();
     }
 
     protected DBNComboBox<DriverOption> getDriverComboBox() {
-        return driverComboBox;
+        return driverSettingsForm.getDriverComboBox();
     }
 
     @Override
@@ -110,7 +105,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     }
 
     public JLabel getDriverErrorLabel() {
-        return driverErrorLabel;
+        return driverSettingsForm.getDriverErrorLabel();
     }
 
     public JPanel getComponent() {
@@ -118,6 +113,9 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     }
 
     public void applyFormChanges(GuidedDatabaseSettings connectionConfig){
+        TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
+        DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+
         connectionConfig.setActive(activeCheckBox.isSelected());
         connectionConfig.setName(nameTextField.getText());
         connectionConfig.setDescription(descriptionTextField.getText());
@@ -140,6 +138,9 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
         final GuidedDatabaseSettings configuration = getConfiguration();
+
+        TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
+        DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
         DatabaseType selectedDatabaseType = configuration.getDatabaseType();
         DriverOption selectedDriver = driverComboBox.getSelectedValue();
@@ -178,7 +179,6 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         activeCheckBox.setSelected(connectionConfig.isActive());
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());
-        driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
         hostTextField.setText(connectionConfig.getHost());
         portTextField.setText(connectionConfig.getPort());
         databaseTextField.setText(connectionConfig.getDatabase());
@@ -189,6 +189,9 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
         emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
+        TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
+        DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+        driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
         updateDriverFields();
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
     }
