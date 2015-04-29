@@ -119,6 +119,11 @@ public class DatabaseDriverManager implements ApplicationComponent {
         return driversCache.get(libraryName);
     }
 
+    public Driver getDriver(String className) throws Exception {
+        Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
+        return driverClass.newInstance();
+    }
+
     public Driver getDriver(String libraryName, String className) throws Exception {
         if (StringUtil.isEmptyOrSpaces(className)) {
             throw new Exception("No driver class specified.");

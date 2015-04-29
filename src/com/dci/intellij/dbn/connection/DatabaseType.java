@@ -8,24 +8,26 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseType implements Presentable {
-    ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     DatabaseUrlResolver.ORACLE),
-    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      DatabaseUrlResolver.MYSQL),
-    POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, DatabaseUrlResolver.POSTGRES),
-    UNKNOWN  ("UNKNOWN",  "Unknown", null, null, DatabaseUrlResolver.UNKNOWN);
+    ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     DatabaseUrlResolver.ORACLE, "oracle.jdbc.driver.OracleDriver"),
+    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      DatabaseUrlResolver.MYSQL, "com.mysql.jdbc.Driver"),
+    POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, DatabaseUrlResolver.POSTGRES, "org.postgresql.Driver"),
+    UNKNOWN  ("UNKNOWN",  "Unknown", null, null, DatabaseUrlResolver.UNKNOWN, "");
 
     private String name;
     private String displayName;
     private Icon icon;
     private Icon largeIcon;
     private DatabaseUrlResolver urlResolver;
+    private String driverClassName;
 
 
-    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, DatabaseUrlResolver urlResolver) {
+    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, DatabaseUrlResolver urlResolver, String driverClassName) {
         this.name = name;
         this.displayName = displayName;
         this.icon = icon;
         this.largeIcon = largeIcon;
         this.urlResolver = urlResolver;
+        this.driverClassName = driverClassName;
     }
 
     @NotNull
@@ -71,5 +73,7 @@ public enum DatabaseType implements Presentable {
     }
 
 
-
+    public String getDriverClassName() {
+        return driverClassName;
+    }
 }
