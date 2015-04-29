@@ -28,6 +28,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
@@ -44,6 +45,7 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
     protected abstract JTextField getNameTextField();
     protected abstract TextFieldWithBrowseButton getDriverLibraryTextField();
     protected abstract JCheckBox getActiveCheckBox();
+    protected abstract DBNComboBox<DriverSource> getDriverSourceComboBox();
     protected abstract DBNComboBox<DriverOption> getDriverComboBox();
     protected abstract DBNComboBox<DatabaseType> getDatabaseTypeComboBox();
     protected abstract JLabel getDriverErrorLabel();
@@ -173,54 +175,60 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
     }
 
     protected void updateDriverFields() {
-        JTextField textField = getDriverLibraryTextField().getTextField();
-        String driverLibrary = textField.getText();
+        DBNComboBox<DriverSource> driverSourceComboBox = getDriverSourceComboBox();
+        DriverSource driverSource = driverSourceComboBox == null ? DriverSource.EXTERNAL : driverSourceComboBox.getSelectedValue();
 
         String error = null;
-        boolean fileExists = StringUtil.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
-        DBNComboBox<DriverOption> driverComboBox = getDriverComboBox();
-        if (fileExists) {
-            textField.setForeground(UIUtil.getTextFieldForeground());
-            DatabaseType databaseType = DatabaseType.resolve(driverLibrary);
-            if (databaseType != DatabaseType.UNKNOWN && databaseType != getDatabaseTypeComboBox().getSelectedValue()) {
-                error = "The driver library does not match the selected database type";
-                driverComboBox.clearValues();
-                driverComboBox.setSelectedValue(null);
+        if (driverSource == DriverSource.EXTERNAL) {
+            JTextField textField = getDriverLibraryTextField().getTextField();
+            String driverLibrary = textField.getText();
+
+            boolean fileExists = StringUtil.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
+            DBNComboBox<DriverOption> driverComboBox = getDriverComboBox();
+            if (fileExists) {
+                textField.setForeground(UIUtil.getTextFieldForeground());
+                DatabaseType databaseType = DatabaseType.resolve(driverLibrary);
+                if (databaseType != DatabaseType.UNKNOWN && databaseType != getDatabaseTypeComboBox().getSelectedValue()) {
+                    error = "The driver library does not match the selected database type";
+                    driverComboBox.clearValues();
+                    driverComboBox.setSelectedValue(null);
+                } else {
+                    List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
+                    DriverOption selectedOption = driverComboBox.getSelectedValue();
+                    driverComboBox.clearValues();
+                    //driverComboBox.addItem("");
+                    if (drivers != null && drivers.size() > 0) {
+                        List<DriverOption> driverOptions = new ArrayList<DriverOption>();
+                        for (Driver driver : drivers) {
+                            DriverOption driverOption = new DriverOption(driver);
+                            driverOptions.add(driverOption);
+                            if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
+                                selectedOption = driverOption;
+                            }
+                        }
+
+                        driverComboBox.setValues(driverOptions);
+
+                        if (selectedOption == null && driverOptions.size() > 0) {
+                            selectedOption = driverOptions.get(0);
+                        }
+                    } else {
+                        error = "Invalid driver library";
+                    }
+                    driverComboBox.setSelectedValue(selectedOption);
+                }
             } else {
-                List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
-                DriverOption selectedOption = driverComboBox.getSelectedValue();
+                textField.setForeground(JBColor.RED);
+                if (StringUtil.isEmpty(driverLibrary)) {
+                    error = "Driver library is not specified";
+                } else {
+                    error = "Cannot locate driver library file";
+                }
                 driverComboBox.clearValues();
                 //driverComboBox.addItem("");
-                if (drivers != null && drivers.size() > 0) {
-                    List<DriverOption> driverOptions = new ArrayList<DriverOption>();
-                    for (Driver driver : drivers) {
-                        DriverOption driverOption = new DriverOption(driver);
-                        driverOptions.add(driverOption);
-                        if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
-                            selectedOption = driverOption;
-                        }
-                    }
-
-                    driverComboBox.setValues(driverOptions);
-
-                    if (selectedOption == null && driverOptions.size() > 0) {
-                        selectedOption = driverOptions.get(0);
-                    }
-                } else {
-                    error = "Invalid driver library";
-                }
-                driverComboBox.setSelectedValue(selectedOption);
             }
-        } else {
-            textField.setForeground(JBColor.RED);
-            if (StringUtil.isEmpty(driverLibrary)) {
-                error = "Driver library is not specified";
-            } else {
-                error = "Cannot locate driver library file";
-            }
-            driverComboBox.clearValues();
-            //driverComboBox.addItem("");
         }
+
 
         JLabel driverErrorLabel = getDriverErrorLabel();
         if (error != null) {

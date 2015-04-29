@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class ConnectionUtil {
@@ -159,9 +160,10 @@ public class ConnectionUtil {
                     properties.putAll(configProperties);
                 }
 
-                final Driver driver = DatabaseDriverManager.getInstance().getDriver(
-                        databaseSettings.getDriverLibrary(),
-                        databaseSettings.getDriver());
+                DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
+                final Driver driver = databaseSettings.getDriverSource() == DriverSource.EXTERNAL ?
+                            driverManager.getDriver(databaseSettings.getDriverLibrary(), databaseSettings.getDriver()) :
+                            driverManager.getDriver(databaseSettings.getDriver());
 
 
                 String connectionUrl = databaseSettings.getConnectionUrl();

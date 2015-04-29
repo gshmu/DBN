@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.GenericDatabaseSettings;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -97,6 +98,11 @@ public class GenericDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<
     @Override
     protected TextFieldWithBrowseButton getDriverLibraryTextField() {
         return driverLibraryTextField;
+    }
+
+    @Override
+    protected DBNComboBox<DriverSource> getDriverSourceComboBox() {
+        return null;
     }
 
     protected DBNComboBox<DriverOption> getDriverComboBox() {

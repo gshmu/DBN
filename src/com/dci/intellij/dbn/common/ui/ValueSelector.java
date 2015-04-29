@@ -212,6 +212,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
         innerPanel.setBackground(isComboBox && isEnabled ? COMBO_BOX_BACKGROUND : UIUtil.getPanelBackground());
         innerPanel.setFocusable(isEnabled);
+        label.setForeground(isEnabled ? UIUtil.getTextFieldForeground() : UIUtil.getLabelDisabledForeground());
     }
 
     public void paintComponent(Graphics g) {

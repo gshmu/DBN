@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
 import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
-import com.dci.intellij.dbn.driver.DriverType;
+import com.dci.intellij.dbn.driver.DriverSource;
 
 public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     private String host;
@@ -17,6 +17,7 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
 
     public GuidedDatabaseSettings(ConnectionSettings connectionSettings, DatabaseType databaseType) {
         super(connectionSettings);
+        setDriverSource(DriverSource.BUILTIN);
         setDatabaseType(databaseType);
         DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
         setHost(urlResolver.getDefaultHost());
@@ -56,7 +57,7 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
 
     @Override
     public String getDriver() {
-        if (driverType == DriverType.BUNDLED) {
+        if (driverSource == DriverSource.BUILTIN) {
             return databaseType.getDriverClassName();
         } else {
             return super.getDriver();
@@ -110,7 +111,7 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
         host             = getString(element, "host", host);
         port             = getString(element, "port", port);
         database         = getString(element, "database", database);
-        driverType       = getEnum(element, "driver-lookup", DriverType.BUNDLED);
+        driverSource = getEnum(element, "driver-lookup", DriverSource.BUILTIN);
     }
 
     public void writeConfiguration(Element element) {
@@ -118,6 +119,6 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
         setString(element, "host", host);
         setString(element, "port", port);
         setString(element, "database", database);
-        setEnum(element, "driver-lookup", driverType);
+        setEnum(element, "driver-lookup", driverSource);
     }
 }

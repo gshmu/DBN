@@ -18,7 +18,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.connection.config.GuidedDatabaseSettings;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -38,7 +38,6 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     private JTextField databaseTextField;
     private JPanel driverLibraryPanel;
 
-    private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
     private ConnectionDriverSettingsForm<GuidedDatabaseSettingsForm> driverSettingsForm;
 
     public GuidedDatabaseSettingsForm(GuidedDatabaseSettings configuration) {
@@ -51,7 +50,8 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
 
         driverSettingsForm = new ConnectionDriverSettingsForm<GuidedDatabaseSettingsForm>(this);
 
-        DBNCollapsiblePanel driverPanel = new DBNCollapsiblePanel(this, driverSettingsForm.getComponent(), "Driver", false);
+        boolean externalLibrary = configuration.getDriverSource() == DriverSource.EXTERNAL;
+        DBNCollapsiblePanel<GuidedDatabaseSettingsForm> driverPanel = new DBNCollapsiblePanel<GuidedDatabaseSettingsForm>(this, driverSettingsForm.getComponent(), "Driver", externalLibrary);
         driverLibraryPanel.add(driverPanel.getComponent(), BorderLayout.CENTER);
 
         resetFormChanges();
@@ -75,6 +75,11 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
     @Override
     protected TextFieldWithBrowseButton getDriverLibraryTextField() {
         return driverSettingsForm.getDriverLibraryTextField();
+    }
+
+    @Override
+    protected DBNComboBox<DriverSource> getDriverSourceComboBox() {
+        return driverSettingsForm.getDriverSourceComboBox();
     }
 
     protected DBNComboBox<DriverOption> getDriverComboBox() {
@@ -112,27 +117,44 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         return mainPanel;
     }
 
-    public void applyFormChanges(GuidedDatabaseSettings connectionConfig){
+    public void applyFormChanges(final GuidedDatabaseSettings configuration){
+        DBNComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        connectionConfig.setActive(activeCheckBox.isSelected());
-        connectionConfig.setName(nameTextField.getText());
-        connectionConfig.setDescription(descriptionTextField.getText());
-        connectionConfig.setDriverLibrary(driverLibraryTextField.getText());
-        connectionConfig.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
-        connectionConfig.setHost(hostTextField.getText());
-        connectionConfig.setPort(portTextField.getText());
-        connectionConfig.setDatabase(databaseTextField.getText());
+        configuration.setActive(activeCheckBox.isSelected());
+        String newName = nameTextField.getText();
+        final boolean nameChanged = !newName.equals(configuration.getName());
+        configuration.setName(newName);
 
-        Authentication authentication = connectionConfig.getAuthentication();
+        configuration.setDescription(descriptionTextField.getText());
+        configuration.setDriverLibrary(driverLibraryTextField.getText());
+        configuration.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
+        configuration.setHost(hostTextField.getText());
+        configuration.setPort(portTextField.getText());
+        configuration.setDatabase(databaseTextField.getText());
+
+        Authentication authentication = configuration.getAuthentication();
         authentication.setUser(userTextField.getText());
         authentication.setPassword(new String(passwordField.getPassword()));
         authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
-        connectionConfig.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
-        connectionConfig.updateHashCode();
+        configuration.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
+        configuration.setDriverSource(driverSourceComboBox.getSelectedValue());
+
+        configuration.updateHashCode();
+
+        new SettingsChangeNotifier() {
+            @Override
+            public void notifyChanges() {
+                if (nameChanged) {
+                    Project project = configuration.getProject();
+                    ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
+                    listener.nameChanged(configuration.getConnectionId());
+                }
+            }
+        };
     }
 
     public void applyFormChanges() throws ConfigurationException {
@@ -174,6 +196,10 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
 
 
     public void resetFormChanges() {
+        DBNComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
+        TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
+        DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+
         GuidedDatabaseSettings connectionConfig = getConfiguration();
 
         activeCheckBox.setSelected(connectionConfig.isActive());
@@ -189,8 +215,7 @@ public class GuidedDatabaseSettingsForm extends ConnectionDatabaseSettingsForm<G
         osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
         emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
 
-        TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
-        DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+        driverSourceComboBox.setSelectedValue(connectionConfig.getDriverSource());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
         updateDriverFields();
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
