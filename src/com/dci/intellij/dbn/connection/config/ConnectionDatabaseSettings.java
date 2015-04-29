@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
-import com.dci.intellij.dbn.driver.DriverType;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -32,7 +32,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     protected double databaseVersion = 9999;
     protected int hashCode;
 
-    protected DriverType driverType = DriverType.EXTERNAL;
+    protected DriverSource driverSource = DriverSource.EXTERNAL;
     protected String driverLibrary;
     protected String driver;
 
@@ -66,6 +66,14 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public String getName() {
         return name;
+    }
+
+    public DriverSource getDriverSource() {
+        return driverSource;
+    }
+
+    public void setDriverSource(DriverSource driverSource) {
+        this.driverSource = driverSource;
     }
 
     public String getDriverLibrary() {
@@ -171,16 +179,18 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
             }
         }
 
-        if (StringUtil.isEmpty(getDriverLibrary())) {
-            errors.add("JDBC driver library not provided");
-        } else {
-            String driver = getDriver();
-            if (StringUtil.isEmpty(driver)) {
-                errors.add("JDBC driver not provided");
+        if (getDriverSource() == DriverSource.EXTERNAL) {
+            if (StringUtil.isEmpty(getDriverLibrary())) {
+                errors.add("JDBC driver library not provided");
             } else {
-                DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
-                if (driverDatabaseType != databaseType) {
-                    errors.add("JDBC driver does not match the selected database type");
+                String driver = getDriver();
+                if (StringUtil.isEmpty(driver)) {
+                    errors.add("JDBC driver not provided");
+                } else {
+                    DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
+                    if (driverDatabaseType != databaseType) {
+                        errors.add("JDBC driver does not match the selected database type");
+                    }
                 }
             }
         }
@@ -214,6 +224,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
+        driverSource  = getEnum(element, "driver-source", driverSource);
         driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
@@ -241,6 +252,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
                 FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
                 this.driverLibrary;
 
+        setEnum(element, "driver-source", driverSource);
         setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
 
