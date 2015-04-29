@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 
@@ -23,20 +24,23 @@ public class DBNCollapsiblePanel<P extends DisposableProjectComponent> extends D
         return mainPanel;
     }
 
-    public DBNCollapsiblePanel(@NotNull P parentComponent, JComponent contentComponent, String title) {
+    public DBNCollapsiblePanel(@NotNull P parentComponent, JComponent contentComponent, String title, boolean expanded) {
         super(parentComponent);
+        this.expanded = expanded;
         contentPanel.add(contentComponent, BorderLayout.CENTER);
+        contentPanel.setVisible(this.expanded);
         collapseExpandLabel.setText(title);
+        collapseExpandLabel.setIcon(this.expanded ? Icons.COMMON_DOWN : Icons.COMMON_RIGHT);
         collapseExpandLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        collapseExpandLabel.setIcon(Icons.COMMON_RIGHT);
+        collapseExpandLabel.setForeground(Colors.HINT_COLOR);
 
         collapseExpandLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1) {
-                    expanded = !expanded;
-                    contentPanel.setVisible(expanded);
-                    collapseExpandLabel.setIcon(expanded ? Icons.COMMON_DOWN : Icons.COMMON_RIGHT);
+                    DBNCollapsiblePanel.this.expanded = !DBNCollapsiblePanel.this.expanded;
+                    contentPanel.setVisible(DBNCollapsiblePanel.this.expanded);
+                    collapseExpandLabel.setIcon(DBNCollapsiblePanel.this.expanded ? Icons.COMMON_DOWN : Icons.COMMON_RIGHT);
                 }
             }
         });

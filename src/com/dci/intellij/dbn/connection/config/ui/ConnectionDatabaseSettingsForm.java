@@ -1,25 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.DBNComboBox;
-import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.driver.DatabaseDriverManager;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -35,6 +15,23 @@ import java.io.File;
 import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.driver.DatabaseDriverManager;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 
 public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabaseSettings> extends ConfigurationEditorForm<T> {
     protected T temporaryConfig;
@@ -233,39 +230,6 @@ public abstract class ConnectionDatabaseSettingsForm<T extends ConnectionDatabas
         } else {
             driverErrorLabel.setText("");
             driverErrorLabel.setVisible(false);
-        }
-    }
-
-    protected static class DriverOption implements Presentable {
-        private Driver driver;
-
-        public DriverOption(Driver driver) {
-            this.driver = driver;
-        }
-
-        public Driver getDriver() {
-            return driver;
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return driver.getClass().getName();
-        }
-
-        @Nullable
-        @Override
-        public Icon getIcon() {
-            return null;
-        }
-
-        public static DriverOption get(List<DriverOption> driverOptions, String name) {
-            for (DriverOption driverOption : driverOptions) {
-                if (driverOption.getName().equals(name)) {
-                    return driverOption;
-                }
-            }
-            return null;
         }
     }
 
