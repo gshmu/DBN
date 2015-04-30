@@ -173,7 +173,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isActive() {
-        return connectionSettings.getDatabaseSettings().isActive();
+        return connectionSettings.isActive();
     }
 
     public DatabaseType getDatabaseType() {

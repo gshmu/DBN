@@ -25,7 +25,6 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
-    protected boolean active = true;
     protected String name;
     protected String description;
     protected DatabaseType databaseType = DatabaseType.UNKNOWN;
@@ -62,14 +61,6 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
 
     public void setConnectivityStatus(ConnectivityStatus connectivityStatus) {
         this.connectivityStatus = connectivityStatus;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getName() {
@@ -256,7 +247,6 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             parent.setConnectionId(connectionId);
         }
 
-        active           = getBoolean(element, "active", active);
         name             = getString(element, "name", name);
         description      = getString(element, "description", description);
 
@@ -305,7 +295,6 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
                 FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
                 this.driverLibrary;
 
-        setBoolean(element, "active", active);
         setString(element, "name", nvl(name));
         setString(element, "description", nvl(description));
 
