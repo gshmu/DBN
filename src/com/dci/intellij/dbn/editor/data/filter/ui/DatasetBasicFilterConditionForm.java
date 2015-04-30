@@ -110,9 +110,9 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
             super(null, "", selectedColumn, true);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
-                public void valueSelected(DBColumn column) {
-                    if (column != null) {
-                        GenericDataType dataType = column.getDataType().getGenericDataType();
+                public void selectionChanged(DBColumn oldValue, DBColumn newValue) {
+                    if (newValue != null) {
+                        GenericDataType dataType = newValue.getDataType().getGenericDataType();
                         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataType == GenericDataType.DATE_TIME);
                     }
                     if (basicFilterForm != null) {
@@ -140,7 +140,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
             super("", selectedOperator, true);
             addListener(new ValueSelectorListener<ConditionOperator>() {
                 @Override
-                public void valueSelected(ConditionOperator operator) {
+                public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
                     if (basicFilterForm != null) {
                         basicFilterForm.updateNameAndPreview();
                         updateValueTextField();

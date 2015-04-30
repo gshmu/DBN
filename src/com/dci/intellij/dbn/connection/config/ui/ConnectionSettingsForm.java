@@ -55,7 +55,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
 
         TabInfo connectionTabInfo = new TabInfo(new JBScrollPane(databaseSettings.createComponent()));
-        connectionTabInfo.setText("Connection");
+        connectionTabInfo.setText("Database");
         configTabbedPane.addTab(connectionTabInfo);
 
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();

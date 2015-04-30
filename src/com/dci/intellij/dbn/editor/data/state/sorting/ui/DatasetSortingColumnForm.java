@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
@@ -12,14 +20,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingForm> {
     private JPanel actionsPanel;
@@ -52,9 +52,9 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
             super(Icons.DBO_COLUMN_HIDDEN, "Select column...", selectedColumn, true);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
-                public void valueSelected(DBColumn column) {
-                    sortingInstruction.setColumnName(column.getName());
-                    dataTypeLabel.setText(column.getDataType().getQualifiedName());
+                public void selectionChanged(DBColumn oldValue, DBColumn newValue) {
+                    sortingInstruction.setColumnName(newValue.getName());
+                    dataTypeLabel.setText(newValue.getDataType().getQualifiedName());
                 }
             });
         }

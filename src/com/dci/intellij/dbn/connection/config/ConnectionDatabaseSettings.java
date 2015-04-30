@@ -25,26 +25,31 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
-    protected String name;
-    protected String description;
-    protected DatabaseType databaseType = DatabaseType.UNKNOWN;
-    protected double databaseVersion = 9999;
-    protected int hashCode;
+    private String name;
+    private String description;
+    private DatabaseType databaseType = DatabaseType.UNKNOWN;
+    private double databaseVersion = 9999;
+    private int hashCode;
 
     private String host;
     private String port;
     private String database;
 
-    protected DriverSource driverSource = DriverSource.EXTERNAL;
-    protected String driverLibrary;
-    protected String driver;
+    private DriverSource driverSource = DriverSource.BUILTIN;
+    private String driverLibrary;
+    private String driver;
 
     private Authentication authentication = new Authentication();
 
     private ConnectionSettings parent;
 
-    public ConnectionDatabaseSettings(ConnectionSettings parent) {
+    public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType) {
         this.parent = parent;
+        this.databaseType = databaseType;
+        DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+        this.host = urlResolver.getDefaultHost();
+        this.port = urlResolver.getDefaultPort();
+        this.database = urlResolver.getDefaultDatabase();
     }
 
     public ConnectionDatabaseSettingsForm createConfigurationEditor() {
@@ -80,7 +85,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     }
 
     public String getDriver() {
-        return driver;
+        return driverSource == DriverSource.BUILTIN ? databaseType.getDriverClassName() : driver;
     }
 
     public void setDriverLibrary(String driverLibrary) {
@@ -185,7 +190,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public ConnectionDatabaseSettings clone() {
         Element connectionElement = new Element(getConfigElementName());
         writeConfiguration(connectionElement);
-        ConnectionDatabaseSettings clone = new ConnectionDatabaseSettings(getParent());
+        ConnectionDatabaseSettings clone = new ConnectionDatabaseSettings(getParent(), databaseType);
         clone.readConfiguration(connectionElement);
         clone.setConnectivityStatus(getConnectivityStatus());
         return clone;
@@ -200,7 +205,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
 
         String connectionUrl = getConnectionUrl();
         if (StringUtil.isEmpty(connectionUrl)) {
-            errors.add("Database information not provided (url, host, port, database)");
+            errors.add("Database information not provided (host, port, database)");
         } else {
             DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
             if (!urlResolver.isValid(connectionUrl)) {

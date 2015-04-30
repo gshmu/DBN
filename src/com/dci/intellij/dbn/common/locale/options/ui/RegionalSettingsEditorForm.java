@@ -69,7 +69,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
         ValueSelectorListener previewListener = new ValueSelectorListener() {
             @Override
-            public void valueSelected(Object value) {
+            public void selectionChanged(Object oldValue, Object newValue) {
                 updatePreview();
             }
         };

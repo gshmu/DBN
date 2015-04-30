@@ -150,8 +150,8 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
 
         dataTypeComboBox.addListener(new ValueSelectorListener<GenericDataType>() {
             @Override
-            public void valueSelected(GenericDataType value) {
-                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, value == GenericDataType.DATE_TIME);
+            public void selectionChanged(GenericDataType oldValue, GenericDataType newValue) {
+                editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, oldValue == GenericDataType.DATE_TIME);
                 getParentComponent().updatePreview();
             }
         });
