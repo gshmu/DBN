@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -20,6 +14,12 @@ import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -35,7 +35,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     private String port;
     private String database;
 
-    private DriverSource driverSource = DriverSource.BUILTIN;
+    private DriverSource driverSource = DriverSource.EXTERNAL;
     private String driverLibrary;
     private String driver;
 
@@ -46,10 +46,13 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType) {
         this.parent = parent;
         this.databaseType = databaseType;
-        DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
-        this.host = urlResolver.getDefaultHost();
-        this.port = urlResolver.getDefaultPort();
-        this.database = urlResolver.getDefaultDatabase();
+        if (databaseType != DatabaseType.UNKNOWN) {
+            DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+            this.host = urlResolver.getDefaultHost();
+            this.port = urlResolver.getDefaultPort();
+            this.database = urlResolver.getDefaultDatabase();
+            this.driverSource = DriverSource.BUILTIN;
+        }
     }
 
     public ConnectionDatabaseSettingsForm createConfigurationEditor() {

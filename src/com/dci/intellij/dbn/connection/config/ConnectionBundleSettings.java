@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.connection.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
@@ -20,6 +15,11 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.DefaultProject;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
     public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
@@ -161,5 +161,13 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
 
     public ConnectionBundle getConnectionBundle() {
         return connectionBundle;
+    }
+
+    @Override
+    public void disposeUIResources() {
+        super.disposeUIResources();
+        for (ConnectionHandler connectionHandler : connectionBundle.getAllConnectionHandlers()) {
+            connectionHandler.getSettings().disposeUIResources();
+        }
     }
 }
