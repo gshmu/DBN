@@ -77,7 +77,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         filtersTabInfo.setText("Filters");
         configTabbedPane.addTab(filtersTabInfo);
 
-        ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) databaseSettings.getSettingsEditor();
+        ConnectionDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
         ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
 
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
@@ -102,7 +102,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     public ConnectionSettings getTemporaryConfig() throws ConfigurationException {
         ConnectionSettings configuration = getConfiguration();
         ConnectionSettings clone = configuration.clone();
-        ConnectionDatabaseSettingsForm databaseSettingsEditor = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+        ConnectionDatabaseSettingsForm databaseSettingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
         if(databaseSettingsEditor != null) {
             databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
         }
@@ -146,7 +146,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                                 JList connectionList = bundleSettingsForm.getList();
                                 connectionList.revalidate();
                                 connectionList.repaint();
-                                ConnectionDatabaseSettingsForm settingsEditor = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+                                ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
                                 if (settingsEditor != null) {
                                     settingsEditor.notifyPresentationChanges();
                                 }

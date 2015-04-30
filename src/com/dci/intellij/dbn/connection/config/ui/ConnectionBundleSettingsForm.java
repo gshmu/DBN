@@ -23,6 +23,7 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
@@ -119,7 +120,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             for (int i=0; i<oldConnections.size(); i++) {
                 ConnectionSettings oldConfig = oldConnections.get(i).getSettings();
                 ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
-                ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) newConfig.getDatabaseSettings().getSettingsEditor();
+                ConnectionDatabaseSettingsForm databaseSettingsForm = newConfig.getDatabaseSettings().getSettingsEditor();
                 if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
                         (databaseSettingsForm != null && databaseSettingsForm.isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
                     listChanged.set(true);
@@ -231,14 +232,15 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
 
-    public void createNewConnection(DatabaseType databaseType) {
+    public void createNewConnection(@NotNull DatabaseType databaseType) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         connectionBundleSettings.setModified(true);
-        ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType);
+        ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings);
+        connectionSettings.getDatabaseSettings().setDatabaseType(databaseType);
         connectionSettings.setNew(true);
         connectionSettings.generateNewId();
 
-        String name = databaseType == null ? "Connection" :  databaseType.getDisplayName() + " Connection";
+        String name = "Connection";
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         while (model.getConnectionConfig(name) != null) {
             name = NamingUtil.getNextNumberedName(name, true);
@@ -257,7 +259,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
             ConnectionSettings clone = connectionSettings.clone();
 
-            ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) connectionSettings.getDatabaseSettings().getSettingsEditor();
+            ConnectionDatabaseSettingsForm databaseSettingsForm = connectionSettings.getDatabaseSettings().getSettingsEditor();
             if (databaseSettingsForm != null) {
                 Element element = new Element("db-settings");
                 databaseSettingsForm.getTemporaryConfig().writeConfiguration(element);
@@ -326,8 +328,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     ConnectionBundleSettings configuration = getConfiguration();
                     for (Element configElement : configElements) {
                         selectedIndex++;
-                        DatabaseType databaseType = DatabaseType.get(configElement.getAttributeValue("template-database-type"));
-                        ConnectionSettings clone = new ConnectionSettings(configuration, databaseType);
+                        ConnectionSettings clone = new ConnectionSettings(configuration);
                         clone.readConfiguration(configElement);
                         clone.setNew(true);
                         clone.generateNewId();

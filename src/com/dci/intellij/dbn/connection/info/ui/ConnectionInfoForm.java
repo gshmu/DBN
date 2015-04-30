@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.GuidedDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 
 public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
@@ -134,12 +133,7 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
         setupHostValueLabel.setText(getPresentableText(databaseSettings.getHost()));
         setupPortValueLabel.setText(getPresentableText(databaseSettings.getPort()));
         setupDatabaseValueLabel.setText(getPresentableText(databaseSettings.getDatabase()));
-        if (databaseSettings instanceof GuidedDatabaseSettings) {
-            setupUrlLabel.setVisible(false);
-            setupUrlValueLabel.setVisible(false);
-        } else {
-            setupUrlValueLabel.setText(getPresentableText(databaseSettings.getConnectionUrl()));
-        }
+        setupUrlValueLabel.setText(getPresentableText(databaseSettings.getConnectionUrl()));
         updateBorderTitleForeground(setupPanel);
     }
 

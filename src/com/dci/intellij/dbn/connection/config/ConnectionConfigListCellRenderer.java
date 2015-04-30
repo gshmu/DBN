@@ -15,7 +15,7 @@ public class ConnectionConfigListCellRenderer extends DefaultListCellRenderer{
         ConnectionSettings connectionSettings = (ConnectionSettings) value;
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus );
-        ConnectionDatabaseSettingsForm settingsEditor = (ConnectionDatabaseSettingsForm) databaseSettings.getSettingsEditor();
+        ConnectionDatabaseSettingsForm settingsEditor = databaseSettings.getSettingsEditor();
         String name = settingsEditor == null ?
                 databaseSettings.getName() :
                 settingsEditor.getConnectionName();
