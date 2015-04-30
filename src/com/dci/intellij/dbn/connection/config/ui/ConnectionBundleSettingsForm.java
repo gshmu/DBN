@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -120,9 +121,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             for (int i=0; i<oldConnections.size(); i++) {
                 ConnectionSettings oldConfig = oldConnections.get(i).getSettings();
                 ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
-                ConnectionDatabaseSettingsForm databaseSettingsForm = newConfig.getDatabaseSettings().getSettingsEditor();
+                ConnectionSettingsForm settingsEditor = newConfig.getSettingsEditor();
                 if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
-                        (databaseSettingsForm != null && databaseSettingsForm.isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
+                        (settingsEditor != null && settingsEditor.isConnectionActive() != oldConfig.isActive())) {
                     listChanged.set(true);
                     break;
                 }
@@ -256,25 +257,26 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         ConnectionSettings connectionSettings = (ConnectionSettings) connectionsList.getSelectedValue();
         if (connectionSettings != null) {
             getConfiguration().setModified(true);
-            ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-            ConnectionSettings clone = connectionSettings.clone();
-
-            ConnectionDatabaseSettingsForm databaseSettingsForm = connectionSettings.getDatabaseSettings().getSettingsEditor();
-            if (databaseSettingsForm != null) {
-                Element element = new Element("db-settings");
-                databaseSettingsForm.getTemporaryConfig().writeConfiguration(element);
-                clone.getDatabaseSettings().readConfiguration(element);
+            ConnectionSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
+            if (settingsEditor != null) {
+                ConnectionSettings duplicate = null;
+                try {
+                    duplicate = settingsEditor.getTemporaryConfig();
+                    duplicate.setNew(true);
+                    String name = duplicate.getDatabaseSettings().getName();
+                    ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+                    while (model.getConnectionConfig(name) != null) {
+                        name = NamingUtil.getNextNumberedName(name, true);
+                    }
+                    duplicate.getDatabaseSettings().setName(name);
+                    int selectedIndex = connectionsList.getSelectedIndex() + 1;
+                    model.add(selectedIndex, duplicate);
+                    connectionsList.setSelectedIndex(selectedIndex);
+                } catch (ConfigurationException e) {
+                    MessageUtil.showErrorDialog(getProject(), e.getMessage());
+                }
             }
 
-            clone.setNew(true);
-            String name = clone.getDatabaseSettings().getName();
-            while (model.getConnectionConfig(name) != null) {
-                name = NamingUtil.getNextNumberedName(name, true);
-            }
-            clone.getDatabaseSettings().setName(name);
-            int selectedIndex = connectionsList.getSelectedIndex() + 1;
-            model.add(selectedIndex, clone);
-            connectionsList.setSelectedIndex(selectedIndex);
         }
     }
 

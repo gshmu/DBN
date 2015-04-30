@@ -12,6 +12,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionBundleSettings parent;
 
     private String connectionId;
+    private boolean isActive = true;
     private boolean isNew;
 
     private ConnectionDatabaseSettings databaseSettings;
@@ -89,6 +90,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         } else {
             connectionId = element.getAttributeValue("id");
         }
+        isActive = getBooleanAttribute(element, "active", isActive);
         super.readConfiguration(element);
     }
 
@@ -100,9 +102,18 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         this.isNew = isNew;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
     @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("id", connectionId);
+        element.setAttribute("active", Boolean.toString(isActive));
         super.writeConfiguration(element);
     }
 

@@ -7,7 +7,6 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,14 +115,13 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     public void applyFormChanges() throws ConfigurationException {
         final ConnectionDetailSettings configuration = getConfiguration();
 
-        Charset newCharset = encodingComboBox.getSelectedValue().getCharset();
         boolean newDdlFileBinding = ddlFileBindingCheckBox.isSelected();
         boolean newDatabaseLogging = databaseLoggingCheckBox.isSelected();
         EnvironmentType newEnvironmentType = environmentTypesComboBox.getSelectedValue();
         final String newEnvironmentTypeId = newEnvironmentType.getId();
 
         final boolean settingsChanged =
-                !configuration.getCharset().equals(newCharset) ||
+                !configuration.getCharset().equals(encodingComboBox.getSelectedValue().getCharset()) ||
                 configuration.isEnableDdlFileBinding() != newDdlFileBinding ||
                 configuration.isEnableDatabaseLogging() != newDatabaseLogging;
 
@@ -131,18 +129,8 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
                 !configuration.getEnvironmentType().getId().equals(newEnvironmentTypeId);
 
 
-        configuration.setEnvironmentTypeId(newEnvironmentTypeId);
-        configuration.setCharset(newCharset);
-        configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
-        configuration.setEnableDdlFileBinding(newDdlFileBinding);
-        configuration.setEnableDatabaseLogging(newDatabaseLogging);
-        configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
-        int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", true, 0, 60, "");
-        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Password expiry time (minutes)", true, 0, 60, "");
-        int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
-        configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
-        configuration.setPasswordExpiryTime(passwordExpiryTime);
-        configuration.setMaxConnectionPoolSize(maxPoolSize);
+        applyFormChanges(configuration);
+
 
         new SettingsChangeNotifier() {
             @Override
@@ -160,6 +148,24 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             }
         };
     }
+
+    @Override
+    public void applyFormChanges(ConnectionDetailSettings configuration) throws ConfigurationException {
+        CharsetOption charsetOption = encodingComboBox.getSelectedValue();
+        EnvironmentType environmentType = environmentTypesComboBox.getSelectedValue();
+
+        configuration.setEnvironmentTypeId(environmentType == null ? "" : environmentType.getId());
+        configuration.setCharset(charsetOption == null ? null : charsetOption.getCharset());
+        configuration.setConnectAutomatically(autoConnectCheckBox.isSelected());
+        configuration.setEnableDdlFileBinding(ddlFileBindingCheckBox.isSelected());
+        configuration.setEnableDatabaseLogging(ddlFileBindingCheckBox.isSelected());
+        configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
+        int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", true, 0, 60, "");
+        int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Password expiry time (minutes)", true, 0, 60, "");
+        int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
+        configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
+        configuration.setPasswordExpiryTime(passwordExpiryTime);
+        configuration.setMaxConnectionPoolSize(maxPoolSize);    }
 
     @Override
     public void resetFormChanges() {

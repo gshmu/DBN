@@ -34,6 +34,7 @@ import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -54,7 +55,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JPasswordField passwordField;
     private JCheckBox osAuthenticationCheckBox;
     private JCheckBox emptyPasswordCheckBox;
-    private JCheckBox activeCheckBox;
     private JTextField portTextField;
     private JTextField databaseTextField;
     private JPanel driverLibraryPanel;
@@ -109,26 +109,17 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         ConnectionDatabaseSettings configuration = temporaryConfig;//getConfiguration();
         String name = nameTextField.getText();
         ConnectivityStatus connectivityStatus = configuration.getConnectivityStatus();
-        Icon icon = configuration.getParent().isNew() ? Icons.CONNECTION_NEW :
-                !activeCheckBox.isSelected() ? Icons.CONNECTION_DISABLED :
+        ConnectionSettings connectionSettings = configuration.getParent();
+        ConnectionSettingsForm connectionSettingsForm = connectionSettings.getSettingsEditor();
+
+        Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
+                connectionSettingsForm != null && !connectionSettingsForm.isConnectionActive() ? Icons.CONNECTION_DISABLED :
                         connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
-                                connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
+                        connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
         ConnectionPresentationChangeListener listener = EventUtil.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
-        EnvironmentType environmentType = configuration.getParent().getDetailSettings().getEnvironmentType();
+        EnvironmentType environmentType = connectionSettings.getDetailSettings().getEnvironmentType();
         listener.presentationChanged(name, icon, environmentType.getColor(), getConfiguration().getConnectionId(), configuration.getDatabaseType());
-    }
-
-    public boolean isConnectionActive() {
-        return activeCheckBox.isSelected();
-    }
-
-    public ConnectionDatabaseSettings getTemporaryConfig() {
-        return temporaryConfig;
-    }
-
-    public void setTemporaryConfig(ConnectionDatabaseSettings temporaryConfig) {
-        this.temporaryConfig = temporaryConfig;
     }
 
     public ConnectivityStatus getConnectivityStatus() {
@@ -199,7 +190,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     }
                 }
 
-                if (source == activeCheckBox || source == nameTextField) {
+                if (source == nameTextField) {
                     ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
                     ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
 
@@ -298,7 +289,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        configuration.setActive(activeCheckBox.isSelected());
         String newName = nameTextField.getText();
         final boolean nameChanged = !newName.equals(configuration.getName());
         configuration.setName(newName);
@@ -378,7 +368,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         ConnectionDatabaseSettings connectionConfig = getConfiguration();
 
-        activeCheckBox.setSelected(connectionConfig.isActive());
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());
         hostTextField.setText(connectionConfig.getHost());
