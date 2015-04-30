@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
@@ -35,6 +24,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
     private JPanel mainPanel;
@@ -153,6 +153,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                                     connectionManager.showConnectionInfo(temporaryConfig, environmentType);
                                 }
                             }
+                            configuration.getDatabaseSettings().setConnectivityStatus(temporaryConfig.getDatabaseSettings().getConnectivityStatus());
 
                             ConnectionBundleSettingsForm bundleSettingsForm = bundleSettings.getSettingsEditor();
                             if (bundleSettingsForm != null) {
