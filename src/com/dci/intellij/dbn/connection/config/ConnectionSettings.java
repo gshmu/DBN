@@ -3,11 +3,9 @@ package com.dci.intellij.dbn.connection.config;
 import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
@@ -22,25 +20,14 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
 
-    private DatabaseType templateDatabaseType;
-
-    public ConnectionSettings(ConnectionBundleSettings parent, @Nullable DatabaseType templateDatabaseType) {
+    public ConnectionSettings(ConnectionBundleSettings parent) {
         super(parent.getProject());
         this.parent = parent;
-        this.templateDatabaseType = templateDatabaseType;
-
-        databaseSettings = templateDatabaseType == null ?
-                new GenericDatabaseSettings(this) :
-                new GuidedDatabaseSettings(this, templateDatabaseType);
-
+        databaseSettings = new ConnectionDatabaseSettings(this);
         propertiesSettings = new ConnectionPropertiesSettings(this);
         sshTunnelSettings = new ConnectionSshTunnelSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
         filterSettings = new ConnectionFilterSettings(this);
-    }
-
-    public DatabaseType getTemplateDatabaseType() {
-        return templateDatabaseType;
     }
 
     public ConnectionBundleSettings getParent() {
@@ -101,7 +88,6 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
             generateNewId();
         } else {
             connectionId = element.getAttributeValue("id");
-            templateDatabaseType = DatabaseType.get(element.getAttributeValue("template-database-type"));
         }
         super.readConfiguration(element);
     }
@@ -117,7 +103,6 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("id", connectionId);
-        element.setAttribute("template-database-type", templateDatabaseType == null ? "" : templateDatabaseType.name());
         super.writeConfiguration(element);
     }
 
@@ -125,7 +110,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         try {
             Element connectionElement = new Element("Connection");
             writeConfiguration(connectionElement);
-            ConnectionSettings clone = new ConnectionSettings(parent, templateDatabaseType);
+            ConnectionSettings clone = new ConnectionSettings(parent);
             clone.readConfiguration(connectionElement);
             clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
             clone.generateNewId();

@@ -7,9 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
-import com.dci.intellij.dbn.connection.config.ui.GuidedDatabaseSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 
+@Deprecated
 public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     private String host;
     private String port;
@@ -26,8 +27,8 @@ public class GuidedDatabaseSettings extends ConnectionDatabaseSettings {
     }
 
     @NotNull
-    public GuidedDatabaseSettingsForm createConfigurationEditor() {
-        return new GuidedDatabaseSettingsForm(this);
+    public ConnectionDatabaseSettingsForm createConfigurationEditor() {
+        return new ConnectionDatabaseSettingsForm(this);
     }
 
     public String getHost() {

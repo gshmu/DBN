@@ -13,7 +13,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 
 
-public class ConnectionDriverSettingsForm<P extends ConnectionDatabaseSettingsForm> extends DBNFormImpl<P>{
+public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
     private TextFieldWithBrowseButton driverLibraryTextField;
     private DBNComboBox<DriverOption> driverComboBox;
     private JPanel mainPanel;
@@ -23,7 +23,7 @@ public class ConnectionDriverSettingsForm<P extends ConnectionDatabaseSettingsFo
 
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
 
-    public ConnectionDriverSettingsForm(@NotNull P parentComponent) {
+    public ConnectionDriverSettingsForm(@NotNull ConnectionDatabaseSettingsForm parentComponent) {
         super(parentComponent);
 
         driverSourceComboBox.setValues(DriverSource.BUILTIN, DriverSource.EXTERNAL);

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
@@ -8,7 +13,6 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -16,11 +20,6 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.impl.DefaultProject;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
     public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
@@ -119,8 +118,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             }
 
             if (connectionHandler == null) {
-                DatabaseType templateDatabaseType = DatabaseType.get(connectionElement.getAttributeValue("template-database-type"));
-                ConnectionSettings connectionSettings = new ConnectionSettings(this, templateDatabaseType);
+                ConnectionSettings connectionSettings = new ConnectionSettings(this);
                 connectionSettings.readConfiguration(connectionElement);
                 connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionSettings);
                 connectionBundle.addConnection(connectionHandler);

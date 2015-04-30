@@ -21,7 +21,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
-public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
+public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
@@ -31,6 +31,10 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     protected DatabaseType databaseType = DatabaseType.UNKNOWN;
     protected double databaseVersion = 9999;
     protected int hashCode;
+
+    private String host;
+    private String port;
+    private String database;
 
     protected DriverSource driverSource = DriverSource.EXTERNAL;
     protected String driverLibrary;
@@ -42,6 +46,10 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
     public ConnectionDatabaseSettings(ConnectionSettings parent) {
         this.parent = parent;
+    }
+
+    public ConnectionDatabaseSettingsForm createConfigurationEditor() {
+        return new ConnectionDatabaseSettingsForm(this);
     }
 
     public ConnectionSettings getParent() {
@@ -131,28 +139,51 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         return authentication;
     }
 
-    public String getConnectionDetails() {
-        return "Name:\t"      + name + "\n" +
-                (StringUtil.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
-               "User:\t"      + authentication.getUser();
-    }
-
     @Override
     public String getConfigElementName() {
         return "database";
     }
 
-    public abstract String getHost();
+    public String getHost() {
+        return host;
+    }
 
-    public abstract String getPort();
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-    public abstract String getDatabase();
+    public String getPort() {
+        return port;
+    }
 
-    public abstract String getConnectionUrl();
+    public void setPort(String port) {
+        this.port = port;
+    }
 
-    public abstract String getConnectionUrl(String host, String port);
+    public String getDatabase() {
+        return database;
+    }
 
-    public abstract void updateHashCode();
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public String getConnectionUrl() {
+        return databaseType.getUrlResolver().getUrl(host, port, database);
+    };
+
+    public String getConnectionUrl(String host, String port) {
+        return databaseType.getUrlResolver().getUrl(
+                host,
+                port,
+                database);
+    }
+
+
+    public void updateHashCode() {
+        Authentication authentication = getAuthentication();
+        hashCode = (name + driver + driverLibrary + host + port + database + authentication.getUser() + authentication.getPassword() + authentication.isOsAuthentication()).hashCode();
+    }
 
     @Override
     public int hashCode() {
@@ -160,7 +191,14 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     }
 
     @Override
-    public abstract ConnectionDatabaseSettings clone();
+    public ConnectionDatabaseSettings clone() {
+        Element connectionElement = new Element(getConfigElementName());
+        writeConfiguration(connectionElement);
+        ConnectionDatabaseSettings clone = new ConnectionDatabaseSettings(getParent());
+        clone.readConfiguration(connectionElement);
+        clone.setConnectivityStatus(getConnectivityStatus());
+        return clone;
+    }
 
     public void checkConfiguration() throws ConfigurationException{
         List<String> errors = new ArrayList<String>();
@@ -221,8 +259,23 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         active           = getBoolean(element, "active", active);
         name             = getString(element, "name", name);
         description      = getString(element, "description", description);
+
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
+
+        String url = getString(element, "url", null);
+        if (StringUtil.isEmpty(url)) {
+            host             = getString(element, "host", host);
+            port             = getString(element, "port", port);
+            database         = getString(element, "database", database);
+        } else {
+            if (databaseType != null && databaseType != DatabaseType.UNKNOWN) {
+                DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+                host = urlResolver.resolveHost(url);
+                port = urlResolver.resolvePort(url);
+                database = urlResolver.resolveDatabase(url);
+            }
+        }
 
         driverSource  = getEnum(element, "driver-source", driverSource);
         driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
@@ -252,16 +305,22 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
                 FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
                 this.driverLibrary;
 
+        setBoolean(element, "active", active);
+        setString(element, "name", nvl(name));
+        setString(element, "description", nvl(description));
+
+        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
+        setDouble(element, "database-version", databaseVersion);
+
         setEnum(element, "driver-source", driverSource);
         setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
 
-        setString(element, "name", nvl(name));
-        setString(element, "description", nvl(description));
-        setBoolean(element, "active", active);
+        setString(element, "host", nvl(host));
+        setString(element, "port", nvl(port));
+        setString(element, "database", nvl(database));
+
         setBoolean(element, "os-authentication", authentication.isOsAuthentication());
-        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
-        setDouble(element, "database-version", databaseVersion);
         setString(element, "user", nvl(authentication.getUser()));
         setString(element, "password", PasswordUtil.encodePassword(authentication.getPassword()));
     }
