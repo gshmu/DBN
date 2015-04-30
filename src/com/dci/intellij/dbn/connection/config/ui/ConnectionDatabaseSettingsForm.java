@@ -1,23 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.sql.Driver;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
@@ -37,14 +19,27 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
-import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
+
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
@@ -94,7 +89,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     if (StringUtil.isEmpty(database) || (oldUrlResolver != null && oldUrlResolver.getDefaultDatabase().equals(database))) {
                         databaseTextField.setText(urlResolver.getDefaultDatabase());
                     }
-                    updateDriverFields();
+                    driverSettingsForm.updateDriverFields();
                 }
             });
         } else {
@@ -148,7 +143,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 Document document = e.getDocument();
 
                 if (document == driverSettingsForm.getDriverLibraryTextField().getTextField().getDocument()) {
-                    updateDriverFields();
+                    driverSettingsForm.updateDriverFields();
                 }
 
                 if (document == nameTextField.getDocument()) {
@@ -214,73 +209,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 }
             }
         };
-    }
-
-    protected void updateDriverFields() {
-        DBNComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
-        DriverSource driverSource = driverSourceComboBox == null ? DriverSource.EXTERNAL : driverSourceComboBox.getSelectedValue();
-
-        String error = null;
-        if (driverSource == DriverSource.EXTERNAL) {
-            JTextField textField = driverSettingsForm.getDriverLibraryTextField().getTextField();
-            String driverLibrary = textField.getText();
-
-            boolean fileExists = StringUtil.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
-            DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
-            if (fileExists) {
-                textField.setForeground(UIUtil.getTextFieldForeground());
-                DatabaseType databaseType = DatabaseType.resolve(driverLibrary);
-                if (databaseType != DatabaseType.UNKNOWN && databaseType != databaseTypeComboBox.getSelectedValue()) {
-                    error = "The driver library does not match the selected database type";
-                    driverComboBox.clearValues();
-                    driverComboBox.setSelectedValue(null);
-                } else {
-                    List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
-                    DriverOption selectedOption = driverComboBox.getSelectedValue();
-                    driverComboBox.clearValues();
-                    //driverComboBox.addItem("");
-                    if (drivers != null && drivers.size() > 0) {
-                        List<DriverOption> driverOptions = new ArrayList<DriverOption>();
-                        for (Driver driver : drivers) {
-                            DriverOption driverOption = new DriverOption(driver);
-                            driverOptions.add(driverOption);
-                            if (selectedOption != null && selectedOption.getDriver().equals(driver)) {
-                                selectedOption = driverOption;
-                            }
-                        }
-
-                        driverComboBox.setValues(driverOptions);
-
-                        if (selectedOption == null && driverOptions.size() > 0) {
-                            selectedOption = driverOptions.get(0);
-                        }
-                    } else {
-                        error = "Invalid driver library";
-                    }
-                    driverComboBox.setSelectedValue(selectedOption);
-                }
-            } else {
-                textField.setForeground(JBColor.RED);
-                if (StringUtil.isEmpty(driverLibrary)) {
-                    error = "Driver library is not specified";
-                } else {
-                    error = "Cannot locate driver library file";
-                }
-                driverComboBox.clearValues();
-                //driverComboBox.addItem("");
-            }
-        }
-
-
-        JLabel driverErrorLabel = driverSettingsForm.getDriverErrorLabel();
-        if (error != null) {
-            driverErrorLabel.setIcon(Icons.COMMON_ERROR);
-            driverErrorLabel.setText(error);
-            driverErrorLabel.setVisible(true);
-        } else {
-            driverErrorLabel.setText("");
-            driverErrorLabel.setVisible(false);
-        }
     }
 
     private static boolean fileExists(String driverLibrary) {
@@ -391,8 +319,12 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         driverSourceComboBox.setSelectedValue(connectionConfig.getDriverSource());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
-        updateDriverFields();
+        driverSettingsForm.updateDriverFields();
         driverComboBox.setSelectedValue(DriverOption.get(driverComboBox.getValues(), connectionConfig.getDriver()));
+    }
+
+    public DatabaseType getSelectedDatabaseType() {
+        return databaseTypeComboBox.getSelectedValue();
     }
 }
 
