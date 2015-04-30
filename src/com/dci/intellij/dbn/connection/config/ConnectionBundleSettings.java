@@ -62,7 +62,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         if (super.isModified()) {
             return true;
         }
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        for (ConnectionHandler connectionHandler : connectionBundle.getAllConnectionHandlers()) {
             if (connectionHandler.getSettings().isModified() || connectionHandler.getSettings().isNew()) return true;
         }
         return false;
