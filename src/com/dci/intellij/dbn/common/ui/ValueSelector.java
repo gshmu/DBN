@@ -365,27 +365,25 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         this.values = null;
     }
 
-    public final void valueSelected(T value) {
-        for (ValueSelectorListener<T> listener : listeners) {
-            listener.valueSelected(value);
-        }
-
-    }
-
     private void selectValue(T value) {
+        T oldValue = selectedValue;
         value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
-        if (isComboBox) {
-            selectedValue = value;
-            if (selectedValue == null) {
-                label.setIcon(cropIcon(icon));
-                label.setText(text);
-            } else {
-                label.setIcon(cropIcon(selectedValue.getIcon()));
-                label.setText(selectedValue.getName());
+        if (!CommonUtil.safeEqual(oldValue, value)) {
+            if (isComboBox) {
+                selectedValue = value;
+                if (selectedValue == null) {
+                    label.setIcon(cropIcon(icon));
+                    label.setText(text);
+                } else {
+                    label.setIcon(cropIcon(selectedValue.getIcon()));
+                    label.setText(selectedValue.getName());
+                }
+            }
+
+            for (ValueSelectorListener<T> listener : listeners) {
+                listener.selectionChanged(oldValue, value);
             }
         }
-
-        valueSelected(value);
     }
 
     public void selectNext() {

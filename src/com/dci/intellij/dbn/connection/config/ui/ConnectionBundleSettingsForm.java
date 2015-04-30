@@ -236,8 +236,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     public void createNewConnection(@NotNull DatabaseType databaseType) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         connectionBundleSettings.setModified(true);
-        ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings);
-        connectionSettings.getDatabaseSettings().setDatabaseType(databaseType);
+        ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType);
         connectionSettings.setNew(true);
         connectionSettings.generateNewId();
 

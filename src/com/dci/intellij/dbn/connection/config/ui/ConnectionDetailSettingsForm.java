@@ -58,7 +58,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         environmentTypesComboBox.addListener(new ValueSelectorListener<EnvironmentType>() {
             @Override
-            public void valueSelected(EnvironmentType value) {
+            public void selectionChanged(EnvironmentType oldValue, EnvironmentType newValue) {
                 notifyPresentationChanges();
             }
         });

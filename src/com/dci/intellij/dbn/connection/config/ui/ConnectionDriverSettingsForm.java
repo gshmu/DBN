@@ -29,8 +29,8 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         driverSourceComboBox.setValues(DriverSource.BUILTIN, DriverSource.EXTERNAL);
         driverSourceComboBox.addListener(new ValueSelectorListener<DriverSource>() {
             @Override
-            public void valueSelected(DriverSource value) {
-                boolean isExternalLibrary = value == DriverSource.EXTERNAL;
+            public void selectionChanged(DriverSource oldValue, DriverSource newValue) {
+                boolean isExternalLibrary = newValue == DriverSource.EXTERNAL;
                 driverLibraryTextField.setEnabled(isExternalLibrary);
                 driverComboBox.setEnabled(isExternalLibrary);
                 //driverSetupPanel.setVisible(isExternalLibrary);

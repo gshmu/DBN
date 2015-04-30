@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -58,6 +59,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JTextField portTextField;
     private JTextField databaseTextField;
     private JPanel driverLibraryPanel;
+    private JLabel databaseTypeLabel;
 
     protected ConnectionDatabaseSettings temporaryConfig;
 
@@ -75,15 +77,22 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     DatabaseType.POSTGRES);
             databaseTypeComboBox.addListener(new ValueSelectorListener<DatabaseType>() {
                 @Override
-                public void valueSelected(DatabaseType databaseType) {
-                    if (StringUtil.isEmpty(hostTextField.getText())) {
-                        hostTextField.setText(databaseType.getUrlResolver().getDefaultHost());
+                public void selectionChanged(DatabaseType oldValue, DatabaseType newValue) {
+                    DatabaseUrlResolver oldUrlResolver = oldValue == null ? null : oldValue.getUrlResolver();
+                    DatabaseUrlResolver urlResolver = newValue.getUrlResolver();
+                    String host = hostTextField.getText();
+                    String port = portTextField.getText();
+                    String database = databaseTextField.getText();
+
+                    if (StringUtil.isEmpty(host) || (oldUrlResolver != null && oldUrlResolver.getDefaultHost().equals(host))) {
+                        hostTextField.setText(urlResolver.getDefaultHost());
                     }
-                    if (StringUtil.isEmpty(portTextField.getText())) {
-                        hostTextField.setText(databaseType.getUrlResolver().getDefaultPort());
+
+                    if (StringUtil.isEmpty(port) || (oldUrlResolver != null && oldUrlResolver.getDefaultPort().equals(port))) {
+                        portTextField.setText(urlResolver.getDefaultPort());
                     }
-                    if (StringUtil.isEmpty(databaseTextField.getText())) {
-                        hostTextField.setText(databaseType.getUrlResolver().getDefaultDatabase());
+                    if (StringUtil.isEmpty(database) || (oldUrlResolver != null && oldUrlResolver.getDefaultDatabase().equals(database))) {
+                        databaseTextField.setText(urlResolver.getDefaultDatabase());
                     }
                     updateDriverFields();
                 }
@@ -92,6 +101,8 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             databaseTypeComboBox.setValues(databaseType);
             databaseTypeComboBox.setSelectedValue(databaseType);
             databaseTypeComboBox.setEnabled(false);
+            databaseTypeComboBox.setVisible(false);
+            databaseTypeLabel.setVisible(false);
         }
 
         driverSettingsForm = new ConnectionDriverSettingsForm(this);
@@ -289,13 +300,14 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         DBNComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        String newName = nameTextField.getText();
-        final boolean nameChanged = !newName.equals(configuration.getName());
-        configuration.setName(newName);
+        DatabaseType databaseType = databaseTypeComboBox.getSelectedValue();
+        DriverOption driverOption = driverComboBox.getSelectedValue();
 
+        configuration.setDatabaseType(databaseType == null ? DatabaseType.UNKNOWN : databaseType);
+        configuration.setName(nameTextField.getText());
         configuration.setDescription(descriptionTextField.getText());
         configuration.setDriverLibrary(driverLibraryTextField.getText());
-        configuration.setDriver(driverComboBox.getSelectedValue() == null ? null : driverComboBox.getSelectedValue().getName());
+        configuration.setDriver(driverOption == null ? null : driverOption.getName());
         configuration.setHost(hostTextField.getText());
         configuration.setPort(portTextField.getText());
         configuration.setDatabase(databaseTextField.getText());
@@ -310,17 +322,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         configuration.setDriverSource(driverSourceComboBox.getSelectedValue());
 
         configuration.updateHashCode();
-
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (nameChanged) {
-                    Project project = configuration.getProject();
-                    ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                    listener.nameChanged(configuration.getConnectionId());
-                }
-            }
-        };
     }
 
     public void applyFormChanges() throws ConfigurationException {
@@ -337,6 +338,8 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getDisplayName() + " driver library.");
         }
 
+        final boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
+
         final boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
@@ -351,6 +354,12 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
          new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
+                if (nameChanged) {
+                    Project project = configuration.getProject();
+                    ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
+                    listener.nameChanged(configuration.getConnectionId());
+                }
+
                 if (settingsChanged) {
                     Project project = configuration.getProject();
                     ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);

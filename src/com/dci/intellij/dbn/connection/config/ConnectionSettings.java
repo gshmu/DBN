@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> {
@@ -22,9 +23,12 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionFilterSettings filterSettings;
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
+        this(parent, DatabaseType.UNKNOWN);
+    }
+    public ConnectionSettings(ConnectionBundleSettings parent, DatabaseType databaseType) {
         super(parent.getProject());
         this.parent = parent;
-        databaseSettings = new ConnectionDatabaseSettings(this);
+        databaseSettings = new ConnectionDatabaseSettings(this, databaseType);
         propertiesSettings = new ConnectionPropertiesSettings(this);
         sshTunnelSettings = new ConnectionSshTunnelSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
@@ -121,7 +125,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         try {
             Element connectionElement = new Element("Connection");
             writeConfiguration(connectionElement);
-            ConnectionSettings clone = new ConnectionSettings(parent);
+            ConnectionSettings clone = new ConnectionSettings(parent, getDatabaseSettings().getDatabaseType());
             clone.readConfiguration(connectionElement);
             clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
             clone.generateNewId();

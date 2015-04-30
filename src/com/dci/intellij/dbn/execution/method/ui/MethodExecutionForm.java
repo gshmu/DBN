@@ -139,8 +139,8 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
             super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getExecutionSchema(), true);
             addListener(new ValueSelectorListener<DBSchema>() {
                 @Override
-                public void valueSelected(DBSchema schema) {
-                    executionInput.setExecutionSchema(schema);
+                public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
+                    executionInput.setExecutionSchema(newValue);
                     notifyChangeListeners();
                 }
             });
