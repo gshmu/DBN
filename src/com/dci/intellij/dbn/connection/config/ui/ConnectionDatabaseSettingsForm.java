@@ -56,13 +56,10 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JPanel driverLibraryPanel;
     private JLabel databaseTypeLabel;
 
-    protected ConnectionDatabaseSettings temporaryConfig;
-
     private ConnectionDriverSettingsForm driverSettingsForm;
 
     public ConnectionDatabaseSettingsForm(ConnectionDatabaseSettings configuration) {
         super(configuration);
-        temporaryConfig = configuration.clone();
 
         DatabaseType databaseType = configuration.getDatabaseType();
         if (databaseType == DatabaseType.UNKNOWN) {
@@ -112,7 +109,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     }
 
     public void notifyPresentationChanges() {
-        ConnectionDatabaseSettings configuration = temporaryConfig;//getConfiguration();
+        ConnectionDatabaseSettings configuration = getConfiguration();
         String name = nameTextField.getText();
         ConnectivityStatus connectivityStatus = configuration.getConnectivityStatus();
         ConnectionSettings connectionSettings = configuration.getParent();
@@ -126,10 +123,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         ConnectionPresentationChangeListener listener = EventUtil.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
         EnvironmentType environmentType = connectionSettings.getDetailSettings().getEnvironmentType();
         listener.presentationChanged(name, icon, environmentType.getColor(), getConfiguration().getConnectionId(), configuration.getDatabaseType());
-    }
-
-    public ConnectivityStatus getConnectivityStatus() {
-        return temporaryConfig.getConnectivityStatus();
     }
 
     //protected abstract ConnectionDatabaseSettings createConfig(ConnectionSettings configuration);
@@ -246,7 +239,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
-        configuration.setConnectivityStatus(temporaryConfig.getConnectivityStatus());
         configuration.setDriverSource(driverSourceComboBox.getSelectedValue());
 
         configuration.updateHashCode();
