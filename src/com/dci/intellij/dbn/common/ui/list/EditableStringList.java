@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.common.ui.list;
 
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
+import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.ColoredTableCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.border.CustomLineBorder;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
@@ -14,17 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
-import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
-import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.ui.ColoredTableCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.border.CustomLineBorder;
-import com.intellij.util.ui.UIUtil;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
     private boolean sorted;
@@ -65,7 +65,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
                 setBorder(new LineBorder(background, 2));
                 setBackground(background);
                 setForeground(foreground);
-                append((String) value, attributes);
+                append(value == null ? "" : (String) value, attributes);
             }
         });
 
