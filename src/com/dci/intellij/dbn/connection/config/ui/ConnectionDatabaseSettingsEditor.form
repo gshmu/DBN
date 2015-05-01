@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="12" left="4" bottom="4" right="4"/>
     <constraints>
-      <xy x="20" y="20" width="577" height="294"/>
+      <xy x="20" y="20" width="577" height="313"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -75,60 +75,6 @@
               <margin top="1" left="3" bottom="1" right="1"/>
             </properties>
           </component>
-          <component id="a59df" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="8fdf5"/>
-              <text value="&amp;User"/>
-            </properties>
-          </component>
-          <component id="8fdf5" class="javax.swing.JTextField" binding="userTextField">
-            <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <margin top="1" left="3" bottom="1" right="1"/>
-            </properties>
-          </component>
-          <component id="fb5d3" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="9a713"/>
-              <text value="&amp;Password"/>
-            </properties>
-          </component>
-          <component id="9a713" class="javax.swing.JPasswordField" binding="passwordField">
-            <constraints>
-              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <margin top="1" left="3" bottom="1" right="1"/>
-            </properties>
-          </component>
-          <component id="e1164" class="javax.swing.JCheckBox" binding="osAuthenticationCheckBox">
-            <constraints>
-              <grid row="4" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Use &amp;OS Authentication"/>
-            </properties>
-          </component>
-          <component id="cd0bc" class="javax.swing.JCheckBox" binding="emptyPasswordCheckBox">
-            <constraints>
-              <grid row="5" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Use &amp;Empty Password "/>
-            </properties>
-          </component>
           <component id="c6bf9" class="javax.swing.JLabel">
             <constraints>
               <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -171,7 +117,7 @@
           <vspacer id="8bd3">
             <constraints>
               <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <preferred-size width="-1" height="40"/>
+                <preferred-size width="-1" height="20"/>
               </grid>
             </constraints>
           </vspacer>
@@ -193,15 +139,30 @@
           </component>
           <component id="19440" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="databaseTypeComboBox">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="3" vsize-policy="3" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
-          <hspacer id="9d45c">
+          <hspacer id="f6749">
             <constraints>
-              <grid row="3" column="2" row-span="1" col-span="4" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
+          <grid id="9f35f" binding="authenticationPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
+          <vspacer id="4c32b">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="20"/>
+              </grid>
+            </constraints>
+          </vspacer>
         </children>
       </grid>
     </children>
