@@ -269,6 +269,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 if (passwordDialog.isRememberCredentials()) {
                     storedAuthentication.setUser(newAuthentication.getUser());
                     storedAuthentication.setPassword(newAuthentication.getPassword());
+                    storedAuthentication.setOsAuthentication(newAuthentication.isOsAuthentication());
+                    storedAuthentication.setEmptyPassword(newAuthentication.isEmptyPassword());
                 } else {
                     connectionHandler.setTemporaryAuthentication(newAuthentication.clone());
                 }
