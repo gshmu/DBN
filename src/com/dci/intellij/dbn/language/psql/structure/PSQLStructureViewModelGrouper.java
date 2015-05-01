@@ -1,15 +1,10 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
@@ -17,6 +12,12 @@ import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
 
 public class PSQLStructureViewModelGrouper implements Grouper {
     private ActionPresentation actionPresentation = new ActionPresentationData("Group by Object Type", "", Icons.ACTION_GROUP);
@@ -28,7 +29,8 @@ public class PSQLStructureViewModelGrouper implements Grouper {
         Map<DBObjectType, Group> groups = null;
         if (abstractTreeNode.getValue() instanceof PSQLStructureViewElement) {
             PSQLStructureViewElement structureViewElement = (PSQLStructureViewElement) abstractTreeNode.getValue();
-            if (structureViewElement.getValue() instanceof BasePsiElement) {
+            Object value = structureViewElement.getValue();
+            if (value instanceof BasePsiElement || value instanceof PSQLFile) {
 
                 for (TreeElement treeElement : treeElements) {
                     if (treeElement instanceof PSQLStructureViewElement) {
@@ -40,6 +42,12 @@ public class PSQLStructureViewModelGrouper implements Grouper {
                                 if (subjectPsiElement instanceof IdentifierPsiElement) {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
                                     DBObjectType objectType = identifierPsiElement.getObjectType();
+                                    switch (objectType) {
+                                        case PACKAGE_PROCEDURE: objectType = DBObjectType.PROCEDURE; break;
+                                        case PACKAGE_FUNCTION: objectType = DBObjectType.FUNCTION; break;
+                                        case TYPE_PROCEDURE: objectType = DBObjectType.PROCEDURE; break;
+                                        case TYPE_FUNCTION: objectType = DBObjectType.FUNCTION; break;
+                                    }
 
                                     if (groups == null) groups = new EnumMap<DBObjectType, Group>(DBObjectType.class);
                                     PSQLStructureViewModelGroup group = (PSQLStructureViewModelGroup) groups.get(objectType);
