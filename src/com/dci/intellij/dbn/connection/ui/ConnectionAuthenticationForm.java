@@ -28,6 +28,10 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
     private JTextArea hintTextArea;
     private JTextField userTextField;
     private JCheckBox emptyPasswordCheckBox;
+    private JCheckBox osAuthenticationCheckBox;
+
+    private String cachedUser = "";
+    private String cachedPassword = "";
 
     public ConnectionAuthenticationForm(@NotNull final ConnectionAuthenticationDialog parentComponent, final @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
@@ -39,7 +43,9 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         String user = authentication.getUser();
         if (StringUtil.isNotEmpty(user)) {
             userTextField.setText(user);
+            cachedUser = user;
         }
+
         boolean isEmptyPassword = authentication.isEmptyPassword();
         emptyPasswordCheckBox.setSelected(isEmptyPassword);
         passwordField.setEnabled(!isEmptyPassword);
@@ -62,6 +68,8 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             hintTextArea.setText("The system needs your credentials to connect to this database.");
         }
 
+        updateAuthenticationFields();
+
         userTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(DocumentEvent e) {
@@ -73,8 +81,18 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
 
         passwordField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {String password = new String(passwordField.getPassword());
+            protected void textChanged(DocumentEvent e) {
+                String password = new String(passwordField.getPassword());
                 authentication.setPassword(password);
+                parentComponent.updateConnectButton();
+            }
+        });
+
+        osAuthenticationCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+                updateAuthenticationFields();
                 parentComponent.updateConnectButton();
             }
         });
@@ -82,13 +100,39 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         emptyPasswordCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-                passwordField.setEnabled(!isEmptyPassword);
-                passwordField.setBackground(isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-                authentication.setEmptyPassword(isEmptyPassword);
+                authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+                updateAuthenticationFields();
                 parentComponent.updateConnectButton();
             }
         });
+    }
+
+    protected void updateAuthenticationFields() {
+        boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
+        boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
+        userTextField.setEnabled(!isOsAuthentication);
+
+        passwordField.setEnabled(!isOsAuthentication && !emptyPasswordCheckBox.isSelected());
+        passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
+        emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
+
+        String user = userTextField.getText();
+        String password = new String(passwordField.getPassword());
+        if (StringUtil.isNotEmpty(user)) cachedUser = user;
+        if (StringUtil.isNotEmpty(password)) cachedPassword = password;
+
+        if (isOsAuthentication || isEmptyPassword) {
+            passwordField.setText("");
+        } else {
+            passwordField.setText(cachedPassword);
+        }
+
+        if (isOsAuthentication) {
+            userTextField.setText("");
+            emptyPasswordCheckBox.setSelected(false);
+        } else {
+            userTextField.setText(cachedUser);
+        }
     }
 
     @Override

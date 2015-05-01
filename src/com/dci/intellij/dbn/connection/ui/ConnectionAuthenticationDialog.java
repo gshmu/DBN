@@ -23,35 +23,37 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Connect");
         okAction.setEnabled(false);
-        setDoNotAskOption(new DoNotAskOption() {
-            @Override
-            public boolean isToBeShown() {
-                return true;
-            }
-
-            @Override
-            public void setToBeShown(boolean toBeShown, int exitCode) {
-                if (exitCode == OK_EXIT_CODE) {
-                    rememberCredentials = toBeShown;
+        if (connectionHandler != null) {
+            setDoNotAskOption(new DoNotAskOption() {
+                @Override
+                public boolean isToBeShown() {
+                    return true;
                 }
-            }
 
-            @Override
-            public boolean canBeHidden() {
-                return true;
-            }
+                @Override
+                public void setToBeShown(boolean toBeShown, int exitCode) {
+                    if (exitCode == OK_EXIT_CODE) {
+                        rememberCredentials = !toBeShown;
+                    }
+                }
 
-            @Override
-            public boolean shouldSaveOptionsOnCancel() {
-                return false;
-            }
+                @Override
+                public boolean canBeHidden() {
+                    return true;
+                }
 
-            @NotNull
-            @Override
-            public String getDoNotShowMessage() {
-                return "Store credentials";
-            }
-        });
+                @Override
+                public boolean shouldSaveOptionsOnCancel() {
+                    return false;
+                }
+
+                @NotNull
+                @Override
+                public String getDoNotShowMessage() {
+                    return "Remember credentials";
+                }
+            });
+        }
         init();
     }
 
