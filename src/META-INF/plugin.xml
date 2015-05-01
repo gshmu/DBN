@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Oracle TNS Names import (tnsnames.ora)<br>
+                - Build-in drivers support<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4412</b>
             <ul>
                 - Support for various dark schemes in WebStorm/PhpStorm<br>
