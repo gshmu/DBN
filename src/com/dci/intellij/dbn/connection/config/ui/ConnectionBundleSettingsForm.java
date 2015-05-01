@@ -22,6 +22,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.diagnostic.Logger;
@@ -324,7 +326,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     Element rootElement = xmlDocument.getRootElement();
                     List<Element> configElements = rootElement.getChildren();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-                    int selectedIndex = connectionsList.getSelectedIndex();
+                    int selectedIndex = connectionsList.getLeadSelectionIndex();
                     List<Integer> selectedIndexes = new ArrayList<Integer>();
                     ConnectionBundleSettings configuration = getConfiguration();
                     for (Element configElement : configElements) {
@@ -352,6 +354,37 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         } catch (Exception ex) {
             LOGGER.error("Could not paste database configuration from clipboard", ex);
         }
+    }
+
+    public void importTnsNames(List<TnsName> tnsNames) {
+        ConnectionBundleSettings configuration = getConfiguration();
+        ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+        int selectedIndex = connectionsList.getLeadSelectionIndex();
+        List<Integer> selectedIndexes = new ArrayList<Integer>();
+
+        for (TnsName tnsName : tnsNames) {
+            selectedIndex++;
+            ConnectionSettings clone = new ConnectionSettings(configuration);
+            clone.setNew(true);
+            clone.generateNewId();
+            ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+            String name = tnsName.getName();
+            while (model.getConnectionConfig(name) != null) {
+                name = NamingUtil.getNextNumberedName(name, true);
+            }
+
+            databaseSettings.setName(name);
+            databaseSettings.setHost(tnsName.getHost());
+            databaseSettings.setPort(tnsName.getPort());
+            databaseSettings.setDatabase(tnsName.getSid());
+            databaseSettings.setDatabaseType(DatabaseType.ORACLE);
+            databaseSettings.setDriverSource(DriverSource.BUILTIN);
+
+            model.add(selectedIndex, clone);
+            selectedIndexes.add(selectedIndex);
+            configuration.setModified(true);
+        }
+        connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
     }
 
 

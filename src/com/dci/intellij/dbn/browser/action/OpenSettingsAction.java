@@ -1,16 +1,18 @@
 package com.dci.intellij.dbn.browser.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 public class OpenSettingsAction extends DumbAwareAction {
     public OpenSettingsAction() {
@@ -24,6 +26,12 @@ public class OpenSettingsAction extends DumbAwareAction {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             ConnectionHandler activeConnection = browserManager.getActiveConnection();
             settingsManager.openConnectionSettings(activeConnection);
+        }
+
+        try {
+            TnsNamesParser.parse(new File("D:\\Projects\\DBNavigatorTest\\tnsnames.ora"));
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
     }
 
