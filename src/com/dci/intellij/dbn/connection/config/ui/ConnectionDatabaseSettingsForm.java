@@ -90,11 +90,12 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 }
             });
         } else {
+            databaseTypeLabel.setText(databaseType.getName());
+            databaseTypeLabel.setIcon(databaseType.getIcon());
             databaseTypeComboBox.setValues(databaseType);
             databaseTypeComboBox.setSelectedValue(databaseType);
             databaseTypeComboBox.setEnabled(false);
             databaseTypeComboBox.setVisible(false);
-            databaseTypeLabel.setVisible(false);
         }
 
         driverSettingsForm = new ConnectionDriverSettingsForm(this);
