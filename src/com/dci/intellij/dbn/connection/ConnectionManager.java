@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -35,7 +26,7 @@ import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
-import com.dci.intellij.dbn.connection.ui.ConnectionUserPasswordDialog;
+import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -51,6 +42,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @State(
         name = "DBNavigator.Project.ConnectionManager",
@@ -258,7 +258,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
-        ConnectionUserPasswordDialog passwordDialog = new ConnectionUserPasswordDialog(project, connectionHandler, authentication);
+        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(project, connectionHandler, authentication);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             Authentication newAuthentication = passwordDialog.getAuthentication();

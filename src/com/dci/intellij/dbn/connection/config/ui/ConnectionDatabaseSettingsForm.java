@@ -24,14 +24,11 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -39,24 +36,21 @@ import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
     private JTextField nameTextField;
     private JTextField descriptionTextField;
-    private JTextField userTextField;
     private JTextField hostTextField;
     private DBNComboBox<DatabaseType> databaseTypeComboBox;
-    private JPasswordField passwordField;
-    private JCheckBox osAuthenticationCheckBox;
-    private JCheckBox emptyPasswordCheckBox;
     private JTextField portTextField;
     private JTextField databaseTextField;
     private JPanel driverLibraryPanel;
     private JLabel databaseTypeLabel;
+    private JPanel authenticationPanel;
 
     private ConnectionDriverSettingsForm driverSettingsForm;
+    private ConnectionAuthenticationSettingsForm authenticationSettingsForm;
 
     public ConnectionDatabaseSettingsForm(ConnectionDatabaseSettings configuration) {
         super(configuration);
@@ -98,15 +92,17 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             databaseTypeComboBox.setVisible(false);
         }
 
-        driverSettingsForm = new ConnectionDriverSettingsForm(this);
+        authenticationSettingsForm = new ConnectionAuthenticationSettingsForm(this);
+        DBNCollapsiblePanel<ConnectionDatabaseSettingsForm> authenticationSettingsPanel = new DBNCollapsiblePanel<ConnectionDatabaseSettingsForm>(this, authenticationSettingsForm.getComponent(), "Authentication", true);
+        authenticationPanel.add(authenticationSettingsPanel.getComponent(), BorderLayout.CENTER);
 
+        driverSettingsForm = new ConnectionDriverSettingsForm(this);
         boolean externalLibrary = configuration.getDriverSource() == DriverSource.EXTERNAL;
         DBNCollapsiblePanel<ConnectionDatabaseSettingsForm> driverPanel = new DBNCollapsiblePanel<ConnectionDatabaseSettingsForm>(this, driverSettingsForm.getComponent(), "Driver", externalLibrary);
         driverLibraryPanel.add(driverPanel.getComponent(), BorderLayout.CENTER);
 
         resetFormChanges();
         registerComponent(mainPanel);
-        updateAuthenticationFields();
     }
 
     public void notifyPresentationChanges() {
@@ -154,16 +150,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         };
     }
 
-    protected void updateAuthenticationFields() {
-        boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
-        boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-        userTextField.setEnabled(!isOsAuthentication);
-
-        passwordField.setEnabled(!isOsAuthentication && !emptyPasswordCheckBox.isSelected());
-        passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-        emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
-    }
-
 
     protected ActionListener createActionListener() {
         return new ActionListener() {
@@ -171,25 +157,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 Object source = e.getSource();
                 ConnectionDatabaseSettings configuration = getConfiguration();
                 configuration.setModified(true);
-
-                if (source == osAuthenticationCheckBox || source == emptyPasswordCheckBox) {
-                    boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
-                    boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-                    userTextField.setEnabled(!isOsAuthentication);
-
-                    passwordField.setEnabled(!isOsAuthentication && !isEmptyPassword);
-                    passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-                    emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
-
-                    if (isOsAuthentication || isEmptyPassword) {
-                        passwordField.setText("");
-                    }
-                    if (isOsAuthentication) {
-                        userTextField.setText("");
-                        emptyPasswordCheckBox.setSelected(false);
-                    }
-                }
-
                 if (source == nameTextField) {
                     ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
                     ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
@@ -203,10 +170,6 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 }
             }
         };
-    }
-
-    private static boolean fileExists(String driverLibrary) {
-        return driverLibrary != null && new File(driverLibrary).exists();
     }
 
     public String getConnectionName() {
@@ -235,13 +198,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         configuration.setDatabase(databaseTextField.getText());
 
         Authentication authentication = configuration.getAuthentication();
-        authentication.setUser(userTextField.getText());
-        authentication.setPassword(new String(passwordField.getPassword()));
-        authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-        authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+        authenticationSettingsForm.applyFormChanges(authentication);
 
         configuration.setDriverSource(driverSourceComboBox.getSelectedValue());
-
         configuration.updateHashCode();
     }
 
@@ -267,7 +226,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 !CommonUtil.safeEqual(configuration.getHost(), hostTextField.getText()) ||
                 !CommonUtil.safeEqual(configuration.getPort(), portTextField.getText()) ||
                 !CommonUtil.safeEqual(configuration.getDatabase(), databaseTextField.getText()) ||
-                !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), userTextField.getText());
+                !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), authenticationSettingsForm.getUserTextField().getText());
 
 
         applyFormChanges(configuration);
@@ -305,10 +264,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         databaseTextField.setText(connectionConfig.getDatabase());
 
         Authentication authentication = connectionConfig.getAuthentication();
-        userTextField.setText(authentication.getUser());
-        passwordField.setText(authentication.getPassword());
-        osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
-        emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
+        authenticationSettingsForm.resetFormChanges(authentication);
 
         driverSourceComboBox.setSelectedValue(connectionConfig.getDriverSource());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());
