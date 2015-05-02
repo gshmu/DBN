@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.options;
 
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -12,9 +8,11 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -31,6 +29,11 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @State(
         name = "DBNavigator.Project.Settings",
@@ -113,17 +116,40 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     public void openProjectSettings(ConfigId configId) {
         Project project = getProject();
-        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-        globalSettingsDialog.focusSettings(configId);
-        globalSettingsDialog.show();
+        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
+        settingsDialog.focusSettings(configId);
+        settingsDialog.show();
     }
 
-    public void openConnectionSettings(@Nullable ConnectionHandler connectionHandler) {
+    public void openConnectionSettings(@Nullable String connectionId) {
         Project project = getProject();
-        ProjectSettingsDialog globalSettingsDialog = new ProjectSettingsDialog(project);
-        globalSettingsDialog.focusConnectionSettings(connectionHandler);
-        globalSettingsDialog.show();
+        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
+        settingsDialog.focusConnectionSettings(connectionId);
+        settingsDialog.show();
     }
+
+    public void createConnection(@NotNull DatabaseType databaseType) {
+        Project project = getProject();
+        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
+        ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
+        if (settingsEditor != null) {
+            String connectionId = settingsEditor.createNewConnection(databaseType);
+            settingsDialog.focusConnectionSettings(connectionId);
+            settingsDialog.show();
+        }
+    }
+
+    public void createConnections(List<TnsName> tnsNames) {
+        Project project = getProject();
+        ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
+        ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
+        if (settingsEditor != null) {
+            settingsEditor.importTnsNames(tnsNames);
+            settingsDialog.focusConnectionSettings(null);
+            settingsDialog.show();
+        }
+    }
+
 
     private Project getProject() {
         return projectSettings.getProject();
