@@ -185,7 +185,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
             for (int i=0; i<model.size(); i++) {
                 ConnectionSettings connectionSettings = (ConnectionSettings) model.getElementAt(i);
-                if (connectionSettings.getId().equals(connectionId)) {
+                if (connectionSettings.getConnectionId().equals(connectionId)) {
                     connectionsList.setSelectedValue(connectionSettings, true);
                     break;
                 }
