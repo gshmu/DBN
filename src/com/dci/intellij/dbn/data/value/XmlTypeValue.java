@@ -21,14 +21,24 @@ public class XmlTypeValue extends LargeObjectValue{
 
     public XmlTypeValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
         OracleCallableStatement oracleCallableStatement = (OracleCallableStatement) callableStatement;
-        OPAQUE opaque = oracleCallableStatement.getOPAQUE(parameterIndex);
-        xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        Object object = oracleCallableStatement.getObject(parameterIndex);
+        if (object instanceof XMLType) {
+            xmlType = (XMLType) object;
+        } else {
+            OPAQUE opaque = oracleCallableStatement.getOPAQUE(parameterIndex);
+            xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        }
     }
 
     public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
         OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
-        OPAQUE opaque = oracleResultSet.getOPAQUE(columnIndex);
-        xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        Object object = oracleResultSet.getObject(columnIndex);
+        if (object instanceof XMLType) {
+            xmlType = (XMLType) object;
+        } else {
+            OPAQUE opaque = oracleResultSet.getOPAQUE(columnIndex);
+            xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        }
     }
 
     @Override
