@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -146,8 +147,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         final String connectionName = databaseSettings.getName();
         try {
             databaseSettings.checkConfiguration();
-            final Authentication temporaryAuthentication = getTemporaryAuthentication(databaseSettings);
-            if (temporaryAuthentication == null){
+            final AuthenticationInfo temporaryAuthenticationInfo = getTemporaryAuthentication(databaseSettings);
+            if (temporaryAuthenticationInfo == null){
                 return;
             }
 
@@ -155,7 +156,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
-                        Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
+                        Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthenticationInfo, false, null, ConnectionType.TEST);
                         ConnectionUtil.closeConnection(connection);
                         databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
                         if (showMessageDialog) {
@@ -182,8 +183,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
         try {
             databaseSettings.checkConfiguration();
-            final Authentication temporaryAuthentication = getTemporaryAuthentication(databaseSettings);
-            if (temporaryAuthentication == null) {
+            final AuthenticationInfo temporaryAuthenticationInfo = getTemporaryAuthentication(databaseSettings);
+            if (temporaryAuthenticationInfo == null) {
                 return;
             }
 
@@ -191,7 +192,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) {
                     try {
-                        Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthentication, false, null, ConnectionType.TEST);
+                        Connection connection = ConnectionUtil.connect(connectionSettings, temporaryAuthenticationInfo, false, null, ConnectionType.TEST);
                         ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
                         ConnectionUtil.closeConnection(connection);
                         showConnectionInfoDialog(getProject(), connectionInfo, connectionName, environmentType);
@@ -206,12 +207,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public Authentication getTemporaryAuthentication(ConnectionDatabaseSettings databaseSettings) {
-        Authentication authentication = databaseSettings.getAuthentication().clone();
-        if (!authentication.isProvided()) {
-            return openUserPasswordDialog(databaseSettings.getProject(), null, authentication);
+    public AuthenticationInfo getTemporaryAuthentication(ConnectionDatabaseSettings databaseSettings) {
+        AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
+        if (!authenticationInfo.isProvided()) {
+            return openUserPasswordDialog(databaseSettings.getProject(), null, authenticationInfo);
         }
-        return authentication;
+        return authenticationInfo;
     }
 
     private void showErrorConnectionMessage(Project project, String connectionName, Exception e) {
@@ -257,27 +258,27 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }.start();
     }
 
-    public static Authentication openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
-        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(project, connectionHandler, authentication);
+    public static AuthenticationInfo openUserPasswordDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
+        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(project, connectionHandler, authenticationInfo);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            Authentication newAuthentication = passwordDialog.getAuthentication();
+            AuthenticationInfo newAuthenticationInfo = passwordDialog.getAuthenticationInfo();
             if (connectionHandler != null) {
                 ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
-                Authentication storedAuthentication = databaseSettings.getAuthentication();
+                AuthenticationInfo storedAuthenticationInfo = databaseSettings.getAuthenticationInfo();
 
                 if (passwordDialog.isRememberCredentials()) {
-                    storedAuthentication.setUser(newAuthentication.getUser());
-                    storedAuthentication.setPassword(newAuthentication.getPassword());
-                    storedAuthentication.setOsAuthentication(newAuthentication.isOsAuthentication());
-                    storedAuthentication.setEmptyPassword(newAuthentication.isEmptyPassword());
+                    storedAuthenticationInfo.setUser(newAuthenticationInfo.getUser());
+                    storedAuthenticationInfo.setPassword(newAuthenticationInfo.getPassword());
+                    storedAuthenticationInfo.setOsAuthentication(newAuthenticationInfo.isOsAuthentication());
+                    storedAuthenticationInfo.setEmptyPassword(newAuthenticationInfo.isEmptyPassword());
                 } else {
-                    connectionHandler.setTemporaryAuthentication(newAuthentication.clone());
+                    connectionHandler.setTemporaryAuthenticationInfo(newAuthenticationInfo.clone());
                 }
 
                 connectionHandler.setAllowConnection(true);
             }
-            return newAuthentication;
+            return newAuthenticationInfo;
         }
 
         return null;

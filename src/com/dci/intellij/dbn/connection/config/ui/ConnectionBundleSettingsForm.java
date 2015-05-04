@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -381,10 +382,11 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                 name = NamingUtil.getNextNumberedName(name, true);
             }
 
+            DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
+            databaseInfo.setHost(tnsName.getHost());
+            databaseInfo.setPort(tnsName.getPort());
+            databaseInfo.setDatabase(tnsName.getSid());
             databaseSettings.setName(name);
-            databaseSettings.setHost(tnsName.getHost());
-            databaseSettings.setPort(tnsName.getPort());
-            databaseSettings.setDatabase(tnsName.getSid());
             databaseSettings.setDatabaseType(DatabaseType.ORACLE);
             databaseSettings.setDriverSource(DriverSource.BUILTIN);
 

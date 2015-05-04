@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database.postgres;
 
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.database.ScriptExecutionInput;
 import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.database.postgres.execution.PostgresMethodExecutionProcessor;
@@ -12,6 +15,11 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
     }
 
     public MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method) {
+        return null;
+    }
+
+    @Override
+    public ScriptExecutionInput createScriptExecutionInput(String programPath, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo, String filePath) {
         return null;
     }
 }

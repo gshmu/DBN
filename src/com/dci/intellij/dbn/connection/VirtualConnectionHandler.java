@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -153,7 +154,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void setAllowConnection(boolean allowConnection) {}
 
     @Override
-    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {}
+    public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
 
     @Override
     public boolean canConnect() {
@@ -162,8 +163,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @NotNull
     @Override
-    public Authentication getTemporaryAuthentication() {
-        return new Authentication();
+    public AuthenticationInfo getTemporaryAuthenticationInfo() {
+        return new AuthenticationInfo();
     }
 
     @Override

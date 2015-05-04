@@ -1,22 +1,22 @@
 package com.dci.intellij.dbn.connection.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.connection.Authentication;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.openapi.project.Project;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Action;
-import javax.swing.JComponent;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.intellij.openapi.project.Project;
 
 public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenticationForm> {
     private boolean rememberCredentials;
-    private Authentication authentication;
+    private AuthenticationInfo authenticationInfo;
 
-    public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull Authentication authentication) {
+    public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
         super(project, "Enter Password", true);
-        this.authentication = authentication;
+        this.authenticationInfo = authenticationInfo;
         setModal(true);
         setResizable(false);
         component = new ConnectionAuthenticationForm(this, connectionHandler);
@@ -61,12 +61,12 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
         return rememberCredentials;
     }
 
-    public Authentication getAuthentication() {
-        return authentication;
+    public AuthenticationInfo getAuthenticationInfo() {
+        return authenticationInfo;
     }
 
     public void updateConnectButton() {
-        getOKAction().setEnabled(authentication.isProvided());
+        getOKAction().setEnabled(authenticationInfo.isProvided());
     }
 
     @Override

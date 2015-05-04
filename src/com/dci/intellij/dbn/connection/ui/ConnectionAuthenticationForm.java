@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.connection.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.Authentication;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -20,6 +10,16 @@ import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.ui.UIUtil;
 
 public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenticationDialog>{
     private JPanel mainPanel;
@@ -38,15 +38,15 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         hintTextArea.setBackground(mainPanel.getBackground());
         hintTextArea.setFont(mainPanel.getFont());
 
-        final Authentication authentication = parentComponent.getAuthentication();
+        final AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
 
-        String user = authentication.getUser();
+        String user = authenticationInfo.getUser();
         if (StringUtil.isNotEmpty(user)) {
             userTextField.setText(user);
             cachedUser = user;
         }
 
-        boolean isEmptyPassword = authentication.isEmptyPassword();
+        boolean isEmptyPassword = authenticationInfo.isEmptyPassword();
         emptyPasswordCheckBox.setSelected(isEmptyPassword);
         passwordField.setEnabled(!isEmptyPassword);
         passwordField.setBackground(isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
@@ -74,7 +74,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             @Override
             protected void textChanged(DocumentEvent e) {
                 String user = userTextField.getText();
-                authentication.setUser(user);
+                authenticationInfo.setUser(user);
                 parentComponent.updateConnectButton();
             }
         });
@@ -83,7 +83,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             @Override
             protected void textChanged(DocumentEvent e) {
                 String password = new String(passwordField.getPassword());
-                authentication.setPassword(password);
+                authenticationInfo.setPassword(password);
                 parentComponent.updateConnectButton();
             }
         });
@@ -91,7 +91,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         osAuthenticationCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+                authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
                 updateAuthenticationFields();
                 parentComponent.updateConnectButton();
             }
@@ -100,7 +100,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         emptyPasswordCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+                authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
                 updateAuthenticationFields();
                 parentComponent.updateConnectButton();
             }
