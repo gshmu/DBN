@@ -35,10 +35,10 @@ public enum DatabaseFeature {
     }
 
     public boolean isSupported(@Nullable DBObject object) {
-        return object != null && isSupported(object.getConnectionHandler());
+        return object != null && !object.isDisposed() && isSupported(object.getConnectionHandler());
     }
     public boolean isSupported(@Nullable ConnectionHandler connectionHandler) {
-        if (connectionHandler != null) {
+        if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             return compatibilityInterface != null && compatibilityInterface.supportsFeature(this);
         }
