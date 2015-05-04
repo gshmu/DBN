@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.connection.config.tns;
 
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public class TnsName implements Comparable<TnsName>{
 
