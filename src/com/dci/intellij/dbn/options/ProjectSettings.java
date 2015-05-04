@@ -16,11 +16,9 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsEditorForm;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,14 +60,6 @@ public class ProjectSettings
         operationSettings = new OperationSettings(project);
         ddlFileSettings = new DDLFileSettings(project);
         connectionSettings = new ConnectionBundleSettings(project);
-
-
-        if ((project.isDefault() && ApplicationManager.getApplication().isActive()) || project.isInitialized()) {
-            ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
-            Element settings = new Element("settings");
-            projectSettings.writeConfiguration(settings);
-            readConfiguration(settings);
-        }
     }
 
     public String getHelpTopic() {
