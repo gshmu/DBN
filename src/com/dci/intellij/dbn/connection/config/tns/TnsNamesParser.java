@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.connection.config.tns;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,6 +7,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
+
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class TnsNamesParser {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(true, false, false, false, false, false).
@@ -64,7 +64,7 @@ public class TnsNamesParser {
                     }
                     if (parsingValue) {
                         Map newMap = new HashMap();
-                        currentMap.put(currentTnsKey.toString(), newMap);
+                        currentMap.put(currentTnsKey.toString().toUpperCase(), newMap);
                         currentTnsKey.setLength(0);
                         mapStack.push(currentMap);
                         currentMap = newMap;
@@ -74,7 +74,7 @@ public class TnsNamesParser {
                 }
                 case ')': {
                     if (parsingValue) {
-                        currentMap.put(currentTnsKey.toString(), currentTnsValue.toString());
+                        currentMap.put(currentTnsKey.toString().toUpperCase(), currentTnsValue.toString());
                         currentTnsKey.setLength(0);
                         currentTnsValue.setLength(0);
                         parsingValue = false;
