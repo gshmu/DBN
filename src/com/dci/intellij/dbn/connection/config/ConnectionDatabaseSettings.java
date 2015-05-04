@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -14,12 +20,6 @@ import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -261,12 +261,12 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
+        host             = getString(element, "host", host);
+        port             = getString(element, "port", port);
+        database         = getString(element, "database", database);
+
         String url = getString(element, "url", null);
-        if (StringUtil.isEmpty(url)) {
-            host             = getString(element, "host", host);
-            port             = getString(element, "port", port);
-            database         = getString(element, "database", database);
-        } else {
+        if (StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && StringUtil.isNotEmpty(url)) {
             if (databaseType != null && databaseType != DatabaseType.UNKNOWN) {
                 DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
                 host = urlResolver.resolveHost(url);

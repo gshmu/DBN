@@ -1,5 +1,14 @@
 package com.dci.intellij.dbn.connection;
 
+import java.sql.Connection;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -42,15 +51,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @State(
         name = "DBNavigator.Project.ConnectionManager",
@@ -430,7 +430,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      *********************************************************/
     @Nullable
     public Element getState() {
-        return null;
+        return new Element("State");
     }
 
     public void loadState(Element element) {
