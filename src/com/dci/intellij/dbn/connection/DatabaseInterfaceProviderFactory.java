@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.SQLException;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -16,9 +17,9 @@ public class DatabaseInterfaceProviderFactory {
     public static final DatabaseInterfaceProvider MYSQL_INTERFACE_PROVIDER = new MySqlInterfaceProvider();
     public static final DatabaseInterfaceProvider POSTGRES_INTERFACE_PROVIDER = new PostgresInterfaceProvider();
 
-    public static DatabaseInterfaceProvider createInterfaceProvider(ConnectionHandler connectionHandler) throws SQLException {
+    public static DatabaseInterfaceProvider createInterfaceProvider(@NotNull ConnectionHandler connectionHandler) throws SQLException {
         DatabaseType databaseType;
-        if (connectionHandler != null && connectionHandler.isVirtual()) {
+        if (connectionHandler.isVirtual()) {
             databaseType = connectionHandler.getDatabaseType();
         } else {
             ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();

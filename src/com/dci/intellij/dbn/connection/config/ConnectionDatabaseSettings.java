@@ -7,11 +7,12 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
@@ -31,15 +32,12 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     private double databaseVersion = 9999;
     private int hashCode;
 
-    private String host;
-    private String port;
-    private String database;
-
+    private DatabaseInfo databaseInfo = new DatabaseInfo();
     private DriverSource driverSource = DriverSource.EXTERNAL;
     private String driverLibrary;
     private String driver;
 
-    private Authentication authentication = new Authentication();
+    private AuthenticationInfo authenticationInfo = new AuthenticationInfo();
 
     private ConnectionSettings parent;
 
@@ -48,9 +46,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         this.databaseType = databaseType;
         if (databaseType != DatabaseType.UNKNOWN) {
             DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
-            this.host = urlResolver.getDefaultHost();
-            this.port = urlResolver.getDefaultPort();
-            this.database = urlResolver.getDefaultDatabase();
+            databaseInfo = urlResolver.getDefaultInfo();
             this.driverSource = DriverSource.BUILTIN;
         }
     }
@@ -134,8 +130,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     }
 
     @NotNull
-    public Authentication getAuthentication() {
-        return authentication;
+    public AuthenticationInfo getAuthenticationInfo() {
+        return authenticationInfo;
     }
 
     @Override
@@ -143,45 +139,26 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         return "database";
     }
 
-    public String getHost() {
-        return host;
-    }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
+    public DatabaseInfo getDatabaseInfo() {
+        return databaseInfo;
     }
 
     public String getConnectionUrl() {
-        return databaseType.getUrlResolver().getUrl(host, port, database);
+        return databaseType.getUrlResolver().getUrl(databaseInfo);
     };
 
     public String getConnectionUrl(String host, String port) {
         return databaseType.getUrlResolver().getUrl(
                 host,
                 port,
-                database);
+                databaseInfo.getDatabase());
     }
 
 
     public void updateHashCode() {
-        Authentication authentication = getAuthentication();
-        hashCode = (name + driver + driverLibrary + host + port + database + authentication.getUser() + authentication.getPassword() + authentication.isOsAuthentication()).hashCode();
+        AuthenticationInfo authenticationInfo = getAuthenticationInfo();
+        hashCode = (name + driver + driverLibrary + databaseInfo.getHost() + databaseInfo.getPort() + databaseInfo.getDatabase() + authenticationInfo.getUser() + authenticationInfo.getPassword() + authenticationInfo.isOsAuthentication()).hashCode();
     }
 
     @Override
@@ -261,17 +238,17 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
-        host             = getString(element, "host", host);
-        port             = getString(element, "port", port);
-        database         = getString(element, "database", database);
+        databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
+        databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
+        databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
 
         String url = getString(element, "url", null);
-        if (StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && StringUtil.isNotEmpty(url)) {
+        if (databaseInfo.isEmpty() && StringUtil.isNotEmpty(url)) {
             if (databaseType != null && databaseType != DatabaseType.UNKNOWN) {
                 DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
-                host = urlResolver.resolveHost(url);
-                port = urlResolver.resolvePort(url);
-                database = urlResolver.resolveDatabase(url);
+                databaseInfo.setHost(urlResolver.resolveHost(url));
+                databaseInfo.setPort(urlResolver.resolvePort(url));
+                databaseInfo.setDatabase(urlResolver.resolveDatabase(url));
             }
         }
 
@@ -279,9 +256,9 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
-        authentication.setUser(getString(element, "user", authentication.getUser()));
-        authentication.setPassword(PasswordUtil.decodePassword(getString(element, "password", authentication.getPassword())));
-        authentication.setOsAuthentication(getBoolean(element, "os-authentication", authentication.isOsAuthentication()));
+        authenticationInfo.setUser(getString(element, "user", authenticationInfo.getUser()));
+        authenticationInfo.setPassword(PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword())));
+        authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
 
 
         // TODO backward compatibility (to remove)
@@ -313,13 +290,13 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
 
-        setString(element, "host", nvl(host));
-        setString(element, "port", nvl(port));
-        setString(element, "database", nvl(database));
+        setString(element, "host", nvl(databaseInfo.getHost()));
+        setString(element, "port", nvl(databaseInfo.getPort()));
+        setString(element, "database", nvl(databaseInfo.getDatabase()));
 
-        setBoolean(element, "os-authentication", authentication.isOsAuthentication());
-        setString(element, "user", nvl(authentication.getUser()));
-        setString(element, "password", PasswordUtil.encodePassword(authentication.getPassword()));
+        setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
+        setString(element, "user", nvl(authenticationInfo.getUser()));
+        setString(element, "password", PasswordUtil.encodePassword(authenticationInfo.getPassword()));
     }
 
     public Project getProject() {

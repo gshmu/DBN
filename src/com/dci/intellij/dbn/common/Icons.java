@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common;
 
+import javax.swing.Icon;
+import java.util.Map;
+
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
 import gnu.trove.THashMap;
-
-import javax.swing.Icon;
-import java.util.Map;
 
 public class Icons {
     private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
@@ -95,6 +95,8 @@ public class Icons {
     public static final Icon METHOD_CALL              = load("METHOD_CALL", "/img/MethodCall.png");
     public static final Icon SQL_STATEMENT            = load("SQL_STATEMENT", "/img/SQLStatement.png");
 
+
+    public static final Icon EXECUTE_SQL_SCRIPT       = load("/img/action/ExecuteAsScript.png");
 
     public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
     public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");

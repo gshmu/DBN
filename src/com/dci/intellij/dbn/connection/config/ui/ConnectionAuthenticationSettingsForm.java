@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.Authentication;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -13,6 +7,12 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.util.ui.UIUtil;
 
 public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
     private JTextField userTextField;
@@ -69,23 +69,23 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
         return userTextField;
     }
 
-    public void applyFormChanges(Authentication authentication){
-        authentication.setUser(userTextField.getText());
-        authentication.setPassword(new String(passwordField.getPassword()));
-        authentication.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-        authentication.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+    public void applyFormChanges(AuthenticationInfo authenticationInfo){
+        authenticationInfo.setUser(userTextField.getText());
+        authenticationInfo.setPassword(new String(passwordField.getPassword()));
+        authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
+        authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
     }
 
-    public void resetFormChanges(Authentication authentication) {
-        String user = authentication.getUser();
-        String password = authentication.getPassword();
+    public void resetFormChanges(AuthenticationInfo authenticationInfo) {
+        String user = authenticationInfo.getUser();
+        String password = authenticationInfo.getPassword();
         if (StringUtil.isNotEmpty(user)) cachedUser = user;
         if (StringUtil.isNotEmpty(password)) cachedPassword = password;
 
-        userTextField.setText(authentication.getUser());
-        passwordField.setText(authentication.getPassword());
-        osAuthenticationCheckBox.setSelected(authentication.isOsAuthentication());
-        emptyPasswordCheckBox.setSelected(authentication.isEmptyPassword());
+        userTextField.setText(authenticationInfo.getUser());
+        passwordField.setText(authenticationInfo.getPassword());
+        osAuthenticationCheckBox.setSelected(authenticationInfo.isOsAuthentication());
+        emptyPasswordCheckBox.setSelected(authenticationInfo.isEmptyPassword());
         updateAuthenticationFields();
     }
 

@@ -339,6 +339,7 @@
             <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLoggingToggleAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
+            <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
             </action>
@@ -359,7 +360,7 @@
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
             <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
             <action class="com.dci.intellij.dbn.menu.action.OpenSessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory" icon="/img/MethodExecutionHistory.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory"/>
             <action class="com.dci.intellij.dbn.menu.action.OpenUncommittedChangesOverviewAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.OpenUncommittedChangesOverview"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">

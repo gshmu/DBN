@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -40,10 +41,10 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider {
     boolean isAllowConnection();
     void setAllowConnection(boolean allowConnection);
 
-    void setTemporaryAuthentication(Authentication temporaryAuthentication);
+    void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo);
 
     @NotNull
-    Authentication getTemporaryAuthentication();
+    AuthenticationInfo getTemporaryAuthenticationInfo();
 
     boolean canConnect();
 

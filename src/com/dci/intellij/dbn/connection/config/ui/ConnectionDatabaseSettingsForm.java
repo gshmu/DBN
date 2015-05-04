@@ -1,6 +1,20 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -11,7 +25,6 @@ import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
@@ -24,18 +37,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
@@ -70,15 +71,17 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     String port = portTextField.getText();
                     String database = databaseTextField.getText();
 
-                    if (StringUtil.isEmpty(host) || (oldUrlResolver != null && oldUrlResolver.getDefaultHost().equals(host))) {
-                        hostTextField.setText(urlResolver.getDefaultHost());
+                    DatabaseInfo defaults = urlResolver.getDefaultInfo();
+                    DatabaseInfo oldDefaults = oldUrlResolver == null ? null : oldUrlResolver.getDefaultInfo();
+                    if (StringUtil.isEmpty(host) || (oldDefaults != null && oldDefaults.getHost().equals(host))) {
+                        hostTextField.setText(defaults.getHost());
                     }
 
-                    if (StringUtil.isEmpty(port) || (oldUrlResolver != null && oldUrlResolver.getDefaultPort().equals(port))) {
-                        portTextField.setText(urlResolver.getDefaultPort());
+                    if (StringUtil.isEmpty(port) || (oldDefaults != null && oldDefaults.getPort().equals(port))) {
+                        portTextField.setText(defaults.getPort());
                     }
-                    if (StringUtil.isEmpty(database) || (oldUrlResolver != null && oldUrlResolver.getDefaultDatabase().equals(database))) {
-                        databaseTextField.setText(urlResolver.getDefaultDatabase());
+                    if (StringUtil.isEmpty(database) || (oldDefaults != null && oldDefaults.getDatabase().equals(database))) {
+                        databaseTextField.setText(defaults.getDatabase());
                     }
                     driverSettingsForm.updateDriverFields();
                 }
@@ -193,12 +196,13 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         configuration.setDescription(descriptionTextField.getText());
         configuration.setDriverLibrary(driverLibraryTextField.getText());
         configuration.setDriver(driverOption == null ? null : driverOption.getName());
-        configuration.setHost(hostTextField.getText());
-        configuration.setPort(portTextField.getText());
-        configuration.setDatabase(databaseTextField.getText());
+        DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
+        databaseInfo.setHost(hostTextField.getText());
+        databaseInfo.setPort(portTextField.getText());
+        databaseInfo.setDatabase(databaseTextField.getText());
 
-        Authentication authentication = configuration.getAuthentication();
-        authenticationSettingsForm.applyFormChanges(authentication);
+        AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
+        authenticationSettingsForm.applyFormChanges(authenticationInfo);
 
         configuration.setDriverSource(driverSourceComboBox.getSelectedValue());
         configuration.updateHashCode();
@@ -220,13 +224,14 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         final boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
 
+        DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
         final boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(configuration.getHost(), hostTextField.getText()) ||
-                !CommonUtil.safeEqual(configuration.getPort(), portTextField.getText()) ||
-                !CommonUtil.safeEqual(configuration.getDatabase(), databaseTextField.getText()) ||
-                !CommonUtil.safeEqual(configuration.getAuthentication().getUser(), authenticationSettingsForm.getUserTextField().getText());
+                !CommonUtil.safeEqual(databaseInfo.getHost(), hostTextField.getText()) ||
+                !CommonUtil.safeEqual(databaseInfo.getPort(), portTextField.getText()) ||
+                !CommonUtil.safeEqual(databaseInfo.getDatabase(), databaseTextField.getText()) ||
+                !CommonUtil.safeEqual(configuration.getAuthenticationInfo().getUser(), authenticationSettingsForm.getUserTextField().getText());
 
 
         applyFormChanges(configuration);
@@ -259,12 +264,13 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         nameTextField.setText(connectionConfig.getDisplayName());
         descriptionTextField.setText(connectionConfig.getDescription());
-        hostTextField.setText(connectionConfig.getHost());
-        portTextField.setText(connectionConfig.getPort());
-        databaseTextField.setText(connectionConfig.getDatabase());
+        DatabaseInfo databaseInfo = connectionConfig.getDatabaseInfo();
+        hostTextField.setText(databaseInfo.getHost());
+        portTextField.setText(databaseInfo.getPort());
+        databaseTextField.setText(databaseInfo.getDatabase());
 
-        Authentication authentication = connectionConfig.getAuthentication();
-        authenticationSettingsForm.resetFormChanges(authentication);
+        AuthenticationInfo authenticationInfo = connectionConfig.getAuthenticationInfo();
+        authenticationSettingsForm.resetFormChanges(authenticationInfo);
 
         driverSourceComboBox.setSelectedValue(connectionConfig.getDriverSource());
         driverLibraryTextField.setText(connectionConfig.getDriverLibrary());

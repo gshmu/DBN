@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -76,24 +77,24 @@ public class ConnectionUtil {
         // credentials changed (account can be locked on several invalid trials)
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        Authentication authentication = databaseSettings.getAuthentication();
-        if (!authentication.isProvided()) {
-            authentication = connectionHandler.getTemporaryAuthentication();
+        AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
+        if (!authenticationInfo.isProvided()) {
+            authenticationInfo = connectionHandler.getTemporaryAuthenticationInfo();
         }
 
-        if (authenticationError != null && authenticationError.getAuthentication().isSame(authentication) && !authenticationError.isExpired()) {
+        if (authenticationError != null && authenticationError.getAuthenticationInfo().isSame(authenticationInfo) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
         try {
-            Connection connection = connect(connectionSettings, connectionHandler.getTemporaryAuthentication(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
+            Connection connection = connect(connectionSettings, connectionHandler.getTemporaryAuthenticationInfo(), propertiesSettings.isEnableAutoCommit(), connectionStatus, connectionType);
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
             if (connectionHandler.getDatabaseType() != DatabaseType.UNKNOWN) {
                 DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
                 if (messageParserInterface.isAuthenticationException(e)){
-                    authenticationError = new AuthenticationError(authentication, e);
+                    authenticationError = new AuthenticationError(authenticationInfo, e);
                     connectionStatus.setAuthenticationError(authenticationError);
                 }
             }
@@ -101,10 +102,10 @@ public class ConnectionUtil {
         }
     }
 
-    public static Connection connect(final ConnectionSettings connectionSettings, @Nullable Authentication temporaryAuthentication, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
+    public static Connection connect(final ConnectionSettings connectionSettings, @Nullable AuthenticationInfo temporaryAuthenticationInfo, final boolean autoCommit, @Nullable final ConnectionStatus connectionStatus, ConnectionType connectionType) throws SQLException {
         ConnectTimeoutCall connectCall = new ConnectTimeoutCall();
         connectCall.connectionType = connectionType;
-        connectCall.temporaryAuthentication = temporaryAuthentication;
+        connectCall.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
         connectCall.connectionSettings = connectionSettings;
         connectCall.connectionStatus = connectionStatus;
         connectCall.autoCommit = autoCommit;
@@ -123,7 +124,7 @@ public class ConnectionUtil {
 
     private static class ConnectTimeoutCall extends SimpleTimeoutCall<Connection> {
         private ConnectionType connectionType;
-        private Authentication temporaryAuthentication;
+        private AuthenticationInfo temporaryAuthenticationInfo;
         private ConnectionSettings connectionSettings;
         private ConnectionStatus connectionStatus;
         private boolean autoCommit;
@@ -139,13 +140,13 @@ public class ConnectionUtil {
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
                 final Properties properties = new Properties();
-                Authentication authentication = databaseSettings.getAuthentication();
-                if (!authentication.isProvided() && temporaryAuthentication != null) {
-                    authentication = temporaryAuthentication;
+                AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
+                if (!authenticationInfo.isProvided() && temporaryAuthenticationInfo != null) {
+                    authenticationInfo = temporaryAuthenticationInfo;
                 }
-                if (!authentication.isOsAuthentication()) {
-                    String user = authentication.getUser();
-                    String password = authentication.getPassword();
+                if (!authenticationInfo.isOsAuthentication()) {
+                    String user = authenticationInfo.getUser();
+                    String password = authenticationInfo.getPassword();
                     properties.put("user", user);
                     if (StringUtil.isNotEmpty(password)) {
                         properties.put("password", password);
