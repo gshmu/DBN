@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
@@ -37,12 +36,11 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         SessionBrowserModel tableModel = sessionBrowser.getTableModel();
 
         add(new ReloadSessionsAction());
-        if (table != null && table.getSelectedRowCount() > 0) {
+        if (table.getSelectedRowCount() > 0) {
             int rowCount = table.getSelectedRowCount();
             addSeparator();
             ConnectionHandler connectionHandler = getConnectionHandler();
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-            if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT)) {
+            if (DatabaseFeature.SESSION_DISCONNECT.isSupported(connectionHandler)) {
                 add(new DisconnectSessionAction(rowCount > 1));
             }
             add(new KillSessionAction(rowCount > 1));

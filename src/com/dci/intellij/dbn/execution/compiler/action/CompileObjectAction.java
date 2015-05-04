@@ -21,11 +21,13 @@ import com.intellij.openapi.project.Project;
 public class CompileObjectAction extends AnAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     private DBContentType contentType;
+    private CompileTypeOption compileType;
 
-    public CompileObjectAction(DBSchemaObject object, DBContentType contentType) {
+    public CompileObjectAction(DBSchemaObject object, DBContentType contentType, CompileTypeOption compileType) {
         super("Compile");
         this.objectRef = DBObjectRef.from(object);
         this.contentType = contentType;
+        this.compileType = compileType;
     }
 
     public DBSchemaObject getObject() {
@@ -35,7 +37,6 @@ public class CompileObjectAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSchemaObject object = getObject();
         DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(object.getProject());
-        CompileTypeOption compileType = getCompilerSettings(object.getProject()).getCompileTypeOption();
         CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType);
         compilerManager.compileInBackground(object, compileType, compilerAction);
     }
@@ -44,30 +45,18 @@ public class CompileObjectAction extends AnAction {
         DBSchemaObject object = getObject();
         Presentation presentation = e.getPresentation();
 
-        CompilerSettings compilerSettings = getCompilerSettings(object.getProject());
-        CompileTypeOption compileType = compilerSettings.getCompileTypeOption();
         DBObjectStatusHolder status = object.getStatus();
 
-        boolean isDebug = compileType == CompileTypeOption.DEBUG;
-        if (compileType == CompileTypeOption.KEEP && contentType != DBContentType.CODE_SPEC_AND_BODY) {
-            isDebug = status.is(contentType, DBObjectStatus.DEBUG);
-        }
-
         boolean isPresent = status.is(contentType, DBObjectStatus.PRESENT);
-        boolean isValid = status.is(contentType, DBObjectStatus.VALID);
-        //boolean isDebug = status.is(contentType, DBObjectStatus.DEBUG);
         boolean isCompiling = status.is(contentType, DBObjectStatus.COMPILING);
         boolean isEnabled = isPresent && !isCompiling /*&& (compilerSettings.alwaysShowCompilerControls() || !isValid)*/;
 
         presentation.setEnabled(isEnabled);
 
-        String text =
-                contentType == DBContentType.CODE_SPEC ? "Compile Spec" :
-                contentType == DBContentType.CODE_BODY ? "Compile Body" :
-                contentType == DBContentType.CODE_SPEC_AND_BODY ? "Compile Spec and Body" :
-                        "Compile";
-        if (isDebug) text = text + " (debug)";
-        if (compileType == CompileTypeOption.ASK) text = text + "...";
+        String text = "Compile " + object.getObjectType().getName();
+        if (compileType == CompileTypeOption.DEBUG) {
+            text += " (debug)";
+        }
         presentation.setText(text);
     }
 
