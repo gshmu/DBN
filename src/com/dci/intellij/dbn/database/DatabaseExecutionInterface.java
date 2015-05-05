@@ -8,5 +8,5 @@ import com.dci.intellij.dbn.object.DBMethod;
 public interface DatabaseExecutionInterface {
     MethodExecutionProcessor createExecutionProcessor(DBMethod method);
     MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method);
-    ScriptExecutionInput createScriptExecutionInput(String programPath, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo, String filePath);
+    ScriptExecutionInput createScriptExecutionInput(String programPath, String filePath, String content, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo);
 }

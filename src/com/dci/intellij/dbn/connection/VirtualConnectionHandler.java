@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -199,6 +200,16 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public ConnectionHandlerRef getRef() {
         return ref;
+    }
+
+    @Override
+    public DatabaseInfo getDatabaseInfo() {
+        return databaseType.getUrlResolver().getDefaultInfo();
+    }
+
+    @Override
+    public AuthenticationInfo getAuthenticationInfo() {
+        return null;
     }
 
     public ConnectionHandler clone() {return null;}

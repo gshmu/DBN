@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -23,7 +24,6 @@ import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
@@ -141,8 +141,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean isAuthenticationProvided() {
-        ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
-        return databaseSettings.getAuthenticationInfo().isProvided() || getTemporaryAuthenticationInfo().isProvided();
+        return getAuthenticationInfo().isProvided() || getTemporaryAuthenticationInfo().isProvided();
     }
 
 
@@ -271,6 +270,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public ConnectionHandlerRef getRef() {
         return ref;
+    }
+
+    @Override
+    public DatabaseInfo getDatabaseInfo() {
+        return getSettings().getDatabaseSettings().getDatabaseInfo();
+    }
+
+    @Override
+    public AuthenticationInfo getAuthenticationInfo() {
+        return getSettings().getDatabaseSettings().getAuthenticationInfo();
     }
 
     public boolean isValid() {

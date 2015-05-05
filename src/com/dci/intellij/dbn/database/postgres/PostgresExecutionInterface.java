@@ -19,7 +19,7 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
     }
 
     @Override
-    public ScriptExecutionInput createScriptExecutionInput(String programPath, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo, String filePath) {
+    public ScriptExecutionInput createScriptExecutionInput(String programPath, String filePath, String content, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo) {
         return null;
     }
 }

@@ -5,11 +5,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class ScriptExecutionInput {
     private String command;
+    private String content;
     private String[] environmentVariables;
 
-    public ScriptExecutionInput(@NotNull String command, @Nullable String[] environmentVariables) {
+    public ScriptExecutionInput(@NotNull String command, @NotNull String content, @Nullable String[] environmentVariables) {
         this.command = command;
+        this.content = content;
         this.environmentVariables = environmentVariables;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     @NotNull

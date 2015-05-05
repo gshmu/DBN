@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
@@ -70,7 +69,6 @@ public class ConnectionUtil {
     public static Connection connect(ConnectionHandler connectionHandler, ConnectionType connectionType) throws SQLException {
         ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
         ConnectionSettings connectionSettings = connectionHandler.getSettings();
-        ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
 
         // do not retry connection on authentication error unless
