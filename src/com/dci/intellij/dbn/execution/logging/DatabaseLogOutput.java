@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -36,7 +37,7 @@ public class DatabaseLogOutput implements ExecutionResult {
     public DatabaseLogOutputForm getForm(boolean create) {
         if (logOutputForm == null && create) {
             logOutputForm = new DatabaseLogOutputForm(getProject(), this);
-            Disposer.register(this, logOutputForm);
+            Disposer.register(logOutputForm, this);
         }
         return logOutputForm;
     }
@@ -122,5 +123,8 @@ public class DatabaseLogOutput implements ExecutionResult {
 
     public void dispose() {
         disposed = true;
+        ScriptExecutionManager executionManager = ScriptExecutionManager.getInstance(getProject());
+        executionManager.killProcess(sourceFile);
+        sourceFile = null;
     }
 }

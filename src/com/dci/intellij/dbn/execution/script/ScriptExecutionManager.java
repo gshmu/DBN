@@ -4,13 +4,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -28,6 +32,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ScriptExecutionManager extends AbstractProjectComponent {
+    private Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
 
     private ScriptExecutionManager(Project project) {
         super(project);
@@ -37,35 +42,57 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         return FailsafeUtil.getComponent(project, ScriptExecutionManager.class);
     }
 
-    public void executeScript(final VirtualFile virtualFile) {
-        final Project project = getProject();
-
-        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-
-        ScriptExecutionInputDialog inputDialog =
-                new ScriptExecutionInputDialog(project, virtualFile,
-                        connectionMappingManager.getActiveConnection(virtualFile), connectionMappingManager.getCurrentSchema(virtualFile));
-        inputDialog.show();
-        if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-            final ConnectionHandler connectionHandler = inputDialog.getConnection();
-            final DBSchema schema = inputDialog.getSchema();
-            new BackgroundTask(project, "Executing database script", true, false) {
-                @Override
-                protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    new SimpleTimeoutCall<Object>(60, TimeUnit.SECONDS, null) {
-                        @Override
-                        public Object call() throws Exception {
-                            doExecuteScript(virtualFile, connectionHandler, schema);
-                            return null;
-                        }
-                    }.start();
-                }
-            }.start();
+    public void killProcess(VirtualFile virtualFile) {
+        synchronized (activeProcesses) {
+            Process process = activeProcesses.remove(virtualFile);
+            if (process != null) {
+                process.destroy();
+            }
         }
     }
 
-    private void doExecuteScript(VirtualFile virtualFile, ConnectionHandler connectionHandler, DBSchema schema) {
+    public void executeScript(final VirtualFile virtualFile) {
+        final Project project = getProject();
+        if (activeProcesses.containsKey(virtualFile)) {
+            MessageUtil.showInfoDialog(project, "Information", "SQL Script \"" + virtualFile.getPath() + "\" is already running. \nWait for the execution to finish before running again.");
+        } else {
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+
+            ScriptExecutionInputDialog inputDialog =
+                    new ScriptExecutionInputDialog(project, virtualFile,
+                            connectionMappingManager.getActiveConnection(virtualFile), connectionMappingManager.getCurrentSchema(virtualFile));
+            inputDialog.show();
+            if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                final ConnectionHandler connectionHandler = inputDialog.getConnection();
+                final DBSchema schema = inputDialog.getSchema();
+                new BackgroundTask(project, "Executing database script", true, false) {
+                    @Override
+                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                        new SimpleTimeoutCall<Object>(10, TimeUnit.SECONDS, null) {
+                            @Override
+                            public Object call() throws Exception {
+                                doExecuteScript(virtualFile, connectionHandler, schema);
+                                return null;
+                            }
+
+                            @Override
+                            protected Object handleException(Exception e) {
+                                String causeMessage = e instanceof TimeoutException ? "Operation has timed out" : e.getMessage();
+                                NotificationUtil.sendErrorNotification(project, "Script execution", "Error executing SQL script \"" + virtualFile.getPath() + "\". Details: " + causeMessage);
+                                return super.handleException(e);
+                            }
+                        }.start();
+                    }
+                }.start();
+            }
+        }
+    }
+
+    private void doExecuteScript(VirtualFile virtualFile, ConnectionHandler connectionHandler, DBSchema schema) throws Exception{
+        activeProcesses.put(virtualFile, null);
         File tempScriptFile = null;
+        Process process = null;
+        BufferedReader outputReader = null;
         try {
             String content = new String(virtualFile.contentsToByteArray());
             tempScriptFile = createTempScriptFile();
@@ -81,7 +108,6 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
 
             FileUtil.writeToFile(tempScriptFile, executionInput.getTextContent());
 
-            Process process;
             if (true) {
                 ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
                 processBuilder.environment().putAll(executionInput.getEnvironmentVars());
@@ -91,22 +117,31 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                 Runtime runtime = Runtime.getRuntime();
                 process = runtime.exec(executionInput.getLineCommand());
             }
+            activeProcesses.put(virtualFile, process);
 
-            BufferedReader bri = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
             ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
             boolean addHeadline = true;
-            while ((line = bri.readLine()) != null) {
-                executionManager.writeLogOutput(connectionHandler, virtualFile, line, addHeadline, true);
-                addHeadline = false;
+            while ((line = outputReader.readLine()) != null) {
+                synchronized (activeProcesses) {
+                    if (activeProcesses.containsKey(virtualFile)) {
+                        executionManager.writeLogOutput(connectionHandler, virtualFile, line, addHeadline, true);
+                        addHeadline = false;
+                    } else {
+                        break;
+                    }
+                }
             }
-            bri.close();
-
         } catch (Exception e) {
-            MessageUtil.showErrorDialog(getProject(), "Script Execution Error", "Error executing script " + virtualFile.getName() + ".\n" + e.getMessage());
-            e.printStackTrace();
+            if (process != null) {
+                process.destroy();
+            }
+            throw e;
         } finally {
+            if (outputReader != null) outputReader.close();
+            activeProcesses.remove(virtualFile);
             if (tempScriptFile != null && tempScriptFile.exists()) {
                 tempScriptFile.delete();
             }
@@ -125,4 +160,11 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
     public String getComponentName() {
         return "DBNavigator.Project.ScriptExecutionManager";
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        activeProcesses.clear();
+    }
+
 }
