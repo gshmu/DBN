@@ -324,6 +324,9 @@
     </module-components>
 
     <actions>
+        <action class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" id="DBNavigator.Actions.File.ExecuteScript" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png">
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="WeighingNewGroup" anchor="before"/>
+        </action>
         <group id="DBNavigator.ActionGroup.ConnectionSettings" text="Connections Settings">
             <action id="DBNavigator.Actions.ConnectionSettings.CreateConnection" class="com.dci.intellij.dbn.connection.config.action.CreateConnectionDropdownAction" text="Connection Setup - Create Connection" icon="/img/action/AddMore.png"/>
             <action id="DBNavigator.Actions.ConnectionSettings.RemoveConnection" class="com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction" text="Connection Setup - Remove Connection" icon="/img/action/Remove.png"/>
@@ -339,7 +342,6 @@
             <action id="DBNavigator.Actions.DatabaseLogging" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLoggingToggleAction" text="Script Editor - Enable / Disable Database Logging" icon="/img/LogOutputConsole.png"/>
             <action id="DBNavigator.Actions.Connections" class="com.dci.intellij.dbn.language.editor.action.SelectConnectionComboBoxAction" text="Script Editor - DB Connections"/>
             <action id="DBNavigator.Actions.CurrentSchema" class="com.dci.intellij.dbn.language.editor.action.SetCurrentSchemaComboBoxAction" text="Script Editor - Current schema"/>
-            <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <action id="DBNavigator.Actions.Execute" class="com.dci.intellij.dbn.execution.statement.action.ExecuteStatementAction" text="Script Editor - Execute Statement" icon="/img/action/ExecuteStatement.png">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl ENTER"/>
             </action>
@@ -348,6 +350,8 @@
             </action>
             <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction" icon="/img/action/ConnectionCommit.png"/>
             <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction" icon="/img/action/ConnectionRollback.png"/>
+            <separator/>
+            <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptEditorAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
             <separator/>
             <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
             <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
