@@ -367,7 +367,9 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     private void selectValue(T value) {
         T oldValue = selectedValue;
-        value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
+        if (value != null) {
+            value = values.contains(value) ? value : values.isEmpty() ? null : values.get(0);
+        }
         if (!CommonUtil.safeEqual(oldValue, value)) {
             if (isComboBox) {
                 selectedValue = value;
