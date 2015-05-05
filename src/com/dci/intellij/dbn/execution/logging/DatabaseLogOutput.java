@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -12,13 +7,21 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputConsole;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
+import com.intellij.execution.impl.ConsoleViewImpl;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class DatabaseLogOutput implements ExecutionResult {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -76,6 +79,11 @@ public class DatabaseLogOutput implements ExecutionResult {
         return connectionHandlerRef.getConnectionId();
     }
 
+    @Nullable
+    public VirtualFile getSourceFile() {
+        return sourceFile;
+    }
+
     @NotNull
     @Override
     public ConnectionHandler getConnectionHandler() {
@@ -89,7 +97,15 @@ public class DatabaseLogOutput implements ExecutionResult {
 
     public void write(String string, boolean addHeadline, boolean writeEmptyLines) {
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
-            logOutputForm.getConsole().writeToConsole(string, addHeadline, writeEmptyLines);
+            DatabaseLogOutputConsole console = logOutputForm.getConsole();
+            if (addHeadline) {
+                ConsoleView consoleView = console.getConsole();
+                if (consoleView instanceof ConsoleViewImpl) {
+                    ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) consoleView;
+                    consoleViewImpl.requestScrollingToEnd();
+                }
+            }
+            console.writeToConsole(string, addHeadline, writeEmptyLines);
         }
     }
 

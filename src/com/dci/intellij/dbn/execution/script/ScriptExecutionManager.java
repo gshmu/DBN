@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.execution.script;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -30,6 +18,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ScriptExecutionManager extends AbstractProjectComponent {
     private Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
@@ -65,6 +65,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 final ConnectionHandler connectionHandler = inputDialog.getConnection();
                 final DBSchema schema = inputDialog.getSchema();
+                connectionMappingManager.setActiveConnection(virtualFile, connectionHandler);
+                connectionMappingManager.setCurrentSchema(virtualFile, schema);
+
                 new BackgroundTask(project, "Executing database script", true, false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {

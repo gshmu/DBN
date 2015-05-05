@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
-import java.util.List;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -27,6 +21,12 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
+import java.util.List;
 
 public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
     private JPanel mainPanel;
@@ -114,7 +114,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             logConsoleName = databaseLogName;
         }
 
-        DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
+        DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, null, logConsoleName, true);
         outputConsole.writeToConsole(logOutput, false, false);
         Disposer.register(this, outputConsole);
 
