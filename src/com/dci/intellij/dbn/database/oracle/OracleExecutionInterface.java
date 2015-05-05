@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.database.oracle;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.ScriptExecutionInput;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
@@ -24,7 +27,7 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
     }
 
     @Override
-    public ScriptExecutionInput createScriptExecutionInput(String programPath, String filePath, String content, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo) {
+    public ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         ScriptExecutionInput executionInput = new ScriptExecutionInput(content);
         String connectArg = SQLPLUS_CONNECT_PATTERN.
                 replace("[USER]", authenticationInfo.getUser()).
@@ -42,6 +45,9 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
 
         StringBuilder contentBuilder = executionInput.getContent();
         contentBuilder.insert(0, "set echo on;\n");
+        if (StringUtil.isNotEmpty(schema)) {
+            contentBuilder.insert(0, "alter session set current_schema = " + schema + ";");
+        }
         contentBuilder.append("\nexit;\n");
 
         return executionInput;
