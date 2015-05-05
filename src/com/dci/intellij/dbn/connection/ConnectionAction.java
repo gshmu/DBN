@@ -83,7 +83,7 @@ public abstract class ConnectionAction extends SimpleTask {
                                     }
                                 });
                     } else {
-                        AuthenticationInfo authenticationInfo = connectionHandler.getSettings().getDatabaseSettings().getAuthenticationInfo();
+                        AuthenticationInfo authenticationInfo = connectionHandler.getAuthenticationInfo();
                         authenticationInfo = ConnectionManager.openUserPasswordDialog(getProject(), connectionHandler, authenticationInfo.clone());
                         if (authenticationInfo != null) {
                             doExecute();

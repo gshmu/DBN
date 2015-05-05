@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -98,4 +99,7 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider {
     int getIdleMinutes();
 
     ConnectionHandlerRef getRef();
+
+    DatabaseInfo getDatabaseInfo();
+    AuthenticationInfo getAuthenticationInfo();
 }

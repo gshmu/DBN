@@ -264,8 +264,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             AuthenticationInfo newAuthenticationInfo = passwordDialog.getAuthenticationInfo();
             if (connectionHandler != null) {
-                ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
-                AuthenticationInfo storedAuthenticationInfo = databaseSettings.getAuthenticationInfo();
+                AuthenticationInfo storedAuthenticationInfo = connectionHandler.getAuthenticationInfo();
 
                 if (passwordDialog.isRememberCredentials()) {
                     storedAuthenticationInfo.setUser(newAuthenticationInfo.getUser());
