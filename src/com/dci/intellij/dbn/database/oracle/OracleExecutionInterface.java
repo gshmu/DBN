@@ -44,10 +44,10 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         command.add(fileArg);
 
         StringBuilder contentBuilder = executionInput.getContent();
-        contentBuilder.insert(0, "set echo on;\n");
         if (StringUtil.isNotEmpty(schema)) {
-            contentBuilder.insert(0, "alter session set current_schema = " + schema + ";");
+            contentBuilder.insert(0, "alter session set current_schema = " + schema + ";\n");
         }
+        contentBuilder.insert(0, "set echo on;\n");
         contentBuilder.append("\nexit;\n");
 
         return executionInput;
