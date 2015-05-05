@@ -16,14 +16,21 @@ import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
 public class DatabaseLogOutput implements ExecutionResult {
     private ConnectionHandlerRef connectionHandlerRef;
     private DatabaseLogOutputForm logOutputForm;
+    private VirtualFile sourceFile;
 
-    public DatabaseLogOutput(ConnectionHandler connectionHandler) {
+
+    public DatabaseLogOutput(@NotNull ConnectionHandler connectionHandler) {
+        this(connectionHandler, null);
+    }
+    public DatabaseLogOutput(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile) {
         this.connectionHandlerRef = connectionHandler.getRef();
+        this.sourceFile = sourceFile;
     }
 
     public DatabaseLogOutputForm getForm(boolean create) {
@@ -38,10 +45,18 @@ public class DatabaseLogOutput implements ExecutionResult {
     @NotNull
     public String getName() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-        String databaseLogName = compatibilityInterface.getDatabaseLogName();
+        if (sourceFile == null) {
+            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
+            String databaseLogName = compatibilityInterface.getDatabaseLogName();
 
-        return connectionHandler.getName() + " - " + CommonUtil.nvl(databaseLogName, "Log Output");
+            return connectionHandler.getName() + " - " + CommonUtil.nvl(databaseLogName, "Log Output");
+        } else {
+            return connectionHandler.getName() + " - " + sourceFile.getName();
+        }
+    }
+
+    public boolean matches(ConnectionHandler connectionHandler, VirtualFile sourceFile) {
+        return getConnectionHandler() == connectionHandler && CommonUtil.safeEqual(this.sourceFile, sourceFile);
     }
 
     @Override
@@ -71,9 +86,9 @@ public class DatabaseLogOutput implements ExecutionResult {
         return null;
     }
 
-    public void write(String string) {
+    public void write(String string, boolean addHeadline, boolean writeEmptyLines) {
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
-            logOutputForm.getConsole().writeToConsole(string);
+            logOutputForm.getConsole().writeToConsole(string, addHeadline, writeEmptyLines);
         }
     }
 

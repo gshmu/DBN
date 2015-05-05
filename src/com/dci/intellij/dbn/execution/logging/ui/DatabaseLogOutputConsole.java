@@ -12,6 +12,7 @@ import com.intellij.diagnostic.logging.DefaultLogFilterModel;
 import com.intellij.diagnostic.logging.LogConsoleBase;
 import com.intellij.diagnostic.logging.LogFilterModel;
 import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionGroup;
 
 public class DatabaseLogOutputConsole extends LogConsoleBase{
@@ -37,15 +38,23 @@ public class DatabaseLogOutputConsole extends LogConsoleBase{
         return ConnectionHandlerRef.get(connectionHandlerRef);
     }
 
-    public void writeToConsole(String text) {
+    public void writeToConsole(String text, boolean addHeadline, boolean writeEmptyLines) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null && !connectionHandler.isDisposed() && StringUtil.isNotEmptyOrSpaces(text)) {
-            Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
-            String date = formatter.formatDateTime(new Date());
+        if (connectionHandler != null && !connectionHandler.isDisposed()) {
+            if (addHeadline) {
+                Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
+                String date = formatter.formatDateTime(new Date());
 
-            String headline = connectionHandler.getName() + " - " + date + "\n";
-            writeToConsole(headline, ProcessOutputTypes.SYSTEM);
-            writeToConsole(text, ProcessOutputTypes.STDOUT);
+                String headline = connectionHandler.getName() + " - " + date + "\n";
+                ConsoleView console = getConsole();
+                if (console != null && console.getContentSize() > 0) {
+                    headline = "__________________________________________________\n" + headline;
+                }
+                writeToConsole(headline, ProcessOutputTypes.SYSTEM);
+            }
+            if (writeEmptyLines || StringUtil.isNotEmptyOrSpaces(text)) {
+                writeToConsole(text + "\n", ProcessOutputTypes.STDOUT);
+            }
         }
     }
 

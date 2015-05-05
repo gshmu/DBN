@@ -13,10 +13,12 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.ScriptExecutionInput;
+import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -36,7 +38,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
         final ConnectionHandler connectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
         if (connectionHandler != null && !connectionHandler.isVirtual()) {
-            new BackgroundTask(connectionHandler.getProject(), "Executing database script", false, false) {
+            new BackgroundTask(connectionHandler.getProject(), "Executing database script", true, false) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                     new SimpleTimeoutCall<Object>(60, TimeUnit.SECONDS, null) {
@@ -55,29 +57,32 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                                         connectionHandler.getAuthenticationInfo()
                                 );
 
-                                FileUtil.writeToFile(tempScriptFile, executionInput.getContent());
+                                FileUtil.writeToFile(tempScriptFile, executionInput.getTextContent());
 
-                                Runtime runtime = Runtime.getRuntime();
-                                Process process = runtime.exec(executionInput.getCommand(), executionInput.getEnvironmentVariables());
+                                Process process;
+                                if (true) {
+                                    ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
+                                    processBuilder.environment().putAll(executionInput.getEnvironmentVars());
+                                    processBuilder.redirectErrorStream(true);
+                                    process = processBuilder.start();
+                                } else {
+                                    Runtime runtime = Runtime.getRuntime();
+                                    process = runtime.exec(executionInput.getLineCommand());
+                                }
+
                                 BufferedReader bri = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                                BufferedReader bre = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
                                 String line;
-                                System.out.println("<BEGIN>");
-
+                                ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+                                boolean addHeadline = true;
                                 while ((line = bri.readLine()) != null) {
-                                    System.out.println(line);
+                                    executionManager.writeLogOutput(connectionHandler, virtualFile, line, addHeadline, true);
+                                    addHeadline = false;
                                 }
                                 bri.close();
 
-                                while ( (line = bre.readLine()) != null) {
-                                    System.out.println(line);
-                                }
-                                bre.close();
-
-
-                                System.out.println("</END>");
                             } catch (Exception e) {
+                                MessageUtil.showErrorDialog(getProject(), "Script Execution Error", "Error executing script " + virtualFile.getName() + "." + e.getMessage());
                                 e.printStackTrace();
                             } finally {
                                 if (tempScriptFile != null && tempScriptFile.exists()) {
