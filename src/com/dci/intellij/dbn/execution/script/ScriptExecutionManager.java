@@ -82,7 +82,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                                 bri.close();
 
                             } catch (Exception e) {
-                                MessageUtil.showErrorDialog(getProject(), "Script Execution Error", "Error executing script " + virtualFile.getName() + "." + e.getMessage());
+                                MessageUtil.showErrorDialog(getProject(), "Script Execution Error", "Error executing script " + virtualFile.getName() + ".\n" + e.getMessage());
                                 e.printStackTrace();
                             } finally {
                                 if (tempScriptFile != null && tempScriptFile.exists()) {
