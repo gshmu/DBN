@@ -50,6 +50,7 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
 import com.intellij.ui.tabs.JBTabsPosition;
@@ -360,17 +361,20 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     /*********************************************************
      *                       Logging                         *
      *********************************************************/
-    public void displayLogOutput(ConnectionHandler connectionHandler, String output) {
+    public void displayLogOutput(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, String output, boolean addHeadline, boolean writeEmptyLines) {
         TabbedPane resultTabs = getResultTabs();
         boolean emptyOutput = StringUtil.isEmptyOrSpaces(output);
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult instanceof DatabaseLogOutput) {
                 DatabaseLogOutput logOutput = (DatabaseLogOutput) executionResult;
-                if (logOutput.getConnectionHandler() == connectionHandler) {
-                    logOutput.write(output);
+                if (logOutput.matches(connectionHandler, sourceFile)) {
+                    logOutput.write(output, addHeadline, writeEmptyLines);
                     if (!emptyOutput) {
                         tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
+                    }
+                    if (sourceFile != null) {
+                        resultTabs.select(tabInfo, true);
                     }
                     return;
                 }
@@ -378,7 +382,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
         boolean messagesTabVisible = isMessagesTabVisible();
 
-        DatabaseLogOutput logOutput = new DatabaseLogOutput(connectionHandler);
+        DatabaseLogOutput logOutput = new DatabaseLogOutput(connectionHandler, sourceFile);
         DatabaseLogOutputForm form = logOutput.getForm(true);
         if (form != null) {
             JComponent component = form.getComponent();
@@ -396,7 +400,10 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             }
 
             resultTabs.addTab(tabInfo, messagesTabVisible ? 1 : 0);
-            logOutput.write(output);
+            if (sourceFile != null) {
+                resultTabs.select(tabInfo, true);
+            }
+            logOutput.write(output, addHeadline, writeEmptyLines);
         }
     }
 

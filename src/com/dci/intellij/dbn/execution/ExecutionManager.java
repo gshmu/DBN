@@ -26,6 +26,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -122,6 +123,17 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }.start();
     }
 
+    public void writeLogOutput(final ConnectionHandler connectionHandler, final VirtualFile virtualFile, final String output, final boolean addHeadline, final boolean writeEmptyLines) {
+        new ConditionalLaterInvocator() {
+            @Override
+            protected void execute() {
+                showExecutionConsole();
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.displayLogOutput(connectionHandler, virtualFile, output, addHeadline, writeEmptyLines);
+            }
+        }.start();
+    }
+
     public void addExecutionResult(final StatementExecutionResult executionResult) {
         new ConditionalLaterInvocator() {
             @Override
@@ -129,7 +141,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionResult.isLoggingActive()) {
-                    executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), executionResult.getLoggingOutput());
+                    executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), null, executionResult.getLoggingOutput(), true, false);
                 }
 
                 executionConsoleForm.addResult(executionResult);

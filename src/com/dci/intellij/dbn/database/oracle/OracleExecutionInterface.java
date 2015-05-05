@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import java.util.List;
+
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -11,7 +13,7 @@ import com.dci.intellij.dbn.database.oracle.execution.OracleMethodExecutionProce
 import com.dci.intellij.dbn.object.DBMethod;
 
 public class OracleExecutionInterface implements DatabaseExecutionInterface {
-    private static final String SQLPLUS_COMMAND_PATTERN = "[PROGRAM_PATH] \"[USER]/[PASSWORD]@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\" \"@[SCRIPT_FILE_PATH]\"";
+    private static final String SQLPLUS_CONNECT_PATTERN = "\"[USER]/[PASSWORD]@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\"";
 
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
         return new OracleMethodExecutionProcessor(method);
@@ -23,17 +25,25 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
 
     @Override
     public ScriptExecutionInput createScriptExecutionInput(String programPath, String filePath, String content, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo) {
-        String command = SQLPLUS_COMMAND_PATTERN.
-                replace("[PROGRAM_PATH]", CommonUtil.nvl(programPath, "sqlplus")).
+        ScriptExecutionInput executionInput = new ScriptExecutionInput(content);
+        String connectArg = SQLPLUS_CONNECT_PATTERN.
                 replace("[USER]", authenticationInfo.getUser()).
                 replace("[PASSWORD]", authenticationInfo.getPassword()).
                 replace("[HOST]", databaseInfo.getHost()).
                 replace("[PORT]", databaseInfo.getPort()).
-                replace("[DATABASE]", databaseInfo.getDatabase()).
-                replace("[SCRIPT_FILE_PATH]", filePath);
+                replace("[DATABASE]", databaseInfo.getDatabase());
 
-        content = "set echo on;\n" + content + "\nexit;\n";
+        String fileArg = "\"@" + filePath + "\"";
 
-        return new ScriptExecutionInput(command, content, null);
+        List<String> command = executionInput.getCommand();
+        command.add(CommonUtil.nvl(programPath, "sqlplus"));
+        command.add(connectArg);
+        command.add(fileArg);
+
+        StringBuilder contentBuilder = executionInput.getContent();
+        contentBuilder.insert(0, "set echo on;\n");
+        contentBuilder.append("\nexit;\n");
+
+        return executionInput;
     }
 }
