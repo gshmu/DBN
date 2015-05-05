@@ -55,7 +55,7 @@ import com.intellij.psi.PsiElement;
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
     protected WeakReference<FileEditor> fileEditorRef;
-    protected WeakReference<DBLanguagePsiFile> psiFileRef;
+    protected DBLanguagePsiFile psiFile;
     protected ExecutablePsiElement cachedExecutable;
     private EditorProviderId editorProviderId;
 
@@ -67,7 +67,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
         this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
-        this.psiFileRef = new WeakReference<DBLanguagePsiFile>(psiElement.getFile());
+        this.psiFile = psiElement.getFile();
 
         this.cachedExecutable = psiElement;
         this.index = index;
@@ -77,7 +77,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     public StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
         this.fileEditorRef = new WeakReference<FileEditor>(fileEditor);
-        this.psiFileRef = new WeakReference<DBLanguagePsiFile>(psiFile);
+        this.psiFile = psiFile;
         this.index = index;
         sqlStatement = sqlStatement.trim();
         executionInput = new StatementExecutionInput(sqlStatement, sqlStatement, this);
@@ -124,7 +124,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     @NotNull
     public DBLanguagePsiFile getPsiFile() {
-        return FailsafeUtil.get(psiFileRef.get());
+        return FailsafeUtil.get(psiFile);
     }
 
     @Override
@@ -510,7 +510,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (!disposed) {
             disposed = true;
             cachedExecutable = null;
-            psiFileRef = null;
+            psiFile = null;
 
         }
     }

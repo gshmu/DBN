@@ -9236,16 +9236,16 @@
 
     <!-- ========= EXPRESSIONS ========= -->
     <element-def description="Source string expression" id="source_string">
-        <element ref-id="simple_expression" />
+        <element ref-id="expression" />
     </element-def>
     <element-def description="Pattern expression" id="pattern">
-        <element ref-id="simple_expression" />
+        <element ref-id="expression" />
     </element-def>
     <element-def description="Match parameter expression" id="match_parameter">
-        <element ref-id="simple_expression" />
+        <element ref-id="expression" />
     </element-def>
     <element-def description="Escape character expression" id="esc_char">
-        <element ref-id="simple_expression" />
+        <element ref-id="expression" />
     </element-def>
     <element-def description="Character expression" id="char_expression">
         <element ref-id="expression" />
