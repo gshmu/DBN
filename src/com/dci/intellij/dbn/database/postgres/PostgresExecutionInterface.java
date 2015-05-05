@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.database.postgres;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.database.ScriptExecutionInput;
@@ -19,7 +22,7 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
     }
 
     @Override
-    public ScriptExecutionInput createScriptExecutionInput(String programPath, String filePath, String content, DatabaseInfo databaseInfo, AuthenticationInfo authenticationInfo) {
+    public ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         return null;
     }
 }

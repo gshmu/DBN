@@ -53,6 +53,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                                 ScriptExecutionInput executionInput = executionInterface.createScriptExecutionInput(null,
                                         tempScriptFile.getPath(),
                                         content,
+                                        null,
                                         connectionHandler.getDatabaseInfo(),
                                         connectionHandler.getAuthenticationInfo()
                                 );
