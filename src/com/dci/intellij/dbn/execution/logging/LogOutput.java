@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class LogOutput {
-    public static enum Type {
+    public enum Type {
         SYS(ProcessOutputTypes.SYSTEM),
         STD(ProcessOutputTypes.STDOUT),
         ERR(ProcessOutputTypes.STDERR);
