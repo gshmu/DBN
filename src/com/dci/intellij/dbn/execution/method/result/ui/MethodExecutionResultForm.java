@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -118,9 +119,11 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
         DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connectionHandler, logConsoleName, true);
         LogOutputContext context = new LogOutputContext(connectionHandler);
-        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Execution started"));
-        outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
-        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Execution finished\n\n"));
+        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution started"));
+        if (StringUtil.isNotEmptyOrSpaces(logOutput)) {
+            outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
+        }
+        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n"));
         Disposer.register(this, outputConsole);
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());

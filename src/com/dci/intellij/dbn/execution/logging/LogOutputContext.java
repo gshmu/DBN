@@ -13,7 +13,8 @@ public class LogOutputContext {
         NEW,
         ACTIVE,
         FINISHED,    // finished normally (or with error)
-        KILLED  // interrupted by user
+        STOPPED,     // interrupted by user
+        CLOSED      // cancelled completely (console closed)
     }
     private ConnectionHandlerRef connectionHandlerRef;
     private VirtualFile sourceFile;
@@ -75,10 +76,16 @@ public class LogOutputContext {
     }
 
 
-    public void kill() {
+    public void stop() {
         if (isActive()) {
-            status = Status.KILLED;
+            status = Status.STOPPED;
         }
+        destroyProcess();
+    }
+
+
+    public void close() {
+        status = Status.CLOSED;
         destroyProcess();
     }
 
@@ -86,8 +93,12 @@ public class LogOutputContext {
         return status == Status.ACTIVE;
     }
 
-    public boolean isKilled() {
-        return status == Status.KILLED;
+    public boolean isClosed() {
+        return status == Status.CLOSED;
+    }
+
+    public boolean isStopped() {
+        return status == Status.STOPPED;
     }
 
 

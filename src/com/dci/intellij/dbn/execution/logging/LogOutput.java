@@ -68,7 +68,7 @@ public class LogOutput {
         if (sourceFile != null) {
             text += " / " + sourceFile.getName();
         }
-        text += message + "\n";
+        text += message;
 
         return new LogOutput(text, Type.SYS, true);
     }

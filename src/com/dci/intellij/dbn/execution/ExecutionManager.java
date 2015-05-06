@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
@@ -128,7 +129,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                if (!context.isKilled()) {
+                if (!context.isClosed()) {
                     showExecutionConsole();
                     ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                     executionConsoleForm.displayLogOutput(context, output);
@@ -146,13 +147,18 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                 if (executionResult.isLoggingActive()) {
                     LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
                     context.setHideEmptyLines(false);
+                    String loggingOutput = executionResult.getLoggingOutput();
 
-                    LogOutput startOutput = LogOutput.createSysOutput(context, " - Statement execution started");
-                    LogOutput stdOutput = LogOutput.createStdOutput(executionResult.getLoggingOutput());
-                    LogOutput endOutput = LogOutput.createSysOutput(context, " - Statement execution finished\n\n");
-                    executionConsoleForm.displayLogOutput(context, startOutput);
-                    executionConsoleForm.displayLogOutput(context, stdOutput);
-                    executionConsoleForm.displayLogOutput(context, endOutput);
+                    executionConsoleForm.displayLogOutput(
+                            context, LogOutput.createSysOutput(context, " - Statement execution started"));
+
+                    if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
+                        executionConsoleForm.displayLogOutput(context,
+                                LogOutput.createStdOutput(loggingOutput));
+                    }
+
+                    executionConsoleForm.displayLogOutput(context,
+                            LogOutput.createSysOutput(context, " - Statement execution finished\n"));
                 }
 
                 executionConsoleForm.addResult(executionResult);
