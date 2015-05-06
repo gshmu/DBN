@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class ScriptExecutionManager extends AbstractProjectComponent {
-    private Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
+    private final Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
 
     private ScriptExecutionManager(Project project) {
         super(project);
@@ -71,7 +71,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                 new BackgroundTask(project, "Executing database script", true, false) {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        new SimpleTimeoutCall<Object>(10, TimeUnit.SECONDS, null) {
+                        new SimpleTimeoutCall<Object>(100, TimeUnit.SECONDS, null) {
                             @Override
                             public Object call() throws Exception {
                                 doExecuteScript(virtualFile, connectionHandler, schema);
@@ -95,7 +95,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         activeProcesses.put(virtualFile, null);
         File tempScriptFile = null;
         Process process = null;
-        BufferedReader outputReader = null;
+        BufferedReader logReader = null;
         try {
             String content = new String(virtualFile.contentsToByteArray());
             tempScriptFile = createTempScriptFile();
@@ -122,31 +122,34 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
             }
             activeProcesses.put(virtualFile, process);
 
-            outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            readExecutionLog(virtualFile, connectionHandler, logReader, true);
 
-            String line;
-            ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-            boolean addHeadline = true;
-            while ((line = outputReader.readLine()) != null) {
-                synchronized (activeProcesses) {
-                    if (activeProcesses.containsKey(virtualFile)) {
-                        executionManager.writeLogOutput(connectionHandler, virtualFile, line, addHeadline, true);
-                        addHeadline = false;
-                    } else {
-                        break;
-                    }
-                }
-            }
         } catch (Exception e) {
             if (process != null) {
                 process.destroy();
             }
             throw e;
         } finally {
-            if (outputReader != null) outputReader.close();
+            if (logReader != null) logReader.close();
             activeProcesses.remove(virtualFile);
             if (tempScriptFile != null && tempScriptFile.exists()) {
                 tempScriptFile.delete();
+            }
+        }
+    }
+
+    private void readExecutionLog(VirtualFile virtualFile, ConnectionHandler connectionHandler, BufferedReader logReader, boolean addHeadline) throws IOException {
+        String line;
+        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+        while ((line = logReader.readLine()) != null) {
+            synchronized (activeProcesses) {
+                if (activeProcesses.containsKey(virtualFile)) {
+                    executionManager.writeLogOutput(connectionHandler, virtualFile, line, addHeadline, true);
+                    addHeadline = false;
+                } else {
+                    break;
+                }
             }
         }
     }
