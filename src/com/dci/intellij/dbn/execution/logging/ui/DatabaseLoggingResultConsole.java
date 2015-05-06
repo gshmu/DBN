@@ -32,9 +32,10 @@ public class DatabaseLoggingResultConsole extends LogConsoleBase{
     public void writeToConsole(LogOutputContext context, LogOutput output) {
         String text = output.getText();
         boolean isEmpty = StringUtil.isEmptyOrSpaces(text);
-        if (!context.isHideEmptyLines() || !isEmpty) {
-            text = isEmpty ? text : text + "\n";
-            writeToConsole(text, output.getType().getKey());
+        boolean hideEmptyLines = context.isHideEmptyLines();
+
+        if (!hideEmptyLines || !isEmpty) {
+            writeToConsole(text + '\n', output.getType().getKey());
         }
     }
 
