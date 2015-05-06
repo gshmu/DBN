@@ -368,16 +368,17 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         boolean emptyOutput = StringUtil.isEmptyOrSpaces(output.getText());
         VirtualFile sourceFile = context.getSourceFile();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
+        boolean selectTab = sourceFile != null;
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult instanceof DatabaseLoggingResult) {
                 DatabaseLoggingResult logOutput = (DatabaseLoggingResult) executionResult;
                 if (logOutput.matches(context)) {
                     logOutput.write(context, output);
-                    if (!emptyOutput && sourceFile == null) {
+                    if (!emptyOutput && !selectTab) {
                         tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
                     }
-                    if (sourceFile != null) {
+                    if (selectTab) {
                         resultTabs.select(tabInfo, true);
                     }
                     return;
@@ -393,7 +394,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(form);
             tabInfo.setText(logOutput.getName());
-            tabInfo.setIcon(emptyOutput ?
+            tabInfo.setIcon(emptyOutput || selectTab ?
                     Icons.EXEC_LOG_OUTPUT_CONSOLE :
                     Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
@@ -404,7 +405,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             }
 
             resultTabs.addTab(tabInfo, messagesTabVisible ? 1 : 0);
-            if (sourceFile != null) {
+            if (selectTab) {
                 resultTabs.select(tabInfo, true);
             }
             logOutput.write(context, output);
