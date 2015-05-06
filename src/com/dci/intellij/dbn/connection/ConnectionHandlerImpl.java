@@ -31,7 +31,7 @@ import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -58,7 +58,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
-    private DatabaseLogOutput logOutput;
+    private DatabaseLoggingResult logOutput;
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;

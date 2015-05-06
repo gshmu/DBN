@@ -8,31 +8,21 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class LogOutputRequest {
+public class LogOutputContext {
     private ConnectionHandlerRef connectionHandlerRef;
     private VirtualFile sourceFile;
     private Process process;
-    private String text;
-    private boolean addHeadline = false;
     private boolean hideEmptyLines = false;
     private boolean cancelled = false;
 
-    public LogOutputRequest(@NotNull ConnectionHandler connectionHandler) {
+    public LogOutputContext(@NotNull ConnectionHandler connectionHandler) {
         this(connectionHandler, null, null);
     }
 
-    public LogOutputRequest(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
+    public LogOutputContext(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
         this.connectionHandlerRef = connectionHandler.getRef();
         this.sourceFile = sourceFile;
         this.process = process;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     @NotNull
@@ -54,14 +44,6 @@ public class LogOutputRequest {
         this.process = process;
     }
 
-    public boolean isAddHeadline() {
-        return addHeadline;
-    }
-
-    public void setAddHeadline(boolean addHeadline) {
-        this.addHeadline = addHeadline;
-    }
-
     public boolean isHideEmptyLines() {
         return hideEmptyLines;
     }
@@ -74,9 +56,9 @@ public class LogOutputRequest {
         return cancelled;
     }
 
-    public boolean matches(LogOutputRequest request) {
-        return getConnectionHandler() == request.getConnectionHandler() &&
-                CommonUtil.safeEqual(getSourceFile(), request.getSourceFile());
+    public boolean matches(LogOutputContext context) {
+        return getConnectionHandler() == context.getConnectionHandler() &&
+                CommonUtil.safeEqual(getSourceFile(), context.getSourceFile());
     }
 
     public void cancel() {

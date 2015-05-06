@@ -17,7 +17,8 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
-import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
+import com.dci.intellij.dbn.execution.logging.LogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -123,14 +124,14 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }.start();
     }
 
-    public void writeLogOutput(@NotNull final LogOutputRequest request) {
+    public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                if (!request.isCancelled()) {
+                if (!context.isCancelled()) {
                     showExecutionConsole();
                     ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.displayLogOutput(request);
+                    executionConsoleForm.displayLogOutput(context, output);
                 }
             }
         }.start();
@@ -143,11 +144,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionResult.isLoggingActive()) {
-                    LogOutputRequest logRequest = new LogOutputRequest(executionResult.getConnectionHandler());
-                    logRequest.setHideEmptyLines(false);
-                    logRequest.setAddHeadline(true);
-                    logRequest.setText(executionResult.getLoggingOutput());
-                    executionConsoleForm.displayLogOutput(logRequest);
+                    LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
+                    LogOutput output = new LogOutput(executionResult.getLoggingOutput(), true);
+                    context.setHideEmptyLines(false);
+                    executionConsoleForm.displayLogOutput(context, output);
                 }
 
                 executionConsoleForm.addResult(executionResult);

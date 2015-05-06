@@ -23,7 +23,8 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.ScriptExecutionInput;
 import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
+import com.dci.intellij.dbn.execution.logging.LogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -87,7 +88,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         activeProcesses.put(virtualFile, null);
         File tempScriptFile = null;
         BufferedReader logReader = null;
-        LogOutputRequest logRequest = new LogOutputRequest(connectionHandler, virtualFile, null);
+        LogOutputContext context = new LogOutputContext(connectionHandler, virtualFile, null);
         try {
             String content = new String(virtualFile.contentsToByteArray());
             tempScriptFile = createTempScriptFile();
@@ -112,28 +113,29 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                 Runtime runtime = Runtime.getRuntime();
                 process = runtime.exec(executionInput.getLineCommand());
 */
-            logRequest.setProcess(process);
+            context.setProcess(process);
             activeProcesses.put(virtualFile, process);
 
             logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 
-            logRequest.setAddHeadline(true);
-            logRequest.setHideEmptyLines(false);
+
+            context.setHideEmptyLines(false);
             String line;
+            boolean addHeadline = true;
             ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
             while ((line = logReader.readLine()) != null) {
-                if (logRequest.isCancelled()) {
+                if (context.isCancelled()) {
                     break;
                 } else {
-                    logRequest.setText(line);
-                    executionManager.writeLogOutput(logRequest);
-                    logRequest.setAddHeadline(false);
+                    LogOutput output = new LogOutput(line, addHeadline);
+                    executionManager.writeLogOutput(context, output);
+                    addHeadline = false;
                 }
             }
 
         } catch (Exception e) {
-            logRequest.cancel();
+            context.cancel();
             throw e;
         } finally {
             if (logReader != null) logReader.close();
