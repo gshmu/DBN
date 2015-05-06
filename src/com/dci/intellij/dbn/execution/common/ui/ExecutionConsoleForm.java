@@ -37,9 +37,10 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
-import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
-import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
+import com.dci.intellij.dbn.execution.logging.LogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputContext;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -171,7 +172,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     }
                 }
             }
-            if (oldSelection != null && newSelection != null && getExecutionResult(newSelection) instanceof DatabaseLogOutput) {
+            if (oldSelection != null && newSelection != null && getExecutionResult(newSelection) instanceof DatabaseLoggingResult) {
                 newSelection.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
             }
 
@@ -362,17 +363,17 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     /*********************************************************
      *                       Logging                         *
      *********************************************************/
-    public void displayLogOutput(LogOutputRequest request) {
+    public void displayLogOutput(LogOutputContext context, LogOutput output) {
         TabbedPane resultTabs = getResultTabs();
-        boolean emptyOutput = StringUtil.isEmptyOrSpaces(request.getText());
-        VirtualFile sourceFile = request.getSourceFile();
-        ConnectionHandler connectionHandler = request.getConnectionHandler();
+        boolean emptyOutput = StringUtil.isEmptyOrSpaces(output.getText());
+        VirtualFile sourceFile = context.getSourceFile();
+        ConnectionHandler connectionHandler = context.getConnectionHandler();
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
-            if (executionResult instanceof DatabaseLogOutput) {
-                DatabaseLogOutput logOutput = (DatabaseLogOutput) executionResult;
-                if (logOutput.matches(request)) {
-                    logOutput.write(request);
+            if (executionResult instanceof DatabaseLoggingResult) {
+                DatabaseLoggingResult logOutput = (DatabaseLoggingResult) executionResult;
+                if (logOutput.matches(context)) {
+                    logOutput.write(context, output);
                     if (!emptyOutput && sourceFile == null) {
                         tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
                     }
@@ -385,8 +386,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
         boolean messagesTabVisible = isMessagesTabVisible();
 
-        DatabaseLogOutput logOutput = new DatabaseLogOutput(request);
-        DatabaseLogOutputForm form = logOutput.getForm(true);
+        DatabaseLoggingResult logOutput = new DatabaseLoggingResult(context);
+        DatabaseLoggingResultForm form = logOutput.getForm(true);
         if (form != null) {
             JComponent component = form.getComponent();
             TabInfo tabInfo = new TabInfo(component);
@@ -406,7 +407,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             if (sourceFile != null) {
                 resultTabs.select(tabInfo, true);
             }
-            logOutput.write(request);
+            logOutput.write(context, output);
         }
     }
 

@@ -15,8 +15,9 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
-import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputConsole;
+import com.dci.intellij.dbn.execution.logging.LogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputContext;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultConsole;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -115,10 +116,10 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             logConsoleName = databaseLogName;
         }
 
-        DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
-        LogOutputRequest request = new LogOutputRequest(connectionHandler);
-        request.setText(logOutput);
-        outputConsole.writeToConsole(request);
+        DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connectionHandler, logConsoleName, true);
+        LogOutputContext context = new LogOutputContext(connectionHandler);
+        LogOutput output = new LogOutput(logOutput, false);
+        outputConsole.writeToConsole(context, output);
         Disposer.register(this, outputConsole);
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());

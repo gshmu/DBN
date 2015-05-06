@@ -47,7 +47,12 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         if (StringUtil.isNotEmpty(schema)) {
             contentBuilder.insert(0, "alter session set current_schema = " + schema + ";\n");
         }
+
         contentBuilder.insert(0, "set echo on;\n");
+        contentBuilder.insert(0, "set linesize 32000;\n");
+        contentBuilder.insert(0, "set pagesize 40000;\n");
+        contentBuilder.insert(0, "set long 50000;\n");
+
         contentBuilder.append("\nexit;\n");
 
         return executionInput;

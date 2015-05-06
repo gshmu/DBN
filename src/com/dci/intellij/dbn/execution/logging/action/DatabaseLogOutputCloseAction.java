@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 
@@ -16,11 +16,11 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = getEventProject(e);
-        DatabaseLogOutput databaseLogOutput = getDatabaseLogOutput(e);
-        if (project != null && databaseLogOutput != null && !databaseLogOutput.isDisposed()) {
-            databaseLogOutput.getRequest().cancel();
+        DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
+        if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
+            loggingResult.getContext().cancel();
             ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            executionManager.removeResultTab(databaseLogOutput);
+            executionManager.removeResultTab(loggingResult);
         }
     }
 

@@ -11,8 +11,8 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputConsole;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultConsole;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.DataProvider;
@@ -21,30 +21,30 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
-public class DatabaseLogOutput implements ExecutionResult {
-    private LogOutputRequest request;
-    private DatabaseLogOutputForm logOutputForm;
+public class DatabaseLoggingResult implements ExecutionResult {
+    private LogOutputContext context;
+    private DatabaseLoggingResultForm logOutputForm;
 
-    public DatabaseLogOutput(@NotNull LogOutputRequest request) {
-        this.request = request;
+    public DatabaseLoggingResult(@NotNull LogOutputContext context) {
+        this.context = context;
     }
-    public DatabaseLogOutputForm getForm(boolean create) {
+    public DatabaseLoggingResultForm getForm(boolean create) {
         if (logOutputForm == null && create) {
-            logOutputForm = new DatabaseLogOutputForm(getProject(), this);
+            logOutputForm = new DatabaseLoggingResultForm(getProject(), this);
             Disposer.register(logOutputForm, this);
         }
         return logOutputForm;
     }
 
-    public LogOutputRequest getRequest() {
-        return request;
+    public LogOutputContext getContext() {
+        return context;
     }
 
     @Override
     @NotNull
     public String getName() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        VirtualFile sourceFile = request.getSourceFile();
+        VirtualFile sourceFile = context.getSourceFile();
         if (sourceFile == null) {
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
             String databaseLogName = compatibilityInterface.getDatabaseLogName();
@@ -55,8 +55,8 @@ public class DatabaseLogOutput implements ExecutionResult {
         }
     }
 
-    public boolean matches(LogOutputRequest request) {
-        return this.request == request || this.request.matches(request);
+    public boolean matches(LogOutputContext context) {
+        return this.context == context || this.context.matches(context);
     }
 
     @Override
@@ -72,18 +72,18 @@ public class DatabaseLogOutput implements ExecutionResult {
 
     @Override
     public String getConnectionId() {
-        return request.getConnectionId();
+        return context.getConnectionId();
     }
 
     @Nullable
     public VirtualFile getSourceFile() {
-        return request.getSourceFile();
+        return context.getSourceFile();
     }
 
     @NotNull
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return request.getConnectionHandler();
+        return context.getConnectionHandler();
     }
 
     @Override
@@ -91,18 +91,18 @@ public class DatabaseLogOutput implements ExecutionResult {
         return null;
     }
 
-    public void write(LogOutputRequest request) {
-        this.request = request;
+    public void write(LogOutputContext context, LogOutput output) {
+        this.context = context;
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
-            DatabaseLogOutputConsole console = logOutputForm.getConsole();
-            if (request.isAddHeadline()) {
+            DatabaseLoggingResultConsole console = logOutputForm.getConsole();
+            if (output.isAddHeadline()) {
                 ConsoleView consoleView = console.getConsole();
                 if (consoleView instanceof ConsoleViewImpl) {
                     ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) consoleView;
                     consoleViewImpl.requestScrollingToEnd();
                 }
             }
-            console.writeToConsole(request);
+            console.writeToConsole(context, output);
         }
     }
 
@@ -113,7 +113,7 @@ public class DatabaseLogOutput implements ExecutionResult {
         @Override
         public Object getData(@NonNls String dataId) {
             if (DBNDataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
-                return DatabaseLogOutput.this;
+                return DatabaseLoggingResult.this;
             }
             return null;
         }
@@ -136,6 +136,6 @@ public class DatabaseLogOutput implements ExecutionResult {
 
     public void dispose() {
         disposed = true;
-        request = null;
+        context = null;
     }
 }
