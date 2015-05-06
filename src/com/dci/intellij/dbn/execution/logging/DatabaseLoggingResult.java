@@ -95,7 +95,7 @@ public class DatabaseLoggingResult implements ExecutionResult {
         this.context = context;
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
             DatabaseLoggingResultConsole console = logOutputForm.getConsole();
-            if (output.isAddHeadline()) {
+            if (output.isScrollToEnd()) {
                 ConsoleView consoleView = console.getConsole();
                 if (consoleView instanceof ConsoleViewImpl) {
                     ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) consoleView;

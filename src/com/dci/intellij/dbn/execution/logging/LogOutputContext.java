@@ -9,11 +9,17 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class LogOutputContext {
+    public enum Status{
+        NEW,
+        ACTIVE,
+        FINISHED,    // finished normally (or with error)
+        KILLED  // interrupted by user
+    }
     private ConnectionHandlerRef connectionHandlerRef;
     private VirtualFile sourceFile;
     private Process process;
+    private Status status = Status.NEW;
     private boolean hideEmptyLines = false;
-    private boolean cancelled = false;
 
     public LogOutputContext(@NotNull ConnectionHandler connectionHandler) {
         this(connectionHandler, null, null);
@@ -52,17 +58,40 @@ public class LogOutputContext {
         this.hideEmptyLines = hideEmptyLines;
     }
 
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
     public boolean matches(LogOutputContext context) {
         return getConnectionHandler() == context.getConnectionHandler() &&
                 CommonUtil.safeEqual(getSourceFile(), context.getSourceFile());
     }
 
-    public void cancel() {
-        cancelled = true;
+    public void start() {
+        status = Status.ACTIVE;
+    }
+
+    public void finish() {
+        if (isActive()) {
+            status = Status.FINISHED;
+        }
+        destroyProcess();
+    }
+
+
+    public void kill() {
+        if (isActive()) {
+            status = Status.KILLED;
+        }
+        destroyProcess();
+    }
+
+    public boolean isActive() {
+        return status == Status.ACTIVE;
+    }
+
+    public boolean isKilled() {
+        return status == Status.KILLED;
+    }
+
+
+    private void destroyProcess() {
         if (process != null) {
             process.destroy();
             process = null;
