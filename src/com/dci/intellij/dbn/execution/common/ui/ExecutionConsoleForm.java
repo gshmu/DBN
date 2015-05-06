@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -24,6 +38,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -43,20 +58,6 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -361,15 +362,17 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     /*********************************************************
      *                       Logging                         *
      *********************************************************/
-    public void displayLogOutput(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, String output, boolean addHeadline, boolean writeEmptyLines) {
+    public void displayLogOutput(LogOutputRequest request) {
         TabbedPane resultTabs = getResultTabs();
-        boolean emptyOutput = StringUtil.isEmptyOrSpaces(output);
+        boolean emptyOutput = StringUtil.isEmptyOrSpaces(request.getText());
+        VirtualFile sourceFile = request.getSourceFile();
+        ConnectionHandler connectionHandler = request.getConnectionHandler();
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult instanceof DatabaseLogOutput) {
                 DatabaseLogOutput logOutput = (DatabaseLogOutput) executionResult;
-                if (logOutput.matches(connectionHandler, sourceFile)) {
-                    logOutput.write(output, addHeadline, writeEmptyLines);
+                if (logOutput.matches(request)) {
+                    logOutput.write(request);
                     if (!emptyOutput && sourceFile == null) {
                         tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
                     }
@@ -382,7 +385,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
         boolean messagesTabVisible = isMessagesTabVisible();
 
-        DatabaseLogOutput logOutput = new DatabaseLogOutput(connectionHandler, sourceFile);
+        DatabaseLogOutput logOutput = new DatabaseLogOutput(request);
         DatabaseLogOutputForm form = logOutput.getForm(true);
         if (form != null) {
             JComponent component = form.getComponent();
@@ -403,7 +406,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             if (sourceFile != null) {
                 resultTabs.select(tabInfo, true);
             }
-            logOutput.write(output, addHeadline, writeEmptyLines);
+            logOutput.write(request);
         }
     }
 

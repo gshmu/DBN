@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,10 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-
 public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResultForm<DatabaseLogOutput>{
     private JPanel mainPanel;
     private JPanel consolePanel;
@@ -34,7 +34,7 @@ public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResul
         this.databaseLogOutput = databaseLogOutput;
         ConnectionHandler connectionHandler = databaseLogOutput.getConnectionHandler();
         VirtualFile sourceFile = databaseLogOutput.getSourceFile();
-        console = new DatabaseLogOutputConsole(connectionHandler, sourceFile, databaseLogOutput.getName(), false);
+        console = new DatabaseLogOutputConsole(connectionHandler, databaseLogOutput.getName(), false);
         consolePanel.add(console.getComponent(), BorderLayout.CENTER);
 
         ActionManager actionManager = ActionManager.getInstance();
@@ -51,7 +51,7 @@ public class DatabaseLogOutputForm extends DBNFormImpl implements ExecutionResul
             toolbarActions.add(actionManager.getAction("DBNavigator.Actions.DatabaseLogOutput.Settings"), Constraints.LAST);
             ActionToolbar actionToolbar = actionManager.createActionToolbar(ActionPlaces.UNKNOWN, toolbarActions, false);
             actionsPanel.add(actionToolbar.getComponent());
-            actionToolbar.setTargetComponent(actionsPanel);
+            actionToolbar.setTargetComponent(console.getToolbarContextComponent());
         }
 
 
