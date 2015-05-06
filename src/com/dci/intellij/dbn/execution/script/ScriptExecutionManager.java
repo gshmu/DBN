@@ -89,6 +89,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         File tempScriptFile = null;
         BufferedReader logReader = null;
         LogOutputContext context = new LogOutputContext(connectionHandler, virtualFile, null);
+        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
         try {
             String content = new String(virtualFile.contentsToByteArray());
             tempScriptFile = createTempScriptFile();
@@ -116,28 +117,28 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
             context.setProcess(process);
             activeProcesses.put(virtualFile, process);
 
-            logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-
-
             context.setHideEmptyLines(false);
+            context.start();
             String line;
-            boolean addHeadline = true;
-            ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution started"));
+
+            logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = logReader.readLine()) != null) {
-                if (context.isCancelled()) {
-                    break;
+                if (context.isActive()) {
+                    LogOutput stdOutput = LogOutput.createStdOutput(line);
+                    executionManager.writeLogOutput(context, stdOutput);
                 } else {
-                    LogOutput output = new LogOutput(line, addHeadline);
-                    executionManager.writeLogOutput(context, output);
-                    addHeadline = false;
+                    break;
                 }
             }
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution finished"));
 
         } catch (Exception e) {
-            context.cancel();
+            executionManager.writeLogOutput(context, LogOutput.createErrOutput(e.getMessage()));
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution finished with errors"));
             throw e;
         } finally {
+            context.finish();
             if (logReader != null) logReader.close();
             activeProcesses.remove(virtualFile);
             if (tempScriptFile != null && tempScriptFile.exists()) {

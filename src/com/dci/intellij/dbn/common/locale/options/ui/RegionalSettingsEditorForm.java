@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Date;
+import java.util.Locale;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
@@ -13,19 +26,6 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Date;
-import java.util.Locale;
 
 public class RegionalSettingsEditorForm extends ConfigurationEditorForm<RegionalSettings> {
     private JPanel mainPanel;
@@ -73,12 +73,13 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
                 updatePreview();
             }
         };
-        numberFormatComboBox.addListener(previewListener);
-        dateFormatComboBox.addListener(previewListener);
 
         resetFormChanges();
         updatePreview();
 
+        numberFormatComboBox.addListener(previewListener);
+        dateFormatComboBox.addListener(previewListener);
+        localeComboBox.addListener(previewListener);
         registerComponent(mainPanel);
     }
 

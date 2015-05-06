@@ -118,8 +118,9 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
         DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connectionHandler, logConsoleName, true);
         LogOutputContext context = new LogOutputContext(connectionHandler);
-        LogOutput output = new LogOutput(logOutput, false);
-        outputConsole.writeToConsole(context, output);
+        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Execution started"));
+        outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
+        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Execution finished\n\n"));
         Disposer.register(this, outputConsole);
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());

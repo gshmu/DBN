@@ -128,7 +128,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                if (!context.isCancelled()) {
+                if (!context.isKilled()) {
                     showExecutionConsole();
                     ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                     executionConsoleForm.displayLogOutput(context, output);
@@ -145,9 +145,14 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionResult.isLoggingActive()) {
                     LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
-                    LogOutput output = new LogOutput(executionResult.getLoggingOutput(), true);
                     context.setHideEmptyLines(false);
-                    executionConsoleForm.displayLogOutput(context, output);
+
+                    LogOutput startOutput = LogOutput.createSysOutput(context, " - Statement execution started");
+                    LogOutput stdOutput = LogOutput.createStdOutput(executionResult.getLoggingOutput());
+                    LogOutput endOutput = LogOutput.createSysOutput(context, " - Statement execution finished\n\n");
+                    executionConsoleForm.displayLogOutput(context, startOutput);
+                    executionConsoleForm.displayLogOutput(context, stdOutput);
+                    executionConsoleForm.displayLogOutput(context, endOutput);
                 }
 
                 executionConsoleForm.addResult(executionResult);
