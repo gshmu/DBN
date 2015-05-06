@@ -131,7 +131,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                     break;
                 }
             }
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution finished"));
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, context.isStopped() ? " - Script execution interrupted by used" : " - Script execution finished"));
 
         } catch (Exception e) {
             executionManager.writeLogOutput(context, LogOutput.createErrOutput(e.getMessage()));

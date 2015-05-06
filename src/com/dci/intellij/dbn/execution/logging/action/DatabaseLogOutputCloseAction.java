@@ -21,7 +21,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
         final DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
         if (project != null && loggingResult != null && !loggingResult.isDisposed()) {
             if (loggingResult.getContext().isActive()) {
-                SimpleTask killConsoleTask = new SimpleTask() {
+                SimpleTask closeConsoleTask = new SimpleTask() {
                     @Override
                     protected void execute() {
                         if (getOption() == 0) {
@@ -33,7 +33,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
                         project,
                         "Process Active",
                         "The process is still active. Closing the log output will forcibly interrupt the process. \nAre you sure you want to close the console?",
-                        MessageUtil.OPTIONS_YES_NO, 0, killConsoleTask);
+                        MessageUtil.OPTIONS_YES_NO, 0, closeConsoleTask);
             } else {
                 closeConsole(loggingResult, project);
             }
@@ -42,7 +42,7 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
     }
 
     private void closeConsole(DatabaseLoggingResult loggingResult, Project project) {
-        loggingResult.getContext().kill();
+        loggingResult.getContext().close();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.removeResultTab(loggingResult);
     }

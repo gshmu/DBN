@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -36,8 +37,9 @@ public class DatabaseLoggingResult implements ExecutionResult {
         return logOutputForm;
     }
 
+    @NotNull
     public LogOutputContext getContext() {
-        return context;
+        return FailsafeUtil.get(context);
     }
 
     @Override
