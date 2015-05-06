@@ -59,10 +59,14 @@ public class LogOutput {
     }
 
     public static LogOutput createSysOutput(LogOutputContext context, String message) {
+        return createSysOutput(context, System.currentTimeMillis(), message);
+    }
+
+    public static LogOutput createSysOutput(LogOutputContext context, long timestamp, String message) {
         ConnectionHandler connectionHandler = context.getConnectionHandler();
         Project project = connectionHandler.getProject();
         Formatter formatter = Formatter.getInstance(project);
-        String date = formatter.formatDateTime(new Date());
+        String date = formatter.formatDateTime(new Date(timestamp));
         String text = date + ": " + connectionHandler.getName();
         VirtualFile sourceFile = context.getSourceFile();
         if (sourceFile != null) {

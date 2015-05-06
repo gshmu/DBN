@@ -66,7 +66,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 initProgressIndicator(progressIndicator, true, "Reloading results for " + getExecutionProcessor().getStatementName());
 
                 resultPanel.highlightLoading(true);
-                long startTimeMillis = System.currentTimeMillis();
+                getExecutionInput().initExecution();
                 try {
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     DBSchema currentSchema = getCurrentSchema();
@@ -79,7 +79,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 } catch (final SQLException e) {
                     MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                 }
-                setExecutionDuration((int) (System.currentTimeMillis() - startTimeMillis));
+                calculateExecDuration();
                 resultPanel.highlightLoading(false);
             }
         }.start();

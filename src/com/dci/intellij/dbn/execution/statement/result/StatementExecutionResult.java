@@ -20,7 +20,7 @@ public interface StatementExecutionResult extends ExecutionResult {
     void updateExecutionMessage(MessageType messageType, String message, String causeMessage);
     void updateExecutionMessage(MessageType messageType, String message);
     void clearExecutionMessage();
-    void setExecutionDuration(int executionDuration);
+    void calculateExecDuration();
     int getExecutionDuration();
 
 
