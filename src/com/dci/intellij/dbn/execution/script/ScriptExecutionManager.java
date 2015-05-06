@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.execution.script;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
@@ -11,6 +23,7 @@ import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.ScriptExecutionInput;
 import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -18,18 +31,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class ScriptExecutionManager extends AbstractProjectComponent {
     private final Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
@@ -40,15 +41,6 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
 
     public static ScriptExecutionManager getInstance(@NotNull Project project) {
         return FailsafeUtil.getComponent(project, ScriptExecutionManager.class);
-    }
-
-    public void killProcess(VirtualFile virtualFile) {
-        synchronized (activeProcesses) {
-            Process process = activeProcesses.remove(virtualFile);
-            if (process != null) {
-                process.destroy();
-            }
-        }
     }
 
     public void executeScript(final VirtualFile virtualFile) {
@@ -94,8 +86,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
     private void doExecuteScript(VirtualFile virtualFile, ConnectionHandler connectionHandler, DBSchema schema) throws Exception{
         activeProcesses.put(virtualFile, null);
         File tempScriptFile = null;
-        Process process = null;
         BufferedReader logReader = null;
+        LogOutputRequest logRequest = new LogOutputRequest(connectionHandler, virtualFile, null);
         try {
             String content = new String(virtualFile.contentsToByteArray());
             tempScriptFile = createTempScriptFile();
@@ -111,24 +103,37 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
 
             FileUtil.writeToFile(tempScriptFile, executionInput.getTextContent());
 
-            if (true) {
-                ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
-                processBuilder.environment().putAll(executionInput.getEnvironmentVars());
-                processBuilder.redirectErrorStream(true);
-                process = processBuilder.start();
-            } else {
+            ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());
+            processBuilder.environment().putAll(executionInput.getEnvironmentVars());
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+/*
                 Runtime runtime = Runtime.getRuntime();
                 process = runtime.exec(executionInput.getLineCommand());
-            }
+*/
+            logRequest.setProcess(process);
             activeProcesses.put(virtualFile, process);
 
             logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            readExecutionLog(virtualFile, connectionHandler, logReader, true);
+
+
+            logRequest.setAddHeadline(true);
+            logRequest.setHideEmptyLines(false);
+            String line;
+            ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+            while ((line = logReader.readLine()) != null) {
+                if (logRequest.isCancelled()) {
+                    break;
+                } else {
+                    logRequest.setText(line);
+                    executionManager.writeLogOutput(logRequest);
+                    logRequest.setAddHeadline(false);
+                }
+            }
 
         } catch (Exception e) {
-            if (process != null) {
-                process.destroy();
-            }
+            logRequest.cancel();
             throw e;
         } finally {
             if (logReader != null) logReader.close();
@@ -139,20 +144,6 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    private void readExecutionLog(VirtualFile virtualFile, ConnectionHandler connectionHandler, BufferedReader logReader, boolean addHeadline) throws IOException {
-        String line;
-        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-        while ((line = logReader.readLine()) != null) {
-            synchronized (activeProcesses) {
-                if (activeProcesses.containsKey(virtualFile)) {
-                    executionManager.writeLogOutput(connectionHandler, virtualFile, line, addHeadline, true);
-                    addHeadline = false;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
 
     private File createTempScriptFile() throws IOException {
         return File.createTempFile(UUID.randomUUID().toString(), ".sql");

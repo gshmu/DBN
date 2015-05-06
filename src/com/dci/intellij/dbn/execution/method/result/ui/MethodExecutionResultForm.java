@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -9,6 +15,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
+import com.dci.intellij.dbn.execution.logging.LogOutputRequest;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputConsole;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
@@ -21,12 +28,6 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import java.awt.BorderLayout;
-import java.util.List;
 
 public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
     private JPanel mainPanel;
@@ -114,8 +115,10 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             logConsoleName = databaseLogName;
         }
 
-        DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, null, logConsoleName, true);
-        outputConsole.writeToConsole(logOutput, false, false);
+        DatabaseLogOutputConsole outputConsole = new DatabaseLogOutputConsole(connectionHandler, logConsoleName, true);
+        LogOutputRequest request = new LogOutputRequest(connectionHandler);
+        request.setText(logOutput);
+        outputConsole.writeToConsole(request);
         Disposer.register(this, outputConsole);
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());

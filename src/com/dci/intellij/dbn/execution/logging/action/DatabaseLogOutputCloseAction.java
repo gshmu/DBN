@@ -17,7 +17,8 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = getEventProject(e);
         DatabaseLogOutput databaseLogOutput = getDatabaseLogOutput(e);
-        if (databaseLogOutput != null && !databaseLogOutput.isDisposed()) {
+        if (project != null && databaseLogOutput != null && !databaseLogOutput.isDisposed()) {
+            databaseLogOutput.getRequest().cancel();
             ExecutionManager executionManager = ExecutionManager.getInstance(project);
             executionManager.removeResultTab(databaseLogOutput);
         }
