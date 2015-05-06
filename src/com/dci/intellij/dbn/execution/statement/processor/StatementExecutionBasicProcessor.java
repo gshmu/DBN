@@ -208,8 +208,8 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
     }
 
     public void execute(ProgressIndicator progressIndicator) {
+        executionInput.initExecution();
         progressIndicator.setText("Executing " + getStatementName());
-        long startTimeMillis = System.currentTimeMillis();
         resultName = null;
         ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
@@ -285,7 +285,7 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
             }
         }
 
-        executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTimeMillis));
+        executionResult.calculateExecDuration();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.addExecutionResult(executionResult);
     }

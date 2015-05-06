@@ -54,6 +54,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
 
     public void execute(MethodExecutionInput executionInput, boolean debug) throws SQLException {
+        executionInput.initExecution(debug);
         T method = getMethod();
         if (method != null) {
             boolean usePoolConnection = executionInput.isUsePoolConnection();
@@ -71,14 +72,13 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
     public void execute(MethodExecutionInput executionInput, Connection connection, boolean debug) throws SQLException {
+        executionInput.initExecution(debug);
         ConnectionHandler connectionHandler = null;
         boolean usePoolConnection = false;
         boolean loggingEnabled = !debug && executionInput.isEnableLogging();
         Project project = getProject();
         DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
         try {
-            long startTime = System.currentTimeMillis();
-
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
             if (method != null) {
@@ -106,7 +106,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 MethodExecutionResult executionResult = executionInput.getExecutionResult();
                 if (executionResult != null) {
                     loadValues(executionResult, preparedStatement);
-                    executionResult.setExecutionDuration((int) (System.currentTimeMillis() - startTime));
+                    executionResult.calculateExecDuration();
 
                     if (loggingEnabled) {
                         String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);

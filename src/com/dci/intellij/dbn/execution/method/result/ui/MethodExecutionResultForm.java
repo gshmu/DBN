@@ -119,7 +119,11 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
         DatabaseLoggingResultConsole outputConsole = new DatabaseLoggingResultConsole(connectionHandler, logConsoleName, true);
         LogOutputContext context = new LogOutputContext(connectionHandler);
-        outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution started"));
+        outputConsole.writeToConsole(context,
+                LogOutput.createSysOutput(context,
+                        executionResult.getExecutionInput().getExecutionTimestamp(),
+                        " - Method execution started"));
+
         if (StringUtil.isNotEmptyOrSpaces(logOutput)) {
             outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
         }

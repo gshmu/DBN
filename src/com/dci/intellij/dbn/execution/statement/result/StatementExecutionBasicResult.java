@@ -82,8 +82,8 @@ public class StatementExecutionBasicResult implements StatementExecutionResult{
         return executionDuration;
     }
 
-    public void setExecutionDuration(int executionDuration) {
-        this.executionDuration = executionDuration;
+    public void calculateExecDuration() {
+        this.executionDuration = (int) (System.currentTimeMillis() - getExecutionInput().getExecutionTimestamp());
     }
 
     public StatementExecutionStatus getExecutionStatus() {
