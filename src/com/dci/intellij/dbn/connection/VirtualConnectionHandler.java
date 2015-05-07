@@ -122,7 +122,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public DatabaseInterfaceProvider getInterfaceProvider() {
         if (interfaceProvider == null) {
             try {
-                interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
+                interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
             } catch (SQLException e) {
                 // do not initialize
                 return DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER;

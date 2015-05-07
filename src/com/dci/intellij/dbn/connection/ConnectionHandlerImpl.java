@@ -414,7 +414,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             synchronized (this) {
                 if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
                     try {
-                        interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
+                        interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
 
                     }

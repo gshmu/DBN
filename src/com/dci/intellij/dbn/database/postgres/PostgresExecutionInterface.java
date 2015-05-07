@@ -21,6 +21,12 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
         return null;
     }
 
+    @Nullable
+    @Override
+    public String getDefaultCmdLineInterface() {
+        return "postgres";
+    }
+
     @Override
     public ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         return null;

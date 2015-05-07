@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.execution.common.options.ui.ExecutionEngineSettingsForm;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
+import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
@@ -15,8 +16,10 @@ import com.intellij.openapi.project.Project;
 
 public class ExecutionEngineSettings extends CompositeProjectConfiguration<ExecutionEngineSettingsForm> implements TopLevelConfig {
     private StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings();
+    private ScriptExecutionSettings scriptExecutionSettings = new ScriptExecutionSettings(this);
     private MethodExecutionSettings methodExecutionSettings = new MethodExecutionSettings();
     private CompilerSettings compilerSettings = new CompilerSettings();
+
     public ExecutionEngineSettings(Project project) {
         super(project);
     }
@@ -56,6 +59,10 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
         return statementExecutionSettings;
     }
 
+    public ScriptExecutionSettings getScriptExecutionSettings() {
+        return scriptExecutionSettings;
+    }
+
     public MethodExecutionSettings getMethodExecutionSettings() {
         return methodExecutionSettings;
     }
@@ -80,6 +87,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 statementExecutionSettings,
+                scriptExecutionSettings,
                 methodExecutionSettings,
                 compilerSettings};
     }

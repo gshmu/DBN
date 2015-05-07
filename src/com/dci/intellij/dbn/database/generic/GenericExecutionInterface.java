@@ -20,6 +20,12 @@ public class GenericExecutionInterface extends DatabaseExecutionInterfaceImpl {
         return null;
     }
 
+    @Nullable
+    @Override
+    public String getDefaultCmdLineInterface() {
+        return null;
+    }
+
     @Override
     public ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         throw new UnsupportedOperationException();

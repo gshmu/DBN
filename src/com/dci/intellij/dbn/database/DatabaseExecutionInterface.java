@@ -11,5 +11,9 @@ import com.dci.intellij.dbn.object.DBMethod;
 public interface DatabaseExecutionInterface {
     MethodExecutionProcessor createExecutionProcessor(DBMethod method);
     MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method);
+
+    @Nullable
+    String getDefaultCmdLineInterface();
+
     ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo);
 }

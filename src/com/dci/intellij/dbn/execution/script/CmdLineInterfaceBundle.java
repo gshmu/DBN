@@ -1,0 +1,86 @@
+package com.dci.intellij.dbn.execution.script;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.jdom.Element;
+
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+
+public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.Cloneable<CmdLineInterfaceBundle>, Iterable<CmdLineInterface>, PersistentConfiguration {
+    private List<CmdLineInterface> elements = new ArrayList<CmdLineInterface>();
+
+    public Iterator<CmdLineInterface> iterator() {
+        return elements.iterator();
+    }
+
+    public void clear() {
+        elements.clear();
+    }
+
+    public void add(CmdLineInterface cmdLineInterface) {
+        elements.add(cmdLineInterface);
+    }
+
+    public void add(int index, CmdLineInterface cmdLineInterface) {
+        elements.add(index, cmdLineInterface);
+    }
+
+    public int size() {
+        return elements.size();
+    }
+
+    public CmdLineInterface get(int index) {
+        return elements.get(index);
+    }
+
+    public CmdLineInterface getInterface(String name) {
+        for (CmdLineInterface cmdLineInterface : elements) {
+            if (cmdLineInterface.getName().equals(name)) {
+                return cmdLineInterface;
+            }
+        }
+
+        return null;
+    }
+
+    public CmdLineInterface remove(int index) {
+        return elements.remove(index);
+    }
+
+    public List<CmdLineInterface> getElements() {
+        return elements;
+    }
+
+    @Override
+    public void readConfiguration(Element element) {
+        if (element != null) {
+            List<Element> children = element.getChildren();
+            for (Element child : children) {
+                CmdLineInterface cmdLineInterface = new CmdLineInterface();
+                cmdLineInterface.readConfiguration(child);
+                elements.add(cmdLineInterface);
+            }
+        }
+    }
+
+    @Override
+    public void writeConfiguration(Element element) {
+        for (CmdLineInterface cmdLineInterface : elements) {
+            Element child = new Element("value");
+            cmdLineInterface.writeConfiguration(child);
+            element.addContent(child);
+        }
+
+    }
+
+    @Override
+    public CmdLineInterfaceBundle clone() {
+        CmdLineInterfaceBundle cmdLineInterfaces = new CmdLineInterfaceBundle();
+        for (CmdLineInterface cmdLineInterface : elements) {
+            cmdLineInterfaces.elements.add(cmdLineInterface.clone());
+        }
+
+        return cmdLineInterfaces;
+    }
+}
