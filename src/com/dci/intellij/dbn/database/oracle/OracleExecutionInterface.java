@@ -26,6 +26,12 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         return new OracleMethodDebugExecutionProcessor(method);
     }
 
+    @Nullable
+    @Override
+    public String getDefaultCmdLineInterface() {
+        return "sqlplus";
+    }
+
     @Override
     public ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         ScriptExecutionInput executionInput = new ScriptExecutionInput(content);
@@ -39,7 +45,7 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         String fileArg = "\"@" + filePath + "\"";
 
         List<String> command = executionInput.getCommand();
-        command.add(CommonUtil.nvl(programPath, "sqlplus"));
+        command.add(CommonUtil.nvl(programPath, getDefaultCmdLineInterface()));
         command.add(connectArg);
         command.add(fileArg);
 

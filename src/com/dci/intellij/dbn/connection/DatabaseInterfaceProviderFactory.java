@@ -17,7 +17,7 @@ public class DatabaseInterfaceProviderFactory {
     public static final DatabaseInterfaceProvider MYSQL_INTERFACE_PROVIDER = new MySqlInterfaceProvider();
     public static final DatabaseInterfaceProvider POSTGRES_INTERFACE_PROVIDER = new PostgresInterfaceProvider();
 
-    public static DatabaseInterfaceProvider createInterfaceProvider(@NotNull ConnectionHandler connectionHandler) throws SQLException {
+    public static DatabaseInterfaceProvider getInterfaceProvider(@NotNull ConnectionHandler connectionHandler) throws SQLException {
         DatabaseType databaseType;
         if (connectionHandler.isVirtual()) {
             databaseType = connectionHandler.getDatabaseType();
@@ -37,15 +37,17 @@ public class DatabaseInterfaceProviderFactory {
             }
         }
 
+        return get(databaseType);
+    }
 
-        if (databaseType == DatabaseType.ORACLE) {
-            return ORACLE_INTERFACE_PROVIDER;
-        } else if (databaseType == DatabaseType.MYSQL) {
-            return MYSQL_INTERFACE_PROVIDER;
-        } else if (databaseType == DatabaseType.POSTGRES) {
-            return POSTGRES_INTERFACE_PROVIDER;
+    @NotNull
+    public static DatabaseInterfaceProvider get(DatabaseType databaseType) {
+        switch (databaseType) {
+            case ORACLE: return ORACLE_INTERFACE_PROVIDER;
+            case MYSQL: return MYSQL_INTERFACE_PROVIDER;
+            case POSTGRES: return POSTGRES_INTERFACE_PROVIDER;
+            default: return GENERIC_INTERFACE_PROVIDER;
         }
-        return GENERIC_INTERFACE_PROVIDER;
     }
 
     public static void reset() {
