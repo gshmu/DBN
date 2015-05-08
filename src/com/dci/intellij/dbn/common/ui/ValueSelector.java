@@ -68,8 +68,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private boolean isEnabled = true;
     private boolean isFocused = false;
     private boolean isShowingPopup = false;
-    private boolean hideDescriptions = false;
-    private boolean hideIcons = false;
+    private OptionBundle<ValueSelectorOption> options;
 
     private Border focusBorder;
     private Border defaultBorder;
@@ -173,15 +172,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     public void setOptions(ValueSelectorOption ... options) {
-        if (options != null) {
-            for (ValueSelectorOption option : options) {
-                switch (option) {
-                    case HIDE_DESCRIPTION: hideDescriptions = true; break;
-                    case HIDE_ICON: hideIcons = true; break;
-                }
-            }
-
-        }
+        this.options = new OptionBundle<ValueSelectorOption>(options);
     }
 
     private void adjustSize() {
@@ -327,7 +318,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, hideIcons ? null : value.getIcon());
+            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
             this.value = value;
         }
 
@@ -347,7 +338,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         if (value != null) {
             String description = value.getDescription();
             String name = value.getName();
-            return hideDescriptions || StringUtil.isNotEmpty(description) ? name : name + " (" + description + ")";
+            return options.is(ValueSelectorOption.HIDE_DESCRIPTION) || StringUtil.isEmpty(description) ? name : name + " (" + description + ")";
         } else {
             return "";
         }
@@ -415,10 +406,10 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (isComboBox) {
                 selectedValue = value;
                 if (selectedValue == null) {
-                    label.setIcon(hideIcons ? cropIcon(icon) : null);
+                    label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(icon));
                     label.setText(text);
                 } else {
-                    label.setIcon(hideIcons ? cropIcon(selectedValue.getIcon()) : null);
+                    label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(selectedValue.getIcon()));
                     label.setText(getName(selectedValue));
                 }
             }
