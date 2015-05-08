@@ -28,15 +28,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.thread.SimpleCallback;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -65,6 +71,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private boolean isEnabled = true;
     private boolean isFocused = false;
     private boolean isShowingPopup = false;
+    private OptionBundle<ValueSelectorOption> options;
 
     private Border focusBorder;
     private Border defaultBorder;
@@ -72,18 +79,20 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private Border insideBorderFocused;
 
     private List<T> values;
+    private PresentableFactory<T> valueFactory;
 
 
-    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, boolean isComboBox) {
-        this(null, text, null, preselectedValue, isComboBox);
+    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
+        this(null, text, null, preselectedValue, isComboBox, options);
     }
 
-    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, boolean isComboBox) {
-        this(icon, text, null, preselectedValue, isComboBox);
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
+        this(icon, text, null, preselectedValue, isComboBox, options);
     }
 
-    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, boolean isComboBox) {
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
         super(new BorderLayout());
+        setOptions(options);
         this.values = values;
         text = CommonUtil.nvl(text, "");
         this.icon = icon;
@@ -121,7 +130,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 label.setText(text);
             } else {
                 label.setIcon(cropIcon(selectedValue.getIcon()));
-                label.setText(selectedValue.getName());
+                label.setText(getName(selectedValue));
             }
 
             innerPanel.setBackground(COMBO_BOX_BACKGROUND);
@@ -166,12 +175,16 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         adjustSize();
     }
 
+    public void setOptions(ValueSelectorOption ... options) {
+        this.options = new OptionBundle<ValueSelectorOption>(options);
+    }
+
     private void adjustSize() {
         int minWidth = 0;
         FontMetrics fontMetrics = label.getFontMetrics(label.getFont());
         int height = fontMetrics.getHeight();
         for (T presentable : getAllPossibleValues()) {
-            String name = CommonUtil.nvl(presentable.getName(), "");
+            String name = CommonUtil.nvl(getName(presentable), "");
             int width = fontMetrics.stringWidth(name);
             if (presentable.getIcon() != null) {
                 width = width + 16;
@@ -187,6 +200,10 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         label.setMinimumSize(new Dimension(minWidth + 10, height));
         innerPanel.setMaximumSize(new Dimension(-1, height + 2));
         innerPanel.setPreferredSize(new Dimension((int) innerPanel.getPreferredSize().getWidth(), height + 2));
+    }
+
+    public void setValueFactory(PresentableFactory<T> valueFactory) {
+        this.valueFactory = valueFactory;
     }
 
     public void addListener(ValueSelectorListener<T> listener) {
@@ -264,6 +281,10 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         for (T value : getValues()) {
             actionGroup.add(new SelectValueAction(value));
         }
+        if (valueFactory != null) {
+            actionGroup.add(ActionUtil.SEPARATOR);
+            actionGroup.add(new AddValueAction());
+        }
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
                 null,
                 actionGroup,
@@ -309,7 +330,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(value.getName()), null, value.getIcon());
+            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
             this.value = value;
         }
 
@@ -323,6 +344,41 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             e.getPresentation().setVisible(isVisible(value));
         }
     }
+
+    public class AddValueAction extends DumbAwareAction {
+        public AddValueAction() {
+            super(valueFactory.getActionName(), null, Icons.ACTION_ADD);
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            valueFactory.create(new SimpleCallback<T>() {
+                @Override
+                public void start(T value) {
+                    if (value != null) {
+                        addValue(value);
+                        selectValue(value);
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+            e.getPresentation().setVisible(valueFactory != null);
+        }
+    }
+
+    @NotNull
+    private String getName(T value) {
+        if (value != null) {
+            String description = value.getDescription();
+            String name = value.getName();
+            return options.is(ValueSelectorOption.HIDE_DESCRIPTION) || StringUtil.isEmpty(description) ? name : name + " (" + description + ")";
+        } else {
+            return "";
+        }
+    }
+
 
     public boolean isVisible(T value) {
         return true;
@@ -361,6 +417,17 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         adjustSize();
     }
 
+    public void addValue(T value) {
+        this.values.add(value);
+        adjustSize();
+    }
+
+    public void addValues(Collection<T> value) {
+        this.values.addAll(value);
+        adjustSize();
+    }
+
+
     public void resetValues() {
         this.values = null;
     }
@@ -374,11 +441,11 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (isComboBox) {
                 selectedValue = value;
                 if (selectedValue == null) {
-                    label.setIcon(cropIcon(icon));
+                    label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(icon));
                     label.setText(text);
                 } else {
-                    label.setIcon(cropIcon(selectedValue.getIcon()));
-                    label.setText(selectedValue.getName());
+                    label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(selectedValue.getIcon()));
+                    label.setText(getName(selectedValue));
                 }
             }
 
@@ -466,6 +533,18 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 return enabled ? Gray._100 : Gray._83;
             }
             return Gray._150;
+        }
+    }
+
+    public abstract class NewValueCallable implements Callable<T> {
+        private String actionName;
+
+        public NewValueCallable(String actionName) {
+            this.actionName = actionName;
+        }
+
+        public String getActionName() {
+            return actionName;
         }
     }
 }

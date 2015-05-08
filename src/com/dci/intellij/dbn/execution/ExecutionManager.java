@@ -12,11 +12,14 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
+import com.dci.intellij.dbn.execution.logging.LogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
@@ -26,7 +29,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -123,13 +125,15 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         }.start();
     }
 
-    public void writeLogOutput(final ConnectionHandler connectionHandler, final VirtualFile virtualFile, final String output, final boolean addHeadline, final boolean writeEmptyLines) {
+    public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
         new ConditionalLaterInvocator() {
             @Override
             protected void execute() {
-                showExecutionConsole();
-                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                executionConsoleForm.displayLogOutput(connectionHandler, virtualFile, output, addHeadline, writeEmptyLines);
+                if (!context.isClosed()) {
+                    showExecutionConsole();
+                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                    executionConsoleForm.displayLogOutput(context, output);
+                }
             }
         }.start();
     }
@@ -141,7 +145,22 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                 if (executionResult.isLoggingActive()) {
-                    executionConsoleForm.displayLogOutput(executionResult.getConnectionHandler(), null, executionResult.getLoggingOutput(), true, false);
+                    LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
+                    context.setHideEmptyLines(false);
+                    String loggingOutput = executionResult.getLoggingOutput();
+
+                    executionConsoleForm.displayLogOutput(
+                            context, LogOutput.createSysOutput(context,
+                                    executionResult.getExecutionInput().getExecutionTimestamp(),
+                                    " - Statement execution started"));
+
+                    if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
+                        executionConsoleForm.displayLogOutput(context,
+                                LogOutput.createStdOutput(loggingOutput));
+                    }
+
+                    executionConsoleForm.displayLogOutput(context,
+                            LogOutput.createSysOutput(context, " - Statement execution finished\n"));
                 }
 
                 executionConsoleForm.addResult(executionResult);

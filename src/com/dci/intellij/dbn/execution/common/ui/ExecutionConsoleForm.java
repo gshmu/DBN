@@ -1,5 +1,19 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.tree.TreePath;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -23,8 +37,10 @@ import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
-import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLogOutputForm;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
+import com.dci.intellij.dbn.execution.logging.LogOutput;
+import com.dci.intellij.dbn.execution.logging.LogOutputContext;
+import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -43,20 +59,6 @@ import com.intellij.ui.tabs.JBTabsPosition;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.TabLabel;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -170,7 +172,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     }
                 }
             }
-            if (oldSelection != null && newSelection != null && getExecutionResult(newSelection) instanceof DatabaseLogOutput) {
+            if (oldSelection != null && newSelection != null && getExecutionResult(newSelection) instanceof DatabaseLoggingResult) {
                 newSelection.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE);
             }
 
@@ -361,19 +363,22 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     /*********************************************************
      *                       Logging                         *
      *********************************************************/
-    public void displayLogOutput(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, String output, boolean addHeadline, boolean writeEmptyLines) {
+    public void displayLogOutput(LogOutputContext context, LogOutput output) {
         TabbedPane resultTabs = getResultTabs();
-        boolean emptyOutput = StringUtil.isEmptyOrSpaces(output);
+        boolean emptyOutput = StringUtil.isEmptyOrSpaces(output.getText());
+        VirtualFile sourceFile = context.getSourceFile();
+        ConnectionHandler connectionHandler = context.getConnectionHandler();
+        boolean selectTab = sourceFile != null;
         for (TabInfo tabInfo : resultTabs.getTabs()) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
-            if (executionResult instanceof DatabaseLogOutput) {
-                DatabaseLogOutput logOutput = (DatabaseLogOutput) executionResult;
-                if (logOutput.matches(connectionHandler, sourceFile)) {
-                    logOutput.write(output, addHeadline, writeEmptyLines);
-                    if (!emptyOutput && sourceFile == null) {
+            if (executionResult instanceof DatabaseLoggingResult) {
+                DatabaseLoggingResult logOutput = (DatabaseLoggingResult) executionResult;
+                if (logOutput.matches(context)) {
+                    logOutput.write(context, output);
+                    if (!emptyOutput && !selectTab) {
                         tabInfo.setIcon(Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
                     }
-                    if (sourceFile != null) {
+                    if (selectTab) {
                         resultTabs.select(tabInfo, true);
                     }
                     return;
@@ -382,14 +387,14 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
         boolean messagesTabVisible = isMessagesTabVisible();
 
-        DatabaseLogOutput logOutput = new DatabaseLogOutput(connectionHandler, sourceFile);
-        DatabaseLogOutputForm form = logOutput.getForm(true);
+        DatabaseLoggingResult logOutput = new DatabaseLoggingResult(context);
+        DatabaseLoggingResultForm form = logOutput.getForm(true);
         if (form != null) {
             JComponent component = form.getComponent();
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(form);
             tabInfo.setText(logOutput.getName());
-            tabInfo.setIcon(emptyOutput ?
+            tabInfo.setIcon(emptyOutput || selectTab ?
                     Icons.EXEC_LOG_OUTPUT_CONSOLE :
                     Icons.EXEC_LOG_OUTPUT_CONSOLE_UNREAD);
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
@@ -400,10 +405,10 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             }
 
             resultTabs.addTab(tabInfo, messagesTabVisible ? 1 : 0);
-            if (sourceFile != null) {
+            if (selectTab) {
                 resultTabs.select(tabInfo, true);
             }
-            logOutput.write(output, addHeadline, writeEmptyLines);
+            logOutput.write(context, output);
         }
     }
 

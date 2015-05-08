@@ -87,6 +87,13 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
 
         @Nullable
         @Override
+        public String getDescription() {
+            return null;
+        }
+
+
+        @Nullable
+        @Override
         public Icon getIcon() {
             return null;
         }

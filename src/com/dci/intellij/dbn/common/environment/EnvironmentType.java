@@ -75,7 +75,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
 
     @NotNull
     public String getName() {
-        return name;
+        return CommonUtil.nvl(name, "");
     }
 
     @Nullable

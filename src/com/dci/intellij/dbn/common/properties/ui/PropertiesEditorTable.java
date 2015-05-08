@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
@@ -9,29 +8,24 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import java.awt.Component;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
 
-public class PropertiesEditorTable extends JTable {
+public class PropertiesEditorTable extends DBNTable<PropertiesTableModel> {
 
     public PropertiesEditorTable(Map<String, String> properties) {
-        super(new PropertiesTableModel(properties));
+        super(null, new PropertiesTableModel(properties), true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());
         setSelectionForeground(UIUtil.getTableForeground());
         setCellSelectionEnabled(true);
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                stopCellEditing();
-            }
-        });
+        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
 
     ListSelectionListener selectionListener = new ListSelectionListener() {
@@ -68,10 +62,6 @@ public class PropertiesEditorTable extends JTable {
         }
     }
 
-    private void stopCellEditing() {
-        if (isEditing()) getCellEditor().stopCellEditing();
-    }
-
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
         final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(new EmptyBorder(0,0,0,0));
@@ -88,6 +78,7 @@ public class PropertiesEditorTable extends JTable {
         return textField;
     }
 
+    @NotNull
     @Override
     public PropertiesTableModel getModel() {
         return (PropertiesTableModel) super.getModel();

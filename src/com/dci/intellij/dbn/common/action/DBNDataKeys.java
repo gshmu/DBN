@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
-import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionCursorResultForm;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
@@ -21,7 +21,7 @@ public interface DBNDataKeys {
     DataKey<MethodExecutionCursorResultForm> METHOD_EXECUTION_CURSOR_RESULT_FORM = DataKey.create("DBNavigator.MethodExecutionCursorResult");
     DataKey<DBArgument> METHOD_EXECUTION_ARGUMENT = DataKey.create("DBNavigator.MethodExecutionArgument");
     DataKey<ExplainPlanResult> EXPLAIN_PLAN_RESULT = DataKey.create("DBNavigator.ExplainPlanResult");
-    DataKey<DatabaseLogOutput> DATABASE_LOG_OUTPUT = DataKey.create("DBNavigator.DatabaseLogOutput");
+    DataKey<DatabaseLoggingResult> DATABASE_LOG_OUTPUT = DataKey.create("DBNavigator.DatabaseLogOutput");
     Key<String> ACTION_PLACE_KEY = Key.create("DBNavigator.ActionPlace");
     Key<Boolean> PROJECT_SETTINGS_LOADED_KEY = Key.create("DBNavigator.ProjectSettingsLoaded");
 }

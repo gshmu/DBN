@@ -29,8 +29,9 @@
         <ul>
             <li><b>3.0.NEXT</b>
             <ul>
+                - SQL Script execution support <br>
                 - Oracle TNS Names import (tnsnames.ora)<br>
-                - Build-in drivers support<br>
+                - Build-in jdbc drivers support<br>
                 - Bug fixes<br>
             </ul>
             <li><b>3.0.4412</b>
@@ -499,6 +500,7 @@
         </group>
         <group id="DBNavigator.ActionGroup.DatabaseLogOutput">
             <action id="DBNavigator.Actions.DatabaseLogOutput.Close" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputCloseAction" text="Database Log Output - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.DatabaseLogOutput.KillProcess" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputKillAction" text="Database Log Output - Kill Process" icon="/img/action/KillProcess.png"/>
             <action id="DBNavigator.Actions.DatabaseLogOutput.Settings" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputSettingsAction" text="Database Log Output - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.Browser.ObjectProperties" text="Browser object properties">

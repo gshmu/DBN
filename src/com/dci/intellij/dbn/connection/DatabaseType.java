@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -35,9 +36,17 @@ public enum DatabaseType implements Presentable {
         return name;
     }
 
+    @Nullable
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
     public String getDisplayName() {
         return displayName;
     }
+
+
 
     public Icon getIcon() {
         return icon;
