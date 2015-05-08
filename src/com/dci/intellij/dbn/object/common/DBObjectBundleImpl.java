@@ -1,18 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -75,6 +62,19 @@ import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DBObjectBundleImpl implements DBObjectBundle {
     private ConnectionHandler connectionHandler;
@@ -225,6 +225,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return nativeDataTypes;
     }
 
+    @Nullable
     public DBNativeDataType getNativeDataType(String name) {
         String upperCaseName = name.toUpperCase();
         for (DBNativeDataType dataType : getNativeDataTypes()) {
@@ -240,14 +241,17 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return null;
     }
 
+    @Nullable
     public DBSchema getSchema(String name) {
         return schemas.getObject(name);
     }
 
+    @Nullable
     public DBSchema getPublicSchema() {
         return getSchema("PUBLIC");
     }
 
+    @Nullable
     public DBSchema getUserSchema() {
         for (DBSchema schema : getSchemas()) {
             if (schema.isUserSchema()) return schema;
@@ -255,27 +259,33 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return null;
     }
 
+    @Nullable
     public DBUser getUser(String name) {
         return users.getObject(name);
     }
 
+    @Nullable
     public DBRole getRole(String name) {
         return roles.getObject(name);
     }
 
+    @Nullable
     @Override
     public DBPrivilege getPrivilege(String name) {
         return systemPrivileges.getObject(name);
     }
 
+    @Nullable
     public DBSystemPrivilege getSystemPrivilege(String name) {
         return systemPrivileges.getObject(name);
     }
 
+    @Nullable
     public DBCharset getCharset(String name) {
         return charsets.getObject(name);
     }
 
+    @NotNull
     @Override
     public List<DBDataType> getCachedDataTypes() {
         return cachedDataTypes;
@@ -481,6 +491,7 @@ public class DBObjectBundleImpl implements DBObjectBundle {
      *********************************************************/
 
 
+    @Nullable
     public DBObject getObject(DatabaseObjectIdentifier objectIdentifier) {
         DBObject object = null;
         for (int i=0; i<objectIdentifier.getObjectTypes().length; i++){
@@ -496,10 +507,12 @@ public class DBObjectBundleImpl implements DBObjectBundle {
         return object;
     }
 
+    @Nullable
     public DBObject getObject(DBObjectType objectType, String name) {
         return getObject(objectType, name, 0);
     }
 
+    @Nullable
     public DBObject getObject(DBObjectType objectType, String name, int overload) {
         if (objectType == DBObjectType.SCHEMA) return getSchema(name);
         if (objectType == DBObjectType.USER) return getUser(name);

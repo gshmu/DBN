@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.data.type;
 
-import javax.swing.Icon;
+import com.dci.intellij.dbn.common.ui.Presentable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.ui.Presentable;
+import javax.swing.Icon;
 
 public enum GenericDataType implements Presentable{
     LITERAL("Literal"),
@@ -26,6 +27,7 @@ public enum GenericDataType implements Presentable{
     private GenericDataType(String name) {
         this.name = name;
     }
+    @NotNull
     public String getName() {
         return name;
     }

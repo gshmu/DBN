@@ -1,16 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -19,6 +8,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -71,6 +61,17 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     DBObjectList<DBTable> tables;
@@ -93,7 +94,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     boolean isEmptySchema;
 
     public DBSchemaImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        super(connectionHandler.getObjectBundle(), resultSet);
+        super(connectionHandler, resultSet);
     }
 
     @Override
@@ -159,7 +160,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
     @Override
     public DBUser getOwner() {
-        return getObjectBundle().getUser(name);
+        return FailsafeUtil.get(getObjectBundle()).getUser(name);
     }
 
     public DBObjectType getObjectType() {

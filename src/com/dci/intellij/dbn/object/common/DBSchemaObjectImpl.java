@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
@@ -30,6 +22,14 @@ import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -37,11 +37,11 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
     private DBObjectList<DBObject> referencingObjects;
     private DBObjectStatusHolder objectStatus;
 
-    public DBSchemaObjectImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    public DBSchemaObjectImpl(@NotNull DBSchema schema, ResultSet resultSet) throws SQLException {
         super(schema, resultSet);
     }
 
-    public DBSchemaObjectImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+    public DBSchemaObjectImpl(@NotNull DBSchemaObject parent, ResultSet resultSet) throws SQLException {
         super(parent, resultSet);
     }
 
