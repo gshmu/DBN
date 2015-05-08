@@ -73,7 +73,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 ConnectionHandler connectionHandler = connectionComboBox.getSelectedValue();
                 if (connectionHandler != null) {
                     ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-                    scriptExecutionManager.createCmdLineInterface(connectionHandler.getDatabaseType(), callback);
+                    scriptExecutionManager.createCmdLineInterface(connectionHandler.getDatabaseType(), null, callback);
                 }
             }
         });

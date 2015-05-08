@@ -11,31 +11,20 @@ import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Set;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TableUtil;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 
 public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel> {
@@ -49,10 +38,10 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         setCellSelectionEnabled(true);
         setDefaultRenderer(Object.class, new CmdLineInterfacesTableCellRenderer());
 
-        columnModel.getColumn(0).setMaxWidth(120);
-        columnModel.getColumn(1).setMaxWidth(120);
-        columnModel.getColumn(0).setPreferredWidth(120);
-        columnModel.getColumn(1).setPreferredWidth(120);
+        columnModel.getColumn(0).setMaxWidth(100);
+        columnModel.getColumn(1).setMaxWidth(220);
+        columnModel.getColumn(0).setPreferredWidth(100);
+        columnModel.getColumn(1).setPreferredWidth(220);
 
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         addMouseListener(mouseListener);
@@ -74,79 +63,18 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
                 int rowIndex = rowAtPoint(point);
                 int columnIndex = columnAtPoint(point);
                 DatabaseType databaseType = (DatabaseType) getValueAt(rowIndex, 0);
-                if (columnIndex == 0) {
-                    showPopup(databaseType, rowIndex, columnIndex);
-                } else if (columnIndex == 2) {
+                if (columnIndex == 2) {
                     Project project = getProject();
-                    if (databaseType == null) {
-                        MessageUtil.showInfoDialog(project, "Select Database Type", "Please select database type first");
-                    } else {
-                        String executablePath = (String) getValueAt(rowIndex, 2);
-                        ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
-                        VirtualFile virtualFile = scriptExecutionManager.selectCmdLineExecutable(databaseType, executablePath);
-                        if (virtualFile != null) {
-                            setValueAt(virtualFile.getPath(), rowIndex, 2);
-                        }
+                    String executablePath = (String) getValueAt(rowIndex, 2);
+                    ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+                    VirtualFile virtualFile = scriptExecutionManager.selectCmdLineExecutable(databaseType, executablePath);
+                    if (virtualFile != null) {
+                        setValueAt(virtualFile.getPath(), rowIndex, 2);
                     }
                 }
             }
         }
     };
-
-    private void showPopup(final DatabaseType selectedDatabaseType, int rowIndex, int columnIndex) {
-        DefaultActionGroup actionGroup = new DefaultActionGroup();
-        for (DatabaseType databaseType : DatabaseType.values()) {
-            if (databaseType != DatabaseType.UNKNOWN){
-                actionGroup.add(new SelectValueAction(databaseType, rowIndex));
-            }
-        }
-
-        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                null,
-                actionGroup,
-                DataManager.getInstance().getDataContext(this),
-                false,
-                false,
-                false,
-                null, 10, new Condition<AnAction>() {
-                    @Override
-                    public boolean value(AnAction anAction) {
-                        if (anAction instanceof SelectValueAction) {
-                            SelectValueAction action = (SelectValueAction) anAction;
-                            return action.databaseType.equals(selectedDatabaseType);
-                        }
-                        return false;
-                    }
-                });
-
-        Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
-        Point point = new Point((int) cellRect.getX() + 4, (int) cellRect.getHeight() + 1);
-        popup.show(new RelativePoint(this, point));
-    }
-
-    public class SelectValueAction extends DumbAwareAction {
-        private DatabaseType databaseType;
-        private int rowIndex;
-        public SelectValueAction(DatabaseType databaseType, int rowIndex) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(databaseType.getName()), null, databaseType.getIcon());
-            this.databaseType = databaseType;
-            this.rowIndex = rowIndex;
-        }
-
-        public void actionPerformed(AnActionEvent e) {
-            setValueAt(databaseType, rowIndex, 0);
-            CmdLineInterface defaultCli = CmdLineInterface.getDefault(databaseType);
-            if (defaultCli != null) {
-                setValueAt(defaultCli.getExecutablePath(), rowIndex, 1);
-            }
-            setValueAt("", rowIndex, 2);
-        }
-
-        @Override
-        public void update(AnActionEvent e) {
-
-        }
-    }
 
     @Override
     protected void processMouseMotionEvent(MouseEvent e) {
@@ -254,5 +182,15 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         stopCellEditing();
         TableUtil.moveSelectedItemsDown(this);
         selectCell(selectedRow + 1, selectedColumn);
+    }
+
+    public void addInterface(CmdLineInterface value) {
+        getModel().addInterface(value);
+        revalidate();
+        repaint();
+    }
+
+    public Set<String> getNames() {
+        return getModel().getInterfaceNames();
     }
 }
