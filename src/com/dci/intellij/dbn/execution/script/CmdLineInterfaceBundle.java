@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.execution.script;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,5 +92,13 @@ public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.
             }
         }
         return interfaces;
+    }
+
+    public Set<String> getInterfaceNames() {
+        Set<String> names = new HashSet<String>();
+        for (CmdLineInterface cmdLineInterface : elements) {
+            names.add(cmdLineInterface.getName());
+        }
+        return names;
     }
 }
