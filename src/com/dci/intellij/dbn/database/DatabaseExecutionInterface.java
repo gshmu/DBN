@@ -16,5 +16,5 @@ public interface DatabaseExecutionInterface {
     @Nullable
     CmdLineInterface getDefaultCmdLineInterface();
 
-    ScriptExecutionInput createScriptExecutionInput(@NotNull String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo);
+    ScriptExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo);
 }

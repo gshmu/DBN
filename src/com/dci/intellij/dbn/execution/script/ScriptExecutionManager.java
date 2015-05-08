@@ -53,11 +53,13 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
 
             ScriptExecutionInputDialog inputDialog =
                     new ScriptExecutionInputDialog(project, virtualFile,
-                            connectionMappingManager.getActiveConnection(virtualFile), connectionMappingManager.getCurrentSchema(virtualFile));
+                            connectionMappingManager.getActiveConnection(virtualFile),
+                            connectionMappingManager.getCurrentSchema(virtualFile));
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 final ConnectionHandler connectionHandler = inputDialog.getConnection();
                 final DBSchema schema = inputDialog.getSchema();
+                final CmdLineInterface cmdLineInterface = inputDialog.getCmdLineInterface();
                 connectionMappingManager.setActiveConnection(virtualFile, connectionHandler);
                 connectionMappingManager.setCurrentSchema(virtualFile, schema);
 
@@ -67,7 +69,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
                         new SimpleTimeoutCall<Object>(100, TimeUnit.SECONDS, null) {
                             @Override
                             public Object call() throws Exception {
-                                doExecuteScript(virtualFile, connectionHandler, schema);
+                                doExecuteScript(cmdLineInterface, virtualFile, connectionHandler, schema);
                                 return null;
                             }
 
@@ -84,7 +86,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
         }
     }
 
-    private void doExecuteScript(VirtualFile virtualFile, ConnectionHandler connectionHandler, DBSchema schema) throws Exception{
+    private void doExecuteScript(CmdLineInterface cmdLineInterface, VirtualFile virtualFile, ConnectionHandler connectionHandler, DBSchema schema) throws Exception{
         activeProcesses.put(virtualFile, null);
         File tempScriptFile = null;
         BufferedReader logReader = null;
@@ -95,7 +97,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent {
             tempScriptFile = createTempScriptFile();
 
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            ScriptExecutionInput executionInput = executionInterface.createScriptExecutionInput(null,
+            ScriptExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                     tempScriptFile.getPath(),
                     content,
                     schema == null ? null : schema.getName(),

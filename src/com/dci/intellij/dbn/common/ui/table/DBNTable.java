@@ -128,8 +128,6 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return scrollDistance;
     }
 
-
-
     public Project getProject() {
         return project;
     }

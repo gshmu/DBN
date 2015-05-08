@@ -35,7 +35,7 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
     }
 
     @Override
-    public ScriptExecutionInput createScriptExecutionInput(@NotNull String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+    public ScriptExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         ScriptExecutionInput executionInput = new ScriptExecutionInput(content);
         String connectArg = SQLPLUS_CONNECT_PATTERN.
                 replace("[USER]", authenticationInfo.getUser()).
@@ -47,7 +47,7 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         String fileArg = "\"@" + filePath + "\"";
 
         List<String> command = executionInput.getCommand();
-        command.add(programPath);
+        command.add(cmdLineInterface.getExecutablePath());
         command.add(connectArg);
         command.add(fileArg);
 

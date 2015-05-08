@@ -26,6 +26,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());
         setCellSelectionEnabled(true);
+        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     }
 
     @Override

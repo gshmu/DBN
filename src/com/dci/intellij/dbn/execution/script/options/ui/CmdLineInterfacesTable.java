@@ -12,8 +12,6 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -23,6 +21,7 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseInterfaceProviderFactory;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -61,14 +60,8 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         columnModel.getColumn(0).setPreferredWidth(120);
         columnModel.getColumn(1).setPreferredWidth(120);
 
+        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         addMouseListener(mouseListener);
-
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                stopCellEditing();
-            }
-        });
     }
 
     public void setExecutorBundle(CmdLineInterfaceBundle executorBundle) {
@@ -101,7 +94,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
                                 withDescription("Select Command-Line Executable (" + defaultCli + ")").
                                 withShowHiddenFiles(true);
                         String executablePath = (String) getValueAt(rowIndex, 2);
-                        VirtualFile selectedFile = LocalFileSystem.getInstance().findFileByPath(executablePath);
+                        VirtualFile selectedFile = StringUtil.isEmpty(executablePath) ? null : LocalFileSystem.getInstance().findFileByPath(executablePath);
                         VirtualFile[] virtualFiles = FileChooser.chooseFiles(fileChooserDescriptor, project, selectedFile);
                         if (virtualFiles.length == 1) {
                             setValueAt(virtualFiles[0].getPath(), rowIndex, 2);
