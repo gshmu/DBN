@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -45,6 +37,14 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -346,6 +346,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return loadMonitor;
     }
 
+    @NotNull
     public DBObjectBundle getObjectBundle() {
         return objectBundle.get();
     }
@@ -466,6 +467,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getPresentableText();
     }
 
+    @NotNull
     public String getName() {
         return connectionSettings.getDatabaseSettings().getName();
     }

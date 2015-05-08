@@ -234,7 +234,9 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             scrollRectToVisible(cellRect);
         }
         if (getSelectedRowCount() != 1 || getSelectedRow() != rowIndex) {
-            setRowSelectionInterval(rowIndex, rowIndex);
+            if (rowIndex < getModel().getRowCount()) {
+                setRowSelectionInterval(rowIndex, rowIndex);
+            }
         }
 
         if (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex) {
