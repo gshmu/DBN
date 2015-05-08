@@ -68,8 +68,8 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private boolean isEnabled = true;
     private boolean isFocused = false;
     private boolean isShowingPopup = false;
-    private boolean isShowValueDescriptions = true;
-    private boolean isShowIcons = true;
+    private boolean hideDescriptions = false;
+    private boolean hideIcons = false;
 
     private Border focusBorder;
     private Border defaultBorder;
@@ -79,16 +79,17 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private List<T> values;
 
 
-    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, boolean isComboBox) {
-        this(null, text, null, preselectedValue, isComboBox);
+    public ValueSelector(@Nullable String text, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
+        this(null, text, null, preselectedValue, isComboBox, options);
     }
 
-    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, boolean isComboBox) {
-        this(icon, text, null, preselectedValue, isComboBox);
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
+        this(icon, text, null, preselectedValue, isComboBox, options);
     }
 
-    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, boolean isComboBox) {
+    public ValueSelector(@Nullable Icon icon, @Nullable String text, @Nullable List<T> values, @Nullable T preselectedValue, boolean isComboBox, ValueSelectorOption ... options) {
         super(new BorderLayout());
+        setOptions(options);
         this.values = values;
         text = CommonUtil.nvl(text, "");
         this.icon = icon;
@@ -171,16 +172,16 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         adjustSize();
     }
 
-    public ValueSelector<T> withValueDescriptions(boolean flag) {
-        isShowValueDescriptions = flag;
-        label.setText(getName(selectedValue));
-        return this;
-    }
+    public void setOptions(ValueSelectorOption ... options) {
+        if (options != null) {
+            for (ValueSelectorOption option : options) {
+                switch (option) {
+                    case HIDE_DESCRIPTION: hideDescriptions = true; break;
+                    case HIDE_ICON: hideIcons = true; break;
+                }
+            }
 
-    public ValueSelector<T> withIcons(boolean flag) {
-        isShowIcons = flag;
-        if (!isShowIcons) label.setIcon(null);
-        return this;
+        }
     }
 
     private void adjustSize() {
@@ -326,7 +327,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, isShowIcons ? value.getIcon() : null);
+            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, hideIcons ? null : value.getIcon());
             this.value = value;
         }
 
@@ -343,9 +344,13 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     @NotNull
     private String getName(T value) {
-        String description = value.getDescription();
-        String name = value.getName();
-        return isShowValueDescriptions && StringUtil.isNotEmpty(description)? name + " (" + description + ")" : name;
+        if (value != null) {
+            String description = value.getDescription();
+            String name = value.getName();
+            return hideDescriptions || StringUtil.isNotEmpty(description) ? name : name + " (" + description + ")";
+        } else {
+            return "";
+        }
     }
 
 
@@ -410,10 +415,10 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (isComboBox) {
                 selectedValue = value;
                 if (selectedValue == null) {
-                    label.setIcon(isShowIcons ? cropIcon(icon) : null);
+                    label.setIcon(hideIcons ? cropIcon(icon) : null);
                     label.setText(text);
                 } else {
-                    label.setIcon(isShowIcons ? cropIcon(selectedValue.getIcon()) : null);
+                    label.setIcon(hideIcons ? cropIcon(selectedValue.getIcon()) : null);
                     label.setText(getName(selectedValue));
                 }
             }

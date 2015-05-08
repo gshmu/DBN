@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.script.ui;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -27,6 +29,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private DBNComboBox<DBSchema> schemaComboBox;
     private JPanel mainPanel;
     private DBNComboBox<CmdLineInterface> cmdLineExecutableComboBox;
+    private JTextArea hintTextArea;
 
     private DBNHeaderForm headerForm;
 
@@ -43,14 +46,23 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         headerForm = new DBNHeaderForm(headerTitle, headerIcon, null);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
+        hintTextArea.setText(
+                "Script execution engine uses the Command-Line Interface executable supplied with your database client.\n" +
+                "You can use default Command-Line Interface resolver (which tries to locate the executable using the \n" +
+                "\"path\" environment variables) or point to a specific Command-Line executable.\n\n" +
+                "Database client interfaces are configurable in DBN Settings > Execution Engine > Script Execution.\n");
+        hintTextArea.setBackground(mainPanel.getBackground());
+        hintTextArea.setFont(mainPanel.getFont());
+
         if (connectionHandler != null) {
             selectConnection(connectionHandler);
         } else {
             cmdLineExecutableComboBox.setEnabled(false);
         }
-        cmdLineExecutableComboBox.withIcons(false);
+        cmdLineExecutableComboBox.setOptions(ValueSelectorOption.HIDE_ICON);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        connectionComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
         connectionComboBox.setValues(connectionManager.getConnectionHandlers());
         connectionComboBox.setSelectedValue(connectionHandler);
@@ -60,14 +72,13 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 selectConnection(newValue);
             }
         });
-        connectionComboBox.withValueDescriptions(false);
+        schemaComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         schemaComboBox.addListener(new ValueSelectorListener<DBSchema>() {
             @Override
             public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
                 parentComponent.setSchema(newValue);
             }
         });
-        schemaComboBox.withValueDescriptions(false);
 
         cmdLineExecutableComboBox.addListener(new ValueSelectorListener<CmdLineInterface>() {
             @Override
