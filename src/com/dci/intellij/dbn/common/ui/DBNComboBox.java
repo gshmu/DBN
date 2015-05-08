@@ -7,8 +7,7 @@ public class DBNComboBox<T extends Presentable> extends ValueSelector<T>{
         super(null, null, true);
     }
 
-    public DBNComboBox(List<T> values) {
-        super(null, null, values, null, true);
+    public DBNComboBox(List<T> values, ValueSelectorOption ... options) {
+        super(null, null, values, null, true, options);
     }
-
 }

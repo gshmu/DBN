@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
@@ -70,7 +71,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
 
     private class ColumnSelector extends ValueSelector<DBColumn> {
         public ColumnSelector() {
-            super(PlatformIcons.ADD_ICON, "Add Sorting Column...", null, false);
+            super(PlatformIcons.ADD_ICON, "Add Sorting Column...", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
                 public void selectionChanged(DBColumn oldValue, DBColumn newValue) {

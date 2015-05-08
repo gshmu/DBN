@@ -96,7 +96,8 @@ public class Icons {
     public static final Icon SQL_STATEMENT            = load("SQL_STATEMENT", "/img/SQLStatement.png");
 
 
-    public static final Icon EXECUTE_SQL_SCRIPT       = load("/img/action/ExecuteAsScript.png");
+    public static final Icon KILL_PROCESS               = load("/img/action/KillProcess.png");
+    public static final Icon EXECUTE_SQL_SCRIPT         = load("/img/action/ExecuteAsScript.png");
 
     public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
     public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");

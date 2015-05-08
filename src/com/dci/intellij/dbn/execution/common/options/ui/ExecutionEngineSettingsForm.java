@@ -11,12 +11,14 @@ public class ExecutionEngineSettingsForm extends CompositeConfigurationEditorFor
     private JPanel statementExecutionPanel;
     private JPanel compilerPanel;
     private JPanel methodExecutionPanel;
+    private JPanel scriptExecutionPanel;
 
     public ExecutionEngineSettingsForm(ExecutionEngineSettings settings) {
         super(settings);
         statementExecutionPanel.add(settings.getStatementExecutionSettings().createComponent(), BorderLayout.CENTER);
         methodExecutionPanel.add(settings.getMethodExecutionSettings().createComponent(), BorderLayout.CENTER);
         compilerPanel.add(settings.getCompilerSettings().createComponent(), BorderLayout.CENTER);
+        scriptExecutionPanel.add(settings.getScriptExecutionSettings().createComponent(), BorderLayout.CENTER);
     }
 
     public JPanel getComponent() {

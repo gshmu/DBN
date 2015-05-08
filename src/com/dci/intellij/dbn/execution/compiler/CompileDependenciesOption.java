@@ -26,6 +26,13 @@ public enum CompileDependenciesOption implements InteractiveOption {
 
     @Nullable
     @Override
+    public String getDescription() {
+        return null;
+    }
+
+
+    @Nullable
+    @Override
     public Icon getIcon() {
         return null;
     }

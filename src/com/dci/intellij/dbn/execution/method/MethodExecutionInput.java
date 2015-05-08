@@ -35,6 +35,7 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
     private boolean commitAfterExecution = true;
     private boolean enableLogging = false;
     private boolean isExecuting = false;
+    private long executionTimestamp;
 
 
     private transient MethodExecutionResult executionResult;
@@ -56,9 +57,14 @@ public class MethodExecutionInput implements Disposable, PersistentConfiguration
         }
     }
 
-    public void initExecutionResult(boolean debug) {
+    public void initExecution(boolean debug) {
         MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
         executionResult = new MethodExecutionResult(this, resultForm, debug);
+        executionTimestamp = System.currentTimeMillis();
+    }
+
+    public long getExecutionTimestamp() {
+        return executionTimestamp;
     }
 
     @Nullable

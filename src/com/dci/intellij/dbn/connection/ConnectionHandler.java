@@ -20,12 +20,6 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public interface ConnectionHandler extends Disposable, ConnectionProvider, Presentable {
     @NotNull
@@ -73,6 +67,8 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     String getUserName();
     String getPresentableText();
     String getQualifiedName();
+    @NotNull
+    String getName();
     String getDescription();
     Icon getIcon();
 

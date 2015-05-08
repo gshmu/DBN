@@ -27,6 +27,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -136,7 +137,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
 
     private class SchemaSelector extends ValueSelector<DBSchema> {
         public SchemaSelector() {
-            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getExecutionSchema(), true);
+            super(Icons.DBO_SCHEMA, "Select Schema...", executionInput.getExecutionSchema(), true, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBSchema>() {
                 @Override
                 public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
