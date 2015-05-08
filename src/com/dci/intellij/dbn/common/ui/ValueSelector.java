@@ -173,6 +173,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
 
     public ValueSelector<T> withValueDescriptions(boolean flag) {
         isShowValueDescriptions = flag;
+        label.setText(getName(selectedValue));
         return this;
     }
 
