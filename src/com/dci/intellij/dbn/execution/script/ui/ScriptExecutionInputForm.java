@@ -49,6 +49,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         } else {
             cmdLineExecutableComboBox.setEnabled(false);
         }
+        cmdLineExecutableComboBox.withIcons(false);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
@@ -60,6 +61,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 selectConnection(newValue);
             }
         });
+        connectionComboBox.withValueDescriptions(false);
         schemaComboBox.addListener(new ValueSelectorListener<DBSchema>() {
             @Override
             public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
@@ -67,6 +69,13 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             }
         });
         schemaComboBox.withValueDescriptions(false);
+
+        cmdLineExecutableComboBox.addListener(new ValueSelectorListener<CmdLineInterface>() {
+            @Override
+            public void selectionChanged(CmdLineInterface oldValue, CmdLineInterface newValue) {
+                getParentComponent().setCmdLineInterface(newValue);
+            }
+        });
     }
 
     private void selectConnection(@Nullable ConnectionHandler connectionHandler) {
@@ -90,6 +99,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             List<CmdLineInterface> interfaces = commandLineInterfaces.getInterfaces(connectionHandler.getDatabaseType());
             cmdLineExecutableComboBox.addValues(interfaces);
             cmdLineExecutableComboBox.setEnabled(true);
+
         }
     }
 

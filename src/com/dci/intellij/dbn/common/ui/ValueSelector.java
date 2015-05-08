@@ -69,6 +69,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private boolean isFocused = false;
     private boolean isShowingPopup = false;
     private boolean isShowValueDescriptions = true;
+    private boolean isShowIcons = true;
 
     private Border focusBorder;
     private Border defaultBorder;
@@ -125,7 +126,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 label.setText(text);
             } else {
                 label.setIcon(cropIcon(selectedValue.getIcon()));
-                label.setText(selectedValue.getName());
+                label.setText(getName(selectedValue));
             }
 
             innerPanel.setBackground(COMBO_BOX_BACKGROUND);
@@ -175,12 +176,18 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         return this;
     }
 
+    public ValueSelector<T> withIcons(boolean flag) {
+        isShowIcons = flag;
+        if (!isShowIcons) label.setIcon(null);
+        return this;
+    }
+
     private void adjustSize() {
         int minWidth = 0;
         FontMetrics fontMetrics = label.getFontMetrics(label.getFont());
         int height = fontMetrics.getHeight();
         for (T presentable : getAllPossibleValues()) {
-            String name = CommonUtil.nvl(presentable.getName(), "");
+            String name = CommonUtil.nvl(getName(presentable), "");
             int width = fontMetrics.stringWidth(name);
             if (presentable.getIcon() != null) {
                 width = width + 16;
@@ -318,7 +325,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, value.getIcon());
+            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, isShowIcons ? value.getIcon() : null);
             this.value = value;
         }
 
@@ -402,11 +409,11 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             if (isComboBox) {
                 selectedValue = value;
                 if (selectedValue == null) {
-                    label.setIcon(cropIcon(icon));
+                    label.setIcon(isShowIcons ? cropIcon(icon) : null);
                     label.setText(text);
                 } else {
-                    label.setIcon(cropIcon(selectedValue.getIcon()));
-                    label.setText(selectedValue.getName());
+                    label.setIcon(isShowIcons ? cropIcon(selectedValue.getIcon()) : null);
+                    label.setText(getName(selectedValue));
                 }
             }
 

@@ -26,6 +26,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="b83"/>
           <text value="&amp;Connection"/>
         </properties>
       </component>
@@ -40,6 +41,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="f366b"/>
           <text value="&amp;Schema"/>
         </properties>
       </component>
@@ -70,7 +72,8 @@
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Command-Line Interface"/>
+          <labelFor value="e5ee0"/>
+          <text value="Cmd-Line &amp;Interface"/>
         </properties>
       </component>
       <component id="e5ee0" class="com.dci.intellij.dbn.common.ui.DBNComboBox" binding="cmdLineExecutableComboBox" default-binding="true">

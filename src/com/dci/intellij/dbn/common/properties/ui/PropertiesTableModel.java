@@ -1,15 +1,20 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.dci.intellij.dbn.common.properties.Property;
+import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.util.*;
-
-public class PropertiesTableModel implements TableModel {
+public class PropertiesTableModel implements DBNTableModel {
     private List<Property> properties = new ArrayList<Property>();
     private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
 
@@ -122,5 +127,15 @@ public class PropertiesTableModel implements TableModel {
         for (TableModelListener modelListener : listeners) {
             modelListener.tableChanged(modelEvent);
         }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return false;
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }
