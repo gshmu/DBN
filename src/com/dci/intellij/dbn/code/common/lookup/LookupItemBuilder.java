@@ -3,11 +3,10 @@ package com.dci.intellij.dbn.code.common.lookup;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
-import com.intellij.openapi.Disposable;
 
 import javax.swing.Icon;
 
-public abstract class LookupItemBuilder implements Disposable {
+public abstract class LookupItemBuilder {
     public CodeCompletionLookupItem createLookupItem(Object source, CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
 
