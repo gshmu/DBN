@@ -19,10 +19,10 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
     private DBObjectRef<DBSchema> schemaRef;
     private CmdLineInterface cmdLineInterface;
 
-    public ScriptExecutionInputDialog(Project project, VirtualFile scriptFile, @Nullable ConnectionHandler connectionHandler) {
+    public ScriptExecutionInputDialog(Project project, VirtualFile scriptFile, @Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
         super(project, "Execute SQL Script", true);
         setModal(true);
-        component = new ScriptExecutionInputForm(this, scriptFile, connectionHandler);
+        component = new ScriptExecutionInputForm(this, scriptFile, connectionHandler, schema);
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Execute");
         init();
@@ -44,6 +44,10 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
                 getOKAction(),
                 getCancelAction(),
         };
+    }
+
+    public void setActionEnabled(boolean enabled) {
+        getOKAction().setEnabled(enabled);
     }
 
     public ConnectionHandler getConnection() {

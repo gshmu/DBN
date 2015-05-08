@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -33,7 +34,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
     private DBNHeaderForm headerForm;
 
-    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull VirtualFile sourceFile, @Nullable ConnectionHandler connectionHandler) {
+    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull VirtualFile sourceFile, @Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
         super(parentComponent);
 
         String headerTitle = sourceFile.getPath();
@@ -47,36 +48,35 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         hintTextArea.setText(
-                "Script execution engine uses the Command-Line Interface executable supplied with your database client.\n" +
-                "You can use default Command-Line Interface resolver (which tries to locate the executable using the \n" +
-                "\"path\" environment variables) or point to a specific Command-Line executable.\n\n" +
+                "Script execution uses the Command-Line Interface executable supplied with your database client. " +
+                "\n - you can use default Command-Line Interface (resolved using the path environment variable)" +
+                "\n - or point to a specific Command-Line executable.\n\n" +
                 "Database client interfaces are configurable in DBN Settings > Execution Engine > Script Execution.\n");
         hintTextArea.setBackground(mainPanel.getBackground());
         hintTextArea.setFont(mainPanel.getFont());
-
-        if (connectionHandler != null) {
-            selectConnection(connectionHandler);
-        } else {
-            cmdLineExecutableComboBox.setEnabled(false);
-        }
-        cmdLineExecutableComboBox.setOptions(ValueSelectorOption.HIDE_ICON);
+        //hintTextArea.setForeground(Colors.HINT_COLOR);
+        //hintTextArea.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         connectionComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
         connectionComboBox.setValues(connectionManager.getConnectionHandlers());
-        connectionComboBox.setSelectedValue(connectionHandler);
+        schemaComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
+        cmdLineExecutableComboBox.setOptions(ValueSelectorOption.HIDE_ICON);
+
+        updateDropDowns(connectionHandler, schema);
+
         connectionComboBox.addListener(new ValueSelectorListener<ConnectionHandler>() {
             @Override
             public void selectionChanged(ConnectionHandler oldValue, ConnectionHandler newValue) {
-                selectConnection(newValue);
+                updateDropDowns(newValue, null);
             }
         });
-        schemaComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         schemaComboBox.addListener(new ValueSelectorListener<DBSchema>() {
             @Override
             public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
                 parentComponent.setSchema(newValue);
+                updateButtons();
             }
         });
 
@@ -84,16 +84,26 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             @Override
             public void selectionChanged(CmdLineInterface oldValue, CmdLineInterface newValue) {
                 getParentComponent().setCmdLineInterface(newValue);
+                updateButtons();
             }
         });
     }
 
-    private void selectConnection(@Nullable ConnectionHandler connectionHandler) {
-        if (connectionHandler != null) {
-            ScriptExecutionInputDialog parentComponent = getParentComponent();
-            DBSchema userSchema = connectionHandler.getUserSchema();
+    @Nullable
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        return connectionComboBox;
+    }
+
+    private void updateDropDowns(@Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
+        ScriptExecutionInputDialog parentComponent = getParentComponent();
+        CmdLineInterface cmdLineInterface = null;
+        if (connectionHandler != null && !connectionHandler.isVirtual()) {
+            schema = CommonUtil.nvln(schema, connectionHandler.getUserSchema());
+            connectionComboBox.setSelectedValue(connectionHandler);
             schemaComboBox.setValues(connectionHandler.getObjectBundle().getSchemas());
-            schemaComboBox.setSelectedValue(userSchema);
+            schemaComboBox.setSelectedValue(schema);
+            schemaComboBox.setEnabled(true);
             headerForm.setBackground(connectionHandler.getEnvironmentType().getColor());
 
             DatabaseType databaseType = connectionHandler.getDatabaseType();
@@ -103,16 +113,28 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             cmdLineExecutableComboBox.addValues(interfaces);
             cmdLineExecutableComboBox.setEnabled(true);
 
-            CmdLineInterface cmdLineInterface = scriptExecutionManager.getRecentInterface(databaseType);
+            cmdLineInterface = scriptExecutionManager.getRecentInterface(databaseType);
             if (cmdLineInterface != null) {
                 cmdLineExecutableComboBox.setSelectedValue(cmdLineInterface);
 
             }
 
             parentComponent.setConnection(connectionHandler);
-            parentComponent.setSchema(userSchema);
+            parentComponent.setSchema(schema);
             parentComponent.setCmdLineInterface(cmdLineInterface);
+        } else {
+            schemaComboBox.setEnabled(false);
+            cmdLineExecutableComboBox.setEnabled(false);
         }
+        updateButtons();
+    }
+
+    private void updateButtons() {
+        ScriptExecutionInputDialog parentComponent = getParentComponent();
+        parentComponent.setActionEnabled(
+                connectionComboBox.getSelectedValue() != null &&
+                schemaComboBox.getSelectedValue() != null &&
+                cmdLineExecutableComboBox.getSelectedValue() != null);
     }
 
     @Override

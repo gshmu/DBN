@@ -17,8 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -81,10 +81,15 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
 
             ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
+            DBSchema currentSchema = connectionMappingManager.getCurrentSchema(virtualFile);
 
             ScriptExecutionInputDialog inputDialog =
-                    new ScriptExecutionInputDialog(project, virtualFile,
-                            activeConnection);
+                    new ScriptExecutionInputDialog(
+                            project,
+                            virtualFile,
+                            activeConnection,
+                            currentSchema);
+
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 final ConnectionHandler connectionHandler = inputDialog.getConnection();
@@ -107,7 +112,16 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                             @Override
                             protected Object handleException(Exception e) {
                                 String causeMessage = e instanceof TimeoutException ? "Operation has timed out" : e.getMessage();
-                                NotificationUtil.sendErrorNotification(project, "Script execution", "Error executing SQL script \"" + virtualFile.getPath() + "\". Details: " + causeMessage);
+                                MessageUtil.showErrorDialog(project,
+                                        "Script execution error",
+                                        "Error executing SQL script \"" + virtualFile.getPath() + "\". \nDetails: " + causeMessage,
+                                        new String[]{"Retry", "Cancel"}, 0,
+                                        new SimpleTask() {
+                                            @Override
+                                            protected void execute() {
+                                                executeScript(virtualFile);
+                                            }
+                                        });
                                 return super.handleException(e);
                             }
                         }.start();
