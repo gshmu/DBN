@@ -9,9 +9,11 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.PresentableFactory;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -22,6 +24,7 @@ import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
@@ -57,12 +60,23 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         //hintTextArea.setForeground(Colors.HINT_COLOR);
         //hintTextArea.setBorder(Borders.BOTTOM_LINE_BORDER);
 
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        final Project project = getProject();
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         connectionComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         connectionComboBox.setEnabled(sourceFile.isInLocalFileSystem());
         connectionComboBox.setValues(connectionManager.getConnectionHandlers());
         schemaComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         cmdLineExecutableComboBox.setOptions(ValueSelectorOption.HIDE_ICON);
+        cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New interface...") {
+            @Override
+            public void create(SimpleCallback<CmdLineInterface> callback) {
+                ConnectionHandler connectionHandler = connectionComboBox.getSelectedValue();
+                if (connectionHandler != null) {
+                    ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+                    scriptExecutionManager.createCmdLineInterface(connectionHandler.getDatabaseType(), callback);
+                }
+            }
+        });
 
         updateDropDowns(connectionHandler, schema);
 

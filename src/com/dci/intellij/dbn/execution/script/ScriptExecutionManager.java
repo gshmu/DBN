@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -18,9 +19,11 @@ import org.jetbrains.annotations.Nullable;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -30,6 +33,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
+import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -37,10 +41,13 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 
 @State(
@@ -129,6 +136,36 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }.start();
             }
         }
+    }
+
+    public void createCmdLineInterface(@NotNull DatabaseType databaseType, SimpleCallback<CmdLineInterface> callback) {
+        VirtualFile virtualFile = selectCmdLineExecutable(databaseType, null);
+        if (virtualFile != null) {
+            Project project = getProject();
+            ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
+            Set<String> interfaceNames = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces().getInterfaceNames();
+            CmdLineInterface cmdLineInterface = new CmdLineInterface(databaseType, virtualFile.getPath(), CmdLineInterface.getDefault(databaseType).getName(), null);
+            CmdLineInterfaceInputDialog dialog = new CmdLineInterfaceInputDialog(project, cmdLineInterface, interfaceNames);
+            dialog.show();
+            if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                callback.start(cmdLineInterface);
+                CmdLineInterfaceBundle commandLineInterfaces = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces();
+                commandLineInterfaces.add(cmdLineInterface);
+            }
+        }
+    }
+
+    @Nullable
+    public VirtualFile selectCmdLineExecutable(@NotNull DatabaseType databaseType, @Nullable String selectedExecutable) {
+        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
+        CmdLineInterface defaultCli = CmdLineInterface.getDefault(databaseType);
+        fileChooserDescriptor.
+                withTitle("Select Command-Line Executable").
+                withDescription("Select Command-Line Executable (" + defaultCli.getName() + ")").
+                withShowHiddenFiles(true);
+        VirtualFile selectedFile = StringUtil.isEmpty(selectedExecutable) ? null : LocalFileSystem.getInstance().findFileByPath(selectedExecutable);
+        VirtualFile[] virtualFiles = FileChooser.chooseFiles(fileChooserDescriptor, getProject(), selectedFile);
+        return virtualFiles.length == 1 ? virtualFiles[0] : null;
     }
 
     @Nullable

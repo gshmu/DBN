@@ -20,22 +20,19 @@ import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.awt.RelativePoint;
@@ -84,17 +81,11 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
                     if (databaseType == null) {
                         MessageUtil.showInfoDialog(project, "Select Database Type", "Please select database type first");
                     } else {
-                        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-                        CmdLineInterface defaultCli = CmdLineInterface.getDefault(databaseType);
-                        fileChooserDescriptor.
-                                withTitle("Select Command-Line Executable").
-                                withDescription("Select Command-Line Executable (" + defaultCli + ")").
-                                withShowHiddenFiles(true);
                         String executablePath = (String) getValueAt(rowIndex, 2);
-                        VirtualFile selectedFile = StringUtil.isEmpty(executablePath) ? null : LocalFileSystem.getInstance().findFileByPath(executablePath);
-                        VirtualFile[] virtualFiles = FileChooser.chooseFiles(fileChooserDescriptor, project, selectedFile);
-                        if (virtualFiles.length == 1) {
-                            setValueAt(virtualFiles[0].getPath(), rowIndex, 2);
+                        ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+                        VirtualFile virtualFile = scriptExecutionManager.selectCmdLineExecutable(databaseType, executablePath);
+                        if (virtualFile != null) {
+                            setValueAt(virtualFile.getPath(), rowIndex, 2);
                         }
                     }
                 }
