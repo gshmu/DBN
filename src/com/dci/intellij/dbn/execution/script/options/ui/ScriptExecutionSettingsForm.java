@@ -5,13 +5,25 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.thread.SimpleCallback;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.awt.RelativePoint;
 
 public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptExecutionSettings> {
     private JPanel mainPanel;
@@ -27,7 +39,9 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         decorator.setAddAction(new AnActionButtonRunnable() {
             @Override
             public void run(AnActionButton anActionButton) {
-                cmdLineInterfacesTable.insertRow();
+                showNewInterfacePopup(
+                        anActionButton.getDataContext(),
+                        anActionButton.getPreferredPopupPoint());
             }
         });
         decorator.setRemoveAction(new AnActionButtonRunnable() {
@@ -55,6 +69,50 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         registerComponents(mainPanel);
         updateBorderTitleForeground(mainPanel);
     }
+
+    private void showNewInterfacePopup(DataContext dataContext, RelativePoint point) {
+        DefaultActionGroup actionGroup = new DefaultActionGroup();
+        for (DatabaseType databaseType : DatabaseType.values()) {
+            if (databaseType != DatabaseType.UNKNOWN){
+                actionGroup.add(new CreateInterfaceAction(databaseType));
+            }
+        }
+
+        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
+                null,
+                actionGroup,
+                dataContext,
+                null,
+                false);
+
+        popup.show(point);
+    }
+
+    public class CreateInterfaceAction extends DumbAwareAction {
+        private DatabaseType databaseType;
+        public CreateInterfaceAction(DatabaseType databaseType) {
+            super(NamingUtil.enhanceUnderscoresForDisplay(databaseType.getName()), null, databaseType.getIcon());
+            this.databaseType = databaseType;
+        }
+
+        public void actionPerformed(AnActionEvent e) {
+            Project project = e.getProject();
+            if (project != null) {
+                ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
+                scriptExecutionManager.createCmdLineInterface(databaseType, cmdLineInterfacesTable.getNames(), new SimpleCallback<CmdLineInterface>() {
+                    @Override
+                    public void start(CmdLineInterface value) {
+                        cmdLineInterfacesTable.addInterface(value);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void update(AnActionEvent e) {
+
+        }
+    }
     
     public JPanel getComponent() {
         return mainPanel;
@@ -64,12 +122,12 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         ScriptExecutionSettings settings = getConfiguration();
         CmdLineInterfacesTableModel model = cmdLineInterfacesTable.getModel();
         model.validate();
-        CmdLineInterfaceBundle executorBundle = model.getCmdLineInterfaces();
+        CmdLineInterfaceBundle executorBundle = model.getBundle();
         settings.setCommandLineInterfaces(executorBundle);
     }
 
     public void resetFormChanges() {
         ScriptExecutionSettings settings = getConfiguration();
-        cmdLineInterfacesTable.getModel().setCmdLineInterfaces(settings.getCommandLineInterfaces());
+        cmdLineInterfacesTable.getModel().setBundle(settings.getCommandLineInterfaces());
     }
 }

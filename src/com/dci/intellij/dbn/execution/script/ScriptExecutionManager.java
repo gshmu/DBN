@@ -126,7 +126,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                         new SimpleTask() {
                                             @Override
                                             protected void execute() {
-                                                executeScript(virtualFile);
+                                                if (getOption() == 0) {
+                                                    executeScript(virtualFile);
+                                                }
                                             }
                                         });
                                 return super.handleException(e);
@@ -138,19 +140,26 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void createCmdLineInterface(@NotNull DatabaseType databaseType, SimpleCallback<CmdLineInterface> callback) {
+    public void createCmdLineInterface(@NotNull DatabaseType databaseType, @Nullable Set<String> bannedNames, SimpleCallback<CmdLineInterface> callback) {
+        boolean updateSettings = false;
         VirtualFile virtualFile = selectCmdLineExecutable(databaseType, null);
         if (virtualFile != null) {
             Project project = getProject();
             ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
-            Set<String> interfaceNames = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces().getInterfaceNames();
+            if (bannedNames == null) {
+                bannedNames = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces().getInterfaceNames();
+                updateSettings = true;
+            }
+
             CmdLineInterface cmdLineInterface = new CmdLineInterface(databaseType, virtualFile.getPath(), CmdLineInterface.getDefault(databaseType).getName(), null);
-            CmdLineInterfaceInputDialog dialog = new CmdLineInterfaceInputDialog(project, cmdLineInterface, interfaceNames);
+            CmdLineInterfaceInputDialog dialog = new CmdLineInterfaceInputDialog(project, cmdLineInterface, bannedNames);
             dialog.show();
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 callback.start(cmdLineInterface);
-                CmdLineInterfaceBundle commandLineInterfaces = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces();
-                commandLineInterfaces.add(cmdLineInterface);
+                if (updateSettings) {
+                    CmdLineInterfaceBundle commandLineInterfaces = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces();
+                    commandLineInterfaces.add(cmdLineInterface);
+                }
             }
         }
     }

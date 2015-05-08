@@ -25,7 +25,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
     public interface Defaults {
         CmdLineInterface ORACLE = new CmdLineInterface(DEFAULT_ID, DatabaseType.ORACLE, "sqlplus", "Oracle SQL*Plus client", "environment path based");
         CmdLineInterface MYSQL = new CmdLineInterface(DEFAULT_ID, DatabaseType.MYSQL, "mysql", "MySQL client", "environment path based");
-        CmdLineInterface POSTGRES = new CmdLineInterface(DEFAULT_ID, DatabaseType.POSTGRES, "psql ", "PostgreSQL interactive terminal - psql", "environment path based");
+        CmdLineInterface POSTGRES = new CmdLineInterface(DEFAULT_ID, DatabaseType.POSTGRES, "psql ", "PostgreSQL terminal - psql", "environment path based");
     }
 
     public static CmdLineInterface getDefault(@Nullable DatabaseType databaseType) {

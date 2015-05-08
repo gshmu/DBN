@@ -12,23 +12,23 @@ import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.intellij.openapi.options.ConfigurationException;
 
 public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
-    private CmdLineInterfaceBundle cmdLineInterfaces;
+    private CmdLineInterfaceBundle bundle;
 
-    public CmdLineInterfacesTableModel(CmdLineInterfaceBundle cmdLineInterfaces) {
-        this.cmdLineInterfaces = cmdLineInterfaces.clone();
+    public CmdLineInterfacesTableModel(CmdLineInterfaceBundle bundle) {
+        this.bundle = bundle.clone();
     }
 
-    public CmdLineInterfaceBundle getCmdLineInterfaces() {
-        return cmdLineInterfaces;
+    public CmdLineInterfaceBundle getBundle() {
+        return bundle;
     }
 
-    public void setCmdLineInterfaces(CmdLineInterfaceBundle cmdLineInterfaces) {
-        this.cmdLineInterfaces = cmdLineInterfaces.clone();
-        notifyListeners(0, cmdLineInterfaces.size(), -1);
+    public void setBundle(CmdLineInterfaceBundle bundle) {
+        this.bundle = bundle.clone();
+        notifyListeners(0, bundle.size(), -1);
     }
 
     public int getRowCount() {
-        return cmdLineInterfaces.size();
+        return bundle.size();
     }
 
     public int getColumnCount() {
@@ -51,7 +51,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        CmdLineInterface environmentType = getExecutor(rowIndex);
+        CmdLineInterface environmentType = getInterface(rowIndex);
         return
            columnIndex == 0 ? environmentType.getDatabaseType() :
            columnIndex == 1 ? environmentType.getName() :
@@ -61,7 +61,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!CommonUtil.safeEqual(actualValue, o)) {
-            CmdLineInterface cmdLineInterface = cmdLineInterfaces.get(rowIndex);
+            CmdLineInterface cmdLineInterface = bundle.get(rowIndex);
             if (columnIndex == 0) {
                 DatabaseType databaseType = (DatabaseType) o;
                 cmdLineInterface.setDatabaseType(databaseType);
@@ -75,28 +75,39 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
         }
     }
 
-    private CmdLineInterface getExecutor(int rowIndex) {
-        while (cmdLineInterfaces.size() <= rowIndex) {
-            cmdLineInterfaces.add(new CmdLineInterface());
+    public Set<String> getInterfaceNames() {
+        return bundle.getInterfaceNames();
+    }
+
+
+    private CmdLineInterface getInterface(int rowIndex) {
+        while (bundle.size() <= rowIndex) {
+            bundle.add(new CmdLineInterface());
         }
-        return cmdLineInterfaces.get(rowIndex);
+        return bundle.get(rowIndex);
+    }
+
+    public void addInterface(CmdLineInterface cmdLineInterface) {
+        bundle.add(cmdLineInterface);
+        int rowIndex = bundle.size() - 1;
+        notifyListeners(rowIndex, rowIndex, -1);
     }
 
     public void insertRow(int rowIndex) {
-        cmdLineInterfaces.add(rowIndex, new CmdLineInterface());
-        notifyListeners(rowIndex, cmdLineInterfaces.size()-1, -1);
+        bundle.add(rowIndex, new CmdLineInterface());
+        notifyListeners(rowIndex, bundle.size()-1, -1);
     }
 
     public void removeRow(int rowIndex) {
-        if (cmdLineInterfaces.size() > rowIndex) {
-            cmdLineInterfaces.remove(rowIndex);
-            notifyListeners(rowIndex, cmdLineInterfaces.size()-1, -1);
+        if (bundle.size() > rowIndex) {
+            bundle.remove(rowIndex);
+            notifyListeners(rowIndex, bundle.size()-1, -1);
         }
     }
 
     public void validate() throws ConfigurationException {
         Set<String> names = new HashSet<String>();
-        for (CmdLineInterface cmdLineInterface : cmdLineInterfaces.getInterfaces()) {
+        for (CmdLineInterface cmdLineInterface : bundle.getInterfaces()) {
             String name = cmdLineInterface.getName();
             if (StringUtil.isEmpty(name)) {
                 throw new ConfigurationException("Please provide names for each Command-Line Interface.");
@@ -107,7 +118,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
             }
         }
 
-        for (CmdLineInterface cmdLineInterface : cmdLineInterfaces.getInterfaces()) {
+        for (CmdLineInterface cmdLineInterface : bundle.getInterfaces()) {
             if (StringUtil.isEmpty(cmdLineInterface.getExecutablePath())) {
                 throw new ConfigurationException("Please provide executable paths for each Command-Line Interface.");
             }
