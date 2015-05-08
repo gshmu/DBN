@@ -8,14 +8,15 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum ObjectDependencyType implements Presentable{
-    INCOMING("Incoming references (objects used by this)", Icons.DBO_INCOMING_REF, Icons.DBO_INCOMING_REF_SOFT),
-    OUTGOING("Outgoing references (objects using this)", Icons.DBO_OUTGOING_REF, Icons.DBO_OUTGOING_REF_SOFT);
+    INCOMING("Incoming references", "objects used by this", Icons.DBO_INCOMING_REF, Icons.DBO_INCOMING_REF_SOFT),
+    OUTGOING("Outgoing references", "objects using this", Icons.DBO_OUTGOING_REF, Icons.DBO_OUTGOING_REF_SOFT);
 
     private String name;
+    private String description;
     private Icon icon;
     private Icon softIcon;
 
-    ObjectDependencyType(String name, Icon icon, Icon softIcon) {
+    ObjectDependencyType(String name, String description, Icon icon, Icon softIcon) {
         this.name = name;
         this.icon = icon;
         this.softIcon = softIcon;
@@ -26,6 +27,13 @@ public enum ObjectDependencyType implements Presentable{
     public String getName() {
         return name;
     }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
 
     @Nullable
     @Override

@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
+import javax.swing.Action;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -7,11 +12,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Action;
-import javax.swing.JComponent;
 
 public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputForm> {
     private ConnectionHandlerRef connectionRef;
@@ -24,6 +24,11 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Execute");
         init();
+    }
+
+    @Override
+    protected String getDimensionServiceKey() {
+        return null;
     }
 
     @Override

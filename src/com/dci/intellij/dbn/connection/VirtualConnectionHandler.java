@@ -95,6 +95,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     @Override public String getId() {return id;}
+    @NotNull
     @Override public String getName() {return name;}
     @Override public String getPresentableText() {
         return name;

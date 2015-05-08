@@ -466,6 +466,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getPresentableText();
     }
 
+    @NotNull
     public String getName() {
         return connectionSettings.getDatabaseSettings().getName();
     }

@@ -31,6 +31,13 @@ public enum CompileTypeOption implements InteractiveOption {
 
     @Nullable
     @Override
+    public String getDescription() {
+        return null;
+    }
+
+
+    @Nullable
+    @Override
     public Icon getIcon() {
         return icon;
     }

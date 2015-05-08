@@ -17,16 +17,16 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.DatabaseInterfaceProviderFactory;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -39,6 +39,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.awt.RelativePoint;
@@ -94,11 +95,14 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
                         MessageUtil.showInfoDialog(project, "Select Database Type", "Please select database type first");
                     } else {
                         FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-                        String defaultCli = getDefaultCmdLineInterface(databaseType);
+                        CmdLineInterface defaultCli = getDefaultCmdLineInterface(databaseType);
                         fileChooserDescriptor.
-                                withTitle("Select Command Line Interface").
-                                withDescription("Select Command Line Interface (" + defaultCli + ")");
-                        VirtualFile[] virtualFiles = FileChooser.chooseFiles(fileChooserDescriptor, project, null);
+                                withTitle("Select Command-Line Executable").
+                                withDescription("Select Command-Line Executable (" + defaultCli + ")").
+                                withShowHiddenFiles(true);
+                        String executablePath = (String) getValueAt(rowIndex, 2);
+                        VirtualFile selectedFile = LocalFileSystem.getInstance().findFileByPath(executablePath);
+                        VirtualFile[] virtualFiles = FileChooser.chooseFiles(fileChooserDescriptor, project, selectedFile);
                         if (virtualFiles.length == 1) {
                             setValueAt(virtualFiles[0].getPath(), rowIndex, 2);
                         }
@@ -150,8 +154,10 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
 
         public void actionPerformed(AnActionEvent e) {
             setValueAt(databaseType, rowIndex, 0);
-            String defaultCli = getDefaultCmdLineInterface(databaseType);
-            setValueAt(defaultCli, rowIndex, 1);
+            CmdLineInterface defaultCli = getDefaultCmdLineInterface(databaseType);
+            if (defaultCli != null) {
+                setValueAt(defaultCli.getExecutablePath(), rowIndex, 1);
+            }
             setValueAt("", rowIndex, 2);
         }
 
@@ -161,33 +167,20 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         }
     }
 
-    @NotNull
-    private String getDefaultCmdLineInterface(DatabaseType databaseType) {
+    @Nullable
+    private CmdLineInterface getDefaultCmdLineInterface(DatabaseType databaseType) {
         if (databaseType != null) {
             DatabaseInterfaceProvider interfaceProvider = DatabaseInterfaceProviderFactory.get(databaseType);
-            String defaultCli = interfaceProvider.getDatabaseExecutionInterface().getDefaultCmdLineInterface();
-            return CommonUtil.nvl(defaultCli, "");
+            return interfaceProvider.getDatabaseExecutionInterface().getDefaultCmdLineInterface();
         }
-        return "";
+        return null;
     }
 
     @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         Point point = e.getPoint();
         int columnIndex = columnAtPoint(point);
-        if (columnIndex == 0 || columnIndex == 2) {
-            boolean hand = false;
-            if (columnIndex == 0) {
-                Object databaseType = getValueAtLocation(point);
-                if (databaseType == null) {
-                    hand = true;
-                }
-            } else {
-                hand = true;
-            }
-            setCursor(hand ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
-        }
-
+        setCursor(columnIndex == 0 || columnIndex == 2 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
     }
 
 

@@ -15,15 +15,17 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
     private DatabaseType databaseType;
     private String executablePath;
     private String name;
+    private String description;
 
     public CmdLineInterface() {
 
     }
 
-    public CmdLineInterface(DatabaseType databaseType, String executablePath, String name) {
+    public CmdLineInterface(DatabaseType databaseType, String executablePath, String name, String description) {
         this.databaseType = databaseType;
         this.executablePath = executablePath;
         this.name = name;
+        this.description = description;
     }
 
     public DatabaseType getDatabaseType() {
@@ -44,6 +46,12 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
     @Override
     public String getName() {
         return CommonUtil.nvl(name, "");
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return CommonUtil.nvl(description, executablePath);
     }
 
     public void setDatabaseType(DatabaseType databaseType) {
@@ -74,6 +82,6 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
 
     @Override
     public CmdLineInterface clone() {
-        return new CmdLineInterface(databaseType, executablePath, name);
+        return new CmdLineInterface(databaseType, executablePath, name, description);
     }
 }

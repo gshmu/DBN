@@ -1,18 +1,14 @@
 package com.dci.intellij.dbn.execution.script;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jdom.Element;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.connection.DatabaseType;
 
-public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.Cloneable<CmdLineInterfaceBundle>, Iterable<CmdLineInterface>, PersistentConfiguration {
+public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.Cloneable<CmdLineInterfaceBundle>, PersistentConfiguration {
     private List<CmdLineInterface> elements = new ArrayList<CmdLineInterface>();
-
-    public Iterator<CmdLineInterface> iterator() {
-        return elements.iterator();
-    }
 
     public void clear() {
         elements.clear();
@@ -48,7 +44,7 @@ public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.
         return elements.remove(index);
     }
 
-    public List<CmdLineInterface> getElements() {
+    public List<CmdLineInterface> getInterfaces() {
         return elements;
     }
 
@@ -82,5 +78,15 @@ public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.
         }
 
         return cmdLineInterfaces;
+    }
+
+    public List<CmdLineInterface> getInterfaces(DatabaseType databaseType) {
+        List<CmdLineInterface> interfaces = new ArrayList<CmdLineInterface>();
+        for (CmdLineInterface cmdLineInterface : elements) {
+            if (cmdLineInterface.getDatabaseType() == databaseType) {
+                interfaces.add(cmdLineInterface);
+            }
+        }
+        return interfaces;
     }
 }

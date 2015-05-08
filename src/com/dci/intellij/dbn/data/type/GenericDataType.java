@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.type;
 
 import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -26,9 +27,17 @@ public enum GenericDataType implements Presentable{
     private GenericDataType(String name) {
         this.name = name;
     }
+    @NotNull
     public String getName() {
         return name;
     }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
 
     @Nullable
     @Override

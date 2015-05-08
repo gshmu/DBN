@@ -96,7 +96,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
 
     public void validate() throws ConfigurationException {
         Set<String> names = new HashSet<String>();
-        for (CmdLineInterface cmdLineInterface : cmdLineInterfaces) {
+        for (CmdLineInterface cmdLineInterface : cmdLineInterfaces.getInterfaces()) {
             String name = cmdLineInterface.getName();
             if (StringUtil.isEmpty(name)) {
                 throw new ConfigurationException("Please provide names for each Command-Line Interface.");
@@ -107,7 +107,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
             }
         }
 
-        for (CmdLineInterface cmdLineInterface : cmdLineInterfaces) {
+        for (CmdLineInterface cmdLineInterface : cmdLineInterfaces.getInterfaces()) {
             if (StringUtil.isEmpty(cmdLineInterface.getExecutablePath())) {
                 throw new ConfigurationException("Please provide executable paths for each Command-Line Interface.");
             }

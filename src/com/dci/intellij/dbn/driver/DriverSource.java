@@ -24,6 +24,13 @@ public enum DriverSource implements Presentable{
 
     @Nullable
     @Override
+    public String getDescription() {
+        return null;
+    }
+
+
+    @Nullable
+    @Override
     public Icon getIcon() {
         return null;
     }

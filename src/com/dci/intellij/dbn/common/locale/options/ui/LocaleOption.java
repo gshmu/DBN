@@ -40,9 +40,13 @@ public class LocaleOption implements Presentable{
     @NotNull
     @Override
     public String getName() {
-        return locale.equals(Locale.getDefault()) ?
-                locale.getDisplayName() + " - System default" :
-                locale.getDisplayName();
+        return locale.getDisplayName();
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return locale.equals(Locale.getDefault()) ? "System default" : null;
     }
 
     @Nullable
