@@ -6,17 +6,19 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.ScriptExecutionInput;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.database.oracle.execution.OracleMethodDebugExecutionProcessor;
 import com.dci.intellij.dbn.database.oracle.execution.OracleMethodExecutionProcessor;
+import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.object.DBMethod;
 
 public class OracleExecutionInterface implements DatabaseExecutionInterface {
     private static final String SQLPLUS_CONNECT_PATTERN = "\"[USER]/[PASSWORD]@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\"";
+    public static final CmdLineInterface DEFAULT_CMD_LINE_INTERFACE = new CmdLineInterface(DatabaseType.ORACLE, "sqlplus", "SQL*Plus", "environment path based");
 
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
         return new OracleMethodExecutionProcessor(method);
@@ -28,12 +30,12 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
 
     @Nullable
     @Override
-    public String getDefaultCmdLineInterface() {
-        return "sqlplus";
+    public CmdLineInterface getDefaultCmdLineInterface() {
+        return DEFAULT_CMD_LINE_INTERFACE;
     }
 
     @Override
-    public ScriptExecutionInput createScriptExecutionInput(@Nullable String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+    public ScriptExecutionInput createScriptExecutionInput(@NotNull String programPath, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         ScriptExecutionInput executionInput = new ScriptExecutionInput(content);
         String connectArg = SQLPLUS_CONNECT_PATTERN.
                 replace("[USER]", authenticationInfo.getUser()).
@@ -45,7 +47,7 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         String fileArg = "\"@" + filePath + "\"";
 
         List<String> command = executionInput.getCommand();
-        command.add(CommonUtil.nvl(programPath, getDefaultCmdLineInterface()));
+        command.add(programPath);
         command.add(connectArg);
         command.add(fileArg);
 

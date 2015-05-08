@@ -91,6 +91,13 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
 
         @Nullable
         @Override
+        public String getDescription() {
+            return null;
+        }
+
+
+        @Nullable
+        @Override
         public Icon getIcon() {
             return null;
         }
@@ -112,10 +119,17 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
             this.value = value;
         }
 
+
         @NotNull
         @Override
         public String getName() {
             return name;
+        }
+
+        @Nullable
+        @Override
+        public String getDescription() {
+            return null;
         }
 
         @Nullable

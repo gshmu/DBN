@@ -144,6 +144,7 @@ public class MethodExecutionForm extends DBNFormImpl<DisposableProjectComponent>
                     notifyChangeListeners();
                 }
             });
+            withValueDescriptions(false);
         }
 
         @Override

@@ -28,15 +28,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -65,6 +68,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private boolean isEnabled = true;
     private boolean isFocused = false;
     private boolean isShowingPopup = false;
+    private boolean isShowValueDescriptions = true;
 
     private Border focusBorder;
     private Border defaultBorder;
@@ -164,6 +168,11 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         }
 
         adjustSize();
+    }
+
+    public ValueSelector<T> withValueDescriptions(boolean flag) {
+        isShowValueDescriptions = flag;
+        return this;
     }
 
     private void adjustSize() {
@@ -309,7 +318,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         private T value;
 
         public SelectValueAction(T value) {
-            super(NamingUtil.enhanceUnderscoresForDisplay(value.getName()), null, value.getIcon());
+            super(NamingUtil.enhanceUnderscoresForDisplay(getName(value)), null, value.getIcon());
             this.value = value;
         }
 
@@ -323,6 +332,14 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
             e.getPresentation().setVisible(isVisible(value));
         }
     }
+
+    @NotNull
+    private String getName(T value) {
+        String description = value.getDescription();
+        String name = value.getName();
+        return isShowValueDescriptions && StringUtil.isNotEmpty(description)? name + " (" + description + ")" : name;
+    }
+
 
     public boolean isVisible(T value) {
         return true;
@@ -360,6 +377,17 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         this.values = values;
         adjustSize();
     }
+
+    public void addValue(T value) {
+        this.values.add(value);
+        adjustSize();
+    }
+
+    public void addValues(Collection<T> value) {
+        this.values.addAll(value);
+        adjustSize();
+    }
+
 
     public void resetValues() {
         this.values = null;

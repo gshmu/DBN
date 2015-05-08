@@ -72,6 +72,7 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     String getUserName();
     String getPresentableText();
     String getQualifiedName();
+    @NotNull
     String getName();
     String getDescription();
     Icon getIcon();
