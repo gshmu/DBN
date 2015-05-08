@@ -32,8 +32,8 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
     }
 
     @NotNull
-    public CmdLineInterface getCommandLineInterface(String name) {
-        return commandLineInterfaces.getInterface(name);
+    public CmdLineInterface getCommandLineInterface(String id) {
+        return commandLineInterfaces.getInterface(id);
     }
 
     public void setCommandLineInterfaces(CmdLineInterfaceBundle commandLineInterfaces) {

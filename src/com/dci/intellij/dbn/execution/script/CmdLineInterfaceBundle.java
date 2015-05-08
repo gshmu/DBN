@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.script;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -30,9 +31,10 @@ public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.
         return elements.get(index);
     }
 
-    public CmdLineInterface getInterface(String name) {
+    @Nullable
+    public CmdLineInterface getInterface(String id) {
         for (CmdLineInterface cmdLineInterface : elements) {
-            if (cmdLineInterface.getName().equals(name)) {
+            if (cmdLineInterface.getId().equals(id)) {
                 return cmdLineInterface;
             }
         }

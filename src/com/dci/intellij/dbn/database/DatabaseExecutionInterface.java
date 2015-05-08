@@ -13,8 +13,5 @@ public interface DatabaseExecutionInterface {
     MethodExecutionProcessor createExecutionProcessor(DBMethod method);
     MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method);
 
-    @Nullable
-    CmdLineInterface getDefaultCmdLineInterface();
-
     ScriptExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo);
 }

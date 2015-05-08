@@ -15,16 +15,13 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.DatabaseInterfaceProviderFactory;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.intellij.ide.DataManager;
@@ -88,7 +85,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
                         MessageUtil.showInfoDialog(project, "Select Database Type", "Please select database type first");
                     } else {
                         FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-                        CmdLineInterface defaultCli = getDefaultCmdLineInterface(databaseType);
+                        CmdLineInterface defaultCli = CmdLineInterface.getDefault(databaseType);
                         fileChooserDescriptor.
                                 withTitle("Select Command-Line Executable").
                                 withDescription("Select Command-Line Executable (" + defaultCli + ")").
@@ -147,7 +144,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
 
         public void actionPerformed(AnActionEvent e) {
             setValueAt(databaseType, rowIndex, 0);
-            CmdLineInterface defaultCli = getDefaultCmdLineInterface(databaseType);
+            CmdLineInterface defaultCli = CmdLineInterface.getDefault(databaseType);
             if (defaultCli != null) {
                 setValueAt(defaultCli.getExecutablePath(), rowIndex, 1);
             }
@@ -158,15 +155,6 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         public void update(AnActionEvent e) {
 
         }
-    }
-
-    @Nullable
-    private CmdLineInterface getDefaultCmdLineInterface(DatabaseType databaseType) {
-        if (databaseType != null) {
-            DatabaseInterfaceProvider interfaceProvider = DatabaseInterfaceProviderFactory.get(databaseType);
-            return interfaceProvider.getDatabaseExecutionInterface().getDefaultCmdLineInterface();
-        }
-        return null;
     }
 
     @Override

@@ -14,10 +14,9 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
-import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,7 +30,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
     private DBNHeaderForm headerForm;
 
-    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull VirtualFile sourceFile, @Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
+    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull VirtualFile sourceFile, @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
 
         String headerTitle = sourceFile.getPath();
@@ -82,24 +81,26 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         if (connectionHandler != null) {
             ScriptExecutionInputDialog parentComponent = getParentComponent();
             DBSchema userSchema = connectionHandler.getUserSchema();
-            parentComponent.setConnection(connectionHandler);
-            parentComponent.setSchema(userSchema);
             schemaComboBox.setValues(connectionHandler.getObjectBundle().getSchemas());
             schemaComboBox.setSelectedValue(userSchema);
             headerForm.setBackground(connectionHandler.getEnvironmentType().getColor());
 
+            DatabaseType databaseType = connectionHandler.getDatabaseType();
+            ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(getProject());
+            List<CmdLineInterface> interfaces = scriptExecutionManager.getAvailableInterfaces(databaseType);
             cmdLineExecutableComboBox.clearValues();
-            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            CmdLineInterface defaultCmdLineInterface = executionInterface.getDefaultCmdLineInterface();
-            if (defaultCmdLineInterface != null) {
-                cmdLineExecutableComboBox.addValue(defaultCmdLineInterface);
-            }
-            ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(connectionHandler.getProject());
-            CmdLineInterfaceBundle commandLineInterfaces = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces();
-            List<CmdLineInterface> interfaces = commandLineInterfaces.getInterfaces(connectionHandler.getDatabaseType());
             cmdLineExecutableComboBox.addValues(interfaces);
             cmdLineExecutableComboBox.setEnabled(true);
 
+            CmdLineInterface cmdLineInterface = scriptExecutionManager.getRecentInterface(databaseType);
+            if (cmdLineInterface != null) {
+                cmdLineExecutableComboBox.setSelectedValue(cmdLineInterface);
+
+            }
+
+            parentComponent.setConnection(connectionHandler);
+            parentComponent.setSchema(userSchema);
+            parentComponent.setCmdLineInterface(cmdLineInterface);
         }
     }
 
