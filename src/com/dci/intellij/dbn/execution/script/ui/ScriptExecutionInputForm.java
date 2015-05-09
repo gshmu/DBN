@@ -52,7 +52,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
         hintTextArea.setText(
                 "Script execution uses the Command-Line Interface executable supplied with your database client.\n" +
-                "Make sure it is available in the path environment variable or provide the path to the executable.");
+                "Make sure it is available in the \"PATH\" environment variable or provide the path to the executable.");
         hintTextArea.setBackground(mainPanel.getBackground());
         hintTextArea.setFont(mainPanel.getFont());
         //hintTextArea.setForeground(Colors.HINT_COLOR);

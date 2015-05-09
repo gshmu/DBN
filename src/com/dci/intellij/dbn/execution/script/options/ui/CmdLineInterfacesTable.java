@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.execution.script.CmdLineInterface;
+import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.TableUtil;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
@@ -15,17 +26,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Set;
-
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.execution.script.CmdLineInterface;
-import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
-import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.TableUtil;
-import com.intellij.util.ui.UIUtil;
 
 public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel> {
 
@@ -80,7 +80,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
     protected void processMouseMotionEvent(MouseEvent e) {
         Point point = e.getPoint();
         int columnIndex = columnAtPoint(point);
-        setCursor(columnIndex == 0 || columnIndex == 2 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
+        setCursor(columnIndex == 2 ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
     }
 
 
