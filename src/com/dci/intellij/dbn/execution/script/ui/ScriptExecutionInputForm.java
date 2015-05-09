@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -26,6 +17,15 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
     private JPanel headerPanel;
@@ -51,10 +51,8 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         hintTextArea.setText(
-                "Script execution uses the Command-Line Interface executable supplied with your database client. " +
-                "\n - you can use default Command-Line Interface (resolved using the path environment variable)" +
-                "\n - or point to a specific Command-Line executable.\n\n" +
-                "Database client interfaces are configurable in DBN Settings > Execution Engine > Script Execution.\n");
+                "Script execution uses the Command-Line Interface executable supplied with your database client.\n" +
+                "Make sure it is available in the path environment variable or provide the path to the executable.");
         hintTextArea.setBackground(mainPanel.getBackground());
         hintTextArea.setFont(mainPanel.getFont());
         //hintTextArea.setForeground(Colors.HINT_COLOR);
@@ -67,7 +65,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         connectionComboBox.setValues(connectionManager.getConnectionHandlers());
         schemaComboBox.setOptions(ValueSelectorOption.HIDE_DESCRIPTION);
         cmdLineExecutableComboBox.setOptions(ValueSelectorOption.HIDE_ICON);
-        cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New interface...") {
+        cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New Cmd-Line Interface...") {
             @Override
             public void create(SimpleCallback<CmdLineInterface> callback) {
                 ConnectionHandler connectionHandler = connectionComboBox.getSelectedValue();
