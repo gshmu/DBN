@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.execution.script.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,7 +73,7 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
         nameInUseLabel.setVisible(isNameUsed);
 
         CmdLineInterfaceInputDialog parentComponent = getParentComponent();
-        parentComponent.setActionEnabled(!isNameUsed && StringUtils.isNotEmpty(nameTextField.getText()));
+        parentComponent.setActionEnabled(!isNameUsed && StringUtil.isNotEmpty(nameTextField.getText()));
     }
 
     @Override
