@@ -1,21 +1,22 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import java.util.Set;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import java.util.Set;
 
 public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInputDialog>{
     private JPanel mainPanel;
@@ -25,6 +26,7 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
     private JPanel executablePanel;
     private JLabel executableLabel;
     private JPanel databaseTypePanel;
+    private JTextArea hintTextArea;
 
     public CmdLineInterfaceInputForm(@NotNull final CmdLineInterfaceInputDialog parentComponent, @NotNull final CmdLineInterface cmdLineInterface, @NotNull final Set<String> usedNames) {
         super(parentComponent);
@@ -48,6 +50,12 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
                 updateComponents(cmdLineInterface, usedNames);
             }
         });
+
+        hintTextArea.setText(
+                "Please provide a name for storing Command-Line interface executable.\n" +
+                "Command-Line interfaces can be configured in DBN Settings > Execution Engine > Script Execution.");
+        hintTextArea.setBackground(mainPanel.getBackground());
+        hintTextArea.setFont(mainPanel.getFont());
 
         updateComponents(cmdLineInterface, usedNames);
     }

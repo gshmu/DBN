@@ -1,17 +1,18 @@
 package com.dci.intellij.dbn.execution.script;
 
-import javax.swing.Icon;
-import java.util.UUID;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import org.apache.commons.lang.StringUtils;
+import org.jdesktop.swingx.util.OS;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.UUID;
 
 public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInterface>, PersistentConfiguration, Presentable {
     public static final String DEFAULT_ID = "DEFAULT";
@@ -23,9 +24,10 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
     private String description;
 
     public interface Defaults {
-        CmdLineInterface ORACLE = new CmdLineInterface(DEFAULT_ID, DatabaseType.ORACLE, "sqlplus", "Oracle SQL*Plus client", "environment path based");
-        CmdLineInterface MYSQL = new CmdLineInterface(DEFAULT_ID, DatabaseType.MYSQL, "mysql", "MySQL client", "environment path based");
-        CmdLineInterface POSTGRES = new CmdLineInterface(DEFAULT_ID, DatabaseType.POSTGRES, "psql ", "PostgreSQL terminal - psql", "environment path based");
+        String extension = OS.isWindows() ? ".exe" : "";
+        CmdLineInterface ORACLE = new CmdLineInterface(DEFAULT_ID, DatabaseType.ORACLE, "sqlplus", "Oracle SQL*Plus client", "sqlplus" + extension + " - env path");
+        CmdLineInterface MYSQL = new CmdLineInterface(DEFAULT_ID, DatabaseType.MYSQL, "mysql", "MySQL client", "mysql" + extension + " - env path");
+        CmdLineInterface POSTGRES = new CmdLineInterface(DEFAULT_ID, DatabaseType.POSTGRES, "psql ", "PostgreSQL terminal", "psql" + extension + " - env path");
     }
 
     public static CmdLineInterface getDefault(@Nullable DatabaseType databaseType) {
