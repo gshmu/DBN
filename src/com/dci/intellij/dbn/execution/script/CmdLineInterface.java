@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import org.apache.commons.lang.StringUtils;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +102,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
     @Override
     public void readConfiguration(Element element) {
         id = element.getAttributeValue("id");
-        if (StringUtils.isEmpty(id)) id = UUID.randomUUID().toString();
+        if (StringUtil.isEmpty(id)) id = UUID.randomUUID().toString();
         name = element.getAttributeValue("name");
         executablePath = element.getAttributeValue("executable-path");
         databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
