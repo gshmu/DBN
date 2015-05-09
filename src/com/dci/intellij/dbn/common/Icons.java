@@ -19,7 +19,9 @@ public class Icons {
     public static final Icon COMMON_WARNING = load("/img/common/Warning.png");
     public static final Icon COMMON_ERROR = load("/img/common/Error.png");
     public static final Icon COMMON_RIGHT = load("/img/common/SplitRight.png");
+    public static final Icon COMMON_LEFT = load("/img/common/SplitLeft.png");
     public static final Icon COMMON_UP = load("/img/common/SplitUp.png");
+    public static final Icon COMMON_DOWN = load("/img/common/SplitDown.png");
     public static final Icon COMMON_ARROW_DOWN = load("/img/ComboBoxArrow.png");
     public static final Icon COMMON_TIMER = load("/img/Timer.png");
 
@@ -93,6 +95,9 @@ public class Icons {
     public static final Icon METHOD_CALL              = load("METHOD_CALL", "/img/MethodCall.png");
     public static final Icon SQL_STATEMENT            = load("SQL_STATEMENT", "/img/SQLStatement.png");
 
+
+    public static final Icon KILL_PROCESS               = load("/img/action/KillProcess.png");
+    public static final Icon EXECUTE_SQL_SCRIPT         = load("/img/action/ExecuteAsScript.png");
 
     public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
     public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");
@@ -169,6 +174,7 @@ public class Icons {
     public static final Icon DATA_SORTING_DESC =    load("/img/action/DataSortingDesc.png");
     public static final Icon DATA_COLUMNS =    load("/img/action/ColumnSetup.png");
 
+    public static final Icon TOP_LEVEL_FILTER =    load("/img/TopLevelFilter.png");
     public static final Icon DATASET_FILTER =    load("/img/filter/DatasetFilter.png");
     public static final Icon DATASET_FILTER_CLEAR =    load("/img/filter/DatasetFilterClear.png");
     public static final Icon DATASET_FILTER_NEW =    load("/img/filter/DatasetFilterNew.png");

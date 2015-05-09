@@ -36,8 +36,4 @@ public class VariableLookupItemBuilder extends LookupItemBuilder {
     public Icon getIcon() {
         return null;
     }
-
-    @Override
-    public void dispose() {
-    }
 }

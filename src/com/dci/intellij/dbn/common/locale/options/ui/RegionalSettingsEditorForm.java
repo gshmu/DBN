@@ -69,16 +69,17 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
         ValueSelectorListener previewListener = new ValueSelectorListener() {
             @Override
-            public void valueSelected(Object value) {
+            public void selectionChanged(Object oldValue, Object newValue) {
                 updatePreview();
             }
         };
-        numberFormatComboBox.addListener(previewListener);
-        dateFormatComboBox.addListener(previewListener);
 
         resetFormChanges();
         updatePreview();
 
+        numberFormatComboBox.addListener(previewListener);
+        dateFormatComboBox.addListener(previewListener);
+        localeComboBox.addListener(previewListener);
         registerComponent(mainPanel);
     }
 
@@ -192,7 +193,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         regionalSettings.getCustomNumberFormat().applyChanges(customNumberFormatTextField);
 
         if (modified) {
-            EventUtil.notify(getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
+            EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
         }
 
     }

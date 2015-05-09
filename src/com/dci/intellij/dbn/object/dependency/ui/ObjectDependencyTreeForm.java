@@ -65,8 +65,8 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         dependencyTypeComboBox.setSelectedValue(dependencyType);
         dependencyTypeComboBox.addListener(new ValueSelectorListener<ObjectDependencyType>() {
             @Override
-            public void valueSelected(ObjectDependencyType value) {
-                dependencyTree.setDependencyType(value);
+            public void selectionChanged(ObjectDependencyType oldValue, ObjectDependencyType newValue) {
+                dependencyTree.setDependencyType(newValue);
             }
         });
 

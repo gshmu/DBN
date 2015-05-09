@@ -4,9 +4,20 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class SimpleTimeoutCall<T> implements Callable<T>{
+    public static final ExecutorService POOL = Executors.newCachedThreadPool(new ThreadFactory() {
+        @Override
+        public Thread newThread(@NotNull Runnable runnable) {
+            Thread thread = new Thread(runnable, "DBN - Timed-out Execution Thread");
+            thread.setPriority(Thread.MIN_PRIORITY);
+            return thread;
+        }
+    });
+
     private long timeout;
     private TimeUnit timeoutUnit;
     private T defaultValue;
@@ -19,8 +30,7 @@ public abstract class SimpleTimeoutCall<T> implements Callable<T>{
 
     public final T start() {
         try {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Future<T> future = executor.submit(this);
+            Future<T> future = POOL.submit(this);
             return future.get(timeout, timeoutUnit);
         } catch (Exception e) {
             return handleException(e);

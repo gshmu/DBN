@@ -1,17 +1,11 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -22,7 +16,6 @@ import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
@@ -30,7 +23,7 @@ import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.execution.logging.DatabaseLogOutput;
+import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
@@ -44,6 +37,14 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -57,14 +58,14 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private UncommittedChangeBundle changesBundle;
     private DatabaseConsoleBundle consoleBundle;
     private DBSessionBrowserVirtualFile sessionBrowserFile;
-    private DatabaseLogOutput logOutput;
+    private DatabaseLoggingResult logOutput;
 
     private boolean isDisposed;
     private boolean checkingIdleStatus;
     private boolean allowConnection;
     private long validityCheckTimestamp = 0;
     private ConnectionHandlerRef ref;
-    private Authentication temporaryAuthentication = new Authentication();
+    private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
 
     private LazyValue<NavigationPsiCache> psiCache = new DisposableLazyValue<NavigationPsiCache>(this) {
         @Override
@@ -106,21 +107,21 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     @Override
-    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {
-        this.temporaryAuthentication = temporaryAuthentication;
+    public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {
+        this.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
     }
 
     @Override
     @NotNull
-    public Authentication getTemporaryAuthentication() {
-        if (temporaryAuthentication.isProvided()) {
+    public AuthenticationInfo getTemporaryAuthenticationInfo() {
+        if (temporaryAuthenticationInfo.isProvided()) {
             int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
             long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
-            if (temporaryAuthentication.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
-                temporaryAuthentication = new Authentication();
+            if (temporaryAuthenticationInfo.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
+                temporaryAuthenticationInfo = new AuthenticationInfo();
             }
         }
-        return temporaryAuthentication;
+        return temporaryAuthenticationInfo;
     }
 
     @Override
@@ -140,8 +141,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
 
     @Override
     public boolean isAuthenticationProvided() {
-        ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
-        return databaseSettings.getAuthentication().isProvided() || getTemporaryAuthentication().isProvided();
+        return getAuthenticationInfo().isProvided() || getTemporaryAuthenticationInfo().isProvided();
     }
 
 
@@ -173,7 +173,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isActive() {
-        return connectionSettings.getDatabaseSettings().isActive();
+        return connectionSettings.isActive();
     }
 
     public DatabaseType getDatabaseType() {
@@ -272,6 +272,16 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return ref;
     }
 
+    @Override
+    public DatabaseInfo getDatabaseInfo() {
+        return getSettings().getDatabaseSettings().getDatabaseInfo();
+    }
+
+    @Override
+    public AuthenticationInfo getAuthenticationInfo() {
+        return getSettings().getDatabaseSettings().getAuthenticationInfo();
+    }
+
     public boolean isValid() {
         if (connectionBundle.containsConnection(this)) {
             long currentTimestamp = System.currentTimeMillis();
@@ -318,7 +328,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         try {
             connectionPool.closeConnections();
             changesBundle = null;
-            temporaryAuthentication = new Authentication();
+            temporaryAuthenticationInfo = new AuthenticationInfo();
         } finally {
             connectionStatus.setConnected(false);
         }
@@ -329,13 +339,14 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public String getUserName() {
-        return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthentication().getUser(), "");
+        return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthenticationInfo().getUser(), "");
     }
 
     public ConnectionLoadMonitor getLoadMonitor() {
         return loadMonitor;
     }
 
+    @NotNull
     public DBObjectBundle getObjectBundle() {
         return objectBundle.get();
     }
@@ -404,7 +415,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
             synchronized (this) {
                 if (interfaceProvider == null || interfaceProvider.getDatabaseType() != getDatabaseType()) {
                     try {
-                        interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
+                        interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
 
                     }
@@ -456,6 +467,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return getPresentableText();
     }
 
+    @NotNull
     public String getName() {
         return connectionSettings.getDatabaseSettings().getName();
     }

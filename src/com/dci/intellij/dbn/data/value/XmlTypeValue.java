@@ -22,13 +22,21 @@ public class XmlTypeValue extends LargeObjectValue{
     public XmlTypeValue(CallableStatement callableStatement, int parameterIndex) throws SQLException {
         OracleCallableStatement oracleCallableStatement = (OracleCallableStatement) callableStatement;
         OPAQUE opaque = oracleCallableStatement.getOPAQUE(parameterIndex);
-        xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        if (opaque instanceof XMLType) {
+            xmlType = (XMLType) opaque;
+        } else {
+            xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        }
     }
 
     public XmlTypeValue(ResultSet resultSet, int columnIndex) throws SQLException {
         OracleResultSet oracleResultSet = (OracleResultSet) resultSet;
         OPAQUE opaque = oracleResultSet.getOPAQUE(columnIndex);
-        xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        if (opaque instanceof XMLType) {
+            xmlType = (XMLType) opaque;
+        } else {
+            xmlType = opaque == null ? null : XMLType.createXML(opaque);
+        }
     }
 
     @Override

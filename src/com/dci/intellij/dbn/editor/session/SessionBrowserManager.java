@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -110,8 +109,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         ResultSet resultSet = null;
         try {
             DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-            DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
-            if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_CURRENT_SQL)) {
+            if (DatabaseFeature.SESSION_CURRENT_SQL.isSupported(connectionHandler)) {
                 DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
 
                 connection = connectionHandler.getPoolConnection();
@@ -134,8 +132,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     public void interruptSessions(final SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
         final ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
         final DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-        DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
-        if (compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_INTERRUPTION_TIMING)) {
+        if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
             InteractiveOptionHandler<SessionInterruptionOption> disconnectOptionHandler =

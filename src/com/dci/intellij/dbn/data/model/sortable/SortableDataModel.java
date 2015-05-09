@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSortingSettings;
@@ -14,6 +9,11 @@ import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class SortableDataModel<T extends SortableDataModelRow> extends BasicDataModel<T> {

@@ -4,22 +4,28 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseUrlResolver {
 
-    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",    "localhost", "1521", "XE"),
-    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",      "localhost", "3306", "mysql"),
-    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$", "localhost", "5432", "postgres"),
-    UNKNOWN ("",  "", "localhost", "1234", "database"),
+    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",   DatabaseInfo.ORACLE),
+    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",      DatabaseInfo.MYSQL),
+    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$", DatabaseInfo.POSTGRES),
+    UNKNOWN ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",     "^(jdbc:unknown:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",    DatabaseInfo.UNKNOWN),
     ;
 
     private String urlPattern;
     private String urlRegex;
-    private String defaultHost;
-    private String defaultPort;
-    private String defaultDatabase;
+    private DatabaseInfo defaultInfo;
+
+    public String getUrl(DatabaseInfo databaseInfo) {
+        return getUrl(
+                databaseInfo.getHost(),
+                databaseInfo.getPort(),
+                databaseInfo.getDatabase());
+    }
 
     public String getUrl(String host, String port, String database) {
         return urlPattern.
@@ -29,27 +35,18 @@ public enum DatabaseUrlResolver {
     }
 
     public String getDefaultUrl() {
-        return getUrl(defaultHost, defaultPort, defaultDatabase);
+        return getUrl(defaultInfo);
     }
 
-    DatabaseUrlResolver(String urlPattern, String urlRegex, String defaultHost, String defaultPort, String defaultDatabase) {
+    DatabaseUrlResolver(String urlPattern, String urlRegex, DatabaseInfo defaultInfo) {
         this.urlPattern = urlPattern;
         this.urlRegex = urlRegex;
-        this.defaultHost = defaultHost;
-        this.defaultPort = defaultPort;
-        this.defaultDatabase = defaultDatabase;
+        this.defaultInfo = defaultInfo;
     }
 
-    public String getDefaultHost() {
-        return defaultHost;
-    }
-
-    public String getDefaultPort() {
-        return defaultPort;
-    }
-
-    public String getDefaultDatabase() {
-        return defaultDatabase;
+    @NotNull
+    public DatabaseInfo getDefaultInfo() {
+        return defaultInfo.clone();
     }
 
     public String resolveHost(String url) {

@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
@@ -31,12 +30,9 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
         boolean enabled = false;
         if (sessionBrowser != null) {
             ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
-            DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-            visible = compatibilityInterface.supportsFeature(DatabaseFeature.SESSION_DISCONNECT);
+            visible = DatabaseFeature.SESSION_DISCONNECT.isSupported(connectionHandler);
             SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
-            if (editorTable != null) {
-                enabled = editorTable.getSelectedRows().length > 0;
-            }
+            enabled = editorTable.getSelectedRows().length > 0;
         }
 
         Presentation presentation = e.getPresentation();

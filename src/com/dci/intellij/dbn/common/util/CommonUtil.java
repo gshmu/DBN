@@ -58,7 +58,8 @@ public class CommonUtil {
         return value == null ? defaultValue : value;
     }
 
-    public static <T> T nvln(@Nullable T value, T defaultValue) {
+    @Nullable
+    public static <T> T nvln(@Nullable T value, @Nullable T defaultValue) {
         return value == null ? defaultValue : value;
     }
 

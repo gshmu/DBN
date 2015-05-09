@@ -1,10 +1,10 @@
-package com.dci.intellij.dbn.connection;
+package com.dci.intellij.dbn.common.database;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 
-public class Authentication {
+public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Cloneable<AuthenticationInfo>{
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
     private boolean emptyPassword;
@@ -51,20 +51,20 @@ public class Authentication {
         return TimeUtil.isOlderThan(timestamp, millis);
     }
 
-    public boolean isSame(Authentication authentication) {
+    public boolean isSame(AuthenticationInfo authenticationInfo) {
         return
-            this.osAuthentication == authentication.osAuthentication &&
-            CommonUtil.safeEqual(this.user, authentication.user) &&
-            CommonUtil.safeEqual(this.password, authentication.password);
+            this.osAuthentication == authenticationInfo.osAuthentication &&
+            CommonUtil.safeEqual(this.user, authenticationInfo.user) &&
+            CommonUtil.safeEqual(this.password, authenticationInfo.password);
     }
 
     @Override
-    public Authentication clone() {
-        Authentication authentication = new Authentication();
-        authentication.user = user;
-        authentication.password = password;
-        authentication.osAuthentication = osAuthentication;
-        authentication.emptyPassword = emptyPassword;
-        return authentication;
+    public AuthenticationInfo clone() {
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+        authenticationInfo.user = user;
+        authenticationInfo.password = password;
+        authenticationInfo.osAuthentication = osAuthentication;
+        authenticationInfo.emptyPassword = emptyPassword;
+        return authenticationInfo;
     }
 }

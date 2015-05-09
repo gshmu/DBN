@@ -1,19 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -24,6 +12,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -36,12 +25,24 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
     private JPanel mainPanel;
     private JPanel contentPanel;
     private JPanel headerPanel;
     private JButton infoButton;
     private JButton testButton;
+    private JCheckBox activeCheckBox;
     private TabbedPane configTabbedPane;
 
     private DBNHeaderForm headerForm;
@@ -54,7 +55,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
 
         TabInfo connectionTabInfo = new TabInfo(new JBScrollPane(databaseSettings.createComponent()));
-        connectionTabInfo.setText("Connection");
+        connectionTabInfo.setText("Database");
         configTabbedPane.addTab(connectionTabInfo);
 
         ConnectionPropertiesSettings propertiesSettings = connectionSettings.getPropertiesSettings();
@@ -77,12 +78,12 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         filtersTabInfo.setText("Filters");
         configTabbedPane.addTab(filtersTabInfo);
 
-        ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) databaseSettings.getSettingsEditor();
+        ConnectionDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
         ConnectionDetailSettingsForm detailSettingsForm = detailSettings.getSettingsEditor();
 
         ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
         Icon icon = connectionSettings.isNew() ? Icons.CONNECTION_NEW :
-                   !databaseSettings.isActive() ? Icons.CONNECTION_DISABLED :
+                   !connectionSettings.isActive() ? Icons.CONNECTION_DISABLED :
                    connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_ACTIVE :
                    connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
@@ -90,19 +91,21 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         Project project = databaseSettings.getProject();
         EventUtil.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
-        EventUtil.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, environmentConfigListener);
 
         databaseSettingsForm.notifyPresentationChanges();
         detailSettingsForm.notifyPresentationChanges();
 
+        resetFormChanges();
+
         registerComponent(testButton);
         registerComponent(infoButton);
+        registerComponent(activeCheckBox);
     }
 
     public ConnectionSettings getTemporaryConfig() throws ConfigurationException {
         ConnectionSettings configuration = getConfiguration();
         ConnectionSettings clone = configuration.clone();
-        ConnectionDatabaseSettingsForm databaseSettingsEditor = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+        ConnectionDatabaseSettingsForm databaseSettingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
         if(databaseSettingsEditor != null) {
             databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
         }
@@ -116,6 +119,16 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
             sshTunnelSettingsForm.applyFormChanges(clone.getSshTunnelSettings());
         }
 
+        ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
+        if (detailSettingsForm != null) {
+            detailSettingsForm.applyFormChanges(clone.getDetailSettings());
+        }
+
+        ConnectionFilterSettingsForm filterSettingsForm = configuration.getFilterSettings().getSettingsEditor();
+        if (filterSettingsForm != null) {
+            filterSettingsForm.applyFormChanges(clone.getFilterSettings());
+        }
+
         return clone;
     }
 
@@ -123,9 +136,9 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
+                ConnectionSettings configuration = getConfiguration();
+                ConnectionBundleSettings bundleSettings = configuration.getParent();
                 if (source == testButton || source == infoButton) {
-
-                    ConnectionSettings configuration = getConfiguration();
                     ConnectionSettingsForm connectionSettingsForm = configuration.getSettingsEditor();
                     if (connectionSettingsForm != null) {
                         try {
@@ -140,13 +153,14 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                                     connectionManager.showConnectionInfo(temporaryConfig, environmentType);
                                 }
                             }
+                            configuration.getDatabaseSettings().setConnectivityStatus(temporaryConfig.getDatabaseSettings().getConnectivityStatus());
 
-                            ConnectionBundleSettingsForm bundleSettingsForm = configuration.getParent().getSettingsEditor();
+                            ConnectionBundleSettingsForm bundleSettingsForm = bundleSettings.getSettingsEditor();
                             if (bundleSettingsForm != null) {
                                 JList connectionList = bundleSettingsForm.getList();
                                 connectionList.revalidate();
                                 connectionList.repaint();
-                                ConnectionDatabaseSettingsForm settingsEditor = (ConnectionDatabaseSettingsForm) configuration.getDatabaseSettings().getSettingsEditor();
+                                ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
                                 if (settingsEditor != null) {
                                     settingsEditor.notifyPresentationChanges();
                                 }
@@ -156,11 +170,28 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                         }
                     }
                 }
+                if (source == activeCheckBox) {
+                    configuration.setModified(true);
+                    ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
+
+                    if (bundleSettingsEditor != null) {
+                        JList connectionList = bundleSettingsEditor.getList();
+                        connectionList.revalidate();
+                        connectionList.repaint();
+                        ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
+                        if (settingsEditor != null) {
+                            settingsEditor.notifyPresentationChanges();
+                        }
+                    }
+                }
+
             }
         };
     }
 
-
+    public boolean isConnectionActive() {
+        return activeCheckBox.isSelected();
+    }
 
     public void selectTab(String tabName) {
         TabbedPaneUtil.selectTab(configTabbedPane, tabName);        
@@ -190,13 +221,20 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 }
             }.start();
         }
-
     };
 
-    private EnvironmentConfigLocalListener environmentConfigListener = new EnvironmentConfigLocalListener() {
-        @Override
-        public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
+    @Override
+    public void resetFormChanges() {
+        activeCheckBox.setSelected(getConfiguration().isActive());
+    }
 
-        }
-    };
+    @Override
+    public void applyFormChanges() throws ConfigurationException {
+        applyFormChanges(getConfiguration());
+    }
+
+    @Override
+    public void applyFormChanges(ConnectionSettings configuration) throws ConfigurationException {
+        configuration.setActive(activeCheckBox.isSelected());
+    }
 }

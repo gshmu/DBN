@@ -1,5 +1,23 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -7,6 +25,7 @@ import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
@@ -31,24 +50,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
     private JRadioButton joinAndRadioButton;
@@ -101,11 +102,11 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     private class ColumnSelector extends ValueSelector<DBColumn> {
         public ColumnSelector() {
-            super(PlatformIcons.ADD_ICON, "Add Condition", null, false);
+            super(PlatformIcons.ADD_ICON, "Add Condition", null, false, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
-                public void valueSelected(DBColumn column) {
-                    addConditionPanel(column);
+                public void selectionChanged(DBColumn oldValue, DBColumn newValue) {
+                    addConditionPanel(newValue);
                 }
             });
         }

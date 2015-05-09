@@ -27,6 +27,11 @@ public class StatementExecutionVariablesDialog extends DBNDialog<StatementExecut
     }
 
     @Override
+    protected String getDimensionServiceKey() {
+        return null;
+    }
+
+    @Override
     public JComponent getPreferredFocusedComponent() {
         return component == null ? null : component.getPreferredFocusedComponent();
     }

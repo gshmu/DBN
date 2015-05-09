@@ -39,6 +39,11 @@ public class MethodExecutionDialog extends DBNDialog<MethodExecutionForm> {
     }
 
     @Override
+    protected String getDimensionServiceKey() {
+        return null;
+    }
+
+    @Override
     protected void doOKAction() {
         super.doOKAction();
     }

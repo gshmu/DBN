@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.code.common.lookup;
 
-import javax.swing.Icon;
-
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
+
+import javax.swing.Icon;
 
 public class BasicLookupItemBuilder extends LookupItemBuilder {
     private CharSequence text;
@@ -36,9 +36,5 @@ public class BasicLookupItemBuilder extends LookupItemBuilder {
 
     public Icon getIcon() {
         return icon;
-    }
-
-    @Override
-    public void dispose() {
     }
 }

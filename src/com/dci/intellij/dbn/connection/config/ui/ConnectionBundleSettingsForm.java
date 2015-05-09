@@ -23,10 +23,12 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -35,6 +37,7 @@ import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -46,6 +49,8 @@ import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.diagnostic.Logger;
@@ -91,7 +96,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionListScrollPane.setViewportView(connectionsList);
 
         if (connectionBundle.getConnectionHandlers().size() > 0) {
-            selectConnection(connectionBundle.getConnectionHandlers().get(0));
+            selectConnection(connectionBundle.getConnectionHandlers().get(0).getId());
         }
         JPanel emptyPanel = new JPanel();
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
@@ -119,9 +124,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             for (int i=0; i<oldConnections.size(); i++) {
                 ConnectionSettings oldConfig = oldConnections.get(i).getSettings();
                 ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
-                ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) newConfig.getDatabaseSettings().getSettingsEditor();
+                ConnectionSettingsForm settingsEditor = newConfig.getSettingsEditor();
                 if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
-                        (databaseSettingsForm != null && databaseSettingsForm.isConnectionActive() != oldConfig.getDatabaseSettings().isActive())) {
+                        (settingsEditor != null && settingsEditor.isConnectionActive() != oldConfig.isActive())) {
                     listChanged.set(true);
                     break;
                 }
@@ -176,9 +181,17 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void selectConnection(@Nullable ConnectionHandler connectionHandler) {
-        if (connectionHandler != null) {
-            connectionsList.setSelectedValue(connectionHandler.getSettings(), true);
+    public void selectConnection(@Nullable String connectionId) {
+        if (connectionId != null) {
+            ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+            for (int i=0; i<model.size(); i++) {
+                ConnectionSettings connectionSettings = (ConnectionSettings) model.getElementAt(i);
+                if (connectionSettings.getConnectionId().equals(connectionId)) {
+                    connectionsList.setSelectedValue(connectionSettings, true);
+                    break;
+                }
+            }
+
         }
     }
 
@@ -231,48 +244,50 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
 
-    public void createNewConnection(DatabaseType databaseType) {
+    public String createNewConnection(@NotNull DatabaseType databaseType) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         connectionBundleSettings.setModified(true);
         ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType);
         connectionSettings.setNew(true);
         connectionSettings.generateNewId();
 
-        String name = databaseType == null ? "Connection" :  databaseType.getDisplayName() + " Connection";
+        String name = "Connection";
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         while (model.getConnectionConfig(name) != null) {
             name = NamingUtil.getNextNumberedName(name, true);
         }
         ConnectionDatabaseSettings connectionConfig = connectionSettings.getDatabaseSettings();
         connectionConfig.setName(name);
-        int selectedIndex = connectionsList.getSelectedIndex() + 1;
-        model.add(selectedIndex, connectionSettings);
-        connectionsList.setSelectedIndex(selectedIndex);
+        int index = connectionsList.getModel().getSize();
+        model.add(index, connectionSettings);
+        connectionsList.setSelectedIndex(index);
+        return connectionSettings.getConnectionId();
     }
 
     public void duplicateSelectedConnection() {
         ConnectionSettings connectionSettings = (ConnectionSettings) connectionsList.getSelectedValue();
         if (connectionSettings != null) {
             getConfiguration().setModified(true);
-            ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-            ConnectionSettings clone = connectionSettings.clone();
-
-            ConnectionDatabaseSettingsForm databaseSettingsForm = (ConnectionDatabaseSettingsForm) connectionSettings.getDatabaseSettings().getSettingsEditor();
-            if (databaseSettingsForm != null) {
-                Element element = new Element("db-settings");
-                databaseSettingsForm.getTemporaryConfig().writeConfiguration(element);
-                clone.getDatabaseSettings().readConfiguration(element);
+            ConnectionSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
+            if (settingsEditor != null) {
+                ConnectionSettings duplicate = null;
+                try {
+                    duplicate = settingsEditor.getTemporaryConfig();
+                    duplicate.setNew(true);
+                    String name = duplicate.getDatabaseSettings().getName();
+                    ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+                    while (model.getConnectionConfig(name) != null) {
+                        name = NamingUtil.getNextNumberedName(name, true);
+                    }
+                    duplicate.getDatabaseSettings().setName(name);
+                    int selectedIndex = connectionsList.getSelectedIndex() + 1;
+                    model.add(selectedIndex, duplicate);
+                    connectionsList.setSelectedIndex(selectedIndex);
+                } catch (ConfigurationException e) {
+                    MessageUtil.showErrorDialog(getProject(), e.getMessage());
+                }
             }
 
-            clone.setNew(true);
-            String name = clone.getDatabaseSettings().getName();
-            while (model.getConnectionConfig(name) != null) {
-                name = NamingUtil.getNextNumberedName(name, true);
-            }
-            clone.getDatabaseSettings().setName(name);
-            int selectedIndex = connectionsList.getSelectedIndex() + 1;
-            model.add(selectedIndex, clone);
-            connectionsList.setSelectedIndex(selectedIndex);
         }
     }
 
@@ -321,13 +336,11 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                     Element rootElement = xmlDocument.getRootElement();
                     List<Element> configElements = rootElement.getChildren();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
-                    int selectedIndex = connectionsList.getSelectedIndex();
+                    int index = connectionsList.getModel().getSize();
                     List<Integer> selectedIndexes = new ArrayList<Integer>();
                     ConnectionBundleSettings configuration = getConfiguration();
                     for (Element configElement : configElements) {
-                        selectedIndex++;
-                        DatabaseType databaseType = DatabaseType.get(configElement.getAttributeValue("template-database-type"));
-                        ConnectionSettings clone = new ConnectionSettings(configuration, databaseType);
+                        ConnectionSettings clone = new ConnectionSettings(configuration);
                         clone.readConfiguration(configElement);
                         clone.setNew(true);
                         clone.generateNewId();
@@ -338,9 +351,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                             name = NamingUtil.getNextNumberedName(name, true);
                         }
                         databaseSettings.setName(name);
-                        model.add(selectedIndex, clone);
-                        selectedIndexes.add(selectedIndex);
+                        model.add(index, clone);
+                        selectedIndexes.add(index);
                         configuration.setModified(true);
+                        index++;
                     }
 
                     connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
@@ -351,6 +365,40 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             LOGGER.error("Could not paste database configuration from clipboard", ex);
         }
     }
+
+    public void importTnsNames(List<TnsName> tnsNames) {
+        ConnectionBundleSettings configuration = getConfiguration();
+        ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
+        int index = connectionsList.getModel().getSize();
+        List<Integer> selectedIndexes = new ArrayList<Integer>();
+
+        for (TnsName tnsName : tnsNames) {
+            ConnectionSettings clone = new ConnectionSettings(configuration);
+            clone.setNew(true);
+            clone.generateNewId();
+            ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+            String name = tnsName.getName();
+            while (model.getConnectionConfig(name) != null) {
+                name = NamingUtil.getNextNumberedName(name, true);
+            }
+
+            DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
+            databaseInfo.setHost(tnsName.getHost());
+            databaseInfo.setPort(tnsName.getPort());
+            databaseInfo.setDatabase(tnsName.getSid());
+            databaseSettings.setName(name);
+            databaseSettings.setDatabaseType(DatabaseType.ORACLE);
+            databaseSettings.setDriverSource(DriverSource.BUILTIN);
+
+            model.add(index, clone);
+            selectedIndexes.add(index);
+            configuration.setModified(true);
+            index++;
+        }
+        connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[selectedIndexes.size()])));
+    }
+
+
 
     public DataProvider dataProvider = new DataProvider() {
         @Override

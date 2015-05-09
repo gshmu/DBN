@@ -1,15 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -21,10 +15,19 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.navigation.psi.NavigationPsiCache;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.dci.intellij.dbn.object.common.DBVirtualObjectBundle;
 import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
     private String id;
@@ -36,6 +39,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private Map<String, String> properties = new HashMap<String, String>();
     private NavigationPsiCache psiCache;
     private ConnectionHandlerRef ref;
+    private DBObjectBundle objectBundle;
 
     public VirtualConnectionHandler(String id, String name, DatabaseType databaseType, double databaseVersion, Project project){
         this.id = id;
@@ -44,6 +48,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
         this.ref = new ConnectionHandlerRef(this);
+        this.objectBundle = new DBVirtualObjectBundle(this);
     }
 
     public DatabaseType getDatabaseType() {return databaseType;}
@@ -93,6 +98,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     @Override public String getId() {return id;}
+    @NotNull
     @Override public String getName() {return name;}
     @Override public String getPresentableText() {
         return name;
@@ -120,7 +126,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public DatabaseInterfaceProvider getInterfaceProvider() {
         if (interfaceProvider == null) {
             try {
-                interfaceProvider = DatabaseInterfaceProviderFactory.createInterfaceProvider(this);
+                interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
             } catch (SQLException e) {
                 // do not initialize
                 return DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER;
@@ -153,7 +159,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public void setAllowConnection(boolean allowConnection) {}
 
     @Override
-    public void setTemporaryAuthentication(Authentication temporaryAuthentication) {}
+    public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
 
     @Override
     public boolean canConnect() {
@@ -162,8 +168,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @NotNull
     @Override
-    public Authentication getTemporaryAuthentication() {
-        return new Authentication();
+    public AuthenticationInfo getTemporaryAuthenticationInfo() {
+        return new AuthenticationInfo();
     }
 
     @Override
@@ -179,7 +185,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return null;
     }
 
-    public DBObjectBundle getObjectBundle() {return null;}
+    @NotNull
+    public DBObjectBundle getObjectBundle() {return objectBundle;}
     public DBSchema getUserSchema() {return null;}
 
     @Override
@@ -198,6 +205,16 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public ConnectionHandlerRef getRef() {
         return ref;
+    }
+
+    @Override
+    public DatabaseInfo getDatabaseInfo() {
+        return databaseType.getUrlResolver().getDefaultInfo();
+    }
+
+    @Override
+    public AuthenticationInfo getAuthenticationInfo() {
+        return null;
     }
 
     public ConnectionHandler clone() {return null;}

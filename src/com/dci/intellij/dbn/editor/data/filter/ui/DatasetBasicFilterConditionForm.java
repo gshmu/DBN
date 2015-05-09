@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
+import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldPopupType;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
@@ -107,12 +108,12 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     private class ColumnSelector extends ValueSelector<DBColumn> {
         public ColumnSelector(DBColumn selectedColumn) {
-            super(null, "", selectedColumn, true);
+            super(null, "", selectedColumn, true, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener(new ValueSelectorListener<DBColumn>() {
                 @Override
-                public void valueSelected(DBColumn column) {
-                    if (column != null) {
-                        GenericDataType dataType = column.getDataType().getGenericDataType();
+                public void selectionChanged(DBColumn oldValue, DBColumn newValue) {
+                    if (newValue != null) {
+                        GenericDataType dataType = newValue.getDataType().getGenericDataType();
                         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataType == GenericDataType.DATE_TIME);
                     }
                     if (basicFilterForm != null) {
@@ -140,7 +141,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
             super("", selectedOperator, true);
             addListener(new ValueSelectorListener<ConditionOperator>() {
                 @Override
-                public void valueSelected(ConditionOperator operator) {
+                public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
                     if (basicFilterForm != null) {
                         basicFilterForm.updateNameAndPreview();
                         updateValueTextField();

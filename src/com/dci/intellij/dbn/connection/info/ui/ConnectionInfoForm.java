@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.GuidedDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 
 public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
@@ -131,15 +131,11 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
         setupDriverLibraryValueLabel.setText(getPresentableText(databaseSettings.getDriverLibrary()));
         setupDriverValueLabel.setText(getPresentableText(databaseSettings.getDriver()));
 
-        setupHostValueLabel.setText(getPresentableText(databaseSettings.getHost()));
-        setupPortValueLabel.setText(getPresentableText(databaseSettings.getPort()));
-        setupDatabaseValueLabel.setText(getPresentableText(databaseSettings.getDatabase()));
-        if (databaseSettings instanceof GuidedDatabaseSettings) {
-            setupUrlLabel.setVisible(false);
-            setupUrlValueLabel.setVisible(false);
-        } else {
-            setupUrlValueLabel.setText(getPresentableText(databaseSettings.getConnectionUrl()));
-        }
+        DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
+        setupHostValueLabel.setText(getPresentableText(databaseInfo.getHost()));
+        setupPortValueLabel.setText(getPresentableText(databaseInfo.getPort()));
+        setupDatabaseValueLabel.setText(getPresentableText(databaseInfo.getDatabase()));
+        setupUrlValueLabel.setText(getPresentableText(databaseSettings.getConnectionUrl()));
         updateBorderTitleForeground(setupPanel);
     }
 
