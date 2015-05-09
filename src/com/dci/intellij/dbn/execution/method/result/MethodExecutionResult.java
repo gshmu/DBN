@@ -37,18 +37,14 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
     private MethodExecutionResultForm resultPanel;
     private List<ArgumentValue> argumentValues = new ArrayList<ArgumentValue>();
     private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels;
-    private int executionDuration;
     private boolean debug;
     private String logOutput;
+    private int executionDuration;
 
-    public MethodExecutionResult(MethodExecutionInput executionInput, boolean debug) {
+    public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, boolean debug) {
         this.executionInput = executionInput;
         executionInput.setExecutionResult(this);
         this.debug = debug;
-    }
-
-    public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, boolean debug) {
-        this(executionInput, debug);
         this.resultPanel = resultPanel;
     }
 
@@ -56,8 +52,8 @@ public class MethodExecutionResult implements ExecutionResult, Disposable {
         return executionDuration;
     }
 
-    public void setExecutionDuration(int executionDuration) {
-        this.executionDuration = executionDuration;
+    public void calculateExecDuration() {
+        this.executionDuration = (int) (System.currentTimeMillis() - executionInput.getExecutionTimestamp());
     }
 
     public void addArgumentValue(DBArgument argument, Object value) throws SQLException {

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import java.io.File;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class FileUtil {
     public static File createFileByRelativePath(@NotNull final File absoluteBase, @NotNull final String relativeTail) {

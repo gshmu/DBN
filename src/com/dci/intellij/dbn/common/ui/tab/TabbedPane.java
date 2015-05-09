@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBTabsImpl;
 
-public class TabbedPane extends JBTabsImpl {
+public class TabbedPane extends JBTabsImpl implements com.dci.intellij.dbn.common.dispose.Disposable{
     public TabbedPane(@NotNull Disposable disposable) {
         super(null, null, disposable);
     }

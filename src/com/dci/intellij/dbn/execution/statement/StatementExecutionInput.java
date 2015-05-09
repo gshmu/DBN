@@ -33,6 +33,7 @@ public class StatementExecutionInput implements Disposable {
     private ExecutablePsiElement executablePsiElement;
     private boolean isBulkExecution = false;
     private boolean isDisposed;
+    private long executionTimestamp;
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         this.executionProcessor = executionProcessor;
@@ -40,6 +41,14 @@ public class StatementExecutionInput implements Disposable {
         this.currentSchemaRef = DBObjectRef.from(executionProcessor.getCurrentSchema());
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
+    }
+
+    public void initExecution() {
+        this.executionTimestamp = System.currentTimeMillis();
+    }
+
+    public long getExecutionTimestamp() {
+        return executionTimestamp;
     }
 
     public String getOriginalStatementText() {

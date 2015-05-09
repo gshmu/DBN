@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTable;
@@ -55,8 +54,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         detailsTabbedPane.addTab(currentSqlTabInfo);
 
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();
-        if (compatibilityInterface.supportsFeature(DatabaseFeature.EXPLAIN_PLAN)) {
+        if (DatabaseFeature.EXPLAIN_PLAN.isSupported(connectionHandler)) {
             explainPlanPanel = new JPanel(new BorderLayout());
             TabInfo explainPlanTabInfo = new TabInfo(new JPanel());
             explainPlanTabInfo.setText("Explain Plan");

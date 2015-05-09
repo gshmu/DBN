@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -82,9 +83,9 @@ public abstract class ConnectionAction extends SimpleTask {
                                     }
                                 });
                     } else {
-                        Authentication authentication = connectionHandler.getSettings().getDatabaseSettings().getAuthentication();
-                        authentication = ConnectionManager.openUserPasswordDialog(getProject(), connectionHandler, authentication.clone());
-                        if (authentication != null) {
+                        AuthenticationInfo authenticationInfo = connectionHandler.getAuthenticationInfo();
+                        authenticationInfo = ConnectionManager.openUserPasswordDialog(getProject(), connectionHandler, authenticationInfo.clone());
+                        if (authenticationInfo != null) {
                             doExecute();
                         } else {
                             cancel();

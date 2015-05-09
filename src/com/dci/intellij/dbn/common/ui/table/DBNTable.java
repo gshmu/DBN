@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import sun.swing.SwingUtilities2;
+
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -23,18 +36,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.font.LineMetrics;
 import java.util.Timer;
 import java.util.TimerTask;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
-import sun.swing.SwingUtilities2;
 
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
@@ -106,29 +107,30 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
 
     private double calculateScrollDistance() {
         JViewport viewport = scrollPane.getViewport();
-        double mouseLocation = MouseInfo.getPointerInfo().getLocation().getX();
-        double viewportLocation = viewport.getLocationOnScreen().getX();
+        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+        if (pointerInfo != null) {
+            double mouseLocation = pointerInfo.getLocation().getX();
+            double viewportLocation = viewport.getLocationOnScreen().getX();
 
-        Point viewPosition = viewport.getViewPosition();
-        double contentLocation = viewport.getView().getLocationOnScreen().getX();
+            Point viewPosition = viewport.getViewPosition();
+            double contentLocation = viewport.getView().getLocationOnScreen().getX();
 
-        if (contentLocation < viewportLocation && mouseLocation < viewportLocation + 20) {
-            scrollDistance = - Math.min(viewPosition.x, (viewportLocation - mouseLocation));
-        } else {
-            int viewportWidth = viewport.getWidth();
-            int contentWidth = viewport.getView().getWidth();
-
-            if (contentLocation + contentWidth > viewportLocation + viewportWidth && mouseLocation > viewportLocation + viewportWidth - 20) {
-                scrollDistance = (mouseLocation - viewportLocation - viewportWidth);
+            if (contentLocation < viewportLocation && mouseLocation < viewportLocation + 20) {
+                scrollDistance = - Math.min(viewPosition.x, (viewportLocation - mouseLocation));
             } else {
-                scrollDistance = 0;
+                int viewportWidth = viewport.getWidth();
+                int contentWidth = viewport.getView().getWidth();
+
+                if (contentLocation + contentWidth > viewportLocation + viewportWidth && mouseLocation > viewportLocation + viewportWidth - 20) {
+                    scrollDistance = (mouseLocation - viewportLocation - viewportWidth);
+                } else {
+                    scrollDistance = 0;
+                }
             }
         }
 
         return scrollDistance;
     }
-
-
 
     public Project getProject() {
         return project;
@@ -230,7 +232,9 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
             scrollRectToVisible(cellRect);
         }
         if (getSelectedRowCount() != 1 || getSelectedRow() != rowIndex) {
-            setRowSelectionInterval(rowIndex, rowIndex);
+            if (rowIndex < getModel().getRowCount()) {
+                setRowSelectionInterval(rowIndex, rowIndex);
+            }
         }
 
         if (getSelectedColumnCount() != 1 || getSelectedColumn() != columnIndex) {

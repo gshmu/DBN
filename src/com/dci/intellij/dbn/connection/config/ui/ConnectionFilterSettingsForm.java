@@ -39,7 +39,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         ConnectionFilterSettings configuration = getConfiguration();
         final boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
-        configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
+        applyFormChanges(configuration);
 
         new SettingsChangeNotifier() {
             @Override
@@ -53,6 +53,11 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
                 }
             }
         };
+    }
+
+    @Override
+    public void applyFormChanges(ConnectionFilterSettings configuration) throws ConfigurationException {
+        configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
     }
 
     private ConnectionHandler getConnectionHandler() {

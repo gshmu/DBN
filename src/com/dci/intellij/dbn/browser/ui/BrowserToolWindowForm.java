@@ -1,9 +1,5 @@
 package com.dci.intellij.dbn.browser.ui;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
@@ -22,6 +18,10 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 public class BrowserToolWindowForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -59,7 +59,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         EventUtil.subscribe(project, this, ConnectionSetupListener.TOPIC, connectionSetupListener);
     }
 
-    public synchronized void rebuild() {
+    public void rebuild() {
         displayMode = DatabaseBrowserSettings.getInstance(getProject()).getGeneralSettings().getDisplayMode();
         browserPanel.removeAll();
         DisposerUtil.dispose(browserForm);
@@ -69,6 +69,8 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
 
         browserPanel.add(browserForm.getComponent(), BorderLayout.CENTER);
+        browserPanel.revalidate();
+        browserPanel.repaint();
         Disposer.register(this, browserForm);
     }
 
@@ -140,9 +142,6 @@ public class BrowserToolWindowForm extends DBNFormImpl {
                 Disposer.dispose(browserForm);
                 setDisplayMode(displayMode);
                 rebuild();
-
-                browserPanel.revalidate();
-                browserPanel.repaint();
             }
         }
     };

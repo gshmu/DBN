@@ -178,17 +178,20 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     public List<String> getMissingDebugPrivileges(ConnectionHandler connectionHandler) {
+        List<String> missingPrivileges = new ArrayList<String>();
         String userName = connectionHandler.getUserName();
         DBUser user = connectionHandler.getObjectBundle().getUser(userName);
-        String[] privilegeNames = connectionHandler.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
-        List<String> missingPrivileges = new ArrayList<String>();
-        for (String privilegeName : privilegeNames) {
-            DBSystemPrivilege systemPrivilege = connectionHandler.getObjectBundle().getSystemPrivilege(privilegeName);
-            if (systemPrivilege == null || !user.hasSystemPrivilege(systemPrivilege))  {
-                missingPrivileges.add(privilegeName);
+
+        if (user != null) {
+            String[] privilegeNames = connectionHandler.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
+
+            for (String privilegeName : privilegeNames) {
+                DBSystemPrivilege systemPrivilege = connectionHandler.getObjectBundle().getSystemPrivilege(privilegeName);
+                if (systemPrivilege == null || !user.hasSystemPrivilege(systemPrivilege))  {
+                    missingPrivileges.add(privilegeName);
+                }
             }
         }
-
         return missingPrivileges;
     }
 

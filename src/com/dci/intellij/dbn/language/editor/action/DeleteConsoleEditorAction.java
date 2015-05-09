@@ -33,12 +33,7 @@ public class DeleteConsoleEditorAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         presentation.setText("Delete Console");
         VirtualFile virtualFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-        if (virtualFile instanceof DBConsoleVirtualFile) {
-            DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            presentation.setEnabled(!consoleVirtualFile.isDefault());
-        } else {
-            presentation.setEnabled(false);
-        }
+        presentation.setEnabled(virtualFile instanceof DBConsoleVirtualFile);
     }
 
 

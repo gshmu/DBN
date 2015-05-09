@@ -273,20 +273,19 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                     new SimpleBackgroundTask("load table data") {
                         @Override
                         protected void execute() {
+                            DatasetEditorForm editorForm = getEditorForm();
                             try {
-                                if (!isDisposed()) {
-                                    editorForm.showLoadingHint();
-                                    editorForm.getEditorTable().cancelEditing();
-                                    DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
-                                    try {
-                                        DatasetEditorModel tableModel = getTableModel();
-                                        tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
-                                        DatasetEditorTable editorTable = getEditorTable();
-                                        editorTable.clearSelection();
-                                    } finally {
-                                        if (!isDisposed()) {
-                                            editorForm.afterRebuild(oldEditorTable);
-                                        }
+                                editorForm.showLoadingHint();
+                                editorForm.getEditorTable().cancelEditing();
+                                DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
+                                try {
+                                    DatasetEditorModel tableModel = getTableModel();
+                                    tableModel.load(instructions.isUseCurrentFilter(), instructions.isKeepChanges());
+                                    DatasetEditorTable editorTable = getEditorTable();
+                                    editorTable.clearSelection();
+                                } finally {
+                                    if (!isDisposed()) {
+                                        editorForm.afterRebuild(oldEditorTable);
                                     }
                                 }
                                 dataLoadError = null;
@@ -298,9 +297,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     LOGGER.error("Error loading table data", e);
                                 }
                             } finally {
-                                if (editorForm != null) {
-                                    editorForm.hideLoadingHint();
-                                }
+                                editorForm.hideLoadingHint();
                                 setLoading(false);
                                 EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
                             }

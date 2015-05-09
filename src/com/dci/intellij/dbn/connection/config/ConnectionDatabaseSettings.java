@@ -1,45 +1,58 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.Authentication;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
+import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSettingsForm> extends Configuration<T> {
+public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
-    protected boolean active = true;
-    protected String name;
-    protected String description;
-    protected DatabaseType databaseType = DatabaseType.UNKNOWN;
-    protected double databaseVersion = 9999;
-    protected int hashCode;
+    private String name;
+    private String description;
+    private DatabaseType databaseType = DatabaseType.UNKNOWN;
+    private double databaseVersion = 9999;
+    private int hashCode;
 
-    protected String driverLibrary;
-    protected String driver;
+    private DatabaseInfo databaseInfo = new DatabaseInfo();
+    private DriverSource driverSource = DriverSource.EXTERNAL;
+    private String driverLibrary;
+    private String driver;
 
-    private Authentication authentication = new Authentication();
+    private AuthenticationInfo authenticationInfo = new AuthenticationInfo();
 
     private ConnectionSettings parent;
 
-    public ConnectionDatabaseSettings(ConnectionSettings parent) {
+    public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType) {
         this.parent = parent;
+        this.databaseType = databaseType;
+        if (databaseType != DatabaseType.UNKNOWN) {
+            DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+            databaseInfo = urlResolver.getDefaultInfo();
+            this.driverSource = DriverSource.BUILTIN;
+        }
+    }
+
+    public ConnectionDatabaseSettingsForm createConfigurationEditor() {
+        return new ConnectionDatabaseSettingsForm(this);
     }
 
     public ConnectionSettings getParent() {
@@ -54,16 +67,16 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         this.connectivityStatus = connectivityStatus;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public DriverSource getDriverSource() {
+        return driverSource;
+    }
+
+    public void setDriverSource(DriverSource driverSource) {
+        this.driverSource = driverSource;
     }
 
     public String getDriverLibrary() {
@@ -71,7 +84,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     }
 
     public String getDriver() {
-        return driver;
+        return driverSource == DriverSource.BUILTIN ? databaseType.getDriverClassName() : driver;
     }
 
     public void setDriverLibrary(String driverLibrary) {
@@ -117,14 +130,8 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     }
 
     @NotNull
-    public Authentication getAuthentication() {
-        return authentication;
-    }
-
-    public String getConnectionDetails() {
-        return "Name:\t"      + name + "\n" +
-                (StringUtil.isNotEmpty(description) ? "Description:\t" + description + "\n" : "")+
-               "User:\t"      + authentication.getUser();
+    public AuthenticationInfo getAuthenticationInfo() {
+        return authenticationInfo;
     }
 
     @Override
@@ -132,17 +139,27 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
         return "database";
     }
 
-    public abstract String getHost();
 
-    public abstract String getPort();
+    public DatabaseInfo getDatabaseInfo() {
+        return databaseInfo;
+    }
 
-    public abstract String getDatabase();
+    public String getConnectionUrl() {
+        return databaseType.getUrlResolver().getUrl(databaseInfo);
+    };
 
-    public abstract String getConnectionUrl();
+    public String getConnectionUrl(String host, String port) {
+        return databaseType.getUrlResolver().getUrl(
+                host,
+                port,
+                databaseInfo.getDatabase());
+    }
 
-    public abstract String getConnectionUrl(String host, String port);
 
-    public abstract void updateHashCode();
+    public void updateHashCode() {
+        AuthenticationInfo authenticationInfo = getAuthenticationInfo();
+        hashCode = (name + driver + driverLibrary + databaseInfo.getHost() + databaseInfo.getPort() + databaseInfo.getDatabase() + authenticationInfo.getUser() + authenticationInfo.getPassword() + authenticationInfo.isOsAuthentication()).hashCode();
+    }
 
     @Override
     public int hashCode() {
@@ -150,7 +167,14 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
     }
 
     @Override
-    public abstract ConnectionDatabaseSettings clone();
+    public ConnectionDatabaseSettings clone() {
+        Element connectionElement = new Element(getConfigElementName());
+        writeConfiguration(connectionElement);
+        ConnectionDatabaseSettings clone = new ConnectionDatabaseSettings(getParent(), databaseType);
+        clone.readConfiguration(connectionElement);
+        clone.setConnectivityStatus(getConnectivityStatus());
+        return clone;
+    }
 
     public void checkConfiguration() throws ConfigurationException{
         List<String> errors = new ArrayList<String>();
@@ -161,7 +185,7 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
 
         String connectionUrl = getConnectionUrl();
         if (StringUtil.isEmpty(connectionUrl)) {
-            errors.add("Database information not provided (url, host, port, database)");
+            errors.add("Database information not provided (host, port, database)");
         } else {
             DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
             if (!urlResolver.isValid(connectionUrl)) {
@@ -169,16 +193,18 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
             }
         }
 
-        if (StringUtil.isEmpty(getDriverLibrary())) {
-            errors.add("JDBC driver library not provided");
-        } else {
-            String driver = getDriver();
-            if (StringUtil.isEmpty(driver)) {
-                errors.add("JDBC driver not provided");
+        if (getDriverSource() == DriverSource.EXTERNAL) {
+            if (StringUtil.isEmpty(getDriverLibrary())) {
+                errors.add("JDBC driver library not provided");
             } else {
-                DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
-                if (driverDatabaseType != databaseType) {
-                    errors.add("JDBC driver does not match the selected database type");
+                String driver = getDriver();
+                if (StringUtil.isEmpty(driver)) {
+                    errors.add("JDBC driver not provided");
+                } else {
+                    DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
+                    if (databaseType != DatabaseType.UNKNOWN && driverDatabaseType != databaseType) {
+                        errors.add("JDBC driver does not match the selected database type");
+                    }
                 }
             }
         }
@@ -206,18 +232,33 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
             parent.setConnectionId(connectionId);
         }
 
-        active           = getBoolean(element, "active", active);
         name             = getString(element, "name", name);
         description      = getString(element, "description", description);
+
         databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
+        databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
+        databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
+        databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
+
+        String url = getString(element, "url", null);
+        if (databaseInfo.isEmpty() && StringUtil.isNotEmpty(url)) {
+            if (databaseType != null && databaseType != DatabaseType.UNKNOWN) {
+                DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
+                databaseInfo.setHost(urlResolver.resolveHost(url));
+                databaseInfo.setPort(urlResolver.resolvePort(url));
+                databaseInfo.setDatabase(urlResolver.resolveDatabase(url));
+            }
+        }
+
+        driverSource  = getEnum(element, "driver-source", driverSource);
         driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
-        authentication.setUser(getString(element, "user", authentication.getUser()));
-        authentication.setPassword(PasswordUtil.decodePassword(getString(element, "password", authentication.getPassword())));
-        authentication.setOsAuthentication(getBoolean(element, "os-authentication", authentication.isOsAuthentication()));
+        authenticationInfo.setUser(getString(element, "user", authenticationInfo.getUser()));
+        authenticationInfo.setPassword(PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword())));
+        authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
 
 
         // TODO backward compatibility (to remove)
@@ -239,17 +280,23 @@ public abstract class ConnectionDatabaseSettings<T extends ConnectionDatabaseSet
                 FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :
                 this.driverLibrary;
 
+        setString(element, "name", nvl(name));
+        setString(element, "description", nvl(description));
+
+        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
+        setDouble(element, "database-version", databaseVersion);
+
+        setEnum(element, "driver-source", driverSource);
         setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
 
-        setString(element, "name", nvl(name));
-        setString(element, "description", nvl(description));
-        setBoolean(element, "active", active);
-        setBoolean(element, "os-authentication", authentication.isOsAuthentication());
-        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
-        setDouble(element, "database-version", databaseVersion);
-        setString(element, "user", nvl(authentication.getUser()));
-        setString(element, "password", PasswordUtil.encodePassword(authentication.getPassword()));
+        setString(element, "host", nvl(databaseInfo.getHost()));
+        setString(element, "port", nvl(databaseInfo.getPort()));
+        setString(element, "database", nvl(databaseInfo.getDatabase()));
+
+        setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
+        setString(element, "user", nvl(authenticationInfo.getUser()));
+        setString(element, "password", PasswordUtil.encodePassword(authenticationInfo.getPassword()));
     }
 
     public Project getProject() {

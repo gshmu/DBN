@@ -9,5 +9,8 @@ public interface Presentable {
     String getName();
 
     @Nullable
+    String getDescription();
+
+    @Nullable
     Icon getIcon();
 }

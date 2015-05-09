@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.common.properties.ui;
 
-import com.dci.intellij.dbn.common.ui.DBNForm;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.ToolbarDecorator;
-
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.util.Map;
+
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
 
 public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
@@ -60,6 +60,8 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
 */
 
     }
+
+
 
     public void setProperties(Map<String, String> properties) {
         propertiesTable.setProperties(properties);

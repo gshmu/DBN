@@ -95,7 +95,7 @@ public abstract class ConfigurationEditorForm<E extends Configuration> extends D
                 DBNComboBox comboBox = (DBNComboBox) component;
                 comboBox.addListener(new ValueSelectorListener() {
                     @Override
-                    public void valueSelected(Object value) {
+                    public void selectionChanged(Object oldValue, Object newValue) {
                         getConfiguration().setModified(true);
                     }
                 });

@@ -29,6 +29,13 @@ public enum DatasetFilterType implements Presentable{
     }
 
     @Nullable
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+
+    @Nullable
     public Icon getIcon() {
         return icon;
     }

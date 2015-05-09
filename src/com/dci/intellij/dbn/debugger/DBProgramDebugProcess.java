@@ -1,10 +1,6 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
-import org.jetbrains.annotations.NotNull;
-
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -31,6 +27,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -53,6 +50,11 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
 
 public class DBProgramDebugProcess extends XDebugProcess {
     private Connection targetConnection;
@@ -448,7 +450,8 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     public DBSchemaObject getDatabaseObject(DebuggerRuntimeInfo runtimeInfo) {
-        DBSchema schema = connectionHandler.getObjectBundle().getSchema(runtimeInfo.getOwnerName());
+        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+        DBSchema schema = FailsafeUtil.get(objectBundle.getSchema(runtimeInfo.getOwnerName()));
         DBSchemaObject schemaObject = schema.getProgram(runtimeInfo.getProgramName());
         if (schemaObject == null) schemaObject = schema.getMethod(runtimeInfo.getProgramName(), 0); // overload 0 is assuming debug is only supported in oracle (no schema method overloading)
         return schemaObject;

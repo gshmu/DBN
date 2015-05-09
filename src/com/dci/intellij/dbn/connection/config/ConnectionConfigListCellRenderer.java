@@ -1,32 +1,33 @@
 package com.dci.intellij.dbn.connection.config;
 
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
+import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import java.awt.Component;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
-
 public class ConnectionConfigListCellRenderer extends DefaultListCellRenderer{
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         ConnectionSettings connectionSettings = (ConnectionSettings) value;
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus );
-        ConnectionDatabaseSettingsForm settingsEditor = (ConnectionDatabaseSettingsForm) databaseSettings.getSettingsEditor();
-        String name = settingsEditor == null ?
+        ConnectionDatabaseSettingsForm databaseSettingsForm = databaseSettings.getSettingsEditor();
+        String name = databaseSettingsForm == null ?
                 databaseSettings.getName() :
-                settingsEditor.getConnectionName();
+                databaseSettingsForm.getConnectionName();
 
-        ConnectivityStatus connectivityStatus = settingsEditor == null ?
-                databaseSettings.getConnectivityStatus() :
-                settingsEditor.getConnectivityStatus();
+        ConnectivityStatus connectivityStatus = databaseSettings.getConnectivityStatus();
 
-        boolean isActive = settingsEditor == null ?
-                databaseSettings.isActive() :
-                settingsEditor.isConnectionActive();
+        ConnectionSettingsForm connectionSettingsForm = connectionSettings.getSettingsEditor();
+
+        boolean isActive = connectionSettingsForm == null ?
+                connectionSettings.isActive() :
+                connectionSettingsForm.isConnectionActive();
 
         Icon icon = Icons.CONNECTION_DISABLED;
         boolean isNew = connectionSettings.isNew();

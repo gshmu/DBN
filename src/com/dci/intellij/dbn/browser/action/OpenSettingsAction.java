@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.browser.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -11,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class OpenSettingsAction extends DumbAwareAction {
     public OpenSettingsAction() {
@@ -23,7 +22,8 @@ public class OpenSettingsAction extends DumbAwareAction {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             ConnectionHandler activeConnection = browserManager.getActiveConnection();
-            settingsManager.openConnectionSettings(activeConnection);
+            String connectionId = activeConnection == null ? null : activeConnection.getId();
+            settingsManager.openConnectionSettings(connectionId);
         }
     }
 

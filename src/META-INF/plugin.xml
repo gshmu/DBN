@@ -27,6 +27,13 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - SQL Script execution support <br>
+                - Oracle TNS Names import (tnsnames.ora)<br>
+                - Build-in jdbc drivers support<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4412</b>
             <ul>
                 - Support for various dark schemes in WebStorm/PhpStorm<br>
@@ -318,6 +325,10 @@
     </module-components>
 
     <actions>
+        <action class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptFileAction" id="DBNavigator.Actions.File.ExecuteScript" text="Execute SQL Script" icon="/img/action/ExecuteAsScript.png">
+            <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="WeighingNewGroup" anchor="before"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
         <group id="DBNavigator.ActionGroup.ConnectionSettings" text="Connections Settings">
             <action id="DBNavigator.Actions.ConnectionSettings.CreateConnection" class="com.dci.intellij.dbn.connection.config.action.CreateConnectionDropdownAction" text="Connection Setup - Create Connection" icon="/img/action/AddMore.png"/>
             <action id="DBNavigator.Actions.ConnectionSettings.RemoveConnection" class="com.dci.intellij.dbn.connection.config.action.RemoveConnectionAction" text="Connection Setup - Remove Connection" icon="/img/action/Remove.png"/>
@@ -342,6 +353,8 @@
             <action id="DBNavigator.Actions.Commit" class="com.dci.intellij.dbn.language.editor.action.TransactionCommitEditorAction" text="Script Editor - Commit transaction" icon="/img/action/ConnectionCommit.png"/>
             <action id="DBNavigator.Actions.Rollback" class="com.dci.intellij.dbn.language.editor.action.TransactionRollbackEditorAction" text="Script Editor - Rollback transaction" icon="/img/action/ConnectionRollback.png"/>
             <separator/>
+            <action id="DBNavigator.Actions.ExecuteAsScript" class="com.dci.intellij.dbn.execution.script.action.ExecuteScriptEditorAction" text="Script Editor - Execute as Script" icon="/img/action/ExecuteAsScript.png"/>
+            <separator/>
             <action id="DBNavigator.Actions.SaveToFile" class="com.dci.intellij.dbn.language.editor.action.SaveToFileEditorAction" text="Console - Save to file" icon="/img/action/SaveToFile.png"/>
             <action id="DBNavigator.Actions.ConsoleOptions" class="com.dci.intellij.dbn.language.editor.action.ConsoleOptionsAction" text="Script Editor - Local Settings" icon="/img/action/Options.png"/>
             <!--
@@ -353,7 +366,7 @@
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
             <action class="com.dci.intellij.dbn.menu.action.OpenSQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
             <action class="com.dci.intellij.dbn.menu.action.OpenSessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
-            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory" icon="/img/MethodExecutionHistory.png"/>
+            <action class="com.dci.intellij.dbn.menu.action.OpenMethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.OpenMethodExecutionHistory"/>
             <action class="com.dci.intellij.dbn.menu.action.OpenUncommittedChangesOverviewAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.OpenUncommittedChangesOverview"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
@@ -487,6 +500,7 @@
         </group>
         <group id="DBNavigator.ActionGroup.DatabaseLogOutput">
             <action id="DBNavigator.Actions.DatabaseLogOutput.Close" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputCloseAction" text="Database Log Output - Close" icon="/img/action/Close.png"/>
+            <action id="DBNavigator.Actions.DatabaseLogOutput.KillProcess" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputKillAction" text="Database Log Output - Kill Process" icon="/img/action/KillProcess.png"/>
             <action id="DBNavigator.Actions.DatabaseLogOutput.Settings" class="com.dci.intellij.dbn.execution.logging.action.DatabaseLogOutputSettingsAction" text="Database Log Output - Settings"/>
         </group>
         <group id="DBNavigator.ActionGroup.Browser.ObjectProperties" text="Browser object properties">
@@ -499,6 +513,8 @@
         </action>
 
         <group id="DBNavigator.ActionGroup.Browser.Controls" text="Browser object properties">
+            <action id="DBNavigator.Actions.Browser.NewConnection" class="com.dci.intellij.dbn.browser.action.NewConnectionDropdownAction" text="Browser - New Connection"/>
+            <separator/>
             <action id="DBNavigator.Actions.Browser.NavigateBack" class="com.dci.intellij.dbn.browser.action.NavigateBackAction" text="Browser - Back"/>
             <action id="DBNavigator.Actions.Browser.NavigateForward" class="com.dci.intellij.dbn.browser.action.NavigateForwardAction" text="Browser - Forward"/>
             <action id="DBNavigator.Actions.Browser.AutoscrollToEditor" class="com.dci.intellij.dbn.browser.action.AutoscrollToEditorAction" text="Browser - Autoscroll to editor"/>
