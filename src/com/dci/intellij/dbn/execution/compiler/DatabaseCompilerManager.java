@@ -7,11 +7,11 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.ui.CompilerTypeSelectionDialog;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -252,8 +252,8 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                 compileType = dialog.getSelection();
                 if (dialog.isRememberSelection()) {
-                    ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(getProject());
-                    executionEngineSettings.getCompilerSettings().setCompileTypeOption(compileType);
+                    OperationSettings operationSettings = OperationSettings.getInstance(getProject());
+                    operationSettings.getCompilerSettings().setCompileTypeOption(compileType);
                 }
                 callback.setOption(compileType);
                 callback.start();
