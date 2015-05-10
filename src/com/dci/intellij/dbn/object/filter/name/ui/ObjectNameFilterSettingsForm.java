@@ -1,23 +1,10 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
@@ -33,6 +20,16 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<ObjectNameFilterSettings> {
     private JPanel mainPanel;
@@ -141,25 +138,10 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
                 if (notifyFilterListeners) {
                     Project project = filterSettings.getProject();
                     ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    if (connectionHandler != null) {
-                        listener.nameFiltersChanged(connectionHandler, null);
-                    }
+                    listener.nameFiltersChanged(null);
                 }
             }
         };
-    }
-
-    private ConnectionHandler getConnectionHandler() {
-        ObjectNameFilterSettings nameFilterSettings = getConfiguration();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(nameFilterSettings.getProject());
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            if (nameFilterSettings == connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings()) {
-                return connectionHandler;
-            }
-        }
-        return null;
     }
 
     public void resetFormChanges() {}

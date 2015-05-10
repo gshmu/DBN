@@ -1,5 +1,15 @@
 package com.dci.intellij.dbn.object.filter.type.ui;
 
+import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSetting;
+import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.ui.UIUtil;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -8,19 +18,6 @@ import javax.swing.JScrollPane;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSetting;
-import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.util.ui.UIUtil;
 
 public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<ObjectTypeFilterSettings> {
     private JPanel mainPanel;
@@ -81,23 +78,10 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
             public void notifyChanges() {
                 if (notifyFilterListeners) {
                     ObjectFilterChangeListener listener = EventUtil.notify(objectFilterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    listener.typeFiltersChanged(connectionHandler);
+                    listener.typeFiltersChanged();
                 }
             }
         };
-    }
-
-    private ConnectionHandler getConnectionHandler() {
-        ObjectTypeFilterSettings configuration = getConfiguration();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(configuration.getProject());
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            if (configuration.getElementFilter() == connectionHandler.getObjectTypeFilter()) {
-                return connectionHandler;
-            }
-        }
-        return null;
     }
 
     @Override

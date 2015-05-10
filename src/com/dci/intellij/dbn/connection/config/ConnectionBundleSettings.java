@@ -1,20 +1,15 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
-import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.impl.DefaultProject;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,15 +18,27 @@ import java.util.List;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
     public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
+    public List<ConnectionSettings> connections = new ArrayList<ConnectionSettings>();
 
-    private ConnectionBundle connectionBundle;
     public ConnectionBundleSettings(Project project) {
         super(project);
-        connectionBundle = new ConnectionBundle(project);
     }
 
     public static ConnectionBundleSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getConnectionSettings();
+    }
+
+    public ConnectionSettings getConnectionSettings(String connectionId) {
+        for (ConnectionSettings connection : connections) {
+            if (connection.getConnectionId().equals(connectionId)) {
+                return connection;
+            }
+        }
+        return null;
+    }
+
+    public List<ConnectionSettings> getConnections() {
+        return connections;
     }
 
     @NotNull
@@ -62,8 +69,8 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
         if (super.isModified()) {
             return true;
         }
-        for (ConnectionHandler connectionHandler : connectionBundle.getAllConnectionHandlers()) {
-            if (connectionHandler.getSettings().isModified() || connectionHandler.getSettings().isNew()) return true;
+        for (ConnectionSettings connectionSetting : connections) {
+            if (connectionSetting.isModified() || connectionSetting.isNew()) return true;
         }
         return false;
     }
@@ -71,8 +78,8 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
     @Override
     public void reset() {
         super.reset();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            connectionHandler.getSettings().reset();
+        for (ConnectionSettings connectionSetting : connections) {
+            connectionSetting.reset();
         }
     }
 
@@ -93,41 +100,15 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
      *                      Configurable                     *
      *********************************************************/
     public void readConfiguration(Element element) {
-
-        if (IS_IMPORT_EXPORT_ACTION.get()) {
-            List<ConnectionHandler> connectionHandlers = connectionBundle.getAllConnectionHandlers();
-            List<ConnectionHandler> disposeList = new ArrayList<ConnectionHandler>(connectionHandlers);
-            connectionHandlers.clear();
-
-            Project project = getProject();
-            if (project instanceof DefaultProject) {
-                DisposerUtil.dispose(disposeList);
-            } else {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionManager.disposeConnections(disposeList);
-            }
-        }
-
-
+        Project project = getProject();
+        connections.clear();
         for (Object o : element.getChildren()) {
             Element connectionElement = (Element) o;
-            String connectionId = connectionElement.getAttributeValue("id");
-            ConnectionHandler connectionHandler = null;
-            if (connectionId != null) {
-                connectionHandler = connectionBundle.getConnection(connectionId);
-            }
+            ConnectionSettings connection = new ConnectionSettings(this);
+            connection.readConfiguration(connectionElement);
+            connections.add(connection);
 
-            if (connectionHandler == null) {
-                ConnectionSettings connectionSettings = new ConnectionSettings(this);
-                connectionSettings.readConfiguration(connectionElement);
-                connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionSettings);
-                connectionBundle.addConnection(connectionHandler);
-            } else {
-                ConnectionSettings connectionSettings = connectionHandler.getSettings();
-                connectionSettings.readConfiguration(connectionElement);
-            }
-
-            Element consolesElement = connectionElement.getChild("consoles");
+/*            Element consolesElement = connectionElement.getChild("consoles");
             if (consolesElement != null) {
                 for (Object c : consolesElement.getChildren()) {
                     Element consoleElement = (Element) c;
@@ -137,37 +118,37 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
                         consoleBundle.createConsole(consoleName);
                     }
                 }
-            }
+            }*/
         }
 
+        if (!project.isDefault()) {
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
+            connectionBundle.applySettings(this);
+        }
     }
 
     public void writeConfiguration(Element element) {
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers().getFullList()) {
+        for (ConnectionSettings connectionSetting : connections) {
             Element connectionElement = new Element("connection");
-            ConnectionSettings connectionSettings = connectionHandler.getSettings();
-            connectionSettings.writeConfiguration(connectionElement);
+            connectionSetting.writeConfiguration(connectionElement);
             element.addContent(connectionElement);
 
-            Element consolesElement = new Element("consoles");
+/*            Element consolesElement = new Element("consoles");
             connectionElement.addContent(consolesElement);
             for (String consoleName : connectionHandler.getConsoleBundle().getConsoleNames()) {
                 Element consoleElement = new Element("console");
                 consoleElement.setAttribute("name", consoleName);
                 consolesElement.addContent(consoleElement);
-            }
+            }*/
         }
-    }
-
-    public ConnectionBundle getConnectionBundle() {
-        return connectionBundle;
     }
 
     @Override
     public void disposeUIResources() {
         super.disposeUIResources();
-        for (ConnectionHandler connectionHandler : connectionBundle.getAllConnectionHandlers()) {
-            connectionHandler.getSettings().disposeUIResources();
+        for (ConnectionSettings connectionSetting : connections) {
+            connectionSetting.disposeUIResources();
         }
     }
 }

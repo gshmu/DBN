@@ -35,6 +35,9 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
     Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException;
     void freePoolConnection(Connection connection);
     ConnectionSettings getSettings();
+
+    void setSettings(ConnectionSettings connectionSettings);
+
     ConnectionStatus getConnectionStatus();
     DatabaseConsoleBundle getConsoleBundle();
     DBSessionBrowserVirtualFile getSessionBrowserFile();
