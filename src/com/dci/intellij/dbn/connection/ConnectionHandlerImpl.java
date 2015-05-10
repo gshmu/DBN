@@ -154,6 +154,11 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         return connectionSettings;
     }
 
+    @Override
+    public void setSettings(ConnectionSettings connectionSettings) {
+        this.connectionSettings = connectionSettings;
+    }
+
     public ConnectionStatus getConnectionStatus() {
         return connectionStatus;
     }

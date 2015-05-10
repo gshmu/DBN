@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
@@ -15,11 +10,21 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
@@ -73,6 +78,52 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         for (ConnectionHandler virtualConnection : virtualConnections) {
             if (virtualConnection.getId().equals(id)) {
                 return virtualConnection;
+            }
+        }
+        return null;
+    }
+
+    public void applySettings(ConnectionBundleSettings settings) {
+        FiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
+        List<ConnectionHandler> olsConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
+        List<ConnectionSettings> connections = settings.getConnections();
+        boolean listChanged = false;
+        for (ConnectionSettings connectionSetting : connections) {
+            String connectionId = connectionSetting.getConnectionId();
+            ConnectionHandler connectionHandler = getConnectionHandler(olsConnectionHandlers, connectionId);
+            if (connectionHandler == null) {
+                connectionHandler = new ConnectionHandlerImpl(this, connectionSetting);
+                newConnectionHandlers.add(connectionHandler);
+                listChanged = true;
+            } else {
+                listChanged = listChanged || connectionHandler.getSettings().isActive() != connectionSetting.isActive();
+                connectionHandler.setSettings(connectionSetting);
+                newConnectionHandlers.add(connectionHandler);
+                olsConnectionHandlers.remove(connectionHandler);
+            }
+        }
+        this.connectionHandlers = newConnectionHandlers;
+
+
+
+
+        listChanged = listChanged || olsConnectionHandlers.size() > 0;
+        if (listChanged) {
+            new SettingsChangeNotifier() {
+                @Override
+                public void notifyChanges() {
+                    EventUtil.notify(project, ConnectionSetupListener.TOPIC).setupChanged();
+                }
+            };
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            connectionManager.disposeConnections(olsConnectionHandlers);
+        }
+    }
+
+    ConnectionHandler getConnectionHandler(List<ConnectionHandler> list, String connectionId) {
+        for (ConnectionHandler connectionHandler : list) {
+            if (connectionHandler.getId().equals(connectionId)) {
+                return connectionHandler;
             }
         }
         return null;

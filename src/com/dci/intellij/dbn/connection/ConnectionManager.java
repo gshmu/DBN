@@ -1,14 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import java.sql.Connection;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -24,7 +15,6 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -52,6 +42,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.sql.Connection;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @State(
         name = "DBNavigator.Project.ConnectionManager",
@@ -61,6 +60,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 )
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Timer idleConnectionCleaner;
+    private ConnectionBundle connectionBundle;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
         return getComponent(project);
@@ -72,6 +72,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private ConnectionManager(final Project project) {
         super(project);
+        connectionBundle = new ConnectionBundle(project);
     }
 
     @Override
@@ -116,7 +117,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     *                        Custom                         *
     *********************************************************/
     public ConnectionBundle getConnectionBundle() {
-        return ConnectionBundleSettings.getInstance(getProject()).getConnectionBundle();
+        return connectionBundle;
     }
 
     public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
