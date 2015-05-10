@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.4412.1</version>
+    <version>3.0.4509.1</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,9 +27,9 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.0.NEXT</b>
+            <li><b>3.0.4509</b>
             <ul>
-                - SQL Script execution support <br>
+                - SQL Script execution support (using db command-line client)<br>
                 - Oracle TNS Names import (tnsnames.ora)<br>
                 - Build-in jdbc drivers support<br>
                 - Bug fixes<br>

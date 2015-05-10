@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.execution.compiler.action;
 
-import org.jetbrains.annotations.NotNull;
-
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
@@ -17,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CompileObjectAction extends AnAction {
     private DBObjectRef<DBSchemaObject> objectRef;
@@ -61,6 +60,6 @@ public class CompileObjectAction extends AnAction {
     }
 
     private static CompilerSettings getCompilerSettings(Project project) {
-        return ExecutionEngineSettings.getInstance(project).getCompilerSettings();
+        return OperationSettings.getInstance(project).getCompilerSettings();
     }
 }

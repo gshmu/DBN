@@ -1,12 +1,9 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
@@ -21,6 +18,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
 
 public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     public CompileObjectAction() {
@@ -90,6 +90,6 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     }
 
     private static CompilerSettings getCompilerSettings(Project project) {
-        return ExecutionEngineSettings.getInstance(project).getCompilerSettings();
+        return OperationSettings.getInstance(project).getCompilerSettings();
     }
 }
