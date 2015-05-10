@@ -1,11 +1,5 @@
 package com.dci.intellij.dbn.execution;
 
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -35,6 +29,12 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @State(
     name = "DBNavigator.Project.ExecutionManager",
@@ -152,7 +152,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                     executionConsoleForm.displayLogOutput(
                             context, LogOutput.createSysOutput(context,
                                     executionResult.getExecutionInput().getExecutionTimestamp(),
-                                    " - Statement execution started"));
+                                    " - Statement execution started", false));
 
                     if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
                         executionConsoleForm.displayLogOutput(context,
@@ -160,7 +160,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                     }
 
                     executionConsoleForm.displayLogOutput(context,
-                            LogOutput.createSysOutput(context, " - Statement execution finished\n"));
+                            LogOutput.createSysOutput(context, " - Statement execution finished\n", false));
                 }
 
                 executionConsoleForm.addResult(executionResult);

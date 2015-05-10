@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.postgres;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.ScriptExecutionInput;
+import com.dci.intellij.dbn.database.ScriptExecutionCommand;
 import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.database.postgres.execution.PostgresMethodExecutionProcessor;
@@ -24,8 +24,8 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
     }
 
     @Override
-    public ScriptExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
-        ScriptExecutionInput executionInput = new ScriptExecutionInput(content);
+    public ScriptExecutionCommand createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+        ScriptExecutionCommand executionInput = new ScriptExecutionCommand(content);
 
         List<String> command = executionInput.getCommand();
         command.add(cmdLineInterface.getExecutablePath());
