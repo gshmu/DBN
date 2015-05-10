@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.editor.code.action;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -14,6 +12,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class RunMethodAction extends AbstractSourceCodeEditorAction {
     public RunMethodAction() {
@@ -51,6 +50,6 @@ public class RunMethodAction extends AbstractSourceCodeEditorAction {
     }
 
     private static CompilerSettings getCompilerSettings(Project project) {
-        return ExecutionEngineSettings.getInstance(project).getCompilerSettings();
+        return OperationSettings.getInstance(project).getCompilerSettings();
     }
 }

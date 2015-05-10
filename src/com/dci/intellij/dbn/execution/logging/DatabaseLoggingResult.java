@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -21,6 +16,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
 
 public class DatabaseLoggingResult implements ExecutionResult {
     private LogOutputContext context;
@@ -97,6 +97,9 @@ public class DatabaseLoggingResult implements ExecutionResult {
         this.context = context;
         if (logOutputForm != null && ! logOutputForm.isDisposed()) {
             DatabaseLoggingResultConsole console = logOutputForm.getConsole();
+            if (output.isClearBuffer()) {
+                console.clear();
+            }
             if (output.isScrollToEnd()) {
                 ConsoleView consoleView = console.getConsole();
                 if (consoleView instanceof ConsoleViewImpl) {

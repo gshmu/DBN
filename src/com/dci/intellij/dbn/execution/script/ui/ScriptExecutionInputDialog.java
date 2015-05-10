@@ -1,28 +1,21 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.execution.script.CmdLineExecutionInput;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.Action;
 import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.execution.script.CmdLineInterface;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 
 public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputForm> {
-    private ConnectionHandlerRef connectionRef;
-    private DBObjectRef<DBSchema> schemaRef;
-    private CmdLineInterface cmdLineInterface;
+    private CmdLineExecutionInput executionInput = new CmdLineExecutionInput();
 
-    public ScriptExecutionInputDialog(Project project, VirtualFile scriptFile, @Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
+    public ScriptExecutionInputDialog(Project project, CmdLineExecutionInput executionInput) {
         super(project, "Execute SQL Script", true);
+        this.executionInput = executionInput;
         setModal(true);
-        component = new ScriptExecutionInputForm(this, scriptFile, connectionHandler, schema);
+        component = new ScriptExecutionInputForm(this, executionInput);
         Action okAction = getOKAction();
         okAction.putValue(Action.NAME, "Execute");
         init();
@@ -48,32 +41,6 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
 
     public void setActionEnabled(boolean enabled) {
         getOKAction().setEnabled(enabled);
-    }
-
-    public ConnectionHandler getConnection() {
-        return connectionRef.get();
-    }
-
-    public void setConnection(ConnectionHandler connection) {
-        this.connectionRef = connection.getRef();
-    }
-
-
-    @Nullable
-    public DBSchema getSchema() {
-        return DBObjectRef.get(schemaRef);
-    }
-
-    public void setSchema(DBSchema schema) {
-        this.schemaRef = DBObjectRef.from(schema);
-    }
-
-    public CmdLineInterface getCmdLineInterface() {
-        return cmdLineInterface;
-    }
-
-    public void setCmdLineInterface(CmdLineInterface cmdLineInterface) {
-        this.cmdLineInterface = cmdLineInterface;
     }
 
     @Override

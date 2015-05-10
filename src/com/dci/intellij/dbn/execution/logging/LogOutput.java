@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import java.util.Date;
-
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import java.util.Date;
 
 public class LogOutput {
     public enum Type {
@@ -28,14 +28,16 @@ public class LogOutput {
     private String text;
     private Type type;
     private boolean scrollToEnd;
+    private boolean clearBuffer;
 
     private LogOutput(String text, Type type) {
-        this(text, type, false);
+        this(text, type, false, false);
     }
-    private LogOutput(String text, Type type, boolean scrollToEnd) {
+    private LogOutput(String text, Type type, boolean scrollToEnd, boolean clearBuffer) {
         this.text = text;
         this.type = type;
         this.scrollToEnd = scrollToEnd;
+        this.clearBuffer = clearBuffer;
     }
 
     public String getText() {
@@ -50,6 +52,10 @@ public class LogOutput {
         return scrollToEnd;
     }
 
+    public boolean isClearBuffer() {
+        return clearBuffer;
+    }
+
     public static LogOutput createErrOutput(String text) {
         return new LogOutput(text, Type.ERR);
     }
@@ -58,11 +64,11 @@ public class LogOutput {
         return new LogOutput(text, Type.STD);
     }
 
-    public static LogOutput createSysOutput(LogOutputContext context, String message) {
-        return createSysOutput(context, System.currentTimeMillis(), message);
+    public static LogOutput createSysOutput(LogOutputContext context, String message, boolean clearBuffer) {
+        return createSysOutput(context, System.currentTimeMillis(), message, clearBuffer);
     }
 
-    public static LogOutput createSysOutput(LogOutputContext context, long timestamp, String message) {
+    public static LogOutput createSysOutput(LogOutputContext context, long timestamp, String message, boolean clearBuffer) {
         ConnectionHandler connectionHandler = context.getConnectionHandler();
         Project project = connectionHandler.getProject();
         Formatter formatter = Formatter.getInstance(project);
@@ -74,7 +80,7 @@ public class LogOutput {
         }
         text += message;
 
-        return new LogOutput(text, Type.SYS, true);
+        return new LogOutput(text, Type.SYS, true, clearBuffer);
     }
 
 }
