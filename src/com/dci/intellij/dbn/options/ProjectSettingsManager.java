@@ -21,7 +21,12 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
+import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import org.jdom.Element;
@@ -30,11 +35,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ProjectSettingsManager implements ProjectComponent {
+@State(
+        name = "DBNavigator.Project.Settings",
+        storages = {
+                @Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/dbnavigator.xml", scheme = StorageScheme.DIRECTORY_BASED),
+                @Storage(file = StoragePathMacros.PROJECT_FILE)}
+)
+public class ProjectSettingsManager implements ProjectComponent, PersistentStateComponent<Element> {
     private Project project;
+    private ProjectSettings projectSettings;
 
     private ProjectSettingsManager(Project project) {
         this.project = project;
+        projectSettings = new ProjectSettings(project);
     }
 
     public static ProjectSettingsManager getInstance(@NotNull Project project) {
@@ -50,7 +63,7 @@ public class ProjectSettingsManager implements ProjectComponent {
     }
 
     public ProjectSettings getProjectSettings() {
-        return getSettings(project);
+        return projectSettings;
     }
 
     public GeneralProjectSettings getGeneralSettings() {
@@ -139,6 +152,22 @@ public class ProjectSettingsManager implements ProjectComponent {
         }
     }
 
+    /****************************************
+     *       PersistentStateComponent       *
+     *****************************************/
+    @Nullable
+    @Override
+    public Element getState() {
+        Element element = new Element("state");
+        projectSettings.writeConfiguration(element);
+        return element;
+    }
+
+    @Override
+    public void loadState(Element element) {
+        projectSettings.readConfiguration(element);
+        getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED_KEY, true);
+    }
 
     private Project getProject() {
         return project;
@@ -230,6 +259,6 @@ public class ProjectSettingsManager implements ProjectComponent {
     @NotNull
     @Override
     public String getComponentName() {
-        return "DBNavigator.Project.SettingsManager";
+        return "DBNavigator.Project.Settings";
     }
 }
