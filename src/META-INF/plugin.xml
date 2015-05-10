@@ -318,7 +318,6 @@
         <component><implementation-class>com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.dependency.ObjectDependencyManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettings</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
     </project-components>
     <module-components>

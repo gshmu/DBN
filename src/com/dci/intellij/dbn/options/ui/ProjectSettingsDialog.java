@@ -29,8 +29,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         //setHorizontalStretch(1.5f);
 
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
-        this.projectSettings = new ProjectSettings(project);
-        this.projectSettings.loadState(projectSettings.getState());
+        this.projectSettings = projectSettings.clone();
         this.projectSettings.createCustomComponent();
         component = this.projectSettings.getSettingsEditor();
         if (component != null) component.setDialog(this);
