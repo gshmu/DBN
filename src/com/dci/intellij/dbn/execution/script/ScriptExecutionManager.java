@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.script;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -12,7 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
-import com.dci.intellij.dbn.database.ScriptExecutionInput;
+import com.dci.intellij.dbn.database.ScriptExecutionCommand;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
@@ -60,6 +61,7 @@ import java.util.concurrent.TimeoutException;
 public class ScriptExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element>{
     private final Map<VirtualFile, Process> activeProcesses = new HashMap<VirtualFile, Process>();
     private Map<DatabaseType, String> recentlyUsedInterfaces = new HashMap<DatabaseType, String>();
+    private boolean clearOutputOption = true;
 
     private ScriptExecutionManager(Project project) {
         super(project);
@@ -91,21 +93,22 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
             DBSchema currentSchema = connectionMappingManager.getCurrentSchema(virtualFile);
 
-            ScriptExecutionInputDialog inputDialog =
-                    new ScriptExecutionInputDialog(
-                            project,
-                            virtualFile,
-                            activeConnection,
-                            currentSchema);
+            final CmdLineExecutionInput executionInput = new CmdLineExecutionInput();
+            executionInput.setConnectionHandler(activeConnection);
+            executionInput.setSchema(currentSchema);
+            executionInput.setSourceFile(virtualFile);
+            executionInput.setClearOutput(clearOutputOption);
+            ScriptExecutionInputDialog inputDialog = new ScriptExecutionInputDialog(project,executionInput);
 
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                final ConnectionHandler connectionHandler = inputDialog.getConnection();
-                final DBSchema schema = inputDialog.getSchema();
-                final CmdLineInterface cmdLineExecutable = inputDialog.getCmdLineInterface();
+                final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                final DBSchema schema = executionInput.getSchema();
+                final CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
                 connectionMappingManager.setActiveConnection(virtualFile, connectionHandler);
                 connectionMappingManager.setCurrentSchema(virtualFile, schema);
                 recentlyUsedInterfaces.put(connectionHandler.getDatabaseType(), cmdLineExecutable.getId());
+                clearOutputOption = executionInput.isClearOutput();
 
                 new BackgroundTask(project, "Executing database script", true, false) {
                     @Override
@@ -113,7 +116,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                         new SimpleTimeoutCall<Object>(100, TimeUnit.SECONDS, null) {
                             @Override
                             public Object call() throws Exception {
-                                doExecuteScript(cmdLineExecutable, virtualFile, connectionHandler, schema);
+                                doExecuteScript(executionInput);
                                 return null;
                             }
 
@@ -195,18 +198,22 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         return null;
     }
 
-    private void doExecuteScript(CmdLineInterface cmdLineInterface, VirtualFile virtualFile, ConnectionHandler connectionHandler, DBSchema schema) throws Exception{
-        activeProcesses.put(virtualFile, null);
+    private void doExecuteScript(CmdLineExecutionInput input) throws Exception{
+        VirtualFile sourceFile = input.getSourceFile();
+        ConnectionHandler connectionHandler = input.getConnectionHandler();
+        CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
+        DBSchema schema = input.getSchema();
+        activeProcesses.put(sourceFile, null);
         File tempScriptFile = null;
         BufferedReader logReader = null;
-        LogOutputContext context = new LogOutputContext(connectionHandler, virtualFile, null);
+        LogOutputContext context = new LogOutputContext(connectionHandler, sourceFile, null);
         ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
         try {
-            String content = new String(virtualFile.contentsToByteArray());
+            String content = new String(sourceFile.contentsToByteArray());
             tempScriptFile = createTempScriptFile();
 
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            ScriptExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
+            ScriptExecutionCommand executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                     tempScriptFile.getPath(),
                     content,
                     schema == null ? null : schema.getName(),
@@ -226,12 +233,12 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 process = runtime.exec(executionInput.getLineCommand());
 */
             context.setProcess(process);
-            activeProcesses.put(virtualFile, process);
+            activeProcesses.put(sourceFile, process);
 
             context.setHideEmptyLines(false);
             context.start();
             String line;
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution started"));
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution started", input.isClearOutput()));
 
             logReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = logReader.readLine()) != null) {
@@ -242,22 +249,29 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     break;
                 }
             }
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, context.isStopped() ? " - Script execution interrupted by used" : " - Script execution finished"));
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, context.isStopped() ? " - Script execution interrupted by used" : " - Script execution finished", false));
 
         } catch (Exception e) {
             executionManager.writeLogOutput(context, LogOutput.createErrOutput(e.getMessage()));
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution finished with errors"));
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, " - Script execution finished with errors", false));
             throw e;
         } finally {
             context.finish();
             if (logReader != null) logReader.close();
-            activeProcesses.remove(virtualFile);
+            activeProcesses.remove(sourceFile);
             if (tempScriptFile != null && tempScriptFile.exists()) {
                 tempScriptFile.delete();
             }
         }
     }
 
+    public boolean getClearOutputOption() {
+        return clearOutputOption;
+    }
+
+    public void setClearOutputOption(boolean clearOutputOption) {
+        this.clearOutputOption = clearOutputOption;
+    }
 
     private File createTempScriptFile() throws IOException {
         return File.createTempFile(UUID.randomUUID().toString(), ".sql");
@@ -270,6 +284,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     @Override
     public Element getState() {
         Element element = new Element("state");
+        SettingsUtil.setBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = new Element("recently-used-interfaces");
         element.addContent(interfacesElement);
         for (DatabaseType databaseType : recentlyUsedInterfaces.keySet()) {
@@ -284,6 +299,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     @Override
     public void loadState(final Element element) {
         recentlyUsedInterfaces.clear();
+        clearOutputOption = SettingsUtil.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");
         if (interfacesElement != null) {
             for (Element interfaceElement : interfacesElement.getChildren()) {
