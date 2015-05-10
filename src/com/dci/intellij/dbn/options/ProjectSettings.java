@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -49,10 +48,6 @@ public class ProjectSettings
     private OperationSettings operationSettings;
     private DDLFileSettings ddlFileSettings;
     private ConnectionBundleSettings connectionSettings;
-
-    public static ProjectSettings getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ProjectSettings.class);
-    }
 
     public ProjectSettings(Project project) {
         super(project);
