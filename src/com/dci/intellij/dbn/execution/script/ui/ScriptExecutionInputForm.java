@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.execution.script.CmdLineExecutionInput;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -21,10 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
@@ -34,12 +38,14 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private JPanel mainPanel;
     private DBNComboBox<CmdLineInterface> cmdLineExecutableComboBox;
     private JTextArea hintTextArea;
+    private JCheckBox clearOutputCheckBox;
 
     private DBNHeaderForm headerForm;
 
-    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull VirtualFile sourceFile, @Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
+    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final CmdLineExecutionInput executionInput) {
         super(parentComponent);
 
+        VirtualFile sourceFile = executionInput.getSourceFile();
         String headerTitle = sourceFile.getPath();
         Icon headerIcon = sourceFile.getFileType().getIcon();
         if (sourceFile instanceof DBVirtualFile) {
@@ -75,19 +81,26 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 }
             }
         });
+        clearOutputCheckBox.setSelected(executionInput.isClearOutput());
 
-        updateDropDowns(connectionHandler, schema);
+        updateControls(executionInput);
+        clearOutputCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                executionInput.setClearOutput(clearOutputCheckBox.isSelected());
+            }
+        });
 
         connectionComboBox.addListener(new ValueSelectorListener<ConnectionHandler>() {
             @Override
             public void selectionChanged(ConnectionHandler oldValue, ConnectionHandler newValue) {
-                updateDropDowns(newValue, null);
+                updateControls(executionInput);
             }
         });
         schemaComboBox.addListener(new ValueSelectorListener<DBSchema>() {
             @Override
             public void selectionChanged(DBSchema oldValue, DBSchema newValue) {
-                parentComponent.setSchema(newValue);
+                executionInput.setSchema(newValue);
                 updateButtons();
             }
         });
@@ -95,7 +108,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         cmdLineExecutableComboBox.addListener(new ValueSelectorListener<CmdLineInterface>() {
             @Override
             public void selectionChanged(CmdLineInterface oldValue, CmdLineInterface newValue) {
-                getParentComponent().setCmdLineInterface(newValue);
+                executionInput.setCmdLineInterface(newValue);
                 updateButtons();
             }
         });
@@ -107,9 +120,10 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         return connectionComboBox;
     }
 
-    private void updateDropDowns(@Nullable ConnectionHandler connectionHandler, @Nullable DBSchema schema) {
-        ScriptExecutionInputDialog parentComponent = getParentComponent();
-        CmdLineInterface cmdLineInterface = null;
+    private void updateControls(CmdLineExecutionInput executionInput) {
+        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        DBSchema schema = executionInput.getSchema();
+        CmdLineInterface cmdLineInterface;
         if (connectionHandler != null && !connectionHandler.isVirtual()) {
             schema = CommonUtil.nvln(schema, connectionHandler.getUserSchema());
             connectionComboBox.setSelectedValue(connectionHandler);
@@ -131,9 +145,9 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
             }
 
-            parentComponent.setConnection(connectionHandler);
-            parentComponent.setSchema(schema);
-            parentComponent.setCmdLineInterface(cmdLineInterface);
+            executionInput.setConnectionHandler(connectionHandler);
+            executionInput.setSchema(schema);
+            executionInput.setCmdLineInterface(cmdLineInterface);
         } else {
             schemaComboBox.setEnabled(false);
             cmdLineExecutableComboBox.setEnabled(false);
