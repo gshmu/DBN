@@ -1,9 +1,15 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -20,11 +26,6 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
@@ -35,12 +36,12 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
     };
 
 
-    private Project project;
+    private ProjectRef projectRef;
     private FiltrableList<ConnectionHandler> connectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
     private List<ConnectionHandler> virtualConnections = new ArrayList<ConnectionHandler>();
 
     public ConnectionBundle(Project project) {
-        this.project = project;
+        this.projectRef = new ProjectRef(project);
         virtualConnections.add(new VirtualConnectionHandler(
                 "virtual-oracle-connection",
                 "Virtual - Oracle 10.1",
@@ -85,38 +86,38 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
     public void applySettings(ConnectionBundleSettings settings) {
         FiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableList<ConnectionHandler>(ACTIVE_CONNECTIONS_FILTER);
-        List<ConnectionHandler> olsConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
+        final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connections = settings.getConnections();
         boolean listChanged = false;
         for (ConnectionSettings connectionSetting : connections) {
             String connectionId = connectionSetting.getConnectionId();
-            ConnectionHandler connectionHandler = getConnectionHandler(olsConnectionHandlers, connectionId);
+            ConnectionHandler connectionHandler = getConnectionHandler(oldConnectionHandlers, connectionId);
             if (connectionHandler == null) {
                 connectionHandler = new ConnectionHandlerImpl(this, connectionSetting);
                 newConnectionHandlers.add(connectionHandler);
                 listChanged = true;
             } else {
-                listChanged = listChanged || connectionHandler.getSettings().isActive() != connectionSetting.isActive();
+                listChanged = listChanged || connectionHandler.isActive() != connectionSetting.isActive();
                 connectionHandler.setSettings(connectionSetting);
                 newConnectionHandlers.add(connectionHandler);
-                olsConnectionHandlers.remove(connectionHandler);
+                oldConnectionHandlers.remove(connectionHandler);
             }
         }
         this.connectionHandlers = newConnectionHandlers;
 
 
 
-
-        listChanged = listChanged || olsConnectionHandlers.size() > 0;
+        final Project project = getProject();
+        listChanged = listChanged || oldConnectionHandlers.size() > 0;
         if (listChanged) {
             new SettingsChangeNotifier() {
                 @Override
                 public void notifyChanges() {
                     EventUtil.notify(project, ConnectionSetupListener.TOPIC).setupChanged();
+                    ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                    connectionManager.disposeConnections(oldConnectionHandlers);
                 }
             };
-            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            connectionManager.disposeConnections(olsConnectionHandlers);
         }
     }
 
@@ -135,7 +136,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
 
     public Project getProject() {
-        return FailsafeUtil.get(project);
+        return FailsafeUtil.get(projectRef.get());
     }
 
     @Override
@@ -190,7 +191,6 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         disposed = true;
         connectionHandlers.clear();
         virtualConnections.clear();
-        project = null;
     }
 
     /*********************************************************
@@ -240,7 +240,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
 
     @Nullable
     public BrowserTreeNode getTreeParent() {
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
         return browserManager.isTabbedMode() ? null : activeBrowserTree == null ? null : activeBrowserTree.getModel().getRoot();
     }

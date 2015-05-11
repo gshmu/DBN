@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
-import com.dci.intellij.dbn.database.ScriptExecutionCommand;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
 import com.dci.intellij.dbn.database.oracle.execution.OracleMethodDebugExecutionProcessor;
 import com.dci.intellij.dbn.database.oracle.execution.OracleMethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.object.DBMethod;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class OracleExecutionInterface implements DatabaseExecutionInterface {
     private static final String SQLPLUS_CONNECT_PATTERN = "\"[USER]/[PASSWORD]@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\"";
@@ -27,8 +27,8 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
     }
 
     @Override
-    public ScriptExecutionCommand createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
-        ScriptExecutionCommand executionInput = new ScriptExecutionCommand(content);
+    public CmdLineExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+        CmdLineExecutionInput executionInput = new CmdLineExecutionInput(content);
         String connectArg = SQLPLUS_CONNECT_PATTERN.
                 replace("[USER]", authenticationInfo.getUser()).
                 replace("[PASSWORD]", authenticationInfo.getPassword()).

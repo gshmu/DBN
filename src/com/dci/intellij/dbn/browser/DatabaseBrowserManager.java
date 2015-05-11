@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.browser;
 
+import javax.swing.tree.TreePath;
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
@@ -41,14 +49,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.DatabaseBrowserManager",
@@ -200,20 +200,27 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
      *                       Listeners                        *
      **********************************************************/
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
-        public void typeFiltersChanged() {
+        public void typeFiltersChanged(String connectionId) {
             if (toolWindowForm.isLoaded()) {
-                getToolWindowForm().getBrowserForm().rebuildTree();
+                ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+                if (connectionHandler == null) {
+                    getToolWindowForm().getBrowserForm().rebuildTree();
+                } else {
+                    connectionHandler.getObjectBundle().rebuildTreeChildren();
+                }
             }
         }
 
         @Override
-        public void nameFiltersChanged(@Nullable DBObjectType objectType) {
-            if (toolWindowForm.isLoaded()) {
-                getToolWindowForm().getBrowserForm().rebuildTree();
+        public void nameFiltersChanged(@Nullable DBObjectType objectType, String connectionId) {
+            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            if (toolWindowForm.isLoaded() && connectionHandler != null) {
+                connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
             }
         }
     };
 
+    @Nullable
     private ConnectionHandler getConnectionHandler(String connectionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         return connectionManager.getConnectionHandler(connectionId);

@@ -41,6 +41,12 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
 
     @NotNull
     @Override
+    public String getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
+    }
+
+    @NotNull
+    @Override
     public String getName() {
         return name;
     }

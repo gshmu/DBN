@@ -1,5 +1,22 @@
 package com.dci.intellij.dbn.execution.script;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.jdesktop.swingx.util.OS;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
@@ -12,8 +29,8 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
-import com.dci.intellij.dbn.database.ScriptExecutionCommand;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
@@ -34,23 +51,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdesktop.swingx.util.OS;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @State(
         name = "DBNavigator.Project.ScriptExecutionManager",
@@ -93,7 +93,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             ConnectionHandler activeConnection = connectionMappingManager.getActiveConnection(virtualFile);
             DBSchema currentSchema = connectionMappingManager.getCurrentSchema(virtualFile);
 
-            final CmdLineExecutionInput executionInput = new CmdLineExecutionInput();
+            final ScriptExecutionExecutionInput executionInput = new ScriptExecutionExecutionInput();
             executionInput.setConnectionHandler(activeConnection);
             executionInput.setSchema(currentSchema);
             executionInput.setSourceFile(virtualFile);
@@ -198,7 +198,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         return null;
     }
 
-    private void doExecuteScript(CmdLineExecutionInput input) throws Exception{
+    private void doExecuteScript(ScriptExecutionExecutionInput input) throws Exception{
         VirtualFile sourceFile = input.getSourceFile();
         ConnectionHandler connectionHandler = input.getConnectionHandler();
         CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
@@ -213,7 +213,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             tempScriptFile = createTempScriptFile();
 
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
-            ScriptExecutionCommand executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
+            CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                     tempScriptFile.getPath(),
                     content,
                     schema == null ? null : schema.getName(),

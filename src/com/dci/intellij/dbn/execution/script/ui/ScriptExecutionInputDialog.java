@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
-import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.execution.script.CmdLineExecutionInput;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
 import javax.swing.Action;
 import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionExecutionInput;
+import com.intellij.openapi.project.Project;
 
 public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputForm> {
-    private CmdLineExecutionInput executionInput = new CmdLineExecutionInput();
+    private ScriptExecutionExecutionInput executionInput = new ScriptExecutionExecutionInput();
 
-    public ScriptExecutionInputDialog(Project project, CmdLineExecutionInput executionInput) {
+    public ScriptExecutionInputDialog(Project project, ScriptExecutionExecutionInput executionInput) {
         super(project, "Execute SQL Script", true);
         this.executionInput = executionInput;
         setModal(true);

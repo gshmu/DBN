@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -27,12 +28,19 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
     private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<DBObjectType, Filter<DBObject>>(DBObjectType.class);
     private Map<DBObjectRelationType, Filter<DBObjectRelation>> objectRelationFilterMap = new EnumMap<DBObjectRelationType, Filter<DBObjectRelation>>(DBObjectRelationType.class);
-    public ObjectNameFilterSettings(Project project) {
+    private ConnectionRef connectionRef;
+    public ObjectNameFilterSettings(Project project, ConnectionRef connectionRef) {
         super(project);
+        this.connectionRef = connectionRef;
     }
 
     public List<ObjectNameFilter> getFilters() {
         return filters;
+    }
+
+
+    public String getConnectionId() {
+        return connectionRef.getConnectionId();
     }
 
     public void addFilter(ObjectNameFilter filter) {
@@ -104,7 +112,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
 
     public ObjectNameFilterSettings clone() {
         try {
-            ObjectNameFilterSettings clone = new ObjectNameFilterSettings(getProject());
+            ObjectNameFilterSettings clone = new ObjectNameFilterSettings(getProject(), connectionRef);
             Element element = new Element("Temp");
             writeConfiguration(element);
             clone.readConfiguration(element);

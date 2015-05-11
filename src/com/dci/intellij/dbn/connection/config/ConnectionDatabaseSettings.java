@@ -51,6 +51,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         }
     }
 
+    @NotNull
     public ConnectionDatabaseSettingsForm createConfigurationEditor() {
         return new ConnectionDatabaseSettingsForm(this);
     }
