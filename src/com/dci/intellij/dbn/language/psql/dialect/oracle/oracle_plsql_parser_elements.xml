@@ -180,10 +180,9 @@
         <qualified-identifier id="000000063" separator="CHR_DOT">
             <variant>
                 <object-ref id="000000064" optional="true" type="SCHEMA" />
-                <token attributes="SUBJECT" id="000000065" type-id="KW_PROCEDURE" />
+                <object-def attributes="SUBJECT" id="000000065" type="PROCEDURE" />
             </variant>
         </qualified-identifier>
-        <object-def attributes="SUBJECT" id="000000066" type="PROCEDURE" />
         <element optional="true" ref-id="parameter_declarations" />
         <one-of id="000000067">
             <token id="000000068" type-id="CHR_SEMICOLON" />
@@ -3132,9 +3131,9 @@
                 </variant>
             </qualified-identifier>
             <sequence id="000001545">
-                <token type-id="KW_TABLE" id="000001546" />
-                <wrapper template="PARENTHESES" id="000001547">
-                    <object-ref type="ANY" id="000001548" />
+                <token id="000001546" type-id="KW_TABLE" />
+                <wrapper id="000001547" template="PARENTHESES">
+                    <object-ref id="000001548" type="ANY" />
                 </wrapper>
             </sequence>
             <element ref-id="subquery" />
