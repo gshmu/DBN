@@ -28,9 +28,10 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         setResizable(true);
         //setHorizontalStretch(1.5f);
 
-        projectSettings = ProjectSettingsManager.getSettings(project);
-        projectSettings.createCustomComponent();
-        component = projectSettings.getSettingsEditor();
+        ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
+        this.projectSettings = projectSettings.clone();
+        this.projectSettings.createCustomComponent();
+        component = this.projectSettings.getSettingsEditor();
         if (component != null) component.setDialog(this);
 
         init();

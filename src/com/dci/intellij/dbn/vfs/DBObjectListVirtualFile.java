@@ -39,6 +39,12 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
         return objectList.getConnectionHandler();
     }
 
+    @NotNull
+    @Override
+    public String getConnectionId() {
+        return getConnectionHandler().getId();
+    }
+
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/

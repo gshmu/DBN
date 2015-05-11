@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -16,9 +17,12 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsEditorForm;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +33,8 @@ import javax.swing.JPanel;
 
 public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
-        implements SearchableConfigurable.Parent {
-
+        implements SearchableConfigurable.Parent, com.dci.intellij.dbn.common.util.Cloneable<ProjectSettings> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private GeneralProjectSettings generalSettings;
     private DatabaseBrowserSettings browserSettings;
@@ -44,7 +48,6 @@ public class ProjectSettings
     private OperationSettings operationSettings;
     private DDLFileSettings ddlFileSettings;
     private ConnectionBundleSettings connectionSettings;
-
 
     public ProjectSettings(Project project) {
         super(project);
@@ -70,6 +73,11 @@ public class ProjectSettings
             Configuration selectedConfiguration = settingsEditor.getActiveSettings();
             return selectedConfiguration.getHelpTopic();
         }
+    }
+
+    @Override
+    public void apply() throws ConfigurationException {
+        super.apply();
     }
 
     @NotNull
@@ -203,5 +211,14 @@ public class ProjectSettings
 
     public Runnable enableSearch(String option) {
         return null;
+    }
+
+    @Override
+    public ProjectSettings clone() {
+        Element element = new Element("project-settings");
+        writeConfiguration(element);
+        ProjectSettings projectSettings = new ProjectSettings(getProject());
+        projectSettings.readConfiguration(element);
+        return projectSettings;
     }
 }

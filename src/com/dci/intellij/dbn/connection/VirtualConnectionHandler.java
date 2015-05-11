@@ -141,28 +141,21 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return this;
     }
 
-    public String getUser() {return "root";}
-    public String getUserName() {return "root";}
+    @Override public String getUserName() {return "root";}
 
-    public Connection getPoolConnection() throws SQLException {return null;}
-    public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {return null;}
-    public Connection getStandaloneConnection() throws SQLException {return null;}
-    public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {return null;}
-    public void freePoolConnection(Connection connection) {}
+    @Override public Connection getPoolConnection() throws SQLException {return null;}
+    @Override public Connection getPoolConnection(@Nullable DBSchema schema) throws SQLException {return null;}
+    @Override public Connection getStandaloneConnection() throws SQLException {return null;}
+    @Override public Connection getStandaloneConnection(@Nullable DBSchema schema) throws SQLException {return null;}
+    @Override public void freePoolConnection(Connection connection) {}
+    @Override public ConnectionSettings getSettings() {return null;}
+    @Override public void setSettings(ConnectionSettings connectionSettings) {}
+    @Override public ConnectionStatus getConnectionStatus() {return null;}
 
-    public ConnectionSettings getSettings() {return null;}
-    public ConnectionStatus getConnectionStatus() {return null;}
-
-    @Override
-    public boolean isAllowConnection() {return false;}
-    @Override
-    public void setAllowConnection(boolean allowConnection) {}
-
-    @Override
-    public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
-
-    @Override
-    public boolean canConnect() {
+    @Override public boolean isAllowConnection() {return false;}
+    @Override public void setAllowConnection(boolean allowConnection) {}
+    @Override public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {}
+    @Override public boolean canConnect() {
         return false;
     }
 

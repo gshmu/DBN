@@ -14,12 +14,10 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSetting;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 
 public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<ObjectTypeFilterSettings> {
@@ -80,24 +78,13 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
             @Override
             public void notifyChanges() {
                 if (notifyFilterListeners) {
-                    ObjectFilterChangeListener listener = EventUtil.notify(objectFilterSettings.getProject(), ObjectFilterChangeListener.TOPIC);
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    listener.typeFiltersChanged(connectionHandler);
+                    Project project = objectFilterSettings.getProject();
+                    String connectionId = objectFilterSettings.getConnectionId();
+                    ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
+                    listener.typeFiltersChanged(connectionId);
                 }
             }
         };
-    }
-
-    private ConnectionHandler getConnectionHandler() {
-        ObjectTypeFilterSettings configuration = getConfiguration();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(configuration.getProject());
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            if (configuration.getElementFilter() == connectionHandler.getObjectTypeFilter()) {
-                return connectionHandler;
-            }
-        }
-        return null;
     }
 
     @Override

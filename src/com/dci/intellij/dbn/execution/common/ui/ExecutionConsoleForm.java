@@ -506,12 +506,12 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
-    public void closeExecutionResults(List<ConnectionHandler> connectionHandlers) {
+    public void closeExecutionResults(List<String> connectionIds) {
         TabbedPane resultTabs = getResultTabs();
         List<TabInfo> tabs = new ArrayList<TabInfo>(resultTabs.getTabs());
         for (TabInfo tabInfo : tabs) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
-            if (executionResult != null && connectionHandlers.contains(executionResult.getConnectionHandler())) {
+            if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
                 removeTab(tabInfo);
             }
         }

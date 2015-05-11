@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.execution.script;
 
+import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.connection.DatabaseType;
 
 public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.Cloneable<CmdLineInterfaceBundle>, PersistentConfiguration {
     private List<CmdLineInterface> elements = new ArrayList<CmdLineInterface>();
@@ -54,6 +54,7 @@ public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.
 
     @Override
     public void readConfiguration(Element element) {
+        elements.clear();
         if (element != null) {
             List<Element> children = element.getChildren();
             for (Element child : children) {

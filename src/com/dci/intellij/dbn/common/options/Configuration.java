@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
+import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -94,16 +94,14 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         isModified = false;
 
         Configuration<T> settings = getOriginalSettings();
-        if (settings != null && settings != this) {
-            if (settings != this) {
-                Element settingsElement = new Element("settings");
-                writeConfiguration(settingsElement);
-                settings.readConfiguration(settingsElement);
-            }
+        if (this instanceof TopLevelConfig && settings != null && settings != this) {
+            Element settingsElement = new Element("settings");
+            writeConfiguration(settingsElement);
+            settings.readConfiguration(settingsElement);
         }
 
-        if (!CommonUtil.isCalledThrough(Configuration.class)) {
-        // Notify only when all changes are set
+        if (this instanceof TopLevelConfig) {
+           // Notify only when all changes are set
             notifyChanges();
         }
         onApply();
@@ -112,18 +110,15 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     protected void notifyChanges() {
         List<SettingsChangeNotifier> changeNotifiers = SETTINGS_CHANGE_NOTIFIERS.get();
         if (changeNotifiers != null) {
-            try {
-                for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
-                    try {
-                        changeNotifier.notifyChanges();
-                    } catch (Exception e){
-                        if (!(e instanceof ProcessCanceledException)) {
-                            LOGGER.error("Error notifying configuration changes", e);
-                        }
+            SETTINGS_CHANGE_NOTIFIERS.set(null);
+            for (SettingsChangeNotifier changeNotifier : changeNotifiers) {
+                try {
+                    changeNotifier.notifyChanges();
+                } catch (Exception e){
+                    if (!(e instanceof ProcessCanceledException)) {
+                        LOGGER.error("Error notifying configuration changes", e);
                     }
                 }
-            } finally {
-                SETTINGS_CHANGE_NOTIFIERS.set(null);
             }
         }
     }

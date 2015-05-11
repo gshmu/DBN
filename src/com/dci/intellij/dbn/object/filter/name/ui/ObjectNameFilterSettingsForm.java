@@ -15,9 +15,6 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
@@ -141,25 +138,10 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
                 if (notifyFilterListeners) {
                     Project project = filterSettings.getProject();
                     ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    if (connectionHandler != null) {
-                        listener.nameFiltersChanged(connectionHandler, null);
-                    }
+                    listener.nameFiltersChanged(null, filterSettings.getConnectionId());
                 }
             }
         };
-    }
-
-    private ConnectionHandler getConnectionHandler() {
-        ObjectNameFilterSettings nameFilterSettings = getConfiguration();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(nameFilterSettings.getProject());
-        ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            if (nameFilterSettings == connectionHandler.getSettings().getFilterSettings().getObjectNameFilterSettings()) {
-                return connectionHandler;
-            }
-        }
-        return null;
     }
 
     public void resetFormChanges() {}

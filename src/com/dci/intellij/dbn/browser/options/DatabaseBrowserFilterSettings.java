@@ -13,7 +13,7 @@ public class DatabaseBrowserFilterSettings extends CompositeProjectConfiguration
 
     public DatabaseBrowserFilterSettings(Project project) {
         super(project);
-        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, true);
+        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, null);
     }
 
     @NotNull

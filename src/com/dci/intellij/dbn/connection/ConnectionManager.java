@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,7 +25,6 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -61,6 +61,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 )
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     private Timer idleConnectionCleaner;
+    private ConnectionBundle connectionBundle;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
         return getComponent(project);
@@ -72,6 +73,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private ConnectionManager(final Project project) {
         super(project);
+        connectionBundle = new ConnectionBundle(project);
     }
 
     @Override
@@ -116,7 +118,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     *                        Custom                         *
     *********************************************************/
     public ConnectionBundle getConnectionBundle() {
-        return ConnectionBundleSettings.getInstance(getProject()).getConnectionBundle();
+        return connectionBundle;
     }
 
     public void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
@@ -286,7 +288,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     /*********************************************************
      *                     Miscellaneous                     *
      *********************************************************/
-     public ConnectionHandler getConnectionHandler(String connectionId) {
+    @Nullable
+    public ConnectionHandler getConnectionHandler(String connectionId) {
          for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers().getFullList()) {
             if (connectionHandler.getId().equals(connectionId)) {
                 return connectionHandler;
@@ -371,28 +374,38 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public void disposeConnections(@NotNull final List<ConnectionHandler> connectionHandlers) {
-        final Project project = getProject();
-        new ConditionalLaterInvocator() {
-            @Override
-            protected void execute() {
-                ExecutionManager executionManager = ExecutionManager.getInstance(project);
-                executionManager.closeExecutionResults(connectionHandlers);
-
-                DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-                databaseFileManager.closeDatabaseFiles(connectionHandlers);
-
-                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                methodExecutionManager.cleanupExecutionHistory(connectionHandlers);
-
-                new BackgroundTask(project, "Cleaning up connections", true) {
-                    @Override
-                    protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                        DisposerUtil.dispose(connectionHandlers);
+        if (connectionHandlers.size() > 0) {
+            final Project project = getProject();
+            new ConditionalLaterInvocator() {
+                @Override
+                protected void execute() {
+                    List<String> connectionIds = new ArrayList<String>();
+                    for (ConnectionHandler connectionHandler : connectionHandlers) {
+                        connectionIds.add(connectionHandler.getId());
                     }
-                }.start();
 
-            }
-        }.start();
+                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                    executionManager.closeExecutionResults(connectionIds);
+
+                    DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+                    databaseFileManager.closeDatabaseFiles(connectionIds);
+
+                    MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                    methodExecutionManager.cleanupExecutionHistory(connectionIds);
+
+                    DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+                    //browserManager.
+
+                    new BackgroundTask(project, "Cleaning up connections", true) {
+                        @Override
+                        protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+                            DisposerUtil.dispose(connectionHandlers);
+                        }
+                    }.start();
+
+                }
+            }.start();
+        }
     }
 
     /**********************************************
