@@ -48,7 +48,7 @@ public class DatabaseConsoleBundle implements Disposable{
         return getConsole(name, false);
     }
 
-    private DBConsoleVirtualFile getConsole(String name, boolean create) {
+    public DBConsoleVirtualFile getConsole(String name, boolean create) {
         for (DBConsoleVirtualFile console : consoles) {
             if (console.getName().equals(name)) {
                 return console;
@@ -61,6 +61,11 @@ public class DatabaseConsoleBundle implements Disposable{
         DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name);
         consoles.add(console);
         Collections.sort(consoles);
+        List<String> consoleNames = connectionHandler.getSettings().getConsoleNames();
+        if (!consoleNames.contains(name)) {
+            consoleNames.add(name);
+            Collections.sort(consoleNames);
+        }
 
         return console;
     }

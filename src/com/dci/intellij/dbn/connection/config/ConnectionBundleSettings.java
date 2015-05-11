@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
@@ -10,11 +15,6 @@ import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
     public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
@@ -108,17 +108,14 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             connection.readConfiguration(connectionElement);
             connections.add(connection);
 
-/*            Element consolesElement = connectionElement.getChild("consoles");
+            Element consolesElement = connectionElement.getChild("consoles");
             if (consolesElement != null) {
                 for (Object c : consolesElement.getChildren()) {
                     Element consoleElement = (Element) c;
                     String consoleName = consoleElement.getAttributeValue("name");
-                    DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
-                    if (consoleBundle.getConsole(consoleName) == null) {
-                        consoleBundle.createConsole(consoleName);
-                    }
+                    connection.getConsoleNames().add(consoleName);
                 }
-            }*/
+            }
         }
 
         if (!project.isDefault()) {
@@ -134,13 +131,13 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
             connectionSetting.writeConfiguration(connectionElement);
             element.addContent(connectionElement);
 
-/*            Element consolesElement = new Element("consoles");
+            Element consolesElement = new Element("consoles");
             connectionElement.addContent(consolesElement);
-            for (String consoleName : connectionHandler.getConsoleBundle().getConsoleNames()) {
+            for (String consoleName : connectionSetting.getConsoleNames()) {
                 Element consoleElement = new Element("console");
                 consoleElement.setAttribute("name", consoleName);
                 consolesElement.addContent(consoleElement);
-            }*/
+            }
         }
     }
 

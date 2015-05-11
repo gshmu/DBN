@@ -89,19 +89,23 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
         final List<ConnectionHandler> oldConnectionHandlers = new ArrayList<ConnectionHandler>(this.connectionHandlers.getFullList());
         List<ConnectionSettings> connections = settings.getConnections();
         boolean listChanged = false;
-        for (ConnectionSettings connectionSetting : connections) {
-            String connectionId = connectionSetting.getConnectionId();
+        for (ConnectionSettings connection : connections) {
+            String connectionId = connection.getConnectionId();
             ConnectionHandler connectionHandler = getConnectionHandler(oldConnectionHandlers, connectionId);
             if (connectionHandler == null) {
-                connectionHandler = new ConnectionHandlerImpl(this, connectionSetting);
+                connectionHandler = new ConnectionHandlerImpl(this, connection);
                 newConnectionHandlers.add(connectionHandler);
                 listChanged = true;
             } else {
-                listChanged = listChanged || connectionHandler.isActive() != connectionSetting.isActive();
-                connectionHandler.setSettings(connectionSetting);
+                listChanged = listChanged || connectionHandler.isActive() != connection.isActive();
+                connectionHandler.setSettings(connection);
                 newConnectionHandlers.add(connectionHandler);
                 oldConnectionHandlers.remove(connectionHandler);
             }
+            for (String console : connection.getConsoleNames()) {
+                connectionHandler.getConsoleBundle().getConsole(console, true);
+            }
+
         }
         this.connectionHandlers = newConnectionHandlers;
 

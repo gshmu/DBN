@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionSshTunnelSettings sshTunnelSettings;
     private ConnectionDetailSettings detailSettings;
     private ConnectionFilterSettings filterSettings;
+    private List<String> consoleNames = new ArrayList<String>();
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
         this(parent, DatabaseType.UNKNOWN);
@@ -85,6 +88,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     public String getConnectionId() {
         return connectionId;
+    }
+
+    public List<String> getConsoleNames() {
+        return consoleNames;
     }
 
     @Override
