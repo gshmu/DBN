@@ -94,7 +94,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         isModified = false;
 
         Configuration<T> settings = getOriginalSettings();
-        if (this instanceof TopLevelConfig && settings != this) {
+        if (this instanceof TopLevelConfig && settings != null && settings != this) {
             Element settingsElement = new Element("settings");
             writeConfiguration(settingsElement);
             settings.readConfiguration(settingsElement);
