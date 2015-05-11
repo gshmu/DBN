@@ -16,5 +16,8 @@ public interface DBVirtualFile extends ConnectionProvider, Disposable {
     Icon getIcon();
 
     @NotNull
+    String getConnectionId();
+
+    @NotNull
     ConnectionHandler getConnectionHandler();
 }

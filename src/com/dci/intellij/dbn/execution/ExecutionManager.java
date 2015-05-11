@@ -1,5 +1,11 @@
 package com.dci.intellij.dbn.execution;
 
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
@@ -7,7 +13,6 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DisposableLazyValue;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
@@ -29,12 +34,6 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
     name = "DBNavigator.Project.ExecutionManager",
@@ -223,8 +222,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return executionConsoleForm.get();
     }
 
-    public void closeExecutionResults(List<ConnectionHandler> connectionHandlers){
-        getExecutionConsoleForm().closeExecutionResults(connectionHandlers);
+    public void closeExecutionResults(List<String> connectionIds){
+        getExecutionConsoleForm().closeExecutionResults(connectionIds);
     }
 
     /*********************************************************

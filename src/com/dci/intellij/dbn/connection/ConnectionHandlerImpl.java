@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.connection;
 
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
@@ -37,14 +45,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
 
 public class ConnectionHandlerImpl implements ConnectionHandler {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -60,6 +60,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private DatabaseLoggingResult logOutput;
 
+    private boolean isActive;
     private boolean isDisposed;
     private boolean checkingIdleStatus;
     private boolean allowConnection;
@@ -85,6 +86,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     public ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
         this.connectionBundle = connectionBundle;
         this.connectionSettings = connectionSettings;
+        this.isActive = connectionSettings.isActive();
         connectionStatus = new ConnectionStatus();
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
@@ -157,6 +159,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     @Override
     public void setSettings(ConnectionSettings connectionSettings) {
         this.connectionSettings = connectionSettings;
+        this.isActive = connectionSettings.isActive();
     }
 
     public ConnectionStatus getConnectionStatus() {
@@ -178,7 +181,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isActive() {
-        return connectionSettings.isActive();
+        return isActive;
     }
 
     public DatabaseType getDatabaseType() {
@@ -512,7 +515,7 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
     }
 
     public boolean isDisposed() {
-        return isDisposed;
+        return isDisposed || connectionBundle.isDisposed();
     }
 
     public void setConnectionConfig(final ConnectionSettings connectionSettings) {

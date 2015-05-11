@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.vfs.VirtualFile;
 
-public class CmdLineExecutionInput {
+public class ScriptExecutionExecutionInput {
     private CmdLineInterface cmdLineInterface;
     private VirtualFile sourceFile;
     private ConnectionHandlerRef connectionHandlerRef;

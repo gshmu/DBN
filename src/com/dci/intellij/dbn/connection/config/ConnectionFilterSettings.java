@@ -12,13 +12,12 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
-import com.intellij.openapi.project.Project;
 
 public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionFilterSettingsForm> {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
-    private ConnectionSettings parent;
+    private ConnectionSettings connectionSettings;
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = new Filter<DBSchema>() {
         @Override
@@ -29,12 +28,11 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     private transient Filter<DBSchema> cachedSchemaFilter;
 
-    public ConnectionFilterSettings(ConnectionSettings parent) {
-        super(parent.getProject());
-        this.parent = parent;
-        Project project = parent.getProject();
-        objectTypeFilterSettings = new ObjectTypeFilterSettings(project, false);
-        objectNameFilterSettings = new ObjectNameFilterSettings(project);
+    public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
+        super(connectionSettings.getProject());
+        this.connectionSettings = connectionSettings;
+        objectTypeFilterSettings = new ObjectTypeFilterSettings(connectionSettings.getProject(), connectionSettings);
+        objectNameFilterSettings = new ObjectNameFilterSettings(connectionSettings.getProject(), connectionSettings);
     }
 
     public boolean isHideEmptySchemas() {
@@ -45,8 +43,8 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         this.hideEmptySchemas = hideEmptySchemas;
     }
 
-    public ConnectionSettings getParent() {
-        return parent;
+    public String getConnectionId() {
+        return connectionSettings.getConnectionId();
     }
 
     public String getDisplayName() {

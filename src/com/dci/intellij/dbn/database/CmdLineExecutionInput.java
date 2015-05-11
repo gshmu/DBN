@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.database;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
-public class ScriptExecutionCommand {
+public class CmdLineExecutionInput {
     private StringBuilder content;
     private List<String> command;
     private Map<String, String> environmentVars;
 
-    public ScriptExecutionCommand(@NotNull String content) {
+    public CmdLineExecutionInput(@NotNull String content) {
         this.content = new StringBuilder(content);
         this.command = new ArrayList<String>();
         this.environmentVars = new HashMap<String, String>();

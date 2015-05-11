@@ -1,5 +1,12 @@
 package com.dci.intellij.dbn.vfs;
 
+import javax.swing.Icon;
+import java.io.IOException;
+import java.io.InputStream;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,13 +24,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements FileConnectionMappingProvider  {
     protected DBEditableObjectVirtualFile mainDatabaseFile;
@@ -84,6 +84,12 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @Override
     public ConnectionHandler getConnectionHandler() {
         return getMainDatabaseFile().getConnectionHandler();
+    }
+
+    @NotNull
+    @Override
+    public String getConnectionId() {
+        return getMainDatabaseFile().getConnectionId();
     }
 
     public DBLanguageDialect getLanguageDialect() {

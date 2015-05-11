@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -39,9 +38,6 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     }
 
     public abstract Icon getIcon();
-
-    @NotNull
-    public abstract ConnectionHandler getConnectionHandler();
 
     public int getId() {
         return id;

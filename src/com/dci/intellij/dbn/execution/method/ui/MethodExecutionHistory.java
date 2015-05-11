@@ -9,7 +9,6 @@ import org.jdom.Element;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -44,11 +43,11 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         this.selection = selection;
     }
 
-    public void cleanupHistory(List<ConnectionHandler> connectionHandlers) {
+    public void cleanupHistory(List<String> connectionIds) {
         Iterator<MethodExecutionInput> iterator = executionInputs.iterator();
         while (iterator.hasNext()) {
             MethodExecutionInput executionInput = iterator.next();
-            if (connectionHandlers.contains(executionInput.getConnectionHandler())) {
+            if (connectionIds.contains(executionInput.getConnectionId())) {
                 iterator.remove();
             }
         }

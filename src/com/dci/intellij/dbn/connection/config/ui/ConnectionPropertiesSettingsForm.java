@@ -53,8 +53,8 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
         new SettingsChangeNotifier() {
             @Override
             public void notifyChanges() {
-                Project project = configuration.getProject();
                 if (settingsChanged) {
+                    Project project = configuration.getProject();
                     ConnectionStatusListener listener = EventUtil.notify(project, ConnectionStatusListener.TOPIC);
                     listener.statusChanged(configuration.getConnectionId());
                 }

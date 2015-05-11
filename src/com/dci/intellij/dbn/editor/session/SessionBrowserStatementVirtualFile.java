@@ -87,7 +87,14 @@ public class SessionBrowserStatementVirtualFile extends DBVirtualFileImpl implem
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
+        ConnectionHandler connectionHandler = sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
+        return FailsafeUtil.get(connectionHandler);
+    }
+
+    @NotNull
+    @Override
+    public String getConnectionId() {
+        return sessionBrowser == null ? "disposed" : sessionBrowser.getConnectionHandler().getId();
     }
 
     @Nullable

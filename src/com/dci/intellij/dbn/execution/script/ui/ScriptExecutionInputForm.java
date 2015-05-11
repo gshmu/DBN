@@ -1,5 +1,17 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -11,25 +23,13 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.execution.script.CmdLineExecutionInput;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
+import com.dci.intellij.dbn.execution.script.ScriptExecutionExecutionInput;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
     private JPanel headerPanel;
@@ -42,7 +42,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
     private DBNHeaderForm headerForm;
 
-    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final CmdLineExecutionInput executionInput) {
+    public ScriptExecutionInputForm(@NotNull final ScriptExecutionInputDialog parentComponent, @NotNull final ScriptExecutionExecutionInput executionInput) {
         super(parentComponent);
 
         VirtualFile sourceFile = executionInput.getSourceFile();
@@ -120,7 +120,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         return connectionComboBox;
     }
 
-    private void updateControls(CmdLineExecutionInput executionInput) {
+    private void updateControls(ScriptExecutionExecutionInput executionInput) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         DBSchema schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
