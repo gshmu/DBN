@@ -76,6 +76,12 @@ public class DatasetFilterVirtualFile extends DBVirtualFileImpl implements DBPar
         return datasetRef.lookupConnectionHandler();
     }
 
+    @NotNull
+    @Override
+    public String getConnectionId() {
+        return datasetRef.getConnectionId();
+    }
+
     @Nullable
     @Override
     public ConnectionHandler getActiveConnection() {

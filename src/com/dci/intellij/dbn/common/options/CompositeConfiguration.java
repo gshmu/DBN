@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.common.options;
 
-import org.jdom.Element;
-
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jdom.Element;
 
 public abstract class CompositeConfiguration<T extends CompositeConfigurationEditorForm> extends Configuration<T> {
     private Configuration[] configurations;
@@ -25,14 +23,11 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
     }
 
     @Override
-    public final void apply() throws ConfigurationException {
+    public void apply() throws ConfigurationException {
         for (Configuration configuration : getConfigurations()) {
             configuration.apply();
         }
         super.apply();
-        if (!CommonUtil.isCalledThrough(Configuration.class)) {
-            notifyChanges();
-        }
         onApply();
     }
 

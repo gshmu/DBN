@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.util.LazyValue;
 import com.dci.intellij.dbn.common.util.SimpleLazyValue;
+import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -52,20 +54,28 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         }
     };
     private BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
-    private boolean projectLevel;
+    private ConnectionRef connectionRef;
 
-    public ObjectTypeFilterSettings(Project project, boolean projectLevel) {
+    public ObjectTypeFilterSettings(Project project, @Nullable ConnectionRef connectionRef) {
         super(project);
-        this.projectLevel = projectLevel;
+        this.connectionRef = connectionRef;
     }
 
     public ObjectTypeFilterSettings getMasterSettings() {
-        if (projectLevel) {
+        if (isProjectLevel()) { // is project level
             return null;
         } else {
             DatabaseBrowserSettings databaseBrowserSettings = DatabaseBrowserSettings.getInstance(getProject());
             return databaseBrowserSettings.getFilterSettings().getObjectTypeFilterSettings();
         }
+    }
+
+    private boolean isProjectLevel() {
+        return connectionRef == null;
+    }
+
+    public String getConnectionId() {
+        return connectionRef == null ? null : connectionRef.getConnectionId();
     }
 
     public BooleanSetting getUseMasterSettings() {
@@ -114,7 +124,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     };
 
     private boolean isVisible(DBObjectType objectType) {
-        return projectLevel ?
+        return isProjectLevel() ?
             isSelected(objectType) :
             useMasterSettings.value() ?
                     getMasterSettings().isSelected(objectType) :
@@ -176,7 +186,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     }
 
     public void writeConfiguration(Element element) {
-        if (!projectLevel) {
+        if (!isProjectLevel()) {
             useMasterSettings.writeConfigurationAttribute(element);
         }
 

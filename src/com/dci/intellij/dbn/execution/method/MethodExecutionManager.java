@@ -212,8 +212,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         executionHistory.setExecutionInputs(executionInputs);
     }
 
-    public void cleanupExecutionHistory(List<ConnectionHandler> connectionHandlers) {
-        executionHistory.cleanupHistory(connectionHandlers);
+    public void cleanupExecutionHistory(List<String> connectionIds) {
+        executionHistory.cleanupHistory(connectionIds);
     }
 
     /*********************************************************

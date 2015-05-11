@@ -200,21 +200,31 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
      *                       Listeners                        *
      **********************************************************/
     private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
-        public void typeFiltersChanged(ConnectionHandler connectionHandler) {
-            if (connectionHandler == null) {
-                if (toolWindowForm.isLoaded()) {
+        public void typeFiltersChanged(String connectionId) {
+            if (toolWindowForm.isLoaded()) {
+                ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+                if (connectionHandler == null) {
                     getToolWindowForm().getBrowserForm().rebuildTree();
+                } else {
+                    connectionHandler.getObjectBundle().rebuildTreeChildren();
                 }
-            } else {
-                connectionHandler.getObjectBundle().rebuildTreeChildren();
             }
         }
 
         @Override
-        public void nameFiltersChanged(ConnectionHandler connectionHandler, @Nullable DBObjectType objectType) {
-            connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
+        public void nameFiltersChanged(@Nullable DBObjectType objectType, String connectionId) {
+            ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
+            if (toolWindowForm.isLoaded() && connectionHandler != null) {
+                connectionHandler.getObjectBundle().refreshTreeChildren(objectType);
+            }
         }
     };
+
+    @Nullable
+    private ConnectionHandler getConnectionHandler(String connectionId) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        return connectionManager.getConnectionHandler(connectionId);
+    }
 
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());

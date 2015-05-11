@@ -9,9 +9,6 @@ import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
@@ -37,7 +34,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ConnectionFilterSettings configuration = getConfiguration();
+        final ConnectionFilterSettings configuration = getConfiguration();
         final boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
         applyFormChanges(configuration);
 
@@ -46,10 +43,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
             public void notifyChanges() {
                 if (notifyFilterListeners) {
                     ObjectFilterChangeListener listener = EventUtil.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    if (connectionHandler != null) {
-                        listener.nameFiltersChanged(connectionHandler, DBObjectType.SCHEMA);
-                    }
+                    listener.nameFiltersChanged(DBObjectType.SCHEMA, configuration.getConnectionId());
                 }
             }
         };
@@ -59,19 +53,6 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
     public void applyFormChanges(ConnectionFilterSettings configuration) throws ConfigurationException {
         configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
     }
-
-    private ConnectionHandler getConnectionHandler() {
-        ConnectionFilterSettings configuration = getConfiguration();
-        ConnectionBundleSettings connectionBundleSettings = configuration.getParent().getParent();
-        ConnectionBundle connectionBundle = connectionBundleSettings.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
-            if (configuration == connectionHandler.getSettings().getFilterSettings()) {
-                return connectionHandler;
-            }
-        }
-        return null;
-    }
-
 
     @Override
     public void dispose() {

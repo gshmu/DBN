@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 
@@ -12,10 +11,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ConnectionListModel extends DefaultListModel {
-    public ConnectionListModel(ConnectionBundle connectionBundle) {
-        List<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers().getFullList();
-        for (ConnectionHandler connectionHandler : connectionHandlers) {
-            addElement(connectionHandler.getSettings());
+    public ConnectionListModel(ConnectionBundleSettings connectionBundleSettings) {
+        List<ConnectionSettings> connections = connectionBundleSettings.getConnections();
+        for (ConnectionSettings connection : connections) {
+            addElement(connection);
         }
     }
 

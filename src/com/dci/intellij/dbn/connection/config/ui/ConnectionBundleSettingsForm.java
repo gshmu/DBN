@@ -1,5 +1,42 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.ClipboardUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
+import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.driver.DriverSource;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.GuiUtils;
+import com.intellij.ui.ListUtil;
+import com.intellij.ui.components.JBList;
+import com.intellij.ui.components.JBScrollPane;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xmlbeans.impl.common.ReaderInputStream;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -15,52 +52,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.xmlbeans.impl.common.ReaderInputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.ClipboardUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.connection.ConnectionBundle;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerImpl;
-import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
-import com.dci.intellij.dbn.driver.DriverSource;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.GuiUtils;
-import com.intellij.ui.ListUtil;
-import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.JBScrollPane;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener, DataProviderSupplier {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -83,8 +74,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public ConnectionBundleSettingsForm(ConnectionBundleSettings configuration) {
         super(configuration);
-        ConnectionBundle connectionBundle = configuration.getConnectionBundle();
-        connectionsList = new JBList(new ConnectionListModel(connectionBundle));
+        connectionsList = new JBList(new ConnectionListModel(configuration));
         connectionsList.addListSelectionListener(this);
         connectionsList.setCellRenderer(new ConnectionConfigListCellRenderer());
         connectionsList.setFont(com.intellij.util.ui.UIUtil.getLabelFont());
@@ -95,8 +85,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         actionsPanel.add(component, BorderLayout.CENTER);
         connectionListScrollPane.setViewportView(connectionsList);
 
-        if (connectionBundle.getConnectionHandlers().size() > 0) {
-            selectConnection(connectionBundle.getConnectionHandlers().get(0).getId());
+        List<ConnectionSettings> connections = configuration.getConnections();
+        if (connections.size() > 0) {
+            selectConnection(connections.get(0).getId());
         }
         JPanel emptyPanel = new JPanel();
         connectionSetupPanel.setPreferredSize(new Dimension(500, -1));
@@ -113,63 +104,15 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public void applyFormChanges() throws ConfigurationException {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
-        final ConnectionBundle connectionBundle = connectionBundleSettings.getConnectionBundle();
+        List<ConnectionSettings> connections = connectionBundleSettings.getConnections();
+        connections.clear();
 
-        List<ConnectionHandler> oldConnections = new ArrayList<ConnectionHandler>(connectionBundle.getConnectionHandlers().getFullList());
-        List<ConnectionHandler> newConnections = new ArrayList<ConnectionHandler>();
-
-        final AtomicBoolean listChanged = new AtomicBoolean(false);
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
-        if (oldConnections.size() == listModel.getSize()) {
-            for (int i=0; i<oldConnections.size(); i++) {
-                ConnectionSettings oldConfig = oldConnections.get(i).getSettings();
-                ConnectionSettings newConfig = ((ConnectionSettings) listModel.get(i));
-                ConnectionSettingsForm settingsEditor = newConfig.getSettingsEditor();
-                if (!oldConfig.getConnectionId().equals(newConfig.getConnectionId()) ||
-                        (settingsEditor != null && settingsEditor.isConnectionActive() != oldConfig.isActive())) {
-                    listChanged.set(true);
-                    break;
-                }
-            }
-        } else {
-            listChanged.set(true);
-        }
-
         for (int i=0; i< listModel.getSize(); i++) {
-            ConnectionSettings connectionSettings = (ConnectionSettings) listModel.getElementAt(i);
-            connectionSettings.apply();
-
-            ConnectionHandler connectionHandler = connectionBundle.getConnection(connectionSettings.getConnectionId());
-            if (connectionHandler == null) {
-                connectionHandler = new ConnectionHandlerImpl(connectionBundle, connectionSettings);
-                connectionSettings.setNew(false);
-            } else {
-                oldConnections.remove(connectionHandler);
-                ((ConnectionHandlerImpl)connectionHandler).setConnectionConfig(connectionSettings);
-            }
-
-            newConnections.add(connectionHandler);
-
-        }
-        connectionBundle.setConnectionHandlers(newConnections);
-
-
-        final Project project = connectionBundle.getProject();
-        new SettingsChangeNotifier() {
-            @Override
-            public void notifyChanges() {
-                if (listChanged.get()) {
-                    EventUtil.notify(project, ConnectionSetupListener.TOPIC).setupChanged();
-                }
-            }
-        };
-
-        // dispose old list
-        if (oldConnections.size() > 0) {
-            if (!project.isDefault()) {
-                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                connectionManager.disposeConnections(oldConnections);
-            }
+            ConnectionSettings connection = (ConnectionSettings) listModel.getElementAt(i);
+            connection.apply();
+            connection.setNew(false);
+            connections.add(connection);
         }
     }
 
