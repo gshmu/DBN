@@ -87,11 +87,12 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         this.connectionBundle = connectionBundle;
         this.connectionSettings = connectionSettings;
         this.isActive = connectionSettings.isActive();
+        ref = new ConnectionHandlerRef(this);
+
         connectionStatus = new ConnectionStatus();
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
         loadMonitor = new ConnectionLoadMonitor(this);
-        ref = new ConnectionHandlerRef(this);
 
         Disposer.register(this, connectionPool);
         Disposer.register(this, consoleBundle);

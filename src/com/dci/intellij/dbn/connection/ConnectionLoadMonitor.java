@@ -4,10 +4,14 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.Disposable;
 
 public class ConnectionLoadMonitor implements Disposable {
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     public ConnectionLoadMonitor(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
+    }
+
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
     }
 
     private int activeLoaderCount = 0;
@@ -22,13 +26,12 @@ public class ConnectionLoadMonitor implements Disposable {
 
     public void decrementLoaderCount() {
         activeLoaderCount--;
-        if(activeLoaderCount == 0 && connectionHandler != null && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        if(activeLoaderCount == 0 && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
             EventUtil.notify(connectionHandler.getProject(), ConnectionLoadListener.TOPIC).contentsLoaded(connectionHandler);
         }
     }
 
     @Override
-    public void dispose() {
-        connectionHandler = null;
-    }
+    public void dispose() {}
 }

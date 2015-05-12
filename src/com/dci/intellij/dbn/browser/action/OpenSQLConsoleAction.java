@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -56,23 +57,22 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     }
 
 
-    private class SelectConsoleAction extends AnAction{
-        private ConnectionHandler connectionHandler;
+    private class SelectConsoleAction extends AbstractConnectionAction{
         private DBConsoleVirtualFile consoleVirtualFile;
 
         public SelectConsoleAction(ConnectionHandler connectionHandler) {
-            super("Create New...");
-            this.connectionHandler = connectionHandler;
+            super("Create New...", connectionHandler);
         }
 
         public SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
-            super(consoleVirtualFile.getName(), null, consoleVirtualFile.getIcon());
+            super(consoleVirtualFile.getName(), null, consoleVirtualFile.getIcon(), consoleVirtualFile.getConnectionHandler());
             this.consoleVirtualFile = consoleVirtualFile;
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler);
             } else {

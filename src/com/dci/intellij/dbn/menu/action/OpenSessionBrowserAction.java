@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -69,17 +69,15 @@ public class OpenSessionBrowserAction extends DumbAwareAction {
 
     }
 
-    private class SelectConnectionAction extends AnAction{
-        private ConnectionHandler connectionHandler;
+    private class SelectConnectionAction extends AbstractConnectionAction{
 
         public SelectConnectionAction(ConnectionHandler connectionHandler) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon());
-            this.connectionHandler = connectionHandler;
+            super(connectionHandler.getName(), connectionHandler.getIcon(), connectionHandler);
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            openSessionBrowser(connectionHandler);
+            openSessionBrowser(getConnectionHandler());
         }
     }
 

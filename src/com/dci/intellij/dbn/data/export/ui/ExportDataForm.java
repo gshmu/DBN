@@ -19,12 +19,14 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -59,13 +61,13 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private JPanel optionsPanel;
 
     private DataExportInstructions instructions;
-    private ConnectionHandler connectionHandler;
-    private DBObject sourceObject;
+    private ConnectionHandlerRef connectionHandlerRef;
+    private DBObjectRef sourceObjectRef;
 
     public ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
         super(parentComponent);
-        this.connectionHandler = connectionHandler;
-        this.sourceObject = sourceObject;
+        this.connectionHandlerRef = connectionHandler.getRef();
+        this.sourceObjectRef = DBObjectRef.from(sourceObject);
         this.instructions = instructions;
         updateBorderTitleForeground(scopePanel);
         updateBorderTitleForeground(formatPanel);
@@ -141,6 +143,10 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         headerPanel.add(headerComponent.getComponent());
     }
 
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
+    }
+
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -196,7 +202,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
             }
         }
 
-        Project project = connectionHandler.getProject();
+        Project project = getProject();
         if (buffer.length() > 0) {
             buffer.insert(0, "Please provide values for: ");
             MessageUtil.showErrorDialog(project, "Required input", buffer.toString());
@@ -253,7 +259,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         fileNameTextField.setEnabled(destinationFileRadioButton.isSelected());
         fileLocationTextField.setEnabled(destinationFileRadioButton.isSelected());
 
-        String fileNameBase = sourceObject == null ? instructions.getBaseName() : sourceObject.getName();
+        String fileNameBase = sourceObjectRef == null ? instructions.getBaseName() : sourceObjectRef.getObjectName();
         if (fileNameBase != null && processor != null) {
             String fileName = fileNameBase + "." + processor.getFileExtension();
             fileNameTextField.setText(fileName);
@@ -262,6 +268,5 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
 
     public void dispose() {
         super.dispose();
-        sourceObject = null;
     }
 }
