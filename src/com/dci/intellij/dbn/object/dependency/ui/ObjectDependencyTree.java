@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import javax.swing.JPopupMenu;
-import javax.swing.JTree;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -19,6 +18,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -38,7 +38,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 
-public class ObjectDependencyTree extends JTree implements Disposable{
+public class ObjectDependencyTree extends DBNTree implements Disposable{
     private final Set<ObjectDependencyTreeNode> loadInProgressNodes = new HashSet<ObjectDependencyTreeNode>();
     private DBObjectSelectionHistory selectionHistory =  new DBObjectSelectionHistory();
     private ObjectDependencyTreeSpeedSearch speedSearch;

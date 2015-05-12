@@ -3,10 +3,12 @@ package com.dci.intellij.dbn.common.ui.tree;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.UIUtil;
 
-public class DBNTree extends Tree {
+public class DBNTree extends Tree implements Disposable {
     public DBNTree() {
         setTransferHandler(new DBNTreeTransferHandler());
     }
@@ -21,4 +23,25 @@ public class DBNTree extends Tree {
         super(root);
         setTransferHandler(new DBNTreeTransferHandler());
     }
-}
+
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+    private boolean disposed;
+
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            GUIUtil.removeListeners(this);
+            setModel(null);
+            setSelectionModel(null);
+            getUI().uninstallUI(this);
+
+        }
+    }
+
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }}

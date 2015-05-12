@@ -331,6 +331,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     @Override
     public void dispose() {
+        super.dispose();
         project = null;
     }
 }
