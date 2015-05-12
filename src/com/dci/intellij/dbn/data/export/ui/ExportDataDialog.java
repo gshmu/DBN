@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportManager;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -18,7 +19,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 
 public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private ResultSetTable table;
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     public ExportDataDialog(ResultSetTable table, @NotNull DBObject sourceObject) {
         this(table, sourceObject, sourceObject.getConnectionHandler());
@@ -32,7 +33,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     private ExportDataDialog(ResultSetTable table, @Nullable DBObject sourceObject, ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Export Data", true);
         this.table = table;
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
         DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
         DataExportInstructions instructions = exportManager.getExportInstructions();
         boolean hasSelection = table.getSelectedRowCount() > 1 || table.getSelectedColumnCount() > 1;
@@ -41,6 +42,9 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
         init();
     }
 
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
+    }
 
     @NotNull
     @Override
@@ -59,6 +63,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
         ModalTask callback = new ModalTask(getProject(), "Creating export file", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
                 DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
                 DataExportInstructions exportInstructions = component.getExportInstructions();
                 exportManager.setExportInstructions(exportInstructions);
@@ -81,6 +86,6 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     @Override
     public void dispose() {
         super.dispose();
-        connectionHandler = null;
+        table = null;
     }
 }

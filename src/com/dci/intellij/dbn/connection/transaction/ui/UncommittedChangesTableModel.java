@@ -4,23 +4,28 @@ import javax.swing.event.TableModelListener;
 
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChange;
 import com.dci.intellij.dbn.connection.transaction.UncommittedChangeBundle;
 import com.intellij.openapi.project.Project;
 
 public class UncommittedChangesTableModel implements DBNTableModel {
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     public UncommittedChangesTableModel(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
+    }
+
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
     }
 
     public Project getProject() {
-        return connectionHandler.getProject();
+        return getConnectionHandler().getProject();
     }
 
     public int getRowCount() {
-        UncommittedChangeBundle uncommittedChanges = connectionHandler.getUncommittedChanges();
+        UncommittedChangeBundle uncommittedChanges = getConnectionHandler().getUncommittedChanges();
         return uncommittedChanges == null ? 0 : uncommittedChanges.size();
     }
 
@@ -43,7 +48,7 @@ public class UncommittedChangesTableModel implements DBNTableModel {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return connectionHandler.getUncommittedChanges().getChanges().get(rowIndex);
+        return getConnectionHandler().getUncommittedChanges().getChanges().get(rowIndex);
     }
 
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
@@ -63,7 +68,6 @@ public class UncommittedChangesTableModel implements DBNTableModel {
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            connectionHandler = null;
         }
     }
 

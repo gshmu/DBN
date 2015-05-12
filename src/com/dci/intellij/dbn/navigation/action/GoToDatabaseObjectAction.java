@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.ide.actions.GotoActionBase;
@@ -87,7 +88,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                         return latestConnectionId.equals(selectConnectionAction.connectionHandler.getId());
                                     } else if (action instanceof SelectSchemaAction) {
                                         SelectSchemaAction selectSchemaAction = (SelectSchemaAction) action;
-                                        return latestSchemaName.equals(selectSchemaAction.schema.getName());
+                                        return latestSchemaName.equals(selectSchemaAction.getSchema().getName());
                                     }
                                     return false;
                                 }
@@ -165,14 +166,21 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
     private class SelectSchemaAction extends AnAction {
-        private DBSchema schema;
+        private DBObjectRef<DBSchema> schemaRef;
         private SelectSchemaAction(DBSchema schema) {
             super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
-            this.schema = schema;
+            this.schemaRef = DBObjectRef.from(schema);
         }
+
+        @NotNull
+        public DBSchema getSchema() {
+            return DBObjectRef.getnn(schemaRef);
+        }
+
 
         @Override
         public void actionPerformed(AnActionEvent e) {
+            DBSchema schema = getSchema();
             Project project = schema.getProject();
             showLookupPopup(e, project, schema.getConnectionHandler(), schema);
             latestSchemaName = schema.getName();
