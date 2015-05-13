@@ -377,6 +377,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @Override
+    public String toString() {
+        return getObjectName();
+    }
+
+    @Override
     public int hashCode() {
         if (hashCode == -1) {
             hashCode = (getConnectionId() + '#' + serialize()).hashCode();

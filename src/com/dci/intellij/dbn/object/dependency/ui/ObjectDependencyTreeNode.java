@@ -50,7 +50,8 @@ public class ObjectDependencyTreeNode implements Disposable {
     }
 
     public synchronized List<ObjectDependencyTreeNode> getChildren(final boolean load) {
-        if (objectRef == null)  {
+        final ObjectDependencyTreeModel model = getModel();
+        if (objectRef == null || model == null)  {
             return Collections.emptyList();
         }
 
@@ -64,7 +65,7 @@ public class ObjectDependencyTreeNode implements Disposable {
                 if (getTreePath().length < 2) {
                     ObjectDependencyTreeNode loadInProgressNode = new ObjectDependencyTreeNode(this, null);
                     dependencies.add(loadInProgressNode);
-                    getModel().getTree().registerLoadInProgressNode(loadInProgressNode);
+                    model.getTree().registerLoadInProgressNode(loadInProgressNode);
                 }
             }
         }
