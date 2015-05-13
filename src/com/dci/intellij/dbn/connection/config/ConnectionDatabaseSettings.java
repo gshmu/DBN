@@ -15,7 +15,8 @@ import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.DatabaseUrlResolver;
+import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
@@ -29,6 +30,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     private String name;
     private String description;
     private DatabaseType databaseType = DatabaseType.UNKNOWN;
+    private DatabaseUrlPattern urlPattern = DatabaseUrlPattern.UNKNOWN;
     private double databaseVersion = 9999;
     private int hashCode;
 
@@ -45,8 +47,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         this.parent = parent;
         this.databaseType = databaseType;
         if (databaseType != DatabaseType.UNKNOWN) {
-            DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
-            databaseInfo = urlResolver.getDefaultInfo();
+            urlPattern = databaseType.getDefaultUrlPattern();
+            databaseInfo = urlPattern.getDefaultInfo();
             this.driverSource = DriverSource.BUILTIN;
         }
     }
@@ -119,7 +121,17 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public void setDatabaseType(DatabaseType databaseType) {
         if (this.databaseType == DatabaseType.UNKNOWN && databaseType != DatabaseType.UNKNOWN) {
             this.databaseType = databaseType;
+            urlPattern = databaseType.getDefaultUrlPattern();
+            databaseInfo.setUrlType(urlPattern.getUrlType());
         }
+    }
+
+    public DatabaseUrlPattern getUrlPattern() {
+        return urlPattern;
+    }
+
+    public void setUrlPattern(DatabaseUrlPattern urlPattern) {
+        this.urlPattern = urlPattern;
     }
 
     public double getDatabaseVersion() {
@@ -146,11 +158,11 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     }
 
     public String getConnectionUrl() {
-        return databaseType.getUrlResolver().getUrl(databaseInfo);
+        return urlPattern.getUrl(databaseInfo);
     };
 
     public String getConnectionUrl(String host, String port) {
-        return databaseType.getUrlResolver().getUrl(
+        return urlPattern.getUrl(
                 host,
                 port,
                 databaseInfo.getDatabase());
@@ -188,8 +200,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         if (StringUtil.isEmpty(connectionUrl)) {
             errors.add("Database information not provided (host, port, database)");
         } else {
-            DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
-            if (!urlResolver.isValid(connectionUrl)) {
+            if (!urlPattern.isValid(connectionUrl)) {
                 errors.add("Database information incomplete or invalid (host, port, database)");
             }
         }
@@ -236,20 +247,23 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         name             = getString(element, "name", name);
         description      = getString(element, "description", description);
 
-        databaseType     = DatabaseType.get(getString(element, "database-type", databaseType.getName()));
+        databaseType     = getEnum(element, "database-type", databaseType);
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
+
+        DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
 
         databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
         databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
         databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
+        databaseInfo.setUrlType(urlType);
+        urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
 
         String url = getString(element, "url", null);
         if (databaseInfo.isEmpty() && StringUtil.isNotEmpty(url)) {
-            if (databaseType != null && databaseType != DatabaseType.UNKNOWN) {
-                DatabaseUrlResolver urlResolver = databaseType.getUrlResolver();
-                databaseInfo.setHost(urlResolver.resolveHost(url));
-                databaseInfo.setPort(urlResolver.resolvePort(url));
-                databaseInfo.setDatabase(urlResolver.resolveDatabase(url));
+            if (databaseType != DatabaseType.UNKNOWN) {
+                databaseInfo.setHost(urlPattern.resolveHost(url));
+                databaseInfo.setPort(urlPattern.resolvePort(url));
+                databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
             }
         }
 
@@ -284,7 +298,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         setString(element, "name", nvl(name));
         setString(element, "description", nvl(description));
 
-        setString(element, "database-type", nvl(databaseType == null ? DatabaseType.UNKNOWN.getName() : databaseType.getName()));
+        setEnum(element, "database-type", databaseType == null ? DatabaseType.UNKNOWN : databaseType);
         setDouble(element, "database-version", databaseVersion);
 
         setEnum(element, "driver-source", driverSource);
@@ -294,6 +308,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         setString(element, "host", nvl(databaseInfo.getHost()));
         setString(element, "port", nvl(databaseInfo.getPort()));
         setString(element, "database", nvl(databaseInfo.getDatabase()));
+        setEnum(element, "url-type", databaseInfo.getUrlType());
 
         setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
         setString(element, "user", nvl(authenticationInfo.getUser()));
