@@ -48,7 +48,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private Timer scrollTimer;
 
     @Override
-    public void setModel(TableModel dataModel) {
+    public void setModel(@NotNull TableModel dataModel) {
         DBNTableModel tableModel = (DBNTableModel) dataModel;
         Disposer.register(this, tableModel);
         super.setModel(dataModel);
