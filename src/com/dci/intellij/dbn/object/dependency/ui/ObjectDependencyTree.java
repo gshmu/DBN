@@ -4,6 +4,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.Cursor;
@@ -13,11 +14,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -45,12 +46,9 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
     private Project project;
 
     public ObjectDependencyTree(Project project, DBSchemaObject schemaObject) {
+        setModel(createModel(project, schemaObject));
         this.project = project;
         selectionHistory.add(schemaObject);
-        ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
-        ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
-        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(this, schemaObject, dependencyType);
-        setModel(model);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setCellRenderer(new ObjectDependencyTreeCellRenderer());
         addTreeSelectionListener(new TreeSelectionListener() {
@@ -65,7 +63,6 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
 
         Disposer.register(this, selectionHistory);
         Disposer.register(this, speedSearch);
-        Disposer.register(this, model);
 
 
         addMouseListener(new MouseInputAdapter() {
@@ -99,6 +96,23 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
                 }
             }
         });
+    }
+
+    @Override
+    public void setModel(TreeModel model) {
+        if (model instanceof ObjectDependencyTreeModel) {
+            ObjectDependencyTreeModel treeModel = (ObjectDependencyTreeModel) model;
+            treeModel.setTree(this);
+            super.setModel(model);
+            Disposer.register(this, treeModel);
+        }
+    }
+
+    @NotNull
+    private static ObjectDependencyTreeModel createModel(Project project, DBSchemaObject schemaObject) {
+        ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
+        ObjectDependencyType dependencyType = dependencyManager.getLastUserDependencyType();
+        return new ObjectDependencyTreeModel(schemaObject, dependencyType);
     }
 
     private long selectionTimestamp = System.currentTimeMillis();
@@ -237,7 +251,8 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
     }
     @Override
     public ObjectDependencyTreeModel getModel() {
-        return (ObjectDependencyTreeModel) super.getModel();
+        TreeModel model = super.getModel();
+        return model instanceof ObjectDependencyTreeModel ? (ObjectDependencyTreeModel) model : null;
     }
 
     public void setDependencyType(ObjectDependencyType dependencyType) {
@@ -248,8 +263,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
 
         DBSchemaObject object = oldModel.getObject();
         if (object != null) {
-            ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(this, object, dependencyType);
-            setModel(model);
+            setModel(new ObjectDependencyTreeModel(object, dependencyType));
             Disposer.dispose(oldModel);
         }
     }
@@ -261,26 +275,16 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
         }
 
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
-        ObjectDependencyTreeModel model = new ObjectDependencyTreeModel(this, object, dependencyType);
-        setModel(model);
+        setModel(new ObjectDependencyTreeModel(object, dependencyType));
         Disposer.dispose(oldModel);
-    }
-
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
     }
 
     @Override
     public void dispose() {
-        disposed = true;
-        GUIUtil.removeListeners(this);
+        super.dispose();
         speedSearch = null;
         selectionHistory = null;
         project = null;
-        setModel(null);
     }
 
 

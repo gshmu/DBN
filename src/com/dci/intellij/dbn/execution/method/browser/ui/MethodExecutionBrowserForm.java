@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
 import javax.swing.JPanel;
-import javax.swing.JTree;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
@@ -22,17 +22,17 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.ui.ObjectTree;
-import com.dci.intellij.dbn.object.common.ui.ObjectTreeCellRenderer;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.util.Disposer;
 
 public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrowserDialog> {
 
     private JPanel actionsPanel;
     private JPanel mainPanel;
-    private JTree methodsTree;
+    private DBNTree methodsTree;
 
     private MethodBrowserSettings settings;
 
@@ -46,13 +46,13 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
                 new ShowObjectTypeToggleAction(this, DBObjectType.PROCEDURE),
                 new ShowObjectTypeToggleAction(this, DBObjectType.FUNCTION));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
-        methodsTree.setCellRenderer(new ObjectTreeCellRenderer());
         methodsTree.setModel(model);
         TreePath selectionPath = model.getInitialSelection();
         if (selectionPath != null) {
             methodsTree.setSelectionPath(selectionPath);
             methodsTree.scrollPathToVisible(selectionPath.getParentPath());
         }
+        Disposer.register(this, methodsTree);
     }
 
     public MethodBrowserSettings getSettings() {

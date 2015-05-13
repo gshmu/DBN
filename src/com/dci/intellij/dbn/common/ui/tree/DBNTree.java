@@ -32,9 +32,9 @@ public class DBNTree extends Tree implements Disposable {
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            GUIUtil.removeListeners(this);
             setModel(null);
             setSelectionModel(null);
+            GUIUtil.removeListeners(this);
             getUI().uninstallUI(this);
 
         }
