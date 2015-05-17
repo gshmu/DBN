@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.4513.1</version>
+    <version>3.0.4534.1</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,6 +27,14 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.4534</b>
+            <ul>
+                - Idle disconnect on long running operations<br>
+                - Fixed serious memory leaks on project close<br>
+                - Support for oracle "Service name" connection<br>
+                - Fixed oracle sqlplus script execution on mac<br>
+                - Various small bug fixes<br>
+            </ul>
             <li><b>3.0.4513</b>
             <ul>
                 - SQL Script execution support (using db command-line client)<br>
