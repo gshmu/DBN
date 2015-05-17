@@ -1,13 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import javax.swing.Icon;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
@@ -28,8 +20,17 @@ import com.dci.intellij.dbn.vfs.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.Icon;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
+    public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
     private String id;
     private String name;
     private DatabaseType databaseType;
@@ -150,7 +151,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public void freePoolConnection(Connection connection) {}
     @Override public ConnectionSettings getSettings() {return null;}
     @Override public void setSettings(ConnectionSettings connectionSettings) {}
-    @Override public ConnectionStatus getConnectionStatus() {return null;}
+    @NotNull
+    @Override public ConnectionStatus getConnectionStatus() {return CONNECTION_STATUS;}
 
     @Override public boolean isAllowConnection() {return false;}
     @Override public void setAllowConnection(boolean allowConnection) {}

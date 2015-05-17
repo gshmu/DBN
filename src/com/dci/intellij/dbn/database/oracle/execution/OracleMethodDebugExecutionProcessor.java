@@ -14,13 +14,11 @@ public class OracleMethodDebugExecutionProcessor extends OracleMethodExecutionPr
     protected void preHookExecutionCommand(StringBuilder buffer) {
         super.preHookExecutionCommand(buffer);
         DBMethod method = getMethod();
-        if (method != null) {
-            Project project = method.getProject();
-            MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-            int debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
-            if (debugExecutionTimeout > 0) {
-                buffer.append("\n    v_timeout := SYS.DBMS_DEBUG.set_timeout(").append(debugExecutionTimeout).append(");\n");
-            }
+        Project project = method.getProject();
+        MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
+        int debugExecutionTimeout = methodExecutionSettings.getDebugExecutionTimeout();
+        if (debugExecutionTimeout > 0) {
+            buffer.append("\n    v_timeout := SYS.DBMS_DEBUG.set_timeout(").append(debugExecutionTimeout).append(");\n");
         }
     }
 
