@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.ddl;
 
-import java.util.List;
-
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
@@ -9,6 +7,8 @@ import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import java.util.List;
 
 public class ObjectToDDLContentSynchronizer implements Runnable {
     DBEditableObjectVirtualFile databaseFile;
@@ -37,17 +37,21 @@ public class ObjectToDDLContentSynchronizer implements Runnable {
                         DBContentType[] contentTypes = fileContentType.getSubContentTypes();
                         for (DBContentType contentType : contentTypes) {
                             DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                            String statement = ddlFileManager.createDDLStatement(virtualFile, contentType);
-                            if (statement.trim().length() > 0) {
-                                buffer.append(statement);
-                                buffer.append('\n');
+                            if (virtualFile != null) {
+                                String statement = ddlFileManager.createDDLStatement(virtualFile, contentType);
+                                if (statement.trim().length() > 0) {
+                                    buffer.append(statement);
+                                    buffer.append('\n');
+                                }
+                                if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
                             }
-                            if (contentType != contentTypes[contentTypes.length - 1]) buffer.append('\n');
                         }
                     } else {
                         DBSourceCodeVirtualFile virtualFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(fileContentType);
-                        buffer.append(ddlFileManager.createDDLStatement(virtualFile, fileContentType));
-                        buffer.append('\n');
+                        if (virtualFile != null) {
+                            buffer.append(ddlFileManager.createDDLStatement(virtualFile, fileContentType));
+                            buffer.append('\n');
+                        }
                     }
                     Document document = DocumentUtil.getDocument(ddlFile);
                     document.setText(buffer.toString());
