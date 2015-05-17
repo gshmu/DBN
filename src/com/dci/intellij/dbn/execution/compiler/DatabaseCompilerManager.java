@@ -64,11 +64,15 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 if (contentType.isBundle()) {
                     for (DBContentType subContentType : contentType.getSubContentTypes()) {
                         DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(subContentType);
-                        sourceCodeFile.updateChangeTimestamp();
+                        if (sourceCodeFile != null) {
+                            sourceCodeFile.updateChangeTimestamp();
+                        }
                     }
                 } else {
                     DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                    sourceCodeFile.updateChangeTimestamp();
+                    if (sourceCodeFile != null) {
+                        sourceCodeFile.updateChangeTimestamp();
+                    }
                 }
             }
         }
@@ -94,7 +98,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                             DBEditableObjectVirtualFile databaseFile = object.getVirtualFile();
                             DBContentType contentType = compilerAction.getContentType();
                             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseFile.getContentFile(contentType);
-                            sourceCodeFile.updateChangeTimestamp();
+                            if (sourceCodeFile != null) {
+                                sourceCodeFile.updateChangeTimestamp();
+                            }
                         }
                     }
                 };

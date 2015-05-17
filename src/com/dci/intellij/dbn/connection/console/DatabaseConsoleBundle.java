@@ -10,21 +10,22 @@ import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.intellij.openapi.Disposable;
 
 public class DatabaseConsoleBundle implements Disposable{
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     private List<DBConsoleVirtualFile> consoles = new ArrayList<DBConsoleVirtualFile>();
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
     }
 
     public List<DBConsoleVirtualFile> getConsoles() {
         if (consoles.size() == 0) {
-            createConsole(connectionHandler.getName());
+            createConsole(getConnectionHandler().getName());
         }
         return consoles;
     }
@@ -38,9 +39,13 @@ public class DatabaseConsoleBundle implements Disposable{
         return consoleNames;
     }
 
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
+    }
+
     @NotNull
     public DBConsoleVirtualFile getDefaultConsole() {
-        return getConsole(connectionHandler.getName(), true);
+        return getConsole(getConnectionHandler().getName(), true);
     }
 
     @Nullable
@@ -58,6 +63,7 @@ public class DatabaseConsoleBundle implements Disposable{
     }
 
     public DBConsoleVirtualFile createConsole(String name) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name);
         consoles.add(console);
         Collections.sort(consoles);
@@ -79,7 +85,6 @@ public class DatabaseConsoleBundle implements Disposable{
     @Override
     public void dispose() {
         DisposerUtil.dispose(consoles);
-        connectionHandler = null;
     }
 
     public void renameConsole(String oldName, String newName) {

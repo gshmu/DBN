@@ -26,8 +26,7 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
     private DBObjectRef<DBSchemaObject> objectRef;
 
 
-    public ObjectDependencyTreeModel(ObjectDependencyTree tree, DBSchemaObject object, ObjectDependencyType dependencyType) {
-        this.tree = tree;
+    public ObjectDependencyTreeModel(DBSchemaObject object, ObjectDependencyType dependencyType) {
         this.objectRef = DBObjectRef.from(object);
         this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
@@ -37,6 +36,10 @@ public class ObjectDependencyTreeModel implements TreeModel, Disposable{
 
     public DBSchemaObject getObject() {
         return DBObjectRef.get(objectRef);
+    }
+
+    public void setTree(ObjectDependencyTree tree) {
+        this.tree = tree;
     }
 
     public ObjectDependencyTree getTree() {

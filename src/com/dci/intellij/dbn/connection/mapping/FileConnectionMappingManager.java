@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.mapping;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.editor.ui.DBLanguageFileEditorToolbarForm;
@@ -381,25 +383,27 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
     }
 
 
-    private class SelectConnectionAction extends AnAction {
-        private ConnectionHandler connectionHandler;
-        private DBLanguagePsiFile file;
+    private class SelectConnectionAction extends AbstractConnectionAction {
+        private WeakReference<DBLanguagePsiFile> fileRef;
         private SimpleTask callback;
 
         private SelectConnectionAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, SimpleTask callback) {
-            super(connectionHandler.getName(), null, connectionHandler.getIcon());
-            this.file = file;
-            this.connectionHandler = connectionHandler;
+            super(connectionHandler.getName(), null, connectionHandler.getIcon(), connectionHandler);
+            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
             this.callback = callback;
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
             DBSchema currentSchema = connectionHandler.getUserSchema();
-            file.setActiveConnection(connectionHandler);
-            file.setCurrentSchema(currentSchema);
-            if (callback != null) {
-                callback.start();
+            DBLanguagePsiFile file = fileRef.get();
+            if (file != null) {
+                file.setActiveConnection(connectionHandler);
+                file.setCurrentSchema(currentSchema);
+                if (callback != null) {
+                    callback.start();
+                }
             }
         }
     }
@@ -451,22 +455,25 @@ public class FileConnectionMappingManager extends VirtualFileAdapter implements 
 
 
     private class SelectSchemaAction extends AnAction {
-        private DBLanguagePsiFile file;
-        private DBSchema schema;
+        private WeakReference<DBLanguagePsiFile> fileRef;
+        private DBObjectRef<DBSchema> schemaRef;
         private RunnableTask callback;
 
         private SelectSchemaAction(DBLanguagePsiFile file, DBSchema schema, RunnableTask callback) {
             super(NamingUtil.enhanceUnderscoresForDisplay(schema.getName()), null, schema.getIcon());
-            this.file = file;
-            this.schema = schema;
+            this.fileRef = new WeakReference<DBLanguagePsiFile>(file);
+            this.schemaRef = DBObjectRef.from(schema);
             this.callback = callback;
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            file.setCurrentSchema(schema);
-            if (callback != null) {
-                callback.start();
+            DBLanguagePsiFile file = fileRef.get();
+            if (file != null) {
+                file.setCurrentSchema(DBObjectRef.get(schemaRef));
+                if (callback != null) {
+                    callback.start();
+                }
             }
         }
     }

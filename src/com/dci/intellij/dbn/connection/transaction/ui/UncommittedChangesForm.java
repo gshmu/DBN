@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
@@ -28,10 +29,10 @@ public class UncommittedChangesForm extends DBNFormImpl {
     private JButton rollbackButton;
     private JPanel transactionActionsPanel;
 
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     public UncommittedChangesForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
         Project project = connectionHandler.getProject();
 
         DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler);
@@ -63,6 +64,10 @@ public class UncommittedChangesForm extends DBNFormImpl {
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
+    }
+
     @Override
     public JComponent getComponent() {
         return mainPanel;
@@ -72,7 +77,6 @@ public class UncommittedChangesForm extends DBNFormImpl {
     public void dispose() {
         super.dispose();
         transactionListener = null;
-        connectionHandler = null;
     }
 
     /********************************************************
@@ -85,7 +89,7 @@ public class UncommittedChangesForm extends DBNFormImpl {
 
         @Override
         public void afterAction(ConnectionHandler connectionHandler, TransactionAction action, boolean succeeded) {
-            if (connectionHandler == UncommittedChangesForm.this.connectionHandler && succeeded) {
+            if (connectionHandler == getConnectionHandler() && succeeded) {
                 refreshForm(connectionHandler);
             }
         }

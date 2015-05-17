@@ -61,7 +61,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         EditorColorsManager.getInstance().addEditorColorsListener(this, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
-        addMouseListener(lobValueMouseListener);
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && valuePopup == null) {
+                    showCellValuePopup();
+                }
+            }
+        });
 
         addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -278,16 +285,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             }
         }
     }
-
-    private MouseAdapter lobValueMouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && valuePopup == null) {
-                showCellValuePopup();
-            }
-        }
-    };
-
 
     protected void initLargeValuePopup(LargeValuePreviewPopup viewer) {
     }

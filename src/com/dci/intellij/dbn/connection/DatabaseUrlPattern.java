@@ -8,17 +8,29 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
-public enum DatabaseUrlResolver {
+public enum DatabaseUrlPattern {
 
-    ORACLE  ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",   DatabaseInfo.ORACLE),
-    MYSQL   ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",      DatabaseInfo.MYSQL),
-    POSTGRES("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$", DatabaseInfo.POSTGRES),
-    UNKNOWN ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",     "^(jdbc:unknown:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",    DatabaseInfo.UNKNOWN),
+    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
+    ORACLE_SERVICE ("jdbc:oracle:thin:@<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(/[$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
+    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",      DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
+    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$", DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
+    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",     "^(jdbc:unknown:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",    DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
     ;
 
+    private DatabaseUrlType urlType;
     private String urlPattern;
     private String urlRegex;
     private DatabaseInfo defaultInfo;
+
+    public static DatabaseUrlPattern get(@NotNull DatabaseType databaseType, @NotNull DatabaseUrlType urlType) {
+        for (DatabaseUrlPattern urlPattern : values()) {
+            if (databaseType.hasUrlPattern(urlPattern) && urlPattern.getUrlType() == urlType) {
+                return urlPattern;
+            }
+        }
+        return databaseType.getDefaultUrlPattern();
+    }
+
 
     public String getUrl(DatabaseInfo databaseInfo) {
         return getUrl(
@@ -38,10 +50,15 @@ public enum DatabaseUrlResolver {
         return getUrl(defaultInfo);
     }
 
-    DatabaseUrlResolver(String urlPattern, String urlRegex, DatabaseInfo defaultInfo) {
+    public DatabaseUrlType getUrlType() {
+        return urlType;
+    }
+
+    DatabaseUrlPattern(String urlPattern, String urlRegex, DatabaseInfo defaultInfo, DatabaseUrlType urlType) {
         this.urlPattern = urlPattern;
         this.urlRegex = urlRegex;
         this.defaultInfo = defaultInfo;
+        this.urlType = urlType;
     }
 
     @NotNull

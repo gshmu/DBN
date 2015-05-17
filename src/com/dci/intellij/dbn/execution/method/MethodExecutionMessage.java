@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 public class MethodExecutionMessage extends ConsoleMessage {
     private MethodExecutionProcessor executionProcessor;
@@ -30,6 +31,7 @@ public class MethodExecutionMessage extends ConsoleMessage {
         return databaseFile;
     }
 
+    @Nullable
     public DBContentVirtualFile getContentFile() {
         if (contentFile == null) {
             DBEditableObjectVirtualFile databaseFile = getDatabaseFile();

@@ -60,7 +60,7 @@ public class TabbedPane extends JBTabsImpl implements com.dci.intellij.dbn.commo
         ActionCallback actionCallback = super.removeTab(tabInfo);
         if (object instanceof Disposable) {
             final Disposable disposable = (Disposable) object;
-            DisposerUtil.disposeLater(disposable);
+            DisposerUtil.dispose(disposable);
             tabInfo.setObject(null);
         }
         return actionCallback;

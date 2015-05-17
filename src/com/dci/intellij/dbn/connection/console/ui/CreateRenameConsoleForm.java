@@ -1,17 +1,5 @@
 package com.dci.intellij.dbn.connection.console.ui;
 
-import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.JBColor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,6 +7,19 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import java.awt.BorderLayout;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 
 public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDialog>{
     private JPanel headerPanel;
@@ -26,12 +27,12 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     private JTextField consoleNameTextField;
     private JLabel errorLabel;
 
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
     private DBConsoleVirtualFile console;
 
     public CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsoleVirtualFile console) {
         super(parentComponent);
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
         this.console = console;
         errorLabel.setForeground(JBColor.RED);
         errorLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
@@ -87,7 +88,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return connectionHandlerRef.get();
     }
 
     public DBConsoleVirtualFile getConsole() {
@@ -98,4 +99,12 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     public JComponent getComponent() {
         return mainPanel;
     }
+
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        console = null;
+    }
+
 }
