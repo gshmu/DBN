@@ -1,14 +1,8 @@
 package com.dci.intellij.dbn.database.common.execution;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
+import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,6 +18,13 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
 public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -33,14 +34,14 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         this.method = new DBObjectRef<T>(method);
     }
 
-    @Nullable
+    @NotNull
     public T getMethod() {
-        return method.get();
+        return DBObjectRef.getnn(method);
     }
 
     public List<DBArgument> getArguments() {
         T method = getMethod();
-        return method == null ? new ArrayList<DBArgument>() : method.getArguments();
+        return method.getArguments();
     }
 
     protected int getArgumentsCount() {
@@ -49,75 +50,72 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     protected DBArgument getReturnArgument() {
         DBMethod method = getMethod();
-        return method == null ? null : method.getReturnArgument();
+        return method.getReturnArgument();
     }
 
 
     public void execute(MethodExecutionInput executionInput, boolean debug) throws SQLException {
         executionInput.initExecution(debug);
-        T method = getMethod();
-        if (method != null) {
-            boolean usePoolConnection = executionInput.isUsePoolConnection();
-            ConnectionHandler connectionHandler = method.getConnectionHandler();
-            DBSchema executionSchema = executionInput.getExecutionSchema();
-            Connection connection = usePoolConnection ?
-                    connectionHandler.getPoolConnection(executionSchema) :
-                    connectionHandler.getStandaloneConnection(executionSchema);
-            if (usePoolConnection) {
-                connection.setAutoCommit(false);
-            }
-
-            execute(executionInput, connection, debug);
+        boolean usePoolConnection = executionInput.isUsePoolConnection();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DBSchema executionSchema = executionInput.getExecutionSchema();
+        Connection connection = usePoolConnection ?
+                connectionHandler.getPoolConnection(executionSchema) :
+                connectionHandler.getStandaloneConnection(executionSchema);
+        if (usePoolConnection) {
+            connection.setAutoCommit(false);
         }
+
+        execute(executionInput, connection, debug);
     }
 
     public void execute(MethodExecutionInput executionInput, Connection connection, boolean debug) throws SQLException {
         executionInput.initExecution(debug);
-        ConnectionHandler connectionHandler = null;
+        ConnectionHandler connectionHandler = getConnectionHandler();
         boolean usePoolConnection = false;
         boolean loggingEnabled = !debug && executionInput.isEnableLogging();
         Project project = getProject();
         DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+        Counter runningMethods = connectionHandler.getLoadMonitor().getRunningMethods();
+        runningMethods.increment();
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();
-            if (method != null) {
-                connectionHandler = method.getConnectionHandler();
-                usePoolConnection = executionInput.isUsePoolConnection();
-                loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
-                if (loggingEnabled) {
-                    loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
-                }
-
-                PreparedStatement preparedStatement = isQuery() ?
-                        connection.prepareStatement(command) :
-                        connection.prepareCall(command);
-
-                bindParameters(executionInput, preparedStatement);
-
-                MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
-                int timeout = debug ?
-                        methodExecutionSettings.getDebugExecutionTimeout() :
-                        methodExecutionSettings.getExecutionTimeout();
-
-                preparedStatement.setQueryTimeout(timeout);
-                preparedStatement.execute();
-
-                MethodExecutionResult executionResult = executionInput.getExecutionResult();
-                if (executionResult != null) {
-                    loadValues(executionResult, preparedStatement);
-                    executionResult.calculateExecDuration();
-
-                    if (loggingEnabled) {
-                        String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
-                        executionResult.setLogOutput(logOutput);
-                    }
-                }
-
-                if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
+            usePoolConnection = executionInput.isUsePoolConnection();
+            loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
+            if (loggingEnabled) {
+                loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
+            PreparedStatement preparedStatement = isQuery() ?
+                    connection.prepareStatement(command) :
+                    connection.prepareCall(command);
+
+            bindParameters(executionInput, preparedStatement);
+
+            MethodExecutionSettings methodExecutionSettings = ExecutionEngineSettings.getInstance(project).getMethodExecutionSettings();
+            int timeout = debug ?
+                    methodExecutionSettings.getDebugExecutionTimeout() :
+                    methodExecutionSettings.getExecutionTimeout();
+
+            preparedStatement.setQueryTimeout(timeout);
+            preparedStatement.execute();
+
+            MethodExecutionResult executionResult = executionInput.getExecutionResult();
+            if (executionResult != null) {
+                loadValues(executionResult, preparedStatement);
+                executionResult.calculateExecDuration();
+
+                if (loggingEnabled) {
+                    String logOutput = loggingManager.readLoggerOutput(connectionHandler, connection);
+                    executionResult.setLogOutput(logOutput);
+                }
+            }
+
+            if (!usePoolConnection) connectionHandler.notifyChanges(method.getVirtualFile());
+
         } finally {
+            runningMethods.decrement();
             if (loggingEnabled) {
                 loggingManager.disableLogger(connectionHandler, connection);
             }
@@ -126,11 +124,16 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 if (usePoolConnection) {
                     connection.commit();
                 } else {
-                    if (connectionHandler != null) connectionHandler.commit();
+                    connectionHandler.commit();
                 }
             }
-            if (connectionHandler != null && usePoolConnection) connectionHandler.freePoolConnection(connection);
+            if (usePoolConnection) connectionHandler.freePoolConnection(connection);
         }
+    }
+
+    @NotNull
+    private ConnectionHandler getConnectionHandler() {
+        return FailsafeUtil.get(getMethod().getConnectionHandler());
     }
 
     protected boolean isQuery() {
@@ -163,7 +166,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     private Project getProject() {
         T method = getMethod();
-        return method == null ? null : method.getProject();
+        return method.getProject();
     }
 
     protected void setParameterValue(PreparedStatement preparedStatement, int parameterIndex, DBDataType dataType, String stringValue) throws SQLException {

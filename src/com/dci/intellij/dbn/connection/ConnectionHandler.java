@@ -38,6 +38,7 @@ public interface ConnectionHandler extends Disposable, ConnectionProvider, Prese
 
     void setSettings(ConnectionSettings connectionSettings);
 
+    @NotNull
     ConnectionStatus getConnectionStatus();
     DatabaseConsoleBundle getConsoleBundle();
     DBSessionBrowserVirtualFile getSessionBrowserFile();
