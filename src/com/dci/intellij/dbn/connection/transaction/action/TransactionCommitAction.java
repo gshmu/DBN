@@ -3,17 +3,16 @@ package com.dci.intellij.dbn.connection.transaction.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 
-public class TransactionCommitAction extends DumbAwareAction {
-    private ConnectionHandler connectionHandler;
+public class TransactionCommitAction extends AbstractConnectionAction {
 
     public TransactionCommitAction(ConnectionHandler connectionHandler) {
-        super("Commit", "Commit connection", Icons.CONNECTION_COMMIT);
-        this.connectionHandler = connectionHandler;
+        super("Commit", "Commit connection", Icons.CONNECTION_COMMIT, connectionHandler);
 
     }
 
@@ -21,13 +20,15 @@ public class TransactionCommitAction extends DumbAwareAction {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
-            transactionManager.commit(connectionHandler, false, false);
+            transactionManager.commit(getConnectionHandler(), false, false);
         }
     }
 
     @Override
     public void update(AnActionEvent e) {
-        e.getPresentation().setEnabled(connectionHandler.hasUncommittedChanges());
-        e.getPresentation().setVisible(!connectionHandler.isAutoCommit());
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        Presentation presentation = e.getPresentation();
+        presentation.setEnabled(connectionHandler.hasUncommittedChanges());
+        presentation.setVisible(!connectionHandler.isAutoCommit());
     }
 }

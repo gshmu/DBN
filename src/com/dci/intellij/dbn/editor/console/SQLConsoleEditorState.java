@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.console;
 
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
@@ -68,7 +69,7 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
     public void applyToEditor(@NotNull final TextEditor textEditor) {
         new WriteActionRunner() {
             public void run() {
-                textEditor.getEditor().getDocument().setText(content);
+                textEditor.getEditor().getDocument().setText(CommonUtil.nvl(content, ""));
                 SQLConsoleEditorState.super.applyToEditor(textEditor);
                 DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
                 if (StringUtil.isNotEmpty(currentSchema)) {

@@ -95,6 +95,7 @@ public class ConnectionBundle implements BrowserTreeNode, Disposable {
             if (connectionHandler == null) {
                 connectionHandler = new ConnectionHandlerImpl(this, connection);
                 newConnectionHandlers.add(connectionHandler);
+                Disposer.register(this, connectionHandler);
                 listChanged = true;
             } else {
                 listChanged = listChanged || connectionHandler.isActive() != connection.isActive();

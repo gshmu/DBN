@@ -11,20 +11,17 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectRecursiveLoaderVisitor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 
-public class LoadAllObjectsAction extends DumbAwareAction {
-    private ConnectionHandler connectionHandler;
-
+public class LoadAllObjectsAction extends AbstractConnectionAction {
     public LoadAllObjectsAction(ConnectionHandler connectionHandler) {
-        super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA);
-        this.connectionHandler = connectionHandler;
+        super("Load All Objects", null, Icons.DATA_EDITOR_RELOAD_DATA, connectionHandler);
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
+        final ConnectionHandler connectionHandler = getConnectionHandler();
         new BackgroundTask(project, "Loading data dictionary (" + connectionHandler.getName() + ")", true) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {

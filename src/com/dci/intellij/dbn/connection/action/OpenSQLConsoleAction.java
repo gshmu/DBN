@@ -6,18 +6,15 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.DumbAwareAction;
 
-public class OpenSQLConsoleAction extends DumbAwareAction {
-    private ConnectionHandler connectionHandler;
-
+public class OpenSQLConsoleAction extends AbstractConnectionAction {
     public OpenSQLConsoleAction(ConnectionHandler connectionHandler) {
-        super("Open SQL Console", null, Icons.FILE_SQL_CONSOLE);
-        this.connectionHandler = connectionHandler;
+        super("Open SQL Console", Icons.FILE_SQL_CONSOLE, connectionHandler);
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        ConnectionHandler connectionHandler = getConnectionHandler();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
         fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), true);
     }

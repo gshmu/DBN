@@ -1,14 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -51,6 +43,15 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -233,52 +234,54 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         if (continueExecution) {
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
             Connection connection = null;
+            activeConnection = FailsafeUtil.get(activeConnection);
+            Counter runningStatements = activeConnection.getLoadMonitor().getRunningStatements();
             try {
-                if (activeConnection != null && !activeConnection.isDisposed()) {
-                    connection = activeConnection.getStandaloneConnection(currentSchema);
+                runningStatements.increment();
+                connection = activeConnection.getStandaloneConnection(currentSchema);
 
-                    if (activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
-                        loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
-                    }
-                    Statement statement = connection.createStatement();
+                if (activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
+                    loggingEnabled = loggingManager.enableLogger(activeConnection, connection);
+                }
+                Statement statement = connection.createStatement();
 
-                    statement.setQueryTimeout(getStatementExecutionSettings().getExecutionTimeout());
-                    statement.execute(executableStatementText);
-                    executionResult = createExecutionResult(statement, executionInput);
-                    ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
-                    VirtualFile virtualFile = getPsiFile().getVirtualFile();
-                    if (executablePsiElement != null) {
-                        if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
-                        if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
-                    } else{
-                        if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(virtualFile);
-                    }
+                statement.setQueryTimeout(getStatementExecutionSettings().getExecutionTimeout());
+                statement.execute(executableStatementText);
+                executionResult = createExecutionResult(statement, executionInput);
+                ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
+                VirtualFile virtualFile = getPsiFile().getVirtualFile();
+                if (executablePsiElement != null) {
+                    if (executablePsiElement.isTransactional()) activeConnection.notifyChanges(virtualFile);
+                    if (executablePsiElement.isTransactionControl()) activeConnection.resetChanges();
+                } else{
+                    if (executionResult.getUpdateCount() > 0) activeConnection.notifyChanges(virtualFile);
+                }
 
-                    executionResult.setLoggingActive(loggingEnabled);
-                    if (loggingEnabled) {
-                        String logOutput = loggingManager.readLoggerOutput(activeConnection, connection);
-                        executionResult.setLoggingOutput(logOutput);
-                    }
+                executionResult.setLoggingActive(loggingEnabled);
+                if (loggingEnabled) {
+                    String logOutput = loggingManager.readLoggerOutput(activeConnection, connection);
+                    executionResult.setLoggingOutput(logOutput);
+                }
 
 
-                    if (isDataDefinitionStatement()) {
-                        DBSchemaObject affectedObject = getAffectedObject();
-                        if (affectedObject != null) {
+                if (isDataDefinitionStatement()) {
+                    DBSchemaObject affectedObject = getAffectedObject();
+                    if (affectedObject != null) {
+                        DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
+                        listener.dataDefinitionChanged(affectedObject);
+                    } else {
+                        DBSchema affectedSchema = getAffectedSchema();
+                        IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
+                        if (affectedSchema != null && subjectPsiElement != null) {
                             DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
-                            listener.dataDefinitionChanged(affectedObject);
-                        } else {
-                            DBSchema affectedSchema = getAffectedSchema();
-                            IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
-                            if (affectedSchema != null && subjectPsiElement != null) {
-                                DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
-                                listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
-                            }
+                            listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
                         }
                     }
                 }
             } catch (SQLException e) {
                 executionResult = createErrorExecutionResult(e.getMessage());
             } finally {
+                runningStatements.decrement();
                 if (loggingEnabled) {
                     loggingManager.disableLogger(activeConnection, connection);
                 }

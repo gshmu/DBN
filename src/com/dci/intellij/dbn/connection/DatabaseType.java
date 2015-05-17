@@ -9,25 +9,25 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseType implements Presentable {
-    ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     DatabaseUrlResolver.ORACLE, "oracle.jdbc.driver.OracleDriver"),
-    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      DatabaseUrlResolver.MYSQL, "com.mysql.jdbc.Driver"),
-    POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, DatabaseUrlResolver.POSTGRES, "org.postgresql.Driver"),
-    UNKNOWN  ("UNKNOWN",  "Unknown", null, null, DatabaseUrlResolver.UNKNOWN, "");
+    ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "oracle.jdbc.driver.OracleDriver", DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE),
+    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      "com.mysql.jdbc.Driver",           DatabaseUrlPattern.MYSQL),
+    POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, "org.postgresql.Driver",           DatabaseUrlPattern.POSTGRES),
+    UNKNOWN  ("UNKNOWN",  "Unknown",    null,                null,                      "java.sql.Driver",                 DatabaseUrlPattern.UNKNOWN);
 
     private String name;
     private String displayName;
     private Icon icon;
     private Icon largeIcon;
-    private DatabaseUrlResolver urlResolver;
+    private DatabaseUrlPattern[] urlPatterns;
     private String driverClassName;
 
 
-    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, DatabaseUrlResolver urlResolver, String driverClassName) {
+    DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, String driverClassName, DatabaseUrlPattern... urlPatterns) {
         this.name = name;
         this.displayName = displayName;
         this.icon = icon;
         this.largeIcon = largeIcon;
-        this.urlResolver = urlResolver;
+        this.urlPatterns = urlPatterns;
         this.driverClassName = driverClassName;
     }
 
@@ -56,17 +56,40 @@ public enum DatabaseType implements Presentable {
         return largeIcon;
     }
 
-    public DatabaseUrlResolver getUrlResolver() {
-        return urlResolver;
+    public DatabaseUrlPattern[] getUrlPatterns() {
+        return urlPatterns;
     }
 
+    public boolean hasUrlPattern(DatabaseUrlPattern pattern) {
+        for (DatabaseUrlPattern urlPattern : urlPatterns) {
+            if (urlPattern == pattern) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public DatabaseUrlType[] getUrlTypes() {
+        DatabaseUrlType[] urlTypes = new DatabaseUrlType[urlPatterns.length];
+        for (int i = 0; i < urlPatterns.length; i++) {
+            DatabaseUrlPattern urlPattern = urlPatterns[i];
+            urlTypes[i] = urlPattern.getUrlType();
+        }
+        return urlTypes;
+    }
+
+    public DatabaseUrlPattern getDefaultUrlPattern() {
+        return urlPatterns[0];
+    }
+
+    @NotNull
     public static DatabaseType get(String name) {
         if (StringUtil.isNotEmpty(name)) {
             for (DatabaseType databaseType : values()) {
                 if (name.equalsIgnoreCase(databaseType.name)) return databaseType;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 
     public static DatabaseType resolve(String name) {

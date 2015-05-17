@@ -59,7 +59,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     }
 
     public boolean isValid() {
-        return textEditor.isValid();
+        return textEditor != null && textEditor.isValid();
     }
 
     public void selectNotify() {
@@ -157,5 +157,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         disposed = true;
         project = null;
         virtualFile = null;
+        textEditor = null;
     }
 }

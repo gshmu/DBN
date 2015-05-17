@@ -1,15 +1,20 @@
 package com.dci.intellij.dbn.object.properties;
 
+import javax.swing.Icon;
+
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.pom.Navigatable;
 
-import javax.swing.*;
-
 public class ConnectionPresentableProperty extends PresentableProperty{
-    private ConnectionHandler connectionHandler;
+    private ConnectionHandlerRef connectionHandlerRef;
 
     public ConnectionPresentableProperty(ConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+        this.connectionHandlerRef = connectionHandler.getRef();
+    }
+
+    public ConnectionHandler getConnectionHandler() {
+        return connectionHandlerRef.get();
     }
 
     public String getName() {
@@ -17,15 +22,15 @@ public class ConnectionPresentableProperty extends PresentableProperty{
     }
 
     public String getValue() {
-        return connectionHandler.getName();
+        return getConnectionHandler().getName();
     }
 
     public Icon getIcon() {
-        return connectionHandler.getIcon();
+        return getConnectionHandler().getIcon();
     }
 
     @Override
     public Navigatable getNavigatable() {
-        return connectionHandler.getObjectBundle();
+        return getConnectionHandler().getObjectBundle();
     }
 }

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VirtualConnectionHandler implements ConnectionHandler {
+    public static final ConnectionStatus CONNECTION_STATUS = new ConnectionStatus();
     private String id;
     private String name;
     private DatabaseType databaseType;
@@ -150,7 +151,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public void freePoolConnection(Connection connection) {}
     @Override public ConnectionSettings getSettings() {return null;}
     @Override public void setSettings(ConnectionSettings connectionSettings) {}
-    @Override public ConnectionStatus getConnectionStatus() {return null;}
+    @NotNull
+    @Override public ConnectionStatus getConnectionStatus() {return CONNECTION_STATUS;}
 
     @Override public boolean isAllowConnection() {return false;}
     @Override public void setAllowConnection(boolean allowConnection) {}
@@ -202,7 +204,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     public DatabaseInfo getDatabaseInfo() {
-        return databaseType.getUrlResolver().getDefaultInfo();
+        return databaseType.getUrlPatterns()[0].getDefaultInfo();
     }
 
     @Override

@@ -80,6 +80,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     }
 
     public void dispose() {
+        super.dispose();
         executionHistory = null;
         dialog = null;
     }

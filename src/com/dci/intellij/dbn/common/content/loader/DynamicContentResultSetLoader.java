@@ -1,13 +1,7 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
@@ -21,6 +15,13 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -65,9 +66,10 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         Connection connection = null;
         ResultSet resultSet = null;
         int count = 0;
+        Counter runningMetaLoaders = connectionHandler.getLoadMonitor().getRunningMetaLoaders();
         try {
+            runningMetaLoaders.increment();
             dynamicContent.checkDisposed();
-            connectionHandler.getLoadMonitor().incrementLoaderCount();
             connection = connectionHandler.getPoolConnection();
             dynamicContent.checkDisposed();
             resultSet = createResultSet(dynamicContent, connection);
@@ -119,9 +121,9 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             }
             throw new DynamicContentLoadException(e, modelException);
         } finally {
+            runningMetaLoaders.decrement();
             ConnectionUtil.closeResultSet(resultSet);
             if (!connectionHandler.isDisposed()) {
-                connectionHandler.getLoadMonitor().decrementLoaderCount();
                 connectionHandler.freePoolConnection(connection);
             }
         }

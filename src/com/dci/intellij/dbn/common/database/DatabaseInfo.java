@@ -2,24 +2,29 @@ package com.dci.intellij.dbn.common.database;
 
 
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 
 public class DatabaseInfo implements Cloneable{
-    public static final DatabaseInfo ORACLE = new DatabaseInfo("localhost", "1521", "XE");
-    public static final DatabaseInfo MYSQL = new DatabaseInfo("localhost", "3306", "mysql");
-    public static final DatabaseInfo POSTGRES = new DatabaseInfo("localhost", "5432", "postgres");
-    public static final DatabaseInfo UNKNOWN = new DatabaseInfo("localhost", "1234", "database");
+    public interface Default {
+        DatabaseInfo ORACLE   = new DatabaseInfo("localhost", "1521", "XE",       DatabaseUrlType.SID);
+        DatabaseInfo MYSQL    = new DatabaseInfo("localhost", "3306", "mysql",    DatabaseUrlType.DATABASE);
+        DatabaseInfo POSTGRES = new DatabaseInfo("localhost", "5432", "postgres", DatabaseUrlType.DATABASE);
+        DatabaseInfo UNKNOWN  = new DatabaseInfo("localhost", "1234", "database", DatabaseUrlType.DATABASE);
+    }
 
     private String host;
     private String port;
     private String database;
+    private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
 
     public DatabaseInfo() {
     }
 
-    public DatabaseInfo(String host, String port, String database) {
+    public DatabaseInfo(String host, String port, String database, DatabaseUrlType urlType) {
         this.host = host;
         this.port = port;
         this.database = database;
+        this.urlType = urlType;
     }
 
     public boolean isEmpty() {
@@ -50,8 +55,16 @@ public class DatabaseInfo implements Cloneable{
         this.database = database;
     }
 
+    public DatabaseUrlType getUrlType() {
+        return urlType;
+    }
+
+    public void setUrlType(DatabaseUrlType urlType) {
+        this.urlType = urlType;
+    }
+
     @Override
     public DatabaseInfo clone() {
-        return new DatabaseInfo(host, port, database);
+        return new DatabaseInfo(host, port, database, urlType);
     }
 }

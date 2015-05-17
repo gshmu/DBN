@@ -73,6 +73,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionManager(final Project project) {
         super(project);
         connectionBundle = new ConnectionBundle(project);
+        Disposer.register(this, connectionBundle);
     }
 
     @Override
@@ -351,7 +352,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
             final DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             final ConnectionStatus connectionStatus = connectionHandler.getConnectionStatus();
-            if (connectionStatus!= null && !connectionStatus.isResolvingIdleStatus()) {
+            if (connectionHandler.getLoadMonitor().isIdle() && !connectionStatus.isResolvingIdleStatus()) {
                 int idleMinutes = connectionHandler.getIdleMinutes();
                 int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
                 if (idleMinutes > idleMinutesToDisconnect) {
@@ -391,9 +392,6 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
                     MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
                     methodExecutionManager.cleanupExecutionHistory(connectionIds);
-
-                    DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-                    //browserManager.
 
                     new BackgroundTask(project, "Cleaning up connections", true) {
                         @Override

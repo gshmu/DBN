@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.content.DatabaseLoadMonitor;
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ModalTask;
@@ -53,7 +52,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 
-public class DatabaseBrowserTree extends DBNTree implements Disposable {
+public class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
     private JPopupMenu popupMenu;
     private TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
@@ -404,24 +403,13 @@ public class DatabaseBrowserTree extends DBNTree implements Disposable {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
-
     public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            targetSelection = null;
-            GUIUtil.removeListeners(this);
-            treeSelectionListener = null;
-            mouseListener = null;
-            keyListener = null;
-            treeModelListener = null;
-            setModel(SimpleBrowserTreeModel.EMPTY_MODEL);
-        }
-    }
-
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
+        super.dispose();
+        targetSelection = null;
+        treeSelectionListener = null;
+        mouseListener = null;
+        keyListener = null;
+        treeModelListener = null;
+        setModel(SimpleBrowserTreeModel.EMPTY_MODEL);
     }
 }

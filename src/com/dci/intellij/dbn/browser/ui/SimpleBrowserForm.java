@@ -69,6 +69,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
 
     public void dispose() {
         super.dispose();
+        browserTree = null;
     }
 
     /********************************************************
