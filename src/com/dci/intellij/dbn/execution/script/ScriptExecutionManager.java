@@ -249,7 +249,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     break;
                 }
             }
-            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, context.isStopped() ? " - Script execution interrupted by used" : " - Script execution finished", false));
+            executionManager.writeLogOutput(context, LogOutput.createSysOutput(context, context.isStopped() ? " - Script execution interrupted by user" : " - Script execution finished", false));
 
         } catch (Exception e) {
             executionManager.writeLogOutput(context, LogOutput.createErrOutput(e.getMessage()));

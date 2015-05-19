@@ -1,7 +1,13 @@
 package com.dci.intellij.dbn.code.common.completion;
 
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.DebugMethodIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
@@ -18,10 +24,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @State(
         name = "DBNavigator.Project.CodeCompletionManager",
@@ -37,6 +39,7 @@ public class CodeCompletionManager extends AbstractProjectComponent implements P
         super(project);
         // fixme move these calls to a more appropriate place (nothing to do with code completion)
         IntentionManager intentionManager = IntentionManager.getInstance(project);
+        intentionManager.addAction(new ExecuteScriptIntentionAction());
         intentionManager.addAction(new ExecuteStatementIntentionAction());
         intentionManager.addAction(new RunMethodIntentionAction());
         intentionManager.addAction(new DebugMethodIntentionAction());
