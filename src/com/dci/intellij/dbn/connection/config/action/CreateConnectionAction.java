@@ -21,7 +21,7 @@ public class CreateConnectionAction extends ConnectionSettingsAction {
     }
 
     private static String getName(@Nullable DatabaseType databaseType) {
-        return databaseType == null ? "Custom" : databaseType.getDisplayName();
+        return databaseType == null ? "Custom..." : databaseType.getDisplayName();
     }
 
     public void actionPerformed(AnActionEvent e) {
