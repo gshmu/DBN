@@ -1,21 +1,24 @@
 package com.dci.intellij.dbn.editor.console;
 
+import org.jdom.CDATA;
+import org.jdom.Content;
+import org.jdom.Element;
+import org.jdom.Text;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.editor.BasicTextEditorState;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.CDATA;
-import org.jdom.Content;
-import org.jdom.Element;
-import org.jdom.Text;
-import org.jetbrains.annotations.NotNull;
 
 public class SQLConsoleEditorState extends BasicTextEditorState {
     private String content = "";
@@ -69,11 +72,15 @@ public class SQLConsoleEditorState extends BasicTextEditorState {
     public void applyToEditor(@NotNull final TextEditor textEditor) {
         new WriteActionRunner() {
             public void run() {
-                textEditor.getEditor().getDocument().setText(CommonUtil.nvl(content, ""));
-                SQLConsoleEditorState.super.applyToEditor(textEditor);
-                DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
-                if (StringUtil.isNotEmpty(currentSchema)) {
-                    file.setCurrentSchemaName(currentSchema);
+                Document document = textEditor.getEditor().getDocument();
+                VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+                if (virtualFile != null) {
+                    document.setText(CommonUtil.nvl(content, ""));
+                    SQLConsoleEditorState.super.applyToEditor(textEditor);
+                    DBConsoleVirtualFile file = (DBConsoleVirtualFile) DocumentUtil.getVirtualFile(textEditor.getEditor());
+                    if (StringUtil.isNotEmpty(currentSchema)) {
+                        file.setCurrentSchemaName(currentSchema);
+                    }
                 }
             }
         }.start();
