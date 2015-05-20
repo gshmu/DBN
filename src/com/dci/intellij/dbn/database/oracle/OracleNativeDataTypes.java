@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
+
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Timestamp;
 import java.sql.Types;
-
-import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
-import oracle.jdbc.OracleTypes;
 
 public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
     {
