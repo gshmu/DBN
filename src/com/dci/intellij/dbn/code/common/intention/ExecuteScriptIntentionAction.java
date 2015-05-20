@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -32,7 +33,8 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction impleme
     }
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        if (psiFile != null && psiFile.getLanguage() instanceof DBLanguage) {
+        if (psiFile != null && editor != null && psiFile.getLanguage() instanceof DBLanguage) {
+            FileDocumentManager.getInstance().saveDocument(editor.getDocument());
             ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);
             scriptExecutionManager.executeScript(psiFile.getVirtualFile());
         }
