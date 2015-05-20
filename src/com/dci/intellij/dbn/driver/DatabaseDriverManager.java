@@ -14,17 +14,20 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.SystemProperties;
 
 public class DatabaseDriverManager implements ApplicationComponent {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -119,9 +122,41 @@ public class DatabaseDriverManager implements ApplicationComponent {
         return driversCache.get(libraryName);
     }
 
+    @Nullable
     public Driver getDriver(String className) throws Exception {
-        Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
-        return driverClass.newInstance();
+        try {
+            Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
+            return driverClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    public String getInternalDriverLibrary(DatabaseType databaseType) throws Exception{
+        switch (databaseType) {
+            case ORACLE: return null;
+            case MYSQL: {
+                return getInternalDriverLibPath("mysql-connector-java-5.1.35-bin.jar");
+            }
+
+            case POSTGRES:
+                String javaVersion = SystemProperties.getJavaVersion();
+                if (javaVersion.startsWith("1.6")) {
+                    return getInternalDriverLibPath("postgresql-9.4-1201.jdbc4.jar");
+                }
+                if (javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8")) {
+                    return getInternalDriverLibPath("postgresql-9.4-1201.jdbc41.jar");
+                }
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private String getInternalDriverLibPath(String libName) throws Exception {
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL url = classLoader.getResource("/resources/lib/" + libName);
+        return url == null ? null : new File(url.toURI()).getPath();
     }
 
     public Driver getDriver(String libraryName, String className) throws Exception {

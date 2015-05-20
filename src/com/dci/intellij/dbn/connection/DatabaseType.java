@@ -20,6 +20,7 @@ public enum DatabaseType implements Presentable {
     private Icon largeIcon;
     private DatabaseUrlPattern[] urlPatterns;
     private String driverClassName;
+    private String internaLibraryPath;
 
 
     DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, String driverClassName, DatabaseUrlPattern... urlPatterns) {
