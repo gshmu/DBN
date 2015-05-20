@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.connection.config.action;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
@@ -9,15 +12,13 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
 
 public class CreateConnectionDropdownAction extends GroupPopupAction {
     private AnAction[] actions = new AnAction[] {
             new CreateConnectionAction(DatabaseType.ORACLE),
             new CreateConnectionAction(DatabaseType.MYSQL),
             new CreateConnectionAction(DatabaseType.POSTGRES),
+            new CreateConnectionAction(null),
             ActionUtil.SEPARATOR,
             new TnsNamesImportAction()
     };

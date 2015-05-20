@@ -1,42 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.ClipboardUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
-import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.tns.TnsName;
-import com.dci.intellij.dbn.driver.DriverSource;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.GuiUtils;
-import com.intellij.ui.ListUtil;
-import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.JBScrollPane;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.xmlbeans.impl.common.ReaderInputStream;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -52,6 +15,44 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.xmlbeans.impl.common.ReaderInputStream;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.ClipboardUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.DataProviderSupplier;
+import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionSettings;
+import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.driver.DriverSource;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.GuiUtils;
+import com.intellij.ui.ListUtil;
+import com.intellij.ui.components.JBList;
+import com.intellij.ui.components.JBScrollPane;
 
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener, DataProviderSupplier {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -187,10 +188,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
 
-    public String createNewConnection(@NotNull DatabaseType databaseType) {
+    public String createNewConnection(@NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         connectionBundleSettings.setModified(true);
-        ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType);
+        ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType, configType);
         connectionSettings.setNew(true);
         connectionSettings.generateNewId();
 

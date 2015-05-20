@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.options;
 
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
@@ -10,6 +15,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionSetupListener;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
@@ -29,11 +35,6 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @State(
         name = "DBNavigator.Project.Settings",
@@ -130,12 +131,12 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
         settingsDialog.show();
     }
 
-    public void createConnection(@NotNull DatabaseType databaseType) {
+    public void createConnection(@NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
         Project project = getProject();
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
         ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();
         if (settingsEditor != null) {
-            String connectionId = settingsEditor.createNewConnection(databaseType);
+            String connectionId = settingsEditor.createNewConnection(databaseType, configType);
             settingsDialog.focusConnectionSettings(connectionId);
             settingsDialog.show();
         }
