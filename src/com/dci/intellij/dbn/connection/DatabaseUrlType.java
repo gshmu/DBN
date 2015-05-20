@@ -8,9 +8,10 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 
 public enum DatabaseUrlType implements Presentable{
     SID("SID"),
-    SERVICE("Service"),
-    DATABASE("Database"),
-    CUSTOM("Custom");
+    SERVICE("Service name"),
+    LDAP("LDAP"),
+    LDAPS("LDAP over SSL"),
+    DATABASE("Database");
 
     private String name;
 

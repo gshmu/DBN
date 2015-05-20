@@ -272,18 +272,20 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         configType       = getEnum(element, "config-type", configType);
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
-        DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
+        if (configType == ConnectionConfigType.BASIC) {
+            databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
+            databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
+            databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
 
-        databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
-        databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
-        databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
-        databaseInfo.setUrl(getString(element, "url", databaseInfo.getUrl()));
-        databaseInfo.setUrlType(urlType);
-        urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
-
-        String url = getString(element, "url", null);
-        if (databaseInfo.isEmpty() && StringUtil.isNotEmpty(url)) {
+            DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
+            databaseInfo.setUrlType(urlType);
+            urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
+        } else if (configType == ConnectionConfigType.CUSTOM){
+            String url = getString(element, "url", databaseInfo.getUrl());
+            databaseInfo.setUrl(url);
             if (databaseType != DatabaseType.UNKNOWN) {
+                urlPattern = databaseType.resolveUrlPattern(url);
+                databaseInfo.setUrlType(urlPattern.getUrlType());
                 databaseInfo.setHost(urlPattern.resolveHost(url));
                 databaseInfo.setPort(urlPattern.resolvePort(url));
                 databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
@@ -329,11 +331,14 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
 
-        setString(element, "host", nvl(databaseInfo.getHost()));
-        setString(element, "port", nvl(databaseInfo.getPort()));
-        setString(element, "database", nvl(databaseInfo.getDatabase()));
-        setString(element, "url", nvl(databaseInfo.getUrl()));
-        setEnum(element, "url-type", databaseInfo.getUrlType());
+        if (configType == ConnectionConfigType.BASIC) {
+            setString(element, "host", nvl(databaseInfo.getHost()));
+            setString(element, "port", nvl(databaseInfo.getPort()));
+            setString(element, "database", nvl(databaseInfo.getDatabase()));
+            setEnum(element, "url-type", databaseInfo.getUrlType());
+        } else if (configType == ConnectionConfigType.CUSTOM) {
+            setString(element, "url", nvl(databaseInfo.getUrl()));
+        }
 
         setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
         setString(element, "user", nvl(authenticationInfo.getUser()));

@@ -83,6 +83,16 @@ public enum DatabaseType implements Presentable {
     }
 
     @NotNull
+    public DatabaseUrlPattern resolveUrlPattern(String url) {
+        for (DatabaseUrlPattern urlPattern : urlPatterns) {
+            if (urlPattern.matches(url)) {
+                return urlPattern;
+            }
+        }
+        return DatabaseUrlPattern.UNKNOWN;
+    }
+
+    @NotNull
     public static DatabaseType get(String name) {
         if (StringUtil.isNotEmpty(name)) {
             for (DatabaseType databaseType : values()) {
