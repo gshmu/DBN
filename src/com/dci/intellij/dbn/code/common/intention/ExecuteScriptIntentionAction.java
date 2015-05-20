@@ -6,14 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
-import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
-public class ExecuteScriptIntentionAction extends GenericIntentionAction implements HighPriorityAction {
+public class ExecuteScriptIntentionAction extends GenericIntentionAction {
     @NotNull
     public String getText() {
         return "Execute SQL Script...";
