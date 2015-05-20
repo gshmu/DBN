@@ -27,6 +27,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Restored URL-based connection setup<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4534</b>
             <ul>
                 - Idle disconnect on long running operations<br>
