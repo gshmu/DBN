@@ -26,12 +26,12 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private List<String> consoleNames = new ArrayList<String>();
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
-        this(parent, DatabaseType.UNKNOWN);
+        this(parent, DatabaseType.UNKNOWN, ConnectionConfigType.BASIC);
     }
-    public ConnectionSettings(ConnectionBundleSettings parent, DatabaseType databaseType) {
+    public ConnectionSettings(ConnectionBundleSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent.getProject());
         this.parent = parent;
-        databaseSettings = new ConnectionDatabaseSettings(this, databaseType);
+        databaseSettings = new ConnectionDatabaseSettings(this, databaseType, configType);
         propertiesSettings = new ConnectionPropertiesSettings(this);
         sshTunnelSettings = new ConnectionSshTunnelSettings(this);
         detailSettings = new ConnectionDetailSettings(this);
@@ -132,7 +132,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         try {
             Element connectionElement = new Element("Connection");
             writeConfiguration(connectionElement);
-            ConnectionSettings clone = new ConnectionSettings(parent, getDatabaseSettings().getDatabaseType());
+            ConnectionSettings clone = new ConnectionSettings(parent, databaseSettings.getDatabaseType(), databaseSettings.getConfigType());
             clone.readConfiguration(connectionElement);
             clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
             clone.generateNewId();

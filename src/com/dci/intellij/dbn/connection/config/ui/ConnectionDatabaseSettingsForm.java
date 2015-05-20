@@ -30,6 +30,7 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -51,13 +52,22 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JPanel driverLibraryPanel;
     private JLabel databaseTypeLabel;
     private JPanel authenticationPanel;
+    private JPanel databaseInfoPanel;
+    private JTextField urlTextField;
+    private JPanel urlPanel;
 
     private ConnectionDriverSettingsForm driverSettingsForm;
     private ConnectionAuthenticationSettingsForm authenticationSettingsForm;
 
-    public ConnectionDatabaseSettingsForm(ConnectionDatabaseSettings configuration) {
+    public ConnectionDatabaseSettingsForm(final ConnectionDatabaseSettings configuration) {
         super(configuration);
 
+        final ConnectionConfigType configType = configuration.getConfigType();
+        if (configType == ConnectionConfigType.BASIC) {
+            urlPanel.setVisible(false);
+        } else {
+            databaseInfoPanel.setVisible(false);
+        }
         DatabaseType databaseType = configuration.getDatabaseType();
         if (databaseType == DatabaseType.UNKNOWN) {
             databaseTypeComboBox.setValues(
@@ -69,27 +79,32 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 public void selectionChanged(DatabaseType oldValue, DatabaseType newValue) {
                     DatabaseUrlPattern oldUrlPattern = oldValue == null ? null : oldValue.getDefaultUrlPattern();
                     DatabaseUrlPattern newUrlPattern = newValue.getDefaultUrlPattern();
-                    String host = hostTextField.getText();
-                    String port = portTextField.getText();
-                    String database = databaseTextField.getText();
+                    if (configType == ConnectionConfigType.BASIC) {
+                        String host = hostTextField.getText();
+                        String port = portTextField.getText();
+                        String database = databaseTextField.getText();
 
-                    DatabaseInfo defaults = newUrlPattern.getDefaultInfo();
-                    DatabaseInfo oldDefaults = oldUrlPattern == null ? null : oldUrlPattern.getDefaultInfo();
-                    if (StringUtil.isEmpty(host) || (oldDefaults != null && oldDefaults.getHost().equals(host))) {
-                        hostTextField.setText(defaults.getHost());
-                    }
+                        DatabaseInfo defaults = newUrlPattern.getDefaultInfo();
+                        DatabaseInfo oldDefaults = oldUrlPattern == null ? null : oldUrlPattern.getDefaultInfo();
+                        if (StringUtil.isEmpty(host) || (oldDefaults != null && oldDefaults.getHost().equals(host))) {
+                            hostTextField.setText(defaults.getHost());
+                        }
 
-                    if (StringUtil.isEmpty(port) || (oldDefaults != null && oldDefaults.getPort().equals(port))) {
-                        portTextField.setText(defaults.getPort());
+                        if (StringUtil.isEmpty(port) || (oldDefaults != null && oldDefaults.getPort().equals(port))) {
+                            portTextField.setText(defaults.getPort());
+                        }
+                        if (StringUtil.isEmpty(database) || (oldDefaults != null && oldDefaults.getDatabase().equals(database))) {
+                            databaseTextField.setText(defaults.getDatabase());
+                        }
+                        DatabaseUrlType[] urlTypes = newValue.getUrlTypes();
+                        urlTypeComboBox.setValues(urlTypes);
+                        urlTypeComboBox.setSelectedValue(urlTypes[0]);
+                        urlTypeComboBox.setVisible(urlTypes.length > 1);
+                    } else {
+                        if (oldUrlPattern == null || oldUrlPattern.getDefaultUrl().equals(urlTextField.getText())) {
+                            urlTextField.setText(newUrlPattern.getDefaultUrl());
+                        }
                     }
-                    if (StringUtil.isEmpty(database) || (oldDefaults != null && oldDefaults.getDatabase().equals(database))) {
-                        databaseTextField.setText(defaults.getDatabase());
-                    }
-                    DatabaseUrlType[] urlTypes = newValue.getUrlTypes();
-                    urlTypeComboBox.setValues(urlTypes);
-                    urlTypeComboBox.setSelectedValue(urlTypes[0]);
-                    urlTypeComboBox.setVisible(urlTypes.length > 1);
-
 
                     driverSettingsForm.updateDriverFields();
                 }
@@ -215,6 +230,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         databaseInfo.setHost(hostTextField.getText());
         databaseInfo.setPort(portTextField.getText());
         databaseInfo.setDatabase(databaseTextField.getText());
+        databaseInfo.setUrl(urlTextField.getText());
         databaseInfo.setUrlType(urlType);
 
         AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
@@ -282,6 +298,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         nameTextField.setText(configuration.getDisplayName());
         descriptionTextField.setText(configuration.getDescription());
         DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
+        urlTextField.setText(databaseInfo.getUrl());
         hostTextField.setText(databaseInfo.getHost());
         portTextField.setText(databaseInfo.getPort());
         databaseTextField.setText(databaseInfo.getDatabase());
