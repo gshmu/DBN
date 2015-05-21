@@ -31,6 +31,20 @@ import com.intellij.util.SystemProperties;
 
 public class DatabaseDriverManager implements ApplicationComponent {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+
+    private static Map<DatabaseType, Map<String, String>> INTERNAL_LIB_MAP = new HashMap<DatabaseType, Map<String, String>>();
+    static {
+        HashMap<String, String> mysql = new HashMap<String, String>();
+        mysql.put("1.", "mysql-connector-java-5.1.35-bin.jar");
+        INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
+
+        HashMap<String, String> postgres = new HashMap<String, String>();
+        postgres.put("1.6", "postgresql-9.4-1201.jdbc4.jar");
+        postgres.put("1.7", "postgresql-9.4-1201.jdbc41.jar");
+        INTERNAL_LIB_MAP.put(DatabaseType.POSTGRES, postgres);
+    }
+
+
     private Map<String, List<Driver>> driversCache = new HashMap<String, List<Driver>>();
 
     public static DatabaseDriverManager getInstance() {
@@ -133,30 +147,19 @@ public class DatabaseDriverManager implements ApplicationComponent {
     }
 
     public String getInternalDriverLibrary(DatabaseType databaseType) throws Exception{
-        switch (databaseType) {
-            case ORACLE: return null;
-            case MYSQL: {
-                return getInternalDriverLibPath("mysql-connector-java-5.1.35-bin.jar");
+        Map<String, String> libMap = INTERNAL_LIB_MAP.get(databaseType);
+        if (libMap != null) {
+            String javaVersion = SystemProperties.getJavaVersion();
+            for (String version : libMap.keySet()) {
+                if (javaVersion.startsWith(version)) {
+                    String libFile = libMap.get(version);
+                    ClassLoader classLoader = getClass().getClassLoader();
+                    URL url = classLoader.getResource("/resources/lib/" + libFile);
+                    return url == null ? null : new File(url.toURI()).getPath();
+                }
             }
-
-            case POSTGRES:
-                String javaVersion = SystemProperties.getJavaVersion();
-                if (javaVersion.startsWith("1.6")) {
-                    return getInternalDriverLibPath("postgresql-9.4-1201.jdbc4.jar");
-                }
-                if (javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8")) {
-                    return getInternalDriverLibPath("postgresql-9.4-1201.jdbc41.jar");
-                }
         }
-
         return null;
-    }
-
-    @NotNull
-    private String getInternalDriverLibPath(String libName) throws Exception {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL url = classLoader.getResource("/resources/lib/" + libName);
-        return url == null ? null : new File(url.toURI()).getPath();
     }
 
     public Driver getDriver(String libraryName, String className) throws Exception {
