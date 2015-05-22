@@ -183,7 +183,7 @@ public class ProjectSettingsManager implements ProjectComponent, PersistentState
 
     @Override
     public void initComponent() {
-        importDefaultSettings(true);
+        //importDefaultSettings(true);
     }
 
     public void exportToDefaultSettings() {
