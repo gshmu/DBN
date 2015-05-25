@@ -123,7 +123,7 @@
     </target>
 
     <target name="build.jar" description="Build plugin jar">
-        <jar destfile="${distribution.dir}/DBNavigator.jar" duplicate="preserve">
+        <jar destfile="${distribution.dir}/dbn.jar" duplicate="preserve">
             <zipfileset dir="${compiler.output.dir}" prefix=""/>
             <zipfileset file="${source.dir}/META-INF/plugin.xml" prefix="META-INF"/>
             <manifest>
@@ -140,10 +140,10 @@
     <target name="build.zip" description="Build distribution zip file">
         <zip file="${distribution.dir}/${package.name}">
             <zipfileset dir="${distribution.dir}" prefix="DBNavigator/lib">
-                <include name="DBNavigator.jar"/>
+                <include name="dbn.jar"/>
             </zipfileset>
             <zipfileset dir="${root.dir}/lib" prefix="DBNavigator/lib">
-                <include name="*.jar"/>
+                <include name="**/*.jar"/>
             </zipfileset>
 
             <zipfileset dir="${distribution.dir}" prefix="DBNavigator/help">
