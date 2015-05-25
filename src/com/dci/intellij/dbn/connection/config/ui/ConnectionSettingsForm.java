@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
@@ -13,6 +24,7 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
+import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
@@ -24,17 +36,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
-
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<ConnectionSettings>{
     private JPanel mainPanel;
@@ -63,10 +64,12 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         propertiesTabInfo.setText("Properties");
         configTabbedPane.addTab(propertiesTabInfo);
 
-        ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
-        TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
-        sshTunnelTabInfo.setText("SSH");
-        configTabbedPane.addTab(sshTunnelTabInfo);
+        if (databaseSettings.getConfigType() == ConnectionConfigType.BASIC) {
+            ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
+            TabInfo sshTunnelTabInfo = new TabInfo(new JBScrollPane(sshTunnelSettings.createComponent()));
+            sshTunnelTabInfo.setText("SSH");
+            configTabbedPane.addTab(sshTunnelTabInfo);
+        }
 
         ConnectionDetailSettings detailSettings = connectionSettings.getDetailSettings();
         TabInfo detailsTabInfo = new TabInfo(new JBScrollPane(detailSettings.createComponent()));

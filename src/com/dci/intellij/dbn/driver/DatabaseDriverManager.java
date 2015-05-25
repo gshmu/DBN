@@ -1,5 +1,21 @@
 package com.dci.intellij.dbn.driver;
 
+import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.SystemProperties;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -12,22 +28,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-
-import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
 
 public class DatabaseDriverManager implements ApplicationComponent {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+
+    private static Map<DatabaseType, Map<String, String>> INTERNAL_LIB_MAP = new HashMap<DatabaseType, Map<String, String>>();
+    static {
+        HashMap<String, String> mysql = new HashMap<String, String>();
+        mysql.put("1.", "mysql-connector-java-5.1.35-bin.jar");
+        INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
+
+        HashMap<String, String> postgres = new HashMap<String, String>();
+        postgres.put("1.6", "postgresql-9.4-1201.jdbc4.jar");
+        postgres.put("1.7", "postgresql-9.4-1201.jdbc41.jar");
+        postgres.put("1.8", "postgresql-9.4-1201.jdbc41.jar");
+        INTERNAL_LIB_MAP.put(DatabaseType.POSTGRES, postgres);
+    }
+
+
     private Map<String, List<Driver>> driversCache = new HashMap<String, List<Driver>>();
 
     public static DatabaseDriverManager getInstance() {
@@ -119,9 +137,31 @@ public class DatabaseDriverManager implements ApplicationComponent {
         return driversCache.get(libraryName);
     }
 
+    @Nullable
     public Driver getDriver(String className) throws Exception {
-        Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
-        return driverClass.newInstance();
+        try {
+            Class<Driver> driverClass = (Class<Driver>) Class.forName(className);
+            return driverClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    public String getInternalDriverLibrary(DatabaseType databaseType) throws Exception{
+        Map<String, String> libMap = INTERNAL_LIB_MAP.get(databaseType);
+        if (libMap != null) {
+            String javaVersion = SystemProperties.getJavaVersion();
+            LOGGER.info(javaVersion);
+            for (String version : libMap.keySet()) {
+                if (javaVersion.startsWith(version)) {
+                    String libFile = libMap.get(version);
+                    ClassLoader classLoader = getClass().getClassLoader();
+                    URL url = classLoader.getResource("/" + libFile);
+                    return url == null ? null : new File(url.toURI()).getPath();
+                }
+            }
+        }
+        return null;
     }
 
     public Driver getDriver(String libraryName, String className) throws Exception {

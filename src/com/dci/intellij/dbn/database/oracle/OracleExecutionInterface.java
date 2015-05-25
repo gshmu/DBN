@@ -1,8 +1,13 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
@@ -10,13 +15,11 @@ import com.dci.intellij.dbn.database.oracle.execution.OracleMethodDebugExecution
 import com.dci.intellij.dbn.database.oracle.execution.OracleMethodExecutionProcessor;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.object.DBMethod;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class OracleExecutionInterface implements DatabaseExecutionInterface {
-    private static final String SQLPLUS_CONNECT_PATTERN = "\"[USER]/[PASSWORD]@[HOST]:[PORT]/[DATABASE]\"";
+    private static final String SQLPLUS_CONNECT_PATTERN_SID = "[USER]/[PASSWORD]@\"(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SID=[DATABASE])))\"";
+    private static final String SQLPLUS_CONNECT_PATTERN_SERVICE = "[USER]/[PASSWORD]@\"(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SERVICE_NAME=[DATABASE])))\"";
+    private static final String SQLPLUS_CONNECT_PATTERN_BASIC = "[USER]/[PASSWORD]@[HOST]:[PORT]/[DATABASE]";
 
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
         return new OracleMethodExecutionProcessor(method);
@@ -29,7 +32,13 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
     @Override
     public CmdLineExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
         CmdLineExecutionInput executionInput = new CmdLineExecutionInput(content);
-        String connectArg = SQLPLUS_CONNECT_PATTERN.
+        DatabaseUrlType urlType = databaseInfo.getUrlType();
+        String connectPattern =
+                urlType == DatabaseUrlType.SID ? SQLPLUS_CONNECT_PATTERN_SID :
+                urlType == DatabaseUrlType.SERVICE ? SQLPLUS_CONNECT_PATTERN_SERVICE :
+                SQLPLUS_CONNECT_PATTERN_BASIC;
+
+        String connectArg = connectPattern.
                 replace("[USER]", authenticationInfo.getUser()).
                 replace("[PASSWORD]", authenticationInfo.getPassword()).
                 replace("[HOST]", databaseInfo.getHost()).

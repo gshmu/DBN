@@ -15,6 +15,7 @@ public class DatabaseInfo implements Cloneable{
     private String host;
     private String port;
     private String database;
+    private String url;
     private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
 
     public DatabaseInfo() {
@@ -29,6 +30,14 @@ public class DatabaseInfo implements Cloneable{
 
     public boolean isEmpty() {
         return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database);
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public String getHost() {

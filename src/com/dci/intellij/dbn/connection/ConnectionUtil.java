@@ -159,11 +159,10 @@ public class ConnectionUtil {
                     properties.putAll(configProperties);
                 }
 
-                DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
-                final Driver driver = databaseSettings.getDriverSource() == DriverSource.EXTERNAL ?
-                            driverManager.getDriver(databaseSettings.getDriverLibrary(), databaseSettings.getDriver()) :
-                            driverManager.getDriver(databaseSettings.getDriver());
-
+                Driver driver = resolveDriver(databaseSettings);
+                if (driver == null) {
+                    throw new SQLException("Could not resolve driver class.");
+                }
 
                 String connectionUrl = databaseSettings.getConnectionUrl();
 
@@ -205,6 +204,28 @@ public class ConnectionUtil {
             }
             return null;
         }
+    }
+
+    @Nullable
+    private static Driver resolveDriver(ConnectionDatabaseSettings databaseSettings) throws Exception {
+        Driver driver = null;
+        DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
+        DriverSource driverSource = databaseSettings.getDriverSource();
+        if (driverSource == DriverSource.EXTERNAL) {
+            driver = driverManager.getDriver(
+                    databaseSettings.getDriverLibrary(),
+                    databaseSettings.getDriver());
+        } else if (driverSource == DriverSource.BUILTIN) {
+            driver = driverManager.getDriver(databaseSettings.getDriver());
+            if (driver == null) {
+                String driverLibrary = driverManager.getInternalDriverLibrary(databaseSettings.getDatabaseType());
+                if (driverLibrary != null) {
+                    return driverManager.getDriver(driverLibrary, databaseSettings.getDriver());
+                }
+            }
+        }
+
+        return driver;
     }
 
     private static DatabaseType getDatabaseType(String driver) {

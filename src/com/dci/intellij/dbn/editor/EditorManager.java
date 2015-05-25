@@ -1,0 +1,47 @@
+package com.dci.intellij.dbn.editor;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.DebugMethodIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.RunMethodIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.SelectCurrentSchemaIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction;
+import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ApplicationComponent;
+
+public class EditorManager implements ApplicationComponent{
+    public static EditorManager getInstance() {
+        return ApplicationManager.getApplication().getComponent(EditorManager.class);
+    }
+    @Override
+    public void initComponent() {
+        IntentionManager intentionManager = IntentionManager.getInstance();
+        intentionManager.addAction(new ExecuteScriptIntentionAction());
+        intentionManager.addAction(new ExecuteStatementIntentionAction());
+        intentionManager.addAction(new RunMethodIntentionAction());
+        intentionManager.addAction(new DebugMethodIntentionAction());
+        intentionManager.addAction(new ExplainPlanIntentionAction());
+        intentionManager.addAction(new DatabaseConnectIntentionAction());
+        intentionManager.addAction(new JumpToExecutionResultIntentionAction());
+        intentionManager.addAction(new SelectConnectionIntentionAction());
+        intentionManager.addAction(new SelectCurrentSchemaIntentionAction());
+        intentionManager.addAction(new ToggleDatabaseLoggingIntentionAction());
+        //intentionManager.addAction(new SetupCodeCompletionIntentionAction());
+    }
+
+    @Override
+    public void disposeComponent() { }
+
+    @NotNull
+    @Override
+    public String getComponentName() {
+        return "DBNavigator.EditorManager";
+    }
+}

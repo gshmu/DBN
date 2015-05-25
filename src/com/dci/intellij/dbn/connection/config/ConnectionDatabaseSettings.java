@@ -39,13 +39,15 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     private String driverLibrary;
     private String driver;
 
+    private ConnectionConfigType configType = ConnectionConfigType.BASIC;
     private AuthenticationInfo authenticationInfo = new AuthenticationInfo();
 
     private ConnectionSettings parent;
 
-    public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType) {
+    public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
         this.parent = parent;
         this.databaseType = databaseType;
+        this.configType = configType;
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
@@ -118,6 +120,10 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         return CommonUtil.nvl(databaseType, DatabaseType.UNKNOWN);
     }
 
+    public ConnectionConfigType getConfigType() {
+        return configType;
+    }
+
     public void setDatabaseType(DatabaseType databaseType) {
         if (this.databaseType == DatabaseType.UNKNOWN && databaseType != DatabaseType.UNKNOWN) {
             this.databaseType = databaseType;
@@ -158,20 +164,33 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     }
 
     public String getConnectionUrl() {
-        return urlPattern.getUrl(databaseInfo);
+        return configType == ConnectionConfigType.BASIC ?
+                urlPattern.getUrl(databaseInfo) :
+                databaseInfo.getUrl();
     };
 
     public String getConnectionUrl(String host, String port) {
-        return urlPattern.getUrl(
-                host,
-                port,
-                databaseInfo.getDatabase());
+        if (configType == ConnectionConfigType.BASIC) {
+            return urlPattern.getUrl(
+                    host,
+                    port,
+                    databaseInfo.getDatabase());
+        } else {
+            return databaseInfo.getUrl();
+        }
     }
 
 
     public void updateHashCode() {
         AuthenticationInfo authenticationInfo = getAuthenticationInfo();
-        hashCode = (name + driver + driverLibrary + databaseInfo.getHost() + databaseInfo.getPort() + databaseInfo.getDatabase() + authenticationInfo.getUser() + authenticationInfo.getPassword() + authenticationInfo.isOsAuthentication()).hashCode();
+        hashCode = (name + driver + driverLibrary +
+                databaseInfo.getHost() +
+                databaseInfo.getPort() +
+                databaseInfo.getDatabase() +
+                databaseInfo.getUrl() +
+                authenticationInfo.getUser() +
+                authenticationInfo.getPassword() +
+                authenticationInfo.isOsAuthentication()).hashCode();
     }
 
     @Override
@@ -183,7 +202,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public ConnectionDatabaseSettings clone() {
         Element connectionElement = new Element(getConfigElementName());
         writeConfiguration(connectionElement);
-        ConnectionDatabaseSettings clone = new ConnectionDatabaseSettings(getParent(), databaseType);
+        ConnectionDatabaseSettings clone = new ConnectionDatabaseSettings(getParent(), databaseType, configType);
         clone.readConfiguration(connectionElement);
         clone.setConnectivityStatus(getConnectivityStatus());
         return clone;
@@ -198,9 +217,11 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
 
         String connectionUrl = getConnectionUrl();
         if (StringUtil.isEmpty(connectionUrl)) {
-            errors.add("Database information not provided (host, port, database)");
+            errors.add(configType == ConnectionConfigType.BASIC ?
+                    "Database information not provided (host, port, database)" :
+                    "Database connection url not provided");
         } else {
-            if (!urlPattern.isValid(connectionUrl)) {
+            if (configType == ConnectionConfigType.BASIC && !urlPattern.isValid(connectionUrl)) {
                 errors.add("Database information incomplete or invalid (host, port, database)");
             }
         }
@@ -248,19 +269,23 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         description      = getString(element, "description", description);
 
         databaseType     = getEnum(element, "database-type", databaseType);
+        configType       = getEnum(element, "config-type", configType);
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
-        DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
+        if (configType == ConnectionConfigType.BASIC) {
+            databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
+            databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
+            databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
 
-        databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
-        databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
-        databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
-        databaseInfo.setUrlType(urlType);
-        urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
-
-        String url = getString(element, "url", null);
-        if (databaseInfo.isEmpty() && StringUtil.isNotEmpty(url)) {
+            DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
+            databaseInfo.setUrlType(urlType);
+            urlPattern = DatabaseUrlPattern.get(databaseType, urlType);
+        } else if (configType == ConnectionConfigType.CUSTOM){
+            String url = getString(element, "url", databaseInfo.getUrl());
+            databaseInfo.setUrl(url);
             if (databaseType != DatabaseType.UNKNOWN) {
+                urlPattern = databaseType.resolveUrlPattern(url);
+                databaseInfo.setUrlType(urlPattern.getUrlType());
                 databaseInfo.setHost(urlPattern.resolveHost(url));
                 databaseInfo.setPort(urlPattern.resolvePort(url));
                 databaseInfo.setDatabase(urlPattern.resolveDatabase(url));
@@ -299,16 +324,21 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         setString(element, "description", nvl(description));
 
         setEnum(element, "database-type", databaseType == null ? DatabaseType.UNKNOWN : databaseType);
+        setEnum(element, "config-type", configType);
         setDouble(element, "database-version", databaseVersion);
 
         setEnum(element, "driver-source", driverSource);
         setString(element, "driver-library", nvl(driverLibrary));
         setString(element, "driver", nvl(driver));
 
-        setString(element, "host", nvl(databaseInfo.getHost()));
-        setString(element, "port", nvl(databaseInfo.getPort()));
-        setString(element, "database", nvl(databaseInfo.getDatabase()));
-        setEnum(element, "url-type", databaseInfo.getUrlType());
+        if (configType == ConnectionConfigType.BASIC) {
+            setString(element, "host", nvl(databaseInfo.getHost()));
+            setString(element, "port", nvl(databaseInfo.getPort()));
+            setString(element, "database", nvl(databaseInfo.getDatabase()));
+            setEnum(element, "url-type", databaseInfo.getUrlType());
+        } else if (configType == ConnectionConfigType.CUSTOM) {
+            setString(element, "url", nvl(databaseInfo.getUrl()));
+        }
 
         setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
         setString(element, "user", nvl(authenticationInfo.getUser()));
