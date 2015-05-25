@@ -6,13 +6,10 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 
 public interface BasicTextEditor<T extends VirtualFile> extends FileEditor, Disposable {
-    Project getProject();
-
     @NotNull
     Editor getEditor();
 

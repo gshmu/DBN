@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.dci.intellij.dbn.driver.DriverSource;
 
 public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JPanel mainPanel;
@@ -128,7 +129,8 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
             setupDescriptionValueLabel.setText(description);
         }
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
-        setupDriverLibraryValueLabel.setText(getPresentableText(databaseSettings.getDriverLibrary()));
+        String driverLibrary = databaseSettings.getDriverLibrary();
+        setupDriverLibraryValueLabel.setText(databaseSettings.getDriverSource() == DriverSource.BUILTIN ? "Built-in library" : getPresentableText(driverLibrary));
         setupDriverValueLabel.setText(getPresentableText(databaseSettings.getDriver()));
 
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();

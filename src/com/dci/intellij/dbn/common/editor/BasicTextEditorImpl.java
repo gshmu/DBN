@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -25,12 +26,10 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     protected TextEditor textEditor;
     private T virtualFile;
     private String name;
-    private Project project;
     private EditorProviderId editorProviderId;
     private BasicTextEditorState cachedState;
 
     public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
-        this.project = project;
         this.name = name;
         this.virtualFile = virtualFile;
         this.editorProviderId = editorProviderId;
@@ -38,24 +37,20 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         Disposer.register(this, textEditor);
     }
 
-    public Project getProject() {
-        return project;
-    }
-
     public T getVirtualFile() {
         return virtualFile;
     }
 
     public <T> T getUserData(@NotNull Key<T> key) {
-        return textEditor.getUserData(key);
+        return getTextEditor().getUserData(key);
     }
 
     public <T> void putUserData(@NotNull Key<T> key, T value) {
-        textEditor.putUserData(key, value);
+        getTextEditor().putUserData(key, value);
     }
 
     public boolean isModified() {
-        return textEditor.isModified();
+        return getTextEditor().isModified();
     }
 
     public boolean isValid() {
@@ -63,46 +58,46 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     }
 
     public void selectNotify() {
-        textEditor.selectNotify();
+        getTextEditor().selectNotify();
     }
 
     public void deselectNotify() {
-        textEditor.deselectNotify();
+        getTextEditor().deselectNotify();
     }
 
     public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
-        textEditor.addPropertyChangeListener(listener);
+        getTextEditor().addPropertyChangeListener(listener);
     }
 
     public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
-        textEditor.removePropertyChangeListener(listener);
+        getTextEditor().removePropertyChangeListener(listener);
     }
 
     @Nullable
     public BackgroundEditorHighlighter getBackgroundHighlighter() {
-        return textEditor.getBackgroundHighlighter();
+        return getTextEditor().getBackgroundHighlighter();
     }
 
     public FileEditorLocation getCurrentLocation() {
-        return textEditor.getCurrentLocation();
+        return getTextEditor().getCurrentLocation();
     }
 
     @NotNull
     public Editor getEditor() {
-        return textEditor.getEditor();
+        return getTextEditor().getEditor();
     }
 
     public boolean canNavigateTo(@NotNull final Navigatable navigatable) {
-        return textEditor.canNavigateTo(navigatable);
+        return getTextEditor().canNavigateTo(navigatable);
     }
 
     public void navigateTo(@NotNull final Navigatable navigatable) {
-        textEditor.navigateTo(navigatable);
+        getTextEditor().navigateTo(navigatable);
     }
 
     @NotNull
     public JComponent getComponent() {
-        return textEditor.getComponent();
+        return getTextEditor().getComponent();
     }
 
     @Override
@@ -112,7 +107,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
 
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return textEditor.getPreferredFocusedComponent();
+        return getTextEditor().getPreferredFocusedComponent();
     }
 
     protected BasicTextEditorState createEditorState() {
@@ -123,7 +118,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
         if (!isDisposed()) {
             cachedState = createEditorState();
-            cachedState.loadFromEditor(level, textEditor);
+            cachedState.loadFromEditor(level, getTextEditor());
         }
         return cachedState;
     }
@@ -131,7 +126,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
     public void setState(@NotNull FileEditorState fileEditorState) {
         if (fileEditorState instanceof BasicTextEditorState) {
             BasicTextEditorState state = (BasicTextEditorState) fileEditorState;
-            state.applyToEditor(textEditor);
+            state.applyToEditor(getTextEditor());
         }
     }
 
@@ -141,9 +136,14 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
         return name;
     }
 
+    @NotNull
+    public TextEditor getTextEditor() {
+        return FailsafeUtil.get(textEditor);
+    }
+
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
-        return textEditor.getStructureViewBuilder();
+        return getTextEditor().getStructureViewBuilder();
     }
 
     private boolean disposed;
@@ -155,7 +155,6 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> implements Basi
 
     public void dispose() {
         disposed = true;
-        project = null;
         virtualFile = null;
         textEditor = null;
     }

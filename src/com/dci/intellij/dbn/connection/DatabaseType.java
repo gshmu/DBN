@@ -20,6 +20,7 @@ public enum DatabaseType implements Presentable {
     private Icon largeIcon;
     private DatabaseUrlPattern[] urlPatterns;
     private String driverClassName;
+    private String internaLibraryPath;
 
 
     DatabaseType(String name, String displayName, Icon icon, Icon largeIcon, String driverClassName, DatabaseUrlPattern... urlPatterns) {
@@ -80,6 +81,16 @@ public enum DatabaseType implements Presentable {
 
     public DatabaseUrlPattern getDefaultUrlPattern() {
         return urlPatterns[0];
+    }
+
+    @NotNull
+    public DatabaseUrlPattern resolveUrlPattern(String url) {
+        for (DatabaseUrlPattern urlPattern : urlPatterns) {
+            if (urlPattern.matches(url)) {
+                return urlPattern;
+            }
+        }
+        return DatabaseUrlPattern.UNKNOWN;
     }
 
     @NotNull

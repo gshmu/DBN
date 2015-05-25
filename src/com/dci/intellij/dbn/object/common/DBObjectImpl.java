@@ -1,5 +1,18 @@
 package com.dci.intellij.dbn.object.common;
 
+import javax.swing.Icon;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
@@ -56,19 +69,6 @@ import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.Icon;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBObject, ToolTipProvider {
     public static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<DBObject>(0));
@@ -558,14 +558,16 @@ public abstract class DBObjectImpl extends DBObjectPsiAbstraction implements DBO
             if (object != null) {
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
-                    return childObjects.getObjectList(objectType);
+                    DBObjectList parentObjectList = childObjects.getObjectList(objectType);
+                    return FailsafeUtil.get(parentObjectList);
                 }
             }
         } else {
             DBObjectBundle objectBundle = getObjectBundle();
             if (objectBundle != null) {
                 DBObjectListContainer objectListContainer = objectBundle.getObjectListContainer();
-                return objectListContainer.getObjectList(objectType);
+                DBObjectList parentObjectList = objectListContainer.getObjectList(objectType);
+                return FailsafeUtil.get(parentObjectList);
             }
         }
         throw AlreadyDisposedException.INSTANCE;

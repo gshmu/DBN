@@ -10,11 +10,13 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 
 public enum DatabaseUrlPattern {
 
-    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
-    ORACLE_SERVICE ("jdbc:oracle:thin:@<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(/[$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
-    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",       "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",      DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
-    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$", DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
-    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",     "^(jdbc:unknown:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",    DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
+    ORACLE_SID     ("jdbc:oracle:thin:@<HOST>:<PORT>:<DATABASE>",         "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(:[$_a-z0-9]+)$",             DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SID),
+    ORACLE_SERVICE ("jdbc:oracle:thin:@<HOST>:<PORT>/<DATABASE>",         "^(jdbc:oracle:(?:thin|oci):@)([._\\-a-z0-9]+)(:[0-9]+)(/[$_a-z0-9]+)$",             DatabaseInfo.Default.ORACLE,   DatabaseUrlType.SERVICE),
+    ORACLE_LDAP    ("jdbc:oracle:thin:@ldap://<HOST>:<PORT>/<DATABASE>",  "^(jdbc:oracle:(?:thin|oci):@ldap\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)(/[$_a-z0-9]+)$",   DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAP),
+    ORACLE_LDAPS   ("jdbc:oracle:thin:@ldaps://<HOST>:<PORT>/<DATABASE>", "^(jdbc:oracle:(?:thin|oci):@ldaps\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)(/[$_a-z0-9]+)$",  DatabaseInfo.Default.ORACLE,   DatabaseUrlType.LDAPS),
+    MYSQL          ("jdbc:mysql://<HOST>:<PORT>/<DATABASE>",              "^(jdbc:mysql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",                DatabaseInfo.Default.MYSQL,    DatabaseUrlType.DATABASE),
+    POSTGRES       ("jdbc:postgresql://<HOST>:<PORT>/<DATABASE>",         "^(jdbc:postgresql:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",           DatabaseInfo.Default.POSTGRES, DatabaseUrlType.DATABASE),
+    UNKNOWN        ("jdbc:unknown://<HOST>:<PORT>/<DATABASE>",            "^(jdbc:unknown:\\/\\/)([._\\-a-z0-9]+)(:[0-9]+)?(\\/[\\$_a-z0-9]*)?$",              DatabaseInfo.Default.UNKNOWN,  DatabaseUrlType.DATABASE),
     ;
 
     private DatabaseUrlType urlType;
@@ -114,5 +116,9 @@ public enum DatabaseUrlPattern {
     private Matcher getMatcher(String url) {
         Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
         return pattern.matcher(url);
+    }
+
+    public boolean matches(String url) {
+        return isValid(url);
     }
 }

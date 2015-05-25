@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.0.4534.2</version>
+    <version>3.0.4560.2</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.4560</b>
+            <ul>
+                - Restored URL-based connection setup<br>
+                - Fixed external driver issues<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4534</b>
             <ul>
                 - Idle disconnect on long running operations<br>
@@ -281,6 +287,7 @@
         <component><implementation-class>com.dci.intellij.dbn.DatabaseNavigator</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileSystem</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.driver.DatabaseDriverManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.EditorManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.code.SourceCodeEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.code.SourceCodeBodyEditorProvider</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.ddl.DDLFileEditorProvider0</implementation-class></component>
@@ -627,6 +634,11 @@
         <additionalTextAttributes scheme="Twilight" file="resources/DBNTwilightColors.xml" id="DBN-Twilight"/>
         <additionalTextAttributes scheme="VibrantInk" file="resources/DBNVibrantInkColors.xml" id="DBN-VibrantInk"/>
         <additionalTextAttributes scheme="WarmNeon" file="resources/DBNWarmNeonColors.xml" id="DBN-WarmNeon"/>
+
+<!--        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction</className>
+            <category>DBNavigator</category>
+        </intentionAction>-->
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 
