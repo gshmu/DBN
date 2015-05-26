@@ -16,6 +16,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 
@@ -36,12 +37,15 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        if (psiFile.getVirtualFile().getFileType() instanceof DBLanguageFileType) {
-            ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-            FileEditor fileEditor = EditorUtil.getFileEditor(editor);
-            if (executable != null && fileEditor != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
-                ConnectionHandler activeConnection = executable.getActiveConnection();
-                return DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
+        if (psiFile != null) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            if (virtualFile != null && virtualFile.getFileType() instanceof DBLanguageFileType) {
+                ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+                FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+                if (executable != null && fileEditor != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
+                    ConnectionHandler activeConnection = executable.getActiveConnection();
+                    return DatabaseFeature.EXPLAIN_PLAN.isSupported(activeConnection);
+                }
             }
         }
         return false;
