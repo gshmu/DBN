@@ -12,6 +12,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Date;
 import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
@@ -113,6 +114,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         };
     }
 
+    @NotNull
     public Locale getSelectedLocale() {
         LocaleOption localeOption = localeComboBox.getSelectedValue();
         return localeOption == null ? Locale.getDefault() : localeOption.getLocale();
