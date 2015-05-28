@@ -115,7 +115,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     public Locale getSelectedLocale() {
         LocaleOption localeOption = localeComboBox.getSelectedValue();
-        return localeOption == null ? null : localeOption.getLocale();
+        return localeOption == null ? Locale.getDefault() : localeOption.getLocale();
     }
 
     public void setSelectedLocale(Locale locale) {
