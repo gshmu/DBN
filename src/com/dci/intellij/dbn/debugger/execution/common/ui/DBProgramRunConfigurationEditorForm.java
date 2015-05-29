@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.execution.ui;
+package com.dci.intellij.dbn.debugger.execution.common.ui;
 
 import org.jetbrains.annotations.NotNull;
 
