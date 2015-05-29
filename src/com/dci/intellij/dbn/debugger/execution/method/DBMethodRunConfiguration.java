@@ -107,7 +107,7 @@ public class DBMethodRunConfiguration extends DBProgramRunConfiguration<DBMethod
         if (executionInput == null) {
             return "<unnamed>";
         } else {
-            return executionInput.getMethodRef().getPath();
+            return executionInput.getMethodRef().getObjectName();
         }
     }
 
