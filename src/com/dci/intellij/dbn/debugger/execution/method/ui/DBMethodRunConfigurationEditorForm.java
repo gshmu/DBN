@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.execution.ui;
+package com.dci.intellij.dbn.debugger.execution.method.ui;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
@@ -34,7 +34,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.util.ui.UIUtil;
 
-public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
+public class DBMethodRunConfigurationEditorForm extends DBNFormImpl {
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;
@@ -44,9 +44,9 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
 
-    private DBProgramRunConfiguration configuration;
+    private DBMethodRunConfiguration configuration;
 
-    public DBProgramRunConfigurationEditorForm(final DBProgramRunConfiguration configuration) {
+    public DBMethodRunConfigurationEditorForm(final DBMethodRunConfiguration configuration) {
         this.configuration = configuration;
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SelectMethodAction());
@@ -164,7 +164,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
         return executionInput;
     }
 
-    public void writeConfiguration(DBProgramRunConfiguration configuration) {
+    public void writeConfiguration(DBMethodRunConfiguration configuration) {
         if (methodExecutionForm != null) {
             methodExecutionForm.setExecutionInput(configuration.getExecutionInput());
             methodExecutionForm.updateExecutionInput();
@@ -173,7 +173,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
         //selectMethodAction.setConfiguration(configuration);
     }
 
-    public void readConfiguration(DBProgramRunConfiguration configuration) {
+    public void readConfiguration(DBMethodRunConfiguration configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }

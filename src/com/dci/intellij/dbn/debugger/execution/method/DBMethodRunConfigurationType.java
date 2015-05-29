@@ -1,14 +1,14 @@
-package com.dci.intellij.dbn.debugger.execution;
+package com.dci.intellij.dbn.debugger.execution.method;
+
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-public class DBProgramRunConfigurationType implements ConfigurationType {
-    private ConfigurationFactory[] configurationFactories = new ConfigurationFactory[]{new DBProgramRunConfigurationFactory(this)};
+public class DBMethodRunConfigurationType implements ConfigurationType {
+    private ConfigurationFactory[] configurationFactories = new ConfigurationFactory[]{new DBMethodRunConfigurationFactory(this)};
 
 
     public String getDisplayName() {
@@ -32,7 +32,7 @@ public class DBProgramRunConfigurationType implements ConfigurationType {
         return configurationFactories;
     }
 
-    public DBProgramRunConfigurationFactory getConfigurationFactory() {
-        return (DBProgramRunConfigurationFactory) configurationFactories[0];
+    public DBMethodRunConfigurationFactory getConfigurationFactory() {
+        return (DBMethodRunConfigurationFactory) configurationFactories[0];
     }
 }
