@@ -12,7 +12,7 @@ public class DBMethodRunConfigurationType extends DBProgramRunConfigurationType 
 
 
     public String getDisplayName() {
-        return "DB-Method";
+        return "Database Method (DBN)";
     }
 
     public String getConfigurationTypeDescription() {
@@ -25,7 +25,7 @@ public class DBMethodRunConfigurationType extends DBProgramRunConfigurationType 
 
     @NotNull
     public String getId() {
-        return "DBMethodRunSession";
+        return "DBNMethodRunConfiguration";
     }
 
     public ConfigurationFactory[] getConfigurationFactories() {
