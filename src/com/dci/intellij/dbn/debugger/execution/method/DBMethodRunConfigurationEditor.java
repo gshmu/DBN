@@ -1,36 +1,17 @@
 package com.dci.intellij.dbn.debugger.execution.method;
 
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationEditor;
 import com.dci.intellij.dbn.debugger.execution.method.ui.DBMethodRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
 
-public class DBMethodRunConfigurationEditor extends SettingsEditor<DBMethodRunConfiguration> {
-    private DBMethodRunConfigurationEditorForm configurationEditorComponent;
-    private DBMethodRunConfiguration configuration;
-
+public class DBMethodRunConfigurationEditor extends DBProgramRunConfigurationEditor<DBMethodRunConfiguration, DBMethodRunConfigurationEditorForm> {
     public DBMethodRunConfigurationEditor(DBMethodRunConfiguration configuration) {
-        this.configuration = configuration;
+        super(configuration);
     }
 
     @Override
-    protected void resetEditorFrom(DBMethodRunConfiguration configuration) {
-        configurationEditorComponent.readConfiguration(configuration);
-    }
-
-    @Override
-    protected void applyEditorTo(DBMethodRunConfiguration configuration) throws ConfigurationException {
-        configurationEditorComponent.writeConfiguration(configuration);
-    }
-
-    @NotNull
-    @Override
-    protected JComponent createEditor() {
-        configurationEditorComponent = new DBMethodRunConfigurationEditorForm(configuration);
-        return configurationEditorComponent.getComponent();
+    protected DBMethodRunConfigurationEditorForm createConfigurationEditorForm() {
+        return new DBMethodRunConfigurationEditorForm(getConfiguration());
     }
 
     @Override
@@ -39,8 +20,9 @@ public class DBMethodRunConfigurationEditor extends SettingsEditor<DBMethodRunCo
     }
 
     public void setExecutionInput(MethodExecutionInput executionInput) {
-        if (configurationEditorComponent != null) {
-            configurationEditorComponent.setExecutionInput(executionInput, true);
+        DBMethodRunConfigurationEditorForm configurationEditorForm = getConfigurationEditorForm();
+        if (configurationEditorForm != null) {
+            configurationEditorForm.setExecutionInput(executionInput, true);
         }
     }
 }

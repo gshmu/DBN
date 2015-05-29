@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.execution.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.CompileTypeOption;
@@ -31,7 +32,6 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.history.LocalHistory;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -40,8 +40,8 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 
-public class DBMethodRunner extends GenericProgramRunner {
-    public static final String RUNNER_ID = "DBNavigatorProgramRunner";
+public class DBMethodRunner extends DBProgramRunner {
+    public static final String RUNNER_ID = "DBNMethodRunner";
 
     @NotNull
     public String getRunnerId() {

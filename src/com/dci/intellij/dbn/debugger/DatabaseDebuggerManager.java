@@ -81,13 +81,13 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return true;
     }
 
-    public static DBMethodRunConfigurationType getConfigurationType() {
+    public static DBMethodRunConfigurationType getMethodConfigurationType() {
         ConfigurationType[] configurationTypes = Extensions.getExtensions(ConfigurationType.CONFIGURATION_TYPE_EP);
         return ContainerUtil.findInstance(configurationTypes, DBMethodRunConfigurationType.class);
     }
 
     public static String createConfigurationName(DBMethod method) {
-        DBMethodRunConfigurationType configurationType = getConfigurationType();
+        DBMethodRunConfigurationType configurationType = getMethodConfigurationType();
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(method.getProject());
         RunnerAndConfigurationSettings[] configurationSettings = runManager.getConfigurationSettings(configurationType);
 
@@ -109,7 +109,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     public void createDebugConfiguration(DBMethod method) {
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(method.getProject());
-        DBMethodRunConfigurationType configurationType = getConfigurationType();
+        DBMethodRunConfigurationType configurationType = getMethodConfigurationType();
 
         RunnerAndConfigurationSettings runConfigurationSetting = null;
         RunnerAndConfigurationSettings[] configurationSettings = runManager.getConfigurationSettings(configurationType);

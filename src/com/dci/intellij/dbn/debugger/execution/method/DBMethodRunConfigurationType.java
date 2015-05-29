@@ -4,15 +4,15 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationType;
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
 
-public class DBMethodRunConfigurationType implements ConfigurationType {
+public class DBMethodRunConfigurationType extends DBProgramRunConfigurationType {
     private ConfigurationFactory[] configurationFactories = new ConfigurationFactory[]{new DBMethodRunConfigurationFactory(this)};
 
 
     public String getDisplayName() {
-        return "DB-Program";
+        return "DB-Method";
     }
 
     public String getConfigurationTypeDescription() {
@@ -25,7 +25,7 @@ public class DBMethodRunConfigurationType implements ConfigurationType {
 
     @NotNull
     public String getId() {
-        return "DBProgramDebugSession";
+        return "DBMethodRunSession";
     }
 
     public ConfigurationFactory[] getConfigurationFactories() {

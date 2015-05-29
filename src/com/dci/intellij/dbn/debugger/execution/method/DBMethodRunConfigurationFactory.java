@@ -4,17 +4,17 @@ import javax.swing.Icon;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 
-public class DBMethodRunConfigurationFactory extends ConfigurationFactory {
-    protected DBMethodRunConfigurationFactory(@org.jetbrains.annotations.NotNull ConfigurationType type) {
+public class DBMethodRunConfigurationFactory extends DBProgramRunConfigurationFactory {
+    protected DBMethodRunConfigurationFactory(@NotNull ConfigurationType type) {
         super(type);
     }
 
