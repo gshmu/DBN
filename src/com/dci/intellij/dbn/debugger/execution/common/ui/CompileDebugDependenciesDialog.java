@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.execution.ui;
+package com.dci.intellij.dbn.debugger.execution.common.ui;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -8,22 +8,17 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBProgram;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
-    private DBMethodRunConfiguration runConfiguration;
+    private DBProgramRunConfiguration runConfiguration;
     private List<DBSchemaObject> selection = Collections.emptyList();
 
-    public CompileDebugDependenciesDialog(DBMethodRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
+    public CompileDebugDependenciesDialog(DBProgramRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
         super(runConfiguration.getProject(), "Compile Object Dependencies", true);
         this.runConfiguration = runConfiguration;
-        DBMethod method = runConfiguration.getMethod();
-        DBProgram program = method.getProgram();
-        DBSchemaObject selectedObject = program == null ? method : program;
-        this.component = new CompileDebugDependenciesForm(this, compileList, selectedObject);
+        this.component = new CompileDebugDependenciesForm(this, runConfiguration, compileList);
         init();
     }
 

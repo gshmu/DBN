@@ -13,4 +13,24 @@ public interface Presentable {
 
     @Nullable
     Icon getIcon();
+
+    Presentable UNKNOWN = new Presentable() {
+        @NotNull
+        @Override
+        public String getName() {
+            return "Unknown";
+        }
+
+        @Nullable
+        @Override
+        public String getDescription() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public Icon getIcon() {
+            return null;
+        }
+    };
 }

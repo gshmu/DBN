@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
 import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfigurationFactory;
 import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfigurationType;
 import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunner;
+import com.dci.intellij.dbn.debugger.execution.statement.DBStatementRunConfigurationType;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
@@ -86,10 +87,15 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return ContainerUtil.findInstance(configurationTypes, DBMethodRunConfigurationType.class);
     }
 
+    public static DBStatementRunConfigurationType getStatementConfigurationType() {
+        ConfigurationType[] configurationTypes = Extensions.getExtensions(ConfigurationType.CONFIGURATION_TYPE_EP);
+        return ContainerUtil.findInstance(configurationTypes, DBStatementRunConfigurationType.class);
+    }
+
     public static String createConfigurationName(DBMethod method) {
         DBMethodRunConfigurationType configurationType = getMethodConfigurationType();
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(method.getProject());
-        RunnerAndConfigurationSettings[] configurationSettings = runManager.getConfigurationSettings(configurationType);
+        List<RunnerAndConfigurationSettings> configurationSettings = runManager.getConfigurationSettingsList(configurationType);
 
         String name = method.getName();
         while (nameExists(configurationSettings, name)) {
@@ -98,7 +104,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return name;
     }
 
-    private static boolean nameExists(RunnerAndConfigurationSettings[] configurationSettings, String name) {
+    public static String createConfigurationName(ConnectionHandler connectionHandler) {
+        return connectionHandler.getName() + " - Debugger";
+    }
+
+    private static boolean nameExists(List<RunnerAndConfigurationSettings> configurationSettings, String name) {
         for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
             if (configurationSetting.getName().equals(name)) {
                 return true;
@@ -150,23 +160,25 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
     }
 
-    public List<DBSchemaObject> loadCompileDependencies(DBMethod method, ProgressIndicator progressIndicator) {
-        DBSchemaObject executable = method.getProgram() == null ? method : method.getProgram();
+    public List<DBSchemaObject> loadCompileDependencies(List<DBMethod> methods, ProgressIndicator progressIndicator) {
         List<DBSchemaObject> compileList = new ArrayList<DBSchemaObject>();
-        if (!executable.getStatus().is(DBObjectStatus.DEBUG)) {
-            compileList.add(executable);
-        }
+        for (DBMethod method : methods) {
+            DBSchemaObject executable = method.getProgram() == null ? method : method.getProgram();
+            if (!executable.getStatus().is(DBObjectStatus.DEBUG)) {
+                compileList.add(executable);
+            }
 
-        for (DBObject object : executable.getReferencedObjects()) {
-            if (object instanceof DBSchemaObject && object != executable) {
-                if (!progressIndicator.isCanceled()) {
-                    DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    DBSchema schema = schemaObject.getSchema();
-                    if (!schema.isPublicSchema() && !schema.isSystemSchema() && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
-                        if (!schemaObject.getStatus().is(DBObjectStatus.DEBUG)) {
-                            compileList.add(schemaObject);
-                            progressIndicator.setText("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
-                            schemaObject.getReferencedObjects();
+            for (DBObject object : executable.getReferencedObjects()) {
+                if (object instanceof DBSchemaObject && object != executable) {
+                    if (!progressIndicator.isCanceled()) {
+                        DBSchemaObject schemaObject = (DBSchemaObject) object;
+                        DBSchema schema = schemaObject.getSchema();
+                        if (!schema.isPublicSchema() && !schema.isSystemSchema() && schemaObject.getStatus().has(DBObjectStatus.DEBUG)) {
+                            if (!schemaObject.getStatus().is(DBObjectStatus.DEBUG)) {
+                                compileList.add(schemaObject);
+                                progressIndicator.setText("Loading dependencies of " + schemaObject.getQualifiedNameWithType());
+                                schemaObject.getReferencedObjects();
+                            }
                         }
                     }
                 }
@@ -177,7 +189,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return compileList;
     }
 
-    public List<String> getMissingDebugPrivileges(ConnectionHandler connectionHandler) {
+    public List<String> getMissingDebugPrivileges(@NotNull ConnectionHandler connectionHandler) {
         List<String> missingPrivileges = new ArrayList<String>();
         String userName = connectionHandler.getUserName();
         DBUser user = connectionHandler.getObjectBundle().getUser(userName);

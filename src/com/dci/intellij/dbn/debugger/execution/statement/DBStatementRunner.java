@@ -1,28 +1,15 @@
-package com.dci.intellij.dbn.debugger.execution.method;
+package com.dci.intellij.dbn.debugger.execution.statement;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
-import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionManager;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.history.LocalHistory;
-import com.intellij.openapi.project.Project;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
 
-public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
-    public static final String RUNNER_ID = "DBNMethodRunner";
+public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> {
+    public static final String RUNNER_ID = "DBNStatementRunner";
 
     @NotNull
     public String getRunnerId() {
@@ -30,20 +17,16 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
     }
 
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        if (profile instanceof DBMethodRunConfiguration) {
-            DBMethodRunConfiguration runConfiguration = (DBMethodRunConfiguration) profile;
-            return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && runConfiguration.getMethod() != null;
-        }
         return false;
     }
 
     @Override
     protected void performExecution(
-            final MethodExecutionInput executionInput,
+            final StatementExecutionInput executionInput,
             final Executor executor,
             final ExecutionEnvironment environment,
             final Callback callback) {
-        new SimpleLaterInvocator() {
+/*        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
                 final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
@@ -58,7 +41,7 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
                     XDebugSession session = null;
                     try {
                         session = XDebuggerManager.getInstance(project).startSession(
-                                DBMethodRunner.this,
+                                DBStatementRunner.this,
                                 environment,
                                 reuseContent,
                                 debugProcessStarter);
@@ -67,7 +50,7 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
 
                         if (callback != null) callback.processStarted(descriptor);
 
-                        if (true /*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*/) {
+                        if (true *//*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*//*) {
                             RunProfile runProfile = environment.getRunProfile();
                             LocalHistory.getInstance().putSystemLabel(project, executor.getId() + " " + runProfile.getName());
                         }
@@ -81,7 +64,7 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
                 }
 
             }
-        }.start();
+        }.start();*/
     }
 
 }

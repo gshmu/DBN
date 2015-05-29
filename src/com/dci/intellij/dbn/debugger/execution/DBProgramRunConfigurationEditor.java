@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger.execution;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
-import com.dci.intellij.dbn.debugger.execution.ui.DBProgramRunConfigurationEditorForm;
+import com.dci.intellij.dbn.debugger.execution.common.ui.DBProgramRunConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 
