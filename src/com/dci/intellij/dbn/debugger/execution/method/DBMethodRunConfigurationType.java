@@ -20,7 +20,7 @@ public class DBMethodRunConfigurationType extends DBProgramRunConfigurationType 
     }
 
     public Icon getIcon() {
-        return Icons.EXEC_CONFIG;
+        return Icons.EXEC_METHOD_CONFIG;
     }
 
     @NotNull
