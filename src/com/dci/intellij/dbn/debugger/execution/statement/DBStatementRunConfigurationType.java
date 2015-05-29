@@ -20,7 +20,7 @@ public class DBStatementRunConfigurationType extends DBProgramRunConfigurationTy
     }
 
     public Icon getIcon() {
-        return Icons.EXEC_CONFIG;
+        return Icons.EXEC_STATEMENT_CONFIG;
     }
 
     @NotNull

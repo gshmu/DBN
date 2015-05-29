@@ -18,7 +18,7 @@ public class DBStatementRunConfigurationFactory extends DBProgramRunConfiguratio
 
     @Override
     public Icon getIcon(@NotNull RunConfiguration configuration) {
-        return Icons.EXECUTE_SQL_SCRIPT;
+        return Icons.EXEC_STATEMENT_CONFIG;
     }
 
     @Override
