@@ -1,15 +1,25 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.breakpoint.BreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationType;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfigurationFactory;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfigurationType;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunner;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
@@ -37,16 +47,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.DebuggerManager",
@@ -81,13 +81,13 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return true;
     }
 
-    public static DBProgramRunConfigurationType getConfigurationType() {
+    public static DBMethodRunConfigurationType getConfigurationType() {
         ConfigurationType[] configurationTypes = Extensions.getExtensions(ConfigurationType.CONFIGURATION_TYPE_EP);
-        return ContainerUtil.findInstance(configurationTypes, DBProgramRunConfigurationType.class);
+        return ContainerUtil.findInstance(configurationTypes, DBMethodRunConfigurationType.class);
     }
 
     public static String createConfigurationName(DBMethod method) {
-        DBProgramRunConfigurationType configurationType = getConfigurationType();
+        DBMethodRunConfigurationType configurationType = getConfigurationType();
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(method.getProject());
         RunnerAndConfigurationSettings[] configurationSettings = runManager.getConfigurationSettings(configurationType);
 
@@ -109,12 +109,12 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     public void createDebugConfiguration(DBMethod method) {
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(method.getProject());
-        DBProgramRunConfigurationType configurationType = getConfigurationType();
+        DBMethodRunConfigurationType configurationType = getConfigurationType();
 
         RunnerAndConfigurationSettings runConfigurationSetting = null;
         RunnerAndConfigurationSettings[] configurationSettings = runManager.getConfigurationSettings(configurationType);
         for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
-            DBProgramRunConfiguration availableRunConfiguration = (DBProgramRunConfiguration) configurationSetting.getConfiguration();
+            DBMethodRunConfiguration availableRunConfiguration = (DBMethodRunConfiguration) configurationSetting.getConfiguration();
             if (method.equals(availableRunConfiguration.getMethod())) {
                 runConfigurationSetting = configurationSetting;
                 break;
@@ -123,8 +123,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
         // check whether a configuration already exists for the given method
         if (runConfigurationSetting == null) {
-            DBProgramRunConfigurationFactory configurationFactory = configurationType.getConfigurationFactory();
-            DBProgramRunConfiguration runConfiguration = configurationFactory.createConfiguration(method);
+            DBMethodRunConfigurationFactory configurationFactory = configurationType.getConfigurationFactory();
+            DBMethodRunConfiguration runConfiguration = configurationFactory.createConfiguration(method);
             runConfigurationSetting = runManager.createConfiguration(runConfiguration, configurationFactory);
             runManager.addConfiguration(runConfigurationSetting, false);
             runManager.setTemporaryConfiguration(runConfigurationSetting);
@@ -132,7 +132,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
 
         runManager.setSelectedConfiguration(runConfigurationSetting);
-        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBProgramRunner.RUNNER_ID);
+        ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(DBMethodRunner.RUNNER_ID);
         if (programRunner != null) {
             try {
                 Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();

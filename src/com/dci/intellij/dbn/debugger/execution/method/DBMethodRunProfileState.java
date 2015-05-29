@@ -1,4 +1,6 @@
-package com.dci.intellij.dbn.debugger.execution;
+package com.dci.intellij.dbn.debugger.execution.method;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -7,10 +9,9 @@ import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.runners.ProgramRunner;
-import org.jetbrains.annotations.NotNull;
 
 
-public class DBProgramRunProfileState implements RunProfileState {
+public class DBMethodRunProfileState implements RunProfileState {
     public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         return null;
     }

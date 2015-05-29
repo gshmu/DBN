@@ -8,16 +8,16 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 
 public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDependenciesForm> {
-    private DBProgramRunConfiguration runConfiguration;
+    private DBMethodRunConfiguration runConfiguration;
     private List<DBSchemaObject> selection = Collections.emptyList();
 
-    public CompileDebugDependenciesDialog(DBProgramRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
+    public CompileDebugDependenciesDialog(DBMethodRunConfiguration runConfiguration, List<DBSchemaObject> compileList) {
         super(runConfiguration.getProject(), "Compile Object Dependencies", true);
         this.runConfiguration = runConfiguration;
         DBMethod method = runConfiguration.getMethod();

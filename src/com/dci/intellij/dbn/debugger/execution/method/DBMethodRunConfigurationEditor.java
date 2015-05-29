@@ -1,35 +1,35 @@
-package com.dci.intellij.dbn.debugger.execution;
+package com.dci.intellij.dbn.debugger.execution.method;
 
-import com.dci.intellij.dbn.debugger.execution.ui.DBProgramRunConfigurationEditorForm;
+import javax.swing.JComponent;
+import org.jetbrains.annotations.NotNull;
+
+import com.dci.intellij.dbn.debugger.execution.method.ui.DBMethodRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JComponent;
+public class DBMethodRunConfigurationEditor extends SettingsEditor<DBMethodRunConfiguration> {
+    private DBMethodRunConfigurationEditorForm configurationEditorComponent;
+    private DBMethodRunConfiguration configuration;
 
-public class DBProgramRunConfigurationEditor extends SettingsEditor<DBProgramRunConfiguration> {
-    private DBProgramRunConfigurationEditorForm configurationEditorComponent;
-    private DBProgramRunConfiguration configuration;
-
-    public DBProgramRunConfigurationEditor(DBProgramRunConfiguration configuration) {
+    public DBMethodRunConfigurationEditor(DBMethodRunConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    protected void resetEditorFrom(DBProgramRunConfiguration configuration) {
+    protected void resetEditorFrom(DBMethodRunConfiguration configuration) {
         configurationEditorComponent.readConfiguration(configuration);
     }
 
     @Override
-    protected void applyEditorTo(DBProgramRunConfiguration configuration) throws ConfigurationException {
+    protected void applyEditorTo(DBMethodRunConfiguration configuration) throws ConfigurationException {
         configurationEditorComponent.writeConfiguration(configuration);
     }
 
     @NotNull
     @Override
     protected JComponent createEditor() {
-        configurationEditorComponent = new DBProgramRunConfigurationEditorForm(configuration);
+        configurationEditorComponent = new DBMethodRunConfigurationEditorForm(configuration);
         return configurationEditorComponent.getComponent();
     }
 

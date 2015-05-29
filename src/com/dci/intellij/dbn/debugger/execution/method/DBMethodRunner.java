@@ -1,4 +1,8 @@
-package com.dci.intellij.dbn.debugger.execution;
+package com.dci.intellij.dbn.debugger.execution.method;
+
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -35,12 +39,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public class DBProgramRunner extends GenericProgramRunner {
+public class DBMethodRunner extends GenericProgramRunner {
     public static final String RUNNER_ID = "DBNavigatorProgramRunner";
 
     @NotNull
@@ -49,8 +49,8 @@ public class DBProgramRunner extends GenericProgramRunner {
     }
 
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        if (profile instanceof DBProgramRunConfiguration) {
-            DBProgramRunConfiguration runConfiguration = (DBProgramRunConfiguration) profile;
+        if (profile instanceof DBMethodRunConfiguration) {
+            DBMethodRunConfiguration runConfiguration = (DBMethodRunConfiguration) profile;
             return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && runConfiguration.getMethod() != null;
         }
         return false;
@@ -68,7 +68,7 @@ public class DBProgramRunner extends GenericProgramRunner {
             RunContentDescriptor contentToReuse,
             final ExecutionEnvironment environment) throws ExecutionException {
 
-        final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
+        final DBMethodRunConfiguration runProfile = (DBMethodRunConfiguration) environment.getRunProfile();
         new ConnectionAction("the debug execution", runProfile.getMethod(), new TaskInstructions("Checking debug privileges", false, true)) {
             @Override
             protected boolean canExecute() {
@@ -95,7 +95,7 @@ public class DBProgramRunner extends GenericProgramRunner {
             final Executor executor,
             final ExecutionEnvironment environment,
             final Callback callback) {
-        final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
+        final DBMethodRunConfiguration runProfile = (DBMethodRunConfiguration) environment.getRunProfile();
         final ConnectionHandler connectionHandler = runProfile.getMethod().getConnectionHandler();
         Project project = connectionHandler.getProject();
 
@@ -142,7 +142,7 @@ public class DBProgramRunner extends GenericProgramRunner {
             final Executor executor,
             final ExecutionEnvironment environment,
             final Callback callback) {
-        final DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) environment.getRunProfile();
+        final DBMethodRunConfiguration runProfile = (DBMethodRunConfiguration) environment.getRunProfile();
         if (runProfile.isCompileDependencies()) {
             final ConnectionHandler connectionHandler = runProfile.getMethod().getConnectionHandler();
             final Project project = connectionHandler.getProject();
@@ -189,7 +189,7 @@ public class DBProgramRunner extends GenericProgramRunner {
             @Override
             protected void execute() {
                 final Project project = executionInput.getProject();
-                DBProgramRunConfiguration runConfiguration = (DBProgramRunConfiguration) environment.getRunProfile();
+                DBMethodRunConfiguration runConfiguration = (DBMethodRunConfiguration) environment.getRunProfile();
                 CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
                 dependenciesDialog.show();
                 final List<DBSchemaObject> selectedDependencies =  dependenciesDialog.getSelection();
@@ -251,7 +251,7 @@ public class DBProgramRunner extends GenericProgramRunner {
                     XDebugSession session = null;
                     try {
                         session = XDebuggerManager.getInstance(project).startSession(
-                                DBProgramRunner.this,
+                                DBMethodRunner.this,
                                 environment,
                                 reuseContent,
                                 debugProcessStarter);
