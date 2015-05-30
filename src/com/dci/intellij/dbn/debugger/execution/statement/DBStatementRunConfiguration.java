@@ -1,10 +1,5 @@
 package com.dci.intellij.dbn.debugger.execution.statement;
 
-import java.util.List;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -20,14 +15,18 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLanguagePsiFile, StatementExecutionInput> {
     private StatementExecutionInput executionInput;
     private DBStatementRunConfigurationEditor configurationEditor;
-    private boolean isGeneratedName = true;
 
-    public DBStatementRunConfiguration(Project project, ConfigurationFactory factory, String name) {
-        super(project, factory, name);
+    public DBStatementRunConfiguration(Project project, ConfigurationFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     @NotNull
@@ -74,11 +73,11 @@ public class DBStatementRunConfiguration extends DBProgramRunConfiguration<DBLan
     }
 
     public boolean isGeneratedName() {
-        return isGeneratedName;
+        return false;
     }
 
     public String suggestedName() {
-        return "DBN Script Runner";
+        return "DBN - Statement Runner";
     }
 
     public StatementExecutionInput getExecutionInput() {

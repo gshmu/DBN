@@ -34,8 +34,8 @@ public class DBMethodRunConfiguration extends DBProgramRunConfiguration<DBMethod
     private DBMethodRunConfigurationEditor configurationEditor;
     private boolean isGeneratedName = true;
 
-    public DBMethodRunConfiguration(Project project, ConfigurationFactory factory, String name) {
-        super(project, factory, name);
+    public DBMethodRunConfiguration(Project project, ConfigurationFactory factory, String name, boolean generic) {
+        super(project, factory, name, generic);
     }
 
     @NotNull

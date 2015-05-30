@@ -1,19 +1,23 @@
 package com.dci.intellij.dbn.debugger.execution.statement;
 
-import javax.swing.Icon;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
 
 public class DBStatementRunConfigurationFactory extends DBProgramRunConfigurationFactory {
     protected DBStatementRunConfigurationFactory(@NotNull ConfigurationType type) {
         super(type);
+    }
+
+    @Override
+    public DBProgramRunConfiguration createConfiguration(Project project, String name, boolean generic) {
+        return new DBStatementRunConfiguration(project, this, name, generic);
     }
 
     @Override
@@ -23,12 +27,6 @@ public class DBStatementRunConfigurationFactory extends DBProgramRunConfiguratio
 
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
-        return new DBStatementRunConfiguration(project, this, "");
+        return new DBStatementRunConfiguration(project, this, "", false);
     }
-
-    public DBStatementRunConfiguration createConfiguration(ConnectionHandler connectionHandler) {
-        String name = DatabaseDebuggerManager.createConfigurationName(connectionHandler);
-        return new DBStatementRunConfiguration(connectionHandler.getProject(), this, name);
-    }
-
 }
