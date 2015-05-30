@@ -1,23 +1,37 @@
 package com.dci.intellij.dbn.debugger.execution;
 
-import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.intellij.execution.ExecutionTarget;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class DBProgramRunConfiguration<T extends PresentableConnectionProvider, I extends ExecutionInput> extends RunConfigurationBase implements LocatableConfiguration {
+import java.util.List;
+
+public abstract class DBProgramRunConfiguration<T extends PresentableConnectionProvider, I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
     private boolean compileDependencies = true;
+    private boolean generic;
     private I executionInput;
 
-    protected DBProgramRunConfiguration(Project project, ConfigurationFactory factory, String name) {
+    protected DBProgramRunConfiguration(Project project, ConfigurationFactory factory, String name, boolean generic) {
         super(project, factory, name);
+        this.generic = generic;
+    }
+
+    @Override
+    public boolean canRunOn(@NotNull ExecutionTarget target) {
+        return super.canRunOn(target);
+    }
+
+    public boolean isGeneric() {
+        return generic;
     }
 
     public boolean isCompileDependencies() {
