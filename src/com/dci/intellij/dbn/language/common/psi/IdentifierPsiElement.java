@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -514,6 +515,9 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }
 
         if (ref == null) ref = new PsiResolveResult(this);
+        if (ApplicationManager.getApplication().isDispatchThread()) {
+            return ref.getReferencedElement();
+        }
         if (ref.isDirty()) {
             try {
                 //DatabaseLoadMonitor.setEnsureDataLoaded(false);

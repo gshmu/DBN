@@ -8,14 +8,13 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -27,7 +26,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
 
-public class MethodExecutionInput implements Disposable, PersistentConfiguration, Comparable<MethodExecutionInput>, ConnectionProvider {
+public class MethodExecutionInput implements ExecutionInput, PersistentConfiguration, Comparable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
     private DBObjectRef<DBSchema> executionSchema;
     private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<MethodExecutionArgumentValue>();

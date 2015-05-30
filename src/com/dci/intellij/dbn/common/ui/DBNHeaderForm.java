@@ -5,6 +5,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.Color;
+import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -31,11 +32,11 @@ public class DBNHeaderForm extends DBNFormImpl{
         }
     }
 
-    public DBNHeaderForm(DBObject object) {
+    public DBNHeaderForm(@NotNull DBObject object) {
         update(object);
     }
 
-    public void update(DBObject object) {
+    public void update(@NotNull DBObject object) {
         Project project = object.getProject();
         ConnectionHandler connectionHandler = object.getConnectionHandler();
 
@@ -52,7 +53,12 @@ public class DBNHeaderForm extends DBNFormImpl{
         }
     }
 
-    public DBNHeaderForm(ConnectionHandler connectionHandler) {
+    public DBNHeaderForm(@NotNull Presentable presentable) {
+        objectLabel.setText(presentable.getName());
+        objectLabel.setIcon(presentable.getIcon());
+    }
+
+    public DBNHeaderForm(@NotNull ConnectionHandler connectionHandler) {
         objectLabel.setText(connectionHandler.getName());
         objectLabel.setIcon(connectionHandler.getIcon());
         Color background = UIUtil.getPanelBackground();

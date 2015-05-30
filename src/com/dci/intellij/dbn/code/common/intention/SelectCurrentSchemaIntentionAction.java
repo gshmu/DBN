@@ -30,10 +30,12 @@ public class SelectCurrentSchemaIntentionAction extends GenericIntentionAction i
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (psiFile instanceof DBLanguagePsiFile && virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof DBConsoleVirtualFile) ) {
-            DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
-            return file.getActiveConnection() != null && !file.getActiveConnection().isVirtual();
+        if (psiFile instanceof DBLanguagePsiFile) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            if (virtualFile != null && (virtualFile.isInLocalFileSystem() || virtualFile instanceof DBConsoleVirtualFile) ) {
+                DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
+                return file.getActiveConnection() != null && !file.getActiveConnection().isVirtual();
+            }
         }
         return false;
     }

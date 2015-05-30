@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.debugger.execution.ui;
+package com.dci.intellij.dbn.debugger.execution.method.ui;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -9,14 +9,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.execution.common.ui.DBProgramRunConfigurationEditorForm;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
@@ -32,9 +31,10 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.UIUtil;
 
-public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
+public class DBMethodRunConfigurationEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodRunConfiguration>{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JPanel methodArgumentsPanel;
@@ -44,11 +44,8 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
     private MethodExecutionForm methodExecutionForm;
     private MethodExecutionInput executionInput;
 
-    private DBProgramRunConfiguration configuration;
-
-    public DBProgramRunConfigurationEditorForm(final DBProgramRunConfiguration configuration) {
-        this.configuration = configuration;
-
+    public DBMethodRunConfigurationEditorForm(final DBMethodRunConfiguration configuration) {
+        super(configuration);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SelectMethodAction());
         selectMethodActionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
     }
@@ -84,6 +81,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
                     @Override
                     protected void execute(@NotNull ProgressIndicator progressIndicator) {
                         final MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
+                        final DBMethodRunConfiguration configuration = getConfiguration();
                         DBMethod currentMethod = configuration.getExecutionInput() == null ? null : configuration.getExecutionInput().getMethod();
                         if (currentMethod != null) {
                             settings.setConnectionHandler(currentMethod.getConnectionHandler());
@@ -125,6 +123,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                DBMethodRunConfiguration configuration = getConfiguration();
                 MethodExecutionInput currentInput = configuration.getExecutionInput();
                 MethodExecutionInput methodExecutionInput = methodExecutionManager.selectHistoryMethodExecutionInput(currentInput);
                 if (methodExecutionInput != null) {
@@ -143,7 +142,7 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            configuration.setExecutionInput(executionInput);
+            getConfiguration().setExecutionInput(executionInput);
         }
 
         @Override
@@ -164,16 +163,17 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
         return executionInput;
     }
 
-    public void writeConfiguration(DBProgramRunConfiguration configuration) {
+    public void writeConfiguration(DBMethodRunConfiguration configuration) {
         if (methodExecutionForm != null) {
             methodExecutionForm.setExecutionInput(configuration.getExecutionInput());
             methodExecutionForm.updateExecutionInput();
+            Disposer.register(this, methodExecutionForm);
         }
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
         //selectMethodAction.setConfiguration(configuration);
     }
 
-    public void readConfiguration(DBProgramRunConfiguration configuration) {
+    public void readConfiguration(DBMethodRunConfiguration configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }
@@ -214,10 +214,8 @@ public class DBProgramRunConfigurationEditorForm extends DBNFormImpl {
 
     public void dispose() {
         super.dispose();
-        DisposerUtil.dispose(methodExecutionForm);
         methodExecutionForm = null;
         executionInput = null;
-        configuration = null;
     }
 
     @Override

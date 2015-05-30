@@ -1,11 +1,11 @@
-package com.dci.intellij.dbn.debugger.execution.ui;
-
-import com.dci.intellij.dbn.object.common.DBObject;
+package com.dci.intellij.dbn.debugger.execution.common.ui;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import java.awt.Component;
+
+import com.dci.intellij.dbn.object.common.DBObject;
 
 public class ObjectListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
