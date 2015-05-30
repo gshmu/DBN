@@ -27,6 +27,7 @@ import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.UnknownConfigurationType;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -108,10 +109,6 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return name;
     }
 
-    public static String createConfigurationName(ConnectionHandler connectionHandler) {
-        return connectionHandler.getName() + " - Debugger";
-    }
-
     private static boolean nameExists(List<RunnerAndConfigurationSettings> configurationSettings, String name) {
         for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
             if (configurationSetting.getName().equals(name)) {
@@ -147,8 +144,12 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(project);
         List<RunnerAndConfigurationSettings> configurationSettings = runManager.getConfigurationSettingsList(configurationType);
         for (RunnerAndConfigurationSettings configurationSetting : configurationSettings) {
-            if (configurationSetting.getName().equals(configurationType.getDefaultRunnerName())) {
-                return configurationSetting;
+            RunConfiguration configuration = configurationSetting.getConfiguration();
+            if (configuration instanceof DBProgramRunConfiguration) {
+                DBProgramRunConfiguration dbRunConfiguration = (DBProgramRunConfiguration) configuration;
+                if (dbRunConfiguration.isGeneric()) {
+                    return configurationSetting;
+                }
             }
         }
         if (create) {

@@ -12,9 +12,4 @@ public class DBStatementRunConfigurationEditor extends DBProgramRunConfiguration
     protected DBScriptRunConfigurationEditorForm createConfigurationEditorForm() {
         return new DBScriptRunConfigurationEditorForm(getConfiguration());
     }
-
-    @Override
-    protected void disposeEditor() {
-        //configurationEditorComponent.dispose();
-    }
 }

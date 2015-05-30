@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.debugger.execution;
 
-import javax.swing.JComponent;
-import org.jetbrains.annotations.NotNull;
-
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.debugger.execution.common.ui.DBProgramRunConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JComponent;
 
 public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConfiguration, F extends DBProgramRunConfigurationEditorForm<T>> extends SettingsEditor<T> {
     private T configuration;
@@ -13,7 +14,6 @@ public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConf
 
     public DBProgramRunConfigurationEditor(T configuration) {
         this.configuration = configuration;
-        this.configurationEditorForm = createConfigurationEditorForm();
     }
 
     public T getConfiguration() {
@@ -22,24 +22,33 @@ public abstract class DBProgramRunConfigurationEditor<T extends DBProgramRunConf
 
     protected abstract F createConfigurationEditorForm();
 
-    public F getConfigurationEditorForm() {
+    public F getConfigurationEditorForm(boolean create) {
+        if (create && (configurationEditorForm == null || configurationEditorForm.isDisposed())) {
+            configurationEditorForm = createConfigurationEditorForm();
+        }
         return configurationEditorForm;
     }
 
     @Override
+    protected void disposeEditor() {
+        DisposerUtil.dispose(configurationEditorForm);
+        configurationEditorForm = null;
+    }
+
+    @Override
     protected void resetEditorFrom(T configuration) {
-        configurationEditorForm.readConfiguration(configuration);
+        getConfigurationEditorForm(true).readConfiguration(configuration);
     }
 
     @Override
     protected void applyEditorTo(T configuration) throws ConfigurationException {
-        configurationEditorForm.writeConfiguration(configuration);
+        getConfigurationEditorForm(true).writeConfiguration(configuration);
     }
 
     @NotNull
     @Override
     protected JComponent createEditor() {
-        configurationEditorForm = createConfigurationEditorForm();
+        configurationEditorForm = getConfigurationEditorForm(true);
         return configurationEditorForm.getComponent();
     }
 }
