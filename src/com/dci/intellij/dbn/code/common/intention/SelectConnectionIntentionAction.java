@@ -29,10 +29,12 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     }
 
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (psiFile instanceof DBLanguagePsiFile && virtualFile != null && virtualFile.isInLocalFileSystem()) {
-            //DBLanguageFile file = (DBLanguageFile) psiFile;
-            return true;
+        if (psiFile instanceof DBLanguagePsiFile) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            if (virtualFile != null && virtualFile.isInLocalFileSystem()) {
+                //DBLanguageFile file = (DBLanguageFile) psiFile;
+                return true;
+            }
         }
         return false;
     }

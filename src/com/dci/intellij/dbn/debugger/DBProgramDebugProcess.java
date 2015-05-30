@@ -1,5 +1,10 @@
 package com.dci.intellij.dbn.debugger;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collection;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -17,7 +22,7 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.debugger.breakpoint.DBProgramBreakpointHandler;
 import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEditorsProvider;
-import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
+import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
 import com.dci.intellij.dbn.debugger.frame.DBProgramDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -50,11 +55,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
-import org.jetbrains.annotations.NotNull;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Collection;
 
 public class DBProgramDebugProcess extends XDebugProcess {
     private Connection targetConnection;
@@ -76,7 +76,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 
-        DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) session.getRunProfile();
+        DBMethodRunConfiguration runProfile = (DBMethodRunConfiguration) session.getRunProfile();
         executionInput = runProfile.getExecutionInput();
 
         breakpointHandler = new DBProgramBreakpointHandler(session, this);

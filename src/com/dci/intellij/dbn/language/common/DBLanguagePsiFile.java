@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -48,7 +49,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 
-public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, ConnectionProvider, Disposable {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, Disposable {
     private Language language;
     private DBLanguageFileType fileType;
     private ParserDefinition parserDefinition;
@@ -73,6 +74,18 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         IFileElementType nodeType = parserDefinition.getFileNodeType();
         //assert nodeType.getLanguage() == this.language;
         init(nodeType, nodeType);
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        return getVirtualFile().getFileType().getIcon();
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return null;
     }
 
     public void setUnderlyingObject(DBSchemaObject underlyingObject) {
