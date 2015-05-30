@@ -1,15 +1,5 @@
 package com.dci.intellij.dbn.debugger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -34,6 +24,7 @@ import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.UnknownConfigurationType;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -48,6 +39,16 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 @State(
     name = "DBNavigator.Project.DebuggerManager",
@@ -115,6 +116,17 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             }
         }
         return false;
+    }
+
+    @Override
+    public void initComponent() {
+        // TODO remove this cleanup logic after statement debugger roll-out
+        RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(getProject());
+        List<RunnerAndConfigurationSettings> configurationSettingsList = runManager.getConfigurationSettingsList(UnknownConfigurationType.INSTANCE);
+        for (RunnerAndConfigurationSettings configurationSettings : configurationSettingsList) {
+            runManager.removeConfiguration(configurationSettings);
+        }
+        super.initComponent();
     }
 
     public void createDebugConfiguration(DBMethod method) {
