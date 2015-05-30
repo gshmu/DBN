@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.object.common.ui;
 
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import org.jetbrains.annotations.NotNull;
-
+import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.speedSearch.SpeedSearchUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
     @Override
@@ -33,6 +33,6 @@ public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
         } else {
             append(userObject.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
-        SpeedSearchUtil.applySpeedSearchHighlighting(tree, this, true, selected);
+        TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
     }
 }

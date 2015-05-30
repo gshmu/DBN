@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import javax.swing.Icon;
-import javax.swing.JTree;
-import org.jetbrains.annotations.NotNull;
-
 import com.dci.intellij.dbn.common.load.LoadIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
+import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.Icon;
+import javax.swing.JTree;
 
 public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
@@ -45,13 +45,9 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
             boolean appendSchema = true;
 
             ObjectDependencyTreeNode rootNode = model.getRoot();
-            if (rootNode == null) {
+            DBObject rootObject = rootNode.getObject();
+            if (rootObject == null || CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
                 appendSchema = false;
-            } else {
-                DBObject rootObject = rootNode.getObject();
-                if (rootObject == null || CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
-                    appendSchema = false;
-                }
             }
 
             append(object.getName(), regularAttributes);
@@ -59,7 +55,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
                 append(" (" + object.getSchema().getName() + ")", grayAttributes);
             }
 
-            SpeedSearchUtil.applySpeedSearchHighlighting(tree, this, true, selected);
+            TreeUtil.applySpeedSearchHighlighting(tree, this, true, selected);
         } else {
             setIcon(LoadIcon.INSTANCE);
             append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
