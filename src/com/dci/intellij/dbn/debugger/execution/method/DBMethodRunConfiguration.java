@@ -54,21 +54,23 @@ public class DBMethodRunConfiguration extends DBProgramRunConfiguration<DBMethod
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
-        MethodExecutionInput executionInput = getExecutionInput();
-        if (executionInput == null) {
-            throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
-        }
+        if (!isGeneric()) {
+            MethodExecutionInput executionInput = getExecutionInput();
+            if (executionInput == null) {
+                throw new RuntimeConfigurationError("No or invalid method selected. The database connection is down, obsolete or method has been dropped.");
+            }
 
-        if (executionInput.isObsolete()) {
-            throw new RuntimeConfigurationError(
-                    "Method " + executionInput.getMethodRef().getQualifiedName() + " could not be resolved. " +
-                    "The database connection is down or method has been dropped.");
-        }
+            if (executionInput.isObsolete()) {
+                throw new RuntimeConfigurationError(
+                        "Method " + executionInput.getMethodRef().getQualifiedName() + " could not be resolved. " +
+                                "The database connection is down or method has been dropped.");
+            }
 
-        ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
-        if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
-            throw new RuntimeConfigurationError(
-                    "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+            ConnectionHandler connectionHandler = getMethod().getConnectionHandler();
+            if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
+                throw new RuntimeConfigurationError(
+                        "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+            }
         }
     }
 
