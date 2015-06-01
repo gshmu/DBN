@@ -94,6 +94,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         }
     }
 
+    @NotNull
     public String getName() {
         return objectType.getListName();
     }
