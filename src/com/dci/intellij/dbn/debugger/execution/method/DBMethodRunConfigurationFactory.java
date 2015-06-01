@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.debugger.execution.method;
 
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfigurationFactory;
@@ -10,9 +13,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.Icon;
 
 public class DBMethodRunConfigurationFactory extends DBProgramRunConfigurationFactory {
     protected DBMethodRunConfigurationFactory(@NotNull ConfigurationType type) {
@@ -23,7 +23,7 @@ public class DBMethodRunConfigurationFactory extends DBProgramRunConfigurationFa
     public Icon getIcon(@NotNull RunConfiguration configuration) {
         DBMethodRunConfiguration runConfiguration = (DBMethodRunConfiguration) configuration;
         MethodExecutionInput executionInput = runConfiguration.getExecutionInput();
-        if (executionInput == null) {
+        if (runConfiguration.isGeneric() || executionInput == null) {
             return super.getIcon();
         } else {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();

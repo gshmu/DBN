@@ -35,7 +35,7 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
         DBMethod method = resolveMethod(editor, psiFile);
         if (method != null) {
             DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
-            executionManager.createDebugConfiguration(method);
+            executionManager.startMethodDebugger(method);
         }
     }
 
