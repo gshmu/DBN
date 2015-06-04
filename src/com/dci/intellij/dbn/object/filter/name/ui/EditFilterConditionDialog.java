@@ -1,14 +1,14 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
+import javax.swing.JComponent;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JComponent;
 
 public class EditFilterConditionDialog extends DBNDialog<EditFilterConditionForm> {
     private SimpleFilterCondition condition;
@@ -31,7 +31,7 @@ public class EditFilterConditionDialog extends DBNDialog<EditFilterConditionForm
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return component.getFocusComponent();
+        return component == null ? null : component.getFocusComponent();
     }
 
     public void doOKAction() {
