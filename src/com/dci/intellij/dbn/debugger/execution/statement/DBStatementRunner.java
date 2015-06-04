@@ -2,11 +2,23 @@ package com.dci.intellij.dbn.debugger.execution.statement;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.execution.DBProgramRunner;
+import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.history.LocalHistory;
+import com.intellij.openapi.project.Project;
+import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebuggerManager;
 
 public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> {
     public static final String RUNNER_ID = "DBNStatementRunner";
@@ -26,14 +38,14 @@ public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> 
             final Executor executor,
             final ExecutionEnvironment environment,
             final Callback callback) {
-/*        new SimpleLaterInvocator() {
+        new SimpleLaterInvocator() {
             @Override
             protected void execute() {
-                final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-                final Project project = connectionHandler.getProject();
+                final ConnectionHandler connectionHandler = executionInput.getExecutionContext().getTargetConnection();
+                final Project project = environment.getProject();
 
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
-                boolean continueExecution = executionManager.promptExecutionDialog(executionInput, true);
+                boolean continueExecution = true;//executionManager.promptExecutionDialog(executionInput, true);
 
                 if (continueExecution) {
                     RunContentDescriptor reuseContent = environment.getContentToReuse();
@@ -50,7 +62,7 @@ public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> 
 
                         if (callback != null) callback.processStarted(descriptor);
 
-                        if (true *//*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*//*) {
+                        if (true /*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*/) {
                             RunProfile runProfile = environment.getRunProfile();
                             LocalHistory.getInstance().putSystemLabel(project, executor.getId() + " " + runProfile.getName());
                         }
@@ -64,7 +76,7 @@ public class DBStatementRunner extends DBProgramRunner<StatementExecutionInput> 
                 }
 
             }
-        }.start();*/
+        }.start();
     }
 
 }

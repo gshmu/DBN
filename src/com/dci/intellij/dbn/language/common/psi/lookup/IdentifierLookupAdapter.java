@@ -19,7 +19,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     private ElementTypeAttribute attribute;
     private LeafPsiElement lookupIssuer;
 
-    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @Nullable DBObjectType objectType, CharSequence identifierName) {
+    public IdentifierLookupAdapter(@Nullable LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @Nullable DBObjectType objectType, CharSequence identifierName) {
         this(lookupIssuer, identifierType, identifierCategory, objectType, identifierName, null);
     }
 

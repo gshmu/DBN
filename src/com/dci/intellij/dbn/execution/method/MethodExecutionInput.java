@@ -12,8 +12,11 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
@@ -33,14 +36,33 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     private boolean usePoolConnection = true;
     private boolean commitAfterExecution = true;
     private boolean enableLogging = false;
-    private boolean isExecuting = false;
-    private long executionTimestamp;
-
 
     private transient MethodExecutionResult executionResult;
     private transient List<ArgumentValue> inputArgumentValues = new ArrayList<ArgumentValue>();
+    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
+        @Override
+        protected ExecutionContext load() {
+            return new ExecutionContext() {
+                @NotNull
+                @Override
+                public String getTargetName() {
+                    return methodRef.getQualifiedNameWithType();
+                }
 
-    private transient boolean executionCancelled;
+                @Nullable
+                @Override
+                public ConnectionHandler getTargetConnection() {
+                    return getConnectionHandler();
+                }
+
+                @Nullable
+                @Override
+                public DBSchema getTargetSchema() {
+                    return getExecutionSchema();
+                }
+            };
+        }
+    };
 
     public MethodExecutionInput() {
         methodRef = new DBObjectRef<DBMethod>();
@@ -59,12 +81,22 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
     public void initExecution(boolean debug) {
         MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
         executionResult = new MethodExecutionResult(this, resultForm, debug);
-        executionTimestamp = System.currentTimeMillis();
+        getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
     }
 
-    public long getExecutionTimestamp() {
-        return executionTimestamp;
+    @NotNull
+    @Override
+    public ExecutionContext getExecutionContext() {
+        return executionContext.get();
     }
+
+    @Nullable
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        DBMethod method = getMethod();
+        return method == null ? null : method.getConnectionHandler();
+    }
+
 
     @Nullable
     public DBMethod getMethod() {
@@ -79,26 +111,13 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
         return methodRef.getConnectionId();
     }
 
-    @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(methodRef.lookupConnectionHandler());
-    }
-
     public DBSchema getExecutionSchema() {
-        return executionSchema.get();
+        return DBObjectRef.get(executionSchema);
     }
 
     public boolean isObsolete() {
         ConnectionHandler connectionHandler = methodRef.lookupConnectionHandler();
         return connectionHandler == null || getMethod() == null;
-    }
-
-    public boolean isExecutionCancelled() {
-        return executionCancelled;
-    }
-
-    public void setExecutionCancelled(boolean executionCancelled) {
-        this.executionCancelled = executionCancelled;
     }
 
     public void setExecutionSchema(DBSchema schema) {
@@ -218,14 +237,6 @@ public class MethodExecutionInput implements ExecutionInput, PersistentConfigura
 
     public Project getProject() {
         return getMethod().getProject();
-    }
-
-    public void setExecuting(boolean executing) {
-        isExecuting = executing;
-    }
-
-    public boolean isExecuting() {
-        return isExecuting;
     }
 
     /*********************************************************

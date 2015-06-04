@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import javax.swing.Icon;
+import java.util.HashSet;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributesBundle;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -406,6 +408,31 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             bucket = lookupAdapter.collectInElement(this, bucket);
         }
         return bucket;
+    }
+
+    @Nullable
+    public Set<DBObject> collectObjectReferences(DBObjectType objectType) {
+        PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(null, objectType, null);
+        Set<BasePsiElement> bucket = lookupAdapter.collectInElement(this, null);
+        Set<DBObject> objects = null;
+        if (bucket != null) {
+            for (BasePsiElement basePsiElement : bucket) {
+                if (basePsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                    PsiElement reference = identifierPsiElement.resolve();
+                    if (reference instanceof DBObject) {
+                        DBObject object = (DBObject) reference;
+                        if (objects == null) {
+                            objects = new HashSet<DBObject>();
+                        }
+                        objects.add(object);
+                    }
+                }
+            }
+
+        }
+
+        return objects;
     }
 
     public abstract @Nullable BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount);

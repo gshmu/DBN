@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.DebugMethodIntentionAction;
+import com.dci.intellij.dbn.code.common.intention.DebugStatementIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction;
@@ -25,6 +26,7 @@ public class EditorManager implements ApplicationComponent{
         IntentionManager intentionManager = IntentionManager.getInstance();
         intentionManager.addAction(new ExecuteScriptIntentionAction());
         intentionManager.addAction(new ExecuteStatementIntentionAction());
+        intentionManager.addAction(new DebugStatementIntentionAction());
         intentionManager.addAction(new RunMethodIntentionAction());
         intentionManager.addAction(new DebugMethodIntentionAction());
         intentionManager.addAction(new ExplainPlanIntentionAction());

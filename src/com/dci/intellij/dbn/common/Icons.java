@@ -101,6 +101,7 @@ public class Icons {
 
     public static final Icon STMT_EXECUTION_EXPLAIN       = load("/img/action/ExplainStatement.png");
     public static final Icon STMT_EXECUTION_RUN           = load("/img/action/ExecuteStatement.png");
+    public static final Icon STMT_EXECUTION_DEBUG         = load("/img/action/DebugStatement.png");
     public static final Icon STMT_EXECUTION_RERUN         = load("/img/action/Rerun.png");
     public static final Icon STMT_EXECUTION_RESUME        = load("/img/action/ResumeExecution.png");
     public static final Icon STMT_EXECUTION_REFRESH       = load("/img/action/Refresh.png");

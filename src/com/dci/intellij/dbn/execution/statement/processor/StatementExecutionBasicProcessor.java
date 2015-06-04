@@ -1,8 +1,18 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.Counter;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -39,19 +49,9 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StatementExecutionBasicProcessor implements StatementExecutionProcessor {
 
@@ -208,9 +208,13 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
 
     }
 
-    public void execute(ProgressIndicator progressIndicator) {
+    public void execute() {
+        execute(null);
+    }
+
+    public void execute(@Nullable Connection connection) {
         executionInput.initExecution();
-        progressIndicator.setText("Executing " + getStatementName());
+        ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         resultName = null;
         ConnectionHandler activeConnection = getConnectionHandler();
         DBSchema currentSchema = getCurrentSchema();
@@ -233,12 +237,13 @@ public class StatementExecutionBasicProcessor implements StatementExecutionProce
         boolean loggingEnabled = false;
         if (continueExecution) {
             DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
-            Connection connection = null;
             activeConnection = FailsafeUtil.get(activeConnection);
             Counter runningStatements = activeConnection.getLoadMonitor().getRunningStatements();
             try {
                 runningStatements.increment();
-                connection = activeConnection.getStandaloneConnection(currentSchema);
+                if (connection == null) {
+                    connection = activeConnection.getStandaloneConnection(currentSchema);
+                }
 
                 if (activeConnection.isLoggingEnabled() && executionInput.isDatabaseLogProducer()) {
                     loggingEnabled = loggingManager.enableLogger(activeConnection, connection);

@@ -28,7 +28,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             new BackgroundTask(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), false, true) {
                 @Override
                 protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
-                    executionProcessor.execute(progressIndicator);
+                    executionProcessor.execute();
                 }
             });
         }

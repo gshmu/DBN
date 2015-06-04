@@ -1,12 +1,17 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.LazyValue;
+import com.dci.intellij.dbn.common.util.SimpleLazyValue;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
@@ -33,7 +38,32 @@ public class StatementExecutionInput implements ExecutionInput {
     private ExecutablePsiElement executablePsiElement;
     private boolean isBulkExecution = false;
     private boolean isDisposed;
-    private long executionTimestamp;
+
+    private LazyValue<ExecutionContext> executionContext = new SimpleLazyValue<ExecutionContext>() {
+        @Override
+        protected ExecutionContext load() {
+            return new ExecutionContext() {
+                @NotNull
+                @Override
+                public String getTargetName() {
+                    ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
+                    return CommonUtil.nvl(executablePsiElement == null ? null : executablePsiElement.getPresentableText(), "Statement");
+                }
+
+                @Nullable
+                @Override
+                public ConnectionHandler getTargetConnection() {
+                    return getConnectionHandler();
+                }
+
+                @Nullable
+                @Override
+                public DBSchema getTargetSchema() {
+                    return getCurrentSchema();
+                }
+            };
+        }
+    };
 
     public StatementExecutionInput(String originalStatementText, String executableStatementText, StatementExecutionProcessor executionProcessor) {
         this.executionProcessor = executionProcessor;
@@ -43,12 +73,14 @@ public class StatementExecutionInput implements ExecutionInput {
         this.executableStatementText = executableStatementText;
     }
 
-    public void initExecution() {
-        this.executionTimestamp = System.currentTimeMillis();
+    @NotNull
+    @Override
+    public ExecutionContext getExecutionContext() {
+        return executionContext.get();
     }
 
-    public long getExecutionTimestamp() {
-        return executionTimestamp;
+    public void initExecution() {
+        getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
     }
 
     public String getOriginalStatementText() {
