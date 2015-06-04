@@ -47,7 +47,7 @@ public class DBMethodRunner extends DBProgramRunner<MethodExecutionInput> {
             @Override
             protected void execute() {
                 final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-                final Project project = connectionHandler.getProject();
+                final Project project = environment.getProject();
 
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
                 boolean continueExecution = executionManager.promptExecutionDialog(executionInput, true);

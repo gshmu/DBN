@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
+import java.sql.Connection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -47,7 +47,9 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     @Deprecated
     void navigateToEditor(boolean requestFocus);
 
-    void execute(ProgressIndicator progressIndicator);
+    void execute();
+
+    void execute(@Nullable Connection connection);
 
     StatementExecutionVariablesBundle getExecutionVariables();
 

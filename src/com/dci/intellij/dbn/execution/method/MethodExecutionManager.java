@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
+import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
 import com.dci.intellij.dbn.execution.method.history.ui.MethodExecutionHistoryDialog;
@@ -142,8 +143,10 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     public void execute(final MethodExecutionInput executionInput) {
         cacheArgumentValues(executionInput);
         executionHistory.setSelection(executionInput.getMethodRef());
-        executionInput.setExecuting(true);
         final DBMethod method = executionInput.getMethod();
+        final ExecutionContext executionContext = executionInput.getExecutionContext();
+        executionContext.setExecuting(true);
+
         if (method == null) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
@@ -158,16 +161,16 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     try {
                         initProgressIndicator(progressIndicator, true, "Executing " + method.getQualifiedNameWithType());
                         executionProcessor.execute(executionInput, false);
-                        if (!executionInput.isExecutionCancelled()) {
+                        if (!executionContext.isExecutionCancelled()) {
                             ExecutionManager executionManager = ExecutionManager.getInstance(project);
                             executionManager.addExecutionResult(executionInput.getExecutionResult());
-                            executionInput.setExecuting(false);
+                            executionContext.setExecuting(false);
                         }
 
-                        executionInput.setExecutionCancelled(false);
+                        executionContext.setExecutionCancelled(false);
                     } catch (final SQLException e) {
-                        executionInput.setExecuting(false);
-                        if (!executionInput.isExecutionCancelled()) {
+                        executionContext.setExecuting(false);
+                        if (!executionContext.isExecutionCancelled()) {
                             new SimpleLaterInvocator() {
                                 protected void execute() {
                                     MessageUtil.showErrorDialog(project, "Could not execute " + method.getTypeName() + ".", e);
@@ -184,10 +187,12 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     private void cacheArgumentValues(MethodExecutionInput executionInput) {
-        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
-        for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-            argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
+        ConnectionHandler connectionHandler = executionInput.getExecutionContext().getTargetConnection();
+        if (connectionHandler != null) {
+            Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
+            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
+                argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
+            }
         }
     }
 
@@ -199,11 +204,12 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             final MethodExecutionProcessor executionProcessor = executionInterface.createDebugExecutionProcessor(method);
 
             executionProcessor.execute(executionInput, connection, true);
-            if (!executionInput.isExecutionCancelled()) {
+            ExecutionContext executionContext = executionInput.getExecutionContext();
+            if (!executionContext.isExecutionCancelled()) {
                 ExecutionManager executionManager = ExecutionManager.getInstance(method.getProject());
                 executionManager.addExecutionResult(executionInput.getExecutionResult());
             }
-            executionInput.setExecutionCancelled(false);
+            executionContext.setExecutionCancelled(false);
         }
     }
 

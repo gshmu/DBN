@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -22,11 +23,14 @@ import com.dci.intellij.dbn.database.common.debug.DebuggerSessionInfo;
 import com.dci.intellij.dbn.database.common.debug.ExecutionBacktraceInfo;
 import com.dci.intellij.dbn.debugger.breakpoint.DBProgramBreakpointHandler;
 import com.dci.intellij.dbn.debugger.evaluation.DBProgramDebuggerEditorsProvider;
-import com.dci.intellij.dbn.debugger.execution.method.DBMethodRunConfiguration;
+import com.dci.intellij.dbn.debugger.execution.DBProgramRunConfiguration;
 import com.dci.intellij.dbn.debugger.frame.DBProgramDebugSuspendContext;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
+import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
+import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
@@ -34,7 +38,6 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
@@ -62,7 +65,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
     private ConnectionHandler connectionHandler;
     private DBProgramBreakpointHandler breakpointHandler;
     private DBProgramBreakpointHandler[] breakpointHandlers;
-    private MethodExecutionInput executionInput;
+    private ExecutionInput executionInput;
     private BreakpointInfo defaultBreakpointInfo;
     private DBProgramDebugProcessStatus status = new DBProgramDebugProcessStatus();
 
@@ -76,7 +79,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
         Project project = session.getProject();
         DatabaseDebuggerManager.getInstance(project).registerDebugSession(connectionHandler);
 
-        DBMethodRunConfiguration runProfile = (DBMethodRunConfiguration) session.getRunProfile();
+        DBProgramRunConfiguration runProfile = (DBProgramRunConfiguration) session.getRunProfile();
         executionInput = runProfile.getExecutionInput();
 
         breakpointHandler = new DBProgramBreakpointHandler(session, this);
@@ -123,7 +126,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 try {
-                    targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionSchema());
+                    targetConnection = connectionHandler.getPoolConnection(executionInput.getExecutionContext().getTargetSchema());
                     targetConnection.setAutoCommit(false);
                     debugConnection = connectionHandler.getPoolConnection();
 
@@ -157,7 +160,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
                         @Override
                         protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
                             try {
-                                executeMethod();
+                                executeTarget();
                                 runtimeInfo = debuggerInterface.synchronizeSession(debugConnection);
 
                                 if (status.TARGET_EXECUTION_TERMINATED) {
@@ -184,25 +187,33 @@ public class DBProgramDebugProcess extends XDebugProcess {
         }.start();
     }
 
-    private void executeMethod() {
-        new DebugOperationThread("execute method", getProject()) {
+    private void executeTarget() {
+        final Project project = getProject();
+        new DebugOperationThread("execute method", project) {
             public void executeOperation() throws SQLException {
 
                 XDebugSession session = getSession();
-                MethodExecutionManager executionManager = MethodExecutionManager.getInstance(session.getProject());
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_SYNCHRONIZING_THREW_EXCEPTION) return;
 
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
-                    executionManager.debugExecute(executionInput, targetConnection);
+                    if (executionInput instanceof MethodExecutionInput) {
+                        MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
+                        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                        methodExecutionManager.debugExecute(methodExecutionInput, targetConnection);
+                    } else if (executionInput instanceof StatementExecutionInput) {
+                        StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
+                        StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+                        statementExecutionManager.debugExecute(statementExecutionInput.getExecutionProcessor(), targetConnection);
+                    }
+
                 } catch (SQLException e){
                     // if the method execution threw exception, the debugger-off statement is not reached,
                     // hence the session will hag as debuggable. To avoid this, disable debugging has
                     // to explicitly be called here
                     status.TARGET_EXECUTION_THREW_EXCEPTION = true;
-                    DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-                    MessageUtil.showErrorDialog(getProject(), "Error executing " + methodRef.getQualifiedNameWithType(), e);
+                    MessageUtil.showErrorDialog(project, "Error executing " + executionInput.getExecutionContext().getTargetName(), e);
                     getDebuggerInterface().disableDebugging(targetConnection);
 
                 } finally {
@@ -242,31 +253,35 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     private void registerDefaultBreakpoint() {
-        DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) getMainDatabaseFile().getMainContentFile();
-        PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
-        if (psqlFile != null) {
-            DBMethod method = executionInput.getMethod();
-            if (method != null) {
-                BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
-                if (basePsiElement != null) {
-                    BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
-                    int offset = subject.getTextOffset();
-                    Document document = DocumentUtil.getDocument(psqlFile);
-                    int line = document.getLineNumber(offset);
+        if (executionInput instanceof MethodExecutionInput) {
+            MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
+            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) getMainDatabaseFile().getMainContentFile();
+            PSQLFile psqlFile = (PSQLFile) sourceCodeFile.getPsiFile();
+            if (psqlFile != null) {
+                DBMethod method = methodExecutionInput.getMethod();
+                if (method != null) {
+                    BasePsiElement basePsiElement = psqlFile.lookupObjectDeclaration(method.getObjectType().getGenericType(), method.getName());
+                    if (basePsiElement != null) {
+                        BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+                        int offset = subject.getTextOffset();
+                        Document document = DocumentUtil.getDocument(psqlFile);
+                        int line = document.getLineNumber(offset);
 
-                    DBSchemaObject schemaObject = getMainDatabaseObject();
-                    try {
-                        defaultBreakpointInfo = getDebuggerInterface().addBreakpoint(
-                                method.getSchema().getName(),
-                                schemaObject.getName(),
-                                schemaObject.getObjectType().getName().toUpperCase(),
-                                line,
-                                debugConnection);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                        DBSchemaObject schemaObject = getMainDatabaseObject();
+                        try {
+                            defaultBreakpointInfo = getDebuggerInterface().addBreakpoint(
+                                    method.getSchema().getName(),
+                                    schemaObject.getName(),
+                                    schemaObject.getObjectType().getName().toUpperCase(),
+                                    line,
+                                    debugConnection);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
+
         }
     }
 
@@ -304,7 +319,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     @Override
     public void stop() {
-        executionInput.setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
+        executionInput.getExecutionContext().setExecutionCancelled(!status.PROCESS_STOPPED_NORMALLY);
         final Project project = getSession().getProject();
 
         if (status.PROCESS_IS_TERMINATING) return;
@@ -457,18 +472,20 @@ public class DBProgramDebugProcess extends XDebugProcess {
         return schemaObject;
     }
 
+    @Nullable
     private DBEditableObjectVirtualFile getMainDatabaseFile() {
         DBSchemaObject schemaObject = getMainDatabaseObject();
-        return schemaObject.getVirtualFile();
+        return schemaObject == null ? null : schemaObject.getVirtualFile();
     }
 
+    @Nullable
     public DBSchemaObject getMainDatabaseObject() {
-        DBMethod method = getMethod();
-        return method.isProgramMethod() ? method.getProgram() : method;
-    }
-
-    public DBMethod getMethod() {
-        return executionInput.getMethod();
+        if (executionInput instanceof MethodExecutionInput) {
+            MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
+            DBMethod method = methodExecutionInput.getMethod();
+            return method != null && method.isProgramMethod() ? method.getProgram() : method;
+        }
+        return null;
     }
 
     private void rollOutDebugger() {
@@ -535,7 +552,6 @@ public class DBProgramDebugProcess extends XDebugProcess {
     }
 
     abstract class DebugOperationThread extends Thread {
-        private Project project;
         private String operationName;
         protected DebugOperationThread(String operationName, Project project) {
             super("DBN Debug Operation (" + operationName + ')');
@@ -547,7 +563,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
             try {
                 executeOperation();
             } catch (final SQLException e) {
-                MessageUtil.showErrorDialog(project, "Could not perform debug operation (" + operationName + ").", e);
+                MessageUtil.showErrorDialog(getProject(), "Could not perform debug operation (" + operationName + ").", e);
             }
         }
         public abstract void executeOperation() throws SQLException;

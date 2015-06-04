@@ -150,7 +150,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
                     executionConsoleForm.displayLogOutput(
                             context, LogOutput.createSysOutput(context,
-                                    executionResult.getExecutionInput().getExecutionTimestamp(),
+                                    executionResult.getExecutionContext().getExecutionTimestamp(),
                                     " - Statement execution started", false));
 
                     if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
