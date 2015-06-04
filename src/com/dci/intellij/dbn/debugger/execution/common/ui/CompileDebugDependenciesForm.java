@@ -56,6 +56,10 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         int[] selectedIndicesArray = computeSelection(compileList, selectedObjects);
 
         objectList.setSelectedIndices(selectedIndicesArray);
+        if (selectedIndicesArray.length > 0) {
+            objectList.ensureIndexIsVisible(selectedIndicesArray.length - 1);
+        }
+
         hintTextArea.setBackground(mainPanel.getBackground());
         hintTextArea.setFont(mainPanel.getFont());
 
