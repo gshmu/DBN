@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.debugger.DBProgramDebugProcessStarter;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.execution.common.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -21,14 +22,20 @@ import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.history.LocalHistory;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebuggerManager;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
     @Nullable
@@ -212,5 +219,50 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
         }.start();
     }
 
-    protected abstract void performExecution(T executionInput, Executor executor, ExecutionEnvironment environment, Callback callback);
+    private void performExecution(
+            final T executionInput,
+            final Executor executor,
+            final ExecutionEnvironment environment,
+            final Callback callback) {
+        new SimpleLaterInvocator() {
+            @Override
+            protected void execute() {
+                final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                final Project project = environment.getProject();
+
+                boolean continueExecution = promptExecutionDialog(executionInput);
+
+                if (continueExecution) {
+                    RunContentDescriptor reuseContent = environment.getContentToReuse();
+                    DBProgramDebugProcessStarter debugProcessStarter = new DBProgramDebugProcessStarter(connectionHandler);
+                    XDebugSession session = null;
+                    try {
+                        session = XDebuggerManager.getInstance(project).startSession(
+                                DBProgramRunner.this,
+                                environment,
+                                reuseContent,
+                                debugProcessStarter);
+
+                        RunContentDescriptor descriptor = session.getRunContentDescriptor();
+
+                        if (callback != null) callback.processStarted(descriptor);
+
+                        if (true /*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*/) {
+                            RunProfile runProfile = environment.getRunProfile();
+                            LocalHistory.getInstance().putSystemLabel(project, executor.getId() + " " + runProfile.getName());
+                        }
+
+                        ExecutionManager.getInstance(project).getContentManager().showRunContent(executor, descriptor);
+                        ProcessHandler processHandler = descriptor.getProcessHandler();
+                        if (processHandler != null) processHandler.startNotify();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }.start();
+    }
+
+    protected abstract boolean promptExecutionDialog(T executionInput);
 }
