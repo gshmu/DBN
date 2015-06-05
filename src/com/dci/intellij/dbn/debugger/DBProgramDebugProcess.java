@@ -192,12 +192,12 @@ public class DBProgramDebugProcess extends XDebugProcess {
         new DebugOperationThread("execute method", project) {
             public void executeOperation() throws SQLException {
 
-                XDebugSession session = getSession();
                 if (status.PROCESS_IS_TERMINATING) return;
                 if (status.SESSION_SYNCHRONIZING_THREW_EXCEPTION) return;
 
                 try {
                     status.TARGET_EXECUTION_STARTED = true;
+
                     if (executionInput instanceof MethodExecutionInput) {
                         MethodExecutionInput methodExecutionInput = (MethodExecutionInput) executionInput;
                         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);

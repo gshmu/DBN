@@ -59,7 +59,7 @@ public class MethodExecutionSettings extends Configuration{
 
     @Override
     public String getConfigElementName() {
-        return "statement-execution";
+        return "method-execution";
     }
 
     public void readConfiguration(Element element) {
