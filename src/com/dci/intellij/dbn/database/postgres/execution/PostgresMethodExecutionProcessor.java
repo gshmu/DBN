@@ -78,7 +78,7 @@ public class PostgresMethodExecutionProcessor extends MethodExecutionProcessorIm
     protected boolean isQuery() {
         if (isQuery == null) {
             DBMethod method = getMethod();
-            DBArgument returnArgument = method == null ? null : method.getReturnArgument();
+            DBArgument returnArgument = method.getReturnArgument();
             isQuery = returnArgument != null && returnArgument.getDataType().isSet() && !hasOutputArguments();
         }
         return isQuery;

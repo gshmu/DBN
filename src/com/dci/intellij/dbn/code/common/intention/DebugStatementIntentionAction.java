@@ -5,10 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguageFileType;
+import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -50,16 +53,24 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         return false;
     }
 
-    public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
-        if (executable != null && fileEditor != null) {
-            StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-            StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
-            if (executionProcessor != null) {
-                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                debuggerManager.startStatementDebugger(executionProcessor);
-            }
+    public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+        final ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+        final FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        if (executable != null && fileEditor != null && psiFile instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiFile;
+
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+            connectionMappingManager.selectConnectionAndSchema(databasePsiFile, new ConnectionAction("", databasePsiFile) {
+                @Override
+                protected void execute() {
+                    StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+                    StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
+                    if (executionProcessor != null) {
+                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+                        debuggerManager.startStatementDebugger(executionProcessor);
+                    }
+                }
+            });
         }
     }
 
