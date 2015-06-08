@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import java.util.ArrayList;
+import org.jetbrains.annotations.Nullable;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.thread.ConditionalReadActionRunner;
@@ -122,6 +123,7 @@ public class DocumentUtil {
         return FileDocumentManager.getInstance().getFile(editor.getDocument());
     }
 
+    @Nullable
     public static Document getDocument(final VirtualFile virtualFile) {
         return new ConditionalReadActionRunner<Document>() {
             @Override
@@ -131,9 +133,14 @@ public class DocumentUtil {
         }.start();
     }
 
+    @Nullable
     public static PsiFile getPsiFile(Project project, VirtualFile virtualFile) {
         Document document = getDocument(virtualFile);
-        PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-        return psiDocumentManager.getPsiFile(document);
+        if (document != null) {
+            PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+            return psiDocumentManager.getPsiFile(document);
+        } else {
+            return null;
+        }
     }
 }
