@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.database.common.debug.BreakpointInfo;
 import com.dci.intellij.dbn.database.common.debug.BreakpointOperationInfo;
 import com.dci.intellij.dbn.debugger.DBProgramDebugProcess;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -45,12 +46,23 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
 
         ConnectionHandler connectionHandler = debugProcess.getConnectionHandler();
         VirtualFile virtualFile = getVirtualFile(breakpoint);
+        Project project = session.getProject();
         if (virtualFile == null) {
-            XDebuggerManager.getInstance(session.getProject()).getBreakpointManager().removeBreakpoint(breakpoint);
-        } else if (virtualFile instanceof DBEditableObjectVirtualFile){
-            DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
-            DBSchemaObject object = objectVirtualFile.getObject();
-            if (object.getConnectionHandler() == connectionHandler) {
+            XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
+            debuggerManager.getBreakpointManager().removeBreakpoint(breakpoint);
+        } else {
+            DBSchemaObject object = null;
+            ConnectionHandler breakpointConnectionHandler = null;
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile objectVirtualFile = (DBEditableObjectVirtualFile) virtualFile;
+                object = objectVirtualFile.getObject();
+                breakpointConnectionHandler = object.getConnectionHandler();
+            } else {
+                FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+                breakpointConnectionHandler = connectionMappingManager.getActiveConnection(virtualFile);
+            }
+
+            if (breakpointConnectionHandler == connectionHandler) {
                 DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
 
                 Connection debugConnection = debugProcess.getDebugConnection();
@@ -67,12 +79,16 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
                         }
 
                     } else {
-                        BreakpointInfo breakpointInfo = debuggerInterface.addBreakpoint(
-                                object.getSchema().getName(),
-                                object.getName(),
-                                object.getObjectType().getName().toUpperCase(),
-                                breakpoint.getLine(),
-                                debugConnection);
+                        BreakpointInfo breakpointInfo = object == null ?
+                                debuggerInterface.addSourceBreakpoint(
+                                        breakpoint.getLine(),
+                                        debugConnection) :
+                                debuggerInterface.addProgramBreakpoint(
+                                        object.getSchema().getName(),
+                                        object.getName(),
+                                        object.getObjectType().getName().toUpperCase(),
+                                        breakpoint.getLine(),
+                                        debugConnection);
 
                         String error = breakpointInfo.getError();
                         if (error != null) {
@@ -158,16 +174,23 @@ public class DBProgramBreakpointHandler extends XBreakpointHandler<XLineBreakpoi
     }
 
     public static VirtualFile getVirtualFile(XLineBreakpoint<DBProgramBreakpointProperties> breakpoint) {
-        VirtualFile databaseFile = breakpoint.getUserData(BREAKPOINT_FILE_KEY);
-        if (databaseFile == null) {
+        VirtualFile breakpointFile = breakpoint.getUserData(BREAKPOINT_FILE_KEY);
+        if (breakpointFile == null) {
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) databaseFileSystem.findFileByPath(breakpoint.getFileUrl());
-            if (contentVirtualFile != null) {
-                databaseFile = contentVirtualFile.getMainDatabaseFile();
-                breakpoint.putUserData(BREAKPOINT_FILE_KEY, databaseFile);
+            String fileUrl = breakpoint.getFileUrl();
+            if (databaseFileSystem.isDatabaseUrl(fileUrl)) {
+                VirtualFile virtualFile = databaseFileSystem.findFileByPath(fileUrl);
+                if (virtualFile instanceof DBContentVirtualFile) {
+                    DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
+                    breakpointFile = contentVirtualFile.getMainDatabaseFile();
+                    breakpoint.putUserData(BREAKPOINT_FILE_KEY, breakpointFile);
+                } else if (virtualFile instanceof DBConsoleVirtualFile) {
+                    breakpointFile = virtualFile;
+                    breakpoint.putUserData(BREAKPOINT_FILE_KEY, breakpointFile);
+                }
             }
         }
-        return databaseFile; 
+        return breakpointFile;
     }
 
 

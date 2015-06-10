@@ -444,4 +444,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements Application
             }
         }
     }
+
+    public boolean isDatabaseUrl(String fileUrl) {
+        return fileUrl.startsWith(PROTOCOL_PREFIX);
+    }
 }
