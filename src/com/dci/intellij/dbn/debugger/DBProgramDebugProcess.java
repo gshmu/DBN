@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger;
 
+import javax.swing.Icon;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -59,7 +61,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.ui.XDebugTabLayouter;
 
-public class DBProgramDebugProcess extends XDebugProcess {
+public class DBProgramDebugProcess extends XDebugProcess implements Presentable{
     private Connection targetConnection;
     private Connection debugConnection;
     private ConnectionHandler connectionHandler;
@@ -269,7 +271,7 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
                         DBSchemaObject schemaObject = getMainDatabaseObject();
                         try {
-                            defaultBreakpointInfo = getDebuggerInterface().addBreakpoint(
+                            defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
                                     method.getSchema().getName(),
                                     schemaObject.getName(),
                                     schemaObject.getObjectType().getName().toUpperCase(),
@@ -549,6 +551,43 @@ public class DBProgramDebugProcess extends XDebugProcess {
 
     public ExecutionBacktraceInfo getBacktraceInfo() {
         return backtraceInfo;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+        if (executionInput instanceof MethodExecutionInput) {
+            DBSchemaObject object = getMainDatabaseObject();
+            if (object != null) {
+                return object.getQualifiedName();
+            }
+        } else if (executionInput instanceof StatementExecutionInput) {
+            StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
+            return statementExecutionInput.getExecutionProcessor().getPsiFile().getName();
+        }
+
+        return "Debug Process";
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return "Database Debug Process";
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        if (executionInput instanceof MethodExecutionInput) {
+            DBSchemaObject object = getMainDatabaseObject();
+            if (object != null) {
+                return object.getIcon();
+            }
+        } else if (executionInput instanceof StatementExecutionInput) {
+            StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
+            return statementExecutionInput.getExecutionProcessor().getPsiFile().getIcon();
+        }
+        return null;
     }
 
     abstract class DebugOperationThread extends Thread {
