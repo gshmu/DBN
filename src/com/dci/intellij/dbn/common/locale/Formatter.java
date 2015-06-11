@@ -33,7 +33,7 @@ public class Formatter implements Cloneable{
     private Formatter() {
     }
 
-    public Formatter(Locale locale, DBDateFormat dateFormatOption, DBNumberFormat numberFormatOption) {
+    public Formatter(@NotNull Locale locale, DBDateFormat dateFormatOption, DBNumberFormat numberFormatOption) {
         int dFormat = dateFormatOption.getDateFormat();
         dateFormat = SimpleDateFormat.getDateInstance(dFormat, locale);
         timeFormat = SimpleDateFormat.getTimeInstance(dFormat, locale);
@@ -56,7 +56,7 @@ public class Formatter implements Cloneable{
         integerFormatPattern = ((DecimalFormat) integerFormat).toPattern();
     }
 
-    public Formatter(Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {
+    public Formatter(@NotNull Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {
         if (StringUtil.isEmptyOrSpaces(dateFormatPattern)) throw new IllegalArgumentException("Date format pattern empty.");
         if (StringUtil.isEmptyOrSpaces(timeFormatPattern)) throw new IllegalArgumentException("Time format pattern empty.");
         if (StringUtil.isEmptyOrSpaces(numberFormatPattern)) throw new IllegalArgumentException("Number format pattern empty.");
