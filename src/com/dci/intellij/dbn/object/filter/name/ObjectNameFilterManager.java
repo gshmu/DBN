@@ -1,5 +1,13 @@
 package com.dci.intellij.dbn.object.filter.name;
 
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
+import java.util.List;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -13,14 +21,6 @@ import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.components.StorageScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.JTree;
-import javax.swing.tree.TreePath;
-import java.util.List;
 
 @State(
         name = "DBNavigator.Project.ObjectNameFilterManager",
@@ -90,7 +90,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
             SimpleFilterCondition newCondition = dialog.getCondition();
             ConditionJoinType joinType = dialog.getJoinType();
             CompoundFilterCondition parent = condition.getParent();
-            if (parent.getConditions().size() == 1) {
+            if (parent.getConditions().size() == 1 || parent.getJoinType() == joinType) {
                 parent.setJoinType(joinType);
                 parent.addCondition(newCondition);
             } else {
