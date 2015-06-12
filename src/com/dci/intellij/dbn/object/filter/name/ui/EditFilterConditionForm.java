@@ -1,32 +1,27 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
+import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.name.SimpleFilterCondition;
-import com.intellij.openapi.ui.ComboBox;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDialog> {
     private JPanel mainPanel;
     private JTextField textPatternTextField;
     private JLabel objectNameLabel;
-    private ComboBox operatorComboBox;
-    private JRadioButton joinTypeAndRadioButton;
-    private JRadioButton joinTypeOrRadioButton;
-    private JPanel joinTypePanel;
+    private DBNComboBox<ConditionOperator> operatorComboBox;
     private JLabel wildcardsHintLabel;
+    private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
     private SimpleFilterCondition condition;
     public enum Operation {CREATE, EDIT, JOIN}
@@ -34,28 +29,29 @@ public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDial
     public EditFilterConditionForm(EditFilterConditionDialog parentComponent, CompoundFilterCondition parentCondition, SimpleFilterCondition condition, DBObjectType objectType, Operation operation) {
         super(parentComponent);
         this.condition = condition == null ? new SimpleFilterCondition(ConditionOperator.EQUAL, "") : condition;
-        joinTypePanel.setVisible(false);
+        joinTypeComboBox.setValues(ConditionJoinType.values());
+        joinTypeComboBox.setVisible(false);
         if (operation == Operation.JOIN) {
-            joinTypePanel.setVisible(true);
-            if (parentCondition!= null && parentCondition.getJoinType() == ConditionJoinType.AND) {
-                joinTypeOrRadioButton.setSelected(true);
+            joinTypeComboBox.setVisible(true);
+            if (parentCondition != null && parentCondition.getJoinType() == ConditionJoinType.AND) {
+                joinTypeComboBox.setSelectedValue(ConditionJoinType.OR);
             } else {
-                joinTypeAndRadioButton.setSelected(true);
+                joinTypeComboBox.setSelectedValue(ConditionJoinType.AND);
             }
         } else if (operation == Operation.CREATE) {
             if (parentCondition != null && parentCondition.getConditions().size() == 1) {
-                joinTypePanel.setVisible(true);
-                joinTypeAndRadioButton.setSelected(true);
+                joinTypeComboBox.setVisible(true);
+                joinTypeComboBox.setSelectedValue(ConditionJoinType.AND);
             }
         }
 
         objectNameLabel.setIcon(objectType.getIcon());
         objectNameLabel.setText(objectType.getName().toUpperCase() + "_NAME");
 
-        operatorComboBox.setModel(new DefaultComboBoxModel(ConditionOperator.values()));
+        operatorComboBox.setValues(ConditionOperator.values());;
         if (operation == Operation.EDIT) {
-            textPatternTextField.setText(condition.getText());
-            operatorComboBox.setSelectedItem(condition.getOperator());
+            textPatternTextField.setText(condition == null ? "" : condition.getText());
+            operatorComboBox.setSelectedValue(condition == null ? null : condition.getOperator());
 
         }
         textPatternTextField.selectAll();
@@ -67,16 +63,17 @@ public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDial
         //wildcardsHintLabel.setDisabledIcon(Icons.COMMON_INFO_DISABLED);
         showHideWildcardHint();
 
-        operatorComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        operatorComboBox.addListener(new ValueSelectorListener<ConditionOperator>() {
+            @Override
+            public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
                 showHideWildcardHint();
             }
         });
     }
 
     private void showHideWildcardHint() {
-        ConditionOperator operator = (ConditionOperator) operatorComboBox.getSelectedItem();
-        wildcardsHintLabel.setEnabled(operator.allowsWildcards());
+        ConditionOperator operator = operatorComboBox.getSelectedValue();
+        wildcardsHintLabel.setEnabled(operator != null && operator.allowsWildcards());
     }
 
     public JComponent getFocusComponent() {
@@ -84,15 +81,13 @@ public class EditFilterConditionForm extends DBNFormImpl<EditFilterConditionDial
     }
 
     public SimpleFilterCondition getCondition() {
-        condition.setOperator((ConditionOperator) operatorComboBox.getSelectedItem());
+        condition.setOperator(operatorComboBox.getSelectedValue());
         condition.setText(textPatternTextField.getText().trim());
         return condition;
     }
 
     public ConditionJoinType getJoinType() {
-        return
-            joinTypeAndRadioButton.isSelected() ? ConditionJoinType.AND :
-            joinTypeOrRadioButton.isSelected() ? ConditionJoinType.OR : null;
+        return joinTypeComboBox.getSelectedValue();
     }
 
     public JComponent getComponent() {

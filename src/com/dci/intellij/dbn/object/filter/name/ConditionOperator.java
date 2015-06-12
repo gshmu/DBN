@@ -1,21 +1,29 @@
 package com.dci.intellij.dbn.object.filter.name;
 
-public enum ConditionOperator {
+import javax.swing.Icon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.dci.intellij.dbn.common.ui.Presentable;
+
+public enum ConditionOperator implements Presentable{
     EQUAL("equal", false),
     NOT_EQUAL("not equal", false),
     LIKE("like", true),
     NOT_LIKE("not like", true);
 
-    private String text;
+    private String name;
     private boolean allowsWildcards;
 
     ConditionOperator(String text, boolean allowsWildcards) {
-        this.text = text;
+        this.name = text;
         this.allowsWildcards = allowsWildcards;
     }
 
-    public String getText() {
-        return text;
+    @NotNull
+    @Override
+    public String getName() {
+        return name;
     }
 
     public boolean allowsWildcards() {
@@ -24,6 +32,18 @@ public enum ConditionOperator {
 
     @Override
     public String toString() {
-        return text;
+        return name;
+    }
+
+    @Nullable
+    @Override
+    public String getDescription() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon() {
+        return null;
     }
 }

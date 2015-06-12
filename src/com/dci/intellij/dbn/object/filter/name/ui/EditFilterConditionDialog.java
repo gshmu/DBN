@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
+import javax.swing.Action;
 import javax.swing.JComponent;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +20,12 @@ public class EditFilterConditionDialog extends DBNDialog<EditFilterConditionForm
         component = new EditFilterConditionForm(this, parentCondition, condition,  objectType, operation);
         setModal(true);
         setResizable(false);
+        switch (operation) {
+            case CREATE: getOKAction().putValue(Action.NAME, "Add"); break;
+            case EDIT: getOKAction().putValue(Action.NAME, "Update"); break;
+            case JOIN: getOKAction().putValue(Action.NAME, "Add"); break;
+        }
+
         init();
     }
 
