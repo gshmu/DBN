@@ -1,5 +1,16 @@
 package com.dci.intellij.dbn.object.impl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeChangeListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
@@ -61,17 +72,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     DBObjectList<DBTable> tables;
@@ -601,7 +601,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         }
 
         public DBObjectRelation createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String tableName = resultSet.getString("TABLE_NAME");
+            String datasetName = resultSet.getString("TABLE_NAME");
             String columnName = resultSet.getString("COLUMN_NAME");
             String indexName = resultSet.getString("INDEX_NAME");
 
@@ -618,16 +618,16 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 }
             }*/
 
-            DBTable table = (DBTable) loaderCache.getObject(tableName);
-            if (table == null) {
+            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+            if (dataset == null) {
                 DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                table = schema.getTable(tableName);
-                loaderCache.setObject(tableName, table);
+                dataset = schema.getDataset(datasetName);
+                loaderCache.setObject(datasetName, dataset);
             }
 
-            if (table != null) {
-                DBIndex index = table.getIndex(indexName);
-                DBColumn column = table.getColumn(columnName);
+            if (dataset != null) {
+                DBIndex index = dataset.getIndex(indexName);
+                DBColumn column = dataset.getColumn(columnName);
 
                 if (column != null && index != null) {
                     return new DBIndexColumnRelation(index, column);
@@ -862,16 +862,16 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         }
 
         public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-            String tableName = resultSet.getString("TABLE_NAME");
+            String datasetName = resultSet.getString("TABLE_NAME");
 
-            DBTable table = (DBTable) loaderCache.getObject(tableName);
-            if (table == null) {
+            DBDataset dataset = (DBDataset) loaderCache.getObject(datasetName);
+            if (dataset == null) {
                 DBSchema schema = (DBSchema) dynamicContent.getParentElement();
-                table = schema.getTable(tableName);
-                loaderCache.setObject(tableName, table);
+                dataset = schema.getDataset(datasetName);
+                loaderCache.setObject(datasetName, dataset);
             }
 
-            return table == null ? null : new DBIndexImpl(table, resultSet);
+            return dataset == null ? null : new DBIndexImpl(dataset, resultSet);
         }
     };
 
