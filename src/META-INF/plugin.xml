@@ -27,6 +27,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.0.NEXT</b>
+            <ul>
+                - Support Oracle materialized view indexes<br>
+                - Fixed external driver setup issues<br>
+                - Bug fixes<br>
+            </ul>
             <li><b>3.0.4560</b>
             <ul>
                 - Restored URL-based connection setup<br>
